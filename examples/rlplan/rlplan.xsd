@@ -1,0 +1,569 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="addRrtConCon" type="addRrtConConType"/>
+	<xs:complexType name="addRrtConConType">
+		<xs:complexContent>
+			<xs:extension base="rrtConConType">
+				<xs:sequence>
+					<xs:element name="alpha" type="xs:double" minOccurs="0"/>
+					<xs:element name="lower" minOccurs="0">
+						<xs:complexType>
+							<xs:simpleContent>           
+								<xs:extension base="xs:double">
+									<xs:attribute name="unit">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:enumeration value="deg"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:attribute>
+								</xs:extension>
+							</xs:simpleContent>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="radius" minOccurs="0">
+						<xs:complexType>
+							<xs:simpleContent>           
+								<xs:extension base="xs:double">
+									<xs:attribute name="unit">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:enumeration value="deg"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:attribute>
+								</xs:extension>
+							</xs:simpleContent>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="advancedOptimizer" type="advancedOptimizerType"/>
+	<xs:complexType name="advancedOptimizerType">
+		<xs:complexContent>
+			<xs:extension base="simpleOptimizerType">
+				<xs:sequence>
+					<xs:element name="length" minOccurs="0">
+						<xs:complexType>
+							<xs:simpleContent>           
+								<xs:extension base="xs:double">
+									<xs:attribute name="unit">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:enumeration value="deg"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:attribute>
+								</xs:extension>
+							</xs:simpleContent>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="ratio" type="xs:double" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="bridgeSampler" type="bridgeSamplerType"/>
+	<xs:complexType name="bridgeSamplerType">
+		<xs:complexContent>
+			<xs:extension base="gaussianSamplerType">
+				<xs:sequence>
+					<xs:element name="ratio" type="xs:double" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="eet" type="eetType"/>
+	<xs:complexType name="eetType">
+		<xs:complexContent>
+			<xs:extension base="rrtConType">
+				<xs:sequence>
+					<xs:element name="alpha" type="xs:double" minOccurs="0"/>
+					<xs:element name="alternativeDistanceComputation" minOccurs="0"/>
+					<xs:element name="distanceWeight" type="xs:double" minOccurs="0"/>
+					<xs:element name="explorer" minOccurs="1" maxOccurs="unbounded">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:choice>
+									<xs:element name="distance"/>
+									<xs:element name="space"/>
+								</xs:choice>
+								<xs:element name="goal">
+									<xs:complexType>
+										<xs:choice>
+											<xs:element name="goal">
+												<xs:complexType>
+													<xs:choice>
+														<xs:element name="frame" type="xs:nonNegativeInteger"/>
+														<xs:element name="tcp"/>
+													</xs:choice>
+												</xs:complexType>
+											</xs:element>
+											<xs:element name="start">
+												<xs:complexType>
+													<xs:choice>
+														<xs:element name="frame" type="xs:nonNegativeInteger"/>
+														<xs:element name="tcp"/>
+													</xs:choice>
+												</xs:complexType>
+											</xs:element>
+										</xs:choice>
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="radius" type="xs:double" minOccurs="0"/>
+								<xs:element name="range" type="xs:double" minOccurs="0"/>
+								<xs:element name="samples" type="xs:nonNegativeInteger" minOccurs="0"/>
+								<xs:element name="seed" type="xs:nonNegativeInteger" minOccurs="0"/>
+								<xs:element name="start">
+									<xs:complexType>
+										<xs:choice>
+											<xs:element name="goal">
+												<xs:complexType>
+													<xs:choice>
+														<xs:element name="frame" type="xs:nonNegativeInteger"/>
+														<xs:element name="tcp"/>
+													</xs:choice>
+												</xs:complexType>
+											</xs:element>
+											<xs:element name="start">
+												<xs:complexType>
+													<xs:choice>
+														<xs:element name="frame" type="xs:nonNegativeInteger"/>
+														<xs:element name="tcp"/>
+													</xs:choice>
+												</xs:complexType>
+											</xs:element>
+										</xs:choice>
+									</xs:complexType>
+								</xs:element>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="gamma" type="xs:double" minOccurs="0"/>
+					<xs:element name="goalEpsilon" minOccurs="0">
+						<xs:complexType>
+							<xs:simpleContent>           
+								<xs:extension base="xs:double">
+									<xs:attribute name="orientation" type="xs:boolean" default="false" use="optional"/>
+								</xs:extension>
+							</xs:simpleContent>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="max" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="x" type="xs:double" minOccurs="0"/>
+								<xs:element name="y" type="xs:double" minOccurs="0"/>
+								<xs:element name="z" type="xs:double" minOccurs="0"/>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="min" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="x" type="xs:double" minOccurs="0"/>
+								<xs:element name="y" type="xs:double" minOccurs="0"/>
+								<xs:element name="z" type="xs:double" minOccurs="0"/>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="gaussianSampler" type="gaussianSamplerType"/>
+	<xs:complexType name="gaussianSamplerType">
+		<xs:complexContent>
+			<xs:extension base="uniformSamplerType">
+				<xs:sequence>
+					<xs:element name="sigma" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element ref="q" minOccurs="1" maxOccurs="unbounded"/>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="model">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="kinematics">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="world" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="rotation" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="x" type="xs:double" minOccurs="0"/>
+													<xs:element name="y" type="xs:double" minOccurs="0"/>
+													<xs:element name="z" type="xs:double" minOccurs="0"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="translation" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="x" type="xs:double" minOccurs="0"/>
+													<xs:element name="y" type="xs:double" minOccurs="0"/>
+													<xs:element name="z" type="xs:double" minOccurs="0"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+						<xs:attribute name="href" type="xs:anyURI" use="required"/>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="model" type="xs:nonNegativeInteger" minOccurs="1"/>
+				<xs:element name="scene" minOccurs="1">
+					<xs:complexType>
+						<xs:attribute name="href" type="xs:anyURI" use="required"/>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="optimizerType">
+		<xs:choice>
+			<xs:element ref="recursiveVerifier"/>
+			<xs:element ref="sequentialVerifier"/>
+		</xs:choice>
+	</xs:complexType>
+	<xs:complexType name="plannerType">
+		<xs:sequence>
+			<xs:element name="duration" type="xs:double" minOccurs="0"/>
+			<xs:element name="goal" minOccurs="1">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="q" minOccurs="1" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element ref="model" minOccurs="1"/>
+			<xs:element name="start" minOccurs="1">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="q" minOccurs="1" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element ref="viewer" minOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="prm" type="prmType"/>
+	<xs:complexType name="prmType">
+		<xs:complexContent>
+			<xs:extension base="plannerType">
+				<xs:sequence>
+					<xs:element name="bruteForce" minOccurs="0"/>
+					<xs:element name="degree" type="xs:nonNegativeInteger" minOccurs="0"/>
+					<xs:element name="k" type="xs:nonNegativeInteger" minOccurs="0"/>
+					<xs:element name="radius" minOccurs="0">
+						<xs:complexType>
+							<xs:simpleContent>           
+								<xs:extension base="xs:double">
+									<xs:attribute name="unit">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:enumeration value="deg"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:attribute>
+								</xs:extension>
+							</xs:simpleContent>
+						</xs:complexType>
+					</xs:element>
+					<xs:choice>
+						<xs:element name="bridgeSampler"/>
+						<xs:element name="gaussianSampler"/>
+						<xs:element name="uniformSampler"/>
+					</xs:choice>
+					<xs:choice>
+						<xs:element ref="recursiveVerifier"/>
+						<xs:element ref="sequentialVerifier"/>
+					</xs:choice>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="prmUtilityGuided" type="prmType"/>
+	<xs:complexType name="prmUtilityGuidedType">
+		<xs:complexContent>
+			<xs:extension base="prmType">
+				<xs:sequence>
+					<xs:element name="seed" type="xs:nonNegativeInteger" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="q">
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:double">
+					<xs:attribute name="unit">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="deg"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:attribute>
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="recursiveVerifier" type="recursiveVerifierType"/>
+	<xs:complexType name="recursiveVerifierType">
+		<xs:complexContent>
+			<xs:extension base="verifierType"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="rlplan">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:choice>
+					<xs:element ref="addRrtConCon"/>
+					<xs:element ref="eet"/>
+					<xs:element ref="prm"/>
+					<xs:element ref="prmUtilityGuided"/>
+					<xs:element ref="rrt"/>
+					<xs:element ref="rrtCon"/>
+					<xs:element ref="rrtConCon"/>
+					<xs:element ref="rrtDual"/>
+					<xs:element ref="rrtExtCon"/>
+					<xs:element ref="rrtExtExt"/>
+					<xs:element ref="rrtGoalBias"/>
+				</xs:choice>
+				<xs:choice minOccurs="0">
+					<xs:element ref="advancedOptimizer"/>
+					<xs:element ref="simpleOptimizer"/>
+				</xs:choice>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="rrt" type="rrtType"/>
+	<xs:complexType name="rrtType">
+		<xs:complexContent>
+			<xs:extension base="plannerType">
+				<xs:sequence>
+					<xs:element name="bruteForce" minOccurs="0"/>
+					<xs:element name="delta" minOccurs="0">
+						<xs:complexType>
+							<xs:simpleContent>           
+								<xs:extension base="xs:double">
+									<xs:attribute name="unit">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:enumeration value="deg"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:attribute>
+								</xs:extension>
+							</xs:simpleContent>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="epsilon" minOccurs="0">
+						<xs:complexType>
+							<xs:simpleContent>           
+								<xs:extension base="xs:double">
+									<xs:attribute name="unit">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:enumeration value="deg"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:attribute>
+								</xs:extension>
+							</xs:simpleContent>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="k" type="xs:nonNegativeInteger" minOccurs="0"/>
+					<xs:element name="uniformSampler" minOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="rrtCon" type="rrtConType"/>
+	<xs:complexType name="rrtConType">
+		<xs:complexContent>
+			<xs:extension base="rrtGoalBiasType"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="rrtConCon" type="rrtConConType"/>
+	<xs:complexType name="rrtConConType">
+		<xs:complexContent>
+			<xs:extension base="rrtDualType"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="rrtDual" type="rrtDualType"/>
+	<xs:complexType name="rrtDualType">
+		<xs:complexContent>
+			<xs:extension base="rrtType"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="rrtExtCon" type="rrtExtConType"/>
+	<xs:complexType name="rrtExtConType">
+		<xs:complexContent>
+			<xs:extension base="rrtDualType"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="rrtExtExt" type="rrtExtExtType"/>
+	<xs:complexType name="rrtExtExtType">
+		<xs:complexContent>
+			<xs:extension base="rrtDualType"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="rrtGoalBias" type="rrtGoalBiasType"/>
+	<xs:complexType name="rrtGoalBiasType">
+		<xs:complexContent>
+			<xs:extension base="rrtType">
+				<xs:sequence>
+					<xs:element name="probability" type="xs:double" minOccurs="0"/>
+					<xs:element name="seed" type="xs:nonNegativeInteger" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="samplerType"/>
+	<xs:element name="sequentialVerifier" type="sequentialVerifierType"/>
+	<xs:complexType name="sequentialVerifierType">
+		<xs:complexContent>
+			<xs:extension base="verifierType"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="simpleOptimizer" type="simpleOptimizerType"/>
+	<xs:complexType name="simpleOptimizerType">
+		<xs:complexContent>
+			<xs:extension base="optimizerType"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="uniformSampler" type="uniformSamplerType"/>
+	<xs:complexType name="uniformSamplerType">
+		<xs:complexContent>
+			<xs:extension base="samplerType">
+				<xs:sequence>
+					<xs:element name="seed" type="xs:nonNegativeInteger" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="verifierType">
+		<xs:sequence>
+			<xs:element name="delta" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>           
+						<xs:extension base="xs:double">
+							<xs:attribute name="unit">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="deg"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="viewer">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="background" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="r" type="xs:double" minOccurs="0"/>
+							<xs:element name="g" type="xs:double" minOccurs="0"/>
+							<xs:element name="b" type="xs:double" minOccurs="0"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="camera" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="orthographic" minOccurs="0"/>
+							<xs:element name="position" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="x" type="xs:double" minOccurs="0"/>
+										<xs:element name="y" type="xs:double" minOccurs="0"/>
+										<xs:element name="z" type="xs:double" minOccurs="0"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="scale" type="xs:double" minOccurs="0"/>
+							<xs:element name="target" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="x" type="xs:double" minOccurs="0"/>
+										<xs:element name="y" type="xs:double" minOccurs="0"/>
+										<xs:element name="z" type="xs:double" minOccurs="0"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="up" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="x" type="xs:double" minOccurs="0"/>
+										<xs:element name="y" type="xs:double" minOccurs="0"/>
+										<xs:element name="z" type="xs:double" minOccurs="0"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="cspace" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="delta" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>           
+										<xs:extension base="xs:double">
+											<xs:attribute name="unit">
+												<xs:simpleType>
+													<xs:restriction base="xs:string">
+														<xs:enumeration value="deg"/>
+													</xs:restriction>
+												</xs:simpleType>
+											</xs:attribute>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="scale" type="xs:double" minOccurs="0"/>
+							<xs:element name="x" type="xs:nonNegativeInteger" minOccurs="0"/>
+							<xs:element name="y" type="xs:nonNegativeInteger" minOccurs="0"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="delta" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>           
+							<xs:extension base="xs:double">
+								<xs:attribute name="unit">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:enumeration value="deg"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:attribute>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="frames" minOccurs="0"/>
+				<xs:element ref="model" minOccurs="1"/>
+				<xs:element name="swept" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Categories=Graphics;3DGraphics;
+Comment=Viewer for VRML and Open Inventor files
+Exec=wrlview %f
+Icon=wrlview
+MimeType=graphics/x-inventor;model/vrml;object/x-inventor;x-world/x-vrml;
+Name=wrlview
+Type=Application

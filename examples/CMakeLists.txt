@@ -1,0 +1,29 @@
+project(examples)
+
+install(
+	DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/rlkin/
+	DESTINATION ${CMAKE_INSTALL_DATADIR}/rl/examples/rlkin
+	COMPONENT examples
+	PATTERN .svn EXCLUDE
+)
+
+install(
+	DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/rlmdl/
+	DESTINATION ${CMAKE_INSTALL_DATADIR}/rl/examples/rlmdl
+	COMPONENT examples
+	PATTERN .svn EXCLUDE
+)
+
+install(
+	DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/rlplan/
+	DESTINATION ${CMAKE_INSTALL_DATADIR}/rl/examples/rlplan
+	COMPONENT examples
+	PATTERN .svn EXCLUDE
+)
+
+install(
+	DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/rlsg/
+	DESTINATION ${CMAKE_INSTALL_DATADIR}/rl/examples/rlsg
+	COMPONENT examples
+	PATTERN .svn EXCLUDE
+)

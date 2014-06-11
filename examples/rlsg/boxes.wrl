@@ -1,0 +1,123 @@
+#VRML V2.0 utf8
+DEF room2 Transform {
+	children [
+		DEF floor Transform {
+			translation 0 0 -0.05
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+							transparency 0.5
+						}
+					}
+					geometry Box {
+						size 5.2 5.2 0.1
+					}
+				}
+			]
+		}
+		DEF north Transform {
+			translation 0 2.55 0.5
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+							transparency 0.5
+						}
+					}
+					geometry Box {
+						size 5.2 0.1 1
+					}
+				}
+			]
+		}
+		DEF south Transform {
+			translation 0 -2.55 0.5
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+							transparency 0.5
+						}
+					}
+					geometry Box {
+						size 5.2 0.1 1
+					}
+				}
+			]
+		}
+		DEF west Transform {
+			translation -2.55 0 0.5
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+							transparency 0.5
+						}
+					}
+					geometry Box {
+						size 0.1 5 1
+					}
+				}
+			]
+		}
+		DEF east Transform {
+			translation 2.55 0 0.5
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+							transparency 0.5
+						}
+					}
+					geometry Box {
+						size 0.1 5 1
+					}
+				}
+			]
+		}
+		DEF box1 Transform {
+			translation -1 0 0.5
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+						}
+					}
+					geometry Box {
+						size 1 1 1
+					}
+				}
+			]
+		}
+		DEF box2 Transform {
+			translation 0 -1 0.5
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+						}
+					}
+					geometry Box {
+						size 1 1 1
+					}
+				}
+			]
+		}
+		DEF box3 Transform {
+			translation 0.75 0.75 0.5
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+						}
+					}
+					geometry Box {
+						size 1 1 1
+					}
+				}
+			]
+		}
+	]
+}
+

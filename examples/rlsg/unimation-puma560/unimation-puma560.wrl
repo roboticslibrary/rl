@@ -1,0 +1,62 @@
+#VRML V2.0 utf8
+Transform {
+	children [
+		DEF link0 Transform {
+			children [
+				Inline {
+					url "link0.wrl"
+				}
+			]
+		}
+		DEF link1 Transform {
+			rotation 1 0 0 -1.570796
+			translation 0 0 0.6604
+			children [
+				Inline {
+					url "link1.wrl"
+				}
+			]
+		}
+		DEF link2 Transform {
+			rotation 1 0 0 -1.570796
+			translation 0.4318 0.1291 0.6604
+			children [
+				Inline {
+					url "link2.wrl"
+				}
+			]
+		}
+		DEF link3 Transform {
+			translation 0.4115 0.1291 0.6604
+			children [
+				Inline {
+					url "link3.wrl"
+				}
+			]
+		}
+		DEF link4 Transform {
+			rotation 1 0 0 -1.570796
+			translation 0.4115 0.1291 1.0935
+			children [
+				Inline {
+					url "link4.wrl"
+				}
+			]
+		}
+		DEF link5 Transform {
+			translation 0.4115 0.1291 1.0935
+			children [
+				Inline {
+					url "link5.wrl"
+				}
+			]
+		}
+		DEF link6 Transform {
+			translation 0.4115 0.1291 1.13475
+			children [
+				Inline {
+					url "link6.wrl"
+				}
+			]
+		}	]
+}

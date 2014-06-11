@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rlplan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="rlplan.xsd">
+	<rrtConCon>
+		<duration>1200</duration>
+		<goal>
+			<q unit="deg">0</q>
+			<q unit="deg">0</q>
+			<q unit="deg">90</q>
+			<q unit="deg">0</q>
+			<q unit="deg">0</q>
+			<q unit="deg">0</q>
+		</goal>
+		<model>
+			<kinematics href="../rlkin/unimation-puma560.xml">
+				<world>
+					<rotation>
+						<x>0</x>
+						<y>0</y>
+						<z>90</z>
+					</rotation>
+					<translation>
+						<x>0</x>
+						<y>0</y>
+						<z>0</z>
+					</translation>
+				</world>
+			</kinematics>
+			<model>0</model>
+			<scene href="../rlsg/unimation-puma560_boxes.convex.xml"/>
+		</model>
+		<start>
+			<q unit="deg">90</q>
+			<q unit="deg">-180</q>
+			<q unit="deg">90</q>
+			<q unit="deg">0</q>
+			<q unit="deg">0</q>
+			<q unit="deg">0</q>
+		</start>
+		<viewer>
+			<background>
+				<r>0</r>
+				<g>0</g>
+				<b>0</b>
+			</background>
+			<delta unit="deg">1</delta>
+			<model>
+				<kinematics href="../rlkin/unimation-puma560.xml">
+					<world>
+						<rotation>
+							<x>0</x>
+							<y>0</y>
+							<z>90</z>
+						</rotation>
+						<translation>
+							<x>0</x>
+							<y>0</y>
+							<z>0</z>
+						</translation>
+					</world>
+				</kinematics>
+				<model>0</model>
+				<scene href="../rlsg/unimation-puma560_boxes.xml"/>
+			</model>
+		</viewer>
+		<delta unit="deg">1</delta>
+		<epsilon>1e-9</epsilon>
+		<uniformSampler/>
+	</rrtConCon>
+</rlplan>
