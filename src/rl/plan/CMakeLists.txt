@@ -4,6 +4,8 @@ find_package(Boost COMPONENTS thread system REQUIRED)
 
 find_package(Cgal REQUIRED)
 
+find_package(OMPL)
+
 set(
 	HDRS
 	AddRrtConCon.h
@@ -79,6 +81,12 @@ set(
 	WorkspaceSphereExplorer.cpp
 )
 
+if(OMPL_FOUND)
+    list(APPEND HDRS OMPL.h)
+    list(APPEND SRCS OMPL.cpp)
+    message(${SRCS})
+endif(OMPL_FOUND)
+
 if(WIN32)
 	add_library(
 		rlplan
@@ -120,6 +128,11 @@ target_link_libraries(
 	${Boost_LIBRARIES}
 	${CGAL_LIBRARIES}
 )
+
+if(OMPL_FOUND)
+    target_include_directories(rlplan PUBLIC ${OMPL_INCLUDE_DIRS})
+    target_link_libraries(rlplan ${OMPL_LIBRARIES})
+endif(OMPL_FOUND)
 
 set_target_properties(
 	rlplan
