@@ -302,5 +302,5 @@ main(int argc, char** argv)
 		std::cout << "f1 = " << f1.matrix().transpose() << std::endl;
 	}
 	
-	return 0;
+	return EXIT_SUCCESS;
 }

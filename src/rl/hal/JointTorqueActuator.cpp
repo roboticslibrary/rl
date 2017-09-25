@@ -30,8 +30,8 @@ namespace rl
 {
 	namespace hal
 	{
-		JointTorqueActuator::JointTorqueActuator(const ::std::size_t& dof, const ::rl::math::Real& updateRate) :
-			AxisController(dof, updateRate)
+		JointTorqueActuator::JointTorqueActuator(const ::std::size_t& dof) :
+			AxisController(dof)
 		{
 		}
 		

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rlsg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="rlsg.xsd">
+	<scene href="twotori.wrl">
+		<model name="model1">
+			<body name=""/>
+		</model>
+		<model name="model2">
+			<body name=""/>
+		</model>
+	</scene>
+</rlsg>

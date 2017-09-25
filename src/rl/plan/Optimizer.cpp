@@ -31,9 +31,9 @@ namespace rl
 	namespace plan
 	{
 		Optimizer::Optimizer() :
-			model(NULL),
-			verifier(NULL),
-			viewer(NULL)
+			model(nullptr),
+			verifier(nullptr),
+			viewer(nullptr)
 		{
 		}
 		

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rl xmlns:xi="http://www.w3.org/2003/XInclude">
+	<mdl>
+		<xi:include href="rlmdl/unimation-puma560.xml" xpointer="xpointer(/rlmdl/model)"/>
+	</mdl>
+	<sg>
+		<xi:include href="rlsg/unimation-puma560.xml" xpointer="xpointer(/rlsg/scene)"/>
+	</sg>
+</rl>

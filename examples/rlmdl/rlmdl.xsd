@@ -1,55 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-	<xs:element name="body">
-		<xs:complexType>
-			<xs:complexContent>
-				<xs:extension base="frameType">
-					<xs:sequence>
-						<xs:element name="cm" minOccurs="0">
-							<xs:complexType>
-								<xs:sequence>
-									<xs:element name="x" type="xs:double" minOccurs="0"/>
-									<xs:element name="y" type="xs:double" minOccurs="0"/>
-									<xs:element name="z" type="xs:double" minOccurs="0"/>
-								</xs:sequence>
-							</xs:complexType>
-						</xs:element>
-						<xs:element name="i" minOccurs="0">
-							<xs:complexType>
-								<xs:sequence>
-									<xs:element name="xx" type="xs:double" minOccurs="0"/>
-									<xs:element name="yy" type="xs:double" minOccurs="0"/>
-									<xs:element name="zz" type="xs:double" minOccurs="0"/>
-									<xs:element name="yz" type="xs:double" minOccurs="0"/>
-									<xs:element name="xz" type="xs:double" minOccurs="0"/>
-									<xs:element name="xy" type="xs:double" minOccurs="0"/>
-								</xs:sequence>
-							</xs:complexType>
-						</xs:element>
-						<xs:element name="ignore" minOccurs="0" maxOccurs="unbounded">
-							<xs:complexType>
-								<xs:attribute name="idref" type="xs:IDREF"/>
-							</xs:complexType>
-						</xs:element>
-						<xs:element name="m" type="xs:double" minOccurs="0"/>
-					</xs:sequence>
-				</xs:extension>
-			</xs:complexContent>
-		</xs:complexType>
-	</xs:element>
+	<xs:complexType name="bodyType">
+		<xs:complexContent>
+			<xs:extension base="frameType">
+				<xs:sequence>
+					<xs:element name="cm" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="x" type="xs:double" minOccurs="0"/>
+								<xs:element name="y" type="xs:double" minOccurs="0"/>
+								<xs:element name="z" type="xs:double" minOccurs="0"/>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="i" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="xx" type="xs:double" minOccurs="0"/>
+								<xs:element name="yy" type="xs:double" minOccurs="0"/>
+								<xs:element name="zz" type="xs:double" minOccurs="0"/>
+								<xs:element name="yz" type="xs:double" minOccurs="0"/>
+								<xs:element name="xz" type="xs:double" minOccurs="0"/>
+								<xs:element name="xy" type="xs:double" minOccurs="0"/>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="ignore" minOccurs="0" maxOccurs="unbounded">
+						<xs:complexType>
+							<xs:attribute name="idref" type="xs:IDREF"/>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="m" type="xs:double" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="cylindricalType">
+		<xs:complexContent>
+			<xs:extension base="jointType"/>
+		</xs:complexContent>
+	</xs:complexType>
 	<xs:complexType name="elementType">
 		<xs:attribute name="id" type="xs:ID" use="required"/>
 	</xs:complexType>
-	<xs:element name="fixed" type="fixedType"/>
 	<xs:complexType name="fixedType">
 		<xs:complexContent>
-			<xs:extension base="transformType"/>
-		</xs:complexContent>
-	</xs:complexType>
-	<xs:element name="frame" type="frameType"/>
-	<xs:complexType name="frameType">
-		<xs:complexContent>
-			<xs:extension base="elementType">
+			<xs:extension base="transformType">
 				<xs:sequence>
 					<xs:element name="rotation" minOccurs="0">
 						<xs:complexType>
@@ -73,11 +69,55 @@
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
+	<xs:complexType name="frameType">
+		<xs:complexContent>
+			<xs:extension base="elementType"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="gammaType">
+		<xs:sequence>
+			<xs:element name="row" minOccurs="1" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="col" type="xs:double" minOccurs="1" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="helicalType">
+		<xs:complexContent>
+			<xs:extension base="jointType">
+				<xs:sequence>
+					<xs:element name="pitch" type="xs:double" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="homeType">
+		<xs:sequence>
+			<xs:element name="q" minOccurs="1" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:double">
+							<xs:attribute name="unit">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="deg"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
 	<xs:complexType name="jointType">
 		<xs:complexContent>
 			<xs:extension base="transformType">
 				<xs:sequence>
-					<xs:element name="axis">
+					<xs:element name="axis" minOccurs="0" maxOccurs="unbounded">
 						<xs:complexType>
 							<xs:sequence>
 								<xs:element name="x" type="xs:double" minOccurs="0"/>
@@ -86,49 +126,69 @@
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
-					<xs:element name="max" type="xs:double" minOccurs="0"/>
-					<xs:element name="min" type="xs:double" minOccurs="0"/>
-					<xs:element name="offset" type="xs:double" minOccurs="0"/>
-					<xs:element name="speed" type="xs:double" minOccurs="0"/>
-					<xs:element name="wraparound" minOccurs="0"/>
+					<xs:element name="max" type="xs:double" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="min" type="xs:double" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="offset" type="xs:double" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="speed" type="xs:double" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="wraparound" minOccurs="0" maxOccurs="unbounded"/>
 				</xs:sequence>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
-	<xs:element name="model" type="modelType"/>
 	<xs:complexType name="modelType">
 		<xs:sequence>
 			<xs:element name="manufacturer" type="xs:string" minOccurs="0"/>
 			<xs:element name="name" type="xs:string" minOccurs="0"/>
-			<xs:element ref="world" minOccurs="1"/>
+			<xs:element name="world" type="worldType" minOccurs="1"/>
 			<xs:sequence minOccurs="0" maxOccurs="unbounded">
-				<xs:element ref="body" minOccurs="0" maxOccurs="unbounded"/>
-				<xs:element ref="fixed" minOccurs="0" maxOccurs="unbounded"/>
-				<xs:element ref="frame" minOccurs="0" maxOccurs="unbounded"/>
-				<xs:element ref="prismatic" minOccurs="0" maxOccurs="unbounded"/>
-				<xs:element ref="revolute" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="body" type="bodyType" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="cylindrical" type="cylindricalType" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="fixed" type="fixedType" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="frame" type="frameType" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="gamma" type="gammaType" minOccurs="0"/>
+				<xs:element name="helical" type="helicalType" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="home" type="homeType" minOccurs="0"/>
+				<xs:element name="prismatic" type="prismaticType" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="revolute" type="revoluteType" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="spherical" type="sphericalType" minOccurs="0" maxOccurs="unbounded"/>
 			</xs:sequence>
 		</xs:sequence>
 	</xs:complexType>
-	<xs:element name="prismatic" type="prismaticType"/>
 	<xs:complexType name="prismaticType">
 		<xs:complexContent>
 			<xs:extension base="jointType"/>
 		</xs:complexContent>
 	</xs:complexType>
-	<xs:element name="revolute" type="revoluteType"/>
 	<xs:complexType name="revoluteType">
 		<xs:complexContent>
 			<xs:extension base="jointType"/>
 		</xs:complexContent>
 	</xs:complexType>
-	<xs:element name="rlmdl">
+	<xs:element name="rl">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="model"/>
+				<xs:element name="mdl">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="model" type="modelType"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
+	<xs:element name="rlmdl">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="model" type="modelType"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="sphericalType">
+		<xs:complexContent>
+			<xs:extension base="jointType"/>
+		</xs:complexContent>
+	</xs:complexType>
 	<xs:complexType name="transformType">
 		<xs:complexContent>
 			<xs:extension base="elementType">
@@ -149,6 +209,14 @@
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="worldType">
+		<xs:complexContent>
+			<xs:extension base="frameType">
+				<xs:sequence>
 					<xs:element name="rotation" minOccurs="0">
 						<xs:complexType>
 							<xs:sequence>
@@ -167,15 +235,6 @@
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
-				</xs:sequence>
-			</xs:extension>
-		</xs:complexContent>
-	</xs:complexType>
-	<xs:element name="world" type="worldType"/>
-	<xs:complexType name="worldType">
-		<xs:complexContent>
-			<xs:extension base="frameType">
-				<xs:sequence>
 					<xs:element name="g">
 						<xs:complexType>
 							<xs:sequence>

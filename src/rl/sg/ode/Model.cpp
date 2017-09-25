@@ -36,7 +36,7 @@ namespace rl
 		{
 			Model::Model(Scene* scene) :
 				::rl::sg::Model(scene),
-				space(dHashSpaceCreate(dynamic_cast< Scene* >(getScene())->space))
+				space(::dHashSpaceCreate(dynamic_cast<Scene*>(getScene())->space))
 			{
 				this->getScene()->add(this);
 			}
@@ -50,7 +50,7 @@ namespace rl
 				
 				this->getScene()->remove(this);
 				
-				dSpaceDestroy(this->space);
+				::dSpaceDestroy(this->space);
 			}
 			
 			::rl::sg::Body*

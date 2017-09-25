@@ -24,21 +24,24 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_HAL_SCHUNKFPSF5_H_
-#define _RL_HAL_SCHUNKFPSF5_H_
+#ifndef RL_HAL_SCHUNKFPSF5_H
+#define RL_HAL_SCHUNKFPSF5_H
 
-#include "RangeSensor.h"
-#include "types.h"
-
+#include <cstdint>
 #include <set>
+
+#include "CyclicDevice.h"
+#include "RangeSensor.h"
+#include "Serial.h"
 
 namespace rl
 {
 	namespace hal
 	{
-		class Serial;
-		
-		class SchunkFpsF5 : public RangeSensor
+		/**
+		 * Schunk FPS-F5 flexible position sensor.
+		 */
+		class SchunkFpsF5 : public CyclicDevice, public RangeSensor
 		{
 		public:
 			SchunkFpsF5(const ::std::string& device = "/dev/ttyS0");
@@ -47,7 +50,7 @@ namespace rl
 			
 			void close();
 			
-			void getDistances(::rl::math::Vector& distances) const;
+			::rl::math::Vector getDistances() const;
 			
 			::std::size_t getDistancesCount() const;
 			
@@ -88,11 +91,11 @@ namespace rl
 		protected:
 			
 		private:
-			uint16_t crc(const uint8_t* buf, const ::std::size_t& len) const;
+			::std::uint16_t crc(const ::std::uint8_t* buf, const ::std::size_t& len) const;
 			
-			::std::size_t recv(uint8_t* buf, const ::std::size_t& len, const uint8_t& command);
+			::std::size_t recv(::std::uint8_t* buf, const ::std::size_t& len, const ::std::uint8_t& command);
 			
-			void send(uint8_t* buf, const ::std::size_t& len);
+			void send(::std::uint8_t* buf, const ::std::size_t& len);
 			
 			bool a;
 			
@@ -104,7 +107,7 @@ namespace rl
 			
 			bool closed;
 			
-			::std::set< ::std::pair< ::rl::math::Real, ::rl::math::Real > > fulcrums;
+			::std::set< ::std::pair< ::rl::math::Real, ::rl::math::Real>> fulcrums;
 			
 			::rl::math::Real interpolated;
 			
@@ -114,7 +117,7 @@ namespace rl
 			
 			bool record;
 			
-			Serial* serial;
+			Serial serial;
 			
 			::rl::math::Real temperature;
 			
@@ -127,4 +130,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_HAL_SCHUNKFPSF5_H_
+#endif // RL_HAL_SCHUNKFPSF5_H

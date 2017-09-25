@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_SG_SOLID_SCENE_H_
-#define _RL_SG_SOLID_SCENE_H_
+#ifndef RL_SG_SOLID_SCENE_H
+#define RL_SG_SOLID_SCENE_H
 
 #include <SOLID/SOLID.h>
 #include <SOLID/SOLID_broad.h>
@@ -39,6 +39,11 @@ namespace rl
 {
 	namespace sg
 	{
+		/**
+		 * SOLID.
+		 * 
+		 * http://www.dtecta.com/
+		 */
 		namespace solid
 		{
 			class Shape;
@@ -54,7 +59,7 @@ namespace rl
 				
 				::rl::sg::Model* create();
 				
-				bool depth(::rl::sg::Shape* first, ::rl::sg::Shape* second, ::rl::math::Vector3& point1, ::rl::math::Vector3& point2);
+				::rl::math::Real depth(::rl::sg::Shape* first, ::rl::sg::Shape* second, ::rl::math::Vector3& point1, ::rl::math::Vector3& point2);
 				
 				using ::rl::sg::DistanceScene::distance;
 				
@@ -83,4 +88,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_SG_SOLID_SCENE_H_
+#endif // RL_SG_SOLID_SCENE_H

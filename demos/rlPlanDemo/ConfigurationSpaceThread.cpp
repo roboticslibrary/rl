@@ -32,10 +32,11 @@
 
 ConfigurationSpaceThread::ConfigurationSpaceThread(QObject* parent) :
 	QThread(parent),
-	delta(1.0f),
-	model(NULL),
-	x(0),
-	y(1),
+	axis0(0),
+	axis1(1),
+	delta0(1.0f),
+	delta1(1.0f),
+	model(nullptr),
 	running(false)
 {
 }
@@ -51,31 +52,29 @@ ConfigurationSpaceThread::run()
 	
 	this->running = true;
 	
-	if (rl::plan::SimpleModel* model = dynamic_cast< rl::plan::SimpleModel* >(this->model))
+	if (rl::plan::SimpleModel* model = dynamic_cast<rl::plan::SimpleModel*>(this->model))
 	{
-		rl::math::Vector maximum(model->getDof());
-		model->getMaximum(maximum);
-		rl::math::Vector minimum(model->getDof());
-		model->getMinimum(minimum);
+		rl::math::Vector maximum = model->getMaximum();
+		rl::math::Vector minimum = model->getMinimum();
 		
-		rl::math::Real range0 = std::abs(maximum(this->x) - minimum(this->x));
-		rl::math::Real range1 = std::abs(maximum(this->y) - minimum(this->y));
+		rl::math::Real range0 = std::abs(maximum(this->axis0) - minimum(this->axis0));
+		rl::math::Real range1 = std::abs(maximum(this->axis1) - minimum(this->axis1));
 		
-		rl::math::Real delta0 = range0 / std::ceil(range0 / this->delta);
-		rl::math::Real delta1 = range1 / std::ceil(range1 / this->delta);
+		rl::math::Real delta0 = range0 / std::ceil(range0 / this->delta0);
+		rl::math::Real delta1 = range1 / std::ceil(range1 / this->delta1);
 		
-		std::size_t steps0 = static_cast< std::size_t >(std::ceil(range0 / delta0));
-		std::size_t steps1 = static_cast< std::size_t >(std::ceil(range1 / delta1));
+		std::size_t steps0 = static_cast<std::size_t>(std::ceil(range0 / delta0));
+		std::size_t steps1 = static_cast<std::size_t>(std::ceil(range1 / delta1));
 		
-		rl::math::Vector q(*MainWindow::instance()->start);
+		rl::math::Vector q(*MainWindow::instance()->q);
 		
 		for (std::size_t i = 0; i < steps1 + 1 && this->running; ++i)
 		{
-			q(this->y) = maximum(this->y) - i * delta1;
+			q(this->axis1) = maximum(this->axis1) - i * delta1;
 			
 			for (std::size_t j = 0; j < steps0 + 1 && this->running; ++j)
 			{
-				q(this->x) = minimum(this->x) + j * delta0;
+				q(this->axis0) = minimum(this->axis0) + j * delta0;
 				
 				model->setPosition(q);
 				model->updateFrames();
@@ -83,8 +82,8 @@ ConfigurationSpaceThread::run()
 				if (model->isColliding())
 				{
 					emit addCollision(
-						q(this->x),
-						q(this->y),
+						q(this->axis0),
+						q(this->axis1),
 						delta0,
 						delta1,
 						0

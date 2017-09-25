@@ -26,10 +26,10 @@
 
 #include <cassert>
 #include <string>
-#include <rl/util/Timer.h>
+#include <thread>
+#include <boost/iostreams/stream.hpp>
 
 #include "Coach.h"
-#include "TcpSocket.h"
 
 namespace rl
 {
@@ -37,35 +37,60 @@ namespace rl
 	{
 		Coach::Coach(
 			const ::std::size_t& dof,
-			const ::rl::math::Real& updateRate,
+			const ::std::chrono::nanoseconds& updateRate,
 			const ::std::size_t& i,
-			const ::std::string& host,
+			const ::std::string& address,
 			const unsigned short int& port
 		) :
-			AxisController(dof, updateRate),
-			JointPositionActuator(dof, updateRate),
+			AxisController(dof),
+			CyclicDevice(updateRate),
+			JointPositionActuator(dof),
+			JointPositionSensor(dof),
+			JointTorqueActuator(dof),
+			JointVelocityActuator(dof),
 			i(i),
-			tcp(new TcpSocket(host, port)),
-			text()
+			in(),
+			out(),
+			socket(Socket::Tcp(Socket::Address::Ipv4(address, port)))
 		{
 		}
 		
 		Coach::~Coach()
 		{
-			delete this->tcp;
 		}
 		
 		void
 		Coach::close()
 		{
-			this->tcp->close();
+			this->socket.close();
 			this->setConnected(false);
+		}
+		
+		::rl::math::Vector
+		Coach::getJointPosition() const
+		{
+			::rl::math::Vector q(this->getDof());
+			
+			::boost::iostreams::stream< ::boost::iostreams::basic_array_source<char>> stream(this->in.data(), this->in.size());
+			
+			::std::size_t cmd;
+			stream >> cmd;
+			::std::size_t id;
+			stream >> id;
+			
+			for (::std::size_t i = 0; i < this->getDof(); ++i)
+			{
+				stream >> q(i);
+			}
+			
+			return q;
 		}
 		
 		void
 		Coach::open()
 		{
-			this->tcp->open();
+			this->socket.open();
+			this->socket.connect();
 			this->setConnected(true);
 		}
 		
@@ -74,37 +99,74 @@ namespace rl
 		{
 			assert(this->getDof() >= q.size());
 			
-			this->text.clear();
-			this->text.str("");
-			
-			this->text << 2;
-			
-			this->text << " " << this->i;
+			this->out << 2 << " " << this->i;
 			
 			for (::std::size_t i = 0; i < this->getDof(); ++i)
 			{
-				this->text << " " << q(i);
+				this->out << " " << q(i);
 			}
 			
-			this->text << ::std::endl;
+			this->out << ::std::endl;
+		}
+		
+		void
+		Coach::setJointTorque(const ::rl::math::Vector& tau)
+		{
+			assert(this->getDof() >= tau.size());
+			
+			this->out << 5 << " " << this->i;
+			
+			for (::std::size_t i = 0; i < this->getDof(); ++i)
+			{
+				this->out << " " << tau(i);
+			}
+			
+			this->out << ::std::endl;
+		}
+		
+		void
+		Coach::setJointVelocity(const ::rl::math::Vector& qd)
+		{
+			assert(this->getDof() >= qd.size());
+			
+			this->out << 3 << " " << this->i;
+			
+			for (::std::size_t i = 0; i < this->getDof(); ++i)
+			{
+				this->out << " " << qd(i);
+			}
+			
+			this->out << ::std::endl;
 		}
 		
 		void
 		Coach::start()
 		{
+			this->setRunning(true);
 		}
 		
 		void
 		Coach::step()
 		{
-			this->tcp->write(text.str().c_str(), text.str().length());
+			::std::chrono::steady_clock::time_point start = ::std::chrono::steady_clock::now();
 			
-			::rl::util::Timer::sleep(this->getUpdateRate());
+			this->out << 6 << " " << this->i << ::std::endl;
+			
+			this->socket.send(this->out.str().c_str(), this->out.str().length());
+			
+			this->out.clear();
+			this->out.str("");
+			
+			this->in.fill(0);
+			this->socket.recv(this->in.data(), this->in.size());
+			
+			::std::this_thread::sleep_until(start + this->getUpdateRate());
 		}
 		
 		void
 		Coach::stop()
 		{
+			this->setRunning(false);
 		}
 	}
 }

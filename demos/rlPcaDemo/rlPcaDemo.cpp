@@ -36,7 +36,7 @@ main(int argc, char** argv)
 	if (argc < 2)
 	{
 		std::cout << "Usage: rlPcaDemo FILE" << std::endl;
-		return 1;
+		return EXIT_FAILURE;
 	}
 	
 	std::ifstream data;
@@ -69,7 +69,7 @@ main(int argc, char** argv)
 		mean += src.row(i);
 	}
 	
-	mean /= static_cast< rl::math::Real >(rows);
+	mean /= static_cast<rl::math::Real>(rows);
 	
 	std::cout << "mean = " << mean.transpose() << std::endl;
 	
@@ -82,14 +82,14 @@ main(int argc, char** argv)
 		covariance += delta * delta.transpose();
 	}
 	
-	covariance /= static_cast< rl::math::Real >(rows) - 1;
+	covariance /= static_cast<rl::math::Real>(rows) - 1;
 	
 	std::cout << "covariance = " << std::endl << covariance << std::endl;
 	
-	Eigen::EigenSolver< rl::math::Matrix > eigen(covariance);
+	Eigen::EigenSolver<rl::math::Matrix> eigen(covariance);
 	
 	std::cout << "eigenvectors = " << std::endl << eigen.eigenvectors() << std::endl;
 	std::cout << "eigenvalues = " << std::endl << eigen.eigenvalues() << std::endl;
 	
-	return 0;
+	return EXIT_SUCCESS;
 }

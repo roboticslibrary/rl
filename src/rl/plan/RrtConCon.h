@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_PLAN_RRTCONCON_H_
-#define _RL_PLAN_RRTCONCON_H_
+#ifndef RL_PLAN_RRTCONCON_H
+#define RL_PLAN_RRTCONCON_H
 
 #include "RrtDual.h"
 
@@ -33,6 +33,16 @@ namespace rl
 {
 	namespace plan
 	{
+		/**
+		 * RRT-Connect2.
+		 * 
+		 * James J. Kuffner, Jr. and Steven M. LaValle. RRT-connect: An efficient
+		 * approach to single-query path planning. In Proceedings of the IEEE
+		 * International Conference on Robotics and Automation, pages 995-1001,
+		 * April 2000.
+		 * 
+		 * http://dx.doi.org/10.1109/ROBOT.2000.844730
+		 */
 		class RrtConCon : public RrtDual
 		{
 		public:
@@ -52,4 +62,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_PLAN_RRTCONCON_H_
+#endif // RL_PLAN_RRTCONCON_H

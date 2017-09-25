@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_HAL_RANGESENSOR_H_
-#define _RL_HAL_RANGESENSOR_H_
+#ifndef RL_HAL_RANGESENSOR_H
+#define RL_HAL_RANGESENSOR_H
 
 #include <rl/math/Vector.h>
 
@@ -35,7 +35,7 @@ namespace rl
 {
 	namespace hal
 	{
-		class RangeSensor : public Device
+		class RangeSensor : public virtual Device
 		{
 		public:
 			RangeSensor();
@@ -43,9 +43,9 @@ namespace rl
 			virtual ~RangeSensor();
 			
 			/**
-			 * @param distances [m]
+			 * @param[out] distances [m]
 			 */
-			virtual void getDistances(::rl::math::Vector& distances) const = 0;
+			virtual ::rl::math::Vector getDistances() const = 0;
 			
 			virtual ::std::size_t getDistancesCount() const = 0;
 			
@@ -67,4 +67,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_HAL_RANGESENSOR_H_
+#endif // RL_HAL_RANGESENSOR_H

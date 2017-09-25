@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _SERVER_H_
-#define _SERVER_H_
+#ifndef SERVER_H
+#define SERVER_H
 
 #include <QTcpServer>
 
@@ -34,15 +34,19 @@ class Server : public QTcpServer
 	Q_OBJECT
 	
 public:
-	Server(QObject* parent = NULL);
+	Server(QObject* parent = nullptr);
 	
 	virtual ~Server();
 	
 protected:
+#if QT_VERSION >= 0x050000
+	void incomingConnection(qintptr socketDescriptor);
+#else // QT_VERSION
 	void incomingConnection(int socketDescriptor);
+#endif // QT_VERSION
 	
 private:
 	
 };
 
-#endif //_SERVER_H_
+#endif //_SERVER_H

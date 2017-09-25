@@ -24,17 +24,19 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_HAL_SERIAL_H_
-#define _RL_HAL_SERIAL_H_
-
-#include <string>
-#include <rl/math/Real.h>
+#ifndef RL_HAL_SERIAL_H
+#define RL_HAL_SERIAL_H
 
 #ifdef WIN32
 #include <windows.h>
 #else // WIN32
+#include <fcntl.h>
 #include <termios.h>
 #endif // WIN32
+
+#include <chrono>
+#include <string>
+#include <rl/math/Real.h>
 
 #include "Com.h"
 
@@ -160,7 +162,12 @@ namespace rl
 				const DataBits& dataBits = DATABITS_8BITS,
 				const FlowControl& flowControl = FLOWCONTROL_OFF,
 				const Parity& parity = PARITY_NOPARITY,
-				const StopBits& stopBits = STOPBITS_1BIT
+				const StopBits& stopBits = STOPBITS_1BIT,
+#ifdef WIN32
+				const int& flags = GENERIC_READ | GENERIC_WRITE
+#else // WIN32
+				const int& flags = O_RDWR | O_NONBLOCK | O_NOCTTY
+#endif // WIN32
 			);
 			
 			virtual ~Serial();
@@ -179,23 +186,23 @@ namespace rl
 			
 			void flush(const bool& read, const bool& write);
 			
-			BaudRate getBaudRate() const;
+			const BaudRate& getBaudRate() const;
 			
-			DataBits getDataBits() const;
+			const DataBits& getDataBits() const;
 			
-			::std::string getFilename() const;
+			const ::std::string& getFilename() const;
 			
-			FlowControl getFlowControl() const;
+			const FlowControl& getFlowControl() const;
 			
-			Parity getParity() const;
+			const Parity& getParity() const;
 			
-			StopBits getStopBits() const;
+			const StopBits& getStopBits() const;
 			
 			void open();
 			
 			::std::size_t read(void* buf, const ::std::size_t& count);
 			
-			::std::size_t select(const bool& read, const bool& write, const ::rl::math::Real& timeout);
+			::std::size_t select(const bool& read, const bool& write, const ::std::chrono::nanoseconds& timeout);
 			
 			void setBaudRate(const BaudRate& baudRate);
 			
@@ -232,6 +239,8 @@ namespace rl
 			
 			::std::string filename;
 			
+			int flags;
+			
 			FlowControl flowControl;
 			
 			Parity parity;
@@ -247,4 +256,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_HAL_SERIAL_H_
+#endif // RL_HAL_SERIAL_H

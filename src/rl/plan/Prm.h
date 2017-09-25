@@ -24,15 +24,15 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_PLAN_PRM_H_
-#define _RL_PLAN_PRM_H_
+#ifndef RL_PLAN_PRM_H
+#define RL_PLAN_PRM_H
 
 #include <queue>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/pending/disjoint_sets.hpp>
-#include <CGAL/Search_traits.h>
 
-#include "Orthogonal_k_neighbor_search.h"
+#include "Metric.h"
+#include "NearestNeighbors.h"
 #include "Planner.h"
 #include "VectorPtr.h"
 
@@ -45,7 +45,21 @@ namespace rl
 		class Verifier;
 		
 		/**
-		 * Probabilistic Roadmap.
+		 * Probabilistic Roadmaps.
+		 * 
+		 * Lydia Kavraki and Jean-Claude Latombe. Randomized preprocessing of
+		 * configuration space for path planning: Articulated robots. In Proceedings
+		 * of the IEEE/RSJ/GI International Conference on Intelligent Robots and
+		 * Systems, pages 1764-1771, Munich, Germany, September 1994.
+		 * 
+		 * http://dx.doi.org/10.1109/IROS.1994.407619
+		 * 
+		 * Lydia E. Kavraki, Petr &Scaron;vestka, Jean-Claude Latombe, and Mark H.
+		 * Overmars. Probabilistic roadmaps for path planning in high-dimensional
+		 * configuration spaces. IEEE Transactions on Robotics and Automation,
+		 * 12(4):566-580, August 1996.
+		 * 
+		 * http://dx.doi.org/10.1109/70.508439
 		 */
 		class Prm : public Planner
 		{
@@ -58,13 +72,17 @@ namespace rl
 			
 			virtual ::std::string getName() const;
 			
+			NearestNeighbors* getNearestNeighbors() const;
+			
 			::std::size_t getNumEdges() const;
 			
 			::std::size_t getNumVertices() const;
 			
-			void getPath(VectorList& path);
+			VectorList getPath();
 			
 			void reset();
+			
+			void setNearestNeighbors(NearestNeighbors* nearestNeighbors);
 			
 			bool solve();
 			
@@ -73,9 +91,6 @@ namespace rl
 			
 			/** Maximum number of tested neighbors. */
 			::std::size_t k;
-			
-			/** Use kd-tree for nearest neighbor search instead of brute-force. */
-			bool kd;
 			
 			/** Maximum radius for connecting neighbors. */
 			::rl::math::Real radius;
@@ -123,81 +138,28 @@ namespace rl
 				GraphBundle
 			> Graph;
 			
-			typedef ::std::pair< const ::rl::math::Vector*, Vertex > QueryItem;
-			
-			struct CartesianIterator
-			{
-				typedef const ::rl::math::Real* result_type;
-				
-				const ::rl::math::Real* operator()(const QueryItem& p) const;
-				
-				const ::rl::math::Real* operator()(const QueryItem& p, const int&) const;
-			};
-			
-			struct Distance
-			{
-				typedef QueryItem Query_item;
-				
-				Distance();
-				
-				Distance(Model* model);
-				
-				template< typename SearchTraits > ::rl::math::Real max_distance_to_rectangle(const Query_item& q, const ::CGAL::Kd_tree_rectangle< SearchTraits >& r) const;
-				
-				template< typename SearchTraits > ::rl::math::Real min_distance_to_rectangle(const Query_item& q, const ::CGAL::Kd_tree_rectangle< SearchTraits >& r) const;
-				
-				::rl::math::Real min_distance_to_rectangle(const ::rl::math::Real& q, const ::rl::math::Real& min, const ::rl::math::Real& max, const ::std::size_t& cutting_dimension) const;
-				
-				::rl::math::Real new_distance(const ::rl::math::Real& dist, const ::rl::math::Real& old_off, const ::rl::math::Real& new_off, const int& cutting_dimension) const;
-				
-				::rl::math::Real transformed_distance(const ::rl::math::Real& d) const;
-				
-				::rl::math::Real transformed_distance(const Query_item& q1, const Query_item& q2) const;
-				
-				Model* model;
-			};
-			
-			typedef ::CGAL::Search_traits< ::rl::math::Real, QueryItem, const ::rl::math::Real*, CartesianIterator > SearchTraits;
-			
-			typedef Orthogonal_k_neighbor_search< SearchTraits, Distance > NeighborSearch;
-			
-			typedef NeighborSearch::Tree NeighborSearchTree;
-			
-			typedef ::boost::shared_ptr< NeighborSearchTree > NeighborSearchTreePtr;
-			
-			typedef ::std::vector< NeighborSearchTreePtr > NearestNeighbors;
-			
 			struct GraphBundle
 			{
-				NearestNeighbors nn;
+				NearestNeighbors* nn;
 			};
 			
-			typedef ::boost::graph_traits< Graph >::edge_descriptor Edge;
+			typedef ::boost::graph_traits<Graph>::edge_descriptor Edge;
 			
-			typedef ::boost::graph_traits< Graph >::edge_iterator EdgeIterator;
+			typedef ::boost::graph_traits<Graph>::edge_iterator EdgeIterator;
 			
-			typedef ::std::pair< EdgeIterator, EdgeIterator > EdgeIteratorPair;
+			typedef ::std::pair<EdgeIterator, EdgeIterator> EdgeIteratorPair;
 			
-			typedef ::boost::graph_traits< Graph >::vertex_iterator VertexIterator;
+			typedef NearestNeighbors::Neighbor Neighbor;
 			
-			typedef ::std::pair< VertexIterator, VertexIterator > VertexIteratorPair;
+			typedef ::boost::graph_traits<Graph>::vertex_iterator VertexIterator;
 			
-			typedef ::boost::property_map< Graph, void* VertexBundle::* >::type VertexParentMap;
+			typedef ::std::pair<VertexIterator, VertexIterator> VertexIteratorPair;
 			
-			typedef ::boost::property_map< Graph, ::std::size_t VertexBundle::* >::type VertexRankMap;
+			typedef ::boost::property_map<Graph, void* VertexBundle::*>::type VertexParentMap;
 			
-			typedef ::std::pair< Vertex, ::rl::math::Real > Neighbor;
-			
-			struct Compare
-			{
-				bool operator()(const Neighbor& x, const Neighbor& y) const;
-			};
-			
-			typedef ::std::priority_queue< Neighbor, ::std::vector< Neighbor >, Compare > NeighborQueue;
+			typedef ::boost::property_map<Graph, ::std::size_t VertexBundle::*>::type VertexRankMap;
 			
 			Edge addEdge(const Vertex& u, const Vertex& v, const ::rl::math::Real& weight);
-			
-			void addPoint(NearestNeighbors& nn, const QueryItem& p);
 			
 			Vertex addVertex(const VectorPtr& q);
 			
@@ -205,7 +167,7 @@ namespace rl
 			
 			Vertex begin;
 			
-			::boost::disjoint_sets< VertexRankMap, VertexParentMap > ds;
+			::boost::disjoint_sets<VertexRankMap, VertexParentMap> ds;
 			
 			Vertex end;
 			
@@ -217,4 +179,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_PLAN_PRM_H_
+#endif // RL_PLAN_PRM_H

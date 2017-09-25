@@ -24,66 +24,66 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_MATH_MATRIXBASEADDONS_H_
-#define _RL_MATH_MATRIXBASEADDONS_H_
+#ifndef RL_MATH_MATRIXBASEADDONS_H
+#define RL_MATH_MATRIXBASEADDONS_H
 
-Matrix< Scalar, 3, 1 >
+Matrix<Scalar, 3, 1>
 cross3() const
 {
 	EIGEN_STATIC_ASSERT_MATRIX_SPECIFIC_SIZE(Derived, 3, 3)
-	Matrix< Scalar, 3, 1 > res;
-	res.x() = (derived()(2, 1) - derived()(1, 2)) / Scalar(2);
-	res.y() = (derived()(0, 2) - derived()(2, 0)) / Scalar(2);
-	res.z() = (derived()(1, 0) - derived()(0, 1)) / Scalar(2);
+	Matrix<Scalar, 3, 1> res;
+	res.x() = (this->derived()(2, 1) - this->derived()(1, 2)) / Scalar(2);
+	res.y() = (this->derived()(0, 2) - this->derived()(2, 0)) / Scalar(2);
+	res.z() = (this->derived()(1, 0) - this->derived()(0, 1)) / Scalar(2);
 	return res;
 }
 
-Matrix< Scalar, 3, 3 >
+Matrix<Scalar, 3, 3>
 cross33() const
 {
 	EIGEN_STATIC_ASSERT_VECTOR_SPECIFIC_SIZE(Derived, 3)
-	Matrix< Scalar, 3, 3 > res;
+	Matrix<Scalar, 3, 3> res;
 	res(0, 0) = 0;
-	res(0, 1) = -derived().z();
-	res(0, 2) = derived().y();
-	res(1, 0) = derived().z();
+	res(0, 1) = -this->derived().z();
+	res(0, 2) = this->derived().y();
+	res(1, 0) = this->derived().z();
 	res(1, 1) = 0;
-	res(1, 2) = -derived().x();
-	res(2, 0) = -derived().y();
-	res(2, 1) = derived().x();
+	res(1, 2) = -this->derived().x();
+	res(2, 0) = -this->derived().y();
+	res(2, 1) = this->derived().x();
 	res(2, 2) = 0;
 	return res;
 }
 
-Matrix< Scalar, 6, 1 >
+Matrix<Scalar, 6, 1>
 voigt6() const
 {
 	EIGEN_STATIC_ASSERT_MATRIX_SPECIFIC_SIZE(Derived, 3, 3)
-	Matrix< Scalar, 6, 1 > res;
-	res(0) = derived()(0, 0);
-	res(1) = derived()(1, 1);
-	res(2) = derived()(2, 2);
-	res(3) = (derived()(1, 2) + derived()(2, 1)) / Scalar(2);
-	res(4) = (derived()(0, 2) + derived()(2, 0)) / Scalar(2);
-	res(5) = (derived()(0, 1) + derived()(1, 0)) / Scalar(2);
+	Matrix<Scalar, 6, 1> res;
+	res(0) = this->derived()(0, 0);
+	res(1) = this->derived()(1, 1);
+	res(2) = this->derived()(2, 2);
+	res(3) = (this->derived()(1, 2) + this->derived()(2, 1)) / Scalar(2);
+	res(4) = (this->derived()(0, 2) + this->derived()(2, 0)) / Scalar(2);
+	res(5) = (this->derived()(0, 1) + this->derived()(1, 0)) / Scalar(2);
 	return res;
 }
 
-Matrix< Scalar, 3, 3 >
+Matrix<Scalar, 3, 3>
 voigt33() const
 {
 	EIGEN_STATIC_ASSERT_VECTOR_SPECIFIC_SIZE(Derived, 6)
-	Matrix< Scalar, 3, 3 > res;
-	res(0, 0) = derived()(0);
-	res(0, 1) = derived()(5);
-	res(0, 2) = derived()(4);
-	res(1, 0) = derived()(5);
-	res(1, 1) = derived()(1);
-	res(1, 2) = derived()(3);
-	res(2, 0) = derived()(4);
-	res(2, 1) = derived()(3);
-	res(2, 2) = derived()(2);
+	Matrix<Scalar, 3, 3> res;
+	res(0, 0) = this->derived()(0);
+	res(0, 1) = this->derived()(5);
+	res(0, 2) = this->derived()(4);
+	res(1, 0) = this->derived()(5);
+	res(1, 1) = this->derived()(1);
+	res(1, 2) = this->derived()(3);
+	res(2, 0) = this->derived()(4);
+	res(2, 1) = this->derived()(3);
+	res(2, 2) = this->derived()(2);
 	return res;
 }
 
-#endif // _RL_MATH_MATRIXBASEADDONS_H_
+#endif // RL_MATH_MATRIXBASEADDONS_H

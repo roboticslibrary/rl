@@ -57,14 +57,14 @@ namespace rl
 			this->a.setZero(); // TODO
 			this->c.setZero(); // TODO
 			this->D.setZero(); // TODO
-			this->max.setConstant(::std::numeric_limits< ::rl::math::Real >::max()); // TODO
-			this->min.setConstant(-::std::numeric_limits< ::rl::math::Real >::max()); // TODO
+			this->max.setConstant(::std::numeric_limits< ::rl::math::Real>::max()); // TODO
+			this->min.setConstant(-::std::numeric_limits< ::rl::math::Real>::max()); // TODO
 			this->offset.setZero(); // TODO
 			this->q.setZero(); // TODO
 			this->qd.setZero(); // TODO
 			this->qdd.setZero(); // TODO
 			this->S.setZero(); // TODO
-			this->speed.setConstant(::std::numeric_limits< ::rl::math::Real >::max()); // TODO
+			this->speed.setConstant(::std::numeric_limits< ::rl::math::Real>::max()); // TODO
 			this->tau.setZero(); // TODO
 			this->u.setZero(); // TODO
 			this->U.setZero(); // TODO
@@ -169,13 +169,41 @@ namespace rl
 			this->out->v = this->x * this->in->v + this->v;
 		}
 		
+		::rl::math::Vector
+		Joint::generatePositionGaussian(const ::rl::math::ConstVectorRef& rand, const ::rl::math::ConstVectorRef& mean, const ::rl::math::ConstVectorRef& sigma) const
+		{
+			::rl::math::Vector q(this->getDofPosition());
+			
+			for (::std::size_t i = 0; i < this->getDofPosition(); ++i)
+			{
+				q(i) = mean(i) + rand(i) * sigma(i);
+			}
+			
+			this->clip(q);
+			
+			return q;
+		}
+		
+		::rl::math::Vector
+		Joint::generatePositionUniform(const ::rl::math::ConstVectorRef& rand) const
+		{
+			::rl::math::Vector q(this->getDofPosition());
+			
+			for (::std::size_t i = 0; i < this->getDofPosition(); ++i)
+			{
+				q(i) = this->min(i) + rand(i) * (this->max(i) - this->min(i));
+			}
+			
+			return q;
+		}
+		
 		const ::rl::math::Vector&
 		Joint::getAcceleration() const
 		{
 			return this->qdd;
 		}
 		
-		const ::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1 >&
+		const ::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1>&
 		Joint::getAccelerationUnits() const
 		{
 			return this->qddUnits;
@@ -211,7 +239,7 @@ namespace rl
 			return this->q;
 		}
 		
-		const ::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1 >&
+		const ::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1>&
 		Joint::getPositionUnits() const
 		{
 			return this->qUnits;
@@ -223,7 +251,7 @@ namespace rl
 			return this->tau;
 		}
 		
-		const ::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1 >&
+		const ::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1>&
 		Joint::getTorqueUnits() const
 		{
 			return this->tauUnits;
@@ -235,7 +263,7 @@ namespace rl
 			return this->speed;
 		}
 		
-		const ::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1 >&
+		const ::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1>&
 		Joint::getSpeedUnits() const
 		{
 			return this->speedUnits;
@@ -247,7 +275,7 @@ namespace rl
 			return this->qd;
 		}
 		
-		const ::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1 >&
+		const ::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1>&
 		Joint::getVelocityUnits() const
 		{
 			return this->qdUnits;
@@ -281,6 +309,11 @@ namespace rl
 			}
 			
 			return true;
+		}
+		
+		void
+		Joint::normalize(::rl::math::Vector& q) const
+		{
 		}
 		
 		void

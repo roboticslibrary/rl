@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<language id="vrml" _name="VRML" version="2.0" _section="Markup">
+	<metadata>
+		<property name="mimetypes">x-world/x-vrml;model/vrml</property>
+		<property name="globs">*.wrl;*.vrml</property>
+		<property name="line-comment-start">#</property>
+	</metadata>
+
+	<definitions>
+
+	<context id="nodes" style-ref="def:identifier">
+		<keyword>AsciiText</keyword>
+		<keyword>Box</keyword>
+		<keyword>Cone</keyword>
+		<keyword>Cube</keyword>
+		<keyword>Cylinder</keyword>
+		<keyword>IndexedFaceSet</keyword>
+		<keyword>IndexedLineSet</keyword>
+		<keyword>PointSet</keyword>
+		<keyword>Shape</keyword>
+		<keyword>Sphere</keyword>
+
+		<keyword>Appearance</keyword>
+		<keyword>Coordinate</keyword>
+		<keyword>Coordinate3</keyword>
+		<keyword>DirectionalLight</keyword>
+		<keyword>Inline</keyword>
+		<keyword>Material</keyword>
+		<keyword>Rotation</keyword>
+		<keyword>Scale</keyword>
+		<keyword>Separator</keyword>
+		<keyword>Switch</keyword>
+		<keyword>Scale</keyword>
+		<keyword>Translation</keyword>
+		<keyword>Transform</keyword>
+		<keyword>Normal</keyword>
+	</context>
+	<context id="reference" style-ref="def:preprocessor">
+		<keyword>USE</keyword>
+		<keyword>DEF</keyword>
+	</context>
+	<context id="properties" style-ref="def:type">
+		<keyword>children</keyword>
+		<keyword>translation</keyword>
+		<keyword>rotation</keyword>
+		<keyword>diffuseColor</keyword>
+		<keyword>emissiveColor</keyword>
+		<keyword>specularColor</keyword>
+		<keyword>ambientIntensity</keyword>
+		<keyword>shininess</keyword>
+		<keyword>transparency</keyword>
+		<keyword>radius</keyword>
+		<keyword>height</keyword>
+		<keyword>side</keyword>
+		<keyword>top</keyword>
+		<keyword>bottom</keyword>
+		<keyword>url</keyword>
+		<keyword>top</keyword>
+		<keyword>direction</keyword>
+		<keyword>position</keyword>
+		<keyword>orientation</keyword>
+		<keyword>focalDistance</keyword>
+		<keyword>scaleFactor</keyword>
+		<keyword>point</keyword>
+		<keyword>numPoints</keyword>
+		<keyword>geometry</keyword>
+		<keyword>size</keyword>
+		<keyword>appearance</keyword>
+		<keyword>material</keyword>
+		<keyword>coord</keyword>
+		<keyword>coordIndex</keyword>
+		<keyword>size</keyword>
+		<keyword>creaseAngle</keyword>
+		<keyword>normal</keyword>
+		<keyword>vector</keyword>
+		<keyword>normalPerVertex</keyword>
+		<keyword>normalIndex</keyword>
+		<keyword>geometry</keyword>
+	</context>
+	<context id="node-block">
+	  <start>{</start>
+	  <end>}</end>
+	  <include>
+		<context ref="nodes" />
+		<context ref="properties" />
+		<context ref="node-block" />
+		<context ref="array-block" />
+		<context ref="reference" />
+	    <context ref="comment" />
+	    <context ref="close-array-outside-array" />
+	  </include>
+	</context>
+	<context id="array-block">
+	  <start>\[</start>
+	  <end>\]</end>
+	  <include>
+	    <context ref="properties" />
+		<context ref="reference" />
+		<context ref="nodes" />
+	    <context ref="node-block" />
+	    <context ref="comment" />
+	    <context ref="close-node-outside-node" />
+	  </include>
+	</context>
+    <context id="close-node-outside-node" style-ref="def:error">
+    	<match>}</match>
+    </context>
+    <context id="close-array-outside-array" style-ref="def:error">
+    	<match>\]</match>
+    </context>
+
+	<context id="vrml">
+      <include>
+        <context id="comment" style-ref="def:comment">
+			<start>#</start>
+			<end>$</end>
+		</context>
+		<context ref="nodes" />
+		<context ref="node-block" />
+		<context ref="reference" />
+		<context ref="close-array-outside-array" />
+		<context ref="close-node-outside-node" />
+      </include>
+	</context>
+
+	</definitions>
+</language>

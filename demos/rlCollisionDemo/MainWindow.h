@@ -24,18 +24,22 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _MAINWINDOW_H_
-#define _MAINWINDOW_H_
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
 
+#include <memory>
 #include <QMainWindow>
+#include <QLabel>
 #include <string>
-#include <boost/shared_ptr.hpp>
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #include <Inventor/VRMLnodes/SoVRMLCoordinate.h>
 #include <Inventor/VRMLnodes/SoVRMLIndexedLineSet.h>
+#include <Inventor/VRMLnodes/SoVRMLPointSet.h>
 #include <Inventor/VRMLnodes/SoVRMLTransform.h>
 #include <rl/sg/Scene.h>
 #include <rl/sg/so/Scene.h>
+
+class SoGradientBackground;
 
 class MainWindow : public QMainWindow
 {
@@ -46,29 +50,45 @@ public:
 	
 	void test();
 	
-	boost::shared_ptr< rl::sg::Scene > collisionScene;
+	std::shared_ptr<rl::sg::Scene> collisionScene;
 	
-	boost::shared_ptr< rl::sg::so::Scene > viewScene;
+	std::shared_ptr<rl::sg::so::Scene> viewScene;
 	
 protected:
-	MainWindow(QWidget* parent = NULL, Qt::WFlags f = 0);
+	MainWindow(QWidget* parent = nullptr, Qt::WindowFlags f = 0);
 	
 private:
 	std::size_t body;
+	
+	SoVRMLCoordinate* depthCoordinate;
+	
+	QLabel* depthLabel;
+	
+	SoVRMLIndexedLineSet* depthLineSet;
+	
+	SoVRMLPointSet* depthPointSet;
+	
+	SoVRMLCoordinate* distanceCoordinate;
+	
+	QLabel* distanceLabel;
+	
+	SoVRMLIndexedLineSet* distanceLineSet;
+	
+	SoVRMLPointSet* distancePointSet;
 	
 	QString engine;
 	
 	QString filename;
 	
-	SoVRMLCoordinate* lineCoordinate;
-	
-	SoVRMLIndexedLineSet* lineSet;
+	SoGradientBackground* gradientBackground;
 	
 	std::size_t model;
+	
+	QLabel* simpleLabel;
 	
 	static MainWindow* singleton;
 	
 	SoQtExaminerViewer* viewer;
 };
 
-#endif // _MAINWINDOW_H_
+#endif // MAINWINDOW_H

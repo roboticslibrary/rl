@@ -81,21 +81,19 @@ namespace rl
 			int elbow = this->elbow;
 			int wrist = this->wrist;
 			
-			::rl::math::Real mybigeps = 1e-3;
 			::rl::math::Real myeps = 1e-9;
-			::rl::math::Real mypi = static_cast< ::rl::math::Real >(M_PI);
 			
 			//TODO throw exception instead??
 			assert(this->joints[3]->a == 0
 				&& this->joints[4]->a == 0
 				&& this->joints[5]->a == 0
 				&& this->joints[4]->d == 0);
-			assert(::std::abs(this->joints[0]->alpha - (-mypi/2)) < mybigeps
-				&& ::std::abs(this->joints[1]->alpha            ) < mybigeps
-				&& ::std::abs(this->joints[2]->alpha - (-mypi/2)) < mybigeps
-				&& ::std::abs(this->joints[3]->alpha - ( mypi/2)) < mybigeps
-				&& ::std::abs(this->joints[4]->alpha - ( mypi/2)) < mybigeps
-				&& ::std::abs(this->joints[5]->alpha            ) < mybigeps);
+			assert(::std::abs(this->joints[0]->alpha - (-static_cast< ::rl::math::Real>(M_PI)/2)) < 1e-3
+				&& ::std::abs(this->joints[1]->alpha                                              ) < 1e-3
+				&& ::std::abs(this->joints[2]->alpha - (-static_cast< ::rl::math::Real>(M_PI)/2)) < 1e-3
+				&& ::std::abs(this->joints[3]->alpha - ( static_cast< ::rl::math::Real>(M_PI)/2)) < 1e-3
+				&& ::std::abs(this->joints[4]->alpha - ( static_cast< ::rl::math::Real>(M_PI)/2)) < 1e-3
+				&& ::std::abs(this->joints[5]->alpha                                              ) < 1e-3);
 			
 			::rl::math::Real a1 = this->joints[0]->a;
 			::rl::math::Real a2 = this->joints[1]->a;
@@ -182,7 +180,7 @@ namespace rl
 			}
 			
 			// arm elbow configuration
-			::rl::math::Real K = static_cast< ::rl::math::Real >(arm * elbow);
+			::rl::math::Real K = static_cast< ::rl::math::Real>(arm * elbow);
 			
 			// arm
 			::rl::math::Real theta2 = K * ::std::acos(cosalpha) + deltaWrist;
@@ -202,10 +200,10 @@ namespace rl
 			::rl::math::Real theta3plusbeta = ::std::acos(costheta3plusbeta);
 			
 			// elbow
-			::rl::math::Real theta3  = K * theta3plusbeta - beta - static_cast< ::rl::math::Real >(M_PI);
+			::rl::math::Real theta3  = K * theta3plusbeta - beta - static_cast< ::rl::math::Real>(M_PI);
 			
-			::rl::math::Real c23 = this->cos(theta2 + theta3 + static_cast< ::rl::math::Real >(M_PI));
-			::rl::math::Real s23 = this->sin(theta2 + theta3 + static_cast< ::rl::math::Real >(M_PI));
+			::rl::math::Real c23 = this->cos(theta2 + theta3 + static_cast< ::rl::math::Real>(M_PI));
+			::rl::math::Real s23 = this->sin(theta2 + theta3 + static_cast< ::rl::math::Real>(M_PI));
 			
 			// forearm
 			
@@ -233,7 +231,7 @@ namespace rl
 				 c1 * s23                 * a(0) +
 				 s1 * s23                 * a(1) +
 					  c23                 * a(2)
-			) + static_cast< ::rl::math::Real >(M_PI);
+			) + static_cast< ::rl::math::Real>(M_PI);
 			
 			// flange
 			
@@ -257,11 +255,11 @@ namespace rl
 			// fit into min max angles
 			for (::std::size_t i = 0; i < this->getDof(); ++i)
 			{
-				q(i) = ::std::fmod(q(i), 2.0f * static_cast< ::rl::math::Real >(M_PI));
+				q(i) = ::std::fmod(q(i), 2.0f * static_cast< ::rl::math::Real>(M_PI));
 				
 				if (q(i) < this->joints[i]->min)
 				{
-					q(i) += 2.0f * static_cast< ::rl::math::Real >(M_PI);
+					q(i) += 2.0f * static_cast< ::rl::math::Real>(M_PI);
 					
 					if (q(i) < this->joints[i]->min || q(i) > this->joints[i]->max)
 					{
@@ -270,7 +268,7 @@ namespace rl
 				}
 				else if (q(i) > this->joints[i]->max)
 				{
-					q(i) -= 2.0f * static_cast< ::rl::math::Real >(M_PI);
+					q(i) -= 2.0f * static_cast< ::rl::math::Real>(M_PI);
 					
 					if (q(i) < this->joints[i]->min || q(i) > this->joints[i]->max)
 					{
@@ -299,9 +297,9 @@ namespace rl
 			{
 				myq(i) = q(i) + this->joints[i]->theta + this->joints[i]->offset;
 				myq(i) = ::std::fmod(
-					myq(i) + static_cast< ::rl::math::Real >(M_PI),
-					2.0f * static_cast< ::rl::math::Real >(M_PI)
-				) - static_cast< ::rl::math::Real >(M_PI);
+					myq(i) + static_cast< ::rl::math::Real>(M_PI),
+					2.0f * static_cast< ::rl::math::Real>(M_PI)
+				) - static_cast< ::rl::math::Real>(M_PI);
 			}
 			
 			if (myq(4) < 0.0f)

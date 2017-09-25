@@ -24,23 +24,26 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_HAL_JR3_H_
-#define _RL_HAL_JR3_H_
+#ifndef RL_HAL_JR3_H
+#define RL_HAL_JR3_H
 
 #include <string>
 
+#include "Comedi.h"
+#include "CyclicDevice.h"
 #include "SixAxisForceTorqueSensor.h"
 
 namespace rl
 {
 	namespace hal
 	{
-		class Comedi;
-		
-		class Jr3 : public SixAxisForceTorqueSensor
+		/**
+		 * JR3 force-torque sensor.
+		 */
+		class Jr3 : public CyclicDevice, public SixAxisForceTorqueSensor
 		{
 		public:
-			Jr3(const ::std::string& filename = "/dev/comedi0");
+			Jr3(const ::std::string& filename = "/dev/comedi0", const ::std::chrono::nanoseconds& updateRate = ::std::chrono::milliseconds(1));
 			
 			virtual ~Jr3();
 			
@@ -48,19 +51,19 @@ namespace rl
 			
 			void close();
 			
-			void getForces(::rl::math::Vector& forces) const;
+			::rl::math::Vector getForces() const;
 			
 			::rl::math::Real getForcesMaximum(const ::std::size_t& i) const;
 			
 			::rl::math::Real getForcesMinimum(const ::std::size_t& i) const;
 			
-			void getForcesTorques(::rl::math::Vector& forcesTorques) const;
+			::rl::math::Vector getForcesTorques() const;
 			
 			::rl::math::Real getForcesTorquesMaximum(const ::std::size_t& i) const;
 			
 			::rl::math::Real getForcesTorquesMinimum(const ::std::size_t& i) const;
 			
-			void getTorques(::rl::math::Vector& torques) const;
+			::rl::math::Vector getTorques() const;
 			
 			::rl::math::Real getTorquesMaximum(const ::std::size_t& i) const;
 			
@@ -79,7 +82,7 @@ namespace rl
 		protected:
 			
 		private:
-			Comedi* comedi;
+			Comedi comedi;
 			
 			float values[6];
 			
@@ -88,4 +91,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_HAL_JR3_H_
+#endif // RL_HAL_JR3_H

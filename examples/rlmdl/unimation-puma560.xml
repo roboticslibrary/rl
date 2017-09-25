@@ -182,6 +182,7 @@
 			</frame>
 			<max>160</max>
 			<min>-160</min>
+			<speed>320</speed>
 		</revolute>
 		<fixed id="fixed2">
 			<frame>
@@ -206,6 +207,7 @@
 			</frame>
 			<max>45</max>
 			<min>-225</min>
+			<speed>250</speed>
 		</revolute>
 		<fixed id="fixed3">
 			<frame>
@@ -230,6 +232,7 @@
 			</frame>
 			<max>225</max>
 			<min>-45</min>
+			<speed>270</speed>
 		</revolute>
 		<fixed id="fixed4">
 			<frame>
@@ -255,6 +258,7 @@
 			</frame>
 			<max>170</max>
 			<min>-110</min>
+			<speed>300</speed>
 		</revolute>
 		<fixed id="fixed5">
 			<frame>
@@ -279,6 +283,7 @@
 			</frame>
 			<max>100</max>
 			<min>-100</min>
+			<speed>200</speed>
 		</revolute>
 		<fixed id="fixed6">
 			<frame>
@@ -303,6 +308,7 @@
 			</frame>
 			<max>266</max>
 			<min>-266</min>
+			<speed>532</speed>
 		</revolute>
 		<fixed id="fixed7">
 			<frame>

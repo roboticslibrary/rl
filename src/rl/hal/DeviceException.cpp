@@ -35,6 +35,11 @@ namespace rl
 		{
 		}
 		
+		DeviceException::DeviceException(const int& errnum) :
+			Exception(errnum)
+		{
+		}
+		
 		DeviceException::~DeviceException() throw()
 		{
 		}

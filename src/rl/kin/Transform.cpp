@@ -33,8 +33,8 @@ namespace rl
 	{
 		Transform::Transform() :
 			Element(),
-			in(NULL),
-			out(NULL),
+			in(nullptr),
+			out(nullptr),
 			transform()
 		{
 		}

@@ -27,8 +27,8 @@
 #include <cstdio>
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 #include <rl/hal/Dc1394Camera.h>
-#include <rl/hal/Exception.h>
 
 int
 main(int argc, char** argv)
@@ -67,11 +67,11 @@ main(int argc, char** argv)
 		dc1394.stop();
 		dc1394.close();
 	}
-	catch (const rl::hal::Exception& e)
+	catch (const std::exception& e)
 	{
 		std::cerr << e.what() << std::endl;
-		return 1;
+		return EXIT_FAILURE;
 	}
 	
-	return 0;
+	return EXIT_SUCCESS;
 }

@@ -1,13 +1,24 @@
-project(rlCoachKin)
-
-find_package(Boost REQUIRED)
-find_package(Qt4 COMPONENTS QtCore QtGui QtNetwork QtOpenGL)
-set(QT_USE_QTMAIN TRUE)
-include(${QT_USE_FILE})
-
+find_package(OpenGL REQUIRED)
 find_package(SoQt)
 
-if(QT_FOUND AND SOQT_FOUND)
+if(USE_QT5 AND SoQt5_FOUND)
+	find_package(Qt5 COMPONENTS Core Gui Network OpenGL Widgets QUIET)
+endif()
+
+if(Qt5_FOUND)
+	set(QT_LIBRARIES ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5OpenGL_LIBRARIES} ${Qt5Network_LIBRARIES} ${Qt5Widgets_LIBRARIES})
+	set(QT_FOUND Qt5_FOUND)
+else()
+	set(QT_USE_IMPORTED_TARGETS ON)
+	find_package(Qt4 COMPONENTS QtCore QtGui QtNetwork QtOpenGL)
+	set(QT_USE_QTMAIN ON)
+	include(${QT_USE_FILE})
+endif()
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+if(QT_FOUND AND SoQt_FOUND)
 	set(
 		HDRS
 		ConfigurationDelegate.h
@@ -17,6 +28,7 @@ if(QT_FOUND AND SOQT_FOUND)
 		OperationalModel.h
 		Server.h
 		Socket.h
+		SoGradientBackground.h
 	)
 	
 	set(
@@ -29,20 +41,8 @@ if(QT_FOUND AND SOQT_FOUND)
 		rlCoachKin.cpp
 		Server.cpp
 		Socket.cpp
+		SoGradientBackground.cpp
 		${rl_SOURCE_DIR}/robotics-library.rc
-	)
-	
-	qt4_wrap_cpp(
-		MOC_SRCS
-		ConfigurationDelegate.h
-		ConfigurationModel.h
-		MainWindow.h
-		OperationalDelegate.h
-		OperationalModel.h
-		Server.h
-		Socket.h
-		OPTIONS
-		-DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED
 	)
 	
 	add_executable(
@@ -50,39 +50,44 @@ if(QT_FOUND AND SOQT_FOUND)
 		WIN32
 		${HDRS}
 		${SRCS}
-		${MOC_SRCS}
 	)
 	
 	target_compile_definitions(
 		rlCoachKin
 		PUBLIC
-		${QT_DEFINITIONS}
-		${SOQT_DEFINITIONS}
+		${SoQt_DEFINITIONS}
 	)
 	
 	target_include_directories(
 		rlCoachKin
 		PUBLIC
-		${Boost_INCLUDE_DIR}
-		${QT_INCLUDES}
-		${SOQT_INCLUDE_DIRS}
+		${OPENGL_INCLUDE_DIR}
+		${SoQt_INCLUDE_DIRS}
 	)
 	
 	target_link_libraries(
 		rlCoachKin
-		rlkin
-		rlmath
-		rlsg
+		kin
+		math
+		sg
+		${OPENGL_LIBRARIES}
 		${QT_LIBRARIES}
-		${SOQT_LIBRARIES}
+		${SoQt_LIBRARIES}
 	)
 	
 	set_target_properties(
 		rlCoachKin
 		PROPERTIES
 		VERSION ${VERSION}
-		DEBUG_POSTFIX d
 	)
+	
+	if(WIN32)
+		set_target_properties(
+			rlCoachKin
+			PROPERTIES
+			DEBUG_POSTFIX d
+		)
+	endif()
 	
 	install(
 		TARGETS rlCoachKin
@@ -92,23 +97,42 @@ if(QT_FOUND AND SOQT_FOUND)
 		RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 	)
 	
+	if(MSVC AND BUILD_SHARED_LIBS AND NOT CMAKE_VERSION VERSION_LESS 3.1)
+		install(FILES $<TARGET_PDB_FILE:rlCoachKin> DESTINATION ${CMAKE_INSTALL_BINDIR} CONFIGURATIONS Debug RelWithDebInfo COMPONENT demos)
+	endif()
+	
 	if(UNIX)
-		install(FILES rlCoachKin.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications COMPONENT demos)
-	endif(UNIX)
+		configure_file(rlCoachKin.desktop.in rlCoachKin.desktop @ONLY)
+		install(FILES ${CMAKE_CURRENT_BINARY_DIR}/rlCoachKin.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications COMPONENT demos)
+	endif()
 	
 	set(
-		CPACK_NSIS_EXTRA_INSTALL_COMMANDS
-		${CPACK_NSIS_EXTRA_INSTALL_COMMANDS}
+		CPACK_NSIS_CREATE_ICONS_EXTRA
+		${CPACK_NSIS_CREATE_ICONS_EXTRA}
 		"CreateShortCut \\\\
 			\\\"$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\rlCoachKin.lnk\\\" \\\\
 			\\\"$INSTDIR\\\\${CMAKE_INSTALL_BINDIR}\\\\rlCoachKin.exe\\\" \\\\
 			\\\"\\\\
-				\\\$\\\\\\\"$INSTDIR\\\\${CMAKE_INSTALL_DATADIR}\\\\rl\\\\examples\\\\rlsg\\\\unimation-puma560_boxes.xml\\\$\\\\\\\" \\\\
-				\\\$\\\\\\\"$INSTDIR\\\\${CMAKE_INSTALL_DATADIR}\\\\rl\\\\examples\\\\rlkin\\\\unimation-puma560.xml\\\$\\\\\\\"\\\\
+				\\\$\\\\\\\"$INSTDIR\\\\${CMAKE_INSTALL_DATADIR}\\\\rl-${VERSION}\\\\examples\\\\rlsg\\\\unimation-puma560_boxes.xml\\\$\\\\\\\" \\\\
+				\\\$\\\\\\\"$INSTDIR\\\\${CMAKE_INSTALL_DATADIR}\\\\rl-${VERSION}\\\\examples\\\\rlkin\\\\unimation-puma560.xml\\\$\\\\\\\"\\\\
 			\\\" \\\\
 			\\\"\\\" \\\"\\\" \\\"\\\" \\\"\\\" \\\\
 			\\\"Visualization and kinematics demo with Unimation Puma 560\\\""
 		PARENT_SCOPE
 	)
-	set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS ${CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS} "Delete \\\"$SMPROGRAMS\\\\$START_MENU\\\\rlCoachKin.lnk\\\"" PARENT_SCOPE)
-endif(QT_FOUND AND SOQT_FOUND)
+	set(CPACK_NSIS_DELETE_ICONS_EXTRA ${CPACK_NSIS_DELETE_ICONS_EXTRA} "Delete \\\"$SMPROGRAMS\\\\$START_MENU\\\\rlCoachKin.lnk\\\"" PARENT_SCOPE)
+	
+	set(
+		WIX_SHORTCUTS
+		${WIX_SHORTCUTS}
+		"<Shortcut
+			Arguments=\"&quot;[INSTALL_ROOT]${CMAKE_INSTALL_DATADIR}\\rl-${VERSION}\\examples\\rlsg\\unimation-puma560_boxes.xml&quot; &quot;[INSTALL_ROOT]${CMAKE_INSTALL_DATADIR}\\rl-${VERSION}\\examples\\rlkin\\unimation-puma560.xml&quot;\"
+			Description=\"Visualization and kinematics demo with Unimation Puma 560\"
+			Id=\"CM_SP_bin.rlCoachKin.exe\"
+			Name=\"rlCoachKin\"
+			Target=\"[#CM_FP_bin.rlCoachKin.exe]\"
+			WorkingDirectory=\"CM_DP_bin\"
+		/>"
+		PARENT_SCOPE
+	)
+endif()

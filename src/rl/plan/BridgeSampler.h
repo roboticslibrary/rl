@@ -24,10 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_PLAN_BRIDGESAMPLER_H_
-#define _RL_PLAN_BRIDGESAMPLER_H_
-
-#include <boost/random/normal_distribution.hpp>
+#ifndef RL_PLAN_BRIDGESAMPLER_H
+#define RL_PLAN_BRIDGESAMPLER_H
 
 #include "GaussianSampler.h"
 
@@ -35,6 +33,16 @@ namespace rl
 {
 	namespace plan
 	{
+		/**
+		 * Bridge test sampling strategy.
+		 * 
+		 * David Hsu, Tingting Jiang, John Reif, and Zheng Sun. The bridge test
+		 * for sampling narrow passages with probabilistic roadmap planners. In
+		 * Proceedings of the IEEE International Conference on Robotics and Automation,
+		 * pages 4420-4426, September 2003.
+		 * 
+		 * http://dx.doi.org/10.1109/ROBOT.2003.1242285
+		 */
 		class BridgeSampler : public GaussianSampler
 		{
 		public:
@@ -42,7 +50,7 @@ namespace rl
 			
 			virtual ~BridgeSampler();
 			
-			void generateCollisionFree(::rl::math::Vector& q);
+			::rl::math::Vector generateCollisionFree();
 			
 			/** Probability of choosing bridge sample. */
 			::rl::math::Real ratio;
@@ -55,4 +63,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_PLAN_BRIDGESAMPLER_H_
+#endif // RL_PLAN_BRIDGESAMPLER_H

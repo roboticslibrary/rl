@@ -24,12 +24,12 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_XML_SCHEMA_H_
-#define _RL_XML_SCHEMA_H_
+#ifndef RL_XML_SCHEMA_H
+#define RL_XML_SCHEMA_H
 
+#include <memory>
 #include <string>
 #include <boost/shared_array.hpp>
-#include <boost/shared_ptr.hpp>
 #include <libxml/xmlschemas.h>
 
 #include "Document.h"
@@ -41,32 +41,42 @@ namespace rl
 		class Schema
 		{
 		public:
-			Schema(const ::std::string& url) :
-				parser(xmlSchemaNewParserCtxt(url.c_str()), xmlSchemaFreeParserCtxt),
-				schema(xmlSchemaParse(parser.get()), xmlSchemaFree),
-				valid(xmlSchemaNewValidCtxt(schema.get()), xmlSchemaFreeValidCtxt)
+			explicit Schema(const ::std::string& url) :
+				parser(::xmlSchemaNewParserCtxt(url.c_str()), ::xmlSchemaFreeParserCtxt),
+				schema(::xmlSchemaParse(parser.get()), ::xmlSchemaFree),
+				valid(::xmlSchemaNewValidCtxt(schema.get()), ::xmlSchemaFreeValidCtxt)
 			{
 			}
 			
-			virtual ~Schema()
+			~Schema()
 			{
+			}
+			
+			::xmlSchemaPtr get() const
+			{
+				return this->schema.get();
+			}
+			
+			::xmlSchema& operator*() const
+			{
+				return *this->schema;
 			}
 			
 			bool validate(const Document& doc)
 			{
-				return 0 == xmlSchemaValidateDoc(this->valid.get(), doc()) ? true : false;
+				return 0 == ::xmlSchemaValidateDoc(this->valid.get(), doc.get()) ? true : false;
 			}
 			
 		protected:
 			
 		private:
-			::boost::shared_ptr< xmlSchemaParserCtxt > parser;
+			::std::shared_ptr< ::xmlSchemaParserCtxt> parser;
 			
-			::boost::shared_ptr< xmlSchema > schema;
+			::std::shared_ptr< ::xmlSchema> schema;
 			
-			::boost::shared_ptr< xmlSchemaValidCtxt > valid;
+			::std::shared_ptr< ::xmlSchemaValidCtxt> valid;
 		};
 	}
 }
 
-#endif // _RL_XML_SCHEMA_H_
+#endif // RL_XML_SCHEMA_H

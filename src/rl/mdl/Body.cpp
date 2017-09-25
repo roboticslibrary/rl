@@ -34,14 +34,14 @@ namespace rl
 	{
 		Body::Body() :
 			Frame(),
-			c(),
+			cm(),
 			collision(true),
 			fX(),
 			ic(),
 			m(1),
 			selfcollision()
 		{
-			this->c.setZero(); // TODO
+			this->cm.setZero(); // TODO
 			this->fX.setZero(); // TODO
 			this->ic.setIdentity(); // TODO
 		}
@@ -99,15 +99,15 @@ namespace rl
 		void
 		Body::setCenterOfMass(const ::rl::math::Real& x, const ::rl::math::Real& y, const ::rl::math::Real& z)
 		{
-			this->c.x() = x;
-			this->c.y() = y;
-			this->c.z() = z;
+			this->cm.x() = x;
+			this->cm.y() = y;
+			this->cm.z() = z;
 			
 			// m * c
-			this->i.cog() = this->m * this->c;
+			this->i.cog() = this->m * this->cm;
 			
 			// Ic - m * cx * cx
-			this->i.inertia() = this->ic - this->m * this->c.cross33() * this->c.cross33();
+			this->i.inertia() = this->ic - this->m * this->cm.cross33() * this->cm.cross33();
 		}
 		
 		void
@@ -118,10 +118,10 @@ namespace rl
 			this->i.mass() = m;
 			
 			// m * c
-			this->i.cog() = this->m * this->c;
+			this->i.cog() = this->m * this->cm;
 			
 			// Ic - m * cx * cx
-			this->i.inertia() = this->ic - this->m * this->c.cross33() * this->c.cross33(); // TODO
+			this->i.inertia() = this->ic - this->m * this->cm.cross33() * this->cm.cross33(); // TODO
 		}
 		
 		void
@@ -132,7 +132,7 @@ namespace rl
 			this->ic = ic.voigt33();
 			
 			// Ic - m * cx * cx
-			this->i.inertia() = this->ic - this->m * this->c.cross33() * this->c.cross33();
+			this->i.inertia() = this->ic - this->m * this->cm.cross33() * this->cm.cross33();
 		}
 	}
 }

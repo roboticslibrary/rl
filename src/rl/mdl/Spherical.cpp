@@ -60,6 +60,12 @@ namespace rl
 		{
 		}
 		
+		void
+		Spherical::clip(::rl::math::Vector& q) const
+		{
+			q = ::rl::math::Quaternion(q(0), q(1), q(2), q(3)).normalized().coeffs();
+		}
+		
 		::rl::math::Real
 		Spherical::distance(const ::rl::math::Vector& q1, const ::rl::math::Vector& q2) const
 		{
@@ -68,12 +74,50 @@ namespace rl
 			return quaternion1.angularDistance(quaternion2);
 		}
 		
+		::rl::math::Vector
+		Spherical::generatePositionGaussian(const ::rl::math::ConstVectorRef& rand, const ::rl::math::ConstVectorRef& mean, const ::rl::math::ConstVectorRef& sigma) const
+		{
+			::rl::math::Quaternion quaternion;
+			quaternion.setFromGaussian(rand, ::rl::math::Quaternion(mean(0), mean(1), mean(2), mean(3)), sigma);
+			return quaternion.coeffs();
+		}
+		
+		::rl::math::Vector
+		Spherical::generatePositionUniform(const ::rl::math::ConstVectorRef& rand) const
+		{
+			::rl::math::Quaternion quaternion;
+			quaternion.setFromUniform(rand);
+			return quaternion.coeffs();
+		}
+		
+		void
+		Spherical::interpolate(const ::rl::math::Vector& q1, const ::rl::math::Vector& q2, const ::rl::math::Real& alpha, ::rl::math::Vector& q) const
+		{
+			::rl::math::Quaternion quaternion1(q1(0), q1(1), q1(2), q1(3));
+			::rl::math::Quaternion quaternion2(q2(0), q2(1), q2(2), q2(3));
+			q = quaternion1.slerp(alpha, quaternion2).coeffs();
+		}
+		
+		void
+		Spherical::normalize(::rl::math::Vector& q) const
+		{
+			q = ::rl::math::Quaternion(q(0), q(1), q(2), q(3)).normalized().coeffs();
+		}
+		
 		void
 		Spherical::setPosition(const ::rl::math::Vector& q)
 		{
 			this->q = q;
 			this->t = ::rl::math::Quaternion(this->q(0), this->q(1), this->q(2), this->q(3));
 			this->x.rotation() = this->t.linear().transpose();
+		}
+		
+		void
+		Spherical::step(const ::rl::math::Vector& q1, const ::rl::math::Vector& qdot, ::rl::math::Vector& q2) const
+		{
+			::rl::math::Quaternion quaternion1(q1(0), q1(1), q1(2), q1(3));
+			::rl::math::Quaternion quaterniondot = quaternion1.firstDerivative(qdot);
+			q2 = (quaternion1 * quaterniondot).coeffs();
 		}
 		
 		::rl::math::Real

@@ -24,28 +24,32 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_HAL_COACH_H_
-#define _RL_HAL_COACH_H_
+#ifndef RL_HAL_COACH_H
+#define RL_HAL_COACH_H
 
+#include <array>
 #include <sstream>
 #include <string>
 
+#include "CyclicDevice.h"
 #include "JointPositionActuator.h"
+#include "JointPositionSensor.h"
+#include "JointTorqueActuator.h"
+#include "JointVelocityActuator.h"
+#include "Socket.h"
 
 namespace rl
 {
 	namespace hal
 	{
-		class TcpSocket;
-		
-		class Coach : public JointPositionActuator
+		class Coach : public CyclicDevice, public JointPositionActuator, public JointPositionSensor, public JointTorqueActuator, public JointVelocityActuator
 		{
 		public:
 			Coach(
 				const ::std::size_t& dof,
-				const ::rl::math::Real& updateRate,
+				const ::std::chrono::nanoseconds& updateRate,
 				const ::std::size_t& i = 0,
-				const ::std::string& host = "localhost",
+				const ::std::string& hostname = "localhost",
 				const unsigned short int& port = 11235
 			);
 			
@@ -53,9 +57,15 @@ namespace rl
 			
 			void close();
 			
+			::rl::math::Vector getJointPosition() const;
+			
 			void open();
 			
-			void setJointPosition(const ::rl::math::Vector& set);
+			void setJointPosition(const ::rl::math::Vector& q);
+			
+			void setJointTorque(const ::rl::math::Vector& tau);
+			
+			void setJointVelocity(const ::rl::math::Vector& qd);
 			
 			void start();
 			
@@ -68,11 +78,13 @@ namespace rl
 		private:
 			::std::size_t i;
 			
-			TcpSocket* tcp;
+			::std::array<char, 1024> in;
 			
-			::std::stringstream text;
+			::std::stringstream out;
+			
+			Socket socket;
 		};
 	}
 }
 
-#endif // _RL_HAL_COACH_H_
+#endif // RL_HAL_COACH_H

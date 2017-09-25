@@ -1,10 +1,8 @@
-project(rlPrmDemo)
-
 find_package(Boost REQUIRED)
 
-find_package(Solid)
+find_package(SOLID3)
 
-if(SOLID_FOUND)
+if(SOLID3_FOUND)
 	add_executable(
 		rlPrmDemo
 		rlPrmDemo.cpp
@@ -18,8 +16,8 @@ if(SOLID_FOUND)
 	
 	target_link_libraries(
 		rlPrmDemo
-		rlplan
-		rlkin
-		rlsg
+		plan
+		kin
+		sg
 	)
-endif(SOLID_FOUND)
+endif()

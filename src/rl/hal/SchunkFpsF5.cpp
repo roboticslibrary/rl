@@ -24,18 +24,18 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include "ComException.h"
+#include <array>
+
 #include "DeviceException.h"
-#include "endian.h"
+#include "Endian.h"
 #include "SchunkFpsF5.h"
-#include "Serial.h"
-#include "TimeoutException.h"
 
 namespace rl
 {
 	namespace hal
 	{
 		SchunkFpsF5::SchunkFpsF5(const ::std::string& filename) :
+			CyclicDevice(::std::chrono::nanoseconds::zero()),
 			RangeSensor(),
 			a(false),
 			area(false),
@@ -43,46 +43,41 @@ namespace rl
 			c(false),
 			closed(false),
 			fulcrums(),
-			interpolated(0.0f),
+			interpolated(0),
 			opened(false),
 			reCalc(false),
 			record(false),
 			serial(
-				new Serial(
-					filename,
-					Serial::BAUDRATE_9600BPS,
-					Serial::DATABITS_8BITS,
-					Serial::FLOWCONTROL_OFF,
-					Serial::PARITY_NOPARITY,
-					Serial::STOPBITS_1BIT
-				)
+				filename,
+				Serial::BAUDRATE_9600BPS,
+				Serial::DATABITS_8BITS,
+				Serial::FLOWCONTROL_OFF,
+				Serial::PARITY_NOPARITY,
+				Serial::STOPBITS_1BIT
 			),
-			temperature(0.0f),
+			temperature(0),
 			update(false),
-			value(0.0f),
-			voltage(0.0f)
+			value(0),
+			voltage(0)
 		{
 		}
 		
 		SchunkFpsF5::~SchunkFpsF5()
 		{
-			delete this->serial;
 		}
 		
 		void
 		SchunkFpsF5::close()
 		{
 			assert(this->isConnected());
-			
-			this->serial->close();
-			
+			this->serial.close();
 			this->setConnected(false);
 		}
 		
-		uint16_t
-		SchunkFpsF5::crc(const uint8_t* buf, const ::std::size_t& len) const
+		::std::uint16_t
+		SchunkFpsF5::crc(const ::std::uint8_t* buf, const ::std::size_t& len) const
 		{
-			uint16_t checksum = 0xFFFF;
+			::std::uint16_t checksum = 0xFFFF;
 			
 			for (::std::size_t i = 0; i < len; ++i)
 			{
@@ -105,13 +100,14 @@ namespace rl
 			return checksum;
 		}
 		
-		void
-		SchunkFpsF5::getDistances(::rl::math::Vector& distances) const
+		::rl::math::Vector
+		SchunkFpsF5::getDistances() const
 		{
 			assert(this->isConnected());
-			assert(distances.size() >= this->getDistancesCount());
 			
+			::rl::math::Vector distances(this->getDistancesCount());
 			distances(0) = this->interpolated;
+			return distances;
 		}
 		
 		::std::size_t
@@ -124,7 +120,6 @@ namespace rl
 		SchunkFpsF5::getDistancesMaximum(const ::std::size_t& i) const
 		{
 			assert(i < this->getDistancesCount());
-			
 			return 0.06f;
 		}
 		
@@ -132,7 +127,6 @@ namespace rl
 		SchunkFpsF5::getDistancesMinimum(const ::std::size_t& i) const
 		{
 			assert(i < this->getDistancesCount());
-			
 			return 0;
 		}
 		
@@ -205,18 +199,18 @@ namespace rl
 		void
 		SchunkFpsF5::open()
 		{
-			this->serial->open();
+			this->serial.open();
 			this->setConnected(true);
 		}
 		
 		::std::size_t
-		SchunkFpsF5::recv(uint8_t* buf, const ::std::size_t& len, const uint8_t& command)
+		SchunkFpsF5::recv(::std::uint8_t* buf, const ::std::size_t& len, const ::std::uint8_t& command)
 		{
 			assert(this->isConnected());
 			assert(len > 7);
 			assert(len < 264);
 			
-			uint8_t* ptr;
+			::std::uint8_t* ptr;
 			::std::size_t sumbytes;
 			::std::size_t numbytes;
 			
@@ -227,16 +221,16 @@ namespace rl
 				
 				do
 				{
-					this->serial->select(true, false, 1.0f);
-					numbytes = this->serial->read(ptr, 1);
+					this->serial.select(true, false, ::std::chrono::seconds(1));
+					numbytes = this->serial.read(ptr, 1);
 				}
 				while (0x02 != buf[0]);
 				
 				ptr += numbytes;
 				sumbytes += numbytes;
 				
-				this->serial->select(true, false, 1.0f);
-				numbytes = this->serial->read(ptr, 1);
+				this->serial.select(true, false, ::std::chrono::seconds(1));
+				numbytes = this->serial.read(ptr, 1);
 				
 				ptr += numbytes;
 				sumbytes += numbytes;
@@ -245,14 +239,14 @@ namespace rl
 			
 			while (sumbytes < len)
 			{
-				this->serial->select(true, false, 1.0f);
-				numbytes = this->serial->read(ptr, len - sumbytes);
+				this->serial.select(true, false, ::std::chrono::seconds(1));
+				numbytes = this->serial.read(ptr, len - sumbytes);
 				
 				ptr += numbytes;
 				sumbytes += numbytes;
 			}
 			
-			if (this->crc(buf, sumbytes - 2) != hostEndianWord(buf[sumbytes - 2], buf[sumbytes - 1]))
+			if (this->crc(buf, sumbytes - 2) != Endian::hostWord(buf[sumbytes - 2], buf[sumbytes - 1]))
 			{
 				throw DeviceException("checksum error");
 			}
@@ -261,7 +255,7 @@ namespace rl
 		}
 		
 		void
-		SchunkFpsF5::send(uint8_t* buf, const ::std::size_t& len)
+		SchunkFpsF5::send(::std::uint8_t* buf, const ::std::size_t& len)
 		{
 			assert(this->isConnected());
 			assert(len > 7);
@@ -270,12 +264,12 @@ namespace rl
 			buf[0] = 0x02;
 			buf[len - 3] = 0x03;
 			
-			uint16_t checksum = this->crc(buf, len - 2);
+			::std::uint16_t checksum = this->crc(buf, len - 2);
 			
-			buf[len - 2] = highByteFromHostEndian(checksum);
-			buf[len - 1] = lowByteFromHostEndian(checksum);
+			buf[len - 2] = Endian::hostHighByte(checksum);
+			buf[len - 1] = Endian::hostLowByte(checksum);
 			
-			if (len != this->serial->write(buf, len))
+			if (len != this->serial.write(buf, len))
 			{
 				throw DeviceException("could not send complete data");
 			}
@@ -284,7 +278,7 @@ namespace rl
 		void
 		SchunkFpsF5::start()
 		{
-			uint8_t buf[263];
+			::std::array< ::std::uint8_t, 263> buf;
 			
 			// fulcrums
 			
@@ -293,8 +287,8 @@ namespace rl
 			buf[3] = 0x00;
 			buf[4] = 128;
 			
-			this->send(buf, 1 + 1 + 2 + 1 + 1 + 2);
-			this->recv(buf, 1 + 1 + 2 + 1 + 128 + 1 + 2, 0x81);
+			this->send(buf.data(), 1 + 1 + 2 + 1 + 1 + 2);
+			this->recv(buf.data(), 1 + 1 + 2 + 1 + 128 + 1 + 2, 0x81);
 			
 			if (0x01 == buf[5] && 0x01 == buf[6])
 			{
@@ -303,8 +297,8 @@ namespace rl
 				for (int i = 0; i < ::std::min(size, 31); ++i)
 				{
 					this->fulcrums.insert(::std::make_pair(
-						5.0f * (hostEndianWord(~buf[9 + i * 4], ~buf[9 + i * 4 + 1]) - 0x0000) / (0xFFF0 - 0x0000),
-						hostEndianWord(buf[11 + i * 4], buf[11 + i * 4 + 1]) / 1000.0f / 1000.0f
+						5.0f * (Endian::hostWord(~buf[9 + i * 4], ~buf[9 + i * 4 + 1]) - 0x0000) / (0xFFF0 - 0x0000),
+						Endian::hostWord(buf[11 + i * 4], buf[11 + i * 4 + 1]) / 1000.0f / 1000.0f
 					));
 				}
 				
@@ -315,14 +309,14 @@ namespace rl
 					buf[3] = 0x00;
 					buf[4] = 128;
 					
-					this->send(buf, 1 + 1 + 2 + 1 + 1 + 2);
-					this->recv(buf, 1 + 1 + 2 + 1 + 128 + 1 + 2, 0x81);
+					this->send(buf.data(), 1 + 1 + 2 + 1 + 1 + 2);
+					this->recv(buf.data(), 1 + 1 + 2 + 1 + 128 + 1 + 2, 0x81);
 					
 					for (int i = 0; i < ::std::min(size - 31, 31); ++i)
 					{
 						this->fulcrums.insert(::std::make_pair(
-							5.0f * (hostEndianWord(~buf[5 + i * 4], ~buf[5 + i * 4 + 1]) - 0x0000) / (0xFFF0 - 0x0000),
-							hostEndianWord(buf[7 + i * 4], buf[7 + i * 4 + 1]) / 1000.0f / 1000.0f
+							5.0f * (Endian::hostWord(~buf[5 + i * 4], ~buf[5 + i * 4 + 1]) - 0x0000) / (0xFFF0 - 0x0000),
+							Endian::hostWord(buf[7 + i * 4], buf[7 + i * 4 + 1]) / 1000.0f / 1000.0f
 						));
 					}
 				}
@@ -332,16 +326,15 @@ namespace rl
 		void
 		SchunkFpsF5::step()
 		{
-			uint8_t buf[263];
+			::std::array< ::std::uint8_t, 263> buf;
 			
 			buf[1] = 0x03;
 			buf[2] = 0x06;
 			buf[3] = 0x00;
 			buf[4] = 32;
 			
-			this->send(buf, 1 + 1 + 2 + 1 + 1 + 2);
-			
-			this->recv(buf, 1 + 1 + 2 + 1 + 32 + 1 + 2, 0x83);
+			this->send(buf.data(), 1 + 1 + 2 + 1 + 1 + 2);
+			this->recv(buf.data(), 1 + 1 + 2 + 1 + 32 + 1 + 2, 0x83);
 			
 			// 00001000
 			this->opened = (buf[5] & 8) ? true : false;
@@ -354,9 +347,9 @@ namespace rl
 			// 10000000
 			this->closed = (buf[5] & 128) ? true : false;
 			
-			this->value = 5.0f * (hostEndianWord(~buf[31], ~buf[32]) - 0x0000) / (0xFFF0 - 0x0000);
+			this->value = 5.0f * (Endian::hostWord(~buf[31], ~buf[32]) - 0x0000) / (0xFFF0 - 0x0000);
 			
-			::std::set< ::std::pair< ::rl::math::Real, ::rl::math::Real > >::iterator lower = this->fulcrums.upper_bound(::std::make_pair(this->value, ::std::numeric_limits< ::rl::math::Real >::max()));
+			::std::set< ::std::pair< ::rl::math::Real, ::rl::math::Real>>::iterator lower = this->fulcrums.upper_bound(::std::make_pair(this->value, ::std::numeric_limits< ::rl::math::Real>::max()));
 			
 			if (!this->fulcrums.empty())
 			{
@@ -370,18 +363,17 @@ namespace rl
 				}
 				else
 				{
-					::std::set< ::std::pair< ::rl::math::Real, ::rl::math::Real > >::iterator upper = lower--;
+					::std::set< ::std::pair< ::rl::math::Real, ::rl::math::Real>>::iterator upper = lower--;
 					this->interpolated = (this->value - (*lower).first) / ((*upper).first - (*lower).first) * ((*upper).second - (*lower).second) + (*lower).second;
 				}
 			}
 			else
 			{
-				this->interpolated = ::std::numeric_limits< ::rl::math::Real >::quiet_NaN();
+				this->interpolated = ::std::numeric_limits< ::rl::math::Real>::quiet_NaN();
 			}
 			
-			this->voltage = 23.0f * (hostEndianWord(buf[33], buf[34]) - 0x3D00) / (0xB700 - 0x3D00) + 12.0f;
-			
-			this->temperature = 90.0f * (hostEndianWord(buf[35], 0x0) - 0x0A00) / (0xC300 - 0x0A00) - 20.0f;
+			this->voltage = 23.0f * (Endian::hostWord(buf[33], buf[34]) - 0x3D00) / (0xB700 - 0x3D00) + 12.0f;
+			this->temperature = 90.0f * (Endian::hostWord(buf[35], 0x0) - 0x0A00) / (0xC300 - 0x0A00) - 20.0f;
 			
 			// 00000001
 			this->area = (buf[36] & 1) ? true : false;

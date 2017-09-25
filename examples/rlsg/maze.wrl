@@ -1,0 +1,362 @@
+#VRML V2.0 utf8
+Transform {
+	children [
+		DEF floor Transform {
+			translation 15 15 0
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+							transparency 0.9
+						}
+					}
+					geometry Box {
+						size 30 30 0.1
+					}
+				}
+			]
+		}
+		DEF ceiling Transform {
+			translation 15 15 2
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+							transparency 0.9
+						}
+					}
+					geometry Box {
+						size 30 30 0.1
+					}
+				}
+			]
+		}
+		DEF south Transform {
+			translation 15 0 1
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+							transparency 0.9
+						}
+					}
+					geometry Box {
+						size 30 0.1 2
+					}
+				}
+			]
+		}
+		DEF north Transform {
+			translation 15 30 1
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+							transparency 0.9
+						}
+					}
+					geometry Box {
+						size 30 0.1 2
+					}
+				}
+			]
+		}
+		DEF west Transform {
+			translation 0 15 1
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+							transparency 0.9
+						}
+					}
+					geometry Box {
+						size 0.1 30 2
+					}
+				}
+			]
+		}
+		DEF east Transform {
+			translation 30 15 1
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+							transparency 0.9
+						}
+					}
+					geometry Box {
+						size 0.1 30 2
+					}
+				}
+			]
+		}
+		Transform {
+			translation 5 2 1
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+						}
+					}
+					geometry Box {
+						size 10 0.1 2
+					}
+				}
+			]
+		}
+		Transform {
+			translation 10 7 1
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+						}
+					}
+					geometry Box {
+						size 0.1 10 2
+					}
+				}
+			]
+		}
+		Transform {
+			translation 12 5 1
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+						}
+					}
+					geometry Box {
+						size 0.1 10 2
+					}
+				}
+			]
+		}
+		Transform {
+			translation 19 12 1
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+						}
+					}
+					geometry Box {
+						size 18 0.1 2
+					}
+				}
+			]
+		}
+		Transform {
+			translation 18 5 1
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+						}
+					}
+					geometry Box {
+						size 0.1 10 2
+					}
+				}
+			]
+		}
+		Transform {
+			translation 15 10 1
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+						}
+					}
+					geometry Box {
+						size 6 0.1 2
+					}
+				}
+			]
+		}
+		Transform {
+			translation 20 7 1
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+						}
+					}
+					geometry Box {
+						size 0.1 10 2
+					}
+				}
+			]
+		}
+		Transform {
+			translation 24 2 1
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+						}
+					}
+					geometry Box {
+						size 8 0.1 2
+					}
+				}
+			]
+		}
+		Transform {
+			translation 28 7 1
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+						}
+					}
+					geometry Box {
+						size 0.1 10 2
+					}
+				}
+			]
+		}
+		Transform {
+			translation 26 14 1
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+						}
+					}
+					geometry Box {
+						size 8 0.1 2
+					}
+				}
+			]
+		}
+		Transform {
+			translation 15 14 1
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+						}
+					}
+					geometry Box {
+						size 10 0.1 2
+					}
+				}
+			]
+		}
+		Transform {
+			translation 8 11 1
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+						}
+					}
+					geometry Box {
+						size 0.1 18 2
+					}
+				}
+			]
+		}
+		Transform {
+			translation 5 20 1
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+						}
+					}
+					geometry Box {
+						size 10 0.1 2
+					}
+				}
+			]
+		}
+		Transform {
+			translation 10 16 1
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+						}
+					}
+					geometry Box {
+						size 0.1 4 2
+					}
+				}
+			]
+		}
+		Transform {
+			translation 18 25 1
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+						}
+					}
+					geometry Box {
+						size 0.1 10 2
+					}
+				}
+			]
+		}
+		Transform {
+			translation 20 19 1
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+						}
+					}
+					geometry Box {
+						size 0.1 10 2
+					}
+				}
+			]
+		}
+		Transform {
+			translation 22 19 1
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+						}
+					}
+					geometry Box {
+						size 0.1 10 2
+					}
+				}
+			]
+		}
+		Transform {
+			translation 21 19 1
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+						}
+					}
+					geometry Box {
+						size 2 0.1 2
+					}
+				}
+			]
+		}
+		Transform {
+			translation 9 17 1
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+						}
+					}
+					geometry Box {
+						size 2 0.1 2
+					}
+				}
+			]
+		}
+	]
+}
+

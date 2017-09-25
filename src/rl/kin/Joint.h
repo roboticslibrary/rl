@@ -24,15 +24,10 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_KIN_JOINT_H_
-#define _RL_KIN_JOINT_H_
+#ifndef RL_KIN_JOINT_H
+#define RL_KIN_JOINT_H
 
-#ifdef WIN32
 #include <unordered_set>
-#else // WIN32
-#include <tr1/unordered_set>
-#endif // WIN32
-
 #include <rl/math/Unit.h>
 
 #include "Transform.h"
@@ -64,7 +59,7 @@ namespace rl
 			
 			::rl::math::Real d;
 			
-			::std::tr1::unordered_set< ::std::size_t > leaves;
+			::std::unordered_set< ::std::size_t> leaves;
 			
 			::rl::math::Real max;
 			
@@ -87,4 +82,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_KIN_JOINT_H_
+#endif // RL_KIN_JOINT_H

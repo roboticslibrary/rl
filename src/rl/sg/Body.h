@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_SG_BODY_H_
-#define _RL_SG_BODY_H_
+#ifndef RL_SG_BODY_H
+#define RL_SG_BODY_H
 
 #include <string>
 #include <vector>
@@ -44,7 +44,7 @@ namespace rl
 		class Body
 		{
 		public:
-			typedef ::std::vector< Shape* >::iterator Iterator;
+			typedef ::std::vector<Shape*>::iterator Iterator;
 			
 			Body(Model* model);
 			
@@ -54,11 +54,11 @@ namespace rl
 			
 			Iterator begin();
 			
-			virtual Shape* create(SoVRMLShape* shape) = 0;
+			virtual Shape* create(::SoVRMLShape* shape) = 0;
 			
 			Iterator end();
 			
-			void getBoundingBoxPoints(const ::rl::math::Transform& frame, ::std::vector< ::rl::math::Vector3 >& p) const;
+			void getBoundingBoxPoints(const ::rl::math::Transform& frame, ::std::vector< ::rl::math::Vector3>& p) const;
 			
 			Model* getModel() const;
 			
@@ -66,7 +66,7 @@ namespace rl
 			
 			::std::size_t getNumShapes() const;
 			
-			void getPoints(const ::rl::math::Transform& frame, ::std::vector< ::rl::math::Vector3 >& p) const;
+			void getPoints(const ::rl::math::Transform& frame, ::std::vector< ::rl::math::Vector3>& p) const;
 			
 			Shape* getShape(const ::std::size_t& i) const;
 			
@@ -84,12 +84,12 @@ namespace rl
 			
 			::rl::math::Vector3 min;
 			
-			::std::vector< ::rl::math::Vector3 > points;
+			::std::vector< ::rl::math::Vector3> points;
 			
 		protected:
 			Model* model;
 			
-			::std::vector< Shape* > shapes;
+			::std::vector<Shape*> shapes;
 			
 		private:
 			::std::string name;
@@ -97,4 +97,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_SG_BODY_H_
+#endif // RL_SG_BODY_H

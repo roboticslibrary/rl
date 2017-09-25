@@ -24,21 +24,25 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_HAL_SICKS300_H_
-#define _RL_HAL_SICKS300_H_
+#ifndef RL_HAL_SICKS300_H
+#define RL_HAL_SICKS300_H
 
-#include <rl/util/Timer.h>
+#include <array>
+#include <cstdint>
 
+#include "CyclicDevice.h"
 #include "Device.h"
 #include "Lidar.h"
 #include "Serial.h"
-#include "types.h"
 
 namespace rl
 {
 	namespace hal
 	{
-		class SickS300 : public Lidar
+		/**
+		 * Sick S300 safety laser scanner.
+		 */
+		class SickS300 : public CyclicDevice, public Lidar
 		{
 		public:
 			SickS300(
@@ -50,7 +54,7 @@ namespace rl
 			
 			void close();
 			
-			void getDistances(::rl::math::Vector& distances) const;
+			::rl::math::Vector getDistances() const;
 			
 			::std::size_t getDistancesCount() const;
 			
@@ -79,15 +83,15 @@ namespace rl
 		protected:
 			
 		private:
-			uint16_t crc(const uint8_t* buf, const ::std::size_t& len) const;
+			::std::uint16_t crc(const ::std::uint8_t* buf, const ::std::size_t& len) const;
 			
-			::std::size_t recv(uint8_t* buf);
+			::std::size_t recv(::std::uint8_t* buf);
 			
-			uint8_t data[2048];
+			::std::array< ::std::uint8_t, 2048> data;
 			
 			Serial serial;
 		};
 	}
 }
 
-#endif // _RL_HAL_SICKS300_H_
+#endif // RL_HAL_SICKS300_H

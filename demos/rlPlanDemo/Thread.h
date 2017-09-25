@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _THREAD_H_
-#define _THREAD_H_
+#ifndef THREAD_H
+#define THREAD_H
 
 #include <QThread>
 #include <rl/plan/Viewer.h>
@@ -35,7 +35,7 @@ class Thread : public QThread, public rl::plan::Viewer
 	Q_OBJECT
 	
 public:
-	Thread(QObject* parent = NULL);
+	Thread(QObject* parent = nullptr);
 	
 	virtual ~Thread();
 	
@@ -77,7 +77,11 @@ public:
 	
 	void run();
 	
+	void showMessage(const std::string& message);
+	
 	void stop();
+	
+	bool animate;
 	
 	bool quit;
 	
@@ -103,6 +107,8 @@ signals:
 	
 	void lineResetRequested();
 	
+	void messageRequested(const std::string& message);
+	
 	void pointRequested(const rl::math::Vector& xyz);
 	
 	void pointResetRequested();
@@ -126,4 +132,4 @@ signals:
 	void workVertexRequested(const rl::math::Vector& q);
 };
 
-#endif // _THREAD_H_
+#endif // THREAD_H

@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_HAL_JOINTVELOCITYSENSOR_H_
-#define _RL_HAL_JOINTVELOCITYSENSOR_H_
+#ifndef RL_HAL_JOINTVELOCITYSENSOR_H
+#define RL_HAL_JOINTVELOCITYSENSOR_H
 
 #include <rl/math/Vector.h>
 
@@ -38,11 +38,11 @@ namespace rl
 		class JointVelocitySensor : public virtual AxisController
 		{
 		public:
-			JointVelocitySensor(const ::std::size_t& dof, const ::rl::math::Real& updateRate);
+			JointVelocitySensor(const ::std::size_t& dof);
 			
 			virtual ~JointVelocitySensor();
 			
-			virtual void getJointVelocity(::rl::math::Vector& qd) const = 0;
+			virtual ::rl::math::Vector getJointVelocity() const = 0;
 			
 		protected:
 			
@@ -52,4 +52,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_HAL_JOINTVELOCITYSENSOR_H_
+#endif // RL_HAL_JOINTVELOCITYSENSOR_H

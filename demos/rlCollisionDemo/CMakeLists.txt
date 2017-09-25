@@ -1,73 +1,91 @@
-project(rlCollisionDemo)
-
-find_package(Boost REQUIRED)
-find_package(Qt4 COMPONENTS QtCore QtGui QtOpenGL)
-include(${QT_USE_FILE})
-
-find_package(Bullet)
-find_package(Ode)
-find_package(Pqp)
-find_package(Solid)
+find_package(OpenGL REQUIRED)
 find_package(SoQt)
 
-if(QT_FOUND AND SOQT_FOUND)
-	if(BULLET_FOUND OR ODE_FOUND OR PQP_FOUND OR SOLID_FOUND)
+if(USE_QT5 AND SoQt5_FOUND)
+	find_package(Qt5 COMPONENTS Core Gui OpenGL Widgets QUIET)
+endif()
+
+if(Qt5_FOUND)
+	set(QT_LIBRARIES ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5OpenGL_LIBRARIES} ${Qt5Widgets_LIBRARIES})
+	set(QT_FOUND Qt5_FOUND)
+else()
+	set(QT_USE_IMPORTED_TARGETS ON)
+	find_package(Qt4 COMPONENTS QtCore QtGui QtOpenGL)
+	set(QT_USE_QTMAIN ON)
+	include(${QT_USE_FILE})
+endif()
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+find_package(Bullet)
+find_package(ccd)
+find_package(FCL)
+find_package(ODE)
+find_package(PQP)
+find_package(SOLID3)
+
+if(QT_FOUND AND SoQt_FOUND)
+	if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE_FOUND OR PQP_FOUND OR SOLID3_FOUND)
 		set(
 			HDRS
+			BodyDelegate.h
+			BodyModel.h
 			MainWindow.h
-			TestWidget.h
+			SoGradientBackground.h
 		)
 		
 		set(
 			SRCS
+			BodyDelegate.cpp
+			BodyModel.cpp
 			MainWindow.cpp
 			rlCollisionDemo.cpp
-			TestWidget.cpp
+			SoGradientBackground.cpp
 			${rl_SOURCE_DIR}/robotics-library.rc
-		)
-		
-		qt4_wrap_cpp(
-			MOC_SRCS
-			TestWidget.h
-			OPTIONS
-			-DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED
 		)
 		
 		add_executable(
 			rlCollisionDemo
+			WIN32
 			${HDRS}
 			${SRCS}
-			${MOC_SRCS}
 		)
 		
 		target_compile_definitions(
 			rlCollisionDemo
 			PUBLIC
-			${QT_DEFINITIONS}
-			${SOQT_DEFINITIONS}
+			${SoQt_DEFINITIONS}
 		)
 		
 		target_include_directories(
 			rlCollisionDemo
 			PUBLIC
-			${Boost_INCLUDE_DIR}
-			${QT_INCLUDES}
-			${SOQT_INCLUDE_DIRS}
+			${OPENGL_INCLUDE_DIR}
+			${SoQt_INCLUDE_DIRS}
 		)
 		
 		target_link_libraries(
 			rlCollisionDemo
-			rlsg
+			sg
+			${OPENGL_LIBRARIES}
 			${QT_LIBRARIES}
-			${SOQT_LIBRARIES}
+			${SoQt_LIBRARIES}
 		)
 		
 		set_target_properties(
 			rlCollisionDemo
 			PROPERTIES
 			VERSION ${VERSION}
-			DEBUG_POSTFIX d
 		)
+		
+		if(WIN32)
+			set_target_properties(
+				rlCollisionDemo
+				PROPERTIES
+				DEBUG_POSTFIX d
+			)
+		endif()
 		
 		install(
 			TARGETS rlCollisionDemo
@@ -77,23 +95,42 @@ if(QT_FOUND AND SOQT_FOUND)
 			RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 		)
 		
+		if(MSVC AND BUILD_SHARED_LIBS AND NOT CMAKE_VERSION VERSION_LESS 3.1)
+			install(FILES $<TARGET_PDB_FILE:rlCollisionDemo> DESTINATION ${CMAKE_INSTALL_BINDIR} CONFIGURATIONS Debug RelWithDebInfo COMPONENT demos)
+		endif()
+		
 		if(UNIX)
-			install(FILES rlCollisionDemo.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications COMPONENT demos)
-		endif(UNIX)
+			configure_file(rlCollisionDemo.desktop.in rlCollisionDemo.desktop @ONLY)
+			install(FILES ${CMAKE_CURRENT_BINARY_DIR}/rlCollisionDemo.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications COMPONENT demos)
+		endif()
 		
 		set(
-			CPACK_NSIS_EXTRA_INSTALL_COMMANDS
-			${CPACK_NSIS_EXTRA_INSTALL_COMMANDS}
+			CPACK_NSIS_CREATE_ICONS_EXTRA
+			${CPACK_NSIS_CREATE_ICONS_EXTRA}
 			"CreateShortCut \\\\
 				\\\"$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\rlCollisionDemo.lnk\\\" \\\\
 				\\\"$INSTDIR\\\\${CMAKE_INSTALL_BINDIR}\\\\rlCollisionDemo.exe\\\" \\\\
 				\\\"\\\\
-					\\\$\\\\\\\"$INSTDIR\\\\${CMAKE_INSTALL_DATADIR}\\\\rl\\\\examples\\\\rlsg\\\\scene.xml\\\$\\\\\\\"\\\\
+					\\\$\\\\\\\"$INSTDIR\\\\${CMAKE_INSTALL_DATADIR}\\\\rl-${VERSION}\\\\examples\\\\rlsg\\\\scene.xml\\\$\\\\\\\"\\\\
 				\\\" \\\\
 				\\\"\\\" \\\"\\\" \\\"\\\" \\\"\\\" \\\\
 				\\\"Collision detection and distance computation demo with basic scene\\\""
 			PARENT_SCOPE
 		)
-		set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS ${CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS} "Delete \\\"$SMPROGRAMS\\\\$START_MENU\\\\rlCollisionDemo.lnk\\\"" PARENT_SCOPE)
-	endif(BULLET_FOUND OR ODE_FOUND OR PQP_FOUND OR SOLID_FOUND)
-endif(QT_FOUND AND SOQT_FOUND)
+		set(CPACK_NSIS_DELETE_ICONS_EXTRA ${CPACK_NSIS_DELETE_ICONS_EXTRA} "Delete \\\"$SMPROGRAMS\\\\$START_MENU\\\\rlCollisionDemo.lnk\\\"" PARENT_SCOPE)
+		
+		set(
+			WIX_SHORTCUTS
+			${WIX_SHORTCUTS}
+			"<Shortcut
+				Arguments=\"&quot;[INSTALL_ROOT]${CMAKE_INSTALL_DATADIR}\\rl-${VERSION}\\examples\\rlsg\\scene.xml&quot;\"
+				Description=\"Collision detection and distance computation demo with basic scene\"
+				Id=\"CM_SP_bin.rlCollisionDemo.exe\"
+				Name=\"rlCollisionDemo\"
+				Target=\"[#CM_FP_bin.rlCollisionDemo.exe]\"
+				WorkingDirectory=\"CM_DP_bin\"
+			/>"
+			PARENT_SCOPE
+		)
+	endif()
+endif()

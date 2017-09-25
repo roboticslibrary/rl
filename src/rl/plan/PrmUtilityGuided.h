@@ -27,12 +27,10 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_PLAN_PRMUTILITYGUIDED_H_
-#define _RL_PLAN_PRMUTILITYGUIDED_H_
+#ifndef RL_PLAN_PRMUTILITYGUIDED_H
+#define RL_PLAN_PRMUTILITYGUIDED_H
 
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/random/uniform_real.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <random>
 
 #include "Prm.h"
 
@@ -41,7 +39,13 @@ namespace rl
 	namespace plan
 	{
 		/**
-		 * Probabilistic Roadmap using Utility-Guided Sampling.
+		 * Probabilistic Roadmaps with Utility-Guided Sampling.
+		 * 
+		 * Brendan Burns and Oliver Brock. Toward optimal configuration space sampling.
+		 * In Proceedings of the Robotics Science and Systems Conference, Cambridge,
+		 * MA, USA, June 2005.
+		 * 
+		 * http://www.roboticsproceedings.org/rss01/p15.pdf
 		 */
 		class PrmUtilityGuided : public Prm
 		{
@@ -54,9 +58,11 @@ namespace rl
 			
 			::std::string getName() const;
 			
-			void seed(const ::boost::mt19937::result_type& value);
+			void seed(const ::std::mt19937::result_type& value);
 			
 			bool solve();
+			
+		protected:
 			
 		private:
 			class Sample
@@ -71,6 +77,11 @@ namespace rl
 				bool isColliding;
 				
 				::rl::math::Vector q;
+				
+			protected:
+				
+			private:
+				
 			};
 			
 			/** A compare structure for nearest neighbor sorting. */
@@ -79,7 +90,10 @@ namespace rl
 				bool operator()(const Sample* x, const Sample* y) const;
 			};
 			
-			/** Samples a point near the middle (+/- variance) of two random nodes from unconnected components of the graph. */
+			/**
+			 * Samples a point near the middle (+/- variance) of two random nodes
+			 * from unconnected components of the graph.
+			 */
 			void generateEntropyGuidedSample(::rl::math::Vector& q);
 			
 			/**
@@ -89,17 +103,21 @@ namespace rl
 			*/
 			::rl::math::Real getFreeProbability(const Sample& sample);
 			
+			::std::uniform_real_distribution< ::rl::math::Real>::result_type rand();
+			
 			::std::size_t numNeighbors;
 			
 			::std::size_t numSamples;
 			
-			::boost::variate_generator< ::boost::mt19937, ::boost::uniform_real< ::rl::math::Real > > rand;
+			::std::uniform_real_distribution< ::rl::math::Real> randDistribution;
 			
-			::std::vector< Sample > samples;
+			::std::mt19937 randEngine;
+			
+			::std::vector<Sample> samples;
 			
 			::rl::math::Real variance;
 		};
 	}
 }
 
-#endif // _RL_PLAN_PRMUTILITYGUIDED_H_
+#endif // RL_PLAN_PRMUTILITYGUIDED_H

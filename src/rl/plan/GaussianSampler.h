@@ -24,10 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_PLAN_GAUSSIANSAMPLER_H_
-#define _RL_PLAN_GAUSSIANSAMPLER_H_
-
-#include <boost/random/normal_distribution.hpp>
+#ifndef RL_PLAN_GAUSSIANSAMPLER_H
+#define RL_PLAN_GAUSSIANSAMPLER_H
 
 #include "UniformSampler.h"
 
@@ -35,6 +33,16 @@ namespace rl
 {
 	namespace plan
 	{
+		/**
+		 * Gaussian sampling strategy.
+		 * 
+		 * Val&eacute;rie Boor, Mark H. Overmars, and A. Frank van der Stappen.
+		 * The Gaussian sampling strategy for probabilistic roadmap planners.
+		 * In Proceedings of the IEEE International Conference on Robotics and
+		 * Automation, pages 1018-1023, Detroit, MI, USA, May 1999.
+		 * 
+		 * http://dx.doi.org/10.1109/ROBOT.1999.772447
+		 */
 		class GaussianSampler : public UniformSampler
 		{
 		public:
@@ -42,14 +50,18 @@ namespace rl
 			
 			virtual ~GaussianSampler();
 			
-			void generateCollisionFree(::rl::math::Vector& q);
+			::rl::math::Vector generateCollisionFree();
 			
-			virtual void seed(const ::boost::mt19937::result_type& value);
+			virtual void seed(const ::std::mt19937::result_type& value);
 			
 			::rl::math::Vector* sigma;
 			
 		protected:
-			::boost::variate_generator< ::boost::mt19937, ::boost::normal_distribution< ::rl::math::Real > > gauss;
+			::std::normal_distribution< ::rl::math::Real>::result_type gauss();
+			
+			::std::normal_distribution< ::rl::math::Real> gaussDistribution;
+			
+			::std::mt19937 gaussEngine;
 			
 		private:
 			
@@ -57,4 +69,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_PLAN_GAUSSIANSAMPLER_H_
+#endif // RL_PLAN_GAUSSIANSAMPLER_H

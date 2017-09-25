@@ -1,5 +1,3 @@
-project(rlInterpolatorDemo)
-
 add_executable(
 	rlInterpolatorDemo
 	rlInterpolatorDemo.cpp
@@ -7,5 +5,5 @@ add_executable(
 
 target_link_libraries(
 	rlInterpolatorDemo
-	rlmath
+	math
 )

@@ -28,29 +28,28 @@
 #include <comedi.h>
 
 #include "Comedi.h"
-#include "DeviceException.h"
 #include "Jr3.h"
 
 namespace rl
 {
 	namespace hal
 	{
-		Jr3::Jr3(const ::std::string& filename) :
+		Jr3::Jr3(const ::std::string& filename, const ::std::chrono::nanoseconds& updateRate) :
+			CyclicDevice(updateRate),
 			SixAxisForceTorqueSensor(),
-			comedi(new Comedi(filename)),
+			comedi(filename),
 			values(),
 			zeroes()
 		{
 			for (::std::size_t i = 0; i < 6; ++i)
 			{
-				this->values[i] = ::std::numeric_limits< ::rl::math::Real >::quiet_NaN();
+				this->values[i] = ::std::numeric_limits< ::rl::math::Real>::quiet_NaN();
 				this->zeroes[i] = 0;
 			}
 		}
 		
 		Jr3::~Jr3()
 		{
-			delete this->comedi;
 		}
 		
 		void
@@ -65,19 +64,21 @@ namespace rl
 		void
 		Jr3::close()
 		{
-			this->comedi->close();
+			this->comedi.close();
 			this->setConnected(false);
 		}
 		
-		void
-		Jr3::getForces(::rl::math::Vector& forces) const
+		::rl::math::Vector
+		Jr3::getForces() const
 		{
-			assert(forces.size() >= 3);
+			::rl::math::Vector forces(3);
 			
 			for (::std::size_t i = 0; i < 3; ++i)
 			{
 				forces(i) = (this->values[i] - this->zeroes[i]) * 1000;
 			}
+			
+			return forces;
 		}
 		
 		::rl::math::Real
@@ -85,7 +86,7 @@ namespace rl
 		{
 			assert(i < 4);
 			
-			return -this->comedi->getMax(0, i);
+			return -this->comedi.getMax(0, i);
 		}
 		
 		::rl::math::Real
@@ -93,18 +94,20 @@ namespace rl
 		{
 			assert(i < 4);
 			
-			return -this->comedi->getMax(0, i);
+			return -this->comedi.getMax(0, i);
 		}
 		
-		void
-		Jr3::getForcesTorques(::rl::math::Vector& forcesTorques) const
+		::rl::math::Vector
+		Jr3::getForcesTorques() const
 		{
-			assert(forcesTorques.size() >= 6);
+			::rl::math::Vector forcesTorques(6);
 			
 			for (::std::size_t i = 0; i < 6; ++i)
 			{
 				forcesTorques(i) = (this->values[i] - this->zeroes[i]) * 1000;
 			}
+			
+			return forcesTorques;
 		}
 		
 		::rl::math::Real
@@ -112,7 +115,7 @@ namespace rl
 		{
 			assert(i < 7);
 			
-			return this->comedi->getMax(0, i);
+			return this->comedi.getMax(0, i);
 		}
 		
 		::rl::math::Real
@@ -120,18 +123,20 @@ namespace rl
 		{
 			assert(i < 7);
 			
-			return -this->comedi->getMax(0, i);
+			return -this->comedi.getMax(0, i);
 		}
 		
-		void
-		Jr3::getTorques(::rl::math::Vector& torques) const
+		::rl::math::Vector
+		Jr3::getTorques() const
 		{
-			assert(torques.size() >= 3);
+			::rl::math::Vector torques(3);
 			
 			for (::std::size_t i = 3; i < 6; ++i)
 			{
 				torques(i) = (this->values[i] - this->zeroes[i]) * 1000;
 			}
+			
+			return torques;
 		}
 		
 		::rl::math::Real
@@ -139,7 +144,7 @@ namespace rl
 		{
 			assert(i < 4);
 			
-			return this->comedi->getMax(0, 3 + i);
+			return this->comedi.getMax(0, 3 + i);
 		}
 		
 		::rl::math::Real
@@ -147,13 +152,13 @@ namespace rl
 		{
 			assert(i < 4);
 			
-			return -this->comedi->getMax(0, 3 + i);
+			return -this->comedi.getMax(0, 3 + i);
 		}
 		
 		void
 		Jr3::open()
 		{
-			this->comedi->open();
+			this->comedi.open();
 			this->setConnected(true);
 		}
 		
@@ -176,7 +181,7 @@ namespace rl
 		{
 			for (::std::size_t i = 0; i < 6; ++i)
 			{
-				this->comedi->read(0, i, this->values[i]);
+				this->comedi.read(0, i, this->values[i]);
 			}
 		}
 		

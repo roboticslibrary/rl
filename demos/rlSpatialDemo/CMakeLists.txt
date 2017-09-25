@@ -1,5 +1,3 @@
-project(rlSpatialDemo)
-
 add_executable(
 	rlSpatialDemo
 	rlSpatialDemo.cpp
@@ -7,5 +5,5 @@ add_executable(
 
 target_link_libraries(
 	rlSpatialDemo
-	rlmath
+	math
 )

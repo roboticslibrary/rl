@@ -24,9 +24,10 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_HAL_AXISCONTROLLER_H_
-#define _RL_HAL_AXISCONTROLLER_H_
+#ifndef RL_HAL_AXISCONTROLLER_H
+#define RL_HAL_AXISCONTROLLER_H
 
+#include <chrono>
 #include <rl/math/Real.h>
 
 #include "Device.h"
@@ -38,24 +39,19 @@ namespace rl
 		class AxisController : public virtual Device
 		{
 		public:
-			AxisController(const ::std::size_t& dof, const ::rl::math::Real& updateRate);
+			AxisController(const ::std::size_t& dof);
 			
 			virtual ~AxisController();
 			
 			::std::size_t getDof() const;
-			
-			virtual ::rl::math::Real getUpdateRate() const;
 			
 		protected:
 			
 		private:
 			/** Degrees of freedom. */
 			::std::size_t dof;
-			
-			/** [s] */
-			::rl::math::Real updateRate;
 		};
 	}
 }
 
-#endif // _RL_HAL_AXISCONTROLLER_H_
+#endif // RL_HAL_AXISCONTROLLER_H

@@ -24,7 +24,9 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include "Body.h"
 #include "DepthScene.h"
+#include "Model.h"
 
 namespace rl
 {
@@ -37,6 +39,68 @@ namespace rl
 		
 		DepthScene::~DepthScene()
 		{
+		}
+		
+		::rl::math::Real
+		DepthScene::depth(Body* first, Body* second, ::rl::math::Vector3& point1, ::rl::math::Vector3& point2)
+		{
+			::rl::math::Real depth = 0;
+			
+			for (Body::Iterator i = first->begin(); i != first->end(); ++i)
+			{
+				for (Body::Iterator j = second->begin(); j != second->end(); ++j)
+				{
+					::rl::math::Vector3 tmpPoint1;
+					::rl::math::Vector3 tmpPoint2;
+					
+					::rl::math::Real tmpDepth = this->depth(
+						*i,
+						*j,
+						tmpPoint1,
+						tmpPoint2
+					);
+					
+					if (tmpDepth > depth)
+					{
+						depth = tmpDepth;
+						point1 = tmpPoint1;
+						point2 = tmpPoint2;
+					}
+				}
+			}
+			
+			return depth;
+		}
+		
+		::rl::math::Real
+		DepthScene::depth(Model* first, Model* second, ::rl::math::Vector3& point1, ::rl::math::Vector3& point2)
+		{
+			::rl::math::Real depth = 0;
+			
+			for (Model::Iterator i = first->begin(); i != first->end(); ++i)
+			{
+				for (Model::Iterator j = second->begin(); j != second->end(); ++j)
+				{
+					::rl::math::Vector3 tmpPoint1;
+					::rl::math::Vector3 tmpPoint2;
+					
+					::rl::math::Real tmpDepth = this->depth(
+						*i,
+						*j,
+						tmpPoint1,
+						tmpPoint2
+					);
+					
+					if (tmpDepth > depth)
+					{
+						depth = tmpDepth;
+						point1 = tmpPoint1;
+						point2 = tmpPoint2;
+					}
+				}
+			}
+			
+			return depth;
 		}
 	}
 }

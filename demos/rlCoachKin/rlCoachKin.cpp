@@ -30,7 +30,7 @@
 
 #include "MainWindow.h"
 
-MainWindow* MainWindow::singleton = NULL;
+MainWindow* MainWindow::singleton = nullptr;
 
 int
 main(int argc, char** argv)
@@ -38,7 +38,7 @@ main(int argc, char** argv)
 	if (argc < 3)
 	{
 		std::cout << "Usage: rlCoachKin SCENEFILE KINEMATICSFILE1 ... KINEMATICSFILEn" << std::endl;
-		return 1;
+		return EXIT_FAILURE;
 	}
 	
 	try
@@ -54,6 +54,6 @@ main(int argc, char** argv)
 	catch (const std::exception& e)
 	{
 		std::cerr << e.what() << std::endl;
-		return -1;
+		return EXIT_FAILURE;
 	}
 }

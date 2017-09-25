@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_MDL_CYLINDRICAL_H_
-#define _RL_MDL_CYLINDRICAL_H_
+#ifndef RL_MDL_CYLINDRICAL_H
+#define RL_MDL_CYLINDRICAL_H
 
 #include "Joint.h"
 
@@ -45,9 +45,9 @@ namespace rl
 		protected:
 			
 		private:
-			::rl::math::Real h;
+			
 		};
 	}
 }
 
-#endif // _RL_MDL_CYLINDRICALL_H_
+#endif // RL_MDL_CYLINDRICALL_H

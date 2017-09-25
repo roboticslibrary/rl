@@ -24,14 +24,10 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_MDL_BODY_H_
-#define _RL_MDL_BODY_H_
+#ifndef RL_MDL_BODY_H
+#define RL_MDL_BODY_H
 
-#ifdef WIN32
 #include <unordered_set>
-#else // WIN32
-#include <tr1/unordered_set>
-#endif // WIN32
 
 #include "Frame.h"
 
@@ -68,7 +64,7 @@ namespace rl
 			
 			void setInertia(const ::rl::math::Real& xx, const ::rl::math::Real& yy, const ::rl::math::Real& zz, const ::rl::math::Real& yz, const ::rl::math::Real& xz, const ::rl::math::Real& xy);
 			
-			::rl::math::Vector3 c;
+			::rl::math::Vector3 cm;
 			
 			bool collision;
 			
@@ -78,7 +74,7 @@ namespace rl
 			
 			::rl::math::Real m;
 			
-			::std::tr1::unordered_set< Body* > selfcollision;
+			::std::unordered_set<Body*> selfcollision;
 			
 		protected:
 			
@@ -88,4 +84,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_MDL_BODY_H_
+#endif // RL_MDL_BODY_H

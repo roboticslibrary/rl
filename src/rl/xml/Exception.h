@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_XML_EXCEPTION_H_
-#define _RL_XML_EXCEPTION_H_
+#ifndef RL_XML_EXCEPTION_H
+#define RL_XML_EXCEPTION_H
 
 #include <stdexcept>
 
@@ -36,7 +36,7 @@ namespace rl
 		class Exception : public ::std::runtime_error
 		{
 		public:
-			Exception(const ::std::string& what_arg) :
+			explicit Exception(const ::std::string& what_arg) :
 				::std::runtime_error(what_arg)
 			{
 			}
@@ -53,4 +53,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_XML_EXCEPTION_H_
+#endif // RL_XML_EXCEPTION_H

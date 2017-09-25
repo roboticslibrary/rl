@@ -30,7 +30,7 @@
 
 #include "MainWindow.h"
 
-MainWindow* MainWindow::singleton = NULL;
+MainWindow* MainWindow::singleton = nullptr;
 
 int
 main(int argc, char** argv)
@@ -38,12 +38,17 @@ main(int argc, char** argv)
 	if (argc < 3)
 	{
 		std::cout << "Usage: rlCoachMdl SCENEFILE MODELFILE1 ... MODELFILEn" << std::endl;
-		return 1;
+		return EXIT_FAILURE;
 	}
 	
 	try
 	{
 		QApplication application(argc, argv);
+		application.setStyleSheet("\
+			QStatusBar QComboBox { background: transparent; border: none; }\
+			QStatusBar QComboBox::drop-down { border: none; }\
+			QStatusBar QSpinBox { background: transparent; border: none; }\
+		");
 		
 		QObject::connect(&application, SIGNAL(lastWindowClosed()), &application, SLOT(quit()));
 		
@@ -54,6 +59,6 @@ main(int argc, char** argv)
 	catch (const std::exception& e)
 	{
 		std::cerr << e.what() << std::endl;
-		return -1;
+		return EXIT_FAILURE;
 	}
 }

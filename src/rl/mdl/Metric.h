@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_MDL_METRIC_H_
-#define _RL_MDL_METRIC_H_
+#ifndef RL_MDL_METRIC_H
+#define RL_MDL_METRIC_H
 
 #include "Model.h"
 
@@ -60,11 +60,15 @@ namespace rl
 			
 			::rl::math::Real newDistance(const ::rl::math::Real& dist, const ::rl::math::Real& oldOff, const ::rl::math::Real& newOff, const int& cuttingDimension) const;
 			
+			void normalize(::rl::math::Vector& q) const;
+			
 			void step(const ::rl::math::Vector& q1, const ::rl::math::Vector& qdot, ::rl::math::Vector& q2) const;
 			
 			::rl::math::Real transformedDistance(const ::rl::math::Real& d) const;
 			
 			::rl::math::Real transformedDistance(const ::rl::math::Vector& q1, const ::rl::math::Vector& q2) const;
+			
+			::rl::math::Real transformedDistance(const ::rl::math::Real& q1, const ::rl::math::Real& q2, const ::std::size_t& i) const;
 			
 		protected:
 			
@@ -74,4 +78,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_MDL_METRIC_H_
+#endif // RL_MDL_METRIC_H

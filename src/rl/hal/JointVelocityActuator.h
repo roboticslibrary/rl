@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_HAL_JOINTVELOCITYACTUATOR_H_
-#define _RL_HAL_JOINTVELOCITYACTUATOR_H_
+#ifndef RL_HAL_JOINTVELOCITYACTUATOR_H
+#define RL_HAL_JOINTVELOCITYACTUATOR_H
 
 #include <rl/math/Vector.h>
 
@@ -38,7 +38,7 @@ namespace rl
 		class JointVelocityActuator : public virtual AxisController
 		{
 		public:
-			JointVelocityActuator(const ::std::size_t& dof, const ::rl::math::Real& updateRate);
+			JointVelocityActuator(const ::std::size_t& dof);
 			
 			virtual ~JointVelocityActuator();
 			
@@ -52,4 +52,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_HAL_JOINTVELOCITYACTUATOR_H_
+#endif // RL_HAL_JOINTVELOCITYACTUATOR_H

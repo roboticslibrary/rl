@@ -53,7 +53,7 @@ PlannerModel::columnCount(const QModelIndex& parent) const
 QVariant
 PlannerModel::data(const QModelIndex& index, int role) const
 {
-	if (NULL == MainWindow::instance()->planner)
+	if (nullptr == MainWindow::instance()->planner)
 	{
 		return QVariant();
 	}
@@ -70,13 +70,15 @@ PlannerModel::data(const QModelIndex& index, int role) const
 		switch (index.row())
 		{
 		case 0:
-			return MainWindow::instance()->planner->duration;
+			return std::chrono::duration_cast<std::chrono::duration<double>>(
+				MainWindow::instance()->planner->duration
+			).count();
 			break;
 		default:
 			break;
 		}
 		
-		if (rl::plan::Eet* eet = dynamic_cast< rl::plan::Eet* >(MainWindow::instance()->planner.get()))
+		if (rl::plan::Eet* eet = dynamic_cast<rl::plan::Eet*>(MainWindow::instance()->planner.get()))
 		{
 			switch (index.row())
 			{
@@ -84,27 +86,30 @@ PlannerModel::data(const QModelIndex& index, int role) const
 				return eet->alpha;
 				break;
 			case 5:
-				return eet->distanceWeight;
+				return eet->beta;
 				break;
 			case 6:
-				return eet->gamma;
+				return eet->distanceWeight;
 				break;
 			case 7:
-				return eet->max.x();
+				return eet->gamma;
 				break;
 			case 8:
-				return eet->max.y();
+				return eet->max.x();
 				break;
 			case 9:
-				return eet->max.z();
+				return eet->max.y();
 				break;
 			case 10:
-				return eet->min.x();
+				return eet->max.z();
 				break;
 			case 11:
-				return eet->min.y();
+				return eet->min.x();
 				break;
 			case 12:
+				return eet->min.y();
+				break;
+			case 13:
 				return eet->min.z();
 				break;
 			default:
@@ -112,18 +117,18 @@ PlannerModel::data(const QModelIndex& index, int role) const
 			}
 		}
 		
-		if (rl::plan::Prm* prm = dynamic_cast< rl::plan::Prm* >(MainWindow::instance()->planner.get()))
+		if (rl::plan::Prm* prm = dynamic_cast<rl::plan::Prm*>(MainWindow::instance()->planner.get()))
 		{
 			switch (index.row())
 			{
 			case 1:
-				return static_cast< unsigned int >(prm->degree);
+				return static_cast<unsigned int>(prm->degree);
 				break;
 			case 2:
 				return prm->verifier->delta;
 				break;
 			case 3:
-				return static_cast< unsigned int >(prm->k);
+				return static_cast<unsigned int>(prm->k);
 				break;
 			case 4:
 				return prm->radius;
@@ -133,7 +138,7 @@ PlannerModel::data(const QModelIndex& index, int role) const
 			}
 		}
 		
-		if (rl::plan::Rrt* rrt = dynamic_cast< rl::plan::Rrt* >(MainWindow::instance()->planner.get()))
+		if (rl::plan::Rrt* rrt = dynamic_cast<rl::plan::Rrt*>(MainWindow::instance()->planner.get()))
 		{
 			switch (index.row())
 			{
@@ -148,7 +153,7 @@ PlannerModel::data(const QModelIndex& index, int role) const
 			}
 		}
 		
-		if (rl::plan::RrtGoalBias* rrtGoalBias = dynamic_cast< rl::plan::RrtGoalBias* >(MainWindow::instance()->planner.get()))
+		if (rl::plan::RrtGoalBias* rrtGoalBias = dynamic_cast<rl::plan::RrtGoalBias*>(MainWindow::instance()->planner.get()))
 		{
 			switch (index.row())
 			{
@@ -159,8 +164,10 @@ PlannerModel::data(const QModelIndex& index, int role) const
 				break;
 			}
 		}
+		
+		break;
 	case Qt::TextAlignmentRole:
-		return Qt::AlignRight;
+		return QVariant(Qt::AlignRight | Qt::AlignVCenter);
 		break;
 	default:
 		break;
@@ -183,17 +190,9 @@ PlannerModel::flags(const QModelIndex &index) const
 QVariant
 PlannerModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-	if (NULL == MainWindow::instance()->planner)
+	if (nullptr == MainWindow::instance()->planner)
 	{
 		return QVariant();
-	}
-	
-	if (Qt::DisplayRole == role && Qt::Horizontal == orientation)
-	{
-		if (0 == section)
-		{
-			return MainWindow::instance()->planner->getName().c_str();
-		}
 	}
 	
 	if (Qt::DisplayRole == role && Qt::Vertical == orientation)
@@ -207,7 +206,7 @@ PlannerModel::headerData(int section, Qt::Orientation orientation, int role) con
 			break;
 		}
 		
-		if (dynamic_cast< rl::plan::Eet* >(MainWindow::instance()->planner.get()))
+		if (dynamic_cast<rl::plan::Eet*>(MainWindow::instance()->planner.get()))
 		{
 			switch (section)
 			{
@@ -215,27 +214,30 @@ PlannerModel::headerData(int section, Qt::Orientation orientation, int role) con
 				return "alpha";
 				break;
 			case 5:
-				return "distanceWeight";
+				return "beta";
 				break;
 			case 6:
-				return "gamma";
+				return "distanceWeight";
 				break;
 			case 7:
-				return "max.x";
+				return "gamma";
 				break;
 			case 8:
-				return "max.y";
+				return "max.x";
 				break;
 			case 9:
-				return "max.z";
+				return "max.y";
 				break;
 			case 10:
-				return "min.x";
+				return "max.z";
 				break;
 			case 11:
-				return "min.y";
+				return "min.x";
 				break;
 			case 12:
+				return "min.y";
+				break;
+			case 13:
 				return "min.z";
 				break;
 			default:
@@ -243,7 +245,7 @@ PlannerModel::headerData(int section, Qt::Orientation orientation, int role) con
 			}
 		}
 		
-		if (dynamic_cast< rl::plan::Prm* >(MainWindow::instance()->planner.get()))
+		if (dynamic_cast<rl::plan::Prm*>(MainWindow::instance()->planner.get()))
 		{
 			switch (section)
 			{
@@ -264,7 +266,7 @@ PlannerModel::headerData(int section, Qt::Orientation orientation, int role) con
 			}
 		}
 		
-		if (dynamic_cast< rl::plan::Rrt* >(MainWindow::instance()->planner.get()))
+		if (dynamic_cast<rl::plan::Rrt*>(MainWindow::instance()->planner.get()))
 		{
 			switch (section)
 			{
@@ -279,7 +281,7 @@ PlannerModel::headerData(int section, Qt::Orientation orientation, int role) con
 			}
 		}
 		
-		if (dynamic_cast< rl::plan::RrtGoalBias* >(MainWindow::instance()->planner.get()))
+		if (dynamic_cast<rl::plan::RrtGoalBias*>(MainWindow::instance()->planner.get()))
 		{
 			switch (section)
 			{
@@ -298,30 +300,31 @@ PlannerModel::headerData(int section, Qt::Orientation orientation, int role) con
 void
 PlannerModel::invalidate()
 {
-	this->reset();
+	this->beginResetModel();
+	this->endResetModel();
 }
 
 int
 PlannerModel::rowCount(const QModelIndex& parent) const
 {
-	if (NULL == MainWindow::instance()->planner)
+	if (nullptr == MainWindow::instance()->planner)
 	{
 		return 0;
 	}
 	
-	if (dynamic_cast< rl::plan::Prm* >(MainWindow::instance()->planner.get()))
+	if (dynamic_cast<rl::plan::Prm*>(MainWindow::instance()->planner.get()))
 	{
 		return 5;
 	}
-	else if (dynamic_cast< rl::plan::Eet* >(MainWindow::instance()->planner.get()))
+	else if (dynamic_cast<rl::plan::Eet*>(MainWindow::instance()->planner.get()))
 	{
-		return 13;
+		return 14;
 	}
-	else if (dynamic_cast< rl::plan::RrtGoalBias* >(MainWindow::instance()->planner.get()))
+	else if (dynamic_cast<rl::plan::RrtGoalBias*>(MainWindow::instance()->planner.get()))
 	{
 		return 4;
 	}
-	else if (dynamic_cast< rl::plan::Rrt* >(MainWindow::instance()->planner.get()))
+	else if (dynamic_cast<rl::plan::Rrt*>(MainWindow::instance()->planner.get()))
 	{
 		return 3;
 	}
@@ -332,7 +335,7 @@ PlannerModel::rowCount(const QModelIndex& parent) const
 bool
 PlannerModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
-	if (NULL == MainWindow::instance()->planner)
+	if (nullptr == MainWindow::instance()->planner)
 	{
 		return false;
 	}
@@ -347,90 +350,95 @@ PlannerModel::setData(const QModelIndex& index, const QVariant& value, int role)
 		switch (index.row())
 		{
 		case 0:
-			MainWindow::instance()->planner->duration = value.value< ::rl::math::Real >();
+			MainWindow::instance()->planner->duration = std::chrono::duration_cast<std::chrono::steady_clock::duration>(
+				std::chrono::duration<double>(value.value<double>())
+			);
 			break;
 		default:
 			break;
 		}
 		
-		if (rl::plan::Eet* eet = dynamic_cast< rl::plan::Eet* >(MainWindow::instance()->planner.get()))
+		if (rl::plan::Eet* eet = dynamic_cast<rl::plan::Eet*>(MainWindow::instance()->planner.get()))
 		{
 			switch (index.row())
 			{
 			case 4:
-				eet->alpha = value.value< ::rl::math::Real >();
+				eet->alpha = value.value<rl::math::Real>();
 				break;
 			case 5:
-				eet->distanceWeight = value.value< ::rl::math::Real >();
+				eet->beta = value.value<rl::math::Real>();
 				break;
 			case 6:
-				eet->gamma = value.value< ::rl::math::Real >();
+				eet->distanceWeight = value.value<rl::math::Real>();
 				break;
 			case 7:
-				eet->max.x() = value.value< ::rl::math::Real >();
+				eet->gamma = value.value<rl::math::Real>();
 				break;
 			case 8:
-				eet->max.y() = value.value< ::rl::math::Real >();
+				eet->max.x() = value.value<rl::math::Real>();
 				break;
 			case 9:
-				eet->max.z() = value.value< ::rl::math::Real >();
+				eet->max.y() = value.value<rl::math::Real>();
 				break;
 			case 10:
-				eet->min.x() = value.value< ::rl::math::Real >();
+				eet->max.z() = value.value<rl::math::Real>();
 				break;
 			case 11:
-				eet->min.y() = value.value< ::rl::math::Real >();
+				eet->min.x() = value.value<rl::math::Real>();
 				break;
 			case 12:
-				eet->min.z() = value.value< ::rl::math::Real >();
+				eet->min.y() = value.value<rl::math::Real>();
+				break;
+			case 13:
+				eet->min.z() = value.value<rl::math::Real>();
 				break;
 			default:
 				break;
 			}
 		}
 		
-		if (rl::plan::Prm* prm = dynamic_cast< rl::plan::Prm* >(MainWindow::instance()->planner.get()))
+		if (rl::plan::Prm* prm = dynamic_cast<rl::plan::Prm*>(MainWindow::instance()->planner.get()))
 		{
 			switch (index.row())
 			{
 			case 1:
-				prm->degree = value.value< ::std::size_t >();
+				prm->degree = value.value<std::size_t>();
 				break;
 			case 2:
-				prm->verifier->delta = value.value< ::rl::math::Real >();
+				prm->verifier->delta = value.value<rl::math::Real>();
 				break;
 			case 3:
-				prm->k = value.value< ::std::size_t >();
+				prm->k = value.value<std::size_t>();
 				break;
 			case 4:
-				prm->radius = value.value< ::rl::math::Real >();
+				prm->radius = value.value<rl::math::Real>();
 				break;
 			default:
 				break;
 			}
 		}
 		
-		if (rl::plan::Rrt* rrt = dynamic_cast< rl::plan::Rrt* >(MainWindow::instance()->planner.get()))
+		if (rl::plan::Rrt* rrt = dynamic_cast<rl::plan::Rrt*>(MainWindow::instance()->planner.get()))
 		{
 			switch (index.row())
 			{
 			case 1:
-				rrt->delta = value.value< ::rl::math::Real >();
+				rrt->delta = value.value<rl::math::Real>();
 				break;
 			case 2:
-				rrt->epsilon = value.value< ::rl::math::Real >();
+				rrt->epsilon = value.value<rl::math::Real>();
 				break;
 			default:
 				break;
 			}
 		}
 		
-		if (rl::plan::RrtGoalBias* rrtGoalBias = dynamic_cast< rl::plan::RrtGoalBias* >(MainWindow::instance()->planner.get()))
+		if (rl::plan::RrtGoalBias* rrtGoalBias = dynamic_cast<rl::plan::RrtGoalBias*>(MainWindow::instance()->planner.get()))
 		{
 			switch (index.row())
 			{
 			case 3:
-				rrtGoalBias->probability = value.value< ::rl::math::Real >();
+				rrtGoalBias->probability = value.value<rl::math::Real>();
 				break;
 			default:
 				break;

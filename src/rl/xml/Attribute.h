@@ -24,12 +24,14 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_XML_ATTRIBUTE_H_
-#define _RL_XML_ATTRIBUTE_H_
+#ifndef RL_XML_ATTRIBUTE_H
+#define RL_XML_ATTRIBUTE_H
 
 #include <string>
 #include <boost/shared_array.hpp>
 #include <libxml/parser.h>
+
+#include "Namespace.h"
 
 namespace rl
 {
@@ -38,46 +40,94 @@ namespace rl
 		class Attribute
 		{
 		public:
-			Attribute(xmlAttrPtr attr) :
+			explicit Attribute(::xmlAttrPtr attr) :
 				attr(attr)
 			{
 			}
 			
-			Attribute(xmlNodePtr node, const ::std::string& name, const ::std::string& value) :
+			Attribute(::xmlNodePtr node, const ::std::string& name, const ::std::string& value) :
 				attr(
-					xmlNewProp(
+					::xmlNewProp(
 						node,
-						reinterpret_cast< const xmlChar* >(name.c_str()),
-						reinterpret_cast< const xmlChar* >(value.c_str())
+						reinterpret_cast<const ::xmlChar*>(name.c_str()),
+						reinterpret_cast<const ::xmlChar*>(value.c_str())
 					)
 				)
 			{
 			}
 			
-			virtual ~Attribute()
+			Attribute(::xmlNodePtr node, const Namespace& nameSpace, const ::std::string& name, const ::std::string& value) :
+				attr(
+					::xmlNewNsProp(
+						node,
+						nameSpace.get(),
+						reinterpret_cast<const ::xmlChar*>(name.c_str()),
+						reinterpret_cast<const ::xmlChar*>(value.c_str())
+					)
+				)
 			{
-				if (NULL == this->attr->doc)
+			}
+			
+			~Attribute()
+			{
+				if (nullptr != this->attr && nullptr == this->attr->doc)
 				{
-					xmlFreeProp(this->attr);
+					::xmlFreeProp(this->attr);
 				}
+			}
+			
+			::xmlAttrPtr get() const
+			{
+				return this->attr;
+			}
+			
+			::std::string getName() const
+			{
+				return nullptr != this->attr->name ? reinterpret_cast<const char*>(this->attr->name) : ::std::string(); 
+			}
+			
+			Attribute getNext() const
+			{
+				return Attribute(this->attr->next);
+			}
+			
+			Attribute getPrevious() const
+			{
+				return Attribute(this->attr->prev);
 			}
 			
 			::std::string getValue() const
 			{
-				::boost::shared_array< xmlChar > value(
-					xmlGetProp(
-						this->attr->parent,
-						this->attr->name
-					),
-					xmlFree
-				);
-				
-				return reinterpret_cast< char* >(value.get());
+				if (nullptr != this->attr->ns)
+				{
+					::boost::shared_array< ::xmlChar> value(
+						::xmlGetNsProp(
+							this->attr->parent,
+							this->attr->name,
+							this->attr->ns->href
+						),
+						::xmlFree
+					);
+					
+					return nullptr != value.get() ? reinterpret_cast<char*>(value.get()) : ::std::string();
+				}
+				else
+				{
+					::boost::shared_array< ::xmlChar> value(
+						::xmlGetProp(
+							this->attr->parent,
+							this->attr->name
+						),
+						::xmlFree
+					);
+					
+					return nullptr != value.get() ? reinterpret_cast<char*>(value.get()) : ::std::string();
+				}
 			}
 			
-			xmlAttrPtr operator()() const
+			::xmlAttr& operator*() const
 			{
-				return this->attr;
+				return *this->attr;
 			}
 			
 			void remove()
@@ -87,19 +137,31 @@ namespace rl
 			
 			void setValue(const ::std::string& value)
 			{
-				xmlSetProp(
-					this->attr->parent,
-					this->attr->name,
-					reinterpret_cast< const xmlChar* >(value.c_str())
-				);
+				if (nullptr != this->attr->ns)
+				{
+					::xmlSetNsProp(
+						this->attr->parent,
+						this->attr->ns,
+						this->attr->name,
+						reinterpret_cast<const ::xmlChar*>(value.c_str())
+					);
+				}
+				else
+				{
+					::xmlSetProp(
+						this->attr->parent,
+						this->attr->name,
+						reinterpret_cast<const ::xmlChar*>(value.c_str())
+					);
+				}
 			}
 			
 		protected:
 			
 		private:
-			xmlAttrPtr attr;
+			::xmlAttrPtr attr;
 		};
 	}
 }
 
-#endif // _RL_XML_ATTRIBUTE_H_
+#endif // RL_XML_ATTRIBUTE_H

@@ -25,37 +25,84 @@
 //
 
 #include <iostream>
+#include <signal.h>
 #include <stdexcept>
+#include <thread>
 #include <rl/hal/WeissWsg50.h>
-#include <rl/util/Timer.h>
+
+bool running = true;
+
+void handler(int signum)
+{
+	running = false;
+}
 
 int
 main(int argc, char** argv)
 {
+	signal(SIGINT, handler);
+	
 	try
 	{
 		rl::hal::WeissWsg50 gripper;
 		
 		gripper.open();
-		gripper.start();
 		
-		gripper.doSetAcceleration(0.2f);
-		gripper.doSetForceLimit(40.0f);
-		gripper.doPrePositionFingers(0.02f);
-		rl::util::Timer::sleep(1.0f);
+		std::chrono::steady_clock::time_point time = std::chrono::steady_clock::now();
 		
-		gripper.doSetAcceleration(0.5f);
-		gripper.doSetForceLimit(20.0f);
-		gripper.doPrePositionFingers(0.1f, 0.4f);
+		do
+		{
+			time += std::chrono::duration_cast<std::chrono::steady_clock::duration>(gripper.getUpdateRate());
+			std::this_thread::sleep_until(time);
+			gripper.start();
+		}
+		while (!gripper.isRunning());
 		
-		gripper.stop();
+		for (std::size_t i = 0; running; ++i)
+		{
+			time += std::chrono::duration_cast<std::chrono::steady_clock::duration>(gripper.getUpdateRate());
+			std::this_thread::sleep_until(time);
+			
+			gripper.step();
+			
+			std::cout << "openingWidth: " << gripper.getOpeningWidth() << std::endl;
+			std::cout << "force: " << gripper.getForce() << std::endl;
+			std::cout << "speed: " << gripper.getSpeed() << std::endl;
+			
+			rl::hal::WeissWsg50::SystemState systemState = gripper.getSystemState();
+			
+			std::cout << "isReferenced: " << (rl::hal::WeissWsg50::SYSTEM_STATE_REFERENCED & systemState) << std::endl;
+			std::cout << "isMoving: " << (rl::hal::WeissWsg50::SYSTEM_STATE_MOVING & systemState) << std::endl;
+			std::cout << "isTargetPositionReached: " << (rl::hal::WeissWsg50::SYSTEM_STATE_TARGET_POSITION_REACHED & systemState) << std::endl;
+			
+			if (0 == i % 100)
+			{
+				if (gripper.getOpeningWidth() > 0.1f)
+				{
+					gripper.shut();
+				}
+				else
+				{
+					gripper.release();
+				}
+			}
+		}
+		
+		do
+		{
+			time += std::chrono::duration_cast<std::chrono::steady_clock::duration>(gripper.getUpdateRate());
+			std::this_thread::sleep_until(time);
+			gripper.stop();
+		}
+		while (gripper.isRunning());
+		
 		gripper.close();
 	}
 	catch (const std::exception& e)
 	{
 		std::cerr << e.what() << std::endl;
-		return 1;
+		return EXIT_FAILURE;
 	}
 	
-	return 0;
+	return EXIT_SUCCESS;
 }

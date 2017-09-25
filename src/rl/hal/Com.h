@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_HAL_COM_H_
-#define _RL_HAL_COM_H_
+#ifndef RL_HAL_COM_H
+#define RL_HAL_COM_H
 
 namespace rl
 {
@@ -53,4 +53,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_HAL_COM_H_
+#endif // RL_HAL_COM_H

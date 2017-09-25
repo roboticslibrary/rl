@@ -34,7 +34,7 @@ namespace rl
 		Comedi::Comedi(const ::std::string& filename) :
 			Com(),
 			aref(AREF_GROUND),
-			device(NULL),
+			device(nullptr),
 			filename(filename),
 			range(0)
 		{
@@ -51,7 +51,7 @@ namespace rl
 		void
 		Comedi::close()
 		{
-			if (NULL != this->device)
+			if (nullptr != this->device)
 			{
 				comedi_close(this->device);
 			}
@@ -70,7 +70,7 @@ namespace rl
 		{
 			const char* name = comedi_get_board_name(this->device);
 			
-			if (NULL == name)
+			if (nullptr == name)
 			{
 				throw ComException(comedi_strerror(comedi_errno()));
 			}
@@ -89,7 +89,7 @@ namespace rl
 		{
 			const char* name = comedi_get_driver_name(this->device);
 			
-			if (NULL == name)
+			if (nullptr == name)
 			{
 				throw ComException(comedi_strerror(comedi_errno()));
 			}
@@ -179,7 +179,7 @@ namespace rl
 		{
 			this->device = comedi_open(this->filename.c_str());
 			
-			if (NULL == this->device)
+			if (nullptr == this->device)
 			{
 				throw ComException(comedi_strerror(comedi_errno()));
 			}
@@ -206,7 +206,7 @@ namespace rl
 			
 			comedi_range* range = comedi_get_range(this->device, subdevice, channel, this->range);
 			
-			if (NULL == range)
+			if (nullptr == range)
 			{
 				throw ComException(comedi_strerror(comedi_errno()));
 			}
@@ -233,7 +233,7 @@ namespace rl
 			
 			comedi_range* range = comedi_get_range(this->device, subdevice, channel, this->range);
 			
-			if (NULL == range)
+			if (nullptr == range)
 			{
 				throw ComException(comedi_strerror(comedi_errno()));
 			}

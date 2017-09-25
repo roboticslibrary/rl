@@ -24,12 +24,12 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_XML_DOMPARSER_H_
-#define _RL_XML_DOMPARSER_H_
+#ifndef RL_XML_DOMPARSER_H
+#define RL_XML_DOMPARSER_H
 
+#include <memory>
 #include <string>
 #include <boost/shared_array.hpp>
-#include <boost/shared_ptr.hpp>
 #include <libxml/parser.h>
 
 #include "Document.h"
@@ -43,21 +43,31 @@ namespace rl
 		{
 		public:
 			DomParser() :
-				parser(xmlNewParserCtxt(), xmlFreeParserCtxt)
+				parser(::xmlNewParserCtxt(), ::xmlFreeParserCtxt)
 			{
 			}
 			
-			virtual ~DomParser()
+			~DomParser()
 			{
+			}
+			
+			::xmlParserCtxtPtr get() const
+			{
+				return this->parser.get();
+			}
+			
+			::xmlParserCtxt& operator*() const
+			{
+				return *this->parser;
 			}
 			
 			Document readFile(const ::std::string& filename, const ::std::string& encoding = "", const int& options = 0) const
 			{
-				xmlDocPtr doc = xmlCtxtReadFile(this->parser.get(), filename.c_str(), encoding.c_str(), options);
+				::xmlDocPtr doc = ::xmlCtxtReadFile(this->parser.get(), filename.c_str(), encoding.c_str(), options);
 				
-				if (NULL == doc)
+				if (nullptr == doc)
 				{
-					throw Exception(xmlCtxtGetLastError(this->parser.get())->message);
+					throw Exception(::xmlCtxtGetLastError(this->parser.get())->message);
 				}
 				
 				return Document(doc);
@@ -65,11 +75,11 @@ namespace rl
 			
 			Document readMemory(const ::std::string& buffer, const ::std::string& url = "", const ::std::string& encoding = "", const int& options = 0) const
 			{
-				xmlDocPtr doc = xmlCtxtReadMemory(this->parser.get(), buffer.c_str(), static_cast< int >(buffer.size()), url.c_str(), encoding.c_str(), options);
+				::xmlDocPtr doc = ::xmlCtxtReadMemory(this->parser.get(), buffer.c_str(), static_cast<int>(buffer.size()), url.c_str(), encoding.c_str(), options);
 				
-				if (NULL == doc)
+				if (nullptr == doc)
 				{
-					throw Exception(xmlCtxtGetLastError(this->parser.get())->message);
+					throw Exception(::xmlCtxtGetLastError(this->parser.get())->message);
 				}
 				
 				return Document(doc);
@@ -78,9 +88,9 @@ namespace rl
 		protected:
 			
 		private:
-			::boost::shared_ptr< xmlParserCtxt > parser;
+			::std::shared_ptr< ::xmlParserCtxt> parser;
 		};
 	}
 }
 
-#endif // _RL_XML_DOMPARSER_H_
+#endif // RL_XML_DOMPARSER_H

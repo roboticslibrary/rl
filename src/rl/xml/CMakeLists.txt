@@ -1,10 +1,9 @@
-project(rlxml)
-
 find_package(Boost REQUIRED)
 
-find_package(Iconv)
-find_package(LibXml2 REQUIRED)
-find_package(ZLIB)
+find_package(libiconv)
+find_package(libxml2 REQUIRED)
+find_package(libxslt REQUIRED)
+find_package(zlib)
 
 set(
 	HDRS
@@ -13,54 +12,83 @@ set(
 	DomParser.h
 	Exception.h
 	Node.h
+	NodeSet.h
 	Namespace.h
 	Object.h
 	Path.h
 	Schema.h
+	Stylesheet.h
 )
 
-add_library(
-	rlxml
-	${HDRS}
-	dummy.cpp
-)
+if(NOT CMAKE_VERSION VERSION_LESS 3.0)
+	add_library(xml INTERFACE)
+	add_custom_target(xml_sources SOURCES ${HDRS})
+else()
+	add_library(xml STATIC ${HDRS} dummy.cpp)
+endif()
+
+if(NOT CMAKE_VERSION VERSION_LESS 3.8)
+	target_compile_features(xml INTERFACE cxx_std_11)
+endif()
 
 target_include_directories(
-	rlxml
-	PUBLIC
+	xml
+	INTERFACE
+	$<BUILD_INTERFACE:${rl_SOURCE_DIR}/src>
+	$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}>
 	${Boost_INCLUDE_DIR}
 	${LIBXML2_INCLUDE_DIRS}
+	${LIBXSLT_INCLUDE_DIRS}
 )
 
-target_link_libraries(
-	rlxml
-	${LIBXML2_LIBRARIES}
-)
+if(NOT CMAKE_VERSION VERSION_LESS 3.0)
+	target_link_libraries(xml INTERFACE ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES})
+else()
+	target_link_libraries(xml ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES})
+endif()
 
-if(ICONV_FOUND)
-	target_include_directories(rlxml PUBLIC ${ICONV_INCLUDE_DIRS})
-	target_link_libraries(rlxml ${ICONV_LIBRARIES})
-endif(ICONV_FOUND)
+if(libiconv_FOUND)
+	target_include_directories(xml INTERFACE ${libiconv_INCLUDE_DIRS})
+	if(NOT CMAKE_VERSION VERSION_LESS 3.0)
+		target_link_libraries(xml INTERFACE ${libiconv_LIBRARIES})
+	else()
+		target_link_libraries(xml ${libiconv_LIBRARIES})
+	endif()
+endif()
 
-if(ZLIB_FOUND)
-	target_include_directories(rlxml PUBLIC ${ZLIB_INCLUDE_DIRS})
-	target_link_libraries(rlxml ${ZLIB_LIBRARIES})
-endif(ZLIB_FOUND)
+if(zlib_FOUND)
+	target_include_directories(xml INTERFACE ${zlib_INCLUDE_DIRS})
+	if(NOT CMAKE_VERSION VERSION_LESS 3.0)
+		target_link_libraries(xml INTERFACE ${zlib_LIBRARIES})
+	else()
+		target_link_libraries(xml ${zlib_LIBRARIES})
+	endif()
+endif()
 
-set_target_properties(
-	rlxml
-	PROPERTIES
-	VERSION ${VERSION}
-	DEBUG_POSTFIX d
-)
+if(CMAKE_VERSION VERSION_LESS 3.0)
+	set_target_properties(
+		xml
+		PROPERTIES
+		OUTPUT_NAME rlxml
+		POSITION_INDEPENDENT_CODE ON
+		VERSION ${VERSION}
+	)
+	
+	if(WIN32)
+		set_target_properties(
+			xml
+			PROPERTIES
+			DEBUG_POSTFIX d
+		)
+	endif()
+endif()
 
-install(FILES ${HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl/xml COMPONENT headers)
+install(FILES ${HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/xml COMPONENT development)
 
 install(
-	TARGETS rlxml
+	TARGETS xml
 	EXPORT rl
-	COMPONENT libraries
-	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT development
+	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT runtime NAMELINK_SKIP
+	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT runtime
 )

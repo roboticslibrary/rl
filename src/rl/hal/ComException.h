@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_HAL_COMEXCEPTION_H_
-#define _RL_HAL_COMEXCEPTION_H_
+#ifndef RL_HAL_COMEXCEPTION_H
+#define RL_HAL_COMEXCEPTION_H
 
 #include "Exception.h"
 
@@ -38,6 +38,8 @@ namespace rl
 		public:
 			ComException(const ::std::string& what_arg);
 			
+			ComException(const int& errnum);
+			
 			virtual ~ComException() throw();
 			
 		protected:
@@ -48,4 +50,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_HAL_COMEXCEPTION_H_
+#endif // RL_HAL_COMEXCEPTION_H

@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _CONFIGURATIONSPACETHREAD_H_
-#define _CONFIGURATIONSPACETHREAD_H_
+#ifndef CONFIGURATIONSPACETHREAD_H
+#define CONFIGURATIONSPACETHREAD_H
 
 #include <QThread>
 #include <rl/plan/Model.h>
@@ -35,7 +35,7 @@ class ConfigurationSpaceThread : public QThread
 	Q_OBJECT
 	
 public:
-	ConfigurationSpaceThread(QObject* parent = NULL);
+	ConfigurationSpaceThread(QObject* parent = nullptr);
 	
 	virtual ~ConfigurationSpaceThread();
 	
@@ -43,13 +43,15 @@ public:
 	
 	void stop();
 	
-	rl::math::Real delta;
+	std::size_t axis0;
+	
+	std::size_t axis1;
+	
+	rl::math::Real delta0;
+	
+	rl::math::Real delta1;
 	
 	rl::plan::Model* model;
-	
-	std::size_t x;
-	
-	std::size_t y;
 	
 protected:
 	
@@ -60,4 +62,4 @@ signals:
 	void addCollision(const qreal& x, const qreal& y, const qreal& w, const qreal& h, const int& rgb);
 };
 
-#endif // _CONFIGURATIONSPACETHREAD_H_
+#endif // CONFIGURATIONSPACETHREAD_H

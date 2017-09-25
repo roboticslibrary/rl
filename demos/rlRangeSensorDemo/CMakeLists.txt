@@ -1,5 +1,3 @@
-project(rlRangeSensorDemo)
-
 add_executable(
 	rlRangeSensorDemo
 	rlRangeSensorDemo.cpp
@@ -7,5 +5,5 @@ add_executable(
 
 target_link_libraries(
 	rlRangeSensorDemo
-	rlhal
+	hal
 )

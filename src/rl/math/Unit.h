@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_MATH_UNIT_H_
-#define _RL_MATH_UNIT_H_
+#ifndef RL_MATH_UNIT_H
+#define RL_MATH_UNIT_H
 
 #include <cmath>
 
@@ -182,7 +182,7 @@ namespace rl
 			UNIT_NEWTON_METER
 		};
 		
-		static const Real DEG2RAD = static_cast< Real >(M_PI) / 180.0f;
+		static const Real DEG2RAD = static_cast<Real>(M_PI) / 180.0f;
 		
 		static const Real GIGA2UNIT = 1.0e+9f;
 		
@@ -199,7 +199,7 @@ namespace rl
 		
 		static const Real NANO2UNIT = 1.0e-9f;
 		
-		static const Real RAD2DEG = 180.0f / static_cast< Real >(M_PI);
+		static const Real RAD2DEG = 180.0f / static_cast<Real>(M_PI);
 		
 		static const Real UNIT2GIGA = 1.0e-9f;
 		
@@ -241,4 +241,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_MATH_UNIT_H_
+#endif // RL_MATH_UNIT_H

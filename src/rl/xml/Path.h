@@ -24,13 +24,14 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_XML_PATH_H_
-#define _RL_XML_PATH_H_
+#ifndef RL_XML_PATH_H
+#define RL_XML_PATH_H
 
+#include <memory>
 #include <string>
 #include <boost/shared_array.hpp>
-#include <boost/shared_ptr.hpp>
 #include <libxml/xpath.h>
+#include <libxml/xpathInternals.h>
 
 #include "Document.h"
 #include "Node.h"
@@ -43,53 +44,72 @@ namespace rl
 		class Path
 		{
 		public:
-			Path(const Document& doc) :
-				context(xmlXPathNewContext(doc()), xmlXPathFreeContext),
-				doc(doc())
+			explicit Path(const Document& document) :
+				context(::xmlXPathNewContext(document.get()), ::xmlXPathFreeContext),
+				document(document.get())
 			{
+				this->context->node = nullptr;
 			}
 			
-			virtual ~Path()
+			Path(const Document& document, const Node& node) :
+				context(::xmlXPathNewContext(document.get()), ::xmlXPathFreeContext),
+				document(document.get())
 			{
+				this->context->node = node.get();
+			}
+			
+			~Path()
+			{
+				::xmlXPathRegisteredNsCleanup(this->context.get());
 			}
 			
 			Object eval(const ::std::string& expression)
 			{
-				this->context->node = NULL;
-				
 				return Object(
-					xmlXPathEvalExpression(
-						reinterpret_cast< const xmlChar* >(expression.c_str()),
+					::xmlXPathEvalExpression(
+						reinterpret_cast<const ::xmlChar*>(expression.c_str()),
 						this->context.get()
 					)
 				);
 			}
 			
-			Object eval(const ::std::string& expression, const Node& node)
-			{
-				this->context->node = node();
-				
-				return Object(
-					xmlXPathEvalExpression(
-						reinterpret_cast< const xmlChar* >(expression.c_str()),
-						this->context.get()
-					)
-				);
-			}
-			
-			xmlXPathContextPtr operator()() const
+			::xmlXPathContextPtr get() const
 			{
 				return this->context.get();
+			}
+			
+			Node getNode() const
+			{
+				return Node(this->context->node);
+			}
+			
+			::xmlXPathContext& operator*() const
+			{
+				return *this->context;
+			}
+			
+			bool registerNamespace(const ::std::string& prefix, const ::std::string& uri)
+			{
+				return 0 == ::xmlXPathRegisterNs(
+					this->context.get(),
+					reinterpret_cast<const ::xmlChar*>(prefix.c_str()),
+					reinterpret_cast<const ::xmlChar*>(uri.c_str())
+				) ? true : false;
+			}
+			
+			void setNode(const Node& node)
+			{
+				this->context->node = node.get();
 			}
 			
 		protected:
 			
 		private:
-			::boost::shared_ptr< xmlXPathContext > context;
+			::std::shared_ptr< ::xmlXPathContext> context;
 			
-			xmlDocPtr doc;
+			::xmlDocPtr document;
 		};
 	}
 }
 
-#endif // _RL_XML_PATH_H_
+#endif // RL_XML_PATH_H

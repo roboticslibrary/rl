@@ -1,12 +1,10 @@
-project(rlsg)
-
-find_package(Boost REQUIRED)
-
 find_package(Bullet)
+find_package(ccd)
 find_package(Coin REQUIRED)
-find_package(Ode)
-find_package(Pqp)
-find_package(Solid)
+find_package(FCL)
+find_package(ODE)
+find_package(PQP)
+find_package(SOLID3)
 
 set(
 	BASE_HDRS
@@ -20,7 +18,7 @@ set(
 	Shape.h
 	SimpleScene.h
 )
-set(HDRS ${BASE_HDRS})
+list(APPEND HDRS ${BASE_HDRS})
 
 set(
 	BASE_SRCS
@@ -34,7 +32,7 @@ set(
 	Shape.cpp
 	SimpleScene.cpp
 )
-set(SRCS ${BASE_SRCS})
+list(APPEND SRCS ${BASE_SRCS})
 
 if(BULLET_FOUND)
 	set(
@@ -44,7 +42,7 @@ if(BULLET_FOUND)
 		bullet/Scene.h
 		bullet/Shape.h
 	)
-	set(HDRS ${HDRS} ${BULLET_HDRS})
+	list(APPEND HDRS ${BULLET_HDRS})
 	set(
 		BULLET_SRCS
 		bullet/Body.cpp
@@ -52,10 +50,10 @@ if(BULLET_FOUND)
 		bullet/Scene.cpp
 		bullet/Shape.cpp
 	)
-	set(SRCS ${SRCS} ${BULLET_SRCS})
-endif(BULLET_FOUND)
+	list(APPEND SRCS ${BULLET_SRCS})
+endif()
 
-if(COIN_FOUND)
+if(Coin_FOUND)
 	set(
 		COIN_HDRS
 		so/Body.h
@@ -63,7 +61,7 @@ if(COIN_FOUND)
 		so/Scene.h
 		so/Shape.h
 	)
-	set(HDRS ${HDRS} ${COIN_HDRS})
+	list(APPEND HDRS ${COIN_HDRS})
 	set(
 		COIN_SRCS
 		so/Body.cpp
@@ -71,8 +69,27 @@ if(COIN_FOUND)
 		so/Scene.cpp
 		so/Shape.cpp
 	)
-	set(SRCS ${SRCS} ${COIN_SRCS})
-endif(COIN_FOUND)
+	list(APPEND SRCS ${COIN_SRCS})
+endif()
+
+if(CCD_FOUND AND FCL_FOUND)
+	set(
+		FCL_HDRS
+		fcl/Body.h
+		fcl/Model.h
+		fcl/Scene.h
+		fcl/Shape.h
+	)
+	list(APPEND HDRS ${FCL_HDRS})
+	set(
+		FCL_SRCS
+		fcl/Body.cpp
+		fcl/Model.cpp
+		fcl/Scene.cpp
+		fcl/Shape.cpp
+	)
+	list(APPEND SRCS ${FCL_SRCS})
+endif()
 
 if(ODE_FOUND)
 	set(
@@ -82,7 +99,7 @@ if(ODE_FOUND)
 		ode/Scene.h
 		ode/Shape.h
 	)
-	set(HDRS ${HDRS} ${ODE_HDRS})
+	list(APPEND HDRS ${ODE_HDRS})
 	set(
 		ODE_SRCS
 		ode/Body.cpp
@@ -90,8 +107,8 @@ if(ODE_FOUND)
 		ode/Scene.cpp
 		ode/Shape.cpp
 	)
-	set(SRCS ${SRCS} ${ODE_SRCS})
-endif(ODE_FOUND)
+	list(APPEND SRCS ${ODE_SRCS})
+endif()
 
 if(PQP_FOUND)
 	set(
@@ -101,7 +118,7 @@ if(PQP_FOUND)
 		pqp/Scene.h
 		pqp/Shape.h
 	)
-	set(HDRS ${HDRS} ${PQP_HDRS})
+	list(APPEND HDRS ${PQP_HDRS})
 	set(
 		PQP_SRCS
 		pqp/Body.cpp
@@ -109,10 +126,10 @@ if(PQP_FOUND)
 		pqp/Scene.cpp
 		pqp/Shape.cpp
 	)
-	set(SRCS ${SRCS} ${PQP_SRCS})
-endif(PQP_FOUND)
+	list(APPEND SRCS ${PQP_SRCS})
+endif()
 
-if(SOLID_FOUND)
+if(SOLID3_FOUND)
 	set(
 		SOLID_HDRS
 		solid/Body.h
@@ -120,7 +137,7 @@ if(SOLID_FOUND)
 		solid/Scene.h
 		solid/Shape.h
 	)
-	set(HDRS ${HDRS} ${SOLID_HDRS})
+	list(APPEND HDRS ${SOLID_HDRS})
 	set(
 		SOLID_SRCS
 		solid/Body.cpp
@@ -128,88 +145,122 @@ if(SOLID_FOUND)
 		solid/Scene.cpp
 		solid/Shape.cpp
 	)
-	set(SRCS ${SRCS} ${SOLID_SRCS})
-endif(SOLID_FOUND)
+	list(APPEND SRCS ${SOLID_SRCS})
+endif()
 
-if(WIN32)
-	add_library(
-		rlsg
-		STATIC
-		${HDRS}
-		${SRCS}
-	)
-else(WIN32)
-	add_library(
-		rlsg
-		SHARED
-		${HDRS}
-		${SRCS}
-	)
-endif(WIN32)
-
-target_include_directories(
-	rlsg
-	PUBLIC
-	${Boost_INCLUDE_DIR}
+add_library(
+	sg
+	${HDRS}
+	${SRCS}
 )
+
+if(NOT CMAKE_VERSION VERSION_LESS 3.8)
+	target_compile_features(sg PUBLIC cxx_std_11)
+endif()
 
 target_link_libraries(
-	rlsg
-	rlmath
-	rlutil
-	rlxml
+	sg
+	math
+	util
+	xml
 )
 
-install(FILES ${BASE_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl/sg COMPONENT headers)
+install(FILES ${BASE_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/sg COMPONENT development)
+
+target_include_directories(
+	sg
+	PUBLIC
+	$<BUILD_INTERFACE:${rl_SOURCE_DIR}/src>
+	$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}>
+)
 
 if(BULLET_FOUND)
-	target_compile_definitions(rlsg PUBLIC -DRL_SG_HAVE_BULLET)
-	target_include_directories(rlsg PUBLIC ${BULLET_INCLUDE_DIRS})
-	target_link_libraries(rlsg ${BULLET_LIBRARIES})
-	install(FILES ${BULLET_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl/sg/bullet COMPONENT headers)
-endif(BULLET_FOUND)
+	target_compile_definitions(sg INTERFACE -DRL_SG_BULLET)
+	target_include_directories(sg PUBLIC ${BULLET_INCLUDE_DIRS})
+	target_link_libraries(sg ${BULLET_LIBRARIES})
+	install(FILES ${BULLET_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/sg/bullet COMPONENT development)
+endif()
 
-if(COIN_FOUND)
-	target_compile_definitions(rlsg PUBLIC ${COIN_DEFINITIONS})
-	target_include_directories(rlsg PUBLIC ${COIN_INCLUDE_DIRS})
-	target_link_libraries(rlsg ${COIN_LIBRARIES})
-	install(FILES ${COIN_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl/sg/so COMPONENT headers)
-endif(COIN_FOUND)
+if(Coin_FOUND)
+	target_compile_definitions(sg PUBLIC ${Coin_DEFINITIONS})
+	target_include_directories(sg PUBLIC ${Coin_INCLUDE_DIRS})
+	target_link_libraries(sg ${Coin_LIBRARIES})
+	install(FILES ${COIN_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/sg/so COMPONENT development)
+endif()
+
+if(CCD_FOUND AND FCL_FOUND)
+	target_compile_definitions(sg INTERFACE -DRL_SG_FCL)
+	target_compile_definitions(sg PUBLIC ${FCL_DEFINITIONS})
+	target_include_directories(sg PUBLIC ${CCD_INCLUDE_DIRS} ${FCL_INCLUDE_DIRS})
+	target_link_libraries(sg ${FCL_LIBRARIES} ${CCD_LIBRARIES})
+	install(FILES ${FCL_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/sg/fcl COMPONENT development)
+endif()
 
 if(ODE_FOUND)
-	target_compile_definitions(rlsg PUBLIC -DRL_SG_HAVE_ODE)
-	target_compile_definitions(rlsg PUBLIC ${ODE_DEFINITIONS})
-	target_include_directories(rlsg PUBLIC ${ODE_INCLUDE_DIRS})
-	target_link_libraries(rlsg ${ODE_LIBRARIES})
-	install(FILES ${ODE_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl/sg/ode COMPONENT headers)
-endif(ODE_FOUND)
+	target_compile_definitions(sg INTERFACE -DRL_SG_ODE)
+	target_compile_definitions(sg PUBLIC ${ODE_DEFINITIONS})
+	target_include_directories(sg PUBLIC ${ODE_INCLUDE_DIRS})
+	target_link_libraries(sg ${ODE_LIBRARIES})
+	install(FILES ${ODE_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/sg/ode COMPONENT development)
+endif()
 
 if(PQP_FOUND)
-	target_compile_definitions(rlsg PUBLIC -DRL_SG_HAVE_PQP)
-	target_include_directories(rlsg PUBLIC ${PQP_INCLUDE_DIRS})
-	target_link_libraries(rlsg ${PQP_LIBRARIES})
-	install(FILES ${PQP_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl/sg/pqp COMPONENT headers)
-endif(PQP_FOUND)
+	target_compile_definitions(sg INTERFACE -DRL_SG_PQP)
+	target_include_directories(sg PUBLIC ${PQP_INCLUDE_DIRS})
+	target_link_libraries(sg ${PQP_LIBRARIES})
+	install(FILES ${PQP_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/sg/pqp COMPONENT development)
+endif()
 
-if(SOLID_FOUND)
-	target_compile_definitions(rlsg PUBLIC -DRL_SG_HAVE_SOLID)
-	target_include_directories(rlsg PUBLIC ${SOLID_INCLUDE_DIRS})
-	target_link_libraries(rlsg ${SOLID_LIBRARIES})
-	install(FILES ${SOLID_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl/sg/solid COMPONENT headers)
-endif(SOLID_FOUND)
+if(SOLID3_FOUND)
+	target_compile_definitions(sg INTERFACE -DRL_SG_SOLID)
+	target_include_directories(sg PUBLIC ${SOLID3_INCLUDE_DIRS})
+	target_link_libraries(sg ${SOLID3_LIBRARIES})
+	install(FILES ${SOLID_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/sg/solid COMPONENT development)
+endif()
 
 set_target_properties(
-	rlsg
+	sg
 	PROPERTIES
+	OUTPUT_NAME rlsg
+	POSITION_INDEPENDENT_CODE ON
 	VERSION ${VERSION}
-	DEBUG_POSTFIX d
 )
 
+if(WIN32)
+	if(BUILD_SHARED_LIBS)
+		set_target_properties(
+			sg
+			PROPERTIES
+			DEBUG_POSTFIX d
+		)
+	else()
+		set_target_properties(
+			sg
+			PROPERTIES
+			DEBUG_POSTFIX sd
+			MINSIZEREL_POSTFIX s
+			RELEASE_POSTFIX s
+			RELWITHDEBINFO_POSTFIX s
+		)
+	endif()
+endif()
+
 install(
-	TARGETS rlsg
+	TARGETS sg
 	EXPORT rl
-	COMPONENT libraries
-	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT development
+	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT runtime NAMELINK_SKIP
+	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT runtime
 )
+
+if(BUILD_SHARED_LIBS)
+	install(
+		TARGETS sg
+		EXPORT rl
+		LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT development NAMELINK_ONLY
+	)
+endif()
+
+if(MSVC AND BUILD_SHARED_LIBS AND NOT CMAKE_VERSION VERSION_LESS 3.1)
+	install(FILES $<TARGET_PDB_FILE:sg> DESTINATION ${CMAKE_INSTALL_BINDIR} CONFIGURATIONS Debug RelWithDebInfo COMPONENT debug)
+endif()

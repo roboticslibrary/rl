@@ -24,7 +24,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <rl/util/Timer.h>
+#include <chrono>
 
 #include "GaussianSampler.h"
 #include "SimpleModel.h"
@@ -35,11 +35,9 @@ namespace rl
 	{
 		GaussianSampler::GaussianSampler() :
 			UniformSampler(),
-			sigma(NULL),
-			gauss(
-				::boost::mt19937(static_cast< ::boost::mt19937::result_type >(::rl::util::Timer::now() * 1000000.0f)),
-				::boost::normal_distribution< ::rl::math::Real >(0.0f, 1.0f)
-			)
+			sigma(nullptr),
+			gaussDistribution(0, 1),
+			gaussEngine(::std::random_device()())
 		{
 		}
 		
@@ -47,23 +45,29 @@ namespace rl
 		{
 		}
 		
-		void
-		GaussianSampler::generateCollisionFree(::rl::math::Vector& q)
+		::std::normal_distribution< ::rl::math::Real>::result_type
+		GaussianSampler::gauss()
 		{
-			assert(q.size() == this->model->getDof());
-			
+			return this->gaussDistribution(this->gaussEngine);
+		}
+		
+		::rl::math::Vector
+		GaussianSampler::generateCollisionFree()
+		{
 			::rl::math::Vector q2(this->model->getDof());
 			
 			while (true)
 			{
-				this->generate(q);
+				::rl::math::Vector q = this->generate();
+				
+				::rl::math::Vector gauss(this->model->getDof());
 				
 				for (::std::size_t i = 0; i < this->model->getDof(); ++i)
 				{
-					q2(i) = this->gauss() * (*this->sigma)(i) + q(i);
+					gauss(i) = this->gauss();
 				}
 				
-				this->model->clip(q2);
+				q2 = this->model->generatePositionGaussian(gauss, q, *this->sigma);
 				
 				this->model->setPosition(q);
 				this->model->updateFrames();
@@ -75,7 +79,7 @@ namespace rl
 					
 					if (this->model->isColliding())
 					{
-						return;
+						return q;
 					}
 				}
 				else
@@ -86,17 +90,17 @@ namespace rl
 					if (!this->model->isColliding())
 					{
 						q = q2;
-						return;
+						return q;
 					}
 				}
 			}
 		}
 		
 		void
-		GaussianSampler::seed(const ::boost::mt19937::result_type& value)
+		GaussianSampler::seed(const ::std::mt19937::result_type& value)
 		{
-			this->gauss.engine().seed(value);
-			this->rand.engine().seed(value);
+			this->gaussEngine.seed(value);
+			this->randEngine.seed(value);
 		}
 	}
 }

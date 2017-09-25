@@ -1,8 +1,4 @@
-project(rlplan)
-
-find_package(Boost COMPONENTS thread system REQUIRED)
-
-find_package(Cgal REQUIRED)
+find_package(Boost REQUIRED)
 
 set(
 	HDRS
@@ -13,10 +9,15 @@ set(
 	Eet.h
 	Exception.h
 	GaussianSampler.h
+	GnatNearestNeighbors.h
+	KdtreeBoundingBoxNearestNeighbors.h
+	KdtreeNearestNeighbors.h
+	LinearNearestNeighbors.h
 	MatrixPtr.h
+	Metric.h
 	Model.h
+	NearestNeighbors.h
 	Optimizer.h
-	Orthogonal_k_neighbor_search.h
 	Planner.h
 	Prm.h
 	PrmUtilityGuided.h
@@ -41,6 +42,7 @@ set(
 	VectorPtr.h
 	Verifier.h
 	Viewer.h
+	WorkspaceMetric.h
 	WorkspaceSphere.h
 	WorkspaceSphereExplorer.h
 	WorkspaceSphereList.h
@@ -55,7 +57,13 @@ set(
 	Eet.cpp
 	Exception.cpp
 	GaussianSampler.cpp
+	GnatNearestNeighbors.cpp
+	KdtreeBoundingBoxNearestNeighbors.cpp
+	KdtreeNearestNeighbors.cpp
+	LinearNearestNeighbors.cpp
+	Metric.cpp
 	Model.cpp
+	NearestNeighbors.cpp
 	Optimizer.cpp
 	Planner.cpp
 	Prm.cpp
@@ -75,66 +83,95 @@ set(
 	UniformSampler.cpp
 	Verifier.cpp
 	Viewer.cpp
+	WorkspaceMetric.cpp
 	WorkspaceSphere.cpp
 	WorkspaceSphereExplorer.cpp
 )
 
-if(WIN32)
-	add_library(
-		rlplan
-		STATIC
-		${HDRS}
-		${SRCS}
-	)
-else(WIN32)
-	add_library(
-		rlplan
-		SHARED
-		${HDRS}
-		${SRCS}
-	)
-endif(WIN32)
-
-target_compile_definitions(
-	rlplan
-	PUBLIC
-	-DBOOST_ALL_NO_LIB
-	-DCGAL_DISABLE_ROUNDING_MATH_CHECK
+add_library(
+	plan
+	${HDRS}
+	${SRCS}
 )
 
+if(MSVC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 19.00.23918)
+	target_compile_definitions(
+		plan
+		PUBLIC
+		-DBOOST_ALL_NO_LIB
+		-DBOOST_CHRONO_HEADER_ONLY
+		-DBOOST_ERROR_CODE_HEADER_ONLY
+		-DBOOST_SYSTEM_NO_DEPRECATED
+	)
+endif()
+
+if(NOT CMAKE_VERSION VERSION_LESS 3.8)
+	target_compile_features(plan PUBLIC cxx_std_11)
+endif()
+
 target_include_directories(
-	rlplan
+	plan
 	PUBLIC
+	$<BUILD_INTERFACE:${rl_SOURCE_DIR}/src>
+	$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}>
 	${Boost_INCLUDE_DIR}
-	${CGAL_INCLUDE_DIRS}
 )
 
 target_link_libraries(
-	rlplan
-	rlkin
-	rlmath
-	rlmdl
-	rlsg
-	rlutil
-	rlxml
-	${Boost_LIBRARIES}
-	${CGAL_LIBRARIES}
+	plan
+	kin
+	math
+	mdl
+	sg
+	util
+	xml
 )
 
 set_target_properties(
-	rlplan
+	plan
 	PROPERTIES
+	OUTPUT_NAME rlplan
+	POSITION_INDEPENDENT_CODE ON
 	VERSION ${VERSION}
-	DEBUG_POSTFIX d
 )
 
-install(FILES ${HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl/plan COMPONENT headers)
+if(WIN32)
+	if(BUILD_SHARED_LIBS)
+		set_target_properties(
+			plan
+			PROPERTIES
+			DEBUG_POSTFIX d
+		)
+	else()
+		set_target_properties(
+			plan
+			PROPERTIES
+			DEBUG_POSTFIX sd
+			MINSIZEREL_POSTFIX s
+			RELEASE_POSTFIX s
+			RELWITHDEBINFO_POSTFIX s
+		)
+	endif()
+endif()
+
+install(FILES ${HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/plan COMPONENT development)
 
 install(
-	TARGETS rlplan
+	TARGETS plan
 	EXPORT rl
-	COMPONENT libraries
-	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT development
+	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT runtime NAMELINK_SKIP
+	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT runtime
 )
+
+if(BUILD_SHARED_LIBS)
+	install(
+		TARGETS plan
+		EXPORT rl
+		LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT development NAMELINK_ONLY
+	)
+endif()
+
+if(MSVC AND BUILD_SHARED_LIBS AND NOT CMAKE_VERSION VERSION_LESS 3.1)
+	install(FILES $<TARGET_PDB_FILE:plan> DESTINATION ${CMAKE_INSTALL_BINDIR} CONFIGURATIONS Debug RelWithDebInfo COMPONENT debug)
+endif()

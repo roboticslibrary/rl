@@ -25,9 +25,8 @@
 //
 
 #include <cassert>
+#include <cerrno>
 #include <cstdio>
-#include <cstring>
-#include <errno.h>
 #include <rl/math/Unit.h>
 
 #include "ComException.h"
@@ -40,7 +39,7 @@
 #ifndef pclose
 #define pclose _pclose
 #endif // pclose
-#define GNUPLOT "pgnuplot.exe"
+#define GNUPLOT "gnuplot.exe"
 #else // WIN32
 #define GNUPLOT "gnuplot"
 #endif // WIN32
@@ -51,14 +50,15 @@ namespace rl
 	{
 		Gnuplot::Gnuplot(
 			const ::std::size_t& dof,
-			const ::rl::math::Real& updateRate,
+			const ::std::chrono::nanoseconds& updateRate,
 			const ::rl::math::Real& ymin,
 			const ::rl::math::Real& ymax,
 			const ::std::size_t& max
 		) :
-			AxisController(dof, updateRate),
-			JointPositionActuator(dof, updateRate),
-			fp(NULL),
+			AxisController(dof),
+			CyclicDevice(updateRate),
+			JointPositionActuator(dof),
+			fp(nullptr),
 			history(),
 			max(max),
 			ymax(ymax),
@@ -75,7 +75,7 @@ namespace rl
 		{
 			if (-1 == pclose(this->fp))
 			{
-				throw ComException(strerror(errno));
+				throw ComException(errno);
 			}
 			
 			this->setConnected(false);
@@ -86,12 +86,16 @@ namespace rl
 		{
 			this->fp = popen(GNUPLOT, "w");
 			
-			if (NULL == this->fp)
+			if (nullptr == this->fp)
 			{
-				throw ComException(strerror(errno));
+				throw ComException(errno);
 			}
 			
-			fprintf(this->fp, "set xrange [0:%zi]\n", this->max);
+#ifdef WIN32
+			fprintf(this->fp, "set xrange [0:%Iu]\n", this->max);
+#else // WIN32
+			fprintf(this->fp, "set xrange [0:%zu]\n", this->max);
+#endif // WIN32
 			
 			this->setRange(this->ymin, this->ymax);
 			
@@ -124,6 +128,7 @@ namespace rl
 		Gnuplot::start()
 		{
 			this->history.clear();
+			this->setRunning(true);
 		}
 		
 		void
@@ -149,9 +154,13 @@ namespace rl
 				{
 					::std::size_t t = this->max - this->history.size();
 					
-					for (::std::list< ::rl::math::Vector >::iterator j = this->history.begin(); j != this->history.end(); ++j)
+					for (::std::list< ::rl::math::Vector>::iterator j = this->history.begin(); j != this->history.end(); ++j)
 					{
-						fprintf(this->fp, "%zi %f\n", t, (*j)(i) * ::rl::math::RAD2DEG);
+#ifdef WIN32
+						fprintf(this->fp, "%Iu %f\n", t, (*j)(i) * ::rl::math::RAD2DEG);
+#else // WIN32
+						fprintf(this->fp, "%zu %f\n", t, (*j)(i) * ::rl::math::RAD2DEG);
+#endif // WIN32
 						++t;
 					}
 					
@@ -165,6 +174,7 @@ namespace rl
 		void
 		Gnuplot::stop()
 		{
+			this->setRunning(false);
 		}
 	}
 }

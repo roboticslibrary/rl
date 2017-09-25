@@ -24,125 +24,240 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_MATH_KALMAN_H_
-#define _RL_MATH_KALMAN_H_
+#ifndef RL_MATH_KALMAN_H
+#define RL_MATH_KALMAN_H
 
+#define EIGEN_MATRIXBASE_PLUGIN <rl/math/MatrixBaseAddons.h>
+#define EIGEN_QUATERNIONBASE_PLUGIN <rl/math/QuaternionBaseAddons.h>
+#define EIGEN_TRANSFORM_PLUGIN <rl/math/TransformAddons.h>
+
+#include <Eigen/Core>
 #include <Eigen/LU>
-
-#include "Matrix.h"
-#include "Vector.h"
 
 namespace rl
 {
 	namespace math
 	{
+		/**
+		 * Kalman filter.
+		 * 
+		 * Greg Welch and Gary Bishop. An introduction to the Kalman filter. Technical
+		 * Report TR 95-041, University of North Carolina at Chapel Hill, Chapel Hill,
+		 * NC, USA, July 2006.
+		 * 
+		 * http://www.cs.unc.edu/~welch/media/pdf/kalman_intro.pdf
+		 */
+		template<typename Scalar>
 		class Kalman
 		{
 		public:
-			Kalman()
+			typedef Scalar ScalarType;
+			
+			typedef typename ::Eigen::Matrix<Scalar, ::Eigen::Dynamic, ::Eigen::Dynamic> MatrixType;
+			
+			typedef typename ::Eigen::Matrix<Scalar, ::Eigen::Dynamic, 1> VectorType;
+			
+			Kalman(const ::std::size_t& states, const ::std::size_t& observations, const ::std::size_t& controls = 0) :
+				A(MatrixType::Identity(states, states)),
+				B(MatrixType::Zero(states, controls)),
+				H(MatrixType::Zero(observations, states)),
+				PPosteriori(MatrixType::Zero(states, states)),
+				PPriori(MatrixType::Zero(states, states)),
+				Q(MatrixType::Identity(states, states)),
+				R(MatrixType::Identity(observations, observations)),
+				xPosteriori(VectorType::Zero(states)),
+				xPriori(VectorType::Zero(states))
 			{
-			};
+			}
 			
 			virtual ~Kalman()
 			{
-			};
+			}
 			
-			/**
-			 * \f[ K_{k} = P^{-}_{k} H^{T} \left( H P^{-}_{k} H^{T} + R \right)^{-1} \f]
-			 * \f[ \hat{x}_{k} = \hat{x}^{-}_{k} + K_{k} \left( z_{k} - H \hat{x}^{-}_{k} \right) \f]
-			 * \f[ P_{k} = \left( I - K_{k} H \right) P^{-}_{k} \f]
-			 * 
-			 * @param xPrior \f$ \hat{x}^{-}_{k} \f$
-			 * @param pPrior \f$ P^{-}_{k} \f$
-			 * @param h \f$ H \f$
-			 * @param r \f$ R \f$
-			 * @param z \f$ z_{k} \f$
-			 * @param xPost \f$ \hat{x}_{k} \f$
-			 * @param pPost \f$ P_{k} \f$
-			 */
-			template< typename Vector1, typename Matrix2, typename Matrix3, typename Matrix4, typename Vector5, typename Vector6, typename Matrix7 >
-			static void correct(
-				const Vector1& xPrior,
-				const Matrix2& pPrior,
-				const Matrix3& h,
-				const Matrix4& r,
-				const Vector5& z,
-				Vector6& xPost,
-				Matrix7& pPost
-			)
+			MatrixType& controlModel()
 			{
-				// \f[ K_{k} = P^{-}_{k} H^{T} \left( H P^{-}_{k} H^{T} + R \right)^{-1} \f]
-				Matrix k = pPrior * h.transpose() * (h * pPrior * h.transpose() + r).inverse();
-				// \f[ \hat{x}_{k} = \hat{x}^{-}_{k} + K_{k} \left( z_{k} - H \hat{x}^{-}_{k} \right) \f]
-				xPost = xPrior + k * (z - h * xPrior);
-				// P_{k} = \left( I - K_{k} H \right) P^{-}_{k} \f]
-				pPost = (Matrix::Identity(k.rows(), h.cols()) - k * h) * pPrior;
+				return this->B;
+			}
+			
+			const MatrixType& controlModel() const
+			{
+				return this->B;
 			}
 			
 			/**
-			 * \f[ \hat{x}^{-}_{k} = A \hat{x}_{k - 1} \f]
-			 * \f[ P^{-}_{k} = A P_{k - 1} A^{T} + Q \f]
+			 * Measurement update ("correct").
 			 * 
-			 * @param xPost \f$ \hat{x}_{k - 1} \f$
-			 * @param pPost \f$ P_{k - 1} \f$
-			 * @param a \f$ A \f$
-			 * @param q \f$ Q \f$
-			 * @param xPrior \f$ \hat{x}^{-}_{k} \f$
-			 * @param pPrior \f$ P^{-}_{k} \f$
+			 * Compute the Kalman gain
+			 * \f[ \matr{K}_{k} = \matr{P}^{-}_{k} \matr{H}^{\mathrm{T}} \left( \matr{H} \matr{P}^{-}_{k} \matr{H}^{\mathrm{T}} + \matr{R} \right)^{-1} \f]
+			 * Update estimate with measurement \f$\vec{z}_{k}\f$
+			 * \f[ \hat{\vec{x}}_{k} = \hat{\vec{x}}^{-}_{k} + \matr{K}_{k} \left( \vec{z}_{k} - \matr{H} \hat{\vec{x}}^{-}_{k} \right) \f]
+			 * Update the error covariance
+			 * \f[ \matr{P}_{k} = \left( \matr{1} - \matr{K}_{k} \matr{H} \right) \matr{P}^{-}_{k} \f]
+			 * 
+			 * @param[in] z Measurement \f$\vec{z}_{k}\f$
 			 */
-			template< typename Vector1, typename Matrix2, typename Matrix3, typename Matrix4, typename Vector5, typename Matrix6 >
-			static void predict(
-				const Vector1& xPost,
-				const Matrix2& pPost,
-				const Matrix3& a,
-				const Matrix4& q,
-				Vector5& xPrior,
-				Matrix6& pPrior
-			)
+			VectorType correct(const VectorType& z)
 			{
-				// \f[ \hat{x}^{-}_{k} = A \hat{x}_{k - 1} \f]
-				xPrior = a * xPost;
-				// \f[ P^{-}_{k} = A P_{k - 1} A^{T} + Q \f]
-				pPrior = a * pPost * a.transpose() + q;
+				assert(z.size() == xPriori.size());
+				
+				// \f[ \matr{K}_{k} = \matr{P}^{-}_{k} \matr{H}^{\mathrm{T}} \left( \matr{H} \matr{P}^{-}_{k} \matr{H}^{\mathrm{T}} + \matr{R} \right)^{-1} \f]
+				MatrixType K = PPriori * H.transpose() * (H * PPriori * H.transpose() + R).inverse();
+				// \f[ \hat{\vec{x}}_{k} = \hat{\vec{x}}^{-}_{k} + \matr{K}_{k} \left( \vec{z}_{k} - \matr{H} \hat{\vec{x}}^{-}_{k} \right) \f]
+				xPosteriori = xPriori + K * (z - H * xPriori);
+				// \f[ \matr{P}_{k} = \left( \matr{1} - \matr{K}_{k} \matr{H} \right) \matr{P}^{-}_{k} \f]
+				PPosteriori = (MatrixType::Identity(K.rows(), H.cols()) - K * H) * PPriori;
+				return xPosteriori;
+			}
+			
+			MatrixType& errorCovariancePosteriori()
+			{
+				return this->PPosteriori;
+			}
+			
+			const MatrixType& errorCovariancePosteriori() const
+			{
+				return this->PPosteriori;
+			}
+			
+			MatrixType& errorCovariancePriori()
+			{
+				return this->PPriori;
+			}
+			
+			const MatrixType& errorCovariancePriori() const
+			{
+				return this->PPriori;
+			}
+			
+			MatrixType& measurementModel()
+			{
+				return this->H;
+			}
+			
+			const MatrixType& measurementModel() const
+			{
+				return this->H;
+			}
+			
+			MatrixType& measurementNoiseCovariance()
+			{
+				return this->R;
+			}
+			
+			const MatrixType& measurementNoiseCovariance() const
+			{
+				return this->R;
 			}
 			
 			/**
-			 * \f[ \hat{x}^{-}_{k} = A \hat{x}_{k - 1} + B u_{k - 1} \f]
-			 * \f[ P^{-}_{k} = A P_{k - 1} A^{T} + Q \f]
+			 * Time update ("predict") without control input.
 			 * 
-			 * @param xPost \f$ \hat{x}_{k - 1} \f$
-			 * @param pPost \f$ P_{k - 1} \f$
-			 * @param a \f$ A \f$
-			 * @param b \f$ B \f$
-			 * @param u \f$ U \f$
-			 * @param q \f$ Q \f$
-			 * @param xPrior \f$ \hat{x}^{-}_{k} \f$
-			 * @param pPrior \f$ P^{-}_{k} \f$
+			 * Project the state ahead
+			 * \f[ \hat{\vec{x}}^{-}_{k} = \matr{A} \hat{\vec{x}}_{k - 1} \f]
+			 * Project the error covariance ahead
+			 * \f[ \matr{P}^{-}_{k} = \matr{A} \matr{P}_{k - 1} \matr{A}^{\mathrm{T}} + \matr{Q} \f]
 			 */
-			template< typename Vector1, typename Matrix2, typename Matrix3, typename Matrix4, typename Vector5, typename Matrix6, typename Vector7, typename Matrix8 >
-			static void predict(
-				const Vector1& xPost,
-				const Matrix2& pPost,
-				const Matrix3& a,
-				const Matrix4& b,
-				const Vector5& u,
-				const Matrix6& q,
-				Vector7& xPrior,
-				Matrix8& pPrior
-			)
+			VectorType predict()
 			{
-				// \f[ \hat{x}^{-}_{k} = A \hat{x}_{k - 1} + B u_{k - 1} \f]
-				xPrior = a * xPost + b * u;
-				// \f[ P^{-}_{k} = A P_{k - 1} A^{T} + Q \f]
-				pPrior = a * pPost * a.transpose() + q;
+				// \f[ \hat{\vec{x}}^{-}_{k} = \matr{A} \hat{\vec{x}}_{k - 1} \f]
+				xPriori = A * xPosteriori;
+				// \f[ \matr{P}^{-}_{k} = \matr{A} \matr{P}_{k - 1} \matr{A}^{\mathrm{T}} + \matr{Q} \f]
+				PPriori = A * PPosteriori * A.transpose() + Q;
+				return xPriori;
+			}
+			
+			/**
+			 * Time update ("predict") with control input.
+			 * 
+			 * Project the state ahead
+			 * \f[ \hat{\vec{x}}^{-}_{k} = \matr{A} \hat{\vec{x}}_{k - 1} + \matr{B} \vec{u}_{k - 1} \f]
+			 * Project the error covariance ahead
+			 * \f[ \matr{P}^{-}_{k} = \matr{A} \matr{P}_{k - 1} \matr{A}^{\mathrm{T}} + \matr{Q} \f]
+			 * 
+			 * @param[in] u Control input \f$\vec{u}_{k - 1}\f$
+			 */
+			VectorType predict(const VectorType& u)
+			{
+				assert(u.size() == B.cols());
+				
+				// \f[ \hat{\vec{x}}^{-}_{k} = \matr{A} \hat{\vec{x}}_{k - 1} + \matr{B} \vec{u}_{k - 1} \f]
+				xPriori = A * xPosteriori + B * u;
+				// \matr{P}^{-}_{k} = \matr{A} \matr{P}_{k - 1} \matr{A}^{\mathrm{T}} + \matr{Q} \f]
+				PPriori = A * PPosteriori * A.transpose() + Q;
+				return xPriori;
+			}
+			
+			MatrixType& processNoiseCovariance()
+			{
+				return this->Q;
+			}
+			
+			const MatrixType& processNoiseCovariance() const
+			{
+				return this->Q;
+			}
+			
+			VectorType& statePosteriori()
+			{
+				return this->xPosteriori;
+			}
+			
+			const VectorType& statePosteriori() const
+			{
+				return this->xPosteriori;
+			}
+			
+			VectorType& statePriori()
+			{
+				return this->xPriori;
+			}
+			
+			const VectorType& statePriori() const
+			{
+				return this->xPriori;
+			}
+			
+			MatrixType& stateTransitionModel()
+			{
+				return this->A;
+			}
+			
+			const MatrixType& stateTransitionModel() const
+			{
+				return this->A;
 			}
 			
 		protected:
 			
 		private:
+			/** \f$\matr{A}\f$ relates the state at the previous time step \f$k - 1\f$ to the state at the current step \f$k\f$. */
+			MatrixType A;
 			
+			/** \f$\matr{B}\f$ relates the control input \f$\vec{u}\f$ to the state \f$\vec{x}\f$. */
+			MatrixType B;
+			
+			/** \f$\matr{H}\f$ relates the state to the measurement \f$\vec{z}_{k}\f$. */
+			MatrixType H;
+			
+			/** A posteriori estimate error covariance \f$\matr{P}_{k - 1}\f$. */
+			MatrixType PPosteriori;
+			
+			/** A priori estimate error covariance \f$\matr{P}^{-}_{k}\f$. */
+			MatrixType PPriori;
+			
+			/** Process noise covariance \f$\matr{Q}\f$. */
+			MatrixType Q;
+			
+			/** Measurement error covariance \f$\matr{R}\f$. */
+			MatrixType R;
+			
+			/** A posteriori state estimate \f$\hat{\vec{x}}_{k - 1}\f$. */
+			VectorType xPosteriori;
+			
+			/** A priori state estimate \f$\hat{\vec{x}}^{-}_{k}\f$. */
+			VectorType xPriori;
 		};
 	}
 }
 
-#endif // _RL_MATH_KALMAN_H_
+#endif // RL_MATH_KALMAN_H

@@ -47,7 +47,7 @@ ConfigurationModel::columnCount(const QModelIndex& parent) const
 QVariant
 ConfigurationModel::data(const QModelIndex& index, int role) const
 {
-	if (NULL == MainWindow::instance()->model)
+	if (nullptr == MainWindow::instance()->model)
 	{
 		return QVariant();
 	}
@@ -62,8 +62,7 @@ ConfigurationModel::data(const QModelIndex& index, int role) const
 	case Qt::DisplayRole:
 	case Qt::EditRole:
 		{
-			Eigen::Matrix< rl::math::Unit, Eigen::Dynamic, 1 > qUnits(MainWindow::instance()->model->getDof());
-			MainWindow::instance()->model->getPositionUnits(qUnits);
+			Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> qUnits = MainWindow::instance()->model->getPositionUnits();
 			
 			if (rl::math::UNIT_RADIAN == qUnits(index.row()))
 			{
@@ -75,7 +74,7 @@ ConfigurationModel::data(const QModelIndex& index, int role) const
 			}
 		}
 	case Qt::TextAlignmentRole:
-		return Qt::AlignRight;
+		return QVariant(Qt::AlignRight | Qt::AlignVCenter);
 		break;
 	default:
 		break;
@@ -109,24 +108,25 @@ ConfigurationModel::headerData(int section, Qt::Orientation orientation, int rol
 void
 ConfigurationModel::invalidate()
 {
-	this->reset();
+	this->beginResetModel();
+	this->endResetModel();
 }
 
 int
 ConfigurationModel::rowCount(const QModelIndex& parent) const
 {
-	if (NULL == MainWindow::instance()->model)
+	if (nullptr == MainWindow::instance()->model)
 	{
 		return 0;
 	}
 	
-	return MainWindow::instance()->model->getDof();
+	return MainWindow::instance()->model->getDofPosition();
 }
 
 bool
 ConfigurationModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
-	if (NULL == MainWindow::instance()->model)
+	if (nullptr == MainWindow::instance()->model)
 	{
 		return false;
 	}
@@ -138,16 +138,15 @@ ConfigurationModel::setData(const QModelIndex& index, const QVariant& value, int
 	
 	if (index.isValid() && Qt::EditRole == role)
 	{
-		Eigen::Matrix< rl::math::Unit, Eigen::Dynamic, 1 > qUnits(MainWindow::instance()->model->getDof());
-		MainWindow::instance()->model->getPositionUnits(qUnits);
+		Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> qUnits = MainWindow::instance()->model->getPositionUnits();
 		
 		if (rl::math::UNIT_RADIAN == qUnits(index.row()))
 		{
-			(*MainWindow::instance()->q)(index.row()) = value.value< ::rl::math::Real >() * rl::math::DEG2RAD;
+			(*MainWindow::instance()->q)(index.row()) = value.value<rl::math::Real>() * rl::math::DEG2RAD;
 		}
 		else
 		{
-			(*MainWindow::instance()->q)(index.row()) = value.value< ::rl::math::Real >();
+			(*MainWindow::instance()->q)(index.row()) = value.value<rl::math::Real>();
 		}
 		
 		MainWindow::instance()->viewer->drawConfiguration(*MainWindow::instance()->q);

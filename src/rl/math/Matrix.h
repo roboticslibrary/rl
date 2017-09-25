@@ -24,11 +24,12 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_MATH_MATRIX_H_
-#define _RL_MATH_MATRIX_H_
+#ifndef RL_MATH_MATRIX_H
+#define RL_MATH_MATRIX_H
 
 #define EIGEN_MATRIXBASE_PLUGIN <rl/math/MatrixBaseAddons.h>
 #define EIGEN_QUATERNIONBASE_PLUGIN <rl/math/QuaternionBaseAddons.h>
+#define EIGEN_TRANSFORM_PLUGIN <rl/math/TransformAddons.h>
 
 #include <Eigen/Core>
 
@@ -38,25 +39,25 @@ namespace rl
 {
 	namespace math
 	{
-		typedef ::Eigen::Matrix< Real, ::Eigen::Dynamic, ::Eigen::Dynamic > Matrix;
+		typedef ::Eigen::Matrix<Real, ::Eigen::Dynamic, ::Eigen::Dynamic> Matrix;
 		
-		typedef ::Eigen::Matrix< Real, 2, 2 > Matrix22;
+		typedef ::Eigen::Matrix<Real, 2, 2> Matrix22;
 		
-		typedef ::Eigen::Matrix< Real, 3, 3 > Matrix33;
+		typedef ::Eigen::Matrix<Real, 3, 3> Matrix33;
 		
-		typedef ::Eigen::Matrix< Real, 4, 4 > Matrix44;
+		typedef ::Eigen::Matrix<Real, 4, 4> Matrix44;
 		
-		typedef ::Eigen::Matrix< Real, 6, 6 > Matrix66;
+		typedef ::Eigen::Matrix<Real, 6, 6> Matrix66;
 		
-		typedef ::Eigen::Block< Matrix > MatrixBlock;
+		typedef ::Eigen::Block<Matrix> MatrixBlock;
 		
-		typedef ::Eigen::Block< Matrix22 > Matrix22Block;
+		typedef ::Eigen::Block<Matrix22> Matrix22Block;
 		
-		typedef ::Eigen::Block< Matrix33 > Matrix33Block;
+		typedef ::Eigen::Block<Matrix33> Matrix33Block;
 		
-		typedef ::Eigen::Block< Matrix44 > Matrix44Block;
+		typedef ::Eigen::Block<Matrix44> Matrix44Block;
 		
-		typedef ::Eigen::Block< Matrix66 > Matrix66Block;
+		typedef ::Eigen::Block<Matrix66> Matrix66Block;
 		
 		typedef Matrix::ColXpr MatrixColumn;
 		
@@ -78,15 +79,15 @@ namespace rl
 		
 		typedef Matrix66::RowXpr Matrix66Row;
 		
-		typedef const ::Eigen::Block< const Matrix > ConstMatrixBlock;
+		typedef ::Eigen::Block<const Matrix> ConstMatrixBlock;
 		
-		typedef const ::Eigen::Block< const Matrix22 > ConstMatrix22Block;
+		typedef ::Eigen::Block<const Matrix22> ConstMatrix22Block;
 		
-		typedef const ::Eigen::Block< const Matrix33 > ConstMatrix33Block;
+		typedef ::Eigen::Block<const Matrix33> ConstMatrix33Block;
 		
-		typedef const ::Eigen::Block< const Matrix44 > ConstMatrix44Block;
+		typedef ::Eigen::Block<const Matrix44> ConstMatrix44Block;
 		
-		typedef const ::Eigen::Block< const Matrix66 > ConstMatrix66Block;
+		typedef ::Eigen::Block<const Matrix66> ConstMatrix66Block;
 		
 		typedef Matrix::ConstColXpr ConstMatrixColumn;
 		
@@ -107,7 +108,11 @@ namespace rl
 		typedef Matrix44::ConstRowXpr ConstMatrix44Row;
 		
 		typedef Matrix66::ConstRowXpr ConstMatrix66Row;
+		
+		typedef ::Eigen::Ref<Matrix> MatrixRef;
+		
+		typedef ::Eigen::Ref<const Matrix> ConstMatrixRef;
 	}
 }
 
-#endif // _RL_MATH_MATRIX_H_
+#endif // RL_MATH_MATRIX_H

@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_MDL_JOINT_H_
-#define _RL_MDL_JOINT_H_
+#ifndef RL_MDL_JOINT_H
+#define RL_MDL_JOINT_H
 
 #include <rl/math/Unit.h>
 #include <rl/math/Vector.h>
@@ -57,9 +57,13 @@ namespace rl
 			
 			void forwardVelocity();
 			
+			virtual ::rl::math::Vector generatePositionGaussian(const ::rl::math::ConstVectorRef& rand, const ::rl::math::ConstVectorRef& mean, const ::rl::math::ConstVectorRef& sigma) const;
+			
+			virtual ::rl::math::Vector generatePositionUniform(const ::rl::math::ConstVectorRef& rand) const;
+			
 			const ::rl::math::Vector& getAcceleration() const;
 			
-			const ::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1 >& getAccelerationUnits() const;
+			const ::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1>& getAccelerationUnits() const;
 			
 			::std::size_t getDof() const;
 			
@@ -71,25 +75,27 @@ namespace rl
 			
 			const ::rl::math::Vector& getPosition() const;
 			
-			const ::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1 >& getPositionUnits() const;
+			const ::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1>& getPositionUnits() const;
 			
 			const ::rl::math::Vector& getTorque() const;
 			
-			const ::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1 >& getTorqueUnits() const;
+			const ::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1>& getTorqueUnits() const;
 			
 			const ::rl::math::Vector& getSpeed() const;
 			
-			const ::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1 >& getSpeedUnits() const;
+			const ::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1>& getSpeedUnits() const;
 			
 			const ::rl::math::Vector& getVelocity() const;
 			
-			const ::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1 >& getVelocityUnits() const;
+			const ::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1>& getVelocityUnits() const;
 			
 			virtual void interpolate(const ::rl::math::Vector& q1, const ::rl::math::Vector& q2, const ::rl::math::Real& alpha, ::rl::math::Vector& q) const;
 			
 			void inverseForce();
 			
 			virtual bool isValid(const ::rl::math::Vector& q) const;
+			
+			virtual void normalize(::rl::math::Vector& q) const;
 			
 			void setAcceleration(const ::rl::math::Vector& qdd);
 			
@@ -117,25 +123,25 @@ namespace rl
 			
 			::rl::math::Vector q;
 			
-			::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1 > qUnits;
+			::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1> qUnits;
 			
 			::rl::math::Vector qd;
 			
-			::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1 > qdUnits;
+			::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1> qdUnits;
 			
 			::rl::math::Vector qdd;
 			
-			::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1 > qddUnits;
+			::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1> qddUnits;
 			
 			::rl::math::Matrix S;
 			
 			::rl::math::Vector speed;
 			
-			::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1 > speedUnits;
+			::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1> speedUnits;
 			
 			::rl::math::Vector tau;
 			
-			::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1 > tauUnits;
+			::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1> tauUnits;
 			
 			::rl::math::Vector u;
 			
@@ -143,7 +149,7 @@ namespace rl
 			
 			::rl::math::MotionVector v;
 			
-			::Eigen::Matrix< bool, ::Eigen::Dynamic, 1 > wraparound;
+			::Eigen::Matrix<bool, ::Eigen::Dynamic, 1> wraparound;
 			
 		protected:
 			
@@ -153,4 +159,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_MDL_JOINT_H_
+#endif // RL_MDL_JOINT_H

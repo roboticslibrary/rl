@@ -37,7 +37,11 @@ Server::~Server()
 }
 
 void
+#if QT_VERSION >= 0x050000
+Server::incomingConnection(qintptr socketDescriptor)
+#else // QT_VERSION
 Server::incomingConnection(int socketDescriptor)
+#endif // QT_VERSION
 {
 	Socket* socket = new Socket(this);
 	socket->setSocketDescriptor(socketDescriptor);

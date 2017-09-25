@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_MDL_XMLFACTORY_H_
-#define _RL_MDL_XMLFACTORY_H_
+#ifndef RL_MDL_XMLFACTORY_H
+#define RL_MDL_XMLFACTORY_H
 
 #include "Factory.h"
 
@@ -50,4 +50,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_MDL_XMLFACTORY_H_
+#endif // RL_MDL_XMLFACTORY_H

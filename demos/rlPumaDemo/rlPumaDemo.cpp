@@ -27,11 +27,11 @@
 #include <cmath>
 #include <cstdio>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 #include <string>
 #include <boost/lexical_cast.hpp>
-#include <boost/shared_ptr.hpp>
 #include <rl/kin/Kinematics.h>
 #include <rl/kin/Puma.h>
 #include <rl/math/Rotation.h>
@@ -43,20 +43,20 @@ main(int argc, char** argv)
 	if (argc < 8)
 	{
 		std::cout << "Usage: rlPumaDemo PUMAFILE Q1 Q2 Q3 Q4 Q5 Q6" << std::endl;
-		return 1;
+		return EXIT_FAILURE;
 	}
 	
 	try
 	{
-		boost::shared_ptr< rl::kin::Kinematics > kinematics(rl::kin::Kinematics::create(argv[1]));
+		std::shared_ptr<rl::kin::Kinematics> kinematics(rl::kin::Kinematics::create(argv[1]));
 		
-		if (rl::kin::Puma* puma = dynamic_cast< rl::kin::Puma* >(kinematics.get()))
+		if (rl::kin::Puma* puma = dynamic_cast<rl::kin::Puma*>(kinematics.get()))
 		{
 			rl::math::Vector q(puma->getDof());
 			
 			for (std::ptrdiff_t i = 0; i < q.size(); ++i)
 			{
-				q(i) = boost::lexical_cast< rl::math::Real >(argv[i + 2]) * rl::math::DEG2RAD;
+				q(i) = boost::lexical_cast<rl::math::Real>(argv[i + 2]) * rl::math::DEG2RAD;
 			}
 			
 			rl::kin::Puma::Arm arm;
@@ -94,7 +94,7 @@ main(int argc, char** argv)
 			if (!puma->inversePosition(x, q2))
 			{
 				std::cout << "out of reach" << std::endl;
-				return 1;
+				return EXIT_FAILURE;
 			}
 			
 			std::cout << "q=" << std::endl << q2.transpose() * rl::math::RAD2DEG << std::endl;
@@ -108,14 +108,14 @@ main(int argc, char** argv)
 		}
 		else
 		{
-			return 1;
+			return EXIT_FAILURE;
 		}
 	}
 	catch (const std::exception& e)
 	{
 		std::cout << e.what() << std::endl;
-		return 1;
+		return EXIT_FAILURE;
 	}
 	
-	return 0;
+	return EXIT_SUCCESS;
 }

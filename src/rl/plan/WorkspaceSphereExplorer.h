@@ -24,13 +24,13 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_PLAN_WORKSPACESPHEREEXPLORER_H_
-#define _RL_PLAN_WORKSPACESPHEREEXPLORER_H_
+#ifndef RL_PLAN_WORKSPACESPHEREEXPLORER_H
+#define RL_PLAN_WORKSPACESPHEREEXPLORER_H
 
 #include <list>
+#include <random>
 #include <set>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_on_sphere.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <rl/math/Vector.h>
@@ -45,6 +45,16 @@ namespace rl
 		class DistanceModel;
 		class Viewer;
 		
+		/**
+		 * Wavefront expansion.
+		 * 
+		 * Oliver Brock and Lydia E. Kavraki. Decomposition-based motion planning:
+		 * A framework for real-time motion planning in high-dimensional configuration
+		 * spaces. In Proceedings of the IEEE International Conference on Robotics
+		 * and Automation, pages 1469-1474, 2001.
+		 * 
+		 * http://dx.doi.org/10.1109/ROBOT.2001.932817
+		 */
 		class WorkspaceSphereExplorer
 		{
 		public:
@@ -61,13 +71,13 @@ namespace rl
 			
 			bool explore();
 			
-			void getPath(WorkspaceSphereList& path) const;
+			WorkspaceSphereList getPath() const;
 			
 			bool isCovered(const ::rl::math::Vector3& point) const;
 			
 			void reset();
 			
-			void seed(const ::boost::mt19937::result_type& value);
+			void seed(const ::std::mt19937::result_type& value);
 			
 			::rl::math::Vector3* goal;
 			
@@ -98,17 +108,17 @@ namespace rl
 				VertexBundle
 			> Graph;
 			
-			typedef ::boost::graph_traits< Graph >::edge_descriptor Edge;
+			typedef ::boost::graph_traits<Graph>::edge_descriptor Edge;
 			
-			typedef ::boost::graph_traits< Graph >::edge_iterator EdgeIterator;
+			typedef ::boost::graph_traits<Graph>::edge_iterator EdgeIterator;
 			
-			typedef ::std::pair< EdgeIterator, EdgeIterator > EdgeIteratorPair;
+			typedef ::std::pair<EdgeIterator, EdgeIterator> EdgeIteratorPair;
 			
-			typedef ::boost::graph_traits< Graph >::vertex_descriptor Vertex;
+			typedef ::boost::graph_traits<Graph>::vertex_descriptor Vertex;
 			
-			typedef ::boost::graph_traits< Graph >::vertex_iterator VertexIterator;
+			typedef ::boost::graph_traits<Graph>::vertex_iterator VertexIterator;
 			
-			typedef ::std::pair< VertexIterator, VertexIterator > VertexIteratorPair;
+			typedef ::std::pair<VertexIterator, VertexIterator> VertexIteratorPair;
 			
 			Edge addEdge(const Vertex& u, const Vertex& v);
 			
@@ -122,9 +132,9 @@ namespace rl
 			
 			Graph graph;
 			
-			::std::multiset< WorkspaceSphere > queue;
+			::std::multiset<WorkspaceSphere> queue;
 			
-			::boost::variate_generator< ::boost::mt19937, ::boost::uniform_on_sphere< ::rl::math::Real > > rand;
+			::boost::variate_generator< ::std::mt19937, ::boost::uniform_on_sphere< ::rl::math::Real>> rand;
 			
 		private:
 			
@@ -132,4 +142,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_PLAN_WORKSPACESPHEREEXPLORER_H_
+#endif // RL_PLAN_WORKSPACESPHEREEXPLORER_H

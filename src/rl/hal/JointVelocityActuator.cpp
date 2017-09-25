@@ -30,8 +30,8 @@ namespace rl
 {
 	namespace hal
 	{
-		JointVelocityActuator::JointVelocityActuator(const ::std::size_t& dof, const ::rl::math::Real& updateRate) :
-			AxisController(dof, updateRate)
+		JointVelocityActuator::JointVelocityActuator(const ::std::size_t& dof) :
+			AxisController(dof)
 		{
 		}
 		

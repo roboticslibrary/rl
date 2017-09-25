@@ -27,20 +27,42 @@
 #include <iostream>
 #include <rl/xml/Document.h>
 #include <rl/xml/DomParser.h>
+#include <rl/xml/Stylesheet.h>
 
 int
 main(int argc, char** argv)
 {
 	if (argc < 2)
 	{
-		std::cout << "Usage: rlLoadXmlDemo XMLFILE" << std::endl;
-		return 1;
+		std::cout << "Usage: rlLoadXmlDemo XMLFILE [PARAM1 VALUE1 ... PARAMN VALUEN]" << std::endl;
+		return EXIT_FAILURE;
 	}
 	
 	rl::xml::DomParser parser;
-	rl::xml::Document doc = parser.readFile(argv[1], "", XML_PARSE_NOENT | XML_PARSE_XINCLUDE);
-	doc.substitute(XML_PARSE_NOENT | XML_PARSE_XINCLUDE);
-	doc.save("-");
+	rl::xml::Document document = parser.readFile(argv[1], "", XML_PARSE_NOENT | XML_PARSE_XINCLUDE);
+	document.substitute(XML_PARSE_NOENT | XML_PARSE_XINCLUDE);
 	
-	return 0;
+	if ("stylesheet" == document.getRootElement().getName() || "transform" == document.getRootElement().getName())
+	{
+		if ("1.0" == document.getRootElement().getProperty("version"))
+		{
+			if (document.getRootElement().hasNamespace() && "http://www.w3.org/1999/XSL/Transform" == document.getRootElement().getNamespace().getHref())
+			{
+				::std::map< ::std::string, ::std::string> parameters;
+				
+				for (int i = 2; i < argc - 1; i += 2)
+				{
+					parameters[argv[i]] = argv[i + 1];
+					std::cout << "param['" << argv[i] << "'] = '" << argv[i + 1] << "'" << std::endl;
+				}
+				
+				rl::xml::Stylesheet stylesheet(document);
+				document = stylesheet.apply(parameters);
+			}
+		}
+	}
+	
+	document.save("-");
+	
+	return EXIT_SUCCESS;
 }

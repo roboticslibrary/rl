@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_SG_SHAPE_H_
-#define _RL_SG_SHAPE_H_
+#ifndef RL_SG_SHAPE_H
+#define RL_SG_SHAPE_H
 
 #include <string>
 #include <Inventor/VRMLnodes/SoVRMLShape.h>
@@ -40,7 +40,7 @@ namespace rl
 		class Shape
 		{
 		public:
-			Shape(SoVRMLShape* shape, Body* body);
+			Shape(::SoVRMLShape* shape, Body* body);
 			
 			virtual ~Shape();
 			
@@ -63,4 +63,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_SG_SHAPE_H_
+#endif // RL_SG_SHAPE_H

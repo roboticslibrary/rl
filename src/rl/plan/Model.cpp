@@ -33,10 +33,10 @@ namespace rl
 	namespace plan
 	{
 		Model::Model() :
-			kin(NULL),
-			mdl(NULL),
-			model(NULL),
-			scene(NULL)
+			kin(nullptr),
+			mdl(nullptr),
+			model(nullptr),
+			scene(nullptr)
 		{
 		}
 		
@@ -47,7 +47,7 @@ namespace rl
 		bool
 		Model::areColliding(const ::std::size_t& i, const ::std::size_t& j) const
 		{
-			if (NULL != this->kin)
+			if (nullptr != this->kin)
 			{
 				return this->kin->areColliding(i, j);
 			}
@@ -60,7 +60,7 @@ namespace rl
 		void
 		Model::clip(::rl::math::Vector& q) const
 		{
-			if (NULL != this->kin)
+			if (nullptr != this->kin)
 			{
 				this->kin->clip(q);
 			}
@@ -73,7 +73,7 @@ namespace rl
 		::rl::math::Real
 		Model::distance(const ::rl::math::Vector& q1, const ::rl::math::Vector& q2) const
 		{
-			if (NULL != this->kin)
+			if (nullptr != this->kin)
 			{
 				return this->kin->distance(q1, q2);
 			}
@@ -86,7 +86,7 @@ namespace rl
 		void
 		Model::forwardForce(const ::rl::math::Vector& tau, ::rl::math::Vector& f) const
 		{
-			if (NULL != this->kin)
+			if (nullptr != this->kin)
 			{
 				this->kin->forwardForce(tau, f);
 			}
@@ -99,7 +99,7 @@ namespace rl
 		const ::rl::math::Transform&
 		Model::forwardPosition(const ::std::size_t& i) const
 		{
-			if (NULL != this->kin)
+			if (nullptr != this->kin)
 			{
 				return this->kin->forwardPosition(i);
 			}
@@ -112,7 +112,7 @@ namespace rl
 		void
 		Model::forwardVelocity(const ::rl::math::Vector& qdot, ::rl::math::Vector& xdot) const
 		{
-			if (NULL != this->kin)
+			if (nullptr != this->kin)
 			{
 				this->kin->forwardVelocity(qdot, xdot);
 			}
@@ -122,10 +122,36 @@ namespace rl
 			}
 		}
 		
+		::rl::math::Vector
+		Model::generatePositionGaussian(const ::rl::math::Vector& rand, const ::rl::math::Vector& mean, const ::rl::math::Vector& sigma) const
+		{
+			if (nullptr != this->kin)
+			{
+				return this->kin->generatePositionGaussian(rand, mean, sigma);
+			}
+			else
+			{
+				return this->mdl->generatePositionGaussian(rand, mean, sigma);
+			}
+		}
+		
+		::rl::math::Vector
+		Model::generatePositionUniform(const ::rl::math::Vector& rand) const
+		{
+			if (nullptr != this->kin)
+			{
+				return this->kin->generatePositionUniform(rand);
+			}
+			else
+			{
+				return this->mdl->generatePositionUniform(rand);
+			}
+		}
+		
 		::std::size_t
 		Model::getBodies() const
 		{
-			if (NULL != this->kin)
+			if (nullptr != this->kin)
 			{
 				return this->kin->getBodies();
 			}
@@ -150,7 +176,7 @@ namespace rl
 		::std::size_t
 		Model::getDof() const
 		{
-			if (NULL != this->kin)
+			if (nullptr != this->kin)
 			{
 				return this->kin->getDof();
 			}
@@ -160,10 +186,23 @@ namespace rl
 			}
 		}
 		
+		::std::size_t
+		Model::getDofPosition() const
+		{
+			if (nullptr != this->kin)
+			{
+				return this->kin->getDof();
+			}
+			else
+			{
+				return this->mdl->getDofPosition();
+			}
+		}
+		
 		const ::rl::math::Transform&
 		Model::getFrame(const ::std::size_t& i) const
 		{
-			if (NULL != this->kin)
+			if (nullptr != this->kin)
 			{
 				return this->kin->getFrame(i);
 			}
@@ -176,7 +215,7 @@ namespace rl
 		const ::rl::math::Matrix&
 		Model::getJacobian() const
 		{
-			if (NULL != this->kin)
+			if (nullptr != this->kin)
 			{
 				return this->kin->getJacobian();
 			}
@@ -189,7 +228,7 @@ namespace rl
 		::rl::math::Real
 		Model::getManipulabilityMeasure() const
 		{
-			if (NULL != this->kin)
+			if (nullptr != this->kin)
 			{
 				return this->kin->getManipulabilityMeasure();
 			}
@@ -202,7 +241,7 @@ namespace rl
 		::std::string
 		Model::getManufacturer() const
 		{
-			if (NULL != this->kin)
+			if (nullptr != this->kin)
 			{
 				return this->kin->getManufacturer();
 			}
@@ -212,36 +251,40 @@ namespace rl
 			}
 		}
 		
-		void
-		Model::getMaximum(::rl::math::Vector& maximum) const
+		::rl::math::Vector
+		Model::getMaximum() const
 		{
-			if (NULL != this->kin)
+			if (nullptr != this->kin)
 			{
+				::rl::math::Vector maximum(this->getDofPosition());
 				this->kin->getMaximum(maximum);
+				return maximum;
 			}
 			else
 			{
-				this->mdl->getMaximum(maximum);
+				return this->mdl->getMaximum();
 			}
 		}
 		
-		void
-		Model::getMinimum(::rl::math::Vector& minimum) const
+		::rl::math::Vector
+		Model::getMinimum() const
 		{
-			if (NULL != this->kin)
+			if (nullptr != this->kin)
 			{
+				::rl::math::Vector minimum(this->getDofPosition());;
 				this->kin->getMinimum(minimum);
+				return minimum;
 			}
 			else
 			{
-				this->mdl->getMinimum(minimum);
+				return this->mdl->getMinimum();
 			}
 		}
 		
 		::std::string
 		Model::getName() const
 		{
-			if (NULL != this->kin)
+			if (nullptr != this->kin)
 			{
 				return this->kin->getName();
 			}
@@ -254,7 +297,7 @@ namespace rl
 		::std::size_t
 		Model::getOperationalDof() const
 		{
-			if (NULL != this->kin)
+			if (nullptr != this->kin)
 			{
 				return this->kin->getOperationalDof();
 			}
@@ -264,23 +307,25 @@ namespace rl
 			}
 		}
 		
-		void
-		Model::getPositionUnits(::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1 >& units) const
+		::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1>
+		Model::getPositionUnits() const
 		{
-			if (NULL != this->kin)
+			if (nullptr != this->kin)
 			{
+				::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1> units(this->getDofPosition());;
 				this->kin->getPositionUnits(units);
+				return units;
 			}
 			else
 			{
-				this->mdl->getPositionUnits(units);
+				return this->mdl->getPositionUnits();
 			}
 		}
 		
 		void
 		Model::inverseForce(const ::rl::math::Vector& f, ::rl::math::Vector& tau) const
 		{
-			if (NULL != this->kin)
+			if (nullptr != this->kin)
 			{
 				this->kin->inverseForce(f, tau);
 			}
@@ -293,7 +338,7 @@ namespace rl
 		::rl::math::Real
 		Model::inverseOfTransformedDistance(const ::rl::math::Real& d) const
 		{
-			if (NULL != this->kin)
+			if (nullptr != this->kin)
 			{
 				return this->kin->inverseOfTransformedDistance(d);
 			}
@@ -306,7 +351,7 @@ namespace rl
 		void
 		Model::inverseVelocity(const ::rl::math::Vector& xdot, ::rl::math::Vector& qdot) const
 		{
-			if (NULL != this->kin)
+			if (nullptr != this->kin)
 			{
 				this->kin->inverseVelocity(xdot, qdot);
 			}
@@ -319,7 +364,7 @@ namespace rl
 		void
 		Model::interpolate(const ::rl::math::Vector& q1, const ::rl::math::Vector& q2, const ::rl::math::Real& alpha, ::rl::math::Vector& q) const
 		{
-			if (NULL != this->kin)
+			if (nullptr != this->kin)
 			{
 				this->kin->interpolate(q1, q2, alpha, q);
 			}
@@ -332,7 +377,7 @@ namespace rl
 		bool
 		Model::isColliding(const ::std::size_t& i) const
 		{
-			if (NULL != this->kin)
+			if (nullptr != this->kin)
 			{
 				return this->kin->isColliding(i);
 			}
@@ -345,7 +390,7 @@ namespace rl
 		bool
 		Model::isSingular() const
 		{
-			if (NULL != this->kin)
+			if (nullptr != this->kin)
 			{
 				return this->kin->isSingular();
 			}
@@ -358,7 +403,7 @@ namespace rl
 		bool
 		Model::isValid(const ::rl::math::Vector& q) const
 		{
-			if (NULL != this->kin)
+			if (nullptr != this->kin)
 			{
 				return this->kin->isValid(q);
 			}
@@ -371,7 +416,7 @@ namespace rl
 		::rl::math::Real
 		Model::maxDistanceToRectangle(const ::rl::math::Vector& q, const ::rl::math::Vector& min, const ::rl::math::Vector& max) const
 		{
-			if (NULL != this->kin)
+			if (nullptr != this->kin)
 			{
 				return this->kin->maxDistanceToRectangle(q, min, max);
 			}
@@ -384,7 +429,7 @@ namespace rl
 		::rl::math::Real
 		Model::minDistanceToRectangle(const ::rl::math::Vector& q, const ::rl::math::Vector& min, const ::rl::math::Vector& max) const
 		{
-			if (NULL != this->kin)
+			if (nullptr != this->kin)
 			{
 				return this->kin->minDistanceToRectangle(q, min, max);
 			}
@@ -397,7 +442,7 @@ namespace rl
 		::rl::math::Real
 		Model::minDistanceToRectangle(const ::rl::math::Real& q, const ::rl::math::Real& min, const ::rl::math::Real& max, const ::std::size_t& cuttingDimension) const
 		{
-			if (NULL != this->kin)
+			if (nullptr != this->kin)
 			{
 				return this->kin->minDistanceToRectangle(q, min, max, cuttingDimension);
 			}
@@ -410,7 +455,7 @@ namespace rl
 		::rl::math::Real
 		Model::newDistance(const ::rl::math::Real& dist, const ::rl::math::Real& oldOff, const ::rl::math::Real& newOff, const int& cuttingDimension) const
 		{
-			if (NULL != this->kin)
+			if (nullptr != this->kin)
 			{
 				return this->kin->newDistance(dist, oldOff, newOff, cuttingDimension);
 			}
@@ -428,14 +473,14 @@ namespace rl
 		void
 		Model::setPosition(const ::rl::math::Vector& q)
 		{
-			if (NULL != this->kin)
+			if (nullptr != this->kin)
 			{
 				assert(q.size() == this->kin->getDof());
 				this->kin->setPosition(q);
 			}
 			else
 			{
-				assert(q.size() == this->mdl->getDof());
+				assert(q.size() == this->mdl->getDofPosition());
 				this->mdl->setPosition(q);
 			}
 		}
@@ -443,7 +488,7 @@ namespace rl
 		void
 		Model::step(const ::rl::math::Vector& q1, const ::rl::math::Vector& qdot, ::rl::math::Vector& q2) const
 		{
-			if (NULL != this->kin)
+			if (nullptr != this->kin)
 			{
 				this->kin->step(q1, qdot, q2);
 			}
@@ -456,7 +501,7 @@ namespace rl
 		::rl::math::Real
 		Model::transformedDistance(const ::rl::math::Real& d) const
 		{
-			if (NULL != this->kin)
+			if (nullptr != this->kin)
 			{
 				return this->kin->transformedDistance(d);
 			}
@@ -469,7 +514,7 @@ namespace rl
 		::rl::math::Real
 		Model::transformedDistance(const ::rl::math::Vector& q1, const ::rl::math::Vector& q2) const
 		{
-			if (NULL != this->kin)
+			if (nullptr != this->kin)
 			{
 				return this->kin->transformedDistance(q1, q2);
 			}
@@ -479,10 +524,23 @@ namespace rl
 			}
 		}
 		
+		::rl::math::Real
+		Model::transformedDistance(const ::rl::math::Real& q1, const ::rl::math::Real& q2, const ::std::size_t& i) const
+		{
+			if (nullptr != this->kin)
+			{
+				return this->kin->transformedDistance(q1, q2, i);
+			}
+			else
+			{
+				return this->mdl->transformedDistance(q1, q2, i);
+			}
+		}
+		
 		void
 		Model::updateFrames(const bool& doUpdateModel)
 		{
-			if (NULL != this->kin)
+			if (nullptr != this->kin)
 			{
 				assert(this->model->getNumBodies() == this->kin->getBodies());
 				
@@ -515,7 +573,7 @@ namespace rl
 		void
 		Model::updateJacobian()
 		{
-			if (NULL != this->kin)
+			if (nullptr != this->kin)
 			{
 				this->kin->updateJacobian();
 			}
@@ -528,7 +586,7 @@ namespace rl
 		void
 		Model::updateJacobianInverse(const ::rl::math::Real& lambda, const bool& doSvd)
 		{
-			if (NULL != this->kin)
+			if (nullptr != this->kin)
 			{
 				this->kin->updateJacobianInverse(lambda, doSvd);
 			}

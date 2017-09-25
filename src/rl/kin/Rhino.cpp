@@ -115,7 +115,7 @@ namespace rl
 			::rl::math::Real py0_2 = ::std::pow(py0, 2);
 			::rl::math::Real pz0_2 = ::std::pow(pz0, 2);
 			
-			::rl::math::Real K = static_cast< ::rl::math::Real >(arm * elbow);
+			::rl::math::Real K = static_cast< ::rl::math::Real>(arm * elbow);
 			
 			::rl::math::Real r_2 = px0_2 + py0_2;
 			::rl::math::Real r = ::std::sqrt(r_2);
@@ -123,7 +123,7 @@ namespace rl
 			::rl::math::Real Q_2 = r_2 + pz0_2;
 			::rl::math::Real Q = ::std::sqrt(Q_2);
 			
-			if (::std::abs(Q) <= ::std::numeric_limits< ::rl::math::Real >::epsilon())
+			if (::std::abs(Q) <= ::std::numeric_limits< ::rl::math::Real>::epsilon())
 			{
 				return false;
 			}
@@ -144,13 +144,13 @@ namespace rl
 			::rl::math::Real c2 = cosAlpha * cosBeta - K * sinAlpha * sinBeta;
 			
 			// arm
-			::rl::math::Real theta2 = this->atan2(s2, c2) + static_cast< ::rl::math::Real >(M_PI_2);
+			::rl::math::Real theta2 = this->atan2(s2, c2) + static_cast< ::rl::math::Real>(M_PI_2);
 			
 			::rl::math::Real c3 = (a2_2 + a3_2 - Q_2) / (2 * a2 * a3);
 			::rl::math::Real s3 = K * ::std::sqrt(1.0f - ::std::pow(c3, 2));
 			
 			// elbow
-			::rl::math::Real theta3 = this->atan2(s3, c3) + static_cast< ::rl::math::Real >(M_PI);
+			::rl::math::Real theta3 = this->atan2(s3, c3) + static_cast< ::rl::math::Real>(M_PI);
 			
 			::rl::math::Real c23 = this->cos(theta2 + theta3);
 			::rl::math::Real s23 = this->sin(theta2 + theta3);
@@ -181,11 +181,11 @@ namespace rl
 			
 			for (::std::size_t i = 0; i < this->getDof(); ++i)
 			{
-				q(i) = ::std::fmod(q(i), 2.0f * static_cast< ::rl::math::Real >(M_PI));
+				q(i) = ::std::fmod(q(i), 2.0f * static_cast< ::rl::math::Real>(M_PI));
 				
 				if (q(i) < this->joints[i]->min)
 				{
-					q(i) += 2.0f * static_cast< ::rl::math::Real >(M_PI);
+					q(i) += 2.0f * static_cast< ::rl::math::Real>(M_PI);
 					
 					if (q(i) < this->joints[i]->min || q(i) > this->joints[i]->max)
 					{
@@ -194,7 +194,7 @@ namespace rl
 				}
 				else if (q(i) > this->joints[i]->max)
 				{
-					q(i) -= 2.0f * static_cast< ::rl::math::Real >(M_PI);
+					q(i) -= 2.0f * static_cast< ::rl::math::Real>(M_PI);
 					
 					if (q(i) < this->joints[i]->min || q(i) > this->joints[i]->max)
 					{

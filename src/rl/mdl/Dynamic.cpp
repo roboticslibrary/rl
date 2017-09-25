@@ -75,7 +75,7 @@ namespace rl
 			this->setWorldGravity(0, 0, 0);
 			
 			this->inverseDynamics();
-			this->getTorque(V);
+			V = this->getTorque();
 			
 			this->setWorldGravity(g);
 		}
@@ -96,7 +96,7 @@ namespace rl
 			this->setAcceleration(tmp);
 			
 			this->inverseDynamics();
-			this->getTorque(G);
+			G = this->getTorque();
 		}
 		
 		void
@@ -126,9 +126,8 @@ namespace rl
 				
 				this->setAcceleration(tmp);
 				this->inverseDynamics();
-				this->getTorque(tmp);
 				
-				M.col(i) = tmp;
+				M.col(i) = this->getTorque();
 			}
 			
 			this->setWorldGravity(g);
@@ -161,9 +160,8 @@ namespace rl
 				
 				this->setTorque(tmp);
 				this->forwardDynamics();
-				this->getAcceleration(tmp);
 				
-				invM.col(i) = tmp;
+				invM.col(i) = this->getAcceleration();
 			}
 			
 			this->setWorldGravity(g);
@@ -190,16 +188,13 @@ namespace rl
 		void
 		Dynamic::eulerCauchy(const ::rl::math::Real& dt)
 		{
-			::rl::math::Vector y(this->getDofPosition());
-			this->getPosition(y);
-			::rl::math::Vector dy(this->getDof());
-			this->getVelocity(dy);
+			::rl::math::Vector y = this->getPosition();
+			::rl::math::Vector dy = this->getVelocity();
 			
 			this->forwardDynamics();
 			
 			// f
-			::rl::math::Vector f(this->getDof());
-			this->getAcceleration(f);
+			::rl::math::Vector f = this->getAcceleration();
 			
 			// y_0 + dy_0 * dt
 			y += dt * dy; // TODO
@@ -214,17 +209,17 @@ namespace rl
 		void
 		Dynamic::forwardDynamics()
 		{
-			for (::std::vector< Element* >::iterator i = this->elements.begin(); i != this->elements.end(); ++i)
+			for (::std::vector<Element*>::iterator i = this->elements.begin(); i != this->elements.end(); ++i)
 			{
 				(*i)->forwardDynamics1();
 			}
 			
-			for (::std::vector< Element* >::reverse_iterator i = this->elements.rbegin(); i != this->elements.rend(); ++i)
+			for (::std::vector<Element*>::reverse_iterator i = this->elements.rbegin(); i != this->elements.rend(); ++i)
 			{
 				(*i)->forwardDynamics2();
 			}
 			
-			for (::std::vector< Element* >::iterator i = this->elements.begin(); i != this->elements.end(); ++i)
+			for (::std::vector<Element*>::iterator i = this->elements.begin(); i != this->elements.end(); ++i)
 			{
 				(*i)->forwardDynamics3();
 			}
@@ -263,7 +258,7 @@ namespace rl
 		void
 		Dynamic::getWorldGravity(::rl::math::Real& x, ::rl::math::Real& y, ::rl::math::Real& z) const
 		{
-			dynamic_cast< World* >(this->tree[this->root].get())->getGravity(x, y, z);
+			dynamic_cast<World*>(this->tree[this->root].get())->getGravity(x, y, z);
 		}
 		
 		void
@@ -275,12 +270,12 @@ namespace rl
 		void
 		Dynamic::inverseDynamics()
 		{
-			for (::std::vector< Element* >::iterator i = this->elements.begin(); i != this->elements.end(); ++i)
+			for (::std::vector<Element*>::iterator i = this->elements.begin(); i != this->elements.end(); ++i)
 			{
 				(*i)->inverseDynamics1();
 			}
 			
-			for (::std::vector< Element* >::reverse_iterator i = this->elements.rbegin(); i != this->elements.rend(); ++i)
+			for (::std::vector<Element*>::reverse_iterator i = this->elements.rbegin(); i != this->elements.rend(); ++i)
 			{
 				(*i)->inverseDynamics2();
 			}
@@ -289,7 +284,7 @@ namespace rl
 		void
 		Dynamic::inverseForce()
 		{
-			for (::std::vector< Element* >::reverse_iterator i = this->elements.rbegin(); i != this->elements.rend(); ++i)
+			for (::std::vector<Element*>::reverse_iterator i = this->elements.rbegin(); i != this->elements.rend(); ++i)
 			{
 				(*i)->inverseForce();
 			}
@@ -298,35 +293,27 @@ namespace rl
 		void
 		Dynamic::rungeKuttaNystrom(const ::rl::math::Real& dt)
 		{
-			::rl::math::Vector y0(this->getDofPosition());
-			this->getPosition(y0);
-			::rl::math::Vector dy0(this->getDof());
-			this->getVelocity(dy0);
-			
-			::rl::math::Vector y(this->getDofPosition());
-			::rl::math::Vector dy(this->getDof());
-			::rl::math::Vector f(this->getDof());
+			::rl::math::Vector y0 = this->getPosition();
+			::rl::math::Vector dy0 = this->getVelocity();
 			
 			this->forwardDynamics();
 			
-			// dt / 2 * f
-			::rl::math::Vector k1(this->getDof());
-			this->getAcceleration(f);
-			k1 = dt / 2 * f;
+			::rl::math::Vector f = this->getAcceleration();
+			
+			// k1 = dt / 2 * f
+			::rl::math::Vector k1 = dt / 2 * f;
 			
 			// y_0 + dt / 2 * dy_0 + dt / 4 * k_1
-			y = y0 + dt / 2 * dy0 + dt / 4 * k1; // TODO
+			::rl::math::Vector y = y0 + dt / 2 * dy0 + dt / 4 * k1; // TODO
 			// dy_0 + k1
-			dy = dy0 + k1;
+			::rl::math::Vector dy = dy0 + k1;
 			
 			this->setPosition(y);
 			this->setVelocity(dy);
 			this->forwardDynamics();
 			
-			// dt / 2 * f
-			::rl::math::Vector k2(this->getDof());
-			this->getAcceleration(k2);
-			k2 *= dt / 2;
+			// k2 = dt / 2 * f
+			::rl::math::Vector k2 = dt / 2 * this->getAcceleration();
 			
 			// dy_0 + k_2
 			dy = dy0 + k2;
@@ -334,10 +321,8 @@ namespace rl
 			this->setVelocity(dy);
 			this->forwardDynamics();
 			
-			// dt / 2 * f
-			::rl::math::Vector k3(this->getDof());
-			this->getAcceleration(k3);
-			k3 *= dt / 2;
+			// k3 = dt / 2 * f
+			::rl::math::Vector k3 = dt / 2 * this->getAcceleration();
 			
 			// y_0 + dt * dy_0 + dt * k_3
 			y = y0 + dt * dy0 + dt * k3; // TODO
@@ -348,10 +333,8 @@ namespace rl
 			this->setVelocity(dy);
 			this->forwardDynamics();
 			
-			// dt / 2 * f
-			::rl::math::Vector k4(this->getDof());
-			this->getAcceleration(k4);
-			k4 *= dt / 2;
+			// k4 = dt / 2 * f
+			::rl::math::Vector k4 = dt / 2 * this->getAcceleration();
 			
 			// y_0 + dy_0 * dt + dt / 3 * (k_1 + k_2 + k_3)
 			y = y0 + dy0 * dt + dt / 3 * (k1 + k2 + k3); // TODO
@@ -366,7 +349,7 @@ namespace rl
 		void
 		Dynamic::setWorldGravity(const ::rl::math::Real& x, const ::rl::math::Real& y, const ::rl::math::Real& z)
 		{
-			dynamic_cast< World* >(this->tree[this->root].get())->setGravity(x, y, z);
+			dynamic_cast<World*>(this->tree[this->root].get())->setGravity(x, y, z);
 		}
 		
 		void

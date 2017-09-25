@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_KIN_ELEMENT_H_
-#define _RL_KIN_ELEMENT_H_
+#ifndef RL_KIN_ELEMENT_H
+#define RL_KIN_ELEMENT_H
 
 #include <string>
 
@@ -50,4 +50,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_KIN_ELEMENT_H_
+#endif // RL_KIN_ELEMENT_H

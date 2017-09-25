@@ -33,6 +33,7 @@
 #include <Inventor/VRMLnodes/SoVRMLIndexedFaceSet.h>
 #include <Inventor/VRMLnodes/SoVRMLSphere.h>
 
+#include "../Exception.h"
 #include "Body.h"
 #include "Model.h"
 #include "Scene.h"
@@ -44,43 +45,43 @@ namespace rl
 	{
 		namespace bullet
 		{
-			Shape::Shape(SoVRMLShape* shape, Body* body) :
+			Shape::Shape(::SoVRMLShape* shape, Body* body) :
 				::rl::sg::Shape(shape, body),
-				shape(NULL),
+				shape(nullptr),
 				transform(),
 				indices(),
-				triangleIndexVertexArray(NULL),
+				triangleIndexVertexArray(nullptr),
 				vertices()
 			{
-				SoVRMLGeometry* geometry = static_cast< SoVRMLGeometry* >(shape->geometry.getValue());
+				::SoVRMLGeometry* geometry = static_cast< ::SoVRMLGeometry*>(shape->geometry.getValue());
 				
-				if (geometry->isOfType(SoVRMLBox::getClassTypeId()))
+				if (geometry->isOfType(::SoVRMLBox::getClassTypeId()))
 				{
-					SoVRMLBox* box = static_cast< SoVRMLBox* >(geometry);
-					btVector3 boxHalfExtents(box->size.getValue()[0] / 2, box->size.getValue()[1] / 2, box->size.getValue()[2] / 2);
-					this->shape = new btBoxShape(boxHalfExtents);
+					::SoVRMLBox* box = static_cast< ::SoVRMLBox*>(geometry);
+					::btVector3 boxHalfExtents(box->size.getValue()[0] / 2, box->size.getValue()[1] / 2, box->size.getValue()[2] / 2);
+					this->shape = new ::btBoxShape(boxHalfExtents);
 				}
-				else if (geometry->isOfType(SoVRMLCone::getClassTypeId()))
+				else if (geometry->isOfType(::SoVRMLCone::getClassTypeId()))
 				{
-					SoVRMLCone* cone = static_cast< SoVRMLCone* >(geometry);
-					this->shape = new btConeShape(cone->bottomRadius.getValue(), cone->height.getValue());
+					::SoVRMLCone* cone = static_cast< ::SoVRMLCone*>(geometry);
+					this->shape = new ::btConeShape(cone->bottomRadius.getValue(), cone->height.getValue());
 				}
-				else if (geometry->isOfType(SoVRMLCylinder::getClassTypeId()))
+				else if (geometry->isOfType(::SoVRMLCylinder::getClassTypeId()))
 				{
-					SoVRMLCylinder* cylinder = static_cast< SoVRMLCylinder* >(geometry);
-					this->shape = new btCylinderShape(btVector3(cylinder->radius.getValue(), cylinder->height.getValue() / 2, cylinder->radius.getValue()));
+					::SoVRMLCylinder* cylinder = static_cast< ::SoVRMLCylinder*>(geometry);
+					this->shape = new ::btCylinderShape(::btVector3(cylinder->radius.getValue(), cylinder->height.getValue() / 2, cylinder->radius.getValue()));
 				}
-				else if (geometry->isOfType(SoVRMLIndexedFaceSet::getClassTypeId()))
+				else if (geometry->isOfType(::SoVRMLIndexedFaceSet::getClassTypeId()))
 				{
-					SoVRMLIndexedFaceSet* indexedFaceSet = static_cast< SoVRMLIndexedFaceSet* >(geometry);
+					::SoVRMLIndexedFaceSet* indexedFaceSet = static_cast< ::SoVRMLIndexedFaceSet*>(geometry);
 					
-					SoCallbackAction callbackAction;
+					::SoCallbackAction callbackAction;
 					callbackAction.addTriangleCallback(geometry->getTypeId(), Shape::triangleCallback, this);
 					callbackAction.apply(geometry);
 					
 					if (indexedFaceSet->convex.getValue())
 					{
-						this->shape = new btConvexHullShape(
+						this->shape = new ::btConvexHullShape(
 							&this->vertices[0],
 							this->vertices.size() / 3,
 							3 * sizeof(btScalar)
@@ -88,7 +89,7 @@ namespace rl
 					}
 					else
 					{
-						this->triangleIndexVertexArray = new btTriangleIndexVertexArray(
+						this->triangleIndexVertexArray = new ::btTriangleIndexVertexArray(
 							this->indices.size() / 3,
 							&this->indices[0],
 							3 * sizeof(int),
@@ -97,21 +98,25 @@ namespace rl
 							3 * sizeof(btScalar)
 						);
 						
-						this->shape = new btBvhTriangleMeshShape(this->triangleIndexVertexArray, true);
+						this->shape = new ::btBvhTriangleMeshShape(this->triangleIndexVertexArray, true);
 					}
 				}
-				else if (geometry->isOfType(SoVRMLSphere::getClassTypeId()))
+				else if (geometry->isOfType(::SoVRMLSphere::getClassTypeId()))
 				{
-					SoVRMLSphere* sphere = static_cast< SoVRMLSphere* >(geometry);
-					this->shape = new btSphereShape(sphere->radius.getValue());
+					::SoVRMLSphere* sphere = static_cast< ::SoVRMLSphere*>(geometry);
+					this->shape = new ::btSphereShape(sphere->radius.getValue());
+				}
+				else
+				{
+					throw Exception("::rl::sg::bullet::Shape() - geometry not supported");
 				}
 				
 				this->getBody()->add(this);
 				
-				if (NULL != this->shape)
+				if (nullptr != this->shape)
 				{
 					this->transform.setIdentity();
-					dynamic_cast< Body* >(this->getBody())->shape.addChildShape(this->transform, this->shape);
+					dynamic_cast<Body*>(this->getBody())->shape.addChildShape(this->transform, this->shape);
 					this->shape->setMargin(0);
 					this->shape->setUserPointer(this);
 				}
@@ -119,9 +124,9 @@ namespace rl
 			
 			Shape::~Shape()
 			{
-				if (NULL != this->shape)
+				if (nullptr != this->shape)
 				{
-					dynamic_cast< Body* >(this->getBody())->shape.removeChildShape(this->shape);
+					dynamic_cast<Body*>(this->getBody())->shape.removeChildShape(this->shape);
 				}
 				
 				this->getBody()->remove(this);
@@ -133,7 +138,7 @@ namespace rl
 			void
 			Shape::getTransform(::rl::math::Transform& transform)
 			{
-				Body* body = static_cast< Body* >(this->getBody());
+				Body* body = static_cast<Body*>(this->getBody());
 				
 				for (int i = 0; i < body->shape.getNumChildShapes(); ++i)
 				{
@@ -163,22 +168,22 @@ namespace rl
 			void
 			Shape::setTransform(const ::rl::math::Transform& transform)
 			{
-				Body* body = static_cast< Body* >(this->getBody());
+				Body* body = static_cast<Body*>(this->getBody());
 				
 				for (int i = 0; i < body->shape.getNumChildShapes(); ++i)
 				{
 					if (this->shape == body->shape.getChildList()[i].m_childShape)
 					{
 						this->transform.getOrigin().setValue(
-							static_cast< btScalar >(transform(0, 3)),
-							static_cast< btScalar >(transform(1, 3)),
-							static_cast< btScalar >(transform(2, 3))
+							static_cast< ::btScalar>(transform(0, 3)),
+							static_cast< ::btScalar>(transform(1, 3)),
+							static_cast< ::btScalar>(transform(2, 3))
 						);
 						
 						this->transform.getBasis().setValue(
-							static_cast< btScalar >(transform(0, 0)), static_cast< btScalar >(transform(0, 1)), static_cast< btScalar >(transform(0, 2)),
-							static_cast< btScalar >(transform(1, 0)), static_cast< btScalar >(transform(1, 1)), static_cast< btScalar >(transform(1, 2)),
-							static_cast< btScalar >(transform(2, 0)), static_cast< btScalar >(transform(2, 1)), static_cast< btScalar >(transform(2, 2))
+							static_cast< ::btScalar>(transform(0, 0)), static_cast< ::btScalar>(transform(0, 1)), static_cast< ::btScalar>(transform(0, 2)),
+							static_cast< ::btScalar>(transform(1, 0)), static_cast< ::btScalar>(transform(1, 1)), static_cast< ::btScalar>(transform(1, 2)),
+							static_cast< ::btScalar>(transform(2, 0)), static_cast< ::btScalar>(transform(2, 1)), static_cast< ::btScalar>(transform(2, 2))
 						);
 						
 						body->shape.updateChildTransform(i, this->transform);
@@ -189,23 +194,23 @@ namespace rl
 			}
 			
 			void
-			Shape::triangleCallback(void* userData, SoCallbackAction* action, const SoPrimitiveVertex* v1, const SoPrimitiveVertex* v2, const SoPrimitiveVertex* v3)
+			Shape::triangleCallback(void* userData, ::SoCallbackAction* action, const ::SoPrimitiveVertex* v1, const ::SoPrimitiveVertex* v2, const ::SoPrimitiveVertex* v3)
 			{
-				Shape* shape = static_cast< Shape* >(userData);
+				Shape* shape = static_cast<Shape*>(userData);
 				
-				shape->indices.push_back(shape->vertices.size());
+				shape->indices.push_back(shape->vertices.size() / 3);
 				
 				shape->vertices.push_back(v1->getPoint()[0]);
 				shape->vertices.push_back(v1->getPoint()[1]);
 				shape->vertices.push_back(v1->getPoint()[2]);
 				
-				shape->indices.push_back(shape->vertices.size());
+				shape->indices.push_back(shape->vertices.size() / 3);
 				
 				shape->vertices.push_back(v2->getPoint()[0]);
 				shape->vertices.push_back(v2->getPoint()[1]);
 				shape->vertices.push_back(v2->getPoint()[2]);
 				
-				shape->indices.push_back(shape->vertices.size());
+				shape->indices.push_back(shape->vertices.size() / 3);
 				
 				shape->vertices.push_back(v3->getPoint()[0]);
 				shape->vertices.push_back(v3->getPoint()[1]);

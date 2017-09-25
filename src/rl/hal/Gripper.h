@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_HAL_GRIPPER_H_
-#define _RL_HAL_GRIPPER_H_
+#ifndef RL_HAL_GRIPPER_H
+#define RL_HAL_GRIPPER_H
 
 #include "Device.h"
 
@@ -54,4 +54,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_HAL_GRIPPER_H_
+#endif // RL_HAL_GRIPPER_H

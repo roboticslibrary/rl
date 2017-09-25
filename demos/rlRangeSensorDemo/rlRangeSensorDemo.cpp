@@ -85,24 +85,21 @@ main(int argc, char** argv)
 		sensor.open();
 		sensor.start();
 		
-		rl::math::Vector data(sensor.getDistancesCount());
-		
 		while (running)
 		{
 			sensor.step();
-			sensor.getDistances(data);
-			
+			rl::math::Vector data = sensor.getDistances();
 			std::cout << data << std::endl;
 		}
 		
 		sensor.stop();
 		sensor.close();
 		
-		return 0;
+		return EXIT_SUCCESS;
 	}
 	catch (const std::exception& e)
 	{
 		std::cout << e.what() << std::endl;
-		return -1;
+		return EXIT_FAILURE;
 	}
 }

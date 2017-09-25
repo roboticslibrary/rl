@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_PLAN_SAMPLER_H_
-#define _RL_PLAN_SAMPLER_H_
+#ifndef RL_PLAN_SAMPLER_H
+#define RL_PLAN_SAMPLER_H
 
 #include <rl/math/Vector.h>
 
@@ -42,9 +42,9 @@ namespace rl
 			
 			virtual ~Sampler();
 			
-			virtual void generate(::rl::math::Vector& q) = 0;
+			virtual ::rl::math::Vector generate() = 0;
 			
-			virtual void generateCollisionFree(::rl::math::Vector& q);
+			virtual ::rl::math::Vector generateCollisionFree();
 			
 			SimpleModel* model;
 			
@@ -56,4 +56,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_PLAN_SAMPLER_H_
+#endif // RL_PLAN_SAMPLER_H

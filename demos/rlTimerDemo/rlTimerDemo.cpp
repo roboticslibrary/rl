@@ -24,32 +24,28 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <cmath>
-#include <cstdlib>
+#include <chrono>
+#include <functional>
 #include <iostream>
-#include <rl/util/Timer.h>
+#include <random>
+#include <thread>
 
 int
 main(int argc, char** argv)
 {
-	srand(static_cast< unsigned int >(rl::util::Timer::now() * 1000000.0f));
-	
-	rl::util::Timer timer;
-	
-	double seconds = 0.0f;
+	std::function<double()> rand = std::bind(std::uniform_real_distribution<double>(0.0, 1.0), std::mt19937(std::random_device()()));
 	
 	for (std::size_t i = 0; i < 7; ++i)
 	{
-		seconds += static_cast< double >(rand() % 42) * M_PI / 256.0f;
-		
+		double seconds = rand();
 		std::cout << seconds << " seconds... " << std::flush;
 		
-		timer.start();
-		rl::util::Timer::sleep(seconds);
-		timer.stop();
+		std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+		std::this_thread::sleep_for(std::chrono::duration<double>(seconds));
+		std::chrono::steady_clock::time_point stop = std::chrono::steady_clock::now();
 		
-		std::cout << timer.elapsed() << " seconds" << std::endl;
+		std::cout << std::chrono::duration<double>(stop - start).count() << std::endl;
 	}
 	
-	return 0;
+	return EXIT_SUCCESS;
 }

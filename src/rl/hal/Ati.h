@@ -24,24 +24,32 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_HAL_ATI_H_
-#define _RL_HAL_ATI_H_
+#ifndef RL_HAL_ATI_H
+#define RL_HAL_ATI_H
 
 #include <string>
 #include <atidaq/ftconfig.h>
 
+#include "Comedi.h"
+#include "CyclicDevice.h"
 #include "SixAxisForceTorqueSensor.h"
 
 namespace rl
 {
 	namespace hal
 	{
-		class Comedi;
-		
-		class Ati : public SixAxisForceTorqueSensor
+		/**
+		 * ATI Industrial Automation force-torque sensor.
+		 */
+		class Ati : public CyclicDevice, public SixAxisForceTorqueSensor
 		{
 		public:
-			Ati(const ::std::string& calFilePath, const unsigned short int& index = 0, const ::std::string& filename = "/dev/comedi0");
+			Ati(
+				const ::std::string& calFilePath,
+				const ::std::chrono::nanoseconds& updateRate = ::std::chrono::milliseconds(1),
+				const unsigned short int& index = 0,
+				const ::std::string& filename = "/dev/comedi0"
+			);
 			
 			virtual ~Ati();
 			
@@ -51,19 +59,19 @@ namespace rl
 			
 			::std::string getAxisName(const ::std::size_t& i) const;
 			
-			void getForces(::rl::math::Vector& forces) const;
+			::rl::math::Vector getForces() const;
 			
 			::rl::math::Real getForcesMaximum(const ::std::size_t& i) const;
 			
 			::rl::math::Real getForcesMinimum(const ::std::size_t& i) const;
 			
-			void getForcesTorques(::rl::math::Vector& forcesTorques) const;
+			::rl::math::Vector getForcesTorques() const;
 			
 			::rl::math::Real getForcesTorquesMaximum(const ::std::size_t& i) const;
 			
 			::rl::math::Real getForcesTorquesMinimum(const ::std::size_t& i) const;
 			
-			void getTorques(::rl::math::Vector& torques) const;
+			::rl::math::Vector getTorques() const;
 			
 			::rl::math::Real getTorquesMaximum(const ::std::size_t& i) const;
 			
@@ -87,7 +95,7 @@ namespace rl
 			/** The name and path of the calibration file. */
 			::std::string calFilePath;
 			
-			Comedi* comedi;
+			Comedi comedi;
 			
 			/** The number of the calibration within the file (usually 1). */
 			unsigned short int index;
@@ -99,4 +107,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_HAL_ATI_H_
+#endif // RL_HAL_ATI_H

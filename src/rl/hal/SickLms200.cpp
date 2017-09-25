@@ -29,11 +29,9 @@
 #include <iostream>
 #include <rl/math/Unit.h>
 
-#include "ComException.h"
 #include "DeviceException.h"
-#include "endian.h"
+#include "Endian.h"
 #include "SickLms200.h"
-#include "Serial.h"
 #include "TimeoutException.h"
 
 namespace rl
@@ -48,6 +46,7 @@ namespace rl
 			const Measuring& measuring,
 			const ::std::string& password
 		) :
+			CyclicDevice(::std::chrono::nanoseconds::zero()),
 			Lidar(),
 			baudRate(BAUDRATE_9600BPS),
 			configuration(0x00),
@@ -57,16 +56,13 @@ namespace rl
 			monitoring(monitoring),
 			password(password),
 			serial(
-				new Serial(
-					filename,
-					Serial::BAUDRATE_9600BPS,
-					Serial::DATABITS_8BITS,
-					Serial::FLOWCONTROL_OFF,
-					Serial::PARITY_NOPARITY,
-					Serial::STOPBITS_1BIT
-				)
+				filename,
+				Serial::BAUDRATE_9600BPS,
+				Serial::DATABITS_8BITS,
+				Serial::FLOWCONTROL_OFF,
+				Serial::PARITY_NOPARITY,
+				Serial::STOPBITS_1BIT
 			),
-			timer(),
 			variant(variant)
 		{
 			assert(8 == password.length());
@@ -74,7 +70,6 @@ namespace rl
 		
 		SickLms200::~SickLms200()
 		{
-			delete this->serial;
 		}
 		
 		void
@@ -102,15 +97,15 @@ namespace rl
 				this->setBaudRate(BAUDRATE_9600BPS);
 			}
 			
-			this->serial->close();
+			this->serial.close();
 			
 			this->setConnected(false);
 		}
 		
-		uint16_t
-		SickLms200::crc(const uint8_t* buf, const ::std::size_t& len) const
+		::std::uint16_t
+		SickLms200::crc(const ::std::uint8_t* buf, const ::std::size_t& len) const
 		{	
-			uint16_t checksum = buf[0];
+			::std::uint16_t checksum = buf[0];
 			
 			for (::std::size_t i = 1; i < len; ++i)
 			{
@@ -135,19 +130,19 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			uint8_t buf[812];
+			::std::array< ::std::uint8_t, 812> buf;
 			
 			buf[4] = 0x74;
 			
 			do
 			{
-				this->send(buf, 1 + 1 + 2 + 1 + 2);
+				this->send(buf.data(), 1 + 1 + 2 + 1 + 2);
 			}
 			while (!this->waitAck());
 			
-			this->recv(buf, 1 + 1 + 2 + 1 + 32 + 1 + 2, 0xF4);
+			this->recv(buf.data(), 1 + 1 + 2 + 1 + 32 + 1 + 2, 0xF4);
 			
-			printf("A:  %i\n", hostEndianWord(buf[6], buf[5]));
+			printf("A:  %i\n", Endian::hostWord(buf[6], buf[5]));
 			printf("B:  %02x %02x\n", buf[8], buf[7]);
 			printf("C:  %02x\n", buf[9]);
 			
@@ -200,17 +195,17 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			uint8_t buf[812];
+			::std::array< ::std::uint8_t, 812> buf;
 			
 			buf[4] = 0x31;
 			
 			do
 			{
-				this->send(buf, 1 + 1 + 2 + 1 + 2);
+				this->send(buf.data(), 1 + 1 + 2 + 1 + 2);
 			}
 			while (!this->waitAck());
 			
-			this->recv(buf, 1 + 1 + 2 + 1 + 152 + 1 + 2, 0xB1);
+			this->recv(buf.data(), 1 + 1 + 2 + 1 + 152 + 1 + 2, 0xB1);
 			
 			printf("A:  %c %c %c %c %c %c %c\n", buf[5], buf[6], buf[7], buf[8], buf[9], buf[10], buf[11]);
 			printf("B:  %02x\n", buf[12]);
@@ -219,65 +214,65 @@ namespace rl
 			printf("?:  %c %c %c %c %c %c\n", buf[16], buf[17], buf[18], buf[19], buf[20], buf[21]);
 			printf("E:  %02x\n", buf[22]);
 			printf("F:  %i %i %i %i %i %i %i %i\n",
-				hostEndianWord(buf[24], buf[23]),
-				hostEndianWord(buf[26], buf[25]),
-				hostEndianWord(buf[28], buf[27]),
-				hostEndianWord(buf[30], buf[29]),
-				hostEndianWord(buf[32], buf[31]),
-				hostEndianWord(buf[34], buf[33]),
-				hostEndianWord(buf[36], buf[35]),
-				hostEndianWord(buf[38], buf[37])
+				Endian::hostWord(buf[24], buf[23]),
+				Endian::hostWord(buf[26], buf[25]),
+				Endian::hostWord(buf[28], buf[27]),
+				Endian::hostWord(buf[30], buf[29]),
+				Endian::hostWord(buf[32], buf[31]),
+				Endian::hostWord(buf[34], buf[33]),
+				Endian::hostWord(buf[36], buf[35]),
+				Endian::hostWord(buf[38], buf[37])
 			);
 			printf("G:  %i %i %i %i\n",
-				hostEndianWord(buf[40], buf[39]),
-				hostEndianWord(buf[42], buf[41]),
-				hostEndianWord(buf[44], buf[43]),
-				hostEndianWord(buf[46], buf[45])
+				Endian::hostWord(buf[40], buf[39]),
+				Endian::hostWord(buf[42], buf[41]),
+				Endian::hostWord(buf[44], buf[43]),
+				Endian::hostWord(buf[46], buf[45])
 			);
 			printf("H:  %i %i %i %i %i %i %i %i\n",
-				hostEndianWord(buf[48], buf[47]),
-				hostEndianWord(buf[50], buf[49]),
-				hostEndianWord(buf[52], buf[51]),
-				hostEndianWord(buf[54], buf[53]),
-				hostEndianWord(buf[56], buf[55]),
-				hostEndianWord(buf[58], buf[57]),
-				hostEndianWord(buf[60], buf[59]),
-				hostEndianWord(buf[62], buf[61])
+				Endian::hostWord(buf[48], buf[47]),
+				Endian::hostWord(buf[50], buf[49]),
+				Endian::hostWord(buf[52], buf[51]),
+				Endian::hostWord(buf[54], buf[53]),
+				Endian::hostWord(buf[56], buf[55]),
+				Endian::hostWord(buf[58], buf[57]),
+				Endian::hostWord(buf[60], buf[59]),
+				Endian::hostWord(buf[62], buf[61])
 			);
 			printf("I:  %i %i %i %i\n",
-				hostEndianWord(buf[64], buf[63]),
-				hostEndianWord(buf[66], buf[65]),
-				hostEndianWord(buf[68], buf[67]),
-				hostEndianWord(buf[70], buf[69])
+				Endian::hostWord(buf[64], buf[63]),
+				Endian::hostWord(buf[66], buf[65]),
+				Endian::hostWord(buf[68], buf[67]),
+				Endian::hostWord(buf[70], buf[69])
 			);
-			printf("J:  %i\n", hostEndianWord(buf[72], buf[71]));
+			printf("J:  %i\n", Endian::hostWord(buf[72], buf[71]));
 			printf("K:  reserved\n");
-			printf("L:  %i\n", hostEndianWord(buf[76], buf[75]));
+			printf("L:  %i\n", Endian::hostWord(buf[76], buf[75]));
 			printf("M:  reserved\n");
-			printf("N:  %i\n", hostEndianWord(buf[80], buf[79]));
-			printf("O:  %i\n", hostEndianWord(buf[82], buf[81]));
+			printf("N:  %i\n", Endian::hostWord(buf[80], buf[79]));
+			printf("O:  %i\n", Endian::hostWord(buf[82], buf[81]));
 			printf("P:  reserved\n");
-			printf("Q:  %i\n", hostEndianWord(buf[86], buf[85]));
-			printf("R:  %i\n", hostEndianWord(buf[88], buf[87]));
-			printf("S:  %i\n", hostEndianWord(buf[90], buf[89]));
-			printf("T:  %i\n", hostEndianWord(buf[92], buf[91]));
-			printf("U:  %i\n", hostEndianWord(buf[94], buf[93]));
-			printf("V:  %i\n", hostEndianWord(buf[96], buf[95]));
-			printf("W:  %i\n", hostEndianWord(buf[98], buf[97]));
-			printf("X:  %i\n", hostEndianWord(buf[100], buf[99]));
-			printf("Y:  %i\n", hostEndianWord(buf[102], buf[101]));
-			printf("Z:  %i\n", hostEndianWord(buf[104], buf[103]));
+			printf("Q:  %i\n", Endian::hostWord(buf[86], buf[85]));
+			printf("R:  %i\n", Endian::hostWord(buf[88], buf[87]));
+			printf("S:  %i\n", Endian::hostWord(buf[90], buf[89]));
+			printf("T:  %i\n", Endian::hostWord(buf[92], buf[91]));
+			printf("U:  %i\n", Endian::hostWord(buf[94], buf[93]));
+			printf("V:  %i\n", Endian::hostWord(buf[96], buf[95]));
+			printf("W:  %i\n", Endian::hostWord(buf[98], buf[97]));
+			printf("X:  %i\n", Endian::hostWord(buf[100], buf[99]));
+			printf("Y:  %i\n", Endian::hostWord(buf[102], buf[101]));
+			printf("Z:  %i\n", Endian::hostWord(buf[104], buf[103]));
 			printf("A1: reserved\n");
 			printf("A2: %02x\n", buf[106]);
 			printf("A3: H:%02x L:%02x\n", buf[108], buf[107]);
 			printf("A4: H:%02x L:%02x\n", buf[110], buf[109]);
-			printf("A5: %i\n", hostEndianWord(buf[112], buf[111]));
-			printf("A6: %i\n", hostEndianWord(buf[114], buf[113]));
+			printf("A5: %i\n", Endian::hostWord(buf[112], buf[111]));
+			printf("A6: %i\n", Endian::hostWord(buf[114], buf[113]));
 			printf("A7: %02x\n", buf[115]);
-			printf("A8: %i\n", hostEndianWord(buf[117], buf[116]));
+			printf("A8: %i\n", Endian::hostWord(buf[117], buf[116]));
 			printf("A9: %c\n", buf[118]);
 			printf("B1: reserved\n");
-			printf("B2: %04x\n", hostEndianWord(buf[121], buf[120]));
+			printf("B2: %04x\n", Endian::hostWord(buf[121], buf[120]));
 			printf("B3: %02x\n", buf[122]);
 			printf("B4: %02x\n", buf[123]);
 			printf("B5: %02x\n", buf[124]);
@@ -285,13 +280,13 @@ namespace rl
 			printf("B7: %02x\n", buf[126]);
 			printf("B8: %02x\n", buf[127]);
 			printf("B9: %c %c %c %c %c %c %c\n", buf[128], buf[129], buf[130], buf[131], buf[132], buf[133], buf[134]);
-			printf("C1: %i\n", hostEndianDoubleWord(hostEndianWord(buf[138], buf[137]), hostEndianWord(buf[136], buf[135])));
-			printf("C2: %i\n", hostEndianDoubleWord(hostEndianWord(buf[142], buf[141]), hostEndianWord(buf[140], buf[139])));
-			printf("C3: %i\n", hostEndianDoubleWord(hostEndianWord(buf[146], buf[145]), hostEndianWord(buf[144], buf[143])));
-			printf("C4: %i\n", hostEndianDoubleWord(hostEndianWord(buf[150], buf[149]), hostEndianWord(buf[148], buf[147])));
-			printf("C5: %i\n", hostEndianWord(buf[152], buf[151]));
-			printf("C6: %i\n", hostEndianWord(buf[154], buf[153]));
-			printf("C7: %i\n", hostEndianWord(buf[156], buf[155]));
+			printf("C1: %i\n", Endian::hostDoubleWord(Endian::hostWord(buf[138], buf[137]), Endian::hostWord(buf[136], buf[135])));
+			printf("C2: %i\n", Endian::hostDoubleWord(Endian::hostWord(buf[142], buf[141]), Endian::hostWord(buf[140], buf[139])));
+			printf("C3: %i\n", Endian::hostDoubleWord(Endian::hostWord(buf[146], buf[145]), Endian::hostWord(buf[144], buf[143])));
+			printf("C4: %i\n", Endian::hostDoubleWord(Endian::hostWord(buf[150], buf[149]), Endian::hostWord(buf[148], buf[147])));
+			printf("C5: %i\n", Endian::hostWord(buf[152], buf[151]));
+			printf("C6: %i\n", Endian::hostWord(buf[154], buf[153]));
+			printf("C7: %i\n", Endian::hostWord(buf[156], buf[155]));
 		}
 		
 		SickLms200::BaudRate
@@ -300,11 +295,12 @@ namespace rl
 			return this->baudRate;
 		}
 		
-		void
-		SickLms200::getDistances(::rl::math::Vector& distances) const
+		::rl::math::Vector
+		SickLms200::getDistances() const
 		{
 			assert(this->isConnected());
-			assert(distances.size() >= this->getDistancesCount());
+			
+			::rl::math::Vector distances(this->getDistancesCount());
 			
 			if (this->data[6] & 32)
 			{
@@ -326,9 +322,9 @@ namespace rl
 				break;
 			}
 			
-			uint16_t count = hostEndianWord(this->data[6] & 11, this->data[5]);
+			::std::uint16_t count = Endian::hostWord(this->data[6] & 11, this->data[5]);
 			
-			uint8_t mask;
+			::std::uint8_t mask;
 			
 			switch (this->configuration)
 			{
@@ -350,11 +346,11 @@ namespace rl
 				break;
 			}
 			
-			uint16_t value;
+			::std::uint16_t value;
 			
 			for (::std::size_t i = 0; i < count; ++i)
 			{
-				value = hostEndianWord(this->data[8 + i * 2] & mask, this->data[7 + i * 2]);
+				value = Endian::hostWord(this->data[8 + i * 2] & mask, this->data[7 + i * 2]);
 				
 				switch (this->configuration)
 				{
@@ -373,11 +369,11 @@ namespace rl
 ::std::cerr << "Signal-to-noise ratio too small" << ::std::endl;
 					case 0x1FFA:
 ::std::cerr << "Error when reading channel 1" << ::std::endl;
-						distances(i) = ::std::numeric_limits< ::rl::math::Real >::quiet_NaN();
+						distances(i) = ::std::numeric_limits< ::rl::math::Real>::quiet_NaN();
 						break;
 					case 0x1FF7:
 ::std::cerr << "Measured value > Maximum value" << ::std::endl;
-						distances(i) = ::std::numeric_limits< ::rl::math::Real >::infinity();
+						distances(i) = ::std::numeric_limits< ::rl::math::Real>::infinity();
 						break;
 					default:
 						distances(i) = value;
@@ -400,11 +396,11 @@ namespace rl
 ::std::cerr << "Signal-to-noise ratio too small" << ::std::endl;
 					case 0x3FFA:
 ::std::cerr << "Error when reading channel 1" << ::std::endl;
-						distances(i) = ::std::numeric_limits< ::rl::math::Real >::quiet_NaN();
+						distances(i) = ::std::numeric_limits< ::rl::math::Real>::quiet_NaN();
 						break;
 					case 0x3FF7:
 ::std::cerr << "Measured value > Maximum value" << ::std::endl;
-						distances(i) = ::std::numeric_limits< ::rl::math::Real >::infinity();
+						distances(i) = ::std::numeric_limits< ::rl::math::Real>::infinity();
 						break;
 					default:
 						distances(i) = value;
@@ -425,11 +421,11 @@ namespace rl
 ::std::cerr << "Signal-to-noise ratio too small" << ::std::endl;
 					case 0x7FFA:
 ::std::cerr << "Error when reading channel 1" << ::std::endl;
-						distances(i) = ::std::numeric_limits< ::rl::math::Real >::quiet_NaN();
+						distances(i) = ::std::numeric_limits< ::rl::math::Real>::quiet_NaN();
 						break;
 					case 0x7FF7:
 ::std::cerr << "Measured value > Maximum value" << ::std::endl;
-						distances(i) = ::std::numeric_limits< ::rl::math::Real >::infinity();
+						distances(i) = ::std::numeric_limits< ::rl::math::Real>::infinity();
 						break;
 					default:
 						distances(i) = value;
@@ -442,6 +438,8 @@ namespace rl
 					break;
 				}
 			}
+			
+			return distances;
 		}
 		
 		::std::size_t
@@ -607,19 +605,19 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			uint8_t buf[812];
+			::std::array< ::std::uint8_t, 812> buf;
 			
 			buf[4] = 0x3A;
 			
 			do
 			{
-				this->send(buf, 1 + 1 + 2 + 1 + 2);
+				this->send(buf.data(), 1 + 1 + 2 + 1 + 2);
 			}
 			while (!this->waitAck());
 			
-			this->recv(buf, 1 + 1 + 2 + 1 + 21 + 1 + 2, 0xBA);
+			this->recv(buf.data(), 1 + 1 + 2 + 1 + 21 + 1 + 2, 0xBA);
 			
-			return ::std::string(reinterpret_cast< char* >(buf + 5), 20);
+			return ::std::string(reinterpret_cast<char*>(buf.data() + 5), 20);
 		}
 		
 		SickLms200::Variant
@@ -633,11 +631,11 @@ namespace rl
 		void
 		SickLms200::open()
 		{
-			this->serial->open();
+			this->serial.open();
 			
 			this->setConnected(true);
 			
-			uint8_t buf[812];
+			::std::array< ::std::uint8_t, 812> buf;
 			
 			// synchronize baud rates
 			
@@ -661,9 +659,9 @@ namespace rl
 			for (::std::size_t i = 0; i < 4; ++i)
 #endif // defined(WIN32) || defined(__QNX__)
 			{
-				this->serial->setBaudRate(baudRates[i]);
-				this->serial->changeParameters();
-				this->send(buf, 1 + 1 + 2 + 1 + 1 + 2);
+				this->serial.setBaudRate(baudRates[i]);
+				this->serial.changeParameters();
+				this->send(buf.data(), 1 + 1 + 2 + 1 + 1 + 2);
 				
 				if (this->waitAck())
 				{
@@ -680,7 +678,7 @@ namespace rl
 				}
 			}
 			
-			this->recv(buf, 1 + 1 + 2 + 1 + 1 + 1 + 2, 0xA0);
+			this->recv(buf.data(), 1 + 1 + 2 + 1 + 1 + 1 + 2, 0xA0);
 			
 			switch (buf[5])
 			{
@@ -700,11 +698,11 @@ namespace rl
 			
 			do
 			{
-				this->send(buf, 1 + 1 + 2 + 1 + 2);
+				this->send(buf.data(), 1 + 1 + 2 + 1 + 2);
 			}
 			while (!this->waitAck());
 			
-			this->recv(buf, 1 + 1 + 2 + 1 + 152 + 1 + 2, 0xB1);
+			this->recv(buf.data(), 1 + 1 + 2 + 1 + 152 + 1 + 2, 0xB1);
 			
 			// baud rate
 			
@@ -746,8 +744,8 @@ namespace rl
 			
 			// variant
 			
-			uint16_t angle = hostEndianWord(buf[112], buf[111]);
-			uint16_t resolution = hostEndianWord(buf[114], buf[113]);
+			::std::uint16_t angle = Endian::hostWord(buf[112], buf[111]);
+			::std::uint16_t resolution = Endian::hostWord(buf[114], buf[113]);
 			
 			Variant variant;
 			
@@ -796,12 +794,12 @@ namespace rl
 		}
 		
 		::std::size_t
-		SickLms200::recv(uint8_t* buf, const ::std::size_t& len, const uint8_t& command)
+		SickLms200::recv(::std::uint8_t* buf, const ::std::size_t& len, const ::std::uint8_t& command)
 		{
 			assert(this->isConnected());
 			assert(len > 7);
 			
-			uint8_t* ptr;
+			::std::uint8_t* ptr;
 			::std::size_t sumbytes;
 			::std::size_t numbytes;
 			
@@ -814,14 +812,14 @@ namespace rl
 					
 					do
 					{
-						numbytes = this->serial->read(ptr, 1);
+						numbytes = this->serial.read(ptr, 1);
 					}
 					while (0x02 != buf[0]);
 					
 					ptr += numbytes;
 					sumbytes += numbytes;
 					
-					numbytes = this->serial->read(ptr, 1);
+					numbytes = this->serial.read(ptr, 1);
 				}
 				while (0x80 != buf[1]);
 				
@@ -830,7 +828,7 @@ namespace rl
 				
 				for (::std::size_t i = 0; i < 4; ++i)
 				{
-					numbytes = this->serial->read(ptr, 1);
+					numbytes = this->serial.read(ptr, 1);
 					
 					ptr += numbytes;
 					sumbytes += numbytes;
@@ -843,22 +841,22 @@ namespace rl
 			}
 			while (command != buf[4]);
 			
-			uint16_t length = hostEndianWord(buf[3], buf[2]);
+			::std::uint16_t length = Endian::hostWord(buf[3], buf[2]);
 			
-			if (len != static_cast< ::std::size_t >(length) + 6)
+			if (len != static_cast< ::std::size_t>(length) + 6)
 			{
-				throw DeviceException("data length mismatch in command " + command);
+				throw DeviceException("data length mismatch in command " + ::std::to_string(command));
 			}
 			
 			while (sumbytes < len)
 			{
-				numbytes = this->serial->read(ptr, len - sumbytes);
+				numbytes = this->serial.read(ptr, len - sumbytes);
 				
 				ptr += numbytes;
 				sumbytes += numbytes;
 			}
 			
-			if (this->crc(buf, sumbytes - 2) != hostEndianWord(buf[sumbytes - 1], buf[sumbytes - 2]))
+			if (this->crc(buf, sumbytes - 2) != Endian::hostWord(buf[sumbytes - 1], buf[sumbytes - 2]))
 			{
 				throw DeviceException("checksum error");
 			}
@@ -899,25 +897,25 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			uint8_t buf[812];
+			::std::array< ::std::uint8_t, 812> buf;
 			
 			buf[4] = 0x10;
 			
 			do
 			{
-				this->send(buf, 1 + 1 + 2 + 1 + 2);
+				this->send(buf.data(), 1 + 1 + 2 + 1 + 2);
 			}
 			while (!this->waitAck());
 			
-			this->recv(buf, 1 + 1 + 2 + 1 + 1 + 2, 0x91);
+			this->recv(buf.data(), 1 + 1 + 2 + 1 + 1 + 2, 0x91);
 			
 			// message during power-on
 			
-			this->recv(buf, 1 + 1 + 2 + 1 + 21 + 1 + 2, 0x90);
+			this->recv(buf.data(), 1 + 1 + 2 + 1 + 21 + 1 + 2, 0x90);
 		}
 		
 		void
-		SickLms200::send(uint8_t* buf, const ::std::size_t& len)
+		SickLms200::send(::std::uint8_t* buf, const ::std::size_t& len)
 		{
 			assert(this->isConnected());
 			assert(len > 6);
@@ -925,22 +923,22 @@ namespace rl
 			buf[0] = 0x02;
 			buf[1] = 0x00;
 			
-			uint16_t length = len - 6;
+			::std::uint16_t length = len - 6;
 			
-			buf[2] = lowByteFromHostEndian(length);
-			buf[3] = highByteFromHostEndian(length);
+			buf[2] = Endian::hostLowByte(length);
+			buf[3] = Endian::hostHighByte(length);
 			
-			uint16_t checksum = this->crc(buf, len - 2);
+			::std::uint16_t checksum = this->crc(buf, len - 2);
 			
-			buf[len - 2] = lowByteFromHostEndian(checksum);
-			buf[len - 1] = highByteFromHostEndian(checksum);
+			buf[len - 2] = Endian::hostLowByte(checksum);
+			buf[len - 1] = Endian::hostHighByte(checksum);
 			
-			if (len != this->serial->write(buf, len))
+			if (len != this->serial.write(buf, len))
 			{
 				throw DeviceException("could not send complete data");
 			}
 			
-			this->serial->flush(true, false);
+			this->serial.flush(true, false);
 		}
 		
 		void
@@ -948,7 +946,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			uint8_t buf[812];
+			::std::array< ::std::uint8_t, 812> buf;
 			
 			buf[4] = 0x20;
 			
@@ -974,11 +972,11 @@ namespace rl
 			
 			do
 			{
-				this->send(buf, 1 + 1 + 2 + 1 + 1 + 2);
+				this->send(buf.data(), 1 + 1 + 2 + 1 + 1 + 2);
 			}
 			while (!this->waitAck());
 			
-			this->recv(buf, 1 + 1 + 2 + 1 + 1 + 1 + 2, 0xA0);
+			this->recv(buf.data(), 1 + 1 + 2 + 1 + 1 + 1 + 2, 0xA0);
 			
 			switch (buf[5])
 			{
@@ -995,24 +993,24 @@ namespace rl
 			switch (baudRate)
 			{
 			case BAUDRATE_9600BPS:
-				this->serial->setBaudRate(Serial::BAUDRATE_9600BPS);
+				this->serial.setBaudRate(Serial::BAUDRATE_9600BPS);
 				break;
 			case BAUDRATE_19200BPS:
-				this->serial->setBaudRate(Serial::BAUDRATE_19200BPS);
+				this->serial.setBaudRate(Serial::BAUDRATE_19200BPS);
 				break;
 			case BAUDRATE_38400BPS:
-				this->serial->setBaudRate(Serial::BAUDRATE_38400BPS);
+				this->serial.setBaudRate(Serial::BAUDRATE_38400BPS);
 				break;
 #if !(defined(WIN32) || defined(__QNX__))
 			case BAUDRATE_500000BPS:
-				this->serial->setBaudRate(Serial::BAUDRATE_500000BPS);
+				this->serial.setBaudRate(Serial::BAUDRATE_500000BPS);
 				break;
 #endif // !(defined(WIN32) || defined(__QNX__))
 			default:
 				break;
 			}
 			
-			this->serial->changeParameters();
+			this->serial.changeParameters();
 			
 			this->baudRate = baudRate;
 		}
@@ -1022,7 +1020,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			uint8_t buf[812];
+			::std::array< ::std::uint8_t, 812> buf;
 			
 			// transmit password
 			
@@ -1036,11 +1034,11 @@ namespace rl
 			
 			do
 			{
-				this->send(buf, 16);
+				this->send(buf.data(), 16);
 			}
 			while (!this->waitAck());
 			
-			this->recv(buf, 1 + 1 + 2 + 1 + 1 + 1 + 2, 0xA0);
+			this->recv(buf.data(), 1 + 1 + 2 + 1 + 1 + 1 + 2, 0xA0);
 			
 			if (0x00 != buf[5])
 			{
@@ -1053,11 +1051,11 @@ namespace rl
 			
 			do
 			{
-				this->send(buf, 1 + 1 + 2 + 1 + 2);
+				this->send(buf.data(), 1 + 1 + 2 + 1 + 2);
 			}
 			while (!this->waitAck());
 			
-			this->recv(buf, 1 + 1 + 2 + 1 + 32 + 1 + 2, 0xF4);
+			this->recv(buf.data(), 1 + 1 + 2 + 1 + 32 + 1 + 2, 0xF4);
 			
 			this->configuration = buf[10];
 			
@@ -1095,15 +1093,15 @@ namespace rl
 				break;
 			}
 			
-			uint8_t configuration = buf[10];
+			::std::uint8_t configuration = buf[10];
 			
 			do
 			{
-				this->send(buf, 40);
+				this->send(buf.data(), 40);
 			}
 			while (!this->waitAck());
 			
-			this->recv(buf, 1 + 1 + 2 + 1 + 33 + 1 + 2, 0xF7);
+			this->recv(buf.data(), 1 + 1 + 2 + 1 + 33 + 1 + 2, 0xF7);
 			
 			if (0x00 == buf[5])
 			{
@@ -1120,7 +1118,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			uint8_t buf[812];
+			::std::array< ::std::uint8_t, 812> buf;
 			
 			buf[4] = 0x20;
 			
@@ -1138,11 +1136,11 @@ namespace rl
 			
 			do
 			{
-				this->send(buf, 1 + 1 + 2 + 1 + 1 + 2);
+				this->send(buf.data(), 1 + 1 + 2 + 1 + 1 + 2);
 			}
 			while (!this->waitAck());
 			
-			this->recv(buf, 1 + 1 + 2 + 1 + 1 + 1 + 2, 0xA0);
+			this->recv(buf.data(), 1 + 1 + 2 + 1 + 1 + 1 + 2, 0xA0);
 			
 			switch (buf[5])
 			{
@@ -1164,7 +1162,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			uint8_t buf[812];
+			::std::array< ::std::uint8_t, 812> buf;
 			
 			buf[4] = 0x3B;
 			
@@ -1206,11 +1204,11 @@ namespace rl
 			
 			do
 			{
-				this->send(buf, 11);
+				this->send(buf.data(), 11);
 			}
 			while (!this->waitAck());
 			
-			this->recv(buf, 1 + 1 + 2 + 1 + 5 + 1 + 2, 0xBB);
+			this->recv(buf.data(), 1 + 1 + 2 + 1 + 5 + 1 + 2, 0xBB);
 			
 			if (0x00 == buf[5])
 			{
@@ -1243,7 +1241,7 @@ namespace rl
 				
 				do
 				{
-					this->send(this->data, 1 + 1 + 2 + 1 + 1 + 2);
+					this->send(this->data.data(), 1 + 1 + 2 + 1 + 1 + 2);
 				}
 				while (!this->waitAck());
 			}
@@ -1251,19 +1249,19 @@ namespace rl
 			switch (this->variant)
 			{
 			case VARIANT_100_25:
-				this->recv(this->data, 1 + 1 + 2 + 1 + 1 + 1 + 802 + 1 + 2, 0xB0);
+				this->recv(this->data.data(), 1 + 1 + 2 + 1 + 1 + 1 + 802 + 1 + 2, 0xB0);
 				break;
 			case VARIANT_100_50:
-				this->recv(this->data, 1 + 1 + 2 + 1 + 1 + 1 + 402 + 1 + 2, 0xB0);
+				this->recv(this->data.data(), 1 + 1 + 2 + 1 + 1 + 1 + 402 + 1 + 2, 0xB0);
 				break;
 			case VARIANT_100_100:
-				this->recv(this->data, 1 + 1 + 2 + 1 + 1 + 1 + 202 + 1 + 2, 0xB0);
+				this->recv(this->data.data(), 1 + 1 + 2 + 1 + 1 + 1 + 202 + 1 + 2, 0xB0);
 				break;
 			case VARIANT_180_50:
-				this->recv(this->data, 1 + 1 + 2 + 1 + 1 + 1 + 722 + 1 + 2, 0xB0);
+				this->recv(this->data.data(), 1 + 1 + 2 + 1 + 1 + 1 + 722 + 1 + 2, 0xB0);
 				break;
 			case VARIANT_180_100:
-				this->recv(this->data, 1 + 1 + 2 + 1 + 1 + 1 + 362 + 1 + 2, 0xB0);
+				this->recv(this->data.data(), 1 + 1 + 2 + 1 + 1 + 1 + 362 + 1 + 2, 0xB0);
 				break;
 			default:
 				break;
@@ -1286,16 +1284,16 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			uint8_t ack;
+			::std::uint8_t ack;
 			
 			try
 			{
-				this->timer.start();
+				::std::chrono::steady_clock::time_point start = ::std::chrono::steady_clock::now();
 				
 				do
 				{
-					this->serial->select(true, false, 0.06f);
-					this->serial->read(&ack, 1);
+					this->serial.select(true, false, ::std::chrono::milliseconds(60));
+					this->serial.read(&ack, 1);
 					
 					switch (ack)
 					{
@@ -1308,10 +1306,8 @@ namespace rl
 					default:
 						break;
 					}
-					
-					this->timer.stop();
 				}
-				while (this->timer.elapsed() < 0.06f);
+				while ((::std::chrono::steady_clock::now() - start) < ::std::chrono::milliseconds(60));
 			}
 			catch (const TimeoutException&)
 			{

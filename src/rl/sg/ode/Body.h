@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_SG_ODE_BODY_H_
-#define _RL_SG_ODE_BODY_H_
+#ifndef RL_SG_ODE_BODY_H
+#define RL_SG_ODE_BODY_H
 
 #include <ode/ode.h>
 
@@ -46,15 +46,15 @@ namespace rl
 				
 				virtual ~Body();
 				
-				::rl::sg::Shape* create(SoVRMLShape* shape);
+				::rl::sg::Shape* create(::SoVRMLShape* shape);
 				
 				void getFrame(::rl::math::Transform& frame);
 				
 				void setFrame(const ::rl::math::Transform& frame);
 				
-				dBodyID body;
+				::dBodyID body;
 				
-				dSpaceID space;
+				::dSpaceID space;
 				
 			protected:
 				
@@ -65,4 +65,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_SG_ODE_BODY_H_
+#endif // RL_SG_ODE_BODY_H

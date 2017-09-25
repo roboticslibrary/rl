@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_SG_DEPTHSCENE_H_
-#define _RL_SG_DEPTHSCENE_H_
+#ifndef RL_SG_DEPTHSCENE_H
+#define RL_SG_DEPTHSCENE_H
 
 #include <rl/math/Vector.h>
 
@@ -35,6 +35,7 @@ namespace rl
 {
 	namespace sg
 	{
+		class Body;
 		class Shape;
 		
 		class DepthScene : public virtual Scene
@@ -44,7 +45,11 @@ namespace rl
 			
 			virtual ~DepthScene();
 			
-			virtual bool depth(Shape* first, Shape* second, ::rl::math::Vector3& point1, ::rl::math::Vector3& point2) = 0;
+			virtual ::rl::math::Real depth(Body* first, Body* second, ::rl::math::Vector3& point1, ::rl::math::Vector3& point2);
+			
+			virtual ::rl::math::Real depth(Model* first, Model* second, ::rl::math::Vector3& point1, ::rl::math::Vector3& point2);
+			
+			virtual ::rl::math::Real depth(Shape* first, Shape* second, ::rl::math::Vector3& point1, ::rl::math::Vector3& point2) = 0;
 			
 		protected:
 			
@@ -54,4 +59,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_SG_DEPTHSCENE_H_
+#endif // RL_SG_DEPTHSCENE_H

@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_HAL_LIDAR_H_
-#define _RL_HAL_LIDAR_H_
+#ifndef RL_HAL_LIDAR_H
+#define RL_HAL_LIDAR_H
 
 #include "RangeSensor.h"
 
@@ -33,7 +33,7 @@ namespace rl
 {
 	namespace hal
 	{
-		class Lidar : public RangeSensor
+		class Lidar : public virtual RangeSensor
 		{
 		public:
 			Lidar();
@@ -54,4 +54,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_HAL_LIDAR_H_
+#endif // RL_HAL_LIDAR_H

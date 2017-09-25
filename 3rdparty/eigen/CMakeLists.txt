@@ -1,0 +1,16 @@
+cmake_minimum_required(VERSION 2.8.11)
+
+project(eigen)
+
+include(ExternalProject)
+
+ExternalProject_Add(
+	eigen
+	#HG_REPOSITORY https://bitbucket.org/eigen/eigen/
+	#HG_TAG 3.3.4
+	URL http://bitbucket.org/eigen/eigen/get/3.3.4.tar.gz
+	#URL ${CMAKE_CURRENT_SOURCE_DIR}/eigen-eigen-5a0156e40feb.tar.gz
+	#URL_MD5 1a47e78efe365a97de0c022d127607c3
+	CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_CFG_INTDIR=${CMAKE_CFG_INTDIR} -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH} -DCMAKE_TRY_COMPILE_CONFIGURATION=${CMAKE_TRY_COMPILE_CONFIGURATION}
+	INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
+)

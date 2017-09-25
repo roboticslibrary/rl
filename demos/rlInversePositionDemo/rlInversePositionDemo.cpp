@@ -24,15 +24,23 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include <chrono>
+#include <functional>
 #include <iostream>
+#include <memory>
+#include <random>
 #include <stdexcept>
 #include <boost/lexical_cast.hpp>
-#include <boost/shared_ptr.hpp>
 #include <rl/hal/Coach.h>
+#include <rl/mdl/JacobianInverseKinematics.h>
 #include <rl/mdl/Kinematic.h>
+#include <rl/mdl/UrdfFactory.h>
 #include <rl/mdl/XmlFactory.h>
 #include <rl/math/Unit.h>
-#include <rl/util/Timer.h>
+
+#ifdef RL_MDL_NLOPT
+#include <rl/mdl/NloptInverseKinematics.h>
+#endif
 
 #define COACH
 
@@ -42,23 +50,37 @@ main(int argc, char** argv)
 	if (argc < 2)
 	{
 		std::cout << "Usage: rlInversePositionDemo MODELFILE Q1 ... Qn" << std::endl;
-		return 1;
+		return EXIT_FAILURE;
 	}
 	
 	try
 	{
-		srand(static_cast< unsigned int >(rl::util::Timer::now() * 1.0e9f));
+		std::function<rl::math::Real()> rand = std::bind(
+			std::uniform_real_distribution<rl::math::Real>(0, 1),
+			std::mt19937(std::random_device()())
+		);
 		
-		rl::mdl::XmlFactory factory;
-		boost::shared_ptr< rl::mdl::Model > model(factory.create(argv[1]));
+		std::string filename(argv[1]);
+		std::shared_ptr<rl::mdl::Model> model;
 		
-		rl::mdl::Kinematic* kinematic = dynamic_cast< rl::mdl::Kinematic* >(model.get());
+		if ("urdf" == filename.substr(filename.length() - 4, 4))
+		{
+			rl::mdl::UrdfFactory factory;
+			model.reset(factory.create(filename));
+		}
+		else
+		{
+			rl::mdl::XmlFactory factory;
+			model.reset(factory.create(filename));
+		}
+		
+		rl::mdl::Kinematic* kinematic = dynamic_cast<rl::mdl::Kinematic*>(model.get());
 		
 		rl::math::Vector q(kinematic->getDof());
 		
 		for (std::ptrdiff_t i = 0; i < q.size(); ++i)
 		{
-			q(i) = boost::lexical_cast< rl::math::Real >(argv[i + 2]);
+			q(i) = boost::lexical_cast<rl::math::Real>(argv[i + 2]);
 		}
 		
 		kinematic->setPosition(q);
@@ -68,27 +90,44 @@ main(int argc, char** argv)
 		rl::math::Vector3 orientation = kinematic->getOperationalPosition(0).rotation().eulerAngles(2, 1, 0).reverse();
 		std::cout << "x: " << position.x() << " m, y: " << position.y() << " m, z: " << position.z() << " m, a: " << orientation.x() * rl::math::RAD2DEG << " deg, b: " << orientation.y() * rl::math::RAD2DEG << " deg, c: " << orientation.z() * rl::math::RAD2DEG << " deg" << std::endl;
 		
-		rl::math::Transform x = kinematic->getOperationalPosition(0);
-		kinematic->setPosition(rl::math::Vector::Random(kinematic->getDof()));
-		rl::util::Timer timer;
-		timer.start();
-		bool result = kinematic->calculateInversePosition(x);
-		timer.stop();
-		std::cout << (result ? "true" : "false") << " " << timer.elapsed() * 1000 << " ms" << std::endl;
+#ifdef RL_MDL_NLOPT
+		rl::mdl::NloptInverseKinematics ik(kinematic);
+		std::cout << "IK using rl::mdl::NloptInverseKinematics";
+#else
+		rl::mdl::JacobianInverseKinematics ik(kinematic);
+		std::cout << "IK using rl::mdl::JacobianInverseKinematics";
+#endif
+		ik.duration = std::chrono::seconds(1);
+		std::cout << " with timeout of " << std::chrono::duration_cast<std::chrono::milliseconds>(ik.duration).count() << " ms" << std::endl;
+		ik.goals.push_back(::std::make_pair(kinematic->getOperationalPosition(0), 0));
+		
+		rl::math::Vector min = kinematic->getMinimum();
+		rl::math::Vector max = kinematic->getMaximum();
+		
+		for (std::size_t i = 0; i < kinematic->getDofPosition(); ++i)
+		{
+			q(i) = min(i) + rand() * (max(i) - min(i));
+		}
+		
+		kinematic->setPosition(q);
+		
+		std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+		bool result = ik.solve();
+		std::chrono::steady_clock::time_point stop = std::chrono::steady_clock::now();
+		std::cout << (result ? "true" : "false") << " " << std::chrono::duration_cast<std::chrono::duration<double>>(stop - start).count() * 1000 << " ms" << std::endl;
 		
 		kinematic->forwardPosition();
 		position = kinematic->getOperationalPosition(0).translation();
 		orientation = kinematic->getOperationalPosition(0).rotation().eulerAngles(2, 1, 0).reverse();
 		std::cout << "x: " << position.x() << " m, y: " << position.y() << " m, z: " << position.z() << " m, a: " << orientation.x() * rl::math::RAD2DEG << " deg, b: " << orientation.y() * rl::math::RAD2DEG << " deg, c: " << orientation.z() * rl::math::RAD2DEG << " deg" << std::endl;
 		
-		kinematic->getPosition(q);
-		std::cout << "q: " << q.transpose() << std::endl;
+		std::cout << "q: " << kinematic->getPosition().transpose() << std::endl;
 		
 #ifdef COACH
-		rl::hal::Coach controller(kinematic->getDof(), 0.001f, 0, "localhost");
+		rl::hal::Coach controller(kinematic->getDof(), std::chrono::milliseconds(1), 0, "localhost");
 		controller.open();
 		controller.start();
-		controller.setJointPosition(q);
+		controller.setJointPosition(kinematic->getPosition());
 		controller.step();
 		controller.stop();
 		controller.close();
@@ -97,8 +136,8 @@ main(int argc, char** argv)
 	catch (const std::exception& e)
 	{
 		std::cout << e.what() << std::endl;
-		return 1;
+		return EXIT_FAILURE;
 	}
 	
-	return 0;
+	return EXIT_SUCCESS;
 }

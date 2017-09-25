@@ -24,22 +24,23 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _MAINWINDOW_H_
-#define _MAINWINDOW_H_
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
 
+#include <memory>
 #include <QAction>
 #include <QDockWidget>
-#include <QGraphicsView>
 #include <QMainWindow>
 #include <QMutex>
 #include <QTableView>
-#include <boost/shared_ptr.hpp>
+#include <boost/optional.hpp>
 #include <rl/kin/Kinematics.h>
 #include <rl/mdl/Dynamic.h>
-#include <rl/plan/DistanceModel.h>
+#include <rl/plan/NearestNeighbors.h>
 #include <rl/plan/Optimizer.h>
 #include <rl/plan/Planner.h>
 #include <rl/plan/Sampler.h>
+#include <rl/plan/SimpleModel.h>
 #include <rl/plan/Verifier.h>
 #include <rl/plan/WorkspaceSphereExplorer.h>
 #include <rl/sg/Model.h>
@@ -49,7 +50,9 @@
 
 class ConfigurationDelegate;
 class ConfigurationModel;
+class ConfigurationSpaceModel;
 class ConfigurationSpaceScene;
+class GraphicsView;
 class PlannerModel;
 class Thread;
 class Viewer;
@@ -65,62 +68,70 @@ public:
 	
 	ConfigurationModel* configurationModel;
 	
-	std::vector< boost::shared_ptr< rl::math::Vector3 > > explorerGoals;
+	ConfigurationSpaceModel* configurationSpaceModel;
 	
-	std::vector< boost::shared_ptr< rl::plan::WorkspaceSphereExplorer > > explorers;
+	QString engine;
 	
-	std::vector< boost::shared_ptr< rl::math::Vector3 > > explorerStarts;
+	std::vector<std::shared_ptr<rl::math::Vector3>> explorerGoals;
 	
-	boost::shared_ptr< rl::math::Vector > goal;
+	std::vector<std::shared_ptr<rl::plan::WorkspaceSphereExplorer>> explorers;
 	
-	boost::shared_ptr< rl::kin::Kinematics > kin;
+	std::vector<std::shared_ptr<rl::math::Vector3>> explorerStarts;
 	
-	boost::shared_ptr< rl::kin::Kinematics > kin2;
+	std::shared_ptr<rl::math::Vector> goal;
 	
-	boost::shared_ptr< rl::mdl::Dynamic > mdl;
+	std::shared_ptr<rl::kin::Kinematics> kin;
 	
-	boost::shared_ptr< rl::mdl::Dynamic > mdl2;
+	std::shared_ptr<rl::kin::Kinematics> kin2;
 	
-	boost::shared_ptr< rl::plan::DistanceModel > model;
+	std::shared_ptr<rl::mdl::Dynamic> mdl;
 	
-	boost::shared_ptr< rl::plan::Model > model2;
+	std::shared_ptr<rl::mdl::Dynamic> mdl2;
+	
+	std::shared_ptr<rl::plan::SimpleModel> model;
+	
+	std::shared_ptr<rl::plan::Model> model2;
 	
 	QMutex mutex;
 	
-	boost::shared_ptr< rl::plan::Optimizer > optimizer;
+	std::vector<std::shared_ptr<rl::plan::NearestNeighbors>> nearestNeighbors;
 	
-	boost::shared_ptr< rl::plan::Planner > planner;
+	std::shared_ptr<rl::plan::Optimizer> optimizer;
+	
+	std::shared_ptr<rl::plan::Planner> planner;
 	
 	PlannerModel* plannerModel;
 	
-	boost::shared_ptr< rl::math::Vector > q;
+	std::shared_ptr<rl::math::Vector> q;
 	
-	boost::shared_ptr< rl::plan::Sampler > sampler;
+	std::shared_ptr<rl::plan::Sampler> sampler;
 	
-	boost::shared_ptr< rl::plan::Sampler > sampler2;
+	std::shared_ptr<rl::plan::Sampler> sampler2;
 	
-	boost::shared_ptr< rl::math::Vector > sigma;
+	std::shared_ptr<rl::math::Vector> sigma;
 	
-	boost::shared_ptr< rl::sg::Scene > scene;
+	std::shared_ptr<rl::sg::Scene> scene;
 	
-	boost::shared_ptr< rl::sg::so::Scene > scene2;
+	std::shared_ptr<rl::sg::so::Scene> scene2;
 	
 	rl::sg::Model* sceneModel;
 	
 	rl::sg::so::Model* sceneModel2;
 	
-	boost::shared_ptr< rl::math::Vector > start;
+	std::shared_ptr<rl::math::Vector> start;
 	
 	Thread* thread;
 	
-	boost::shared_ptr< rl::plan::Verifier > verifier;
+	std::shared_ptr<rl::plan::Verifier> verifier;
 	
-	boost::shared_ptr< rl::plan::Verifier > verifier2;
+	std::shared_ptr<rl::plan::Verifier> verifier2;
 	
 	Viewer* viewer;
 	
 public slots:
 	void eval();
+	
+	void evalDone();
 	
 	void getGoalConfiguration();
 	
@@ -134,7 +145,9 @@ public slots:
 	
 	void reset();
 	
-	void saveImage();
+	void saveImageWithAlpha();
+	
+	void saveImageWithoutAlpha();
 	
 	void savePdf();
 	
@@ -146,18 +159,26 @@ public slots:
 	
 	void startThread();
 	
+	void toggleAnimation(const bool& doOn);
+	
 	void toggleCamera();
 	
 	void toggleConfiguration();
 	
 	void toggleConfigurationSpace();
 	
+	void toggleConfigurationSpaceActive(const bool& doOn);
+	
+	void toggleConfigurationSpaceScene();
+	
 	void togglePlanner();
 	
-	void toggleView(const bool& doOn);
+	void toggleSweptVolume(const bool& doOn);
+	
+	void toggleViewActive(const bool& doOn);
 	
 protected:
-	MainWindow(QWidget* parent = NULL, Qt::WindowFlags f = 0);
+	MainWindow(QWidget* parent = nullptr, Qt::WindowFlags f = 0);
 	
 private:
 	void clear();
@@ -178,11 +199,13 @@ private:
 	
 	ConfigurationSpaceScene* configurationSpaceScene;
 	
-	QGraphicsView* configurationSpaceView;
+	QDockWidget* configurationSpaceSceneDockWidget;
+	
+	GraphicsView* configurationSpaceSceneView;
+	
+	QTableView* configurationSpaceView;
 	
 	QTableView* configurationView;
-	
-	QString engine;
 	
 	QAction* evalAction;
 	
@@ -206,11 +229,15 @@ private:
 	
 	QAction* resetAction;
 	
-	QAction* saveImageAction;
+	QAction* saveImageWithAlphaAction;
+	
+	QAction* saveImageWithoutAlphaAction;
 	
 	QAction* savePdfAction;
 	
 	QAction* saveSceneAction;
+	
+	boost::optional<std::size_t> seed;
 	
 	QAction* setGoalConfigurationAction;
 	
@@ -220,6 +247,8 @@ private:
 	
 	QAction* startThreadAction;
 	
+	QAction* toggleAnimationAction;
+	
 	QAction* toggleCameraAction;
 	
 	QAction* toggleConfigurationAction;
@@ -228,9 +257,15 @@ private:
 	
 	QAction* toggleConfigurationSpaceAction;
 	
+	QAction* toggleConfigurationSpaceActiveAction;
+	
+	QAction* toggleConfigurationSpaceSceneAction;
+	
 	QAction* toggleConfigurationVerticesAction;
 	
 	QAction* toggleLinesAction;
+	
+	QAction* togglePathAction;
 	
 	QAction* togglePlannerAction;
 	
@@ -238,11 +273,13 @@ private:
 	
 	QAction* toggleSpheresAction;
 	
-	QAction* toggleViewAction;
+	QAction* toggleSweptVolumeAction;
+	
+	QAction* toggleViewActiveAction;
 	
 	QAction* toggleWorkFramesAction;
 	
 	bool wait;
 };
 
-#endif // _MAINWINDOW_H_
+#endif // MAINWINDOW_H

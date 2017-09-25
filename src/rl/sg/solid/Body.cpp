@@ -70,7 +70,7 @@ namespace rl
 				
 				for (Iterator i = this->begin(); i != this->end(); ++i)
 				{
-					static_cast< Shape* >(*i)->update();
+					static_cast<Shape*>(*i)->update();
 				}
 			}
 			
@@ -79,7 +79,7 @@ namespace rl
 			{
 				for (Iterator i = this->begin(); i != this->end(); ++i)
 				{
-					static_cast< Shape* >(*i)->setMargin(margin);
+					static_cast<Shape*>(*i)->setMargin(margin);
 				}
 			}
 		}

@@ -200,6 +200,19 @@ namespace rl
 		}
 		
 		void
+		Metric::normalize(::rl::math::Vector& q) const
+		{
+			assert(q.size() == this->getDofPosition());
+			
+			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDofPosition(), ++i)
+			{
+				::rl::math::Vector qi = q.segment(j, this->joints[i]->getDofPosition()); // TODO
+				this->joints[i]->normalize(qi);
+				q.segment(j, this->joints[i]->getDofPosition()) = qi; // TODO
+			}
+		}
+		
+		void
 		Metric::step(const ::rl::math::Vector& q1, const ::rl::math::Vector& qdot, ::rl::math::Vector& q2) const
 		{
 			assert(q1.size() == this->getDofPosition());
@@ -243,6 +256,22 @@ namespace rl
 			}
 			
 			return d;
+		}
+		
+		::rl::math::Real
+		Metric::transformedDistance(const ::rl::math::Real& q1, const ::rl::math::Real& q2, const ::std::size_t& i) const
+		{
+			::rl::math::Real delta = ::std::abs(q1 - q2);
+			
+			if (this->joints[i]->wraparound(0))
+			{
+				::rl::math::Real range = ::std::abs(this->joints[i]->max(0) - this->joints[i]->min(0));
+				return this->transformedDistance(::std::max(delta, ::std::abs(range - delta)));
+			}
+			else
+			{
+				return this->transformedDistance(delta);
+			}
 		}
 	}
 }

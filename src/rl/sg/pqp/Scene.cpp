@@ -53,12 +53,12 @@ namespace rl
 			bool
 			Scene::areColliding(::rl::sg::Shape* first, ::rl::sg::Shape* second)
 			{
-				Shape* shape1 = static_cast< Shape* >(first);
-				Shape* shape2 = static_cast< Shape* >(second);
+				Shape* shape1 = static_cast<Shape*>(first);
+				Shape* shape2 = static_cast<Shape*>(second);
 				
-				PQP_CollideResult result;
+				::PQP_CollideResult result;
 				
-				PQP_Collide(
+				::PQP_Collide(
 					&result,
 					shape1->rotation,
 					shape1->translation,
@@ -81,12 +81,12 @@ namespace rl
 			::rl::math::Real
 			Scene::distance(::rl::sg::Shape* first, ::rl::sg::Shape* second, ::rl::math::Vector3& point1, ::rl::math::Vector3& point2)
 			{
-				Shape* shape1 = static_cast< Shape* >(first);
-				Shape* shape2 = static_cast< Shape* >(second);
+				Shape* shape1 = static_cast<Shape*>(first);
+				Shape* shape2 = static_cast<Shape*>(second);
 				
-				PQP_DistanceResult result;
+				::PQP_DistanceResult result;
 				
-				PQP_Distance(
+				::PQP_Distance(
 					&result,
 					shape1->rotation,
 					shape1->translation,
@@ -94,8 +94,8 @@ namespace rl
 					shape2->rotation,
 					shape2->translation,
 					&shape2->model,
-					::std::numeric_limits< ::rl::math::Real >::epsilon(),
-					::std::numeric_limits< ::rl::math::Real >::epsilon()
+					::std::numeric_limits< ::rl::math::Real>::epsilon(),
+					::std::numeric_limits< ::rl::math::Real>::epsilon()
 				);
 				
 				point1(0) = result.P1()[0];
@@ -116,11 +116,11 @@ namespace rl
 			::rl::math::Real
 			Scene::distance(::rl::sg::Shape* shape, const ::rl::math::Vector3& point, ::rl::math::Vector3& point1, ::rl::math::Vector3& point2)
 			{
-				Shape* shape1 = static_cast< Shape* >(shape);
+				Shape* shape1 = static_cast<Shape*>(shape);
 				
 				::rl::math::Real p[3] = {0.0f, 0.0f, 0.0f};
 				
-				PQP_Model model;
+				::PQP_Model model;
 				model.BeginModel(1);
 				model.AddTri(&p[0], &p[0], &p[0], 0);
 				model.EndModel();
@@ -133,9 +133,9 @@ namespace rl
 				
 				PQP_REAL translation[3] = {point(0), point(1), point(2)};
 				
-				PQP_DistanceResult result;
+				::PQP_DistanceResult result;
 				
-				PQP_Distance(
+				::PQP_Distance(
 					&result,
 					shape1->rotation,
 					shape1->translation,
@@ -143,8 +143,8 @@ namespace rl
 					rotation,
 					translation,
 					&model,
-					::std::numeric_limits< ::rl::math::Real >::epsilon(),
-					::std::numeric_limits< ::rl::math::Real >::epsilon()
+					::std::numeric_limits< ::rl::math::Real>::epsilon(),
+					::std::numeric_limits< ::rl::math::Real>::epsilon()
 				);
 				
 				point1(0) = result.P1()[0];

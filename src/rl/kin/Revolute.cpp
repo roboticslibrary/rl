@@ -79,12 +79,11 @@ namespace rl
 		void
 		Revolute::setPosition(const ::rl::math::Real& q)
 		{
-			::rl::math::transform::setDenavitHartenberg(
+			this->transform.fromDenavitHartenbergPaul(
 				this->d,
 				this->theta + q + this->offset,
 				this->a,
-				this->alpha,
-				this->transform
+				this->alpha
 			);
 			
 			Joint::setPosition(q);

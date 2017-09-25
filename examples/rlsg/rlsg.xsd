@@ -1,31 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-	<xs:element name="body">
-		<xs:complexType>
-			<xs:attribute name="name" type="xs:string" use="required"/>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="model">
+	<xs:complexType name="bodyType">
+		<xs:attribute name="name" type="xs:string" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="modelType">
+		<xs:sequence>
+			<xs:element name="body" type="bodyType" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:string" use="required"/>
+	</xs:complexType>
+	<xs:element name="rl">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="body" maxOccurs="unbounded"/>
+				<xs:element name="sg">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="scene" type="sceneType"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
 			</xs:sequence>
-			<xs:attribute name="name" type="xs:string" use="required"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="rlsg">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="scene"/>
+				<xs:element name="scene" type="sceneType"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="scene">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="model" maxOccurs="unbounded"/>
-			</xs:sequence>
-			<xs:attribute name="href" type="xs:anyURI" use="required"/>
-		</xs:complexType>
-	</xs:element>
+	<xs:complexType name="sceneType">
+		<xs:sequence>
+			<xs:element name="model" type="modelType" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="href" type="xs:anyURI" use="required"/>
+	</xs:complexType>
 </xs:schema>

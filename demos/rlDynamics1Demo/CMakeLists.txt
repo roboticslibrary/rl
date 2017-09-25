@@ -1,5 +1,3 @@
-project(rlDynamics1Demo)
-
 find_package(Boost REQUIRED)
 
 add_executable(
@@ -15,5 +13,5 @@ target_include_directories(
 
 target_link_libraries(
 	rlDynamics1Demo
-	rlmdl
+	mdl
 )

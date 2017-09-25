@@ -3,7 +3,6 @@
 	<xs:complexType name="elementType">
 		<xs:attribute name="id" type="xs:ID" use="required"/>
 	</xs:complexType>
-	<xs:element name="frame" type="frameType"/>
 	<xs:complexType name="frameType">
 		<xs:complexContent>
 			<xs:extension base="elementType">
@@ -54,104 +53,111 @@
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
-	<xs:element name="kinematics" type="kinematicsType"/>
 	<xs:complexType name="kinematicsType">
 		<xs:sequence>
 			<xs:element name="manufacturer" type="xs:string" minOccurs="0"/>
 			<xs:element name="name" type="xs:string" minOccurs="0"/>
-			<xs:element ref="world" minOccurs="1"/>
+			<xs:element name="world" type="worldType" minOccurs="1"/>
 			<xs:sequence minOccurs="0" maxOccurs="unbounded">
-				<xs:element ref="frame" minOccurs="0" maxOccurs="unbounded"/>
-				<xs:element ref="link" minOccurs="0" maxOccurs="unbounded"/>
-				<xs:element ref="prismatic" minOccurs="0" maxOccurs="unbounded"/>
-				<xs:element ref="revolute" minOccurs="0" maxOccurs="unbounded"/>
-				<xs:element ref="transform" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="frame" type="frameType" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="link" type="linkType" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="prismatic" type="prismaticType" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="revolute" type="revoluteType" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="transform" type="transformType" minOccurs="0" maxOccurs="unbounded"/>
 			</xs:sequence>
 		</xs:sequence>
 	</xs:complexType>
-	<xs:element name="link">
-		<xs:complexType>
-			<xs:complexContent>
-				<xs:extension base="frameType">
-					<xs:sequence>
-						<xs:element name="ignore" minOccurs="0" maxOccurs="unbounded">
-							<xs:complexType>
-								<xs:attribute name="idref" type="xs:IDREF"/>
-							</xs:complexType>
-						</xs:element>
-					</xs:sequence>
-				</xs:extension>
-			</xs:complexContent>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="prismatic" type="prismaticType"/>
+	<xs:complexType name="linkType">
+		<xs:complexContent>
+			<xs:extension base="frameType">
+				<xs:sequence>
+					<xs:element name="ignore" minOccurs="0" maxOccurs="unbounded">
+						<xs:complexType>
+							<xs:attribute name="idref" type="xs:IDREF"/>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
 	<xs:complexType name="prismaticType">
 		<xs:complexContent>
 			<xs:extension base="jointType"/>
 		</xs:complexContent>
 	</xs:complexType>
-	<xs:element name="puma" type="pumaType"/>
 	<xs:complexType name="pumaType">
 		<xs:sequence>
 			<xs:element name="manufacturer" type="xs:string" minOccurs="0"/>
 			<xs:element name="name" type="xs:string" minOccurs="0"/>
-			<xs:element ref="world" minOccurs="1"/>
-			<xs:element ref="transform" minOccurs="1"/>
-			<xs:element ref="link" minOccurs="1"/>
-			<xs:element ref="revolute" minOccurs="1"/>
-			<xs:element ref="link" minOccurs="1"/>
-			<xs:element ref="revolute" minOccurs="1"/>
-			<xs:element ref="link" minOccurs="1"/>
-			<xs:element ref="revolute" minOccurs="1"/>
-			<xs:element ref="link" minOccurs="1"/>
-			<xs:element ref="revolute" minOccurs="1"/>
-			<xs:element ref="link" minOccurs="1"/>
-			<xs:element ref="revolute" minOccurs="1"/>
-			<xs:element ref="link" minOccurs="1"/>
-			<xs:element ref="revolute" minOccurs="1"/>
-			<xs:element ref="link" minOccurs="1"/>
-			<xs:element ref="transform" minOccurs="1"/>
-			<xs:element ref="frame" minOccurs="1"/>
+			<xs:element name="world" type="worldType" minOccurs="1"/>
+			<xs:element name="transform" type="transformType" minOccurs="1"/>
+			<xs:element name="link" type="linkType" minOccurs="1"/>
+			<xs:element name="revolute" type="revoluteType" minOccurs="1"/>
+			<xs:element name="link" type="linkType" minOccurs="1"/>
+			<xs:element name="revolute" type="revoluteType" minOccurs="1"/>
+			<xs:element name="link" type="linkType" minOccurs="1"/>
+			<xs:element name="revolute" type="revoluteType" minOccurs="1"/>
+			<xs:element name="link" type="linkType" minOccurs="1"/>
+			<xs:element name="revolute" type="revoluteType" minOccurs="1"/>
+			<xs:element name="link" type="linkType" minOccurs="1"/>
+			<xs:element name="revolute" type="revoluteType" minOccurs="1"/>
+			<xs:element name="link" type="linkType" minOccurs="1"/>
+			<xs:element name="revolute" type="revoluteType" minOccurs="1"/>
+			<xs:element name="link" type="linkType" minOccurs="1"/>
+			<xs:element name="transform" type="transformType" minOccurs="1"/>
+			<xs:element name="frame" type="frameType" minOccurs="1"/>
 		</xs:sequence>
 	</xs:complexType>
-	<xs:element name="revolute" type="revoluteType"/>
 	<xs:complexType name="revoluteType">
 		<xs:complexContent>
 			<xs:extension base="jointType"/>
 		</xs:complexContent>
 	</xs:complexType>
-	<xs:element name="rhino" type="rhinoType"/>
 	<xs:complexType name="rhinoType">
 		<xs:sequence>
 			<xs:element name="manufacturer" type="xs:string" minOccurs="0"/>
 			<xs:element name="name" type="xs:string" minOccurs="0"/>
-			<xs:element ref="world" minOccurs="1"/>
-			<xs:element ref="transform" minOccurs="1"/>
-			<xs:element ref="link" minOccurs="1"/>
-			<xs:element ref="revolute" minOccurs="1"/>
-			<xs:element ref="link" minOccurs="1"/>
-			<xs:element ref="revolute" minOccurs="1"/>
-			<xs:element ref="link" minOccurs="1"/>
-			<xs:element ref="revolute" minOccurs="1"/>
-			<xs:element ref="link" minOccurs="1"/>
-			<xs:element ref="revolute" minOccurs="1"/>
-			<xs:element ref="link" minOccurs="1"/>
-			<xs:element ref="revolute" minOccurs="1"/>
-			<xs:element ref="link" minOccurs="1"/>
-			<xs:element ref="transform" minOccurs="1"/>
-			<xs:element ref="frame" minOccurs="1"/>
+			<xs:element name="world" type="worldType" minOccurs="1"/>
+			<xs:element name="transform" type="transformType" minOccurs="1"/>
+			<xs:element name="link" type="linkType" minOccurs="1"/>
+			<xs:element name="revolute" type="revoluteType" minOccurs="1"/>
+			<xs:element name="link" type="linkType" minOccurs="1"/>
+			<xs:element name="revolute" type="revoluteType" minOccurs="1"/>
+			<xs:element name="link" type="linkType" minOccurs="1"/>
+			<xs:element name="revolute" type="revoluteType" minOccurs="1"/>
+			<xs:element name="link" type="linkType" minOccurs="1"/>
+			<xs:element name="revolute" type="revoluteType" minOccurs="1"/>
+			<xs:element name="link" type="linkType" minOccurs="1"/>
+			<xs:element name="revolute" type="revoluteType" minOccurs="1"/>
+			<xs:element name="link" type="linkType" minOccurs="1"/>
+			<xs:element name="transform" type="transformType" minOccurs="1"/>
+			<xs:element name="frame" type="frameType" minOccurs="1"/>
 		</xs:sequence>
 	</xs:complexType>
+	<xs:element name="rl">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="kin">
+					<xs:complexType>
+						<xs:choice>
+							<xs:element name="kinematics" type="kinematicsType"/>
+							<xs:element name="puma" type="pumaType"/>
+							<xs:element name="rhino" type="rhinoType"/>
+						</xs:choice>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
 	<xs:element name="rlkin">
 		<xs:complexType>
 			<xs:choice>
-				<xs:element ref="kinematics"/>
-				<xs:element ref="puma"/>
-				<xs:element ref="rhino"/>
+				<xs:element name="kinematics" type="kinematicsType"/>
+				<xs:element name="puma" type="pumaType"/>
+				<xs:element name="rhino" type="rhinoType"/>
 			</xs:choice>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="transform" type="transformType"/>
 	<xs:complexType name="transformType">
 		<xs:complexContent>
 			<xs:extension base="elementType">
@@ -194,7 +200,6 @@
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
-	<xs:element name="world" type="worldType"/>
 	<xs:complexType name="worldType">
 		<xs:complexContent>
 			<xs:extension base="frameType"/>

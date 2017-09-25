@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_SG_ODE_MODEL_H_
-#define _RL_SG_ODE_MODEL_H_
+#ifndef RL_SG_ODE_MODEL_H
+#define RL_SG_ODE_MODEL_H
 
 #include <ode/ode.h>
 
@@ -48,7 +48,7 @@ namespace rl
 				
 				::rl::sg::Body* create();
 				
-				dSpaceID space;
+				::dSpaceID space;
 				
 			protected:
 				
@@ -59,4 +59,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_SG_ODE_MODEL_H_
+#endif // RL_SG_ODE_MODEL_H

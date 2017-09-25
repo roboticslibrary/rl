@@ -24,19 +24,14 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_SG_SOLID_SHAPE_H_
-#define _RL_SG_SOLID_SHAPE_H_
+#ifndef RL_SG_SOLID_SHAPE_H
+#define RL_SG_SOLID_SHAPE_H
 
+#include <unordered_set>
 #include <Inventor/fields/SoMFInt32.h>
 #include <Inventor/fields/SoMFVec3f.h>
 #include <SOLID/SOLID.h>
 #include <SOLID/SOLID_broad.h>
-
-#ifdef WIN32
-#include <unordered_set>
-#else // WIN32
-#include <tr1/unordered_set>
-#endif // WIN32
 
 #include "../Shape.h"
 
@@ -67,7 +62,7 @@ namespace rl
 				
 				bool complex;
 				
-				::std::tr1::unordered_set< Shape* > encounters;
+				::std::unordered_set<Shape*> encounters;
 				
 				DT_ObjectHandle object;
 				
@@ -96,4 +91,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_SG_SOLID_SHAPE_H_
+#endif // RL_SG_SOLID_SHAPE_H

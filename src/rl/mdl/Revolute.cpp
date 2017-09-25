@@ -104,10 +104,25 @@ namespace rl
 		}
 		
 		void
+		Revolute::normalize(::rl::math::Vector& q) const
+		{
+			q(0) = ::std::fmod(q(0), 2.0f * static_cast< ::rl::math::Real>(M_PI));
+			
+			if (q(0) < this->min(0))
+			{
+				q(0) += 2.0f * static_cast< ::rl::math::Real>(M_PI);
+			}
+			else if (q(0) > this->max(0))
+			{
+				q(0) -= 2.0f * static_cast< ::rl::math::Real>(M_PI);
+			}
+		}
+		
+		void
 		Revolute::setPosition(const ::rl::math::Vector& q)
 		{
 			this->q = q;
-			this->t = ::rl::math::AngleAxis(this->q(0) + this->offset(0), this->S.block< 3, 1 >(0, 0));
+			this->t = ::rl::math::AngleAxis(this->q(0) + this->offset(0), this->S.block<3, 1>(0, 0));
 			this->x.rotation() = this->t.linear().transpose();
 		}
 		

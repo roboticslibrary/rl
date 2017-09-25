@@ -1,0 +1,19 @@
+<CPackWiXPatch>
+	<CPackWiXFragment Id="#PRODUCTFEATURE">
+		<ComponentRef Id="CM_SHORTCUT"/>
+		<Feature Id="CM_C_path_system" Title="Add to System PATH" Description="Add RL directory to environment variable PATH for all users.">
+			<ComponentRef Id="CM_CP_bin.PATH.SYSTEM"/>
+		</Feature>
+		<Feature Id="CM_C_path_user" Title="Add to User PATH" Description="Add RL directory to environment variable PATH for current user." AllowAdvertise="no" Level="2">
+			<ComponentRef Id="CM_CP_bin.PATH.USER"/>
+		</Feature>
+	</CPackWiXFragment>
+	<CPackWiXFragment Id="CM_DP_bin">
+		<Component Id="CM_CP_bin.PATH.SYSTEM" KeyPath="yes" Guid="9923C3E2-C7B6-4593-B2DE-D796A643D207">
+			<Environment Id="CM_EP_bin.PATH.SYSTEM" Action="set" Name="PATH" Part="last" Permanent="no" System="yes" Value="[INSTALL_ROOT]bin"/>
+		</Component>
+		<Component Id="CM_CP_bin.PATH.USER" KeyPath="yes" Guid="4AB7BA0A-8B30-4723-8861-8AEB080EFFFC">
+			<Environment Id="CM_EP_bin.PATH.USER" Action="set" Name="PATH" Part="last" Permanent="no" System="no" Value="[INSTALL_ROOT]bin"/>
+		</Component>
+	</CPackWiXFragment>
+</CPackWiXPatch>

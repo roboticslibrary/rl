@@ -24,11 +24,12 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_MATH_QUATERNION_H_
-#define _RL_MATH_QUATERNION_H_
+#ifndef RL_MATH_QUATERNION_H
+#define RL_MATH_QUATERNION_H
 
 #define EIGEN_MATRIXBASE_PLUGIN <rl/math/MatrixBaseAddons.h>
 #define EIGEN_QUATERNIONBASE_PLUGIN <rl/math/QuaternionBaseAddons.h>
+#define EIGEN_TRANSFORM_PLUGIN <rl/math/TransformAddons.h>
 
 #include <Eigen/Geometry>
 
@@ -38,8 +39,8 @@ namespace rl
 {
 	namespace math
 	{
-		typedef ::Eigen::Quaternion< Real > Quaternion;
+		typedef ::Eigen::Quaternion<Real> Quaternion;
 	}
 }
 
-#endif // _RL_MATH_QUATERNION_H_
+#endif // RL_MATH_QUATERNION_H

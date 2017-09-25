@@ -44,19 +44,21 @@ OperationalDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& o
 {
 	QDoubleSpinBox* editor = new QDoubleSpinBox(parent);
 	
-	editor->setMaximum(std::numeric_limits< double >::max());
-	editor->setMinimum(-std::numeric_limits< double >::max());
+	editor->setMaximum(std::numeric_limits<double>::max());
+	editor->setMinimum(-std::numeric_limits<double>::max());
 	
 	switch (index.column())
 	{
 	case 0:
 	case 1:
 	case 2:
+		editor->setDecimals(4);
 		editor->setSingleStep(0.01f);
 		break;
 	case 3:
 	case 4:
 	case 5:
+		editor->setDecimals(2);
 		editor->setSingleStep(1.0f);
 		break;
 	default:
@@ -71,19 +73,19 @@ OperationalDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& o
 void
 OperationalDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const
 {
-	QDoubleSpinBox* doubleSpinBox = static_cast< QDoubleSpinBox* >(editor);
-	doubleSpinBox->setValue(index.model()->data(index, Qt::DisplayRole).toDouble());
+	QDoubleSpinBox* doubleSpinBox = static_cast<QDoubleSpinBox*>(editor);
+	doubleSpinBox->setValue(index.model()->data(index, Qt::EditRole).toDouble());
 }
 
 void
 OperationalDelegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const
 {
-	QDoubleSpinBox* doubleSpinBox = static_cast< QDoubleSpinBox* >(editor);
+	QDoubleSpinBox* doubleSpinBox = static_cast<QDoubleSpinBox*>(editor);
 	doubleSpinBox->interpretText();
 	
 	if (!model->setData(index, doubleSpinBox->value(), Qt::EditRole))
 	{
-		doubleSpinBox->setValue(index.model()->data(index, Qt::DisplayRole).toDouble());
+		doubleSpinBox->setValue(index.model()->data(index, Qt::EditRole).toDouble());
 	}
 }
 
@@ -96,5 +98,5 @@ OperationalDelegate::updateEditorGeometry(QWidget* editor, const QStyleOptionVie
 void
 OperationalDelegate::valueChanged(double d)
 {
-	emit commitData(static_cast< QWidget* >(QObject::sender()));
+	emit commitData(static_cast<QWidget*>(QObject::sender()));
 }

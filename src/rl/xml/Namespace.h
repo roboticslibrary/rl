@@ -24,11 +24,11 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_XML_NAMESPACE_H_
-#define _RL_XML_NAMESPACE_H_
+#ifndef RL_XML_NAMESPACE_H
+#define RL_XML_NAMESPACE_H
 
+#include <memory>
 #include <string>
-#include <boost/shared_ptr.hpp>
 #include <libxml/parser.h>
 
 namespace rl
@@ -38,52 +38,52 @@ namespace rl
 		class Namespace
 		{
 		public:
-			Namespace(xmlNsPtr ns) :
+			explicit Namespace(::xmlNsPtr ns) :
 				ns(ns)
 			{
 			}
 			
-			Namespace(xmlNodePtr node, const ::std::string& href, const ::std::string& prefix) :
+			Namespace(::xmlNodePtr node, const ::std::string& href, const ::std::string& prefix) :
 				ns(
-					xmlNewNs(
+					::xmlNewNs(
 						node,
-						reinterpret_cast< const xmlChar* >(href.c_str()),
-						reinterpret_cast< const xmlChar* >(prefix.c_str())
+						reinterpret_cast<const ::xmlChar*>(href.c_str()),
+						reinterpret_cast<const ::xmlChar*>(prefix.c_str())
 					)
 				)
 			{
-				this->ns->_private = node;
 			}
 			
-			virtual ~Namespace()
+			~Namespace()
 			{
-				if (NULL == this->ns->_private)
-				{
-					xmlFreeNs(this->ns);
-				}
+			}
+			
+			::xmlNsPtr get() const
+			{
+				return this->ns;
 			}
 			
 			::std::string getHref() const
 			{
-				return reinterpret_cast< const char* >(this->ns->href);
+				return nullptr != this->ns->href ? reinterpret_cast<const char*>(this->ns->href) : ::std::string();
 			}
 			
 			::std::string getPrefix() const
 			{
-				return reinterpret_cast< const char* >(this->ns->prefix);
+				return nullptr != this->ns->prefix ? reinterpret_cast<const char*>(this->ns->prefix) : ::std::string();
 			}
 			
-			xmlNsPtr operator()() const
+			::xmlNs operator*() const
 			{
-				return this->ns;
+				return *this->ns;
 			}
 			
 		protected:
 			
 		private:
-			xmlNsPtr ns;
+			::xmlNsPtr ns;
 		};
 	}
 }
 
-#endif // _RL_XML_NAMESPACE_H_
+#endif // RL_XML_NAMESPACE_H

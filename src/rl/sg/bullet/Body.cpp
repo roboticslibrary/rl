@@ -45,12 +45,12 @@ namespace rl
 				this->object.setCollisionShape(&this->shape);
 				this->object.setUserPointer(this);
 				
-				dynamic_cast< Scene*> (this->getModel()->getScene())->world.addCollisionObject(&this->object);
+				dynamic_cast<Scene*>(this->getModel()->getScene())->world.addCollisionObject(&this->object);
 			}
 			
 			Body::~Body()
 			{
-				dynamic_cast< Scene*> (this->getModel()->getScene())->world.removeCollisionObject(&this->object);
+				dynamic_cast<Scene*>(this->getModel()->getScene())->world.removeCollisionObject(&this->object);
 				
 				while (this->shapes.size() > 0)
 				{
@@ -61,7 +61,7 @@ namespace rl
 			}
 			
 			::rl::sg::Shape*
-			Body::create(SoVRMLShape* shape)
+			Body::create(::SoVRMLShape* shape)
 			{
 				return new Shape(shape, this);
 			}
@@ -90,15 +90,15 @@ namespace rl
 			Body::setFrame(const ::rl::math::Transform& frame)
 			{
 				this->object.getWorldTransform().getOrigin().setValue(
-					static_cast< btScalar >(frame(0, 3)),
-					static_cast< btScalar >(frame(1, 3)),
-					static_cast< btScalar >(frame(2, 3))
+					static_cast< ::btScalar>(frame(0, 3)),
+					static_cast< ::btScalar>(frame(1, 3)),
+					static_cast< ::btScalar>(frame(2, 3))
 				);
 				
 				this->object.getWorldTransform().getBasis().setValue(
-					static_cast< btScalar >(frame(0, 0)), static_cast< btScalar >(frame(0, 1)), static_cast< btScalar >(frame(0, 2)),
-					static_cast< btScalar >(frame(1, 0)), static_cast< btScalar >(frame(1, 1)), static_cast< btScalar >(frame(1, 2)),
-					static_cast< btScalar >(frame(2, 0)), static_cast< btScalar >(frame(2, 1)), static_cast< btScalar >(frame(2, 2))
+					static_cast< ::btScalar>(frame(0, 0)), static_cast< ::btScalar>(frame(0, 1)), static_cast< ::btScalar>(frame(0, 2)),
+					static_cast< ::btScalar>(frame(1, 0)), static_cast< ::btScalar>(frame(1, 1)), static_cast< ::btScalar>(frame(1, 2)),
+					static_cast< ::btScalar>(frame(2, 0)), static_cast< ::btScalar>(frame(2, 1)), static_cast< ::btScalar>(frame(2, 2))
 				);
 			}
 		}

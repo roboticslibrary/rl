@@ -35,37 +35,41 @@ namespace rl
 {
 	namespace hal
 	{
-		Ati::Ati(const ::std::string& calFilePath, const unsigned short int& index, const ::std::string& filename) :
+		Ati::Ati(
+			const ::std::string& calFilePath,
+			const ::std::chrono::nanoseconds& updateRate,
+			const unsigned short int& index,
+			const ::std::string& filename
+		) :
+			CyclicDevice(updateRate),
 			SixAxisForceTorqueSensor(),
-			cal(NULL),
+			cal(nullptr),
 			calFilePath(calFilePath),
-			comedi(new Comedi(filename)),
+			comedi(filename),
 			index(index),
 			values(),
 			voltages()
 		{
-			this->cal = createCalibration(const_cast< char* >(this->calFilePath.c_str()), this->index + 1);
+			this->cal = createCalibration(const_cast<char*>(this->calFilePath.c_str()), this->index + 1);
 			
-			if (NULL == this->cal)
+			if (nullptr == this->cal)
 			{
 				throw DeviceException("Could not load the desired calibration");
 			}
 			
 			for (::std::size_t i = 0; i < 6; ++i)
 			{
-				this->values[i] = ::std::numeric_limits< ::rl::math::Real >::quiet_NaN();
-				this->voltages[i] = ::std::numeric_limits< ::rl::math::Real >::quiet_NaN();
+				this->values[i] = ::std::numeric_limits< ::rl::math::Real>::quiet_NaN();
+				this->voltages[i] = ::std::numeric_limits< ::rl::math::Real>::quiet_NaN();
 			}
 		}
 		
 		Ati::~Ati()
 		{
-			if (NULL != this->cal)
+			if (nullptr != this->cal)
 			{
 				destroyCalibration(this->cal);
 			}
-			
-			delete this->comedi;
 		}
 		
 		void
@@ -77,7 +81,7 @@ namespace rl
 		void
 		Ati::close()
 		{
-			this->comedi->close();
+			this->comedi.close();
 			this->setConnected(false);
 		}
 		
@@ -89,15 +93,17 @@ namespace rl
 			return this->cal->AxisNames[i];
 		}
 		
-		void
-		Ati::getForces(::rl::math::Vector& forces) const
+		::rl::math::Vector
+		Ati::getForces() const
 		{
-			assert(forces.size() >= 3);
+			::rl::math::Vector forces(3);
 			
 			for (::std::size_t i = 0; i < 3; ++i)
 			{
 				forces(i) = this->values[i];
 			}
+			
+			return forces;
 		}
 		
 		::rl::math::Real
@@ -116,15 +122,17 @@ namespace rl
 			return -this->cal->MaxLoads[i];
 		}
 		
-		void
-		Ati::getForcesTorques(::rl::math::Vector& forcesTorques) const
+		::rl::math::Vector
+		Ati::getForcesTorques() const
 		{
-			assert(forcesTorques.size() >= 6);
+			::rl::math::Vector forcesTorques(6);
 			
 			for (::std::size_t i = 0; i < 6; ++i)
 			{
 				forcesTorques(i) = this->values[i];
 			}
+			
+			return forcesTorques;
 		}
 		
 		::rl::math::Real
@@ -143,15 +151,17 @@ namespace rl
 			return -this->cal->MaxLoads[i];
 		}
 		
-		void
-		Ati::getTorques(::rl::math::Vector& torques) const
+		::rl::math::Vector
+		Ati::getTorques() const
 		{
-			assert(torques.size() >= 3);
+			::rl::math::Vector torques(3);
 			
 			for (::std::size_t i = 3; i < 6; ++i)
 			{
 				torques(i) = this->values[i];
 			}
+			
+			return torques;
 		}
 		
 		::rl::math::Real
@@ -173,7 +183,7 @@ namespace rl
 		void
 		Ati::open()
 		{
-			this->comedi->open();
+			this->comedi.open();
 			this->setConnected(true);
 		}
 		
@@ -194,7 +204,7 @@ namespace rl
 		{
 			for (::std::size_t i = 0; i < 6; ++i)
 			{
-				this->comedi->read(0, i, this->voltages[i]);
+				this->comedi.read(0, i, this->voltages[i]);
 			}
 			
 			ConvertToFT(this->cal, this->voltages, this->values);

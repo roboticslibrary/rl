@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _SOCKET_H_
-#define _SOCKET_H_
+#ifndef SOCKET_H
+#define SOCKET_H
 
 #include <QTcpSocket>
 
@@ -34,7 +34,7 @@ class Socket : public QTcpSocket
 	Q_OBJECT
 	
 public:
-	Socket(QObject* parent = NULL);
+	Socket(QObject* parent = nullptr);
 	
 	virtual ~Socket();
 	
@@ -46,4 +46,4 @@ private slots:
 	void readClient();
 };
 
-#endif // _SOCKET_H_
+#endif // SOCKET_H

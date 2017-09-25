@@ -24,8 +24,10 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include <QDateTime>
 #include <QGLWidget>
 #include <QMessageBox>
+#include <QStatusBar>
 #include <Inventor/actions/SoWriteAction.h>
 #include <Inventor/VRMLnodes/SoVRMLIndexedFaceSet.h>
 #include <Inventor/VRMLnodes/SoVRMLSphere.h>
@@ -35,15 +37,19 @@
 #include <rl/sg/so/Model.h>
 #include <rl/sg/so/Shape.h>
 
+#include "SoGradientBackground.h"
 #include "MainWindow.h"
 #include "Viewer.h"
 
 Viewer::Viewer(QWidget* parent, Qt::WindowFlags f) :
 	QWidget(parent, f),
 	delta(1.0f),
-	model(NULL),
+	deltaSwept(100.0f),
+	model(nullptr),
 	sceneGroup(new SoVRMLGroup()),
-	viewer(new SoQtExaminerViewer(this, NULL, true, SoQtFullViewer::BUILD_POPUP)),
+	viewer(new SoQtExaminerViewer(this, nullptr, true, SoQtFullViewer::BUILD_POPUP)),
+	background(new SoVRMLSwitch()),
+	backgroundGradientBackground(new SoGradientBackground()),
 	edges(new SoVRMLSwitch()),
 	edgesColliding(new SoVRMLSwitch()),
 	edgesCollidingAppearance(new SoVRMLAppearance()),
@@ -130,6 +136,17 @@ Viewer::Viewer(QWidget* parent, Qt::WindowFlags f) :
 	
 	this->viewer->setSceneGraph(this->root);
 	this->viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_BLEND);
+	
+	// background
+	
+	this->background->setName("background");
+	this->background->whichChoice = SO_SWITCH_ALL;
+	
+	this->backgroundGradientBackground->color0.setValue(0.8f, 0.8f, 0.8f);
+	this->backgroundGradientBackground->color1.setValue(1.0f, 1.0f, 1.0f);
+	this->background->addChild(backgroundGradientBackground);
+	
+	this->root->addChild(this->background);
 	
 	// edgesColliding
 	
@@ -428,8 +445,8 @@ Viewer::drawConfiguration(const rl::math::Vector& q)
 void
 Viewer::drawConfigurationEdge(const rl::math::Vector& u, const rl::math::Vector& v, const bool& free)
 {
-	SoVRMLCoordinate* coordinate = NULL;
-	SoVRMLIndexedLineSet* indexedLineSet = NULL;
+	SoVRMLCoordinate* coordinate = nullptr;
+	SoVRMLIndexedLineSet* indexedLineSet = nullptr;
 	
 	if (free)
 	{
@@ -444,7 +461,7 @@ Viewer::drawConfigurationEdge(const rl::math::Vector& u, const rl::math::Vector&
 	
 	this->edges->enableNotify(false);
 	
-	rl::math::Vector inter(this->model->getDof());
+	rl::math::Vector inter(this->model->getDofPosition());
 	
 	rl::math::Real steps = std::ceil(this->model->distance(u, v) / this->delta);
 	
@@ -492,7 +509,7 @@ Viewer::drawConfigurationPath(const rl::plan::VectorList& path)
 	this->pathCoordinate->point.setNum(0);
 	this->pathIndexedLineSet->coordIndex.setNum(0);
 	
-	rl::math::Vector inter(this->model->getDof());
+	rl::math::Vector inter(this->model->getDofPosition());
 	
 	for (std::size_t l = 0; l < this->model->getOperationalDof(); ++l)
 	{
@@ -556,7 +573,7 @@ Viewer::drawConfigurationPath(const rl::plan::VectorList& path)
 void
 Viewer::drawConfigurationVertex(const rl::math::Vector& q, const bool& free)
 {
-	SoVRMLCoordinate* coordinate = NULL;
+	SoVRMLCoordinate* coordinate = nullptr;
 	
 	if (free)
 	{
@@ -658,60 +675,80 @@ Viewer::drawSweptVolume(const rl::plan::VectorList& path)
 	
 	this->sweptGroup->removeAllChildren();
 	
-	rl::math::Vector inter(this->model->getDof());
+	rl::math::Real length = 0;
 	
 	rl::plan::VectorList::const_iterator i = path.begin();
 	rl::plan::VectorList::const_iterator j = ++path.begin();
 	
-	if (i != path.end() && j != path.end())
+	for (; i != path.end() && j != path.end(); ++i, ++j)
 	{
-		this->model->setPosition(*i);
-		this->model->updateFrames();
-		
-		SoVRMLGroup* model = new SoVRMLGroup();
-		
-		for (std::size_t i = 0; i < this->model->model->getNumBodies(); ++i)
-		{
-			SoVRMLTransform* frame = new SoVRMLTransform();
-			frame->copyFieldValues(static_cast< rl::sg::so::Body* >(this->model->model->getBody(i))->root);
-			
-			for (std::size_t j = 0; j < this->model->model->getBody(i)->getNumShapes(); ++j)
-			{
-				SoVRMLTransform* transform = new SoVRMLTransform();
-				transform->copyFieldValues(static_cast< rl::sg::so::Shape* >(this->model->model->getBody(i)->getShape(j))->root);
-				transform->addChild(static_cast< rl::sg::so::Shape* >(this->model->model->getBody(i)->getShape(j))->shape);
-				frame->addChild(transform);
-			}
-			
-			model->addChild(frame);
-		}
-		
-		this->sweptGroup->addChild(model);
+		length += this->model->distance(*i, *j);
 	}
+	
+	rl::math::Real delta = length / static_cast<std::size_t>(std::ceil(length / this->deltaSwept));
+	
+	rl::math::Vector inter(this->model->getDofPosition());
+	
+	rl::math::Real x0 = 0;
+	rl::math::Real x1 = x0;
+	rl::math::Real x = 0;
+	
+	i = path.begin();
+	j = ++path.begin();
 	
 	for (; i != path.end() && j != path.end(); ++i, ++j)
 	{
-		rl::math::Real steps = std::ceil(this->model->distance(*i, *j) / this->delta);
+		x1 += this->model->distance(*i, *j);
 		
-		for (std::size_t k = 1; k < steps + 1; ++k)
+		for (; x < x1; x += delta)
 		{
-			this->model->interpolate(*i, *j, k / steps, inter);
+			this->model->interpolate(*i, *j, (x - x0) / (x1 - x0), inter);
 			
 			this->model->setPosition(inter);
 			this->model->updateFrames();
 			
 			SoVRMLGroup* model = new SoVRMLGroup();
 			
-			for (std::size_t i = 0; i < this->model->model->getNumBodies(); ++i)
+			for (std::size_t k = 0; k < this->model->model->getNumBodies(); ++k)
 			{
 				SoVRMLTransform* frame = new SoVRMLTransform();
-				frame->copyFieldValues(static_cast< rl::sg::so::Body* >(this->model->model->getBody(i))->root);
+				frame->copyFieldValues(static_cast<rl::sg::so::Body*>(this->model->model->getBody(k))->root);
 				
-				for (std::size_t j = 0; j < this->model->model->getBody(i)->getNumShapes(); ++j)
+				for (std::size_t l = 0; l < this->model->model->getBody(k)->getNumShapes(); ++l)
 				{
 					SoVRMLTransform* transform = new SoVRMLTransform();
-					transform->copyFieldValues(static_cast< rl::sg::so::Shape* >(this->model->model->getBody(i)->getShape(j))->root);
-					transform->addChild(static_cast< rl::sg::so::Shape* >(this->model->model->getBody(i)->getShape(j))->shape);
+					transform->copyFieldValues(static_cast<rl::sg::so::Shape*>(this->model->model->getBody(k)->getShape(l))->root);
+					transform->addChild(static_cast<rl::sg::so::Shape*>(this->model->model->getBody(k)->getShape(l))->shape);
+					frame->addChild(transform);
+				}
+				
+				model->addChild(frame);
+			}
+			
+			this->sweptGroup->addChild(model);
+		}
+		
+		x0 = x1;
+		
+		if (j == --path.end())
+		{
+			this->model->interpolate(*i, *j, 1, inter);
+			
+			this->model->setPosition(inter);
+			this->model->updateFrames();
+			
+			SoVRMLGroup* model = new SoVRMLGroup();
+			
+			for (std::size_t k = 0; k < this->model->model->getNumBodies(); ++k)
+			{
+				SoVRMLTransform* frame = new SoVRMLTransform();
+				frame->copyFieldValues(static_cast<rl::sg::so::Body*>(this->model->model->getBody(k))->root);
+				
+				for (std::size_t l = 0; l < this->model->model->getBody(k)->getNumShapes(); ++l)
+				{
+					SoVRMLTransform* transform = new SoVRMLTransform();
+					transform->copyFieldValues(static_cast<rl::sg::so::Shape*>(this->model->model->getBody(k)->getShape(l))->root);
+					transform->addChild(static_cast<rl::sg::so::Shape*>(this->model->model->getBody(k)->getShape(l))->shape);
 					frame->addChild(transform);
 				}
 				
@@ -736,7 +773,7 @@ Viewer::drawWork(const rl::math::Transform& t)
 	{
 		for (int j = 0; j < 4; ++j)
 		{
-			matrix[i][j] = static_cast< float >(t(j, i));
+			matrix[i][j] = static_cast<float>(t(j, i));
 		}
 	}
 	
@@ -868,10 +905,26 @@ Viewer::resetVertices()
 }
 
 void
-Viewer::saveImage(const QString& filename)
+Viewer::saveImage(bool withAlpha)
 {
+	QString filename = "rlPlanDemo-" + QDateTime::currentDateTime().toString("yyyyMMdd-HHmmsszzz") + ".png";
+	
+	SoSFInt32 whichChoice = this->background->whichChoice;
+	
+	if (withAlpha)
+	{
+		this->background->whichChoice = SO_SWITCH_NONE;
+		this->viewer->render();
+	}
+	
 	glReadBuffer(GL_FRONT);
-	QImage image = static_cast< QGLWidget* >(this->viewer->getGLWidget())->grabFrameBuffer(false);
+	QImage image = static_cast<QGLWidget*>(this->viewer->getGLWidget())->grabFrameBuffer(withAlpha);
+	
+	if (withAlpha)
+	{
+		this->background->whichChoice = whichChoice;
+		this->viewer->render();
+	}
 	
 	QString format = filename.right(filename.length() - filename.lastIndexOf('.') - 1).toUpper();
 	
@@ -882,13 +935,17 @@ Viewer::saveImage(const QString& filename)
 
 	if (!image.save(filename, format.toStdString().c_str()))
 	{
-		QMessageBox::critical(this, this->windowTitle(), "Error writing " + filename + ".");
+		QMessageBox::critical(this, "Error", "Error writing " + filename + ".");
 	}
+	
+	MainWindow::instance()->statusBar()->showMessage("Successfully saved image in '" + filename + "'.", 1000);
 }
 
 void
-Viewer::saveScene(const QString& filename)
+Viewer::saveScene()
 {
+	QString filename = "rlPlanDemo-" + QDateTime::currentDateTime().toString("yyyyMMdd-HHmmsszzz") + ".wrl";
+	
 	SoOutput output;
 	
 	if (!output.openFile(filename.toStdString().c_str()))
@@ -902,6 +959,21 @@ Viewer::saveScene(const QString& filename)
 	writeAction.apply(this->root);
 	
 	output.closeFile();
+	
+	MainWindow::instance()->statusBar()->showMessage("Successfully saved scene in '" + filename + "'.", 1000);
+}
+
+void
+Viewer::setBackgroundColor(const QColor& color)
+{
+	this->background->whichChoice = SO_SWITCH_NONE;
+	this->viewer->setBackgroundColor(SbColor(color.redF(), color.greenF(), color.blueF()));
+}
+
+void
+Viewer::showMessage(const std::string& message)
+{
+	MainWindow::instance()->statusBar()->showMessage(QString::fromStdString(message));
 }
 
 void
@@ -944,6 +1016,19 @@ Viewer::toggleLines(const bool& doOn)
 }
 
 void
+Viewer::togglePath(const bool& doOn)
+{
+	if (doOn)
+	{
+		this->path->whichChoice = SO_SWITCH_ALL;
+	}
+	else
+	{
+		this->path->whichChoice = SO_SWITCH_NONE;
+	}
+}
+
+void
 Viewer::togglePoints(const bool& doOn)
 {
 	if (doOn)
@@ -966,6 +1051,19 @@ Viewer::toggleSpheres(const bool& doOn)
 	else
 	{
 		this->spheres->whichChoice = SO_SWITCH_NONE;
+	}
+}
+
+void
+Viewer::toggleSweptVolume(const bool& doOn)
+{
+	if (doOn)
+	{
+		this->swept->whichChoice = SO_SWITCH_ALL;
+	}
+	else
+	{
+		this->swept->whichChoice = SO_SWITCH_NONE;
 	}
 }
 

@@ -24,7 +24,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <Inventor/actions/SoGetPrimitiveCountAction.h>
+#include <Inventor/SoPrimitiveVertex.h>
 #include <Inventor/VRMLnodes/SoVRMLBox.h>
 #include <Inventor/VRMLnodes/SoVRMLCone.h>
 #include <Inventor/VRMLnodes/SoVRMLCoordinate.h>
@@ -45,133 +45,138 @@ namespace rl
 	{
 		namespace ode
 		{
-			Shape::Shape(SoVRMLShape* shape, Body* body) :
+			Shape::Shape(::SoVRMLShape* shape, Body* body) :
 				::rl::sg::Shape(shape, body),
-				geom(NULL),
-				indices(NULL),
-				vertices(NULL)
+				geom(nullptr),
+				baseTransform(::rl::math::Transform::Identity()),
+				indices(),
+				transform(::rl::math::Transform::Identity()),
+				vertices()
 			{
-				SoVRMLGeometry* geometry = static_cast< SoVRMLGeometry* >(shape->geometry.getValue());
+				::SoVRMLGeometry* geometry = static_cast< ::SoVRMLGeometry*>(shape->geometry.getValue());
 				
-				SoGetPrimitiveCountAction* primitiveCountAction = new SoGetPrimitiveCountAction();
-				primitiveCountAction->apply(geometry);
-				
-				if (geometry->isOfType(SoVRMLBox::getClassTypeId()))
+				if (geometry->isOfType(::SoVRMLBox::getClassTypeId()))
 				{
-					SoVRMLBox* box = static_cast< SoVRMLBox* >(geometry);
-					this->geom = dCreateBox(static_cast< Body* >(this->getBody())->space, box->size.getValue()[0], box->size.getValue()[1], box->size.getValue()[2]);
+					::SoVRMLBox* box = static_cast< ::SoVRMLBox*>(geometry);
+					this->geom = ::dCreateBox(static_cast<Body*>(this->getBody())->space, box->size.getValue()[0], box->size.getValue()[1], box->size.getValue()[2]);
 				}
-				else if (geometry->isOfType(SoVRMLCone::getClassTypeId()))
+				else if (geometry->isOfType(::SoVRMLCone::getClassTypeId()))
 				{
 					throw Exception("::rl::sg::ode::Shape - SoVRMLCone not supported");
 				}
-				else if (geometry->isOfType(SoVRMLCylinder::getClassTypeId()))
+				else if (geometry->isOfType(::SoVRMLCylinder::getClassTypeId()))
 				{
-					SoVRMLCylinder* cylinder = static_cast< SoVRMLCylinder* >(geometry);
-					this->geom = dCreateCylinder(static_cast< Body* >(this->getBody())->space, cylinder->radius.getValue(), cylinder->height.getValue());
+					::SoVRMLCylinder* cylinder = static_cast< ::SoVRMLCylinder*>(geometry);
+					this->geom = ::dCreateCylinder(static_cast<Body*>(this->getBody())->space, cylinder->radius.getValue(), cylinder->height.getValue());
+					
+					this->baseTransform(0, 0) = 1;
+					this->baseTransform(0, 1) = 0;
+					this->baseTransform(0, 2) = 0;
+					this->baseTransform(0, 3) = 0;
+					this->baseTransform(1, 0) = 0;
+					this->baseTransform(1, 1) = 0;
+					this->baseTransform(1, 2) = 1;
+					this->baseTransform(1, 3) = 0;
+					this->baseTransform(2, 0) = 0;
+					this->baseTransform(2, 1) = -1;
+					this->baseTransform(2, 2) = 0;
+					this->baseTransform(2, 3) = 0;
+					this->baseTransform(3, 0) = 0;
+					this->baseTransform(3, 1) = 0;
+					this->baseTransform(3, 2) = 0;
+					this->baseTransform(3, 3) = 1;
 				}
-				else if (geometry->isOfType(SoVRMLIndexedFaceSet::getClassTypeId()))
+				else if (geometry->isOfType(::SoVRMLIndexedFaceSet::getClassTypeId()))
 				{
-					SoVRMLIndexedFaceSet* indexedFaceSet = static_cast< SoVRMLIndexedFaceSet* >(geometry);
+					::SoCallbackAction callbackAction;
+					callbackAction.addTriangleCallback(geometry->getTypeId(), Shape::triangleCallback, this);
+					callbackAction.apply(geometry);
 					
-					SoVRMLCoordinate* coord = static_cast< SoVRMLCoordinate* >(indexedFaceSet->coord.getValue());
-					
-					int vertexCount = coord->point.getNum();
-					this->vertices = new dReal[vertexCount * 4];
-					
-					int indexCount = primitiveCountAction->getTriangleCount() * 3;
-					this->indices = new dTriIndex[indexCount];
-					
-					this->create(coord->point, indexedFaceSet->coordIndex, this->vertices, this->indices);
-					
-					dTriMeshDataID data = dGeomTriMeshDataCreate();
-					dGeomTriMeshDataBuildSimple(data, this->vertices, vertexCount, this->indices, indexCount);
-					this->geom = dCreateTriMesh(static_cast< Body* >(this->getBody())->space, data, NULL, NULL, NULL);
+					::dTriMeshDataID data = ::dGeomTriMeshDataCreate();
+					::dGeomTriMeshDataBuildSimple(data, &this->vertices[0], this->vertices.size() / 4, &this->indices[0], this->indices.size());
+					this->geom = ::dCreateTriMesh(static_cast<Body*>(this->getBody())->space, data, nullptr, nullptr, nullptr);
 				}
-				else if (geometry->isOfType(SoVRMLSphere::getClassTypeId()))
+				else if (geometry->isOfType(::SoVRMLSphere::getClassTypeId()))
 				{
-					SoVRMLSphere* sphere = static_cast< SoVRMLSphere* >(geometry);
-					this->geom = dCreateSphere(static_cast< Body* >(this->getBody())->space, sphere->radius.getValue());
+					::SoVRMLSphere* sphere = static_cast< ::SoVRMLSphere*>(geometry);
+					this->geom = ::dCreateSphere(static_cast<Body*>(this->getBody())->space, sphere->radius.getValue());
+				}
+				else
+				{
+					throw Exception("::rl::sg::ode::Shape() - geometry not supported");
 				}
 				
-				if (NULL != this->geom)
+				if (nullptr != this->geom)
 				{
-					dGeomSetBody(this->geom, static_cast< Body* >(this->getBody())->body);
-					dGeomSetData(this->geom, this);
+					::dGeomSetBody(this->geom, static_cast<Body*>(this->getBody())->body);
+					::dGeomSetData(this->geom, this);
 				}
 				
 				this->getBody()->add(this);
+
+				this->setTransform(::rl::math::Transform::Identity());
 			}
 			
 			Shape::~Shape()
 			{
 				this->getBody()->remove(this);
-				
-				dGeomDestroy(this->geom);
-				
-				delete[] this->indices;
-				delete[] this->vertices;
-			}
-			
-			void
-			Shape::create(const SoMFVec3f& point, const SoMFInt32& coordIndex, dReal* vertices, dTriIndex* indices) const
-			{
-				::std::size_t index = 0;
-				
-				for (int i = 0; i < coordIndex.getNum(); ++i)
-				{
-					if (SO_END_FACE_INDEX != coordIndex[i])
-					{
-						indices[index] = coordIndex[i];
-						++index;
-					}
-				}
-				
-				for (int i = 0; i < point.getNum(); ++i)
-				{
-					vertices[i * 4] = point[i][0];
-					vertices[i * 4 + 1] = point[i][1];
-					vertices[i * 4 + 2] = point[i][2];
-				}
+				::dGeomDestroy(this->geom);
 			}
 			
 			void
 			Shape::getTransform(::rl::math::Transform& transform)
 			{
-				const dReal* position = dGeomGetOffsetPosition(this->geom);
+				transform = this->transform;
+			}
+			
+			void
+			Shape::triangleCallback(void* userData, SoCallbackAction* action, const SoPrimitiveVertex* v1, const SoPrimitiveVertex* v2, const SoPrimitiveVertex* v3)
+			{
+				Shape* shape = static_cast<Shape*>(userData);
 				
-				transform(0, 3) = position[0];
-				transform(1, 3) = position[1];
-				transform(2, 3) = position[2];
+				shape->indices.push_back(shape->vertices.size() / 4);
 				
-				const dReal* rotation = dGeomGetOffsetRotation(this->geom);
+				shape->vertices.push_back(v1->getPoint()[0]);
+				shape->vertices.push_back(v1->getPoint()[1]);
+				shape->vertices.push_back(v1->getPoint()[2]);
+				shape->vertices.push_back(0);
 				
-				for (::std::size_t i = 0; i < 3; ++i)
-				{
-					for (::std::size_t j = 0; j < 3; ++j)
-					{
-						transform(i, j) = rotation[i * 4 + j];
-					}
-				}
+				shape->indices.push_back(shape->vertices.size() / 4);
+				
+				shape->vertices.push_back(v2->getPoint()[0]);
+				shape->vertices.push_back(v2->getPoint()[1]);
+				shape->vertices.push_back(v2->getPoint()[2]);
+				shape->vertices.push_back(0);
+				
+				shape->indices.push_back(shape->vertices.size() / 4);
+				
+				shape->vertices.push_back(v3->getPoint()[0]);
+				shape->vertices.push_back(v3->getPoint()[1]);
+				shape->vertices.push_back(v3->getPoint()[2]);
+				shape->vertices.push_back(0);
 			}
 			
 			void
 			Shape::setTransform(const ::rl::math::Transform& transform)
 			{
-				dGeomSetOffsetPosition(
+				this->transform = transform;
+				
+				::rl::math::Transform totalTransform = this->transform * this->baseTransform;
+				
+				::dGeomSetOffsetPosition(
 					this->geom,
-					static_cast< dReal >(transform(0, 3)),
-					static_cast< dReal >(transform(1, 3)),
-					static_cast< dReal >(transform(2, 3))
+					static_cast< ::dReal>(totalTransform(0, 3)),
+					static_cast< ::dReal>(totalTransform(1, 3)),
+					static_cast< ::dReal>(totalTransform(2, 3))
 				);
 				
-				dMatrix3 rotation;
+				::dMatrix3 rotation;
 				
 				for (::std::size_t i = 0; i < 3; ++i)
 				{
 					for (::std::size_t j = 0; j < 3; ++j)
 					{
-						rotation[i * 4 + j] = static_cast< dReal >(transform(i, j));
+						rotation[i * 4 + j] = static_cast< ::dReal>(totalTransform(i, j));
 					}
 				}
 				
@@ -179,7 +184,7 @@ namespace rl
 				rotation[7] = 0.0f;
 				rotation[11] = 0.0f;
 				
-				dGeomSetOffsetRotation(this->geom, rotation);
+				::dGeomSetOffsetRotation(this->geom, rotation);
 			}
 		}
 	}

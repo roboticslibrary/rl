@@ -66,8 +66,8 @@ namespace rl
 			bool
 			Scene::areColliding(::rl::sg::Body* first, ::rl::sg::Body* second)
 			{
-				Body* body1 = static_cast< Body* >(first);
-				Body* body2 = static_cast< Body* >(second);
+				Body* body1 = static_cast<Body*>(first);
+				Body* body2 = static_cast<Body*>(second);
 				
 				ContactResultCallback resultCallback;
 				this->world.contactPairTest(&body1->object, &body2->object, resultCallback);
@@ -87,19 +87,14 @@ namespace rl
 				return new Model(this);
 			}
 			
-#if 0
 			::rl::math::Real
-			Scene::distance(::rl::sg::Body* first, ::rl::sg::Body* second, ::rl::math::Vector3& point1, ::rl::math::Vector3& point2)
+			Scene::depth(::rl::sg::Body* first, ::rl::sg::Body* second, ::rl::math::Vector3& point1, ::rl::math::Vector3& point2)
 			{
-				Body* body1 = static_cast< Body* >(first);
-				Body* body2 = static_cast< Body* >(second);
-				
-//				this->world.getDispatchInfo().m_convexMaxDistanceUseCPT = true;
+				Body* body1 = static_cast<Body*>(first);
+				Body* body2 = static_cast<Body*>(second);
 				
 				ContactResultCallback resultCallback;
 				this->world.contactPairTest(&body1->object, &body2->object, resultCallback);
-				
-//				this->world.getDispatchInfo().m_convexMaxDistanceUseCPT = false;
 				
 				point1.x() = resultCallback.positionWorldOnA.getX();
 				point1.y() = resultCallback.positionWorldOnA.getY();
@@ -109,75 +104,82 @@ namespace rl
 				point2.y() = resultCallback.positionWorldOnB.getY();
 				point2.z() = resultCallback.positionWorldOnB.getZ();
 				
-				return resultCallback.distance;
+				return resultCallback.collision ? ::std::abs(resultCallback.distance) : 0;
 			}
 			
 			::rl::math::Real
-			Scene::distance(::rl::sg::Body* body, const ::rl::math::Vector3& point, ::rl::math::Vector3& point1, ::rl::math::Vector3& point2)
+			Scene::depth(::rl::sg::Shape* first, ::rl::sg::Shape* second, ::rl::math::Vector3& point1, ::rl::math::Vector3& point2)
 			{
-				return 0;
+				throw Exception("::rl::sg::bullet::Scene::depth(::rl::sg::Shape* first, ::rl::sg::Shape* second, ::rl::math::Vector3& point1, ::rl::math::Vector3& point2) - not supported");
 			}
-#endif
 			
 			::rl::math::Real
 			Scene::distance(::rl::sg::Shape* first, ::rl::sg::Shape* second, ::rl::math::Vector3& point1, ::rl::math::Vector3& point2)
 			{
-				Shape* shape1 = static_cast< Shape* >(first);
-				Shape* shape2 = static_cast< Shape* >(second);
+				Shape* shape1 = static_cast<Shape*>(first);
+				Shape* shape2 = static_cast<Shape*>(second);
 				
-				btVoronoiSimplexSolver sGjkSimplexSolver;
+				if (!shape1->shape->isConvex() || !shape2->shape->isConvex())
+				{
+					throw Exception("::rl::sg::bullet::Scene::distance() - distance calculation only supported between convex shapes");
+				}
 				
-				btGjkEpaPenetrationDepthSolver epa;
-				btGjkPairDetector convexConvex(dynamic_cast< btConvexShape* >(shape1->shape), dynamic_cast< btConvexShape* >(shape2->shape), &sGjkSimplexSolver, &epa);
+				Body* body1 = static_cast<Body*>(shape1->getBody());
+				Body* body2 = static_cast<Body*>(shape2->getBody());
 				
-				Body* body1 = static_cast< Body* >(shape1->getBody());
-				Body* body2 = static_cast< Body* >(shape2->getBody());
+				::btVoronoiSimplexSolver simplexSolver;
+				::btGjkEpaPenetrationDepthSolver penetrationDepthSolver;
+				::btGjkPairDetector pairDetector(
+					dynamic_cast< ::btConvexShape*>(shape1->shape),
+					dynamic_cast< ::btConvexShape*>(shape2->shape),
+					&simplexSolver,
+					&penetrationDepthSolver
+				);
 				
-				btPointCollector gjkOutput;
-				btGjkPairDetector::ClosestPointInput input;
+				::btPointCollector pointCollector;
+				::btGjkPairDetector::ClosestPointInput input;
 				input.m_transformA = body1->object.getWorldTransform() * shape1->transform;
 				input.m_transformB = body2->object.getWorldTransform() * shape2->transform;
+				pairDetector.getClosestPoints(input, pointCollector, 0);
 				
-				convexConvex.getClosestPoints(input, gjkOutput, 0);
+				point1.x() = pointCollector.m_pointInWorld.x();
+				point1.y() = pointCollector.m_pointInWorld.y();
+				point1.z() = pointCollector.m_pointInWorld.z();
 				
-				point1.x() = gjkOutput.m_pointInWorld.x();
-				point1.y() = gjkOutput.m_pointInWorld.y();
-				point1.z() = gjkOutput.m_pointInWorld.z();
-				
-				btVector3 endPt = gjkOutput.m_pointInWorld + gjkOutput.m_normalOnBInWorld * gjkOutput.m_distance;
+				btVector3 endPt = pointCollector.m_pointInWorld + pointCollector.m_normalOnBInWorld * pointCollector.m_distance;
 				
 				point2.x() = endPt.x();
 				point2.y() = endPt.y();
 				point2.z() = endPt.z();
 				
-				return gjkOutput.m_distance;
+				return pointCollector.m_distance;
 			}
 			
 			::rl::math::Real
 			Scene::distance(::rl::sg::Shape* shape, const ::rl::math::Vector3& point, ::rl::math::Vector3& point1, ::rl::math::Vector3& point2)
 			{
-				btSphereShape sphere(0);
+				::btSphereShape sphere(0);
 				
-				btVoronoiSimplexSolver sGjkSimplexSolver;
+				::btVoronoiSimplexSolver sGjkSimplexSolver;
 				
-				btGjkEpaPenetrationDepthSolver epa;
-				btGjkPairDetector convexConvex(
-					dynamic_cast< btConvexShape* >(static_cast< Shape* >(shape)->shape),
-					dynamic_cast< btConvexShape* >(&sphere),
+				::btGjkEpaPenetrationDepthSolver epa;
+				::btGjkPairDetector convexConvex(
+					dynamic_cast< ::btConvexShape*>(static_cast<Shape*>(shape)->shape),
+					dynamic_cast< ::btConvexShape*>(&sphere),
 					&sGjkSimplexSolver,
 					&epa
 				);
 				
-				Body* body = static_cast< Body* >(shape->getBody());
+				Body* body = static_cast<Body*>(shape->getBody());
 				
-				btPointCollector gjkOutput;
-				btGjkPairDetector::ClosestPointInput input;
-				input.m_transformA = body->object.getWorldTransform() * static_cast< Shape* >(shape)->transform;
+				::btPointCollector gjkOutput;
+				::btGjkPairDetector::ClosestPointInput input;
+				input.m_transformA = body->object.getWorldTransform() * static_cast<Shape*>(shape)->transform;
 				input.m_transformB.setIdentity();
 				input.m_transformB.getOrigin().setValue(
-					static_cast< btScalar >(point.x()),
-					static_cast< btScalar >(point.y()),
-					static_cast< btScalar >(point.z())
+					static_cast< ::btScalar>(point.x()),
+					static_cast< ::btScalar>(point.y()),
+					static_cast< ::btScalar>(point.z())
 				);
 				
 				convexConvex.getClosestPoints(input, gjkOutput, 0);
@@ -186,7 +188,7 @@ namespace rl
 				point1.y() = gjkOutput.m_pointInWorld.y();
 				point1.z() = gjkOutput.m_pointInWorld.z();
 				
-				btVector3 endPt = gjkOutput.m_pointInWorld + gjkOutput.m_normalOnBInWorld * gjkOutput.m_distance;
+				::btVector3 endPt = gjkOutput.m_pointInWorld + gjkOutput.m_normalOnBInWorld * gjkOutput.m_distance;
 				
 				point2.x() = endPt.x();
 				point2.y() = endPt.y();
@@ -214,58 +216,58 @@ namespace rl
 			::rl::sg::Shape*
 			Scene::raycast(const ::rl::math::Vector3& source, const ::rl::math::Vector3& target, ::rl::math::Real& distance)
 			{
-				btVector3 rayFromWorld(
-					static_cast< btScalar >(source.x()),
-					static_cast< btScalar >(source.y()),
-					static_cast< btScalar >(source.z())
+				::btVector3 rayFromWorld(
+					static_cast< ::btScalar>(source.x()),
+					static_cast< ::btScalar>(source.y()),
+					static_cast< ::btScalar>(source.z())
 				);
 				
-				btVector3 rayToWorld(
-					static_cast< btScalar >(target.x()),
-					static_cast< btScalar >(target.y()),
-					static_cast< btScalar >(target.z())
+				::btVector3 rayToWorld(
+					static_cast< ::btScalar>(target.x()),
+					static_cast< ::btScalar>(target.y()),
+					static_cast< ::btScalar>(target.z())
 				);
 				
 				RayResultCallback resultCallback;
 				
 				this->world.rayTest(rayFromWorld, rayToWorld, resultCallback); 
 				
-				if (NULL != resultCallback.collisionShape)
+				if (nullptr != resultCallback.collisionShape)
 				{
-					btVector3 hitPointWorld;
+					::btVector3 hitPointWorld;
 					hitPointWorld.setInterpolate3(rayFromWorld, rayToWorld, resultCallback.m_closestHitFraction);
 					distance = rayFromWorld.distance(hitPointWorld);
-					return static_cast< Shape* >(resultCallback.collisionShape->getUserPointer());
+					return static_cast<Shape*>(resultCallback.collisionShape->getUserPointer());
 				}
 				else
 				{
-					distance = std::numeric_limits< btScalar >::quiet_NaN();
-					return NULL;
+					distance = ::std::numeric_limits< ::btScalar>::quiet_NaN();
+					return nullptr;
 				}
 			}
 			
 			bool
 			Scene::raycast(::rl::sg::Shape* shape, const ::rl::math::Vector3& source, const ::rl::math::Vector3& target, ::rl::math::Real& distance)
 			{
-				Body* body = static_cast< Body* >(shape->getBody());
+				Body* body = static_cast<Body*>(shape->getBody());
 				
-				btVector3 rayFromWorld(
-					static_cast< btScalar >(source.x()),
-					static_cast< btScalar >(source.y()),
-					static_cast< btScalar >(source.z())
+				::btVector3 rayFromWorld(
+					static_cast< ::btScalar>(source.x()),
+					static_cast< ::btScalar>(source.y()),
+					static_cast< ::btScalar>(source.z())
 				);
 				
-				btTransform rayFromTrans;
+				::btTransform rayFromTrans;
 				rayFromTrans.setIdentity();
 				rayFromTrans.setOrigin(rayFromWorld);
 				
-				btVector3 rayToWorld(
-					static_cast< btScalar >(target.x()),
-					static_cast< btScalar >(target.y()),
-					static_cast< btScalar >(target.z())
+				::btVector3 rayToWorld(
+					static_cast< ::btScalar>(target.x()),
+					static_cast< ::btScalar>(target.y()),
+					static_cast< ::btScalar>(target.z())
 				);
 				
-				btTransform rayToTrans;
+				::btTransform rayToTrans;
 				rayToTrans.setIdentity();
 				rayToTrans.setOrigin(rayToWorld);
 				
@@ -275,53 +277,60 @@ namespace rl
 					rayFromTrans,
 					rayToTrans,
 					&body->object,
-					static_cast< Shape* >(shape)->shape,
-					body->object.getWorldTransform() * static_cast< Shape* >(shape)->transform, // TODO
+					static_cast<Shape*>(shape)->shape,
+					body->object.getWorldTransform() * static_cast<Shape*>(shape)->transform, // TODO
 					resultCallback
 				);
 				
-				if (NULL != resultCallback.collisionShape)
+				if (nullptr != resultCallback.collisionShape)
 				{
-					btVector3 hitPointWorld;
+					::btVector3 hitPointWorld;
 					hitPointWorld.setInterpolate3(rayFromWorld, rayToWorld, resultCallback.m_closestHitFraction);
 					distance = rayFromWorld.distance(hitPointWorld);
 					return true;
 				}
 				else
 				{
-					distance = std::numeric_limits< btScalar >::quiet_NaN();
+					distance = ::std::numeric_limits< ::btScalar>::quiet_NaN();
 					return false;
 				}
 			}
 			
 			Scene::ContactResultCallback::ContactResultCallback() :
-				collision(false)
+				collision(false),
+				distance(0),
+				positionWorldOnA(),
+				positionWorldOnB()
 			{
 			}
 			
 			btScalar
 #if (BT_BULLET_VERSION < 281)
-			Scene::ContactResultCallback::addSingleResult(btManifoldPoint& cp, const btCollisionObject* colObj0, int partId0, int index0, const btCollisionObject* colObj1, int partId1, int index1)
+			Scene::ContactResultCallback::addSingleResult(::btManifoldPoint& cp, const ::btCollisionObject* colObj0, int partId0, int index0, const ::btCollisionObject* colObj1, int partId1, int index1)
 #else
-			Scene::ContactResultCallback::addSingleResult(btManifoldPoint& cp, const btCollisionObjectWrapper* colObj0, int partId0, int index0, const btCollisionObjectWrapper* colObj1, int partId1, int index1)
+			Scene::ContactResultCallback::addSingleResult(::btManifoldPoint& cp, const ::btCollisionObjectWrapper* colObj0, int partId0, int index0, const ::btCollisionObjectWrapper* colObj1, int partId1, int index1)
 #endif
 			{
 				this->collision = true;
-#if 0
-				distance = cp.getDistance();
-				positionWorldOnA = cp.getPositionWorldOnA();
-				positionWorldOnB = cp.getPositionWorldOnB();
-#endif
+				
+				if (cp.getDistance() <= this->distance)
+				{
+					this->distance = cp.getDistance();
+					this->positionWorldOnA = cp.getPositionWorldOnA();
+					this->positionWorldOnB = cp.getPositionWorldOnB();
+				}
+				
 				return 0;
 			}
 			
 			Scene::RayResultCallback::RayResultCallback() :
-				collisionShape(NULL)
+				collisionShape(nullptr),
+				hitPointWorld()
 			{
 			}
 			
 			btScalar
-			Scene::RayResultCallback::addSingleResult(btCollisionWorld::LocalRayResult& rayResult, bool normalInWorldSpace)
+			Scene::RayResultCallback::addSingleResult(::btCollisionWorld::LocalRayResult& rayResult, bool normalInWorldSpace)
 			{
 				this->collisionShape = rayResult.m_collisionObject->getCollisionShape();
 				this->m_closestHitFraction = rayResult.m_hitFraction;

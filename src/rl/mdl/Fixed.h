@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_MDL_FIXED_H_
-#define _RL_MDL_FIXED_H_
+#ifndef RL_MDL_FIXED_H
+#define RL_MDL_FIXED_H
 
 #include "Transform.h"
 
@@ -48,4 +48,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_MDL_FIXED_H_
+#endif // RL_MDL_FIXED_H

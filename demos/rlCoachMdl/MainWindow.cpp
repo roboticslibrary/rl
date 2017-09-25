@@ -28,7 +28,7 @@
 #include <QDateTime>
 #include <QGLWidget>
 #include <QHeaderView>
-#include <boost/make_shared.hpp>
+#include <QStatusBar>
 #include <Inventor/actions/SoWriteAction.h>
 #include <Inventor/Qt/SoQt.h>
 #include <rl/mdl/XmlFactory.h>
@@ -39,30 +39,41 @@
 #include "OperationalDelegate.h"
 #include "OperationalModel.h"
 #include "Server.h"
+#include "SoGradientBackground.h"
 
-MainWindow::MainWindow(QWidget* parent, Qt::WFlags f) :
+MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	QMainWindow(parent, f),
 	configurationModels(),
+	geometryModels(),
+	ikAlgorithmComboBox(new QComboBox(this)),
+	ikDurationSpinBox(new QSpinBox(this)),
+	ikJacobianComboBox(new QComboBox(this)),
+	ikJacobianInverseComboBox(new QComboBox(this)),
+	kinematicModels(),
+	operationalModels(),
 	scene(),
 	configurationDelegates(),
 	configurationDockWidget(new QDockWidget(this)),
 	configurationTabWidget(new QTabWidget(this)),
 	configurationViews(),
+	gradientBackground(),
 	operationalDelegates(),
 	operationalDockWidget(new QDockWidget(this)),
 	operationalTabWidget(new QTabWidget(this)),
 	operationalViews(),
-	saveImageAction(new QAction(this)),
+	saveImageWithAlphaAction(new QAction(this)),
+	saveImageWithoutAlphaAction(new QAction(this)),
 	saveSceneAction(new QAction(this)),
 	server(new Server(this)),
-	viewer(NULL)
+	viewer(nullptr)
 {
 	MainWindow::singleton = this;
 	
 	SoQt::init(this);
 	SoDB::init();
+	SoGradientBackground::initClass();
 	
-	this->scene = boost::make_shared< rl::sg::so::Scene >();
+	this->scene = std::make_shared<rl::sg::so::Scene>();
 	this->scene->load(QApplication::arguments()[1].toStdString());
 	
 	rl::mdl::XmlFactory factory;
@@ -70,7 +81,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags f) :
 	for (int i = 2; i < QApplication::arguments().size(); ++i)
 	{
 		this->geometryModels.push_back(this->scene->getModel(i - 2));
-		boost::shared_ptr< rl::mdl::Model > kinematicModel;
+		std::shared_ptr<rl::mdl::Model> kinematicModel;
 		kinematicModel.reset(factory.create(QApplication::arguments()[i].toStdString()));
 		this->kinematicModels.push_back(kinematicModel);
 	}
@@ -86,12 +97,15 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags f) :
 		this->configurationModels.push_back(configurationModel);
 		
 		QTableView* configurationView = new QTableView(this);
+#if QT_VERSION >= 0x050000
+		configurationView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+#else // QT_VERSION
 		configurationView->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+#endif // QT_VERSION
 		configurationView->horizontalHeader()->hide();
 		configurationView->setAlternatingRowColors(true);
 		configurationView->setItemDelegate(configurationDelegate);
 		configurationView->setModel(configurationModel);
-		configurationView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 		this->configurationViews.push_back(configurationView);
 		
 		this->configurationTabWidget->addTab(configurationView, QString::number(i));
@@ -104,11 +118,14 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags f) :
 		this->operationalModels.push_back(operationalModel);
 		
 		QTableView* operationalView = new QTableView(this);
+#if QT_VERSION >= 0x050000
+		operationalView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+#else // QT_VERSION
 		operationalView->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+#endif // QT_VERSION
 		operationalView->setAlternatingRowColors(true);
 		operationalView->setItemDelegate(operationalDelegate);
 		operationalView->setModel(operationalModel);
-		operationalView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 		this->operationalViews.push_back(operationalView);
 		
 		this->operationalTabWidget->addTab(operationalView, QString::number(i));
@@ -127,22 +144,63 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags f) :
 			SLOT(operationalChanged(const QModelIndex&, const QModelIndex&))
 		);
 		
-		rl::math::Vector q(this->kinematicModels[i]->getDof());
-		q.setZero();
-		configurationModel->setData(q);
+		configurationModel->setData(this->kinematicModels[i]->getHomePosition());
 	}
 	
-	this->addDockWidget(Qt::LeftDockWidgetArea, configurationDockWidget);
 	this->configurationDockWidget->resize(160, 320);
 	this->configurationDockWidget->setWidget(this->configurationTabWidget);
 	this->configurationDockWidget->setWindowTitle("Configuration");
 	
-	this->addDockWidget(Qt::LeftDockWidgetArea, operationalDockWidget);
 	this->operationalDockWidget->resize(160, 320);
 	this->operationalDockWidget->setWidget(this->operationalTabWidget);
 	this->operationalDockWidget->setWindowTitle("Operational");
 	
-	this->viewer = new SoQtExaminerViewer(this, NULL, true, SoQtFullViewer::BUILD_POPUP);
+	this->addDockWidget(Qt::LeftDockWidgetArea, this->configurationDockWidget);
+	this->addDockWidget(Qt::BottomDockWidgetArea, this->operationalDockWidget);
+	
+	this->ikAlgorithmComboBox->addItem("JacobianInverseKinematics");
+#ifdef RL_MDL_NLOPT
+	this->ikAlgorithmComboBox->addItem("NloptInverseKinematics");
+#endif
+	this->ikAlgorithmComboBox->setToolTip("IK Algorithm");
+	
+#ifdef RL_MDL_NLOPT
+	this->ikAlgorithmComboBox->setCurrentIndex(this->ikAlgorithmComboBox->findText("NloptInverseKinematics"));
+#endif
+	
+	QObject::connect(this->ikAlgorithmComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(changeIkAlgorithm()));
+	
+	this->ikDurationSpinBox->setMaximum(10000);
+	this->ikDurationSpinBox->setMinimum(1);
+	this->ikDurationSpinBox->setSuffix(" ms");
+	this->ikDurationSpinBox->setToolTip("Max. IK Duration");
+	this->ikDurationSpinBox->setValue(500);
+	
+	this->ikJacobianComboBox->addItem("Inverse");
+	this->ikJacobianComboBox->addItem("Transpose");
+	this->ikJacobianComboBox->setToolTip("Jacobian Method");
+	
+	QObject::connect(this->ikJacobianComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(changeIkJacobian()));
+	
+	this->ikJacobianInverseComboBox->addItem("SVD");
+	this->ikJacobianInverseComboBox->addItem("DLS");
+	this->ikJacobianInverseComboBox->setToolTip("Jacobian Inverse Method");
+	
+	this->statusBar()->addPermanentWidget(this->ikAlgorithmComboBox);
+	this->statusBar()->addPermanentWidget(this->ikJacobianComboBox);
+	this->statusBar()->addPermanentWidget(this->ikJacobianInverseComboBox);
+	this->statusBar()->addPermanentWidget(this->ikDurationSpinBox);
+	
+	this->changeIkAlgorithm();
+	this->changeIkJacobian();
+	
+	this->gradientBackground = new SoGradientBackground();
+	this->gradientBackground->ref();
+	this->gradientBackground->color0.setValue(0.8f, 0.8f, 0.8f);
+	this->gradientBackground->color1.setValue(1.0f, 1.0f, 1.0f);
+	this->scene->root->insertChild(this->gradientBackground, 0);
+	
+	this->viewer = new SoQtExaminerViewer(this, nullptr, true, SoQtFullViewer::BUILD_POPUP);
 	this->viewer->setSceneGraph(this->scene->root);
 	this->viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_BLEND);
 	this->viewer->viewAll();
@@ -159,13 +217,56 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags f) :
 
 MainWindow::~MainWindow()
 {
-	MainWindow::singleton = NULL;
+	this->gradientBackground->unref();
+	MainWindow::singleton = nullptr;
+}
+
+void
+MainWindow::changeIkAlgorithm()
+{
+	if ("JacobianInverseKinematics" == this->ikAlgorithmComboBox->currentText())
+	{
+		this->ikDurationSpinBox->setVisible(true);
+		
+		if ("Inverse" != this->ikJacobianComboBox->currentText())
+		{
+			this->ikJacobianInverseComboBox->setVisible(false);
+		}
+		else
+		{
+			this->ikJacobianInverseComboBox->setVisible(true);
+		}
+		
+		this->ikJacobianComboBox->setVisible(true);
+	}
+	else if ("NloptInverseKinematics" == this->ikAlgorithmComboBox->currentText())
+	{
+		this->ikDurationSpinBox->setVisible(true);
+		this->ikJacobianInverseComboBox->setVisible(false);
+		this->ikJacobianComboBox->setVisible(false);
+	}
+}
+
+void
+MainWindow::changeIkJacobian()
+{
+	if ("JacobianInverseKinematics" == this->ikAlgorithmComboBox->currentText())
+	{
+		if ("Inverse" != this->ikJacobianComboBox->currentText())
+		{
+			this->ikJacobianInverseComboBox->setVisible(false);
+		}
+		else
+		{
+			this->ikJacobianInverseComboBox->setVisible(true);
+		}
+	}
 }
 
 MainWindow*
 MainWindow::instance()
 {
-	if (NULL == MainWindow::singleton)
+	if (nullptr == MainWindow::singleton)
 	{
 		new MainWindow();
 	}
@@ -179,9 +280,13 @@ MainWindow::init()
 	this->configurationDockWidget->toggleViewAction()->setShortcut(QKeySequence("F5"));
 	this->addAction(this->configurationDockWidget->toggleViewAction());
 	
-	this->saveImageAction->setShortcut(QKeySequence("Return"));
-	QObject::connect(this->saveImageAction, SIGNAL(triggered()), this, SLOT(saveImage()));
-	this->addAction(this->saveImageAction);
+	this->saveImageWithoutAlphaAction->setShortcut(QKeySequence("Return"));
+	QObject::connect(this->saveImageWithoutAlphaAction, SIGNAL(triggered()), this, SLOT(saveImageWithoutAlpha()));
+	this->addAction(this->saveImageWithoutAlphaAction);
+	
+	this->saveImageWithAlphaAction->setShortcut(QKeySequence("Shift+Return"));
+	QObject::connect(this->saveImageWithAlphaAction, SIGNAL(triggered()), this, SLOT(saveImageWithAlpha()));
+	this->addAction(this->saveImageWithAlphaAction);
 	
 	this->saveSceneAction->setShortcut(QKeySequence("Ctrl+Return"));
 	QObject::connect(this->saveSceneAction, SIGNAL(triggered()), this, SLOT(saveScene()));
@@ -189,10 +294,36 @@ MainWindow::init()
 }
 
 void
-MainWindow::saveImage()
+MainWindow::saveImage(bool withAlpha)
 {
-	QImage image = static_cast< QGLWidget* >(this->viewer->getGLWidget())->grabFrameBuffer(true);
-	image.save("coach-" + QDateTime::currentDateTime().toString("yyyyMMdd-HHmmsszzz") + ".png", "PNG");
+	if (withAlpha)
+	{
+		this->scene->root->removeChild(this->gradientBackground);
+		this->viewer->render();
+	}
+	
+	glReadBuffer(GL_FRONT);
+	QImage image = static_cast<QGLWidget*>(this->viewer->getGLWidget())->grabFrameBuffer(withAlpha);
+	
+	if (withAlpha)
+	{
+		this->scene->root->insertChild(this->gradientBackground, 0);
+		this->viewer->render();
+	}
+	
+	image.save("rlCoachMdl-" + QDateTime::currentDateTime().toString("yyyyMMdd-HHmmsszzz") + ".png", "PNG");
+}
+
+void
+MainWindow::saveImageWithAlpha()
+{
+	this->saveImage(true);
+}
+
+void
+MainWindow::saveImageWithoutAlpha()
+{
+	this->saveImage(false);
 }
 
 void

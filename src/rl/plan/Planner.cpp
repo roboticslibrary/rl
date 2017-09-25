@@ -33,12 +33,12 @@ namespace rl
 	namespace plan
 	{
 		Planner::Planner() :
-			duration(::std::numeric_limits< ::rl::math::Real >::max()),
-			goal(NULL),
-			model(NULL),
-			start(NULL),
-			viewer(NULL),
-			timer()
+			duration(::std::chrono::steady_clock::duration::max()),
+			goal(nullptr),
+			model(nullptr),
+			start(nullptr),
+			viewer(nullptr),
+			time()
 		{
 		}
 		

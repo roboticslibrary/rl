@@ -1,8 +1,6 @@
-project(rlCameraDemo)
+find_package(libdc1394)
 
-find_package(Libdc1394)
-
-if(LIBDC1394_FOUND)
+if(libdc1394_FOUND)
 	add_executable(
 		rlCameraDemo
 		rlCameraDemo.cpp
@@ -10,6 +8,6 @@ if(LIBDC1394_FOUND)
 	
 	target_link_libraries(
 		rlCameraDemo
-		rlhal
+		hal
 	)
-endif(LIBDC1394_FOUND)
+endif()

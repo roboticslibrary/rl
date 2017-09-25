@@ -43,7 +43,7 @@ namespace rl
 	{
 		namespace pqp
 		{
-			Shape::Shape(SoVRMLShape* shape, Body* body) :
+			Shape::Shape(::SoVRMLShape* shape, Body* body) :
 				::rl::sg::Shape(shape, body),
 				model(),
 				frame(::rl::math::Transform::Identity()),
@@ -53,25 +53,25 @@ namespace rl
 				{
 					for (::std::size_t j = 0; j < 3; ++j)
 					{
-						this->rotation[i][j] = static_cast< PQP_REAL >(this->frame(i, j));
+						this->rotation[i][j] = static_cast<PQP_REAL>(this->frame(i, j));
 					}
 				}
 				
 				for (::std::size_t i = 0; i < 3; ++i)
 				{
-					this->translation[i] = static_cast< PQP_REAL >(this->frame(i, 3));
+					this->translation[i] = static_cast<PQP_REAL>(this->frame(i, 3));
 				}
 				
-				SoVRMLGeometry* geometry = static_cast< SoVRMLGeometry* >(shape->geometry.getValue());
+				::SoVRMLGeometry* geometry = static_cast< ::SoVRMLGeometry*>(shape->geometry.getValue());
 				
-				SoGetPrimitiveCountAction* primitiveCountAction = new SoGetPrimitiveCountAction();
+				::SoGetPrimitiveCountAction* primitiveCountAction = new ::SoGetPrimitiveCountAction();
 				primitiveCountAction->apply(geometry);
 				
 				this->model.BeginModel(primitiveCountAction->getTriangleCount());
 				
 				Model model(&this->model, 0);
 				
-				SoCallbackAction callbackAction;
+				::SoCallbackAction callbackAction;
 				callbackAction.addTriangleCallback(geometry->getTypeId(), Shape::triangleCallback, &model);
 				callbackAction.apply(geometry);
 				
@@ -106,7 +106,7 @@ namespace rl
 			}
 			
 			void
-			Shape::triangleCallback(void* userData, SoCallbackAction* action, const SoPrimitiveVertex* v1, const SoPrimitiveVertex* v2, const SoPrimitiveVertex* v3)
+			Shape::triangleCallback(void* userData, ::SoCallbackAction* action, const ::SoPrimitiveVertex* v1, const ::SoPrimitiveVertex* v2, const ::SoPrimitiveVertex* v3)
 			{
 				PQP_REAL p[3][3] = {
 					{v1->getPoint()[0], v1->getPoint()[1], v1->getPoint()[2]},
@@ -114,7 +114,7 @@ namespace rl
 					{v3->getPoint()[0], v3->getPoint()[1], v3->getPoint()[2]}
 				};
 				
-				Model* model = static_cast< Model* >(userData);
+				Model* model = static_cast<Model*>(userData);
 				
 				model->first->AddTri(p[0], p[1], p[2], model->second);
 				
@@ -124,19 +124,19 @@ namespace rl
 			void
 			Shape::update()
 			{
-				this->frame = static_cast< Body* >(this->getBody())->frame * this->transform;
+				this->frame = static_cast<Body*>(this->getBody())->frame * this->transform;
 				
 				for (::std::size_t i = 0; i < 3; ++i)
 				{
 					for (::std::size_t j = 0; j < 3; ++j)
 					{
-						this->rotation[i][j] = static_cast< PQP_REAL >(this->frame(i, j));
+						this->rotation[i][j] = static_cast<PQP_REAL>(this->frame(i, j));
 					}
 				}
 				
 				for (::std::size_t i = 0; i < 3; ++i)
 				{
-					this->translation[i] = static_cast< PQP_REAL >(this->frame(i, 3));
+					this->translation[i] = static_cast<PQP_REAL>(this->frame(i, 3));
 				}
 			}
 		}

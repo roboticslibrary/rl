@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_HAL_JOINTTORQUESENSOR_H_
-#define _RL_HAL_JOINTTORQUESENSOR_H_
+#ifndef RL_HAL_JOINTTORQUESENSOR_H
+#define RL_HAL_JOINTTORQUESENSOR_H
 
 #include <rl/math/Vector.h>
 
@@ -38,11 +38,11 @@ namespace rl
 		class JointTorqueSensor : public virtual AxisController
 		{
 		public:
-			JointTorqueSensor(const ::std::size_t& dof, const ::rl::math::Real& updateRate);
+			JointTorqueSensor(const ::std::size_t& dof);
 			
 			virtual ~JointTorqueSensor();
 			
-			virtual void getJointTorque(::rl::math::Vector& tau) const = 0;
+			virtual ::rl::math::Vector getJointTorque() const = 0;
 			
 		protected:
 			
@@ -52,4 +52,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_HAL_JOINTTORQUESENSOR_H_
+#endif // RL_HAL_JOINTTORQUESENSOR_H

@@ -1,5 +1,3 @@
-project(rlDenavitHartenbergDemo)
-
 add_executable(
 	rlDenavitHartenbergDemo
 	rlDenavitHartenbergDemo.cpp
@@ -7,5 +5,5 @@ add_executable(
 
 target_link_libraries(
 	rlDenavitHartenbergDemo
-	rlmath
+	math
 )

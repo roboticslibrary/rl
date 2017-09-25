@@ -24,14 +24,17 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_HAL_DEVICE_H_
-#define _RL_HAL_DEVICE_H_
+#ifndef RL_HAL_DEVICE_H
+#define RL_HAL_DEVICE_H
 
 #include <string>
 #include <vector>
 
 namespace rl
 {
+	/**
+	 * Hardware abstraction layer.
+	 */
 	namespace hal
 	{
 		class Device
@@ -58,11 +61,6 @@ namespace rl
 			virtual void start() = 0;
 			
 			/**
-			 * @pre start()
-			 */
-			virtual void step() = 0;
-			
-			/**
 			 * @pre open()
 			 */
 			virtual void stop() = 0;
@@ -80,4 +78,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_HAL_DEVICE_H_
+#endif // RL_HAL_DEVICE_H

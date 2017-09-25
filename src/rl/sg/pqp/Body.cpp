@@ -52,7 +52,7 @@ namespace rl
 			}
 			
 			::rl::sg::Shape*
-			Body::create(SoVRMLShape* shape)
+			Body::create(::SoVRMLShape* shape)
 			{
 				return new Shape(shape, this);
 			}
@@ -70,7 +70,7 @@ namespace rl
 				
 				for (Iterator i = this->begin(); i != this->end(); ++i)
 				{
-					static_cast< Shape* >(*i)->update();
+					static_cast<Shape*>(*i)->update();
 				}
 			}
 		}

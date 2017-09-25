@@ -31,7 +31,7 @@ namespace rl
 	namespace mdl
 	{
 		Element::Element() :
-			compound(NULL),
+			compound(nullptr),
 			name()
 		{
 		}

@@ -24,22 +24,25 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_HAL_SCHMERSALLSS300_H_
-#define _RL_HAL_SCHMERSALLSS300_H_
+#ifndef RL_HAL_SCHMERSALLSS300_H
+#define RL_HAL_SCHMERSALLSS300_H
 
-#include <rl/util/Timer.h>
+#include <array>
+#include <cstdint>
 
+#include "CyclicDevice.h"
 #include "Device.h"
 #include "Lidar.h"
-#include "types.h"
+#include "Serial.h"
 
 namespace rl
 {
 	namespace hal
 	{
-		class Serial;
-		
-		class SchmersalLss300 : public Lidar
+		/**
+		 * Schmersal LSS 300 safety laser scanner.
+		 */
+		class SchmersalLss300 : public CyclicDevice, public Lidar
 		{
 		public:
 			enum BaudRate
@@ -69,7 +72,7 @@ namespace rl
 			};
 			
 			/**
-			 * @param password String with 8 characters comprising "0...9", "a...z", "A...Z", and "_".
+			 * @param[in] password String with 8 characters comprising "0...9", "a...z", "A...Z", and "_".
 			 */
 			SchmersalLss300(
 				const ::std::string& device = "/dev/ttyS0",
@@ -84,7 +87,7 @@ namespace rl
 			
 			BaudRate getBaudRate() const;
 			
-			void getDistances(::rl::math::Vector& distances) const;
+			::rl::math::Vector getDistances() const;
 			
 			::std::size_t getDistancesCount() const;
 			
@@ -119,19 +122,17 @@ namespace rl
 		protected:
 			
 		private:
-			uint16_t crc(const uint8_t* buf, const ::std::size_t& len) const;
+			::std::uint16_t crc(const ::std::uint8_t* buf, const ::std::size_t& len) const;
 			
-			::std::size_t recv(uint8_t* buf, const ::std::size_t& len, const uint8_t& command);
+			::std::size_t recv(::std::uint8_t* buf, const ::std::size_t& len, const ::std::uint8_t& command);
 			
-			void send(uint8_t* buf, const ::std::size_t& len);
+			void send(::std::uint8_t* buf, const ::std::size_t& len);
 			
 			bool waitAck();
 			
 			BaudRate baudRate;
 			
-			uint8_t configuration;
-			
-			uint8_t data[1013];
+			::std::array< ::std::uint8_t, 1013> data;
 			
 			BaudRate desired;
 			
@@ -139,11 +140,9 @@ namespace rl
 			
 			::std::string password;
 			
-			Serial* serial;
-			
-			::rl::util::Timer timer;
+			Serial serial;
 		};
 	}
 }
 
-#endif // _RL_HAL_SCHMERSALLSS300_H_
+#endif // RL_HAL_SCHMERSALLSS300_H

@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_HAL_CARTESIANPOSITIONACTUATOR_H_
-#define _RL_HAL_CARTESIANPOSITIONACTUATOR_H_
+#ifndef RL_HAL_CARTESIANPOSITIONACTUATOR_H
+#define RL_HAL_CARTESIANPOSITIONACTUATOR_H
 
 #include <rl/math/Transform.h>
 
@@ -38,7 +38,7 @@ namespace rl
 		class CartesianPositionActuator : public virtual AxisController
 		{
 		public:
-			CartesianPositionActuator(const ::std::size_t& dof, const ::rl::math::Real& updateRate);
+			CartesianPositionActuator(const ::std::size_t& dof);
 			
 			virtual ~CartesianPositionActuator();
 			
@@ -52,4 +52,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_HAL_CARTESIANPOSITIONACTUATOR_H_
+#endif // RL_HAL_CARTESIANPOSITIONACTUATOR_H

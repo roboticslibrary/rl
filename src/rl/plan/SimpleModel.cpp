@@ -78,7 +78,7 @@ namespace rl
 						{
 							for (::rl::sg::Model::Iterator k = (*j)->begin(); k != (*j)->end(); ++k)
 							{
-								if (dynamic_cast< ::rl::sg::SimpleScene* >(this->scene)->areColliding(this->model->getBody(i), *k))
+								if (dynamic_cast< ::rl::sg::SimpleScene*>(this->scene)->areColliding(this->model->getBody(i), *k))
 								{
 									this->body = i;
 									return true;
@@ -92,7 +92,7 @@ namespace rl
 				{
 					if (this->areColliding(i, j))
 					{
-						if (dynamic_cast< ::rl::sg::SimpleScene* >(this->scene)->areColliding(this->model->getBody(i), this->model->getBody(j)))
+						if (dynamic_cast< ::rl::sg::SimpleScene*>(this->scene)->areColliding(this->model->getBody(i), this->model->getBody(j)))
 						{
 							this->body = i;
 							return true;

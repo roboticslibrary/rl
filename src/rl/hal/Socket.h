@@ -24,10 +24,18 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_HAL_SOCKET_H_
-#define _RL_HAL_SOCKET_H_
+#ifndef RL_HAL_SOCKET_H
+#define RL_HAL_SOCKET_H
 
+#ifdef WIN32
+#include <winsock2.h>
+#else
+#include <sys/socket.h>
+#endif // WIN32
+
+#include <chrono>
 #include <string>
+#include <vector>
 #include <rl/math/Real.h>
 
 #include "Com.h"
@@ -39,35 +47,130 @@ namespace rl
 		class Socket : public Com
 		{
 		public:
-			Socket(const ::std::string& host, const unsigned short int& port);
+			class Address
+			{
+			public:
+				Address();
+				
+				Address(const Address& address);
+				
+				Address(const ::sockaddr_storage& addr);
+				
+				virtual ~Address();
+				
+				static Address Ipv4(const ::std::string& string, const unsigned short int& port, const bool& asNumeric = false);
+				
+				static Address Ipv4(const ::std::string& string, const ::std::string& port, const bool& asNumeric = false);
+				
+				static Address Ipv6(const ::std::string& string, const unsigned short int& port, const bool& asNumeric = false);
+				
+				static Address Ipv6(const ::std::string& string, const ::std::string& port, const bool& asNumeric = false);
+				
+				const ::sockaddr_storage& get() const;
+				
+				::std::vector<unsigned char> getHexadecimal();
+				
+				::std::string getNameInfo(const bool& asNumeric = false) const;
+				
+				void setInfo(const ::std::string& string, const unsigned short int& port, const bool& asNumeric = false);
+				
+				void setInfo(const ::std::string& string, const ::std::string& port, const bool& asNumeric = false);
+				
+			protected:
+				Address(const int& family);
+				
+			private:
+				::sockaddr_storage addr;
+			};
+			
+			enum Option
+			{
+				OPTION_KEEPALIVE,
+				OPTION_MULTICAST_LOOP,
+				OPTION_MULTICAST_TTL,
+#if defined(__APPLE__) || defined(__QNX__) || defined(WIN32)
+				OPTION_NODELAY
+#else // __APPLE__ || __QNX__ || WIN32
+				OPTION_NODELAY,
+				OPTION_QUICKACK
+#endif // __APPLE__ || __QNX__ || WIN32
+			};
+			
+			Socket(const Socket& socket);
 			
 			virtual ~Socket();
 			
+			static Socket Tcp(const Address& address);
+			
+			static Socket Udp(const Address& address);
+			
+			Socket accept();
+			
+			void bind();
+			
 			void close();
 			
-			::std::string getHost() const;
+			void connect();
 			
-			unsigned short int getPort() const;
+			const Address& getAddress() const;
 			
-			virtual void open() = 0;
+			int getOption(const Option& option) const;
 			
-			::std::size_t read(void* buf, const ::std::size_t& count);
+			const int& getProtocol() const;
 			
-			::std::size_t select(const bool& read, const bool& write, const ::rl::math::Real& timeout);
+			const int& getType() const;
 			
-			::std::size_t write(const void* buf, const ::std::size_t& count);
+			void listen();
+			
+			void listen(const int& backlog);
+			
+			void open();
+			
+			::std::size_t recv(void* buf, const ::std::size_t& count);
+			
+			::std::size_t recvfrom(void* buf, const ::std::size_t& count, Address& address);
+			
+			::std::size_t select(const bool& read, const bool& write, const ::std::chrono::nanoseconds& timeout);
+			
+			::std::size_t send(const void* buf, const ::std::size_t& count);
+			
+			::std::size_t sendto(const void* buf, const ::std::size_t& count, const Address& address);
+			
+			void setAddress(const Address& address);
+			
+			void setOption(const Option& option, const int& value);
+			
+			void shutdown(const bool& read = true, const bool& write = true);
 			
 		protected:
-			void connect(const int& domain, const int& type, const int& protocol);
+			Socket(const int& type, const int& protocol, const Address& address);
+			
+#ifdef WIN32
+			Socket(const int& type, const int& protocol, const Address& address, const SOCKET& fd);
+#else // WIN32
+			Socket(const int& type, const int& protocol, const Address& address, const int& fd);
+#endif // WIN32
+			
+#ifdef WIN32
+			SOCKET fd;
+#else // WIN32
+			int fd;
+#endif // WIN32
 			
 		private:
-			::std::string host;
+#ifdef WIN32
+			static void cleanup();
 			
-			unsigned short int port;
+			static void startup();
+#endif // WIN32
 			
-			int sockfd;
+			Address address;
+			
+			int protocol;
+			
+			int type;
 		};
 	}
 }
 
-#endif // _RL_HAL_SOCKET_H_
+#endif // RL_HAL_SOCKET_H

@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_PLAN_RECURSIVEVERIFIER_H_
-#define _RL_PLAN_RECURSIVEVERIFIER_H_
+#ifndef RL_PLAN_RECURSIVEVERIFIER_H
+#define RL_PLAN_RECURSIVEVERIFIER_H
 
 #include "Verifier.h"
 
@@ -34,7 +34,9 @@ namespace rl
 	namespace plan
 	{
 		/**
-		 * Recursive binary strategy using the van der Corput sequence (\f$ \frac{1}{2}, \frac{1}{4}, \frac{3}{4}, \frac{1}{8}, \frac{5}{8}, \frac{3}{8}, \frac{7}{8}, \ldots \f$).
+		 * Recursive binary strategy using the van der Corput sequence.
+		 * 
+		 * \f[ \frac{1}{2}, \frac{1}{4}, \frac{3}{4}, \frac{1}{8}, \frac{5}{8}, \frac{3}{8}, \frac{7}{8}, \ldots \f].
 		 */
 		class RecursiveVerifier : public Verifier
 		{
@@ -53,4 +55,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_PLAN_RECURSIVEVERIFIER_H_
+#endif // RL_PLAN_RECURSIVEVERIFIER_H

@@ -24,6 +24,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include <chrono>
 #include <QApplication>
 #include <QDateTime>
 #include <QDockWidget>
@@ -33,11 +34,12 @@
 #include <QHeaderView>
 #include <QLayout>
 #include <QMenuBar>
+#include <QMessageBox>
 #include <QMutexLocker>
 #include <QPainter>
 #include <QPrinter>
 #include <QRegExp>
-#include <boost/make_shared.hpp>
+#include <QStatusBar>
 #include <Inventor/nodes/SoCamera.h>
 #include <Inventor/nodes/SoOrthographicCamera.h>
 #include <Inventor/nodes/SoPerspectiveCamera.h>
@@ -51,6 +53,10 @@
 #include <rl/plan/DistanceModel.h>
 #include <rl/plan/Eet.h>
 #include <rl/plan/GaussianSampler.h>
+#include <rl/plan/GnatNearestNeighbors.h>
+#include <rl/plan/KdtreeBoundingBoxNearestNeighbors.h>
+#include <rl/plan/KdtreeNearestNeighbors.h>
+#include <rl/plan/LinearNearestNeighbors.h>
 #include <rl/plan/Prm.h>
 #include <rl/plan/PrmUtilityGuided.h>
 #include <rl/plan/RecursiveVerifier.h>
@@ -73,31 +79,40 @@
 #include <rl/xml/Node.h>
 #include <rl/xml/Object.h>
 #include <rl/xml/Path.h>
+#include <rl/xml/Stylesheet.h>
 
-#ifdef RL_SG_HAVE_BULLET
+#ifdef RL_SG_BULLET
 #include <rl/sg/bullet/Scene.h>
-#endif // RL_SG_HAVE_BULLET
-#ifdef RL_SG_HAVE_ODE
+#endif // RL_SG_BULLET
+#ifdef RL_SG_FCL
+#include <rl/sg/fcl/Scene.h>
+#endif // RL_SG_FCL
+#ifdef RL_SG_ODE
 #include <rl/sg/ode/Scene.h>
-#endif // RL_SG_HAVE_ODE
-#ifdef RL_SG_HAVE_PQP
+#endif // RL_SG_ODE
+#ifdef RL_SG_PQP
 #include <rl/sg/pqp/Scene.h>
-#endif // RL_SG_HAVE_PQP
-#ifdef RL_SG_HAVE_SOLID
+#endif // RL_SG_PQP
+#ifdef RL_SG_SOLID
 #include <rl/sg/solid/Scene.h>
-#endif // RL_SG_HAVE_SOLID
+#endif // RL_SG_SOLID
 
 #include "ConfigurationDelegate.h"
 #include "ConfigurationModel.h"
+#include "ConfigurationSpaceModel.h"
 #include "ConfigurationSpaceScene.h"
+#include "GraphicsView.h"
 #include "MainWindow.h"
 #include "PlannerModel.h"
+#include "SoGradientBackground.h"
 #include "Thread.h"
 #include "Viewer.h"
 
-MainWindow::MainWindow(QWidget* parent, Qt::WFlags f) :
+MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	QMainWindow(parent, f),
 	configurationModel(new ConfigurationModel(this)),
+	configurationSpaceModel(new ConfigurationSpaceModel(this)),
+	engine(),
 	explorerGoals(),
 	explorers(),
 	explorerStarts(),
@@ -109,6 +124,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags f) :
 	model(),
 	model2(),
 	mutex(),
+	nearestNeighbors(),
 	planner(),
 	plannerModel(new PlannerModel(this)),
 	q(),
@@ -117,20 +133,21 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags f) :
 	sigma(),
 	scene(),
 	scene2(),
-	sceneModel(NULL),
-	sceneModel2(NULL),
+	sceneModel(nullptr),
+	sceneModel2(nullptr),
 	start(),
 	thread(new Thread(this)),
 	verifier(),
 	verifier2(),
-	viewer(NULL),
+	viewer(nullptr),
 	configurationDelegate(new ConfigurationDelegate(this)),
 	configurationDockWidget(new QDockWidget(this)),
 	configurationSpaceDockWidget(new QDockWidget(this)),
 	configurationSpaceScene(new ConfigurationSpaceScene(this)),
-	configurationSpaceView(new QGraphicsView(this)),
+	configurationSpaceSceneDockWidget(new QDockWidget(this)),
+	configurationSpaceSceneView(new GraphicsView(this)),
+	configurationSpaceView(new QTableView(this)),
 	configurationView(new QTableView(this)),
-	engine(),
 	evalAction(new QAction(this)),
 	exitAction(new QAction(this)),
 	filename(),
@@ -142,22 +159,29 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags f) :
 	plannerDockWidget(new QDockWidget(this)),
 	plannerView(new QTableView(this)),
 	resetAction(new QAction(this)),
-	saveImageAction(new QAction(this)),
+	saveImageWithAlphaAction(new QAction(this)),
+	saveImageWithoutAlphaAction(new QAction(this)),
 	savePdfAction(new QAction(this)),
 	saveSceneAction(new QAction(this)),
+	seed(),
 	setGoalConfigurationAction(new QAction(this)),
 	setStartConfigurationAction(new QAction(this)),
 	startThreadAction(new QAction(this)),
+	toggleAnimationAction(new QAction(this)),
 	toggleCameraAction(new QAction(this)),
 	toggleConfigurationAction(new QAction(this)),
 	toggleConfigurationEdgesAction(new QAction(this)),
 	toggleConfigurationSpaceAction(new QAction(this)),
+	toggleConfigurationSpaceActiveAction(new QAction(this)),
+	toggleConfigurationSpaceSceneAction(new QAction(this)),
 	toggleConfigurationVerticesAction(new QAction(this)),
 	toggleLinesAction(new QAction(this)),
+	togglePathAction(new QAction(this)),
 	togglePlannerAction(new QAction(this)),
 	togglePointsAction(new QAction(this)),
 	toggleSpheresAction(new QAction(this)),
-	toggleViewAction(new QAction(this)),
+	toggleSweptVolumeAction(new QAction(this)),
+	toggleViewActiveAction(new QAction(this)),
 	toggleWorkFramesAction(new QAction(this)),
 	wait(true)
 {
@@ -165,98 +189,147 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags f) :
 	
 	SoQt::init(this);
 	SoDB::init();
+	SoGradientBackground::initClass();
+	
+	QGLFormat format;
+	format.setAlpha(true);
+	format.setSampleBuffers(true);
+	QGLFormat::setDefaultFormat(format);
 	
 	this->viewer = new Viewer(this);
 	this->setCentralWidget(this->viewer);
 	
-	this->configurationSpaceView->setEnabled(false);
-	this->configurationSpaceView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	this->configurationSpaceView->setScene(this->configurationSpaceScene);
-	this->configurationSpaceView->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-	this->configurationSpaceView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	this->configurationSpaceModel->configurationSpaceScene = this->configurationSpaceScene;
 	
+#if QT_VERSION >= 0x050000
+	this->configurationSpaceView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+#else // QT_VERSION
+	this->configurationSpaceView->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+#endif // QT_VERSION
+	this->configurationSpaceView->horizontalHeader()->hide();
+	this->configurationSpaceView->setAlternatingRowColors(true);
+	this->configurationSpaceView->setModel(this->configurationSpaceModel);
+	
+	this->configurationSpaceSceneView->setBackgroundBrush(QBrush(QWidget::palette().color(QWidget::backgroundRole())));
+	this->configurationSpaceSceneView->setScene(this->configurationSpaceScene);
+	
+#if QT_VERSION >= 0x050000
+	this->configurationView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+#else // QT_VERSION
 	this->configurationView->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+#endif // QT_VERSION
 	this->configurationView->horizontalHeader()->hide();
 	this->configurationView->setAlternatingRowColors(true);
 	this->configurationView->setItemDelegate(this->configurationDelegate);
 	this->configurationView->setModel(this->configurationModel);
-	this->configurationView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 	
-	this->configurationDockWidget->hide();
-	this->configurationDockWidget->resize(160, 320);
-	this->configurationDockWidget->setFloating(true);
-	this->configurationDockWidget->setWidget(this->configurationView);
-	this->configurationDockWidget->setWindowTitle("Configuration");
-	
-	this->configurationSpaceDockWidget->hide();
-	this->configurationSpaceDockWidget->setFloating(true);
-	this->configurationSpaceDockWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-	this->configurationSpaceDockWidget->setWidget(this->configurationSpaceView);
-	this->configurationSpaceDockWidget->setWindowTitle("C-Space");
-	
+#if QT_VERSION >= 0x050000
+	this->plannerView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+#else // QT_VERSION
 	this->plannerView->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+#endif // QT_VERSION
+	this->plannerView->horizontalHeader()->hide();
 	this->plannerView->setAlternatingRowColors(true);
 	this->plannerView->setModel(this->plannerModel);
 	this->plannerView->setWordWrap(false);
-	this->plannerView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 	
-	this->plannerDockWidget->hide();
+	this->configurationDockWidget->resize(160, 320);
+	this->configurationDockWidget->setWidget(this->configurationView);
+	this->configurationDockWidget->setWindowTitle("Configuration");
+	
+	this->configurationSpaceDockWidget->resize(160, 320);
+	this->configurationSpaceDockWidget->setWidget(this->configurationSpaceView);
+	this->configurationSpaceDockWidget->setWindowTitle("Configuration Space");
+	
+	this->configurationSpaceSceneDockWidget->resize(320, 320);
+	this->configurationSpaceSceneDockWidget->setWidget(this->configurationSpaceSceneView);
+	this->configurationSpaceSceneDockWidget->setWindowTitle("Configuration Space");
+	
 	this->plannerDockWidget->resize(160, 320);
-	this->plannerDockWidget->setFloating(true);
 	this->plannerDockWidget->setWidget(this->plannerView);
 	this->plannerDockWidget->setWindowTitle("Planner");
+	
+	this->addDockWidget(Qt::LeftDockWidgetArea, this->configurationSpaceDockWidget);
+	this->tabifyDockWidget(this->configurationSpaceDockWidget, this->configurationSpaceSceneDockWidget);
+	this->addDockWidget(Qt::LeftDockWidgetArea, this->configurationDockWidget);
+	this->addDockWidget(Qt::LeftDockWidgetArea, this->plannerDockWidget);
+	
+	QObject::connect(this->configurationSpaceModel, SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)), this->configurationSpaceSceneView, SLOT(adjust(const QModelIndex&, const QModelIndex&)));
+	QObject::connect(this->configurationSpaceScene, SIGNAL(evalFinished()), this, SLOT(evalDone()));
 	
 	this->init();
 	
 	QStringList engines;
-#ifdef RL_SG_HAVE_ODE
+#ifdef RL_SG_FCL
+	engines.push_back("fcl");
+	this->engine = "fcl";
+#endif // RL_SG_FCL
+#ifdef RL_SG_ODE
 	engines.push_back("ode");
 	this->engine = "ode";
-#endif // RL_SG_HAVE_ODE
-#ifdef RL_SG_HAVE_PQP
+#endif // RL_SG_ODE
+#ifdef RL_SG_PQP
 	engines.push_back("pqp");
 	this->engine = "pqp";
-#endif // RL_SG_HAVE_PQP
-#ifdef RL_SG_HAVE_BULLET
+#endif // RL_SG_PQP
+#ifdef RL_SG_BULLET
 	engines.push_back("bullet");
 	this->engine = "bullet";
-#endif // RL_SG_HAVE_BULLET
-#ifdef RL_SG_HAVE_SOLID
+#endif // RL_SG_BULLET
+#ifdef RL_SG_SOLID
 	engines.push_back("solid");
 	this->engine = "solid";
-#endif // RL_SG_HAVE_SOLID
+#endif // RL_SG_SOLID
 	engines.sort();
 	
+	QRegExp backgroundRegExp("--background=(\\S*)");
 	QRegExp engineRegExp("--engine=(" + engines.join("|") + ")");
 	QRegExp helpRegExp("--help");
 	QRegExp heightRegExp("--height=(\\d*)");
+	QRegExp quitRegExp("--enable-quit");
+	QRegExp seedRegExp("--seed=(\\d*)");
 	QRegExp viewerRegExp("--disable-viewer");
 	QRegExp waitRegExp("--disable-wait");
 	QRegExp widthRegExp("--width=(\\d*)");
-	QRegExp quitRegExp("--enable-quit");
 	
 	int width = 1024;
 	int height = 768;
 	
+	bool doSetMinimumSize = false;
+	
 	for (int i = 1; i < QApplication::arguments().size(); ++i)
 	{
-		if (-1 != engineRegExp.indexIn(QApplication::arguments()[i]))
+		if (-1 != backgroundRegExp.indexIn(QApplication::arguments()[i]))
+		{
+			this->viewer->setBackgroundColor(backgroundRegExp.cap(1));
+		}
+		else if (-1 != engineRegExp.indexIn(QApplication::arguments()[i]))
 		{
 			this->engine = engineRegExp.cap(1);
 		}
 		else if (-1 != helpRegExp.indexIn(QApplication::arguments()[i]))
 		{
-			std::cout << "Usage: rlPlanDemo [PLANFILE] [--engine=" << engines.join("|").toStdString() << "] [--help] [--disable-viewer] [--disable-wait] [--enable-quit] [--width=WIDTH] [--height=HEIGHT]" << std::endl;
+			QMessageBox::information(this, "Usage", "rlPlanDemo [PLANFILE] [--background=COLOR] [--engine=" + engines.join("|") + "] [--help] [--disable-viewer] [--disable-wait] [--enable-quit] [--seed=SEED] [--width=WIDTH] [--height=HEIGHT]");
+			exit(EXIT_SUCCESS);
 		}
 		else if (-1 != heightRegExp.indexIn(QApplication::arguments()[i]))
 		{
 			height = heightRegExp.cap(1).toInt();
+			doSetMinimumSize = true;
+		}
+		else if (-1 != quitRegExp.indexIn(QApplication::arguments()[i]))
+		{
+			this->thread->quit = true;
+		}
+		else if (-1 != seedRegExp.indexIn(QApplication::arguments()[i]))
+		{
+			this->seed = seedRegExp.cap(1).toUInt();
 		}
 		else if (-1 != viewerRegExp.indexIn(QApplication::arguments()[i]))
 		{
-			QObject::disconnect(this->toggleViewAction, SIGNAL(toggled(bool)), this, SLOT(toggleView(bool)));
-			this->toggleViewAction->setChecked(false);
-			QObject::connect(this->toggleViewAction, SIGNAL(toggled(bool)), this, SLOT(toggleView(bool)));
+			QObject::disconnect(this->toggleViewActiveAction, SIGNAL(toggled(bool)), this, SLOT(toggleViewActive(bool)));
+			this->toggleViewActiveAction->setChecked(false);
+			QObject::connect(this->toggleViewActiveAction, SIGNAL(toggled(bool)), this, SLOT(toggleViewActive(bool)));
 		}
 		else if (-1 != waitRegExp.indexIn(QApplication::arguments()[i]))
 		{
@@ -265,10 +338,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags f) :
 		else if (-1 != widthRegExp.indexIn(QApplication::arguments()[i]))
 		{
 			width = widthRegExp.cap(1).toInt();
-		}
-		else if (-1 != quitRegExp.indexIn(QApplication::arguments()[i]))
-		{
-			this->thread->quit = true;
+			doSetMinimumSize = true;
 		}
 		else
 		{
@@ -277,7 +347,11 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags f) :
 	}
 	
 	this->resize(width, height);
-	this->viewer->setMinimumSize(width, height);
+	
+	if (doSetMinimumSize)
+	{
+		this->viewer->setMinimumSize(width, height);
+	}
 	
 	if (this->filename.isEmpty())
 	{
@@ -291,14 +365,15 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags f) :
 
 MainWindow::~MainWindow()
 {
-	this->thread->stop();
+	this->reset();
 	
-	MainWindow::singleton = NULL;
+	MainWindow::singleton = nullptr;
 }
 
 void
 MainWindow::clear()
 {
+	this->configurationSpaceScene->clear();
 	this->explorerGoals.clear();
 	this->explorers.clear();
 	this->explorerStarts.clear();
@@ -309,6 +384,7 @@ MainWindow::clear()
 	this->mdl2.reset();
 	this->model.reset();
 	this->model2.reset();
+	this->nearestNeighbors.clear();
 	this->optimizer.reset();
 	this->planner.reset();
 	this->q.reset();
@@ -317,8 +393,8 @@ MainWindow::clear()
 	this->sigma.reset();
 	this->scene.reset();
 	this->scene2.reset();
-	this->sceneModel = NULL;
-	this->sceneModel2 = NULL;
+	this->sceneModel = nullptr;
+	this->sceneModel2 = nullptr;
 	this->start.reset();
 	this->verifier.reset();
 	this->verifier2.reset();
@@ -374,6 +450,13 @@ MainWindow::connect(const QObject* sender, const QObject* receiver)
 		SIGNAL(lineResetRequested()),
 		receiver,
 		SLOT(resetLines())
+	);
+	
+	QObject::connect(
+		sender,
+		SIGNAL(messageRequested(const std::string&)),
+		receiver,
+		SLOT(showMessage(const std::string&))
 	);
 	
 	QObject::connect(
@@ -450,13 +533,57 @@ MainWindow::connect(const QObject* sender, const QObject* receiver)
 void
 MainWindow::disconnect(const QObject* sender, const QObject* receiver)
 {
-	QObject::disconnect(sender, NULL, receiver, NULL);
+	QObject::disconnect(sender, nullptr, receiver, nullptr);
 }
 
 void
 MainWindow::eval()
 {
+	this->configurationView->setEnabled(false);
+	this->configurationSpaceSceneView->setEnabled(false);
+	this->configurationSpaceView->setEnabled(false);
+	this->evalAction->setEnabled(false);
+	this->getGoalConfigurationAction->setEnabled(false);
+	this->getRandomConfigurationAction->setEnabled(false);
+	this->getRandomFreeConfigurationAction->setEnabled(false);
+	this->getStartConfigurationAction->setEnabled(false);
+	this->openAction->setEnabled(false);
+	this->plannerView->setEnabled(false);
+	this->setGoalConfigurationAction->setEnabled(false);
+	this->setStartConfigurationAction->setEnabled(false);
+	this->startThreadAction->setEnabled(false);
+	this->toggleConfigurationSpaceActiveAction->setEnabled(false);
+	this->toggleViewActiveAction->setEnabled(false);
+	
+	this->model->reset();
+	
+	MainWindow::instance()->statusBar()->showMessage("Calculating configuration space...");
+	
 	this->configurationSpaceScene->eval();
+}
+
+void
+MainWindow::evalDone()
+{
+	this->configurationView->setEnabled(true);
+	this->configurationSpaceSceneView->setEnabled(true);
+	this->configurationSpaceView->setEnabled(true);
+	this->evalAction->setEnabled(true);
+	this->getGoalConfigurationAction->setEnabled(true);
+	this->getRandomConfigurationAction->setEnabled(true);
+	this->getRandomFreeConfigurationAction->setEnabled(true);
+	this->getStartConfigurationAction->setEnabled(true);
+	this->openAction->setEnabled(true);
+	this->plannerView->setEnabled(true);
+	this->setGoalConfigurationAction->setEnabled(true);
+	this->setStartConfigurationAction->setEnabled(true);
+	this->startThreadAction->setEnabled(true);
+	this->toggleAnimationAction->setEnabled(true);
+	this->toggleConfigurationSpaceActiveAction->setEnabled(true);
+	this->toggleSweptVolumeAction->setEnabled(true);
+	this->toggleViewActiveAction->setEnabled(true);
+	
+	this->statusBar()->showMessage("Finished calculating configuration space.", 1000);
 }
 
 void
@@ -465,22 +592,25 @@ MainWindow::getGoalConfiguration()
 	*this->q = *this->goal;
 	this->configurationModel->invalidate();
 	this->viewer->drawConfiguration(*this->q);
+	this->statusBar()->showMessage("Showing goal configuration.", 1000);
 }
 
 void
 MainWindow::getRandomConfiguration()
 {
-	this->sampler2->generate(*this->q);
+	*this->q = this->sampler2->generate();
 	this->configurationModel->invalidate();
 	this->viewer->drawConfiguration(*this->q);
+	this->statusBar()->showMessage("Showing random configuration.", 1000);
 }
 
 void
 MainWindow::getRandomFreeConfiguration()
 {
-	this->sampler2->generateCollisionFree(*this->q);
+	*this->q = this->sampler2->generateCollisionFree();
 	this->configurationModel->invalidate();
 	this->viewer->drawConfiguration(*this->q);
+	this->statusBar()->showMessage("Showing random collision-free configuration.", 1000);
 }
 
 void
@@ -489,11 +619,14 @@ MainWindow::getStartConfiguration()
 	*this->q = *this->start;
 	this->configurationModel->invalidate();
 	this->viewer->drawConfiguration(*this->q);
+	this->statusBar()->showMessage("Showing start configuration.", 1000);
 }
 
 void
 MainWindow::init()
 {
+	this->statusBar();
+	
 	QMenu* fileMenu = this->menuBar()->addMenu("File");
 	
 	this->openAction->setText("Open...");
@@ -504,11 +637,17 @@ MainWindow::init()
 	
 	fileMenu->addSeparator();
 	
-	this->saveImageAction->setText("Save as PNG");
-	this->saveImageAction->setShortcut(QKeySequence("Return"));
-	QObject::connect(this->saveImageAction, SIGNAL(triggered()), this, SLOT(saveImage()));
-	this->addAction(this->saveImageAction);
-	fileMenu->addAction(this->saveImageAction);
+	this->saveImageWithoutAlphaAction->setText("Save as PNG w/o Alpha");
+	this->saveImageWithoutAlphaAction->setShortcut(QKeySequence("Return"));
+	QObject::connect(this->saveImageWithoutAlphaAction, SIGNAL(triggered()), this, SLOT(saveImageWithoutAlpha()));
+	this->addAction(this->saveImageWithoutAlphaAction);
+	fileMenu->addAction(this->saveImageWithoutAlphaAction);
+	
+	this->saveImageWithAlphaAction->setText("Save as PNG w/ Alpha");
+	this->saveImageWithAlphaAction->setShortcut(QKeySequence("Shift+Return"));
+	QObject::connect(this->saveImageWithAlphaAction, SIGNAL(triggered()), this, SLOT(saveImageWithAlpha()));
+	this->addAction(this->saveImageWithAlphaAction);
+	fileMenu->addAction(this->saveImageWithAlphaAction);
 	
 	this->saveSceneAction->setText("Save as VRML");
 	this->saveSceneAction->setShortcut(QKeySequence("Ctrl+Return"));
@@ -531,7 +670,7 @@ MainWindow::init()
 	
 	QMenu* configurationMenu = this->menuBar()->addMenu("Configuration");
 	
-	this->toggleConfigurationAction->setText("Show/Hide");
+	this->toggleConfigurationAction->setText("Parameters");
 	this->toggleConfigurationAction->setShortcut(QKeySequence("F5"));
 	QObject::connect(this->toggleConfigurationAction, SIGNAL(triggered()), this, SLOT(toggleConfiguration()));
 	this->addAction(this->toggleConfigurationAction);
@@ -551,25 +690,40 @@ MainWindow::init()
 	this->addAction(this->getRandomFreeConfigurationAction);
 	configurationMenu->addAction(this->getRandomFreeConfigurationAction);
 	
-	QMenu* cSpaceMenu = this->menuBar()->addMenu("C-Space");
+	QMenu* configurationSpaceMenu = this->menuBar()->addMenu("Configuration Space");
 	
-	this->toggleConfigurationSpaceAction->setText("Show/Hide");
+	this->toggleConfigurationSpaceAction->setText("Parameters");
 	this->toggleConfigurationSpaceAction->setShortcut(QKeySequence("F6"));
 	QObject::connect(this->toggleConfigurationSpaceAction, SIGNAL(triggered()), this, SLOT(toggleConfigurationSpace()));
 	this->addAction(this->toggleConfigurationSpaceAction);
-	cSpaceMenu->addAction(this->toggleConfigurationSpaceAction);
+	configurationSpaceMenu->addAction(this->toggleConfigurationSpaceAction);
 	
-	cSpaceMenu->addSeparator();
+	this->toggleConfigurationSpaceSceneAction->setText("Visualization");
+	this->toggleConfigurationSpaceSceneAction->setShortcut(QKeySequence("F10"));
+	QObject::connect(this->toggleConfigurationSpaceSceneAction, SIGNAL(triggered()), this, SLOT(toggleConfigurationSpaceScene()));
+	this->addAction(this->toggleConfigurationSpaceSceneAction);
+	configurationSpaceMenu->addAction(this->toggleConfigurationSpaceSceneAction);
+	
+	configurationSpaceMenu->addSeparator();
+	
+	this->toggleConfigurationSpaceActiveAction->setCheckable(true);
+	this->toggleConfigurationSpaceActiveAction->setChecked(false);
+	this->toggleConfigurationSpaceActiveAction->setText("Active");
+	QObject::connect(this->toggleConfigurationSpaceActiveAction, SIGNAL(toggled(bool)), this, SLOT(toggleConfigurationSpaceActive(bool)));
+	this->addAction(this->toggleConfigurationSpaceActiveAction);
+	configurationSpaceMenu->addAction(this->toggleConfigurationSpaceActiveAction);
+	
+	configurationSpaceMenu->addSeparator();
 	
 	this->evalAction->setText("Evaluate");
 	this->evalAction->setShortcut(QKeySequence("F11"));
 	QObject::connect(this->evalAction, SIGNAL(triggered()), this, SLOT(eval()));
 	this->addAction(this->evalAction);
-	cSpaceMenu->addAction(this->evalAction);
+	configurationSpaceMenu->addAction(this->evalAction);
 	
 	QMenu* plannerMenu = this->menuBar()->addMenu("Planner");
 	
-	this->togglePlannerAction->setText("Show/Hide");
+	this->togglePlannerAction->setText("Parameters");
 	this->togglePlannerAction->setShortcut(QKeySequence("F7"));
 	QObject::connect(this->togglePlannerAction, SIGNAL(triggered()), this, SLOT(togglePlanner()));
 	this->addAction(this->togglePlannerAction);
@@ -619,12 +773,36 @@ MainWindow::init()
 	
 	QMenu* viewMenu = this->menuBar()->addMenu("View");
 	
-	this->toggleViewAction->setCheckable(true);
-	this->toggleViewAction->setChecked(true);
-	this->toggleViewAction->setText("Active");
-	QObject::connect(this->toggleViewAction, SIGNAL(toggled(bool)), this, SLOT(toggleView(bool)));
-	this->addAction(this->toggleViewAction);
-	viewMenu->addAction(this->toggleViewAction);
+	this->toggleViewActiveAction->setCheckable(true);
+	this->toggleViewActiveAction->setChecked(true);
+	this->toggleViewActiveAction->setText("Active");
+	QObject::connect(this->toggleViewActiveAction, SIGNAL(toggled(bool)), this, SLOT(toggleViewActive(bool)));
+	this->addAction(this->toggleViewActiveAction);
+	viewMenu->addAction(this->toggleViewActiveAction);
+	
+	viewMenu->addSeparator();
+	
+	this->togglePathAction->setCheckable(true);
+	this->togglePathAction->setChecked(true);
+	this->togglePathAction->setText("Path");
+	QObject::connect(this->togglePathAction, SIGNAL(toggled(bool)), this->viewer, SLOT(togglePath(bool)));
+	this->addAction(this->togglePathAction);
+	viewMenu->addAction(this->togglePathAction);
+	
+	this->toggleAnimationAction->setCheckable(true);
+	this->toggleAnimationAction->setChecked(true);
+	this->toggleAnimationAction->setText("Animation");
+	QObject::connect(this->toggleAnimationAction, SIGNAL(toggled(bool)), this, SLOT(toggleAnimation(bool)));
+	this->addAction(this->toggleAnimationAction);
+	viewMenu->addAction(this->toggleAnimationAction);
+	
+	this->toggleSweptVolumeAction->setCheckable(true);
+	this->toggleSweptVolumeAction->setChecked(false);
+	this->toggleSweptVolumeAction->setText("Swept Volume");
+	QObject::connect(this->toggleSweptVolumeAction, SIGNAL(toggled(bool)), this, SLOT(toggleSweptVolume(bool)));
+	QObject::connect(this->toggleSweptVolumeAction, SIGNAL(toggled(bool)), this->viewer, SLOT(toggleSweptVolume(bool)));
+	this->addAction(this->toggleSweptVolumeAction);
+	viewMenu->addAction(this->toggleSweptVolumeAction);
 	
 	viewMenu->addSeparator();
 	
@@ -686,7 +864,7 @@ MainWindow::init()
 MainWindow*
 MainWindow::instance()
 {
-	if (NULL == MainWindow::singleton)
+	if (nullptr == MainWindow::singleton)
 	{
 		new MainWindow();
 	}
@@ -697,112 +875,141 @@ MainWindow::instance()
 void
 MainWindow::load(const QString& filename)
 {
+	this->statusBar()->showMessage("Loading '" + filename + "'...");
+	
 	QMutexLocker lock(&this->mutex);
 	
 	this->clear();
 	
 	rl::xml::DomParser parser;
 	
-	rl::xml::Document doc = parser.readFile(filename.toStdString(), "", XML_PARSE_NOENT | XML_PARSE_XINCLUDE);
+	rl::xml::Document document = parser.readFile(filename.toStdString(), "", XML_PARSE_NOENT | XML_PARSE_XINCLUDE);
+	document.substitute(XML_PARSE_NOENT | XML_PARSE_XINCLUDE);
+	
+	if ("stylesheet" == document.getRootElement().getName() || "transform" == document.getRootElement().getName())
+	{
+		if ("1.0" == document.getRootElement().getProperty("version"))
+		{
+			if (document.getRootElement().hasNamespace() && "http://www.w3.org/1999/XSL/Transform" == document.getRootElement().getNamespace().getHref())
+			{
+				rl::xml::Stylesheet stylesheet(document);
+				document = stylesheet.apply();
+			}
+		}
+	}
 	
 	this->filename = filename;
-	this->setWindowTitle(filename + " - " + this->engine + " - rlPlanDemo");
+	this->setWindowTitle(filename + " - " + this->engine.toUpper() + " - rlPlanDemo");
 	
-	doc.substitute(XML_PARSE_NOENT | XML_PARSE_XINCLUDE);
+	rl::xml::Path path(document);
 	
-	rl::xml::Path path(doc);
-	
-#ifdef RL_SG_HAVE_BULLET
+#ifdef RL_SG_BULLET
 	if ("bullet" == this->engine)
 	{
-		this->scene = boost::make_shared< rl::sg::bullet::Scene >();
+		this->scene = std::make_shared<rl::sg::bullet::Scene>();
 	}
-#endif // RL_SG_HAVE_BULLET
-#ifdef RL_SG_HAVE_ODE
+#endif // RL_SG_BULLET
+#ifdef RL_SG_FCL
+	if ("fcl" == this->engine)
+	{
+		this->scene = std::make_shared<rl::sg::fcl::Scene>();
+	}
+#endif // RL_SG_FCL
+#ifdef RL_SG_ODE
 	if ("ode" == this->engine)
 	{
-		this->scene = boost::make_shared< rl::sg::ode::Scene >();
+		this->scene = std::make_shared<rl::sg::ode::Scene>();
 	}
-#endif // RL_SG_HAVE_ODE
-#ifdef RL_SG_HAVE_PQP
+#endif // RL_SG_ODE
+#ifdef RL_SG_PQP
 	if ("pqp" == this->engine)
 	{
-		this->scene = boost::make_shared< rl::sg::pqp::Scene >();
+		this->scene = std::make_shared<rl::sg::pqp::Scene>();
 	}
-#endif // RL_SG_HAVE_PQP
-#ifdef RL_SG_HAVE_SOLID
+#endif // RL_SG_PQP
+#ifdef RL_SG_SOLID
 	if ("solid" == this->engine)
 	{
-		this->scene = boost::make_shared< rl::sg::solid::Scene >();
+		this->scene = std::make_shared<rl::sg::solid::Scene>();
 	}
-#endif // RL_SG_HAVE_SOLID
+#endif // RL_SG_SOLID
 	
-	rl::xml::Object modelScene = path.eval("//model/scene");
-	this->scene->load(modelScene.getNodeTab(0).getUri(modelScene.getNodeTab(0).getAttribute("href").getValue()));
+	rl::xml::NodeSet modelScene = path.eval("(/rl/plan|/rlplan)//model/scene").getValue<rl::xml::NodeSet>();
+	this->scene->load(modelScene[0].getUri(modelScene[0].getProperty("href")));
 	this->sceneModel = this->scene->getModel(
-		static_cast< int >(path.eval("number(//model/model)").getFloatval())
+		path.eval("number((/rl/plan|/rlplan)//model/model)").getValue<std::size_t>()
 	);
 	
-	if (path.eval("count(//model/kinematics) > 0").getBoolval())
+	if ("mdl" == path.eval("string((/rl/plan|/rlplan)//model/kinematics/@type)").getValue<std::string>())
 	{
-		rl::xml::Object kin = path.eval("//model/kinematics");
-		this->kin.reset(rl::kin::Kinematics::create(
-			kin.getNodeTab(0).getUri(kin.getNodeTab(0).getAttribute("href").getValue())
-		));
-		
-		if (path.eval("count(//model/kinematics/world) > 0").getBoolval())
-		{
-			this->kin->world() = ::rl::math::AngleAxis(
-				path.eval("number(//model/kinematics/world/rotation/z)").getFloatval(0) * rl::math::DEG2RAD,
-				::rl::math::Vector3::UnitZ()
-			) * ::rl::math::AngleAxis(
-				path.eval("number(//model/kinematics/world/rotation/y)").getFloatval(0) * rl::math::DEG2RAD,
-				::rl::math::Vector3::UnitY()
-			) * ::rl::math::AngleAxis(
-				path.eval("number(//model/kinematics/world/rotation/x)").getFloatval(0) * rl::math::DEG2RAD,
-				::rl::math::Vector3::UnitX()
-			);
-			
-			this->kin->world().translation().x() = path.eval("number(//model/kinematics/world/translation/x)").getFloatval(0);
-			this->kin->world().translation().y() = path.eval("number(//model/kinematics/world/translation/y)").getFloatval(0);
-			this->kin->world().translation().z() = path.eval("number(//model/kinematics/world/translation/z)").getFloatval(0);
-		}
-	}
-	
-	if (path.eval("count(//model/mdl) > 0").getBoolval())
-	{
-		rl::xml::Object mdl = path.eval("//model/mdl");
+		rl::xml::NodeSet mdl = path.eval("(/rl/plan|/rlplan)//model/kinematics").getValue<rl::xml::NodeSet>();
 		rl::mdl::XmlFactory factory;
-		this->mdl.reset(dynamic_cast< rl::mdl::Dynamic* >(factory.create(
-			mdl.getNodeTab(0).getUri(mdl.getNodeTab(0).getAttribute("href").getValue())
+		this->mdl.reset(dynamic_cast<rl::mdl::Dynamic*>(factory.create(
+			mdl[0].getUri(mdl[0].getProperty("href"))
 		)));
 		
-		if (path.eval("count(//model/mdl/world) > 0").getBoolval())
+		if (path.eval("count((/rl/plan|/rlplan)//model/kinematics/world) > 0").getValue<bool>())
 		{
-			this->mdl->world() = ::rl::math::AngleAxis(
-				path.eval("number(//model/mdl/world/rotation/z)").getFloatval(0) * rl::math::DEG2RAD,
-				::rl::math::Vector3::UnitZ()
-			) * ::rl::math::AngleAxis(
-				path.eval("number(//model/mdl/world/rotation/y)").getFloatval(0) * rl::math::DEG2RAD,
-				::rl::math::Vector3::UnitY()
-			) * ::rl::math::AngleAxis(
-				path.eval("number(//model/mdl/world/rotation/x)").getFloatval(0) * rl::math::DEG2RAD,
-				::rl::math::Vector3::UnitX()
+			this->mdl->world() = rl::math::AngleAxis(
+				path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/rotation/z)").getValue<rl::math::Real>(0) * rl::math::DEG2RAD,
+				rl::math::Vector3::UnitZ()
+			) * rl::math::AngleAxis(
+				path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/rotation/y)").getValue<rl::math::Real>(0) * rl::math::DEG2RAD,
+				rl::math::Vector3::UnitY()
+			) * rl::math::AngleAxis(
+				path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/rotation/x)").getValue<rl::math::Real>(0) * rl::math::DEG2RAD,
+				rl::math::Vector3::UnitX()
 			);
 			
-			this->mdl->world().translation().x() = path.eval("number(//model/mdl/world/translation/x)").getFloatval(0);
-			this->mdl->world().translation().y() = path.eval("number(//model/mdl/world/translation/y)").getFloatval(0);
-			this->mdl->world().translation().z() = path.eval("number(//model/mdl/world/translation/z)").getFloatval(0);
+			this->mdl->world().translation().x() = path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/translation/x)").getValue<rl::math::Real>(0);
+			this->mdl->world().translation().y() = path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/translation/y)").getValue<rl::math::Real>(0);
+			this->mdl->world().translation().z() = path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/translation/z)").getValue<rl::math::Real>(0);
+		}
+	}
+	else
+	{
+		rl::xml::NodeSet kin = path.eval("(/rl/plan|/rlplan)//model/kinematics").getValue<rl::xml::NodeSet>();
+		this->kin.reset(rl::kin::Kinematics::create(
+			kin[0].getUri(kin[0].getProperty("href"))
+		));
+		
+		if (path.eval("count((/rl/plan|/rlplan)//model/kinematics/world) > 0").getValue<bool>())
+		{
+			this->kin->world() = rl::math::AngleAxis(
+				path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/rotation/z)").getValue<rl::math::Real>(0) * rl::math::DEG2RAD,
+				rl::math::Vector3::UnitZ()
+			) * rl::math::AngleAxis(
+				path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/rotation/y)").getValue<rl::math::Real>(0) * rl::math::DEG2RAD,
+				rl::math::Vector3::UnitY()
+			) * rl::math::AngleAxis(
+				path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/rotation/x)").getValue<rl::math::Real>(0) * rl::math::DEG2RAD,
+				rl::math::Vector3::UnitX()
+			);
+			
+			this->kin->world().translation().x() = path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/translation/x)").getValue<rl::math::Real>(0);
+			this->kin->world().translation().y() = path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/translation/y)").getValue<rl::math::Real>(0);
+			this->kin->world().translation().z() = path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/translation/z)").getValue<rl::math::Real>(0);
 		}
 	}
 	
-	this->model = boost::make_shared< rl::plan::DistanceModel >();
+	if (rl::sg::DistanceScene* scene = dynamic_cast<rl::sg::DistanceScene*>(this->scene.get()))
+	{
+		this->model = std::make_shared<rl::plan::DistanceModel>();
+	}
+	else if (rl::sg::SimpleScene* scene = dynamic_cast<rl::sg::SimpleScene*>(this->scene.get()))
+	{
+		this->model = std::make_shared<rl::plan::SimpleModel>();
+	}
+	else
+	{
+		throw std::runtime_error("selected engine does not support collision queries");
+	}
 	
-	if (NULL != this->kin)
+	if (nullptr != this->kin)
 	{
 		this->model->kin = this->kin.get();
 	}
-	else if (NULL != this->mdl)
+	else if (nullptr != this->mdl)
 	{
 		this->model->mdl = this->mdl.get();
 	}
@@ -810,81 +1017,80 @@ MainWindow::load(const QString& filename)
 	this->model->model = this->sceneModel;
 	this->model->scene = this->scene.get();
 	
-	this->q = boost::make_shared< rl::math::Vector >(this->model->getDof());
+	this->q = std::make_shared<rl::math::Vector>(this->model->getDofPosition());
 	
-	if (NULL != this->scene2)
+	if (nullptr != this->scene2)
 	{
 		this->viewer->sceneGroup->removeChild(this->scene2->root);
 	}
 	
-	this->scene2 = boost::make_shared< rl::sg::so::Scene >();
+	this->scene2 = std::make_shared<rl::sg::so::Scene>();
 	
-	rl::xml::Object viewerScene = path.eval("//viewer/model/scene");
-	this->scene2->load(viewerScene.getNodeTab(0).getUri(viewerScene.getNodeTab(0).getAttribute("href").getValue()));
-	this->sceneModel2 = static_cast< rl::sg::so::Model* >(this->scene2->getModel(
-		static_cast< int >(path.eval("number(//viewer/model/model)").getFloatval())
+	rl::xml::NodeSet viewerScene = path.eval("(/rl/plan|/rlplan)//viewer/model/scene").getValue<rl::xml::NodeSet>();
+	this->scene2->load(viewerScene[0].getUri(viewerScene[0].getProperty("href")));
+	this->sceneModel2 = static_cast<rl::sg::so::Model*>(this->scene2->getModel(
+		path.eval("number((/rl/plan|/rlplan)//viewer/model/model)").getValue<std::size_t>()
 	));
 	
-	if (path.eval("count(//viewer/model/kinematics) > 0").getBoolval())
+	if ("mdl" == path.eval("string((/rl/plan|/rlplan)//viewer/model/kinematics/@type)").getValue<std::string>())
 	{
-		rl::xml::Object kin2 = path.eval("//viewer/model/kinematics");
-		this->kin2.reset(rl::kin::Kinematics::create(
-			kin2.getNodeTab(0).getUri(kin2.getNodeTab(0).getAttribute("href").getValue())
-		));
-		
-		if (path.eval("count(//viewer/model/kinematics/world) > 0").getBoolval())
-		{
-			this->kin2->world() = ::rl::math::AngleAxis(
-				path.eval("number(//viewer/model/kinematics/world/rotation/z)").getFloatval(0) * rl::math::DEG2RAD,
-				::rl::math::Vector3::UnitZ()
-			) * ::rl::math::AngleAxis(
-				path.eval("number(//viewer/model/kinematics/world/rotation/y)").getFloatval(0) * rl::math::DEG2RAD,
-				::rl::math::Vector3::UnitY()
-			) * ::rl::math::AngleAxis(
-				path.eval("number(//viewer/model/kinematics/world/rotation/x)").getFloatval(0) * rl::math::DEG2RAD,
-				::rl::math::Vector3::UnitX()
-			);
-			
-			this->kin2->world().translation().x() = path.eval("number(//viewer/model/kinematics/world/translation/x)").getFloatval(0);
-			this->kin2->world().translation().y() = path.eval("number(//viewer/model/kinematics/world/translation/y)").getFloatval(0);
-			this->kin2->world().translation().z() = path.eval("number(//viewer/model/kinematics/world/translation/z)").getFloatval(0);
-		}
-	}
-	
-	if (path.eval("count(//viewer/model/mdl) > 0").getBoolval())
-	{
-		rl::xml::Object mdl2 = path.eval("//viewer/model/mdl");
+		rl::xml::NodeSet mdl2 = path.eval("(/rl/plan|/rlplan)//viewer/model/kinematics").getValue<rl::xml::NodeSet>();
 		rl::mdl::XmlFactory factory;
-		this->mdl2.reset(dynamic_cast< rl::mdl::Dynamic* >(factory.create(
-			mdl2.getNodeTab(0).getUri(mdl2.getNodeTab(0).getAttribute("href").getValue())
+		this->mdl2.reset(dynamic_cast<rl::mdl::Dynamic*>(factory.create(
+			mdl2[0].getUri(mdl2[0].getProperty("href"))
 		)));
 		
-		if (path.eval("count(//viewer/model/mdl/world) > 0").getBoolval())
+		if (path.eval("count((/rl/plan|/rlplan)//viewer/model/kinematics/world) > 0").getValue<bool>())
 		{
-			this->mdl2->world() = ::rl::math::AngleAxis(
-				path.eval("number(//viewer/model/mdl/world/rotation/z)").getFloatval(0) * rl::math::DEG2RAD,
-				::rl::math::Vector3::UnitZ()
-			) * ::rl::math::AngleAxis(
-				path.eval("number(//viewer/model/mdl/world/rotation/y)").getFloatval(0) * rl::math::DEG2RAD,
-				::rl::math::Vector3::UnitY()
-			) * ::rl::math::AngleAxis(
-				path.eval("number(//viewer/model/mdl/world/rotation/x)").getFloatval(0) * rl::math::DEG2RAD,
-				::rl::math::Vector3::UnitX()
+			this->mdl2->world() = rl::math::AngleAxis(
+				path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/rotation/z)").getValue<rl::math::Real>(0) * rl::math::DEG2RAD,
+				rl::math::Vector3::UnitZ()
+			) * rl::math::AngleAxis(
+				path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/rotation/y)").getValue<rl::math::Real>(0) * rl::math::DEG2RAD,
+				rl::math::Vector3::UnitY()
+			) * rl::math::AngleAxis(
+				path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/rotation/x)").getValue<rl::math::Real>(0) * rl::math::DEG2RAD,
+				rl::math::Vector3::UnitX()
 			);
 			
-			this->mdl2->world().translation().x() = path.eval("number(//viewer/model/mdl/world/translation/x)").getFloatval(0);
-			this->mdl2->world().translation().y() = path.eval("number(//viewer/model/mdl/world/translation/y)").getFloatval(0);
-			this->mdl2->world().translation().z() = path.eval("number(//viewer/model/mdl/world/translation/z)").getFloatval(0);
+			this->mdl2->world().translation().x() = path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/translation/x)").getValue<rl::math::Real>(0);
+			this->mdl2->world().translation().y() = path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/translation/y)").getValue<rl::math::Real>(0);
+			this->mdl2->world().translation().z() = path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/translation/z)").getValue<rl::math::Real>(0);
+		}
+	}
+	else
+	{
+		rl::xml::NodeSet kin2 = path.eval("(/rl/plan|/rlplan)//viewer/model/kinematics").getValue<rl::xml::NodeSet>();
+		this->kin2.reset(rl::kin::Kinematics::create(
+			kin2[0].getUri(kin2[0].getProperty("href"))
+		));
+		
+		if (path.eval("count((/rl/plan|/rlplan)//viewer/model/kinematics/world) > 0").getValue<bool>())
+		{
+			this->kin2->world() = rl::math::AngleAxis(
+				path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/rotation/z)").getValue<rl::math::Real>(0) * rl::math::DEG2RAD,
+				rl::math::Vector3::UnitZ()
+			) * rl::math::AngleAxis(
+				path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/rotation/y)").getValue<rl::math::Real>(0) * rl::math::DEG2RAD,
+				rl::math::Vector3::UnitY()
+			) * rl::math::AngleAxis(
+				path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/rotation/x)").getValue<rl::math::Real>(0) * rl::math::DEG2RAD,
+				rl::math::Vector3::UnitX()
+			);
+			
+			this->kin2->world().translation().x() = path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/translation/x)").getValue<rl::math::Real>(0);
+			this->kin2->world().translation().y() = path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/translation/y)").getValue<rl::math::Real>(0);
+			this->kin2->world().translation().z() = path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/translation/z)").getValue<rl::math::Real>(0);
 		}
 	}
 	
-	this->model2 = boost::make_shared< rl::plan::Model >();
+	this->model2 = std::make_shared<rl::plan::Model>();
 	
-	if (NULL != this->kin2)
+	if (nullptr != this->kin2)
 	{
 		this->model2->kin = this->kin2.get();
 	}
-	else if (NULL != this->mdl2)
+	else if (nullptr != this->mdl2)
 	{
 		this->model2->mdl = this->mdl2.get();
 	}
@@ -892,584 +1098,748 @@ MainWindow::load(const QString& filename)
 	this->model2->model = this->sceneModel2;
 	this->model2->scene = this->scene2.get();
 	
-	rl::xml::Object start = path.eval("//start//q");
-	this->start = boost::make_shared< rl::math::Vector >(start.getNodeNr());
+	rl::xml::NodeSet start = path.eval("(/rl/plan|/rlplan)//start/q").getValue<rl::xml::NodeSet>();
+	this->start = std::make_shared<rl::math::Vector>(start.size());
 	
-	for (int i = 0; i < start.getNodeNr(); ++i)
+	for (int i = 0; i < start.size(); ++i)
 	{
-		(*this->start)(i) = std::atof(start.getNodeTab(i).getContent().c_str());
+		(*this->start)(i) = std::atof(start[i].getContent().c_str());
 		
-		if (start.getNodeTab(i).hasAttribute("unit"))
+		if ("deg" == start[i].getProperty("unit"))
 		{
-			if ("deg" == start.getNodeTab(i).getAttribute("unit").getValue())
-			{
-				(*this->start)(i) *= rl::math::DEG2RAD;
-			}
+			(*this->start)(i) *= rl::math::DEG2RAD;
 		}
 	}
 	
 	*this->q = *this->start;
 	
-	rl::xml::Object goal = path.eval("//goal//q");
-	this->goal = boost::make_shared< rl::math::Vector >(goal.getNodeNr());
+	rl::xml::NodeSet goal = path.eval("(/rl/plan|/rlplan)//goal/q").getValue<rl::xml::NodeSet>();
+	this->goal = std::make_shared<rl::math::Vector>(goal.size());
 	
-	for (int i = 0; i < goal.getNodeNr(); ++i)
+	for (int i = 0; i < goal.size(); ++i)
 	{
-		(*this->goal)(i) = std::atof(goal.getNodeTab(i).getContent().c_str());
+		(*this->goal)(i) = std::atof(goal[i].getContent().c_str());
 		
-		if (goal.getNodeTab(i).hasAttribute("unit"))
+		if ("deg" == goal[i].getProperty("unit"))
 		{
-			if ("deg" == goal.getNodeTab(i).getAttribute("unit").getValue())
-			{
-				(*this->goal)(i) *= rl::math::DEG2RAD;
-			}
+			(*this->goal)(i) *= rl::math::DEG2RAD;
 		}
 	}
 	
-	rl::xml::Object sigma = path.eval("//sigma//q");
-	this->sigma = boost::make_shared< rl::math::Vector >(sigma.getNodeNr());
-	
-	for (int i = 0; i < sigma.getNodeNr(); ++i)
+	if (path.eval("count((/rl/plan|/rlplan)//sigma) > 0").getValue<bool>())
 	{
-		(*this->sigma)(i) = std::atof(sigma.getNodeTab(i).getContent().c_str());
+		rl::xml::NodeSet sigma = path.eval("(/rl/plan|/rlplan)//sigma/q").getValue<rl::xml::NodeSet>();
+		this->sigma = std::make_shared<rl::math::Vector>(sigma.size());
 		
-		if (sigma.getNodeTab(i).hasAttribute("unit"))
+		for (int i = 0; i < sigma.size(); ++i)
 		{
-			if ("deg" == sigma.getNodeTab(i).getAttribute("unit").getValue())
+			(*this->sigma)(i) = std::atof(sigma[i].getContent().c_str());
+			
+			if ("deg" == sigma[i].getProperty("unit"))
 			{
 				(*this->sigma)(i) *= rl::math::DEG2RAD;
 			}
 		}
 	}
 	
-	if (path.eval("count(//uniformSampler) > 0").getBoolval())
+	if (path.eval("count((/rl/plan|/rlplan)//uniformSampler) > 0").getValue<bool>())
 	{
-		this->sampler = boost::make_shared< rl::plan::UniformSampler >();
-		rl::plan::UniformSampler* uniformSampler = static_cast< rl::plan::UniformSampler* >(this->sampler.get());
+		this->sampler = std::make_shared<rl::plan::UniformSampler>();
+		rl::plan::UniformSampler* uniformSampler = static_cast<rl::plan::UniformSampler*>(this->sampler.get());
 		
-		if (path.eval("count(//uniformSampler/seed) > 0").getBoolval())
+		if (path.eval("count((/rl/plan|/rlplan)//uniformSampler/seed) > 0").getValue<bool>())
 		{
 			uniformSampler->seed(
-				static_cast< boost::mt19937::result_type >(path.eval("number(//uniformSampler/seed)").getFloatval(rl::util::Timer::now() * 1000000.0f))
+				path.eval("number((/rl/plan|/rlplan)//uniformSampler/seed)").getValue<std::mt19937::result_type>(std::random_device()())
 			);
 		}
+		else if (this->seed)
+		{
+			uniformSampler->seed(*this->seed);
+		}
 	}
-	else if (path.eval("count(//gaussianSampler) > 0").getBoolval())
+	else if (path.eval("count((/rl/plan|/rlplan)//gaussianSampler) > 0").getValue<bool>())
 	{
-		this->sampler = boost::make_shared< rl::plan::GaussianSampler >();
-		rl::plan::GaussianSampler* gaussianSampler = static_cast< rl::plan::GaussianSampler* >(this->sampler.get());
+		this->sampler = std::make_shared<rl::plan::GaussianSampler>();
+		rl::plan::GaussianSampler* gaussianSampler = static_cast<rl::plan::GaussianSampler*>(this->sampler.get());
 		
-		if (path.eval("count(//gaussianSampler/seed) > 0").getBoolval())
+		if (path.eval("count((/rl/plan|/rlplan)//gaussianSampler/seed) > 0").getValue<bool>())
 		{
 			gaussianSampler->seed(
-				static_cast< boost::mt19937::result_type >(path.eval("number(//gaussianSampler/seed)").getFloatval(rl::util::Timer::now() * 1000000.0f))
+				path.eval("number((/rl/plan|/rlplan)//gaussianSampler/seed)").getValue<std::mt19937::result_type>(std::random_device()())
 			);
+		}
+		else if (this->seed)
+		{
+			gaussianSampler->seed(*this->seed);
 		}
 		
 		gaussianSampler->sigma = this->sigma.get();
 	}
-	else if (path.eval("count(//bridgeSampler) > 0").getBoolval())
+	else if (path.eval("count((/rl/plan|/rlplan)//bridgeSampler) > 0").getValue<bool>())
 	{
-		this->sampler = boost::make_shared< rl::plan::BridgeSampler >();
-		rl::plan::BridgeSampler* bridgeSampler = static_cast< rl::plan::BridgeSampler* >(this->sampler.get());
-		bridgeSampler->ratio = path.eval("number(//bridgeSampler/ratio)").getFloatval(5.0f / 6.0f);
+		this->sampler = std::make_shared<rl::plan::BridgeSampler>();
+		rl::plan::BridgeSampler* bridgeSampler = static_cast<rl::plan::BridgeSampler*>(this->sampler.get());
+		bridgeSampler->ratio = path.eval("number((/rl/plan|/rlplan)//bridgeSampler/ratio)").getValue<rl::math::Real>(5.0f / 6.0f);
 		
-		if (path.eval("count(//bridgeSampler/seed) > 0").getBoolval())
+		if (path.eval("count((/rl/plan|/rlplan)//bridgeSampler/seed) > 0").getValue<bool>())
 		{
 			bridgeSampler->seed(
-				static_cast< boost::mt19937::result_type >(path.eval("number(//bridgeSampler/seed)").getFloatval(rl::util::Timer::now() * 1000000.0f))
+				path.eval("number((/rl/plan|/rlplan)//bridgeSampler/seed)").getValue<std::mt19937::result_type>(std::random_device()())
 			);
+		}
+		else if (this->seed)
+		{
+			bridgeSampler->seed(*this->seed);
 		}
 		
 		bridgeSampler->sigma = this->sigma.get();
 	}
 	
-	if (NULL != this->sampler)
+	if (nullptr != this->sampler)
 	{
 		this->sampler->model = this->model.get();
 	}
 	
-	this->sampler2 = boost::make_shared< rl::plan::UniformSampler >();
+	this->sampler2 = std::make_shared<rl::plan::UniformSampler>();
 	this->sampler2->model = this->model.get();
 	
-	if (path.eval("count(//recursiveVerifier) > 0").getBoolval())
+	if (path.eval("count((/rl/plan|/rlplan)//recursiveVerifier) > 0").getValue<bool>())
 	{
-		this->verifier = boost::make_shared< rl::plan::RecursiveVerifier >();
-		this->verifier->delta = path.eval("number(//recursiveVerifier/delta)").getFloatval(1.0f);
+		this->verifier = std::make_shared<rl::plan::RecursiveVerifier>();
+		this->verifier->delta = path.eval("number((/rl/plan|/rlplan)//recursiveVerifier/delta)").getValue<rl::math::Real>(1);
 		
-		if ("deg" == path.eval("string(//recursiveVerifier/delta/@unit)").getStringval())
+		if ("deg" == path.eval("string((/rl/plan|/rlplan)//recursiveVerifier/delta/@unit)").getValue<std::string>())
 		{
 			this->verifier->delta *= rl::math::DEG2RAD;
 		}
 	}
-	else if (path.eval("count(//sequentialVerifier) > 0").getBoolval())
+	else if (path.eval("count((/rl/plan|/rlplan)//sequentialVerifier) > 0").getValue<bool>())
 	{
-		this->verifier = boost::make_shared< rl::plan::SequentialVerifier >();
-		this->verifier->delta = path.eval("number(//sequentialVerifier/delta)").getFloatval(1.0f);
+		this->verifier = std::make_shared<rl::plan::SequentialVerifier>();
+		this->verifier->delta = path.eval("number((/rl/plan|/rlplan)//sequentialVerifier/delta)").getValue<rl::math::Real>(1);
 		
-		if ("deg" == path.eval("string(//sequentialVerifier/delta/@unit)").getStringval())
+		if ("deg" == path.eval("string((/rl/plan|/rlplan)//sequentialVerifier/delta/@unit)").getValue<std::string>())
 		{
 			this->verifier->delta *= rl::math::DEG2RAD;
 		}
 	}
 	
-	if (NULL != this->verifier)
+	if (nullptr != this->verifier)
 	{
 		this->verifier->model = this->model.get();
 	}
 	
-	if (path.eval("count(//simpleOptimizer/recursiveVerifier) > 0").getBoolval())
+	if (path.eval("count((/rl/plan|/rlplan)//simpleOptimizer/recursiveVerifier) > 0").getValue<bool>())
 	{
-		this->verifier2 = boost::make_shared< rl::plan::RecursiveVerifier >();
-		this->verifier2->delta = path.eval("number(//simpleOptimizer/recursiveVerifier/delta)").getFloatval(1.0f);
+		this->verifier2 = std::make_shared<rl::plan::RecursiveVerifier>();
+		this->verifier2->delta = path.eval("number((/rl/plan|/rlplan)//simpleOptimizer/recursiveVerifier/delta)").getValue<rl::math::Real>(1);
 		
-		if ("deg" == path.eval("string(//simpleOptimizer/recursiveVerifier/delta/@unit)").getStringval())
+		if ("deg" == path.eval("string((/rl/plan|/rlplan)//simpleOptimizer/recursiveVerifier/delta/@unit)").getValue<std::string>())
 		{
 			this->verifier2->delta *= rl::math::DEG2RAD;
 		}
 	}
-	else if (path.eval("count(//advancedOptimizer/recursiveVerifier) > 0").getBoolval())
+	else if (path.eval("count((/rl/plan|/rlplan)//advancedOptimizer/recursiveVerifier) > 0").getValue<bool>())
 	{
-		this->verifier2 = boost::make_shared< rl::plan::RecursiveVerifier >();
-		this->verifier2->delta = path.eval("number(//advancedOptimizer/recursiveVerifier/delta)").getFloatval(1.0f);
+		this->verifier2 = std::make_shared<rl::plan::RecursiveVerifier>();
+		this->verifier2->delta = path.eval("number((/rl/plan|/rlplan)//advancedOptimizer/recursiveVerifier/delta)").getValue<rl::math::Real>(1);
 		
-		if ("deg" == path.eval("string(//advancedOptimizer/recursiveVerifier/delta/@unit)").getStringval())
+		if ("deg" == path.eval("string((/rl/plan|/rlplan)//advancedOptimizer/recursiveVerifier/delta/@unit)").getValue<std::string>())
 		{
 			this->verifier2->delta *= rl::math::DEG2RAD;
 		}
 	}
 	
-	if (NULL != this->verifier2)
+	if (nullptr != this->verifier2)
 	{
 		this->verifier2->model = this->model.get();
 	}
 	
 	this->optimizer.reset();
 	
-	if (path.eval("count(//simpleOptimizer) > 0").getBoolval())
+	if (path.eval("count((/rl/plan|/rlplan)//simpleOptimizer) > 0").getValue<bool>())
 	{
-		this->optimizer = boost::make_shared< rl::plan::SimpleOptimizer >();
+		this->optimizer = std::make_shared<rl::plan::SimpleOptimizer>();
 	}
-	else if (path.eval("count(//advancedOptimizer) > 0").getBoolval())
+	else if (path.eval("count((/rl/plan|/rlplan)//advancedOptimizer) > 0").getValue<bool>())
 	{
-		this->optimizer = boost::make_shared< rl::plan::AdvancedOptimizer >();
-		rl::plan::AdvancedOptimizer* advancedOptimizer = static_cast< rl::plan::AdvancedOptimizer* >(this->optimizer.get());
-		advancedOptimizer->length = path.eval("number(//advancedOptimizer/length)").getFloatval(1.0f);
+		this->optimizer = std::make_shared<rl::plan::AdvancedOptimizer>();
+		rl::plan::AdvancedOptimizer* advancedOptimizer = static_cast<rl::plan::AdvancedOptimizer*>(this->optimizer.get());
+		advancedOptimizer->length = path.eval("number((/rl/plan|/rlplan)//advancedOptimizer/length)").getValue<rl::math::Real>(1);
 		
-		if ("deg" == path.eval("string(//advancedOptimizer/length/@unit)").getStringval())
+		if ("deg" == path.eval("string((/rl/plan|/rlplan)//advancedOptimizer/length/@unit)").getValue<std::string>())
 		{
 			advancedOptimizer->length *= rl::math::DEG2RAD;
 		}
 		
-		advancedOptimizer->ratio = path.eval("number(//advancedOptimizer/ratio)").getFloatval(0.1f);
+		advancedOptimizer->ratio = path.eval("number((/rl/plan|/rlplan)//advancedOptimizer/ratio)").getValue<rl::math::Real>(0.1f);
 	}
 	
-	if (NULL != this->optimizer)
+	if (nullptr != this->optimizer)
 	{
 		this->optimizer->model = this->model.get();
 		this->optimizer->verifier = this->verifier2.get();
 	}
 	
-	rl::xml::Object planner = path.eval("//addRrtConCon|//eet|//prm|//prmUtilityGuided|//rrt|//rrtCon|//rrtConCon|//rrtConExt|//rrtDual|//rrtGoalBias|//rrtExtCon|//rrtExtExt");
+	rl::xml::NodeSet planners = path.eval("(/rl/plan|/rlplan)//addRrtConCon|(/rl/plan|/rlplan)//eet|(/rl/plan|/rlplan)//prm|(/rl/plan|/rlplan)//prmUtilityGuided|(/rl/plan|/rlplan)//rrt|(/rl/plan|/rlplan)//rrtCon|(/rl/plan|/rlplan)//rrtConCon|(/rl/plan|/rlplan)//rrtConExt|(/rl/plan|/rlplan)//rrtDual|(/rl/plan|/rlplan)//rrtGoalBias|(/rl/plan|/rlplan)//rrtExtCon|(/rl/plan|/rlplan)//rrtExtExt").getValue<rl::xml::NodeSet>();
 	
-	if ("addRrtConCon" == planner.getNodeTab(0).getName())
+	for (int i = 0; i < std::min(1, planners.size()); ++i)
 	{
-		this->planner = boost::make_shared< rl::plan::AddRrtConCon >();
-		rl::plan::AddRrtConCon* addRrtConCon = static_cast< rl::plan::AddRrtConCon* >(this->planner.get());
-		addRrtConCon->alpha = path.eval("number(alpha)", planner.getNodeTab(0)).getFloatval(0.05f);
-		addRrtConCon->delta = path.eval("number(delta)", planner.getNodeTab(0)).getFloatval(1.0f);
+		rl::xml::Path path(document, planners[i]);
 		
-		if ("deg" == path.eval("string(delta/@unit)", planner.getNodeTab(0)).getStringval())
+		if ("addRrtConCon" == planners[i].getName())
 		{
-			addRrtConCon->delta *= rl::math::DEG2RAD;
+			this->planner = std::make_shared<rl::plan::AddRrtConCon>();
+			rl::plan::AddRrtConCon* addRrtConCon = static_cast<rl::plan::AddRrtConCon*>(this->planner.get());
+			addRrtConCon->alpha = path.eval("number(alpha)").getValue<rl::math::Real>(0.05f);
+			addRrtConCon->delta = path.eval("number(delta)").getValue<rl::math::Real>(1);
+			
+			if ("deg" == path.eval("string(delta/@unit)").getValue<std::string>())
+			{
+				addRrtConCon->delta *= rl::math::DEG2RAD;
+			}
+			
+			addRrtConCon->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(1.0e-3f);
+			
+			if ("deg" == path.eval("string(epsilon/@unit)").getValue<std::string>())
+			{
+				addRrtConCon->epsilon *= rl::math::DEG2RAD;
+			}
+			
+			addRrtConCon->lower = path.eval("number(lower)").getValue<rl::math::Real>(2);
+			
+			if ("deg" == path.eval("string(lower/@unit)").getValue<std::string>())
+			{
+				addRrtConCon->lower *= rl::math::DEG2RAD;
+			}
+			
+			addRrtConCon->radius = path.eval("number(radius)").getValue<rl::math::Real>(20);
+			
+			if ("deg" == path.eval("string(radius/@unit)").getValue<std::string>())
+			{
+				addRrtConCon->radius *= rl::math::DEG2RAD;
+			}
+			
+			addRrtConCon->sampler = this->sampler.get();
 		}
-		
-		addRrtConCon->epsilon = path.eval("number(epsilon)", planner.getNodeTab(0)).getFloatval(1.0e-3f);
-		
-		if ("deg" == path.eval("string(epsilon/@unit)", planner.getNodeTab(0)).getStringval())
+		else if ("eet" == planners[i].getName())
 		{
-			addRrtConCon->epsilon *= rl::math::DEG2RAD;
+			this->planner = std::make_shared<rl::plan::Eet>();
+			rl::plan::Eet* eet = static_cast<rl::plan::Eet*>(this->planner.get());
+			eet->alpha = path.eval("number(alpha)").getValue<rl::math::Real>(0.01f);
+			eet->alternativeDistanceComputation = path.eval("count(alternativeDistanceComputation) > 0").getValue<bool>() ? true : false;
+			eet->beta = path.eval("number(beta)").getValue<rl::math::Real>(0);
+			eet->delta = path.eval("number(delta)").getValue<rl::math::Real>(1);
+			
+			if ("deg" == path.eval("string(delta/@unit)").getValue<std::string>())
+			{
+				eet->delta *= rl::math::DEG2RAD;
+			}
+			
+			eet->distanceWeight = path.eval("number(distanceWeight)").getValue<rl::math::Real>(0.1f);
+			eet->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(1.0e-3f);
+			
+			if ("deg" == path.eval("string(epsilon/@unit)").getValue<std::string>())
+			{
+				eet->epsilon *= rl::math::DEG2RAD;
+			}
+			
+			eet->gamma = path.eval("number(gamma)").getValue<rl::math::Real>(1.0f / 3.0f);
+			eet->goalEpsilon = path.eval("number(goalEpsilon)").getValue<rl::math::Real>(0.1f);
+			
+			if (path.eval("translate(string(goalEpsilon/@orientation), 'TRUE', 'true') = 'true' or string(goalEpsilon/@orientation) = '1'").getValue<bool>())
+			{
+				eet->goalEpsilonUseOrientation = true;
+			}
+			else
+			{
+				eet->goalEpsilonUseOrientation = false;
+			}
+			
+			eet->max.x() = path.eval("number(max/x)").getValue<rl::math::Real>(0);
+			eet->max.y() = path.eval("number(max/y)").getValue<rl::math::Real>(0);
+			eet->max.z() = path.eval("number(max/z)").getValue<rl::math::Real>(0);
+			eet->min.x() = path.eval("number(min/x)").getValue<rl::math::Real>(0);
+			eet->min.y() = path.eval("number(min/y)").getValue<rl::math::Real>(0);
+			eet->min.z() = path.eval("number(min/z)").getValue<rl::math::Real>(0);
+			eet->sampler = this->sampler.get();
+			
+			if (path.eval("count(seed) > 0").getValue<bool>())
+			{
+				eet->seed(
+					path.eval("number(seed)").getValue<std::mt19937::result_type>(std::random_device()())
+				);
+			}
+			else if (this->seed)
+			{
+				eet->seed(*this->seed);
+			}
+			
+			rl::xml::NodeSet explorers = path.eval("explorer").getValue<rl::xml::NodeSet>();
+			
+			for (int i = 0; i < explorers.size(); ++i)
+			{
+				rl::xml::Path path(document, explorers[i]);
+				
+				std::shared_ptr<rl::plan::WorkspaceSphereExplorer> explorer = std::make_shared<rl::plan::WorkspaceSphereExplorer>();
+				this->explorers.push_back(explorer);
+				eet->explorers.push_back(explorer.get());
+				
+				rl::plan::Eet::ExplorerSetup explorerSetup;
+				
+				std::shared_ptr<rl::math::Vector3> explorerStart = std::make_shared<rl::math::Vector3>();
+				this->explorerStarts.push_back(explorerStart);
+				explorer->start = explorerStart.get();
+				
+				(*explorerStart).x() = path.eval("number(start/x)").getValue<rl::math::Real>(0);
+				(*explorerStart).y() = path.eval("number(start/y)").getValue<rl::math::Real>(0);
+				(*explorerStart).z() = path.eval("number(start/z)").getValue<rl::math::Real>(0);
+				
+				if (path.eval("count(start/goal) > 0").getValue<bool>())
+				{
+					explorerSetup.startConfiguration = this->goal.get();
+				}
+				else if (path.eval("count(start/start) > 0").getValue<bool>())
+				{
+					explorerSetup.startConfiguration = this->start.get();
+				}
+				else
+				{
+					explorerSetup.startConfiguration = nullptr;
+				}
+				
+				if (path.eval("count(start//frame) > 0").getValue<bool>())
+				{
+					explorerSetup.startFrame = path.eval("number(start//frame)").getValue<std::size_t>();
+				}
+				else if (path.eval("count(start//tcp) > 0").getValue<bool>())
+				{
+					explorerSetup.startFrame = -1;
+				}
+				
+				std::shared_ptr<rl::math::Vector3> explorerGoal = std::make_shared<rl::math::Vector3>();
+				this->explorerGoals.push_back(explorerGoal);
+				explorer->goal = explorerGoal.get();
+				
+				(*explorerGoal).x() = path.eval("number(goal/x)").getValue<rl::math::Real>(0);
+				(*explorerGoal).y() = path.eval("number(goal/y)").getValue<rl::math::Real>(0);
+				(*explorerGoal).z() = path.eval("number(goal/z)").getValue<rl::math::Real>(0);
+				
+				if (path.eval("count(goal/goal) > 0").getValue<bool>())
+				{
+					explorerSetup.goalConfiguration = this->goal.get();
+				}
+				else if (path.eval("count(goal/start) > 0").getValue<bool>())
+				{
+					explorerSetup.goalConfiguration = this->start.get();
+				}
+				else
+				{
+					explorerSetup.goalConfiguration = nullptr;
+				}
+				
+				if (path.eval("count(goal//frame) > 0").getValue<bool>())
+				{
+					explorerSetup.goalFrame = path.eval("number(goal//frame)").getValue<std::size_t>();
+				}
+				else if (path.eval("count(goal//tcp) > 0").getValue<bool>())
+				{
+					explorerSetup.goalFrame = -1;
+				}
+				
+				if (path.eval("count(distance) > 0").getValue<bool>())
+				{
+					explorer->greedy = rl::plan::WorkspaceSphereExplorer::GREEDY_DISTANCE;
+				}
+				else if (path.eval("count(sourceDistance) > 0").getValue<bool>())
+				{
+					explorer->greedy = rl::plan::WorkspaceSphereExplorer::GREEDY_SOURCE_DISTANCE;
+				}
+				else if (path.eval("count(space) > 0").getValue<bool>())
+				{
+					explorer->greedy = rl::plan::WorkspaceSphereExplorer::GREEDY_SPACE;
+				}
+				
+				if (rl::plan::DistanceModel* model = dynamic_cast<rl::plan::DistanceModel*>(this->model.get()))
+				{
+					explorer->model = model;
+				}
+				else
+				{
+					throw std::runtime_error("selected engine does not support distance queries");
+				}
+				
+				explorer->radius = path.eval("number(radius)").getValue<rl::math::Real>(0);
+				explorer->range = path.eval("number(range)").getValue<rl::math::Real>(std::numeric_limits<rl::math::Real>::max());
+				explorer->samples = path.eval("number(samples)").getValue<std::size_t>(10);
+				
+				if (path.eval("count(seed) > 0").getValue<bool>())
+				{
+					explorer->seed(
+						path.eval("number(seed)").getValue<std::mt19937::result_type>(std::random_device()())
+					);
+				}
+				else if (this->seed)
+				{
+					explorer->seed(*this->seed);
+				}
+				
+				eet->explorersSetup.push_back(explorerSetup);
+			}
 		}
-		
-		addRrtConCon->kd = path.eval("count(bruteForce) > 0", planner.getNodeTab(0)).getBoolval() ? false : true;
-		addRrtConCon->lower = path.eval("number(lower)", planner.getNodeTab(0)).getFloatval(2.0f);
-		
-		if ("deg" == path.eval("string(lower/@unit)", planner.getNodeTab(0)).getStringval())
+		else if ("prm" == planners[i].getName())
 		{
-			addRrtConCon->lower *= rl::math::DEG2RAD;
+			this->planner = std::make_shared<rl::plan::Prm>();
+			rl::plan::Prm* prm = static_cast<rl::plan::Prm*>(this->planner.get());
+			prm->degree = path.eval("number(degree)").getValue<std::size_t>(std::numeric_limits<std::size_t>::max());
+			prm->k = path.eval("number(k)").getValue<std::size_t>(30);
+			prm->radius = path.eval("number(radius)").getValue<rl::math::Real>(std::numeric_limits<rl::math::Real>::max());
+			
+			if ("deg" == path.eval("string(radius/@unit)").getValue<std::string>())
+			{
+				prm->radius *= rl::math::DEG2RAD;
+			}
+			
+			prm->sampler = this->sampler.get();
+			prm->verifier = this->verifier.get();
 		}
-		
-		addRrtConCon->radius = path.eval("number(radius)", planner.getNodeTab(0)).getFloatval(20.0f);
-		
-		if ("deg" == path.eval("string(radius/@unit)", planner.getNodeTab(0)).getStringval())
+		else if ("prmUtilityGuided" == planners[i].getName())
 		{
-			addRrtConCon->radius *= rl::math::DEG2RAD;
+			this->planner = std::make_shared<rl::plan::PrmUtilityGuided>();
+			rl::plan::PrmUtilityGuided* prmUtilityGuided = static_cast<rl::plan::PrmUtilityGuided*>(this->planner.get());
+			prmUtilityGuided->degree = path.eval("number(degree)").getValue<std::size_t>(std::numeric_limits<std::size_t>::max());
+			prmUtilityGuided->k = path.eval("number(k)").getValue<std::size_t>(30);
+			prmUtilityGuided->radius = path.eval("number(radius)").getValue<rl::math::Real>(std::numeric_limits<rl::math::Real>::max());
+			
+			if ("deg" == path.eval("string(radius/@unit)").getValue<std::string>())
+			{
+				prmUtilityGuided->radius *= rl::math::DEG2RAD;
+			}
+			
+			if (path.eval("count(seed) > 0").getValue<bool>())
+			{
+				prmUtilityGuided->seed(
+					path.eval("number(seed)").getValue<std::mt19937::result_type>(std::random_device()())
+				);
+			}
+			else if (this->seed)
+			{
+				prmUtilityGuided->seed(*this->seed);
+			}
+			
+			prmUtilityGuided->sampler = this->sampler.get();
+			prmUtilityGuided->verifier = this->verifier.get();
 		}
-		
-		addRrtConCon->sampler = this->sampler.get();
+		else if ("rrt" == planners[i].getName())
+		{
+			this->planner = std::make_shared<rl::plan::Rrt>();
+			rl::plan::Rrt* rrt = static_cast<rl::plan::Rrt*>(this->planner.get());
+			rrt->delta = path.eval("number(delta)").getValue<rl::math::Real>(1);
+			
+			if ("deg" == path.eval("string(delta/@unit)").getValue<std::string>())
+			{
+				rrt->delta *= rl::math::DEG2RAD;
+			}
+			
+			rrt->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(1.0e-3f);
+			
+			if ("deg" == path.eval("string(epsilon/@unit)").getValue<std::string>())
+			{
+				rrt->epsilon *= rl::math::DEG2RAD;
+			}
+			
+			rrt->sampler = this->sampler.get();
+		}
+		else if ("rrtCon" == planners[i].getName())
+		{
+			this->planner = std::make_shared<rl::plan::RrtCon>();
+			rl::plan::RrtCon* rrtCon = static_cast<rl::plan::RrtCon*>(this->planner.get());
+			rrtCon->delta = path.eval("number(delta)").getValue<rl::math::Real>(1);
+			
+			if ("deg" == path.eval("string(delta/@unit)").getValue<std::string>())
+			{
+				rrtCon->delta *= rl::math::DEG2RAD;
+			}
+			
+			rrtCon->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(1.0e-3f);
+			
+			if ("deg" == path.eval("string(epsilon/@unit)").getValue<std::string>())
+			{
+				rrtCon->epsilon *= rl::math::DEG2RAD;
+			}
+			
+			rrtCon->probability = path.eval("number(probability)").getValue<rl::math::Real>(0.05f);
+			rrtCon->sampler = this->sampler.get();
+			
+			if (path.eval("count(seed) > 0").getValue<bool>())
+			{
+				rrtCon->seed(
+					path.eval("number(seed)").getValue<std::mt19937::result_type>(std::random_device()())
+				);
+			}
+			else if (this->seed)
+			{
+				rrtCon->seed(*this->seed);
+			}
+		}
+		else if ("rrtConCon" == planners[i].getName())
+		{
+			this->planner = std::make_shared<rl::plan::RrtConCon>();
+			rl::plan::RrtConCon* rrtConCon = static_cast<rl::plan::RrtConCon*>(this->planner.get());
+			rrtConCon->delta = path.eval("number(delta)").getValue<rl::math::Real>(1);
+			
+			if ("deg" == path.eval("string(delta/@unit)").getValue<std::string>())
+			{
+				rrtConCon->delta *= rl::math::DEG2RAD;
+			}
+			
+			rrtConCon->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(1.0e-3f);
+			
+			if ("deg" == path.eval("string(epsilon/@unit)").getValue<std::string>())
+			{
+				rrtConCon->epsilon *= rl::math::DEG2RAD;
+			}
+			
+			rrtConCon->sampler = this->sampler.get();
+		}
+		else if ("rrtDual" == planners[i].getName())
+		{
+			this->planner = std::make_shared<rl::plan::RrtDual>();
+			rl::plan::RrtDual* rrtDual = static_cast<rl::plan::RrtDual*>(this->planner.get());
+			rrtDual->delta = path.eval("number(delta)").getValue<rl::math::Real>(1);
+			
+			if ("deg" == path.eval("string(delta/@unit)").getValue<std::string>())
+			{
+				rrtDual->delta *= rl::math::DEG2RAD;
+			}
+			
+			rrtDual->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(1.0e-3f);
+			
+			if ("deg" == path.eval("string(epsilon/@unit)").getValue<std::string>())
+			{
+				rrtDual->epsilon *= rl::math::DEG2RAD;
+			}
+			
+			rrtDual->sampler = this->sampler.get();
+		}
+		else if ("rrtExtCon" == planners[i].getName())
+		{
+			this->planner = std::make_shared<rl::plan::RrtExtCon>();
+			rl::plan::RrtExtCon* rrtExtCon = static_cast<rl::plan::RrtExtCon*>(this->planner.get());
+			rrtExtCon->delta = path.eval("number(delta)").getValue<rl::math::Real>(1);
+			
+			if ("deg" == path.eval("string(delta/@unit)").getValue<std::string>())
+			{
+				rrtExtCon->delta *= rl::math::DEG2RAD;
+			}
+			
+			rrtExtCon->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(1.0e-3f);
+			
+			if ("deg" == path.eval("string(epsilon/@unit)").getValue<std::string>())
+			{
+				rrtExtCon->epsilon *= rl::math::DEG2RAD;
+			}
+			
+			rrtExtCon->sampler = this->sampler.get();
+		}
+		else if ("rrtExtExt" == planners[i].getName())
+		{
+			this->planner = std::make_shared<rl::plan::RrtExtExt>();
+			rl::plan::RrtExtExt* rrtExtExt = static_cast<rl::plan::RrtExtExt*>(this->planner.get());
+			rrtExtExt->delta = path.eval("number(delta)").getValue<rl::math::Real>(1);
+			
+			if ("deg" == path.eval("string(delta/@unit)").getValue<std::string>())
+			{
+				rrtExtExt->delta *= rl::math::DEG2RAD;
+			}
+			
+			rrtExtExt->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(1.0e-3f);
+			
+			if ("deg" == path.eval("string(epsilon/@unit)").getValue<std::string>())
+			{
+				rrtExtExt->epsilon *= rl::math::DEG2RAD;
+			}
+			
+			rrtExtExt->sampler = this->sampler.get();
+		}
+		else if ("rrtGoalBias" == planners[i].getName())
+		{
+			this->planner = std::make_shared<rl::plan::RrtGoalBias>();
+			rl::plan::RrtGoalBias* rrtGoalBias = static_cast<rl::plan::RrtGoalBias*>(this->planner.get());
+			rrtGoalBias->delta = path.eval("number(delta)").getValue<rl::math::Real>(1);
+			
+			if ("deg" == path.eval("string(delta/@unit)").getValue<std::string>())
+			{
+				rrtGoalBias->delta *= rl::math::DEG2RAD;
+			}
+			
+			rrtGoalBias->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(1.0e-3f);
+			
+			if ("deg" == path.eval("string(epsilon/@unit)").getValue<std::string>())
+			{
+				rrtGoalBias->epsilon *= rl::math::DEG2RAD;
+			}
+			
+			rrtGoalBias->probability = path.eval("number(probability)").getValue<rl::math::Real>(0.05f);
+			rrtGoalBias->sampler = this->sampler.get();
+			
+			if (path.eval("count(seed) > 0").getValue<bool>())
+			{
+				rrtGoalBias->seed(
+					path.eval("number(seed)").getValue<std::mt19937::result_type>(std::random_device()())
+				);
+			}
+			else if (this->seed)
+			{
+				rrtGoalBias->seed(*this->seed);
+			}
+		}
 	}
-	else if ("eet" == planner.getNodeTab(0).getName())
+	
+	std::size_t nearestNeighborsSize = 1;
+	
+	if (rl::plan::RrtDual* rrtDual = dynamic_cast<rl::plan::RrtDual*>(this->planner.get()))
 	{
-		this->planner = boost::make_shared< rl::plan::Eet >();
-		rl::plan::Eet* eet = static_cast< rl::plan::Eet* >(this->planner.get());
-		eet->alpha = path.eval("number(alpha)", planner.getNodeTab(0)).getFloatval(0.01f);
-		eet->alternativeDistanceComputation = path.eval("count(alternativeDistanceComputation) > 0", planner.getNodeTab(0)).getBoolval() ? true : false;
-		eet->delta = path.eval("number(delta)", planner.getNodeTab(0)).getFloatval(1.0f);
+		nearestNeighborsSize = 2;
+	}
+	
+	for (::std::size_t i = 0; i < nearestNeighborsSize; ++i)
+	{
+		std::shared_ptr<rl::plan::NearestNeighbors> nearestNeighbors;
 		
-		if ("deg" == path.eval("string(delta/@unit)", planner.getNodeTab(0)).getStringval())
+		if (path.eval("count((/rl/plan|/rlplan)//gnatNearestNeighbors) > 0").getValue<bool>())
 		{
-			eet->delta *= rl::math::DEG2RAD;
-		}
-		
-		eet->distanceWeight = path.eval("number(distanceWeight)", planner.getNodeTab(0)).getFloatval(0.1f);
-		eet->epsilon = path.eval("number(epsilon)", planner.getNodeTab(0)).getFloatval(1.0e-3f);
-		
-		if ("deg" == path.eval("string(epsilon/@unit)", planner.getNodeTab(0)).getStringval())
-		{
-			eet->epsilon *= rl::math::DEG2RAD;
-		}
-		
-		eet->gamma = path.eval("number(gamma)", planner.getNodeTab(0)).getFloatval(1.f/3.f);
-		eet->goalEpsilon = path.eval("number(goalEpsilon)", planner.getNodeTab(0)).getFloatval(0.1f);
-		
-		if (path.eval("translate(string(goalEpsilon/@orientation), 'TRUE', 'true') = 'true' or string(goalEpsilon/@orientation) = '1'", planner.getNodeTab(0)).getBoolval())
-		{
-			eet->goalEpsilonUseOrientation = true;
-		}
-		else
-		{
-			eet->goalEpsilonUseOrientation = false;
-		}
-		
-		eet->kd = path.eval("count(bruteForce) > 0", planner.getNodeTab(0)).getBoolval() ? false : true;
-		eet->max.x() = path.eval("number(max/x)", planner.getNodeTab(0)).getFloatval(0.0f);
-		eet->max.y() = path.eval("number(max/y)", planner.getNodeTab(0)).getFloatval(0.0f);
-		eet->max.z() = path.eval("number(max/z)", planner.getNodeTab(0)).getFloatval(0.0f);
-		eet->min.x() = path.eval("number(min/x)", planner.getNodeTab(0)).getFloatval(0.0f);
-		eet->min.y() = path.eval("number(min/y)", planner.getNodeTab(0)).getFloatval(0.0f);
-		eet->min.z() = path.eval("number(min/z)", planner.getNodeTab(0)).getFloatval(0.0f);
-		eet->sampler = this->sampler.get();
-		
-		if (path.eval("count(seed) > 0", planner.getNodeTab(0)).getBoolval())
-		{
-			eet->seed(
-				static_cast< boost::mt19937::result_type >(path.eval("number(seed)", planner.getNodeTab(0)).getFloatval(rl::util::Timer::now() * 1000000.0f))
-			);
-		}
-		
-		rl::xml::Object explorers = path.eval("explorer", planner.getNodeTab(0));
-		
-		for (int i = 0; i < explorers.getNodeNr(); ++i)
-		{
-			boost::shared_ptr< rl::plan::WorkspaceSphereExplorer > explorer = boost::make_shared< rl::plan::WorkspaceSphereExplorer >();
-			this->explorers.push_back(explorer);
-			eet->explorers.push_back(explorer.get());
+			std::shared_ptr<rl::plan::GnatNearestNeighbors> gnatNearestNeighbors = std::make_shared<rl::plan::GnatNearestNeighbors>(this->model.get());
 			
-			rl::plan::Eet::ExplorerSetup explorerSetup;
-			
-			boost::shared_ptr< rl::math::Vector3 > explorerStart = boost::make_shared< rl::math::Vector3 >();
-			this->explorerStarts.push_back(explorerStart);
-			explorer->start = explorerStart.get();
-			
-			(*explorerStart).x() = path.eval("number(start/x)", explorers.getNodeTab(i)).getFloatval(0.0f);
-			(*explorerStart).y() = path.eval("number(start/y)", explorers.getNodeTab(i)).getFloatval(0.0f);
-			(*explorerStart).z() = path.eval("number(start/z)", explorers.getNodeTab(i)).getFloatval(0.0f);
-			
-			if (path.eval("count(start/goal) > 0", explorers.getNodeTab(i)).getBoolval())
+			if (path.eval("count((/rl/plan|/rlplan)//gnatNearestNeighbors/checks) > 0").getValue<bool>())
 			{
-				explorerSetup.startConfiguration = this->goal.get();
-			}
-			else if (path.eval("count(start/start) > 0", explorers.getNodeTab(i)).getBoolval())
-			{
-				explorerSetup.startConfiguration = this->start.get();
-			}
-			else
-			{
-				explorerSetup.startConfiguration = NULL;
-			}
-			
-			if (path.eval("count(start//frame) > 0", explorers.getNodeTab(i)).getBoolval())
-			{
-				explorerSetup.startFrame = static_cast< int >(path.eval("number(start//frame)", explorers.getNodeTab(i)).getFloatval());
-			}
-			else if (path.eval("count(start//tcp) > 0", explorers.getNodeTab(i)).getBoolval())
-			{
-				explorerSetup.startFrame = -1;
-			}
-			
-			boost::shared_ptr< rl::math::Vector3 > explorerGoal = boost::make_shared< rl::math::Vector3 >();
-			this->explorerGoals.push_back(explorerGoal);
-			explorer->goal = explorerGoal.get();
-			
-			(*explorerGoal).x() = path.eval("number(goal/x)", explorers.getNodeTab(i)).getFloatval(0.0f);
-			(*explorerGoal).y() = path.eval("number(goal/y)", explorers.getNodeTab(i)).getFloatval(0.0f);
-			(*explorerGoal).z() = path.eval("number(goal/z)", explorers.getNodeTab(i)).getFloatval(0.0f);
-			
-			if (path.eval("count(goal/goal) > 0", explorers.getNodeTab(i)).getBoolval())
-			{
-				explorerSetup.goalConfiguration = this->goal.get();
-			}
-			else if (path.eval("count(goal/start) > 0", explorers.getNodeTab(i)).getBoolval())
-			{
-				explorerSetup.goalConfiguration = this->start.get();
-			}
-			else
-			{
-				explorerSetup.goalConfiguration = NULL;
-			}
-			
-			if (path.eval("count(goal//frame) > 0", explorers.getNodeTab(i)).getBoolval())
-			{
-				explorerSetup.goalFrame = static_cast< int >(path.eval("number(goal//frame)", explorers.getNodeTab(i)).getFloatval());
-			}
-			else if (path.eval("count(goal//tcp) > 0", explorers.getNodeTab(i)).getBoolval())
-			{
-				explorerSetup.goalFrame = -1;
-			}
-			
-			if (path.eval("count(distance) > 0", explorers.getNodeTab(i)).getBoolval())
-			{
-				explorer->greedy = rl::plan::WorkspaceSphereExplorer::GREEDY_DISTANCE;
-			}
-			else if (path.eval("count(sourcedistance) > 0", explorers.getNodeTab(i)).getBoolval())
-			{
-				explorer->greedy = rl::plan::WorkspaceSphereExplorer::GREEDY_SOURCE_DISTANCE;
-			}
-			else if (path.eval("count(space) > 0", explorers.getNodeTab(i)).getBoolval())
-			{
-				explorer->greedy = rl::plan::WorkspaceSphereExplorer::GREEDY_SPACE;
-			}
-			
-			explorer->model = this->model.get();
-			explorer->radius = path.eval("number(radius)", explorers.getNodeTab(i)).getFloatval(0.0f);
-			explorer->range = path.eval("number(range)", explorers.getNodeTab(i)).getFloatval(std::numeric_limits< rl::math::Real >::max());
-			explorer->samples = static_cast< int >(path.eval("number(samples)", explorers.getNodeTab(i)).getFloatval(10.0f));
-			
-			if (path.eval("count(seed) > 0", explorers.getNodeTab(i)).getBoolval())
-			{
-				explorer->seed(
-					static_cast< boost::mt19937::result_type >(path.eval("number(seed)", explorers.getNodeTab(i)).getFloatval(rl::util::Timer::now() * 1000000.0f))
+				gnatNearestNeighbors->setChecks(
+					path.eval("number((/rl/plan|/rlplan)//gnatNearestNeighbors/checks)").getValue<std::size_t>(0)
 				);
 			}
 			
-			eet->explorersSetup.push_back(explorerSetup);
+			if (path.eval("count((/rl/plan|/rlplan)//gnatNearestNeighbors/node/data/@max) > 0").getValue<bool>())
+			{
+				gnatNearestNeighbors->setNodeDataMax(
+					path.eval("number((/rl/plan|/rlplan)//gnatNearestNeighbors/node/data/@max)").getValue<std::size_t>(50)
+				);
+			}
+			
+			if (path.eval("count((/rl/plan|/rlplan)//gnatNearestNeighbors/node/degree) > 0").getValue<bool>())
+			{
+				gnatNearestNeighbors->setNodeDegree(
+					path.eval("number((/rl/plan|/rlplan)//gnatNearestNeighbors/node/degree)").getValue<std::size_t>(8)
+				);
+			}
+			
+			if (path.eval("count((/rl/plan|/rlplan)//gnatNearestNeighbors/node/degree/@max) > 0").getValue<bool>())
+			{
+				gnatNearestNeighbors->setNodeDegreeMax(
+					path.eval("number((/rl/plan|/rlplan)//gnatNearestNeighbors/node/degree/@max)").getValue<std::size_t>(12)
+				);
+			}
+			
+			if (path.eval("count((/rl/plan|/rlplan)//gnatNearestNeighbors/node/degree/@min) > 0").getValue<bool>())
+			{
+				gnatNearestNeighbors->setNodeDegreeMin(
+					path.eval("number((/rl/plan|/rlplan)//gnatNearestNeighbors/node/degree/@min)").getValue<std::size_t>(4)
+				);
+			}
+			
+			if (path.eval("count((/rl/plan|/rlplan)//gnatNearestNeighbors/seed) > 0").getValue<bool>())
+			{
+				gnatNearestNeighbors->seed(
+					path.eval("number((/rl/plan|/rlplan)//gnatNearestNeighbors/seed)").getValue<std::mt19937::result_type>(std::random_device()())
+				);
+			}
+			else if (this->seed)
+			{
+				gnatNearestNeighbors->seed(*this->seed);
+			}
+			
+			nearestNeighbors = gnatNearestNeighbors;
 		}
-	}
-	else if ("prm" == planner.getNodeTab(0).getName())
-	{
-		this->planner = boost::make_shared< rl::plan::Prm >();
-		rl::plan::Prm* prm = static_cast< rl::plan::Prm* >(this->planner.get());
-		prm->degree = static_cast< int >(path.eval("number(degree)", planner.getNodeTab(0)).getFloatval(std::numeric_limits< std::size_t >::max()));
-		prm->k = static_cast< int >(path.eval("number(k)", planner.getNodeTab(0)).getFloatval(30.0f));
-		prm->kd = path.eval("count(bruteForce) > 0", planner.getNodeTab(0)).getBoolval() ? false : true;
-		prm->radius = path.eval("number(radius)", planner.getNodeTab(0)).getFloatval(std::numeric_limits< rl::math::Real >::max());
-		
-		if ("deg" == path.eval("string(radius/@unit)", planner.getNodeTab(0)).getStringval())
+		else if (path.eval("count((/rl/plan|/rlplan)//kdtreeBoundingBoxNearestNeighbors) > 0").getValue<bool>())
 		{
-			prm->radius *= rl::math::DEG2RAD;
+			std::shared_ptr<rl::plan::KdtreeBoundingBoxNearestNeighbors> kdtreeBoundingBoxNearestNeighbors = std::make_shared<rl::plan::KdtreeBoundingBoxNearestNeighbors>(this->model.get());
+			
+			if (path.eval("count((/rl/plan|/rlplan)//kdtreeBoundingBoxNearestNeighbors/checks) > 0").getValue<bool>())
+			{
+				kdtreeBoundingBoxNearestNeighbors->setChecks(
+					path.eval("number((/rl/plan|/rlplan)//kdtreeBoundingBoxNearestNeighbors/checks)").getValue<std::size_t>(0)
+				);
+			}
+			
+			if (path.eval("count((/rl/plan|/rlplan)//kdtreeBoundingBoxNearestNeighbors/node/data/@max) > 0").getValue<bool>())
+			{
+				kdtreeBoundingBoxNearestNeighbors->setNodeDataMax(
+					path.eval("number((/rl/plan|/rlplan)//kdtreeBoundingBoxNearestNeighbors/node/data/@max)").getValue<std::size_t>(10)
+				);
+			}
+			
+			nearestNeighbors = kdtreeBoundingBoxNearestNeighbors;
 		}
-		
-		prm->sampler = this->sampler.get();
-		prm->verifier = this->verifier.get();
-	}
-	else if ("prmUtilityGuided" == planner.getNodeTab(0).getName())
-	{
-		this->planner = boost::make_shared< rl::plan::PrmUtilityGuided >();
-		rl::plan::PrmUtilityGuided* prmUtilityGuided = static_cast< rl::plan::PrmUtilityGuided* >(this->planner.get());
-		prmUtilityGuided->degree = static_cast< int >(path.eval("number(degree)", planner.getNodeTab(0)).getFloatval(std::numeric_limits< std::size_t >::max()));
-		prmUtilityGuided->k = static_cast< int >(path.eval("number(k)", planner.getNodeTab(0)).getFloatval(30.0f));
-		prmUtilityGuided->kd = path.eval("count(bruteForce) > 0", planner.getNodeTab(0)).getBoolval() ? false : true;
-		prmUtilityGuided->radius = path.eval("number(radius)", planner.getNodeTab(0)).getFloatval(std::numeric_limits< rl::math::Real >::max());
-		
-		if ("deg" == path.eval("string(radius/@unit)", planner.getNodeTab(0)).getStringval())
+		else if (path.eval("count((/rl/plan|/rlplan)//kdtreeNearestNeighbors) > 0").getValue<bool>())
 		{
-			prmUtilityGuided->radius *= rl::math::DEG2RAD;
+			std::shared_ptr<rl::plan::KdtreeNearestNeighbors> kdtreeNearestNeighbors = std::make_shared<rl::plan::KdtreeNearestNeighbors>(this->model.get());
+			
+			if (path.eval("count((/rl/plan|/rlplan)//kdtreeNearestNeighbors/checks) > 0").getValue<bool>())
+			{
+				kdtreeNearestNeighbors->setChecks(
+					path.eval("number((/rl/plan|/rlplan)//kdtreeNearestNeighbors/checks)").getValue<std::size_t>(0)
+				);
+			}
+			
+			if (path.eval("count((/rl/plan|/rlplan)//kdtreeNearestNeighbors/samples) > 0").getValue<bool>())
+			{
+				kdtreeNearestNeighbors->setSamples(
+					path.eval("number((/rl/plan|/rlplan)//kdtreeNearestNeighbors/samples)").getValue<std::size_t>(100)
+				);
+			}
+			
+			nearestNeighbors = kdtreeNearestNeighbors;
 		}
-		
-		if (path.eval("count(seed) > 0", planner.getNodeTab(0)).getBoolval())
+		else
 		{
-			prmUtilityGuided->seed(
-				static_cast< boost::mt19937::result_type >(path.eval("number(seed)", planner.getNodeTab(0)).getFloatval(rl::util::Timer::now() * 1000000.0f))
-			);
-		}
-		
-		prmUtilityGuided->sampler = this->sampler.get();
-		prmUtilityGuided->verifier = this->verifier.get();
-	}
-	else if ("rrt" == planner.getNodeTab(0).getName())
-	{
-		this->planner = boost::make_shared< rl::plan::Rrt >();
-		rl::plan::Rrt* rrt = static_cast< rl::plan::Rrt* >(this->planner.get());
-		rrt->delta = path.eval("number(delta)", planner.getNodeTab(0)).getFloatval(1.0f);
-		
-		if ("deg" == path.eval("string(delta/@unit)", planner.getNodeTab(0)).getStringval())
-		{
-			rrt->delta *= rl::math::DEG2RAD;
-		}
-		
-		rrt->epsilon = path.eval("number(epsilon)", planner.getNodeTab(0)).getFloatval(1.0e-3f);
-		
-		if ("deg" == path.eval("string(epsilon/@unit)", planner.getNodeTab(0)).getStringval())
-		{
-			rrt->epsilon *= rl::math::DEG2RAD;
-		}
-		
-		rrt->kd = path.eval("count(bruteForce) > 0", planner.getNodeTab(0)).getBoolval() ? false : true;
-		rrt->sampler = this->sampler.get();
-	}
-	else if ("rrtCon" == planner.getNodeTab(0).getName())
-	{
-		this->planner = boost::make_shared< rl::plan::RrtCon >();
-		rl::plan::RrtCon* rrtCon = static_cast< rl::plan::RrtCon* >(this->planner.get());
-		rrtCon->delta = path.eval("number(delta)", planner.getNodeTab(0)).getFloatval(1.0f);
-		
-		if ("deg" == path.eval("string(delta/@unit)", planner.getNodeTab(0)).getStringval())
-		{
-			rrtCon->delta *= rl::math::DEG2RAD;
-		}
-		
-		rrtCon->epsilon = path.eval("number(epsilon)", planner.getNodeTab(0)).getFloatval(1.0e-3f);
-		
-		if ("deg" == path.eval("string(epsilon/@unit)", planner.getNodeTab(0)).getStringval())
-		{
-			rrtCon->epsilon *= rl::math::DEG2RAD;
-		}
-		
-		rrtCon->kd = path.eval("count(bruteForce) > 0", planner.getNodeTab(0)).getBoolval() ? false : true;
-		rrtCon->probability = path.eval("number(probability)", planner.getNodeTab(0)).getFloatval(0.05f);
-		rrtCon->sampler = this->sampler.get();
-		
-		if (path.eval("count(seed) > 0", planner.getNodeTab(0)).getBoolval())
-		{
-			rrtCon->seed(
-				static_cast< boost::mt19937::result_type >(path.eval("number(seed)", planner.getNodeTab(0)).getFloatval(rl::util::Timer::now() * 1000000.0f))
-			);
-		}
-	}
-	else if ("rrtConCon" == planner.getNodeTab(0).getName())
-	{
-		this->planner = boost::make_shared< rl::plan::RrtConCon >();
-		rl::plan::RrtConCon* rrtConCon = static_cast< rl::plan::RrtConCon* >(this->planner.get());
-		rrtConCon->delta = path.eval("number(delta)", planner.getNodeTab(0)).getFloatval(1.0f);
-		
-		if ("deg" == path.eval("string(delta/@unit)", planner.getNodeTab(0)).getStringval())
-		{
-			rrtConCon->delta *= rl::math::DEG2RAD;
+			std::shared_ptr<rl::plan::LinearNearestNeighbors> linearNearestNeighbors = std::make_shared<rl::plan::LinearNearestNeighbors>(this->model.get());
+			nearestNeighbors = linearNearestNeighbors;
 		}
 		
-		rrtConCon->epsilon = path.eval("number(epsilon)", planner.getNodeTab(0)).getFloatval(1.0e-3f);
+		this->nearestNeighbors.push_back(nearestNeighbors);
 		
-		if ("deg" == path.eval("string(epsilon/@unit)", planner.getNodeTab(0)).getStringval())
+		if (rl::plan::Prm* prm = dynamic_cast<rl::plan::Prm*>(this->planner.get()))
 		{
-			rrtConCon->epsilon *= rl::math::DEG2RAD;
+			prm->setNearestNeighbors(nearestNeighbors.get());
 		}
-		
-		rrtConCon->kd = path.eval("count(bruteForce) > 0", planner.getNodeTab(0)).getBoolval() ? false : true;
-		rrtConCon->sampler = this->sampler.get();
-	}
-	else if ("rrtDual" == planner.getNodeTab(0).getName())
-	{
-		this->planner = boost::make_shared< rl::plan::RrtDual >();
-		rl::plan::RrtDual* rrtDual = static_cast< rl::plan::RrtDual* >(this->planner.get());
-		rrtDual->delta = path.eval("number(delta)", planner.getNodeTab(0)).getFloatval(1.0f);
-		
-		if ("deg" == path.eval("string(delta/@unit)", planner.getNodeTab(0)).getStringval())
+		if (rl::plan::Rrt* rrt = dynamic_cast<rl::plan::Rrt*>(this->planner.get()))
 		{
-			rrtDual->delta *= rl::math::DEG2RAD;
-		}
-		
-		rrtDual->epsilon = path.eval("number(epsilon)", planner.getNodeTab(0)).getFloatval(1.0e-3f);
-		
-		if ("deg" == path.eval("string(epsilon/@unit)", planner.getNodeTab(0)).getStringval())
-		{
-			rrtDual->epsilon *= rl::math::DEG2RAD;
-		}
-		
-		rrtDual->kd = path.eval("count(bruteForce) > 0", planner.getNodeTab(0)).getBoolval() ? false : true;
-		rrtDual->sampler = this->sampler.get();
-	}
-	else if ("rrtExtCon" == planner.getNodeTab(0).getName())
-	{
-		this->planner = boost::make_shared< rl::plan::RrtExtCon >();
-		rl::plan::RrtExtCon* rrtExtCon = static_cast< rl::plan::RrtExtCon* >(this->planner.get());
-		rrtExtCon->delta = path.eval("number(delta)", planner.getNodeTab(0)).getFloatval(1.0f);
-		
-		if ("deg" == path.eval("string(delta/@unit)", planner.getNodeTab(0)).getStringval())
-		{
-			rrtExtCon->delta *= rl::math::DEG2RAD;
-		}
-		
-		rrtExtCon->epsilon = path.eval("number(epsilon)", planner.getNodeTab(0)).getFloatval(1.0e-3f);
-		
-		if ("deg" == path.eval("string(epsilon/@unit)", planner.getNodeTab(0)).getStringval())
-		{
-			rrtExtCon->epsilon *= rl::math::DEG2RAD;
-		}
-		
-		rrtExtCon->kd = path.eval("count(bruteForce) > 0", planner.getNodeTab(0)).getBoolval() ? false : true;
-		rrtExtCon->sampler = this->sampler.get();
-	}
-	else if ("rrtExtExt" == planner.getNodeTab(0).getName())
-	{
-		this->planner = boost::make_shared< rl::plan::RrtExtExt >();
-		rl::plan::RrtExtExt* rrtExtExt = static_cast< rl::plan::RrtExtExt* >(this->planner.get());
-		rrtExtExt->delta = path.eval("number(delta)", planner.getNodeTab(0)).getFloatval(1.0f);
-		
-		if ("deg" == path.eval("string(delta/@unit)", planner.getNodeTab(0)).getStringval())
-		{
-			rrtExtExt->delta *= rl::math::DEG2RAD;
-		}
-		
-		rrtExtExt->epsilon = path.eval("number(epsilon)", planner.getNodeTab(0)).getFloatval(1.0e-3f);
-		
-		if ("deg" == path.eval("string(epsilon/@unit)", planner.getNodeTab(0)).getStringval())
-		{
-			rrtExtExt->epsilon *= rl::math::DEG2RAD;
-		}
-		
-		rrtExtExt->kd = path.eval("count(bruteForce) > 0", planner.getNodeTab(0)).getBoolval() ? false : true;
-		rrtExtExt->sampler = this->sampler.get();
-	}
-	else if ("rrtGoalBias" == planner.getNodeTab(0).getName())
-	{
-		this->planner = boost::make_shared< rl::plan::RrtGoalBias >();
-		rl::plan::RrtGoalBias* rrtGoalBias = static_cast< rl::plan::RrtGoalBias* >(this->planner.get());
-		rrtGoalBias->delta = path.eval("number(delta)", planner.getNodeTab(0)).getFloatval(1.0f);
-		
-		if ("deg" == path.eval("string(delta/@unit)", planner.getNodeTab(0)).getStringval())
-		{
-			rrtGoalBias->delta *= rl::math::DEG2RAD;
-		}
-		
-		rrtGoalBias->epsilon = path.eval("number(epsilon)", planner.getNodeTab(0)).getFloatval(1.0e-3f);
-		
-		if ("deg" == path.eval("string(epsilon/@unit)", planner.getNodeTab(0)).getStringval())
-		{
-			rrtGoalBias->epsilon *= rl::math::DEG2RAD;
-		}
-		
-		rrtGoalBias->kd = path.eval("count(bruteForce) > 0", planner.getNodeTab(0)).getBoolval() ? false : true;
-		rrtGoalBias->probability = path.eval("number(probability)", planner.getNodeTab(0)).getFloatval(0.05f);
-		rrtGoalBias->sampler = this->sampler.get();
-		
-		if (path.eval("count(seed) > 0", planner.getNodeTab(0)).getBoolval())
-		{
-			rrtGoalBias->seed(
-				static_cast< boost::mt19937::result_type >(path.eval("number(seed)", planner.getNodeTab(0)).getFloatval(rl::util::Timer::now() * 1000000.0f))
-			);
+			rrt->setNearestNeighbors(nearestNeighbors.get(), i);
 		}
 	}
 	
-	this->planner->duration = path.eval("number(//duration)").getFloatval(std::numeric_limits< rl::math::Real >::max());
+	this->planner->duration = std::chrono::duration_cast<std::chrono::steady_clock::duration>(
+		std::chrono::duration<float>(
+			path.eval("number((/rl/plan|/rlplan)//duration)").getValue<rl::math::Real>(std::numeric_limits<float>::max())
+		)
+	);
+	
 	this->planner->goal = this->goal.get();
 	this->planner->model = this->model.get();
 	this->planner->start = this->start.get();
 	
-	this->viewer->delta = path.eval("number(//viewer/delta)").getFloatval();
+	this->viewer->delta = path.eval("number((/rl/plan|/rlplan)//viewer/delta)").getValue<rl::math::Real>();
 	
-	if ("deg" == path.eval("string(//viewer/delta/@unit)").getStringval())
+	if ("deg" == path.eval("string((/rl/plan|/rlplan)//viewer/delta/@unit)").getValue<std::string>())
 	{
 		this->viewer->delta *= rl::math::DEG2RAD;
+	}
+	
+	this->viewer->deltaSwept = path.eval("number((/rl/plan|/rlplan)//viewer/swept)").getValue<rl::math::Real>(this->viewer->delta * 100);
+	
+	if ("deg" == path.eval("string((/rl/plan|/rlplan)//viewer/swept/@unit)").getValue<std::string>())
+	{
+		this->viewer->deltaSwept *= rl::math::DEG2RAD;
 	}
 	
 	this->viewer->sceneGroup->addChild(this->scene2->root);
@@ -1477,27 +1847,25 @@ MainWindow::load(const QString& filename)
 	
 	this->configurationSpaceScene->model = this->model.get();
 	
-	if (this->toggleViewAction->isChecked())
+	if (this->toggleViewActiveAction->isChecked())
 	{
-		this->toggleView(true);
+		this->toggleViewActive(true);
 	}
 	else
 	{
-		this->toggleView(false);
+		this->toggleViewActive(false);
 	}
 	
-	if (path.eval("count(//viewer/swept) > 0").getBoolval())
+	if (this->toggleConfigurationSpaceActiveAction->isChecked())
 	{
-		this->thread->swept = true;
+		this->toggleConfigurationSpaceActive(true);
+	}
+	else
+	{
+		this->toggleConfigurationSpaceActive(false);
 	}
 	
-	this->viewer->viewer->setBackgroundColor(SbColor(
-		path.eval("number(//viewer/background/r)").getFloatval(0.0f),
-		path.eval("number(//viewer/background/g)").getFloatval(0.0f),
-		path.eval("number(//viewer/background/b)").getFloatval(0.0f)
-	));
-	
-	if (path.eval("count(//viewer/camera/orthographic) > 0").getBoolval())
+	if (path.eval("count((/rl/plan|/rlplan)//viewer/camera/orthographic) > 0").getValue<bool>())
 	{
 		this->viewer->viewer->setCameraType(SoOrthographicCamera::getClassTypeId());
 	}
@@ -1511,92 +1879,43 @@ MainWindow::load(const QString& filename)
 	this->viewer->viewer->viewAll();
 	
 	this->viewer->viewer->getCamera()->position.setValue(
-		path.eval("number(//viewer/camera/position/x)").getFloatval(this->viewer->viewer->getCamera()->position.getValue()[0]),
-		path.eval("number(//viewer/camera/position/y)").getFloatval(this->viewer->viewer->getCamera()->position.getValue()[1]),
-		path.eval("number(//viewer/camera/position/z)").getFloatval(this->viewer->viewer->getCamera()->position.getValue()[2])
+		path.eval("number((/rl/plan|/rlplan)//viewer/camera/position/x)").getValue<rl::math::Real>(this->viewer->viewer->getCamera()->position.getValue()[0]),
+		path.eval("number((/rl/plan|/rlplan)//viewer/camera/position/y)").getValue<rl::math::Real>(this->viewer->viewer->getCamera()->position.getValue()[1]),
+		path.eval("number((/rl/plan|/rlplan)//viewer/camera/position/z)").getValue<rl::math::Real>(this->viewer->viewer->getCamera()->position.getValue()[2])
 	);
 	
-	if (path.eval("count(//viewer/camera/target) > 0").getBoolval())
+	if (path.eval("count((/rl/plan|/rlplan)//viewer/camera/target) > 0").getValue<bool>())
 	{
 		this->viewer->viewer->getCamera()->pointAt(
 			SbVec3f(
-				path.eval("number(//viewer/camera/target/x)").getFloatval(0),
-				path.eval("number(//viewer/camera/target/y)").getFloatval(0),
-				path.eval("number(//viewer/camera/target/z)").getFloatval(0)
+				path.eval("number((/rl/plan|/rlplan)//viewer/camera/target/x)").getValue<rl::math::Real>(0),
+				path.eval("number((/rl/plan|/rlplan)//viewer/camera/target/y)").getValue<rl::math::Real>(0),
+				path.eval("number((/rl/plan|/rlplan)//viewer/camera/target/z)").getValue<rl::math::Real>(0)
 			),
 			SbVec3f(
-				path.eval("number(//viewer/camera/up/x)").getFloatval(0),
-				path.eval("number(//viewer/camera/up/y)").getFloatval(0),
-				path.eval("number(//viewer/camera/up/z)").getFloatval(1)
+				path.eval("number((/rl/plan|/rlplan)//viewer/camera/up/x)").getValue<rl::math::Real>(0),
+				path.eval("number((/rl/plan|/rlplan)//viewer/camera/up/y)").getValue<rl::math::Real>(0),
+				path.eval("number((/rl/plan|/rlplan)//viewer/camera/up/z)").getValue<rl::math::Real>(1)
 			)
 		);
 	}
 	
 	this->viewer->viewer->getCamera()->scaleHeight(
-		path.eval("number(//viewer/camera/scale)").getFloatval(1.0f)
+		path.eval("number((/rl/plan|/rlplan)//viewer/camera/scale)").getValue<rl::math::Real>(1.0f)
 	);
-	
-	if (path.eval("count(//viewer/cspace) > 0").getBoolval())
-	{
-		this->evalAction->setEnabled(true);
-		this->savePdfAction->setEnabled(true);
-		this->toggleConfigurationSpaceAction->setEnabled(true);
-		
-		this->configurationSpaceScene->delta = path.eval("number(//viewer/cspace/delta)").getFloatval(1.0f);
-		
-		if ("deg" == path.eval("string(//viewer/cspace/delta/@unit)").getStringval())
-		{
-			this->configurationSpaceScene->delta *= rl::math::DEG2RAD;
-		}
-		
-		this->configurationSpaceScene->x = static_cast< std::size_t >(path.eval("number(//viewer/cspace/x)").getFloatval(0));
-		this->configurationSpaceScene->y = static_cast< std::size_t >(path.eval("number(//viewer/cspace/y)").getFloatval(1));
-		
-		this->configurationSpaceScene->eval();
-		
-		qreal scale = static_cast< std::size_t >(path.eval("number(//viewer/cspace/scale)").getFloatval(1.0f));
-		
-		this->configurationSpaceView->setEnabled(true);
-		
-		rl::math::Vector maximum(this->planner->model->getDof());
-		this->planner->model->getMaximum(maximum);
-		rl::math::Vector minimum(this->planner->model->getDof());
-		this->planner->model->getMinimum(minimum);
-		
-		this->configurationSpaceView->setSceneRect(
-			minimum(this->configurationSpaceScene->x),
-			-maximum(this->configurationSpaceScene->y),
-			std::abs(maximum(this->configurationSpaceScene->x) - minimum(this->configurationSpaceScene->x)),
-			std::abs(maximum(this->configurationSpaceScene->y) - minimum(this->configurationSpaceScene->y))
-		);
-		
-		this->configurationSpaceView->resetMatrix();
-		this->configurationSpaceView->scale(scale, scale);
-		
-		this->configurationSpaceView->adjustSize();
-		this->configurationSpaceDockWidget->adjustSize();
-		
-		this->configurationSpaceDockWidget->setUpdatesEnabled(false);
-		this->configurationSpaceDockWidget->setFloating(!this->configurationSpaceDockWidget->isFloating());
-		this->configurationSpaceDockWidget->setFloating(!this->configurationSpaceDockWidget->isFloating());
-		this->configurationSpaceDockWidget->setUpdatesEnabled(true);
-	}
-	else
-	{
-		this->evalAction->setEnabled(false);
-		this->savePdfAction->setEnabled(false);
-		this->toggleConfigurationSpaceAction->setEnabled(false);
-		
-		this->configurationSpaceScene->clear();
-		this->configurationSpaceDockWidget->hide();
-		this->configurationSpaceView->setEnabled(false);
-		this->disconnect(this->thread, this->configurationSpaceScene);
-	}
 	
 	this->viewer->drawConfiguration(*this->start);
 	
 	this->configurationModel->invalidate();
+	this->configurationSpaceModel->invalidate();
 	this->plannerModel->invalidate();
+	
+	this->configurationSpaceScene->init();
+	this->configurationSpaceSceneView->adjust();
+	
+	this->plannerDockWidget->setWindowTitle(QString::fromStdString(this->planner->getName()));
+	
+	this->statusBar()->showMessage("Finished loading '" + filename + "'.", 1000);
 	
 	if (!this->wait)
 	{
@@ -1607,7 +1926,7 @@ MainWindow::load(const QString& filename)
 void
 MainWindow::open()
 {
-	if (NULL != this->planner)
+	if (nullptr != this->planner)
 	{
 		this->reset();
 	}
@@ -1623,11 +1942,11 @@ MainWindow::open()
 void
 MainWindow::reset()
 {
-	rl::math::Real duration = this->planner->duration;
+	std::chrono::steady_clock::duration duration = this->planner->duration;
 	
 	this->thread->blockSignals(true);
 	QCoreApplication::processEvents();
-	this->planner->duration = 0;
+	this->planner->duration = std::chrono::steady_clock::duration::zero();
 	this->thread->stop();
 	this->planner->duration = duration;
 	this->thread->blockSignals(false);
@@ -1637,7 +1956,11 @@ MainWindow::reset()
 	this->viewer->reset();
 	this->configurationSpaceScene->reset();
 	
+	this->statusBar()->showMessage("Successfully reset.", 1000);
+	
 	this->configurationView->setEnabled(true);
+	this->configurationSpaceSceneView->setEnabled(true);
+	this->configurationSpaceView->setEnabled(true);
 	this->evalAction->setEnabled(true);
 	this->getGoalConfigurationAction->setEnabled(true);
 	this->getRandomConfigurationAction->setEnabled(true);
@@ -1648,50 +1971,68 @@ MainWindow::reset()
 	this->setGoalConfigurationAction->setEnabled(true);
 	this->setStartConfigurationAction->setEnabled(true);
 	this->startThreadAction->setEnabled(true);
-	this->toggleViewAction->setEnabled(true);
+	this->toggleAnimationAction->setEnabled(true);
+	this->toggleConfigurationSpaceActiveAction->setEnabled(true);
+	this->toggleSweptVolumeAction->setEnabled(true);
+	this->toggleViewActiveAction->setEnabled(true);
 }
 
 void
-MainWindow::saveImage()
+MainWindow::saveImageWithAlpha()
 {
-	this->viewer->saveImage("planDemo-" + QDateTime::currentDateTime().toString("yyyyMMdd-HHmmsszzz") + ".png");
+	this->viewer->saveImage(true);
+}
+
+void
+MainWindow::saveImageWithoutAlpha()
+{
+	this->viewer->saveImage(false);
 }
 
 void
 MainWindow::savePdf()
 {
+	QString filename = "rlPlanDemo-" + QDateTime::currentDateTime().toString("yyyyMMdd-HHmmsszzz") + ".pdf";
+	
 	QPrinter printer;
-	printer.setOutputFileName("planDemo-" + QDateTime::currentDateTime().toString("yyyyMMdd-HHmmsszzz") + ".pdf");
+	printer.setOutputFileName(filename);
 	printer.setOutputFormat(QPrinter::PdfFormat);
-	printer.setPageSize(QPrinter::A4);
+	printer.setPageMargins(0, 0, 0, 0, QPrinter::Millimeter);
+	printer.setPaperSize(this->configurationSpaceScene->sceneRect().size(), QPrinter::Millimeter);
 	
 	QPainter painter(&printer);
 	
 	this->configurationSpaceScene->render(&painter);
+	
+	this->statusBar()->showMessage("Successfully saved PDF in '" + filename + "'.", 1000);
 }
 
 void
 MainWindow::saveScene()
 {
-	this->viewer->saveScene("planDemo-" + QDateTime::currentDateTime().toString("yyyyMMdd-HHmmsszzz") + ".wrl");
+	this->viewer->saveScene();
 }
 
 void
 MainWindow::setGoalConfiguration()
 {
 	*this->goal = *this->q;
+	this->statusBar()->showMessage("Successfully set goal configuration.", 1000);
 }
 
 void
 MainWindow::setStartConfiguration()
 {
 	*this->start = *this->q;
+	this->statusBar()->showMessage("Successfully set start configuration.", 1000);
 }
 
 void
 MainWindow::startThread()
 {
 	this->configurationView->setEnabled(false);
+	this->configurationSpaceSceneView->setEnabled(false);
+	this->configurationSpaceView->setEnabled(false);
 	this->evalAction->setEnabled(false);
 	this->getGoalConfigurationAction->setEnabled(false);
 	this->getRandomConfigurationAction->setEnabled(false);
@@ -1702,10 +2043,26 @@ MainWindow::startThread()
 	this->setGoalConfigurationAction->setEnabled(false);
 	this->setStartConfigurationAction->setEnabled(false);
 	this->startThreadAction->setEnabled(false);
-	this->toggleViewAction->setEnabled(false);
+	this->toggleAnimationAction->setEnabled(false);
+	this->toggleConfigurationSpaceActiveAction->setEnabled(false);
+	this->toggleSweptVolumeAction->setEnabled(false);
+	this->toggleViewActiveAction->setEnabled(false);
 	
 	this->model->reset();
 	this->thread->start();
+}
+
+void
+MainWindow::toggleAnimation(const bool& doOn)
+{
+	if (doOn)
+	{
+		this->thread->animate = true;
+	}
+	else
+	{
+		this->thread->animate = false;
+	}
 }
 
 void
@@ -1744,16 +2101,39 @@ MainWindow::toggleConfiguration()
 void
 MainWindow::toggleConfigurationSpace()
 {
-	if (this->configurationSpaceView->isEnabled())
+	if (this->configurationSpaceDockWidget->isVisible())
 	{
-		if (this->configurationSpaceDockWidget->isVisible())
-		{
-			this->configurationSpaceDockWidget->hide();
-		}
-		else
-		{
-			this->configurationSpaceDockWidget->show();
-		}
+		this->configurationSpaceDockWidget->hide();
+	}
+	else
+	{
+		this->configurationSpaceDockWidget->show();
+	}
+}
+
+void
+MainWindow::toggleConfigurationSpaceActive(const bool& doOn)
+{
+	if (doOn)
+	{
+		this->connect(this->thread, this->configurationSpaceScene);
+	}
+	else
+	{
+		this->disconnect(this->thread, this->configurationSpaceScene);
+	}
+}
+
+void
+MainWindow::toggleConfigurationSpaceScene()
+{
+	if (this->configurationSpaceSceneDockWidget->isVisible())
+	{
+		this->configurationSpaceSceneDockWidget->hide();
+	}
+	else
+	{
+		this->configurationSpaceSceneDockWidget->show();
 	}
 }
 
@@ -1771,40 +2151,51 @@ MainWindow::togglePlanner()
 }
 
 void
-MainWindow::toggleView(const bool& doOn)
+MainWindow::toggleSweptVolume(const bool& doOn)
+{
+	if (doOn)
+	{
+		this->thread->swept = true;
+	}
+	else
+	{
+		this->thread->swept = false;
+	}
+}
+
+void
+MainWindow::toggleViewActive(const bool& doOn)
 {
 	if (doOn)
 	{
 		this->planner->viewer = this->thread;
 		
-		if (NULL != this->optimizer)
+		if (nullptr != this->optimizer)
 		{
 			this->optimizer->viewer = this->thread;
 		}
 		
-		for (std::vector< boost::shared_ptr< rl::plan::WorkspaceSphereExplorer > >::iterator i = this->explorers.begin(); i != this->explorers.end(); ++i)
+		for (std::vector<std::shared_ptr<rl::plan::WorkspaceSphereExplorer>>::iterator i = this->explorers.begin(); i != this->explorers.end(); ++i)
 		{
 			(*i)->viewer = this->thread;
 		}
 		
-		this->connect(this->thread, this->configurationSpaceScene);
 		this->connect(this->thread, this->viewer);
 	}
 	else
 	{
-		this->disconnect(this->thread, this->configurationSpaceScene);
 		this->disconnect(this->thread, this->viewer);
 		
-		this->planner->viewer = NULL;
+		this->planner->viewer = nullptr;
 		
-		if (NULL != this->optimizer)
+		if (nullptr != this->optimizer)
 		{
-			this->optimizer->viewer = NULL;
+			this->optimizer->viewer = nullptr;
 		}
 		
-		for (std::vector< boost::shared_ptr< rl::plan::WorkspaceSphereExplorer > >::iterator i = this->explorers.begin(); i != this->explorers.end(); ++i)
+		for (std::vector<std::shared_ptr<rl::plan::WorkspaceSphereExplorer>>::iterator i = this->explorers.begin(); i != this->explorers.end(); ++i)
 		{
-			(*i)->viewer = NULL;
+			(*i)->viewer = nullptr;
 		}
 	}
 }

@@ -30,14 +30,6 @@ namespace rl
 {
 	namespace plan
 	{
-		WorkspaceSphere::WorkspaceSphere()
-		{
-		}
-		
-		WorkspaceSphere::~WorkspaceSphere()
-		{
-		}
-		
 		bool
 		WorkspaceSphere::operator<(const WorkspaceSphere& rhs) const
 		{

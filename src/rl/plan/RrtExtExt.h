@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_PLAN_RRTEXTEXT_H_
-#define _RL_PLAN_RRTEXTEXT_H_
+#ifndef RL_PLAN_RRTEXTEXT_H
+#define RL_PLAN_RRTEXTEXT_H
 
 #include "RrtDual.h"
 
@@ -52,4 +52,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_PLAN_RRTEXTEXT_H_
+#endif // RL_PLAN_RRTEXTEXT_H

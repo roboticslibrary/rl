@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_MATH_ROTATION_H_
-#define _RL_MATH_ROTATION_H_
+#ifndef RL_MATH_ROTATION_H
+#define RL_MATH_ROTATION_H
 
 #include "Matrix.h"
 
@@ -47,8 +47,8 @@ namespace rl
 		
 		typedef ConstMatrix33Row ConstRotationRow;
 		
-		typedef ::Eigen::AngleAxis< Real > AngleAxis;
+		typedef ::Eigen::AngleAxis<Real> AngleAxis;
 	}
 }
 
-#endif // _RL_MATH_ROTATION_H_
+#endif // RL_MATH_ROTATION_H

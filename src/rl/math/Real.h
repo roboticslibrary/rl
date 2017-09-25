@@ -24,23 +24,44 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_MATH_REAL_H_
-#define _RL_MATH_REAL_H_
+#ifndef RL_MATH_REAL_H
+#define RL_MATH_REAL_H
 
+#include <cmath>
+
+/**
+ * Robotics Library.
+ */
 namespace rl
 {
+	/**
+	 * Common mathematical functions.
+	 */
 	namespace math
 	{
 		typedef double Real;
 		
-		template< typename T >
-		inline T sign(const T& a)
+		template<typename T>
+		inline T cbrt(const T& arg)
 		{
-			if (a > 0)
+			if (arg < 0)
+			{
+				return -::std::pow(-arg, static_cast<T>(1.0 / 3.0));
+			}
+			else
+			{
+				return ::std::pow(arg, static_cast<T>(1.0 / 3.0));
+			}
+		}
+		
+		template<typename T>
+		inline T sign(const T& arg)
+		{
+			if (arg > 0)
 			{
 				return 1;
 			}
-			else if (a < 0)
+			else if (arg < 0)
 			{
 				return -1;
 			}
@@ -52,4 +73,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_MATH_REAL_H_
+#endif // RL_MATH_REAL_H

@@ -24,8 +24,6 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <boost/make_shared.hpp>
-
 #include "RrtConCon.h"
 #include "SimpleModel.h"
 
@@ -51,36 +49,30 @@ namespace rl
 		bool
 		RrtConCon::solve()
 		{
-			this->begin[0] = this->addVertex(this->tree[0], ::boost::make_shared< ::rl::math::Vector >(*this->start));
-			this->begin[1] = this->addVertex(this->tree[1], ::boost::make_shared< ::rl::math::Vector >(*this->goal));
+			this->time = ::std::chrono::steady_clock::now();
+			
+			this->begin[0] = this->addVertex(this->tree[0], ::std::make_shared< ::rl::math::Vector>(*this->start));
+			this->begin[1] = this->addVertex(this->tree[1], ::std::make_shared< ::rl::math::Vector>(*this->goal));
 			
 			Tree* a = &this->tree[0];
 			Tree* b = &this->tree[1];
 			
-			::rl::math::Vector chosen(this->model->getDof());
-			
-			timer.start();
-			timer.stop();
-			
-			while (timer.elapsed() < this->duration)
+			while ((::std::chrono::steady_clock::now() - this->time) < this->duration)
 			{
 				for (::std::size_t j = 0; j < 2; ++j)
 				{
-					this->choose(chosen);
-					
+					::rl::math::Vector chosen = this->choose();
 					Neighbor aNearest = this->nearest(*a, chosen);
-					
 					Vertex aConnected = this->connect(*a, aNearest, chosen);
 					
-					if (NULL != aConnected)
+					if (nullptr != aConnected)
 					{
-						Neighbor bNearest = this->nearest(*b, *(*a)[aConnected].q);
+						Neighbor bNearest = this->nearest(*b, *get(*a, aConnected)->q);
+						Vertex bConnected = this->connect(*b, bNearest, *get(*a, aConnected)->q);
 						
-						Vertex bConnected = this->connect(*b, bNearest, *(*a)[aConnected].q);
-						
-						if (NULL != bConnected)
+						if (nullptr != bConnected)
 						{
-							if (this->areEqual(*(*a)[aConnected].q, *(*b)[bConnected].q))
+							if (this->areEqual(*get(*a, aConnected)->q, *get(*b, bConnected)->q))
 							{
 								this->end[0] = &this->tree[0] == a ? aConnected : bConnected;
 								this->end[1] = &this->tree[1] == b ? bConnected : aConnected;
@@ -89,10 +81,9 @@ namespace rl
 						}
 					}
 					
-					::std::swap(a, b);
+					using ::std::swap;
+					swap(a, b);
 				}
-				
-				timer.stop();
 			}
 			
 			return false;

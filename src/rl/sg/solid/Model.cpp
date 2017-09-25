@@ -61,7 +61,7 @@ namespace rl
 			{
 				for (Iterator i = this->begin(); i != this->end(); ++i)
 				{
-					static_cast< Body* >(*i)->setMargin(margin);
+					static_cast<Body*>(*i)->setMargin(margin);
 				}
 			}
 		}

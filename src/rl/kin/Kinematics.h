@@ -24,12 +24,12 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_KIN_KINEMATICS_H_
-#define _RL_KIN_KINEMATICS_H_
+#ifndef RL_KIN_KINEMATICS_H
+#define RL_KIN_KINEMATICS_H
 
+#include <memory>
 #include <string>
 #include <vector>
-#include <boost/shared_ptr.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <rl/math/Transform.h>
 #include <rl/math/Unit.h>
@@ -37,6 +37,9 @@
 
 namespace rl
 {
+	/**
+	 * Denavit-Hartenberg kinematics.
+	 */
 	namespace kin
 	{
 		class Element;
@@ -62,7 +65,7 @@ namespace rl
 			/**
 			 * Clip specified configuration to be within joint limits.
 			 * 
-			 * @param q \f$ q \f$
+			 * @param[out] q \f$\vec{q}\f$
 			 */
 			virtual void clip(::rl::math::Vector& q) const;
 			
@@ -73,44 +76,48 @@ namespace rl
 			/**
 			 * Calculate distance measure between specified configuration.
 			 * 
-			 * @param q1 \f$ q_{1} \f$
-			 * @param q2 \f$ q_{2} \f$
+			 * @param[in] q1 \f$\vec{q}_{1}\f$
+			 * @param[in] q2 \f$\vec{q}_{2}\f$
 			 */
 			virtual ::rl::math::Real distance(const ::rl::math::Vector& q1, const ::rl::math::Vector& q2) const;
 			
 			/**
 			 * Get forward position kinematics.
 			 * 
-			 * @param i end effector
+			 * @param[in] i End effector
 			 * 
-			 * \pre updateFrames()
+			 * @pre updateFrames()
 			 */
 			virtual const ::rl::math::Transform& forwardPosition(const ::std::size_t& i = 0) const;
 			
 			/**
 			 * Calculate forward force kinematics.
 			 * 
-			 * \f[ F = J^{-T} \tau \f]
+			 * \f[ \vec{F} = \matr{J}^{-\mathrm{T}} \vec{\tau} \f]
 			 * 
-			 * @param tau \f$ \tau \f$
-			 * @param f \f$ F \f$
+			 * @param[in] tau \f$\vec{\tau}\f$
+			 * @param[out] f \f$\vec{F}\f$
 			 * 
-			 * \pre updateJacobian()
-			 * \pre updateJacobianInverse()
+			 * @pre updateJacobian()
+			 * @pre updateJacobianInverse()
 			 */
 			virtual void forwardForce(const ::rl::math::Vector& tau, ::rl::math::Vector& f) const;
 			
 			/**
 			 * Calculate forward velocity kinematics.
 			 * 
-			 * \f[ \dot{x} = J \dot{q} \f]
+			 * \f[ \dot{\vec{x}} = \matr{J} \dot{\vec{q}} \f]
 			 * 
-			 * @param qdot \f$ \dot{q} \f$
-			 * @param xdot \f$ \dot{x} \f$
+			 * @param[in] qdot \f$\dot{\vec{q}}\f$
+			 * @param[out] xdot \f$\dot{\vec{x}}\f$
 			 * 
-			 * \pre updateJacobian()
+			 * @pre updateJacobian()
 			 */
 			virtual void forwardVelocity(const ::rl::math::Vector& qdot, ::rl::math::Vector& xdot) const;
+			
+			::rl::math::Vector generatePositionGaussian(const ::rl::math::Vector& rand, const ::rl::math::Vector& mean, const ::rl::math::Vector& sigma) const;
+			
+			::rl::math::Vector generatePositionUniform(const ::rl::math::Vector& rand) const;
 			
 			/**
 			 * Get number of links.
@@ -125,21 +132,21 @@ namespace rl
 			/**
 			 * Get link frame.
 			 * 
-			 * \pre updateFrames()
+			 * @pre updateFrames()
 			 */
 			const ::rl::math::Transform& getFrame(const ::std::size_t& i) const;
 			
 			/**
 			 * Get Jacobian.
 			 * 
-			 * \pre updateJacobian()
+			 * @pre updateJacobian()
 			 */
 			const ::rl::math::Matrix& getJacobian() const;
 			
 			/**
 			 * Get Jacobian-Inverse.
 			 * 
-			 * \pre updateJacobianInverse()
+			 * @pre updateJacobianInverse()
 			 */
 			const ::rl::math::Matrix& getJacobianInverse() const;
 			
@@ -148,7 +155,7 @@ namespace rl
 			/**
 			 * Get manipulability measure.
 			 * 
-			 * \pre updateJacobian()
+			 * @pre updateJacobian()
 			 */
 			::rl::math::Real getManipulabilityMeasure() const;
 			
@@ -172,27 +179,27 @@ namespace rl
 			/**
 			 * Get current joint position.
 			 * 
-			 * @param q \f$ q \f$
+			 * @param[out] q \f$\vec{q}\f$
 			 */
 			void getPosition(::rl::math::Vector& q) const;
 			
-			void getPositionUnits(::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1 >& units) const;
+			void getPositionUnits(::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1>& units) const;
 			
 			void getSpeed(::rl::math::Vector& speed) const;
 			
-			void getSpeedUnits(::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1 >& units) const;
+			void getSpeedUnits(::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1>& units) const;
 			
 			virtual void interpolate(const ::rl::math::Vector& q1, const ::rl::math::Vector& q2, const ::rl::math::Real& alpha, ::rl::math::Vector& q) const;
 			
 			/**
 			 * Calculate inverse force kinematics.
 			 * 
-			 * \f[ \tau = J^{T} F \f]
+			 * \f[ \vec{\tau} = \matr{J}^{\mathrm{T}} \vec{F} \f]
 			 * 
-			 * @param f \f$ F \f$
-			 * @param tau \f$ \tau \f$
+			 * @param[in] f \f$\vec{F}\f$
+			 * @param[out] tau \f$\vec{\tau}\f$
 			 * 
-			 * \pre updateJacobian()
+			 * @pre updateJacobian()
 			 */
 			virtual void inverseForce(const ::rl::math::Vector& f, ::rl::math::Vector& tau) const;
 			
@@ -200,18 +207,12 @@ namespace rl
 			
 			/**
 			 * Calculate inverse position kinematics.
-			 * 
-			 * \par Side Effects:
-			 * setPosition()\n\n
-			 * updateFrames()\n\n
-			 * updateJacobian()\n\n
-			 * updateJacobianInverse()
 			 */
 			virtual bool inversePosition(
 				const ::rl::math::Transform& x,
 				::rl::math::Vector& q,
 				const ::std::size_t& leaf = 0,
-				const ::rl::math::Real& delta = ::std::numeric_limits< ::rl::math::Real >::infinity(),
+				const ::rl::math::Real& delta = ::std::numeric_limits< ::rl::math::Real>::infinity(),
 				const ::rl::math::Real& epsilon = 1.0e-3f,
 				const ::std::size_t& iterations = 1000
 			);
@@ -219,12 +220,12 @@ namespace rl
 			/**
 			 * Calculate inverse velocity kinematics.
 			 * 
-			 * \f[ \dot{q} = J^{\dag} \dot{x} \f]
+			 * \f[ \dot{\vec{q}} = \matr{J}^{\dag} \dot{\vec{x}} \f]
 			 * 
-			 * @param xdot \f$ \dot{x} \f$
-			 * @param qdot \f$ \dot{q} \f$
+			 * @param[in] xdot \f$\dot{\vec{x}}\f$
+			 * @param[out] qdot \f$\dot{\vec{q}}\f$
 			 * 
-			 * \pre updateJacobianInverse()
+			 * @pre updateJacobianInverse()
 			 */
 			virtual void inverseVelocity(const ::rl::math::Vector& xdot, ::rl::math::Vector& qdot) const;
 			
@@ -241,7 +242,7 @@ namespace rl
 			/**
 			 * Check if specified configuration is within joint limits.
 			 * 
-			 * @param q \f$ q \f$
+			 * @param[in] q \f$\vec{q}\f$
 			 */
 			virtual bool isValid(const ::rl::math::Vector& q) const;
 			
@@ -266,7 +267,7 @@ namespace rl
 			/**
 			 * Update current joint position.
 			 * 
-			 * @param q \f$ q \f$
+			 * @param[in] q \f$\vec{q}\f$
 			 */
 			void setPosition(const ::rl::math::Vector& q);
 			
@@ -280,37 +281,36 @@ namespace rl
 			
 			virtual ::rl::math::Real transformedDistance(const ::rl::math::Vector& q1, const ::rl::math::Vector& q2) const;
 			
+			virtual ::rl::math::Real transformedDistance(const ::rl::math::Real& q1, const ::rl::math::Real& q2, const ::std::size_t& i) const;
+			
 			/**
 			 * Update frames.
 			 * 
-			 * \f[ {_{0}^{n}T} = {_{0}^{1}T} {_{0}^{1}T} \ldots {_{n-1}^{n}T} \f]
+			 * \f[ {_{0}^{n}\matr{T}} = {_{0}^{1}\matr{T}} \, {_{0}^{1}\matr{T}} \, \ldots \, {_{n-1}^{n}\matr{T}} \f]
 			 * 
-			 * \pre setPosition()
+			 * @pre setPosition()
 			 */
 			virtual void updateFrames();
 			
 			/**
 			 * Update Jacobian.
 			 * 
-			 * \f[ {^{0}J} = \begin{pmatrix} {^{0}J_{1}} & {^{0}J_{2}} & \cdots & {^{0}J_{n}} \end{pmatrix} \f]
+			 * \f[ {^{0}\matr{J}} = \begin{pmatrix} {^{0}\matr{J}_{1}} & {^{0}\matr{J}_{2}} & \cdots & {^{0}\matr{J}_{n}} \end{pmatrix} \f]
 			 * 
-			 * \pre updateFrames()
+			 * @pre updateFrames()
 			 */
 			virtual void updateJacobian();
 			
 			/**
 			 * Update Jacobian-Inverse.
 			 * 
-			 * Singular value decomposition:
-			 * \f[ J^{\dag} = \sum_{i = 1}^{r} \frac{ \sigma_{i} }{ \sigma_{i}^{2} + \lambda^{2} } v_{i} u_{i}^{T} \f]
+			 * \f[ \matr{J}^{\dag}(\vec{q}) = \sum_{i = 1}^{r} \frac{ \sigma_{i} }{ \sigma_{i}^{2} + \lambda^{2} } \, \vec{v}_{i} \, \vec{u}_{i}^{\mathrm{T}} \f]
+			 * \f[ \matr{J}^{\dag}(\vec{q}) = \matr{J}^{\mathrm{T}}(\vec{q}) \, \bigl( \matr{J}(\vec{q}) \, \matr{J}^{\mathrm{T}}(\vec{q}) + \lambda^{2} \, \matr{1} \bigr)^{-1} \f]
 			 * 
-			 * Damped least squares:
-			 * \f[ J^{\dag} = J^{T} \left( J J^{T} + \lambda^{2} I \right)^{-1} \f]
+			 * @param[in] lambda Damping factor \f$\lambda\f$
+			 * @param[in] doSvd Use singular value decomposition or damped least squares
 			 * 
-			 * @param lambda damping factor
-			 * @param svd singular value decomposition
-			 * 
-			 * \pre updateJacobian()
+			 * @pre updateJacobian()
 			 */
 			virtual void updateJacobianInverse(const ::rl::math::Real& lambda = 0.0f, const bool& doSvd = true);
 			
@@ -323,49 +323,49 @@ namespace rl
 				::boost::vecS,
 				::boost::vecS,
 				::boost::bidirectionalS,
-				::boost::shared_ptr< Frame >,
-				::boost::shared_ptr< Transform >,
+				::std::shared_ptr<Frame>,
+				::std::shared_ptr<Transform>,
 				::boost::no_property,
 				::boost::vecS
 			> Tree;
 			
-			typedef ::boost::graph_traits< Tree >::edge_descriptor Edge;
+			typedef ::boost::graph_traits<Tree>::edge_descriptor Edge;
 			
-			typedef ::boost::graph_traits< Tree >::edge_iterator EdgeIterator;
+			typedef ::boost::graph_traits<Tree>::edge_iterator EdgeIterator;
 			
-			typedef ::std::pair< EdgeIterator, EdgeIterator > EdgeIteratorPair;
+			typedef ::std::pair<EdgeIterator, EdgeIterator> EdgeIteratorPair;
 			
-			typedef ::boost::graph_traits< Tree >::in_edge_iterator InEdgeIterator;
+			typedef ::boost::graph_traits<Tree>::in_edge_iterator InEdgeIterator;
 			
-			typedef ::std::pair< InEdgeIterator, InEdgeIterator > InEdgeIteratorPair;
+			typedef ::std::pair<InEdgeIterator, InEdgeIterator> InEdgeIteratorPair;
 			
-			typedef ::boost::graph_traits< Tree >::out_edge_iterator OutEdgeIterator;
+			typedef ::boost::graph_traits<Tree>::out_edge_iterator OutEdgeIterator;
 			
-			typedef ::std::pair< OutEdgeIterator, OutEdgeIterator > OutEdgeIteratorPair;
+			typedef ::std::pair<OutEdgeIterator, OutEdgeIterator> OutEdgeIteratorPair;
 			
-			typedef ::boost::graph_traits< Tree >::vertex_descriptor Vertex;
+			typedef ::boost::graph_traits<Tree>::vertex_descriptor Vertex;
 			
-			typedef ::boost::graph_traits< Tree >::vertex_iterator VertexIterator;
+			typedef ::boost::graph_traits<Tree>::vertex_iterator VertexIterator;
 			
-			typedef ::std::pair< VertexIterator, VertexIterator > VertexIteratorPair;
+			typedef ::std::pair<VertexIterator, VertexIterator> VertexIteratorPair;
 			
 			void update();
 			
 			void update(Vertex& u);
 			
-			::std::vector< Element* > elements;
+			::std::vector<Element*> elements;
 			
-			::std::vector< Frame* > frames;
+			::std::vector<Frame*> frames;
 			
-			::std::vector< Vertex > leaves;
+			::std::vector<Vertex> leaves;
 			
-			::std::vector< Link* > links;
+			::std::vector<Link*> links;
 			
 			::rl::math::Matrix jacobian;
 			
 			::rl::math::Matrix jacobianInverse;
 			
-			::std::vector< Joint* > joints;
+			::std::vector<Joint*> joints;
 			
 			::std::string manufacturer;
 			
@@ -373,9 +373,9 @@ namespace rl
 			
 			Vertex root;
 			
-			::std::vector< Edge > tools;
+			::std::vector<Edge> tools;
 			
-			::std::vector< Transform* > transforms;
+			::std::vector<Transform*> transforms;
 			
 			Tree tree;
 			
@@ -385,4 +385,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_KIN_KINEMATICS_H_
+#endif // RL_KIN_KINEMATICS_H

@@ -1,8 +1,0 @@
-[Desktop Entry]
-Categories=Science;Robotics;
-Comment=Visualization demo with Unimation Puma 560
-Exec=sh -c "rlViewDemo $(dirname %k)/../rl/examples/rlsg/unimation-puma560_boxes.xml"
-Icon=robotics-library
-Name=Robotics Library (rlViewDemo)
-Type=Application
-X-Unity-IconBackgroundColor=#ffffff

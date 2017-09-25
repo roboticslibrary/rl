@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_MATH_TRAPEZOIDALVELOCITY_H_
-#define _RL_MATH_TRAPEZOIDALVELOCITY_H_
+#ifndef RL_MATH_TRAPEZOIDALVELOCITY_H
+#define RL_MATH_TRAPEZOIDALVELOCITY_H
 
 #include <cassert>
 #include <cmath>
@@ -37,7 +37,7 @@ namespace rl
 {
 	namespace math
 	{
-		template< typename T >
+		template<typename T>
 		class TrapezoidalVelocity
 		{
 		public:
@@ -770,4 +770,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_MATH_TRAPEZOIDALVELOCITY_H_
+#endif // RL_MATH_TRAPEZOIDALVELOCITY_H

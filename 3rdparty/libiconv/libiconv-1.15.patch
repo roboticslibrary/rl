@@ -1,0 +1,29 @@
+diff -Naur libiconv-1.15.orig/include/iconv.h.build.in libiconv-1.15/include/iconv.h.build.in
+--- libiconv-1.15.orig/include/iconv.h.build.in	2017-01-01 15:02:55.000000000 -0800
++++ libiconv-1.15/include/iconv.h.build.in	2017-09-23 21:04:49.271114700 -0700
+@@ -24,10 +24,12 @@
+ 
+ #if @HAVE_VISIBILITY@ && BUILDING_LIBICONV
+ #define LIBICONV_DLL_EXPORTED __attribute__((__visibility__("default")))
++#elif defined _MSC_VER && BUILDING_LIBICONV
++#define LIBICONV_DLL_EXPORTED __declspec(dllexport)
+ #else
+ #define LIBICONV_DLL_EXPORTED
+ #endif
+-extern LIBICONV_DLL_EXPORTED @DLL_VARIABLE@ int _libiconv_version; /* Likewise */
++extern LIBICONV_DLL_EXPORTED int _libiconv_version; /* Likewise */
+ 
+ /* We would like to #include any system header file which could define
+    iconv_t, 1. in order to eliminate the risk that the user gets compilation
+diff -Naur libiconv-1.15.orig/libcharset/include/localcharset.h.build.in libiconv-1.15/libcharset/include/localcharset.h.build.in
+--- libiconv-1.15.orig/libcharset/include/localcharset.h.build.in	2017-01-01 15:03:39.000000000 -0800
++++ libiconv-1.15/libcharset/include/localcharset.h.build.in	2017-09-23 21:04:49.271114700 -0700
+@@ -20,6 +20,8 @@
+ 
+ #if @HAVE_VISIBILITY@ && BUILDING_LIBCHARSET
+ #define LIBCHARSET_DLL_EXPORTED __attribute__((__visibility__("default")))
++#elif defined _MSC_VER && BUILDING_LIBCHARSET
++#define LIBCHARSET_DLL_EXPORTED __declspec(dllexport)
+ #else
+ #define LIBCHARSET_DLL_EXPORTED
+ #endif

@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_PLAN_RRTDUAL_H_
-#define _RL_PLAN_RRTDUAL_H_
+#ifndef RL_PLAN_RRTDUAL_H
+#define RL_PLAN_RRTDUAL_H
 
 #include "Rrt.h"
 
@@ -42,7 +42,7 @@ namespace rl
 			
 			virtual ::std::string getName() const;
 			
-			virtual void getPath(VectorList& path);
+			virtual VectorList getPath();
 			
 			virtual bool solve();
 			
@@ -54,4 +54,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_PLAN_RRTDUAL_H_
+#endif // RL_PLAN_RRTDUAL_H

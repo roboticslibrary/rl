@@ -35,7 +35,7 @@ namespace rl
 		{
 			Scene::Scene() :
 				::rl::sg::Scene(),
-				root(new SoVRMLGroup())
+				root(new ::SoVRMLGroup())
 			{
 				this->root->ref();
 				this->root->setUserData(this);
@@ -56,7 +56,7 @@ namespace rl
 			{
 				::rl::sg::Scene::add(model);
 				
-				this->root->addChild(static_cast< Model* >(model)->root);
+				this->root->addChild(static_cast<Model*>(model)->root);
 			}
 			
 			::rl::sg::Model*
@@ -68,7 +68,7 @@ namespace rl
 			void
 			Scene::remove(::rl::sg::Model* model)
 			{
-				this->root->removeChild(static_cast< Model* >(model)->root);
+				this->root->removeChild(static_cast<Model*>(model)->root);
 				
 				::rl::sg::Scene::remove(model);
 			}

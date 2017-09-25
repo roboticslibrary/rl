@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _CONFIGURATIONSPACESCENE_H_
-#define _CONFIGURATIONSPACESCENE_H_
+#ifndef CONFIGURATIONSPACESCENE_H
+#define CONFIGURATIONSPACESCENE_H
 
 #include <QGraphicsLineItem>
 #include <QGraphicsScene>
@@ -40,17 +40,19 @@ class ConfigurationSpaceScene : public QGraphicsScene, public rl::plan::Viewer
 	Q_OBJECT
 	
 public:
-	ConfigurationSpaceScene(QObject* parent = NULL);
+	ConfigurationSpaceScene(QObject* parent = nullptr);
 	
 	virtual ~ConfigurationSpaceScene();
 	
-	rl::math::Real delta;
+	std::size_t axis0;
+	
+	std::size_t axis1;
+	
+	rl::math::Real delta0;
+	
+	rl::math::Real delta1;
 	
 	rl::plan::Model* model;
-	
-	std::size_t x;
-	
-	std::size_t y;
 	
 public slots:
 	void addCollision(const qreal& x, const qreal& y, const qreal& w, const qreal& h, const int& rgb);
@@ -83,6 +85,8 @@ public slots:
 	
 	void eval();
 	
+	void init();
+	
 	void reset();
 	
 	void resetEdges();
@@ -97,6 +101,8 @@ public slots:
 	
 	void resetVertices();
 	
+	void showMessage(const std::string& message);
+	
 protected:
 	void mouseMoveEvent(QGraphicsSceneMouseEvent* mouseEvent);
 	
@@ -106,8 +112,13 @@ private:
 	QLinkedList<QGraphicsLineItem*> edges;
 	
 	QLinkedList<QGraphicsLineItem*> path;
+
+	QGraphicsRectItem* scene;
 	
 	ConfigurationSpaceThread* thread;
+	
+signals:
+	void evalFinished();
 };
 
-#endif // _CONFIGURATIONSPACESCENE_H_
+#endif // CONFIGURATIONSPACESCENE_H

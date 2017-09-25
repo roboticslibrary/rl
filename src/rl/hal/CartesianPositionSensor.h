@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_HAL_CARTESIANPOSITIONSENSOR_H_
-#define _RL_HAL_CARTESIANPOSITIONSENSOR_H_
+#ifndef RL_HAL_CARTESIANPOSITIONSENSOR_H
+#define RL_HAL_CARTESIANPOSITIONSENSOR_H
 
 #include <rl/math/Transform.h>
 
@@ -38,11 +38,11 @@ namespace rl
 		class CartesianPositionSensor : public virtual AxisController
 		{
 		public:
-			CartesianPositionSensor(const ::std::size_t& dof, const ::rl::math::Real& updateRate);
+			CartesianPositionSensor(const ::std::size_t& dof);
 			
 			virtual ~CartesianPositionSensor();
 			
-			virtual void getCartesianPosition(::rl::math::Transform& x) const = 0;
+			virtual ::rl::math::Transform getCartesianPosition() const = 0;
 			
 		protected:
 			
@@ -52,4 +52,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_HAL_CARTESIANPOSITIONSENSOR_H_
+#endif // RL_HAL_CARTESIANPOSITIONSENSOR_H

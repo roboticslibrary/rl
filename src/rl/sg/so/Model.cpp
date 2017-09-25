@@ -36,7 +36,7 @@ namespace rl
 		{
 			Model::Model(Scene* scene) :
 				::rl::sg::Model(scene),
-				root(new SoVRMLGroup())
+				root(new ::SoVRMLGroup())
 			{
 				this->root->ref();
 				this->root->setUserData(this);
@@ -61,7 +61,7 @@ namespace rl
 			{
 				::rl::sg::Model::add(body);
 				
-				this->root->addChild(static_cast< Body* >(body)->root);
+				this->root->addChild(static_cast<Body*>(body)->root);
 			}
 			
 			::rl::sg::Body*
@@ -79,7 +79,7 @@ namespace rl
 			void
 			Model::remove(::rl::sg::Body* body)
 			{
-				this->root->removeChild(static_cast< Body* >(body)->root);
+				this->root->removeChild(static_cast<Body*>(body)->root);
 				
 				::rl::sg::Model::remove(body);
 			}

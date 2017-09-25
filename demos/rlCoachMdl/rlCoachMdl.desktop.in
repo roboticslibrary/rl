@@ -1,0 +1,8 @@
+[Desktop Entry]
+Categories=Science;Robotics;
+Comment=Visualization and kinematics demo with Unimation Puma 560
+Exec=sh -c "rlCoachMdl $(dirname %k)/../rl-@VERSION@/examples/rlsg/unimation-puma560_boxes.xml $(dirname %k)/../rl-@VERSION@/examples/rlmdl/unimation-puma560.xml"
+Icon=robotics-library
+Name=Robotics Library (rlCoachMdl)
+Type=Application
+X-Unity-IconBackgroundColor=#ffffff

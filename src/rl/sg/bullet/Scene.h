@@ -24,11 +24,12 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_SG_BULLET_SCENE_H_
-#define _RL_SG_BULLET_SCENE_H_
+#ifndef RL_SG_BULLET_SCENE_H
+#define RL_SG_BULLET_SCENE_H
 
 #include <btBulletCollisionCommon.h>
 
+#include "../DepthScene.h"
 #include "../DistanceScene.h"
 #include "../RaycastScene.h"
 #include "../SimpleScene.h"
@@ -37,9 +38,14 @@ namespace rl
 {
 	namespace sg
 	{
+		/**
+		 * Bullet Physics Library.
+		 * 
+		 * http://bulletphysics.org/
+		 */
 		namespace bullet
 		{
-			class Scene : public ::rl::sg::DistanceScene, public ::rl::sg::RaycastScene, public ::rl::sg::SimpleScene
+			class Scene : public ::rl::sg::DepthScene, public ::rl::sg::DistanceScene, public ::rl::sg::RaycastScene, public ::rl::sg::SimpleScene
 			{
 			public:
 				Scene();
@@ -52,13 +58,11 @@ namespace rl
 				
 				::rl::sg::Model* create();
 				
+				::rl::math::Real depth(::rl::sg::Body* first, ::rl::sg::Body* second, ::rl::math::Vector3& point1, ::rl::math::Vector3& point2);
+				
+				::rl::math::Real depth(::rl::sg::Shape* first, ::rl::sg::Shape* second, ::rl::math::Vector3& point1, ::rl::math::Vector3& point2);
+				
 				using ::rl::sg::DistanceScene::distance;
-				
-#if 0
-				::rl::math::Real distance(::rl::sg::Body* first, ::rl::sg::Body* second, ::rl::math::Vector3& point1, ::rl::math::Vector3& point2);
-				
-				::rl::math::Real distance(::rl::sg::Body* body, const ::rl::math::Vector3& point, ::rl::math::Vector3& point1, ::rl::math::Vector3& point2);
-#endif
 				
 				::rl::math::Real distance(::rl::sg::Shape* first, ::rl::sg::Shape* second, ::rl::math::Vector3& point1, ::rl::math::Vector3& point2);
 				
@@ -72,49 +76,49 @@ namespace rl
 				
 				void setMargin(const ::rl::math::Real& margin);
 				
-				btDbvtBroadphase broadphase;
+				::btDbvtBroadphase broadphase;
 				
-				btDefaultCollisionConfiguration configuration;
+				::btDefaultCollisionConfiguration configuration;
 				
-				btCollisionDispatcher dispatcher;
+				::btCollisionDispatcher dispatcher;
 				
-				btCollisionWorld world;
+				::btCollisionWorld world;
 				
 			protected:
 				
 			private:
-				struct ContactResultCallback : public btCollisionWorld::ContactResultCallback 
+				struct ContactResultCallback : public ::btCollisionWorld::ContactResultCallback 
 				{
 					ContactResultCallback();
 					
 #if (BT_BULLET_VERSION < 281)
-					btScalar addSingleResult(btManifoldPoint& cp, const btCollisionObject* colObj0, int partId0, int index0, const btCollisionObject* colObj1, int partId1, int index1);
+					btScalar addSingleResult(::btManifoldPoint& cp, const ::btCollisionObject* colObj0, int partId0, int index0, const ::btCollisionObject* colObj1, int partId1, int index1);
 #else
-					btScalar addSingleResult(btManifoldPoint& cp, const btCollisionObjectWrapper* colObj0, int partId0, int index0, const btCollisionObjectWrapper* colObj1, int partId1, int index1);
+					btScalar addSingleResult(::btManifoldPoint& cp, const ::btCollisionObjectWrapper* colObj0, int partId0, int index0, const ::btCollisionObjectWrapper* colObj1, int partId1, int index1);
 #endif
 					
 					bool collision;
 					
-					btScalar distance;
+					::btScalar distance;
 					
-					btVector3 positionWorldOnA;
+					::btVector3 positionWorldOnA;
 					
-					btVector3 positionWorldOnB;
+					::btVector3 positionWorldOnB;
 				};
 				
-				struct RayResultCallback : public btCollisionWorld::RayResultCallback
+				struct RayResultCallback : public ::btCollisionWorld::RayResultCallback
 				{
 					RayResultCallback();
 					
-					btScalar addSingleResult(btCollisionWorld::LocalRayResult& rayResult, bool normalInWorldSpace);
+					::btScalar addSingleResult(::btCollisionWorld::LocalRayResult& rayResult, bool normalInWorldSpace);
 					
-					const btCollisionShape* collisionShape;
+					const ::btCollisionShape* collisionShape;
 					
-					btVector3 hitPointWorld;
+					::btVector3 hitPointWorld;
 				};
 			};
 		}
 	}
 }
 
-#endif // _RL_SG_BULLET_SCENE_H_
+#endif // RL_SG_BULLET_SCENE_H

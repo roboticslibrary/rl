@@ -24,13 +24,13 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_HAL_COMEDI_H_
-#define _RL_HAL_COMEDI_H_
-
-#include "Com.h"
+#ifndef RL_HAL_COMEDI_H
+#define RL_HAL_COMEDI_H
 
 #include <comedilib.h>
 #include <string>
+
+#include "Com.h"
 
 namespace rl
 {
@@ -95,4 +95,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_HAL_COMEDI_H_
+#endif // RL_HAL_COMEDI_H

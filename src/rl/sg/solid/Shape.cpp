@@ -32,6 +32,7 @@
 #include <Inventor/VRMLnodes/SoVRMLIndexedFaceSet.h>
 #include <Inventor/VRMLnodes/SoVRMLSphere.h>
 
+#include "../Exception.h"
 #include "Body.h"
 #include "Model.h"
 #include "Scene.h"
@@ -56,10 +57,10 @@ namespace rl
 				transform(::rl::math::Transform::Identity())
 			{
 				this->object = DT_CreateObject(this, this->shape);
-				DT_AddObject(dynamic_cast< Scene* >(this->getBody()->getModel()->getScene())->scene, this->object);
+				DT_AddObject(dynamic_cast<Scene*>(this->getBody()->getModel()->getScene())->scene, this->object);
 				
 				DT_GetBBox(this->object, this->min, this->max);
-				this->proxy = BP_CreateProxy(dynamic_cast< Scene* >(this->getBody()->getModel()->getScene())->broad, this, this->min, this->max);
+				this->proxy = BP_CreateProxy(dynamic_cast<Scene*>(this->getBody()->getModel()->getScene())->broad, this, this->min, this->max);
 				
 				this->getBody()->add(this);
 			}
@@ -68,23 +69,23 @@ namespace rl
 			{
 				this->getBody()->remove(this);
 				
-				for (::std::tr1::unordered_set< Shape* >::iterator i = this->encounters.begin(); i != this->encounters.end(); ++i)
+				for (::std::unordered_set<Shape*>::iterator i = this->encounters.begin(); i != this->encounters.end(); ++i)
 				{
 					(*i)->encounters.erase(this);
 				}
 				
-				if (NULL != this->proxy)
+				if (nullptr != this->proxy)
 				{
-					BP_DestroyProxy(dynamic_cast< Scene* >(this->getBody()->getModel()->getScene())->broad, this->proxy);
+					BP_DestroyProxy(dynamic_cast<Scene*>(this->getBody()->getModel()->getScene())->broad, this->proxy);
 				}
 				
-				if (NULL != this->object)
+				if (nullptr != this->object)
 				{
-					DT_RemoveObject(dynamic_cast< Scene* >(this->getBody()->getModel()->getScene())->scene, this->object);
+					DT_RemoveObject(dynamic_cast<Scene*>(this->getBody()->getModel()->getScene())->scene, this->object);
 					DT_DestroyObject(this->object);
 				}
 				
-				if (NULL != this->shape)
+				if (nullptr != this->shape)
 				{
 					DT_DeleteShape(this->shape);
 				}
@@ -93,51 +94,55 @@ namespace rl
 			DT_ShapeHandle
 			Shape::create(SoVRMLShape* shape)
 			{
-				SoVRMLGeometry* geometry = static_cast< SoVRMLGeometry* >(shape->geometry.getValue());
+				SoVRMLGeometry* geometry = static_cast<SoVRMLGeometry*>(shape->geometry.getValue());
 				
 				if (geometry->isOfType(SoVRMLBox::getClassTypeId()))
 				{
-					SoVRMLBox* box = static_cast< SoVRMLBox* >(geometry);
+					SoVRMLBox* box = static_cast<SoVRMLBox*>(geometry);
 					return DT_NewBox(box->size.getValue()[0], box->size.getValue()[1], box->size.getValue()[2]);
 				}
 				else if (geometry->isOfType(SoVRMLCone::getClassTypeId()))
 				{
-					SoVRMLCone* cone = static_cast< SoVRMLCone* >(geometry);
+					SoVRMLCone* cone = static_cast<SoVRMLCone*>(geometry);
 					return DT_NewCone(cone->bottomRadius.getValue(), cone->height.getValue());
 				}
 				else if (geometry->isOfType(SoVRMLCylinder::getClassTypeId()))
 				{
-					SoVRMLCylinder* cylinder = static_cast< SoVRMLCylinder* >(geometry);
+					SoVRMLCylinder* cylinder = static_cast<SoVRMLCylinder*>(geometry);
 					return DT_NewCylinder(cylinder->radius.getValue(), cylinder->height.getValue());
 				}
 				else if (geometry->isOfType(SoVRMLIndexedFaceSet::getClassTypeId()))
 				{
-					SoVRMLIndexedFaceSet* indexedFaceSet = static_cast< SoVRMLIndexedFaceSet* >(geometry);
+					SoVRMLIndexedFaceSet* indexedFaceSet = static_cast<SoVRMLIndexedFaceSet*>(geometry);
 					
 					if (indexedFaceSet->convex.getValue())
 					{
-						return Shape::create(static_cast< SoVRMLCoordinate* >(indexedFaceSet->coord.getValue())->point);
+						return Shape::create(static_cast<SoVRMLCoordinate*>(indexedFaceSet->coord.getValue())->point);
 					}
 					else
 					{
 						this->complex = true;
 						
-						return Shape::create(static_cast< SoVRMLCoordinate* >(indexedFaceSet->coord.getValue())->point, indexedFaceSet->coordIndex);
+						return Shape::create(static_cast<SoVRMLCoordinate*>(indexedFaceSet->coord.getValue())->point, indexedFaceSet->coordIndex);
 					}
 				}
 				else if (geometry->isOfType(SoVRMLSphere::getClassTypeId()))
 				{
-					SoVRMLSphere* sphere = static_cast< SoVRMLSphere* >(geometry);
+					SoVRMLSphere* sphere = static_cast<SoVRMLSphere*>(geometry);
 					return DT_NewSphere(sphere->radius.getValue());
 				}
+				else
+				{
+					throw Exception("::rl::sg::solid::Shape::create(SoVRMLShape* shape) - geometry not supported");
+				}
 				
-				return NULL;
+				return nullptr;
 			}
 			
 			DT_ShapeHandle
 			Shape::create(const SoMFVec3f& point)
 			{
-				DT_ShapeHandle shape = DT_NewPolytope(NULL);
+				DT_ShapeHandle shape = DT_NewPolytope(nullptr);
 				
 				DT_Vector3 vertex;
 				
@@ -158,7 +163,7 @@ namespace rl
 			DT_ShapeHandle
 			Shape::create(const SoMFVec3f& point, const SoMFInt32& coordIndex)
 			{
-				DT_ShapeHandle shape = DT_NewComplexShape(NULL);
+				DT_ShapeHandle shape = DT_NewComplexShape(nullptr);
 				
 				DT_Vector3 vertex;
 				
@@ -204,11 +209,11 @@ namespace rl
 				{
 					for (::std::size_t j = 0; j < 4; ++j)
 					{
-						this->frame(i, j) = static_cast< ::rl::math::Real >(m[i + j * 4]);
+						this->frame(i, j) = static_cast< ::rl::math::Real>(m[i + j * 4]);
 					}
 				}
 				
-				this->transform = this->frame * static_cast< Body* >(this->getBody())->frame.inverse();
+				this->transform = static_cast<Body*>(this->getBody())->frame.inverse() * this->frame;
 				
 				transform = this->transform;
 			}
@@ -216,7 +221,7 @@ namespace rl
 			void
 			Shape::setMargin(const ::rl::math::Real& margin)
 			{
-				DT_SetMargin(this->object, static_cast< DT_Scalar >(margin));
+				DT_SetMargin(this->object, static_cast<DT_Scalar>(margin));
 			}
 			
 			void
@@ -230,7 +235,7 @@ namespace rl
 			void
 			Shape::update()
 			{
-				this->frame = static_cast< Body* >(this->getBody())->frame * this->transform;
+				this->frame = static_cast<Body*>(this->getBody())->frame * this->transform;
 				
 				double m[16];
 				
@@ -238,7 +243,7 @@ namespace rl
 				{
 					for (::std::size_t j = 0; j < 4; ++j)
 					{
-						m[i + j * 4] = static_cast< double >(this->frame(i, j));
+						m[i + j * 4] = static_cast<double>(this->frame(i, j));
 					}
 				}
 				

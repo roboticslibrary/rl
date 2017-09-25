@@ -29,12 +29,11 @@
 #include <iostream>
 #include <rl/math/Unit.h>
 
-#include "ComException.h"
 #include "DeviceException.h"
-#include "endian.h"
+#include "Endian.h"
 #include "SickS300.h"
 
-static const uint16_t crcTable[256] = {
+static const ::std::uint16_t crcTable[256] = {
 	0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50a5, 0x60c6, 0x70e7,
 	0x8108, 0x9129, 0xa14a, 0xb16b, 0xc18c, 0xd1ad, 0xe1ce, 0xf1ef,
 	0x1231, 0x0210, 0x3273, 0x2252, 0x52b5, 0x4294, 0x72f7, 0x62d6,
@@ -77,6 +76,7 @@ namespace rl
 			const ::std::string& filename,
 			const Serial::BaudRate& baudRate
 		) :
+			CyclicDevice(::std::chrono::nanoseconds::zero()),
 			Lidar(),
 			data(),
 			serial(
@@ -104,10 +104,10 @@ namespace rl
 			this->setConnected(false);
 		}
 		
-		uint16_t
-		SickS300::crc(const uint8_t* buf, const ::std::size_t& len) const
+		::std::uint16_t
+		SickS300::crc(const ::std::uint8_t* buf, const ::std::size_t& len) const
 		{
-			uint16_t checksum = 0xFFFF;
+			::std::uint16_t checksum = 0xFFFF;
 			
 			for (::std::size_t i = 0; i < len; ++i)
 			{
@@ -117,17 +117,18 @@ namespace rl
 			return checksum;
 		}
 		
-		void
-		SickS300::getDistances(::rl::math::Vector& distances) const
+		::rl::math::Vector
+		SickS300::getDistances() const
 		{
 			assert(this->isConnected());
-			assert(distances.size() >= this->getDistancesCount());
+			
+			::rl::math::Vector distances(this->getDistancesCount());
 			
 			::rl::math::Real scale = 0.01f;
 			
 			for (::std::size_t i = 0; i < this->getDistancesCount(); ++i)
 			{
-				uint16_t value = hostEndianWord(this->data[24 + 1 + i * 2], this->data[24 + 0 + i * 2]) & 0x1FFF;
+				::std::uint16_t value = Endian::hostWord(this->data[24 + 1 + i * 2], this->data[24 + 0 + i * 2]) & 0x1FFF;
 				
 				switch (this->data[24 + 1 + i * 2] & 224)
 				{
@@ -137,13 +138,15 @@ namespace rl
 ::std::cerr << "Measured value detected within protective field" << ::std::endl;
 				case 32:
 ::std::cerr << "Glare (dazzling) detected" << ::std::endl;
-					distances(i) = ::std::numeric_limits< ::rl::math::Real >::quiet_NaN();
+					distances(i) = ::std::numeric_limits< ::rl::math::Real>::quiet_NaN();
 					break;
 				default:
 					distances(i) = value * scale;
 					break;
 				}
 			}
+			
+			return distances;
 		}
 		
 		::std::size_t
@@ -183,9 +186,9 @@ namespace rl
 		::std::size_t
 		SickS300::getScanNumber() const
 		{
-			return hostEndianDoubleWord(
-				hostEndianWord(this->data[17], this->data[16]),
-				hostEndianWord(this->data[15], this->data[14])
+			return Endian::hostDoubleWord(
+				Endian::hostWord(this->data[17], this->data[16]),
+				Endian::hostWord(this->data[15], this->data[14])
 			);
 		}
 		
@@ -208,7 +211,7 @@ namespace rl
 		::std::size_t
 		SickS300::getTelegramNumber() const
 		{
-			return hostEndianWord(this->data[19], this->data[18]);
+			return Endian::hostWord(this->data[19], this->data[18]);
 		}
 		
 		void
@@ -220,9 +223,9 @@ namespace rl
 		}
 		
 		::std::size_t
-		SickS300::recv(uint8_t* buf)
+		SickS300::recv(::std::uint8_t* buf)
 		{
-			uint8_t* ptr;
+			::std::uint8_t* ptr;
 			::std::size_t sumbytes;
 			::std::size_t numbytes;
 			
@@ -290,7 +293,7 @@ printf("buf[3] %02x\n", buf[3]);
 						throw DeviceException("The data word number of the destination address or source address in command telegram (byte 6) is impermissible (not defined in interface register) | The co-ordination flag (byte number) in command telegram (byte 9) does not equal 0xFF | The device code in the command telegram (byte 10, bits 0 to 3) is invalid (i.e. equals 0) | The CPU number in the command telegram (byte 10, bits 5 to 7) is impermissible");
 						break;
 					case 0x10:
-					throw DeviceException("The telegram identifier in the command telegram (byte 1) is not equal to 0x00 or 0xFF or is not followed by a further 0x00 byte (byte 2) | The command data type in the command telegram (byte 4) is impermissible");
+						throw DeviceException("The telegram identifier in the command telegram (byte 1) is not equal to 0x00 or 0xFF or is not followed by a further 0x00 byte (byte 2) | The command data type in the command telegram (byte 4) is impermissible");
 						break;
 					case 0x14:
 						throw DeviceException("The data block number of the destination address or source address in the command telegram (byte 5) is impermissible (not defined in the interface register)");
@@ -318,7 +321,7 @@ printf("buf[%zi] %02x\n", i + 4, buf[i + 4]);
 				sumbytes += numbytes;
 			}
 			
-			uint16_t length = hostEndianWord(buf[6], buf[7]);
+			::std::uint16_t length = Endian::hostWord(buf[6], buf[7]);
 std::cout << "length " << length << std::endl;
 			
 			if (length != 552)
@@ -346,13 +349,13 @@ printf("version %02x%02x\n", buf[11], buf[10]);
 				throw DeviceException("Incorrect status");
 			}
 			
-			uint32_t scanNumber = hostEndianDoubleWord(
-				hostEndianWord(buf[17], buf[16]),
-				hostEndianWord(buf[15], buf[14])
+			::std::uint32_t scanNumber = Endian::hostDoubleWord(
+				Endian::hostWord(buf[17], buf[16]),
+				Endian::hostWord(buf[15], buf[14])
 			);
 std::cout << "scanNumber " << scanNumber << std::endl;
 			
-			uint16_t telegramNumber = hostEndianWord(buf[19], buf[18]);
+			::std::uint16_t telegramNumber = Endian::hostWord(buf[19], buf[18]);
 std::cout << "telegramNumber " << telegramNumber << std::endl;
 			
 			for (::std::size_t i = 0; i < 2; ++i)
@@ -369,7 +372,7 @@ std::cout << "telegramNumber " << telegramNumber << std::endl;
 				sumbytes += numbytes;
 			}
 			
-			if (this->crc(buf + 4, sumbytes - 2 - 4) != hostEndianWord(buf[sumbytes - 1], buf[sumbytes - 2]))
+			if (this->crc(buf + 4, sumbytes - 2 - 4) != Endian::hostWord(buf[sumbytes - 1], buf[sumbytes - 2]))
 			{
 				throw DeviceException("Checksum error");
 			}
@@ -389,7 +392,7 @@ for (::std::size_t i = 0; i < sumbytes; ++i) { printf("%02x ", buf[i]); } printf
 		{
 			assert(this->isConnected());
 			
-			this->recv(this->data);
+			this->recv(this->data.data());
 		}
 		
 		void

@@ -24,12 +24,12 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_XML_DOCUMENT_H_
-#define _RL_XML_DOCUMENT_H_
+#ifndef RL_XML_DOCUMENT_H
+#define RL_XML_DOCUMENT_H
 
+#include <memory>
 #include <string>
 #include <boost/shared_array.hpp>
-#include <boost/shared_ptr.hpp>
 #include <libxml/parser.h>
 #include <libxml/xinclude.h>
 
@@ -38,84 +38,133 @@
 
 namespace rl
 {
+	/**
+	 * XML abstraction layer.
+	 */
 	namespace xml
 	{
 		class Document
 		{
 		public:
-			Document(xmlDocPtr doc) :
-				doc(doc, xmlFreeDoc)
+			explicit Document(const ::std::string& version = "1.0") :
+				doc(::xmlNewDoc(reinterpret_cast<const ::xmlChar*>(version.c_str())), ::xmlFreeDoc)
 			{
 			}
 			
-			virtual ~Document()
+			explicit Document(::xmlDocPtr doc) :
+				doc(doc, ::xmlFreeDoc)
+			{
+			}
+			
+			Document(Document&& document) :
+				doc(::std::move(document.doc))
+			{
+			}
+			
+			~Document()
 			{
 			}
 			
 			::std::string dumpFormatMemory(const bool& format) const
 			{
-				xmlChar* mem;
+				::xmlChar* mem;
 				int size;
 				
-				xmlDocDumpFormatMemory(this->doc.get(), &mem, &size, format ? 1 : 0);
-				::boost::shared_array< xmlChar > memory(mem, xmlFree);
+				::xmlDocDumpFormatMemory(this->doc.get(), &mem, &size, format ? 1 : 0);
+				::boost::shared_array< ::xmlChar> memory(mem, ::xmlFree);
 				
-				return reinterpret_cast< const char* >(memory.get());
+				return nullptr != memory.get() ? reinterpret_cast<const char*>(memory.get()) : ::std::string();
 			}
 			
 			::std::string dumpMemory() const
 			{
-				xmlChar* mem;
+				::xmlChar* mem;
 				int size;
 				
-				xmlDocDumpMemory(this->doc.get(), &mem, &size);
-				::boost::shared_array< xmlChar > memory(mem, xmlFree);
+				::xmlDocDumpMemory(this->doc.get(), &mem, &size);
+				::boost::shared_array< ::xmlChar> memory(mem, ::xmlFree);
 				
-				return reinterpret_cast< const char* >(memory.get());
+				return nullptr != memory.get() ? reinterpret_cast<const char*>(memory.get()) : ::std::string();
 			}
 			
-			::std::string getEncoding() const
-			{
-				return reinterpret_cast< const char* >(this->doc->encoding);
-			}
-			
-			Node getRootElement() const
-			{
-				return xmlDocGetRootElement(this->doc.get());
-			}
-			
-			::std::string getVersion() const
-			{
-				return reinterpret_cast< const char* >(this->doc->version);
-			}
-			
-			xmlDocPtr operator()() const
+			::xmlDocPtr get() const
 			{
 				return this->doc.get();
 			}
 			
+			int getCompression() const
+			{
+				return this->doc->compression;
+			}
+			
+			::std::string getEncoding() const
+			{
+				return nullptr != this->doc->encoding ? reinterpret_cast<const char*>(this->doc->encoding) : ::std::string();
+			}
+			
+			::std::string getName() const
+			{
+				return nullptr != this->doc->name ? this->doc->name : ::std::string();
+			}
+			
+			int getProperties() const
+			{
+				return this->doc->properties;
+			}
+			
+			Node getRootElement() const
+			{
+				return Node(::xmlDocGetRootElement(this->doc.get()));
+			}
+			
+			::std::string getVersion() const
+			{
+				return nullptr != this->doc->version ? reinterpret_cast<const char*>(this->doc->version) : ::std::string();
+			}
+			
+			bool isStandalone() const
+			{
+				return 1 == this->doc->standalone ? true : false;
+			}
+			
+			Document& operator=(Document&& other)
+			{
+				this->doc = std::move(other.doc);
+				return *this;
+			}
+			
+			::xmlDoc& operator*() const
+			{
+				return *this->doc;
+			}
+			
+			::xmlDocPtr release()
+			{
+				return this->doc.release();
+			}
+			
 			void save(const ::std::string& filename, const bool& format = true) const
 			{
-				xmlSaveFormatFile(filename.c_str(), this->doc.get(), format ? 1 : 0);
+				::xmlSaveFormatFile(filename.c_str(), this->doc.get(), format ? 1 : 0);
 			}
 			
 			void save(const ::std::string& filename, const ::std::string& encoding, const bool& format = true) const
 			{
-				xmlSaveFormatFileEnc(filename.c_str(), this->doc.get(), encoding.c_str(), format ? 1 : 0);
+				::xmlSaveFormatFileEnc(filename.c_str(), this->doc.get(), encoding.c_str(), format ? 1 : 0);
 			}
 			
 			void setRootElement(const Node& node)
 			{
-				xmlDocSetRootElement(this->doc.get(), node());
+				::xmlDocSetRootElement(this->doc.get(), node.get());
 			}
 			
 			int substitute(const int& flags = 0)
 			{
-				int substitutions = xmlXIncludeProcessFlags(this->doc.get(), flags);
+				int substitutions = ::xmlXIncludeProcessFlags(this->doc.get(), flags);
 				
 				if (-1 == substitutions)
 				{
-					throw Exception(xmlGetLastError()->message);
+					throw Exception(::xmlGetLastError()->message);
 				}
 				
 				return substitutions;
@@ -124,9 +173,9 @@ namespace rl
 		protected:
 			
 		private:
-			::boost::shared_ptr< xmlDoc > doc;
+			::std::unique_ptr< ::xmlDoc, decltype(&::xmlFreeDoc)> doc;
 		};
 	}
 }
 
-#endif // _RL_XML_DOCUMENT_H_
+#endif // RL_XML_DOCUMENT_H

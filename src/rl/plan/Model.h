@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_PLAN_MODEL_H_
-#define _RL_PLAN_MODEL_H_
+#ifndef RL_PLAN_MODEL_H
+#define RL_PLAN_MODEL_H
 
 #include <rl/kin/Kinematics.h>
 #include <rl/math/Transform.h>
@@ -57,6 +57,10 @@ namespace rl
 			
 			virtual void forwardVelocity(const ::rl::math::Vector& qdot, ::rl::math::Vector& xdot) const;
 			
+			virtual ::rl::math::Vector generatePositionGaussian(const ::rl::math::Vector& rand, const ::rl::math::Vector& mean, const ::rl::math::Vector& sigma) const;
+			
+			virtual ::rl::math::Vector generatePositionUniform(const ::rl::math::Vector& rand) const;
+			
 			virtual ::rl::sg::Body* getBody(const ::std::size_t& i) const;
 			
 			virtual ::std::size_t getBodies() const;
@@ -64,6 +68,8 @@ namespace rl
 			virtual ::rl::math::Vector3& getCenter(const ::std::size_t& i) const;
 			
 			virtual ::std::size_t getDof() const;
+			
+			virtual ::std::size_t getDofPosition() const;
 			
 			virtual const ::rl::math::Transform& getFrame(const ::std::size_t& i) const;
 			
@@ -73,15 +79,15 @@ namespace rl
 			
 			virtual ::std::string getManufacturer() const;
 			
-			virtual void getMaximum(::rl::math::Vector& maximum) const;
+			virtual ::rl::math::Vector getMaximum() const;
 			
-			virtual void getMinimum(::rl::math::Vector& minimum) const;
+			virtual ::rl::math::Vector getMinimum() const;
 			
 			virtual ::std::string getName() const;
 			
 			virtual ::std::size_t getOperationalDof() const;
 			
-			virtual void getPositionUnits(::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1 >& units) const;
+			virtual ::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1> getPositionUnits() const;
 			
 			virtual void inverseForce(const ::rl::math::Vector& f, ::rl::math::Vector& tau) const;
 			
@@ -115,6 +121,8 @@ namespace rl
 			
 			virtual ::rl::math::Real transformedDistance(const ::rl::math::Vector& q1, const ::rl::math::Vector& q2) const;
 			
+			virtual ::rl::math::Real transformedDistance(const ::rl::math::Real& q1, const ::rl::math::Real& q2, const ::std::size_t& i) const;
+			
 			virtual void updateFrames(const bool& doUpdateModel = true);
 			
 			virtual void updateJacobian();
@@ -137,4 +145,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_PLAN_MODEL_H_
+#endif // RL_PLAN_MODEL_H

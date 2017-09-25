@@ -29,13 +29,14 @@
 #include <rl/hal/Coach.h>
 #include <rl/hal/Gnuplot.h>
 #include <rl/hal/MitsubishiH7.h>
-#include <rl/math/Cubic.h>
-#include <rl/math/Quintic.h>
+#include <rl/hal/UniversalRobotsRtde.h>
+#include <rl/math/Polynomial.h>
 #include <rl/math/Unit.h>
 
 #define COACH
 //#define GNUPLOT
 //#define MITSUBISHI
+//#define UNIVERSAL_ROBOTS_RTDE
 
 #define CUBIC
 //#define QUINTIC
@@ -46,90 +47,85 @@ main(int argc, char** argv)
 	try
 	{
 #ifdef COACH
-		rl::hal::Coach controller(6, 0.00711f, 0, "localhost");
+		rl::hal::Coach controller(6, std::chrono::microseconds(7110), 0, "localhost");
 #endif // COACH
 #ifdef GNUPLOT
-		rl::hal::Gnuplot controller(6, 0.00711f, -10.0f * rl::math::DEG2RAD, 10.0f * rl::math::DEG2RAD);
+		rl::hal::Gnuplot controller(6, std::chrono::microseconds(7110), -10.0f * rl::math::DEG2RAD, 10.0f * rl::math::DEG2RAD);
 #endif // GNUPLOT
 #ifdef MITSUBISHI
 		rl::hal::MitsubishiH7 controller(6, "left", "lefthost");
 #endif // MITSUBISHI
+#ifdef UNIVERSAL_ROBOTS_RTDE
+		rl::hal::UniversalRobotsRtde controller("localhost");
+#endif // UNIVERSAL_ROBOTS_RTDE
+		
+		rl::math::Real updateRate = std::chrono::duration_cast<std::chrono::duration<rl::math::Real>>(controller.getUpdateRate()).count();
 		
 		controller.open();
 		controller.start();
 		
 		controller.step();
 		
-		rl::math::Vector x0(controller.getDof());
-		x0.setZero();
-#ifdef MITSUBISHI
-		controller.getJointPosition(x0);
-#endif // MITSUBISHI
+		rl::math::Vector q0 = controller.getJointPosition();
+		rl::math::Vector q1 = q0 + rl::math::Vector::Constant(controller.getDof(), 5.0f * rl::math::DEG2RAD);
 		
-		rl::math::Vector xe(controller.getDof());
-		xe = x0 + ::rl::math::Vector::Constant(controller.getDof(), 5.0f * rl::math::DEG2RAD);
+		rl::math::Real te = updateRate * 300.0f;
+		
+		rl::math::Vector q(controller.getDof());
 		
 #ifdef CUBIC
-		std::vector< rl::math::Cubic< rl::math::Real > > interpolator(controller.getDof());
+		rl::math::Polynomial<rl::math::Vector> interpolator = rl::math::Polynomial<rl::math::Vector>::CubicFirst(
+			q0,
+			q1,
+			rl::math::Vector::Zero(controller.getDof()),
+			rl::math::Vector::Zero(controller.getDof()),
+			te
+		);
 #endif // CUBIC
 #ifdef QUINTIC
-		std::vector< rl::math::Quintic< rl::math::Real > > interpolator(controller.getDof());
+		rl::math::Polynomial<rl::math::Vector> interpolator = rl::math::Polynomial<rl::math::Vector>::QuinticFirstSecond(
+			q0,
+			q1,
+			rl::math::Vector::Zero(controller.getDof()),
+			rl::math::Vector::Zero(controller.getDof()),
+			rl::math::Vector::Zero(controller.getDof()),
+			rl::math::Vector::Zero(controller.getDof()),
+			te
+		);
 #endif // QUINTIC
 		
-		rl::math::Real te = controller.getUpdateRate() * 300.0f;
-		
-		for (std::size_t i = 0; i < interpolator.size(); ++i)
+		for (std::size_t i = 0; i <= std::ceil(te / updateRate); ++i)
 		{
-			interpolator[i].te = te;
-			interpolator[i].v0 = 0;
-			interpolator[i].ve = 0;
-#ifdef QUINTIC
-			interpolator[i].a0 = 0;
-			interpolator[i].ae = 0;
-#endif // QUINTIC
-		}
-		
-		rl::math::Vector x(controller.getDof());
-		
-		// start -> goal
-		
-		for (std::size_t i = 0; i < interpolator.size(); ++i)
-		{
-			interpolator[i].x0 = x0[i];
-			interpolator[i].xe = xe[i];
-			interpolator[i].interpolate();
-		}
-		
-		for (std::size_t i = 0; i <= std::ceil(te / controller.getUpdateRate()); ++i)
-		{
-			for (std::size_t j = 0; j < controller.getDof(); ++j)
-			{
-				x(j) = interpolator[j].x(i * controller.getUpdateRate());
-			}
-			
-			controller.setJointPosition(x);
-			
+			q = interpolator(i * updateRate);
+			controller.setJointPosition(q);
 			controller.step();
 		}
 		
-		// goal -> start
+#ifdef CUBIC
+		interpolator = rl::math::Polynomial<rl::math::Vector>::CubicFirst(
+			q1,
+			q0,
+			rl::math::Vector::Zero(controller.getDof()),
+			rl::math::Vector::Zero(controller.getDof()),
+			te
+		);
+#endif // CUBIC
+#ifdef QUINTIC
+		interpolator = rl::math::Polynomial<rl::math::Vector>::QuinticFirstSecond(
+			q1,
+			q0,
+			rl::math::Vector::Zero(controller.getDof()),
+			rl::math::Vector::Zero(controller.getDof()),
+			rl::math::Vector::Zero(controller.getDof()),
+			rl::math::Vector::Zero(controller.getDof()),
+			te
+		);
+#endif // QUINTIC
 		
-		for (std::size_t i = 0; i < interpolator.size(); ++i)
+		for (std::size_t i = 0; i <= std::ceil(te / updateRate); ++i)
 		{
-			interpolator[i].x0 = xe[i];
-			interpolator[i].xe = x0[i];
-			interpolator[i].interpolate();
-		}
-		
-		for (std::size_t i = 0; i <= std::ceil(te / controller.getUpdateRate()); ++i)
-		{
-			for (std::size_t j = 0; j < controller.getDof(); ++j)
-			{
-				x(j) = interpolator[j].x(i * controller.getUpdateRate());
-			}
-			
-			controller.setJointPosition(x);
-			
+			q = interpolator(i * updateRate);
+			controller.setJointPosition(q);
 			controller.step();
 		}
 		
@@ -139,8 +135,8 @@ main(int argc, char** argv)
 	catch (const std::exception& e)
 	{
 		std::cerr << e.what() << std::endl;
-		return 1;
+		return EXIT_FAILURE;
 	}
 	
-	return 0;
+	return EXIT_SUCCESS;
 }

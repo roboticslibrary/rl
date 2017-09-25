@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_PLAN_ADDRRTCONCON_H_
-#define _RL_PLAN_ADDRRTCONCON_H_
+#ifndef RL_PLAN_ADDRRTCONCON_H
+#define RL_PLAN_ADDRRTCONCON_H
 
 #include "RrtConCon.h"
 
@@ -33,6 +33,16 @@ namespace rl
 {
 	namespace plan
 	{
+		/**
+		 * Adaptive Dynamic-Domain RRT.
+		 * 
+		 * L&eacute;onard Jaillet, Anna Yershova, Steven M. LaValle, and Thiery
+		 * Sim&eacute;on. Adaptive tuning of the sampling domain for dynamic-domain
+		 * RRTs. In Proceedings of the IEEE/RSJ International Conference on Intelligent
+		 * Robots and Systems, pages 2851-2856, August 2005.
+		 * 
+		 * http://dx.doi.org/10.1109/IROS.2005.1545607
+		 */
 		class AddRrtConCon : public RrtConCon
 		{
 		public:
@@ -54,6 +64,14 @@ namespace rl
 			::rl::math::Real radius;
 			
 		protected:
+			struct VertexBundle : Rrt::VertexBundle
+			{
+				::rl::math::Real radius;
+			};
+			
+			Vertex addVertex(Tree& tree, const VectorPtr& q);
+			
+			static VertexBundle* get(const Tree& tree, const Vertex& v);
 			
 		private:
 			
@@ -61,4 +79,4 @@ namespace rl
 	}
 }
 
-#endif //_RL_PLAN_ADDRRTCONCON_H_
+#endif //_RL_PLAN_ADDRRTCONCON_H

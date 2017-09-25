@@ -24,7 +24,9 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <iostream>
+#include <QApplication>
+#include <QFileDialog>
+#include <QMessageBox>
 #include <QWidget>
 #include <stdexcept>
 #include <Inventor/SoDB.h>
@@ -35,12 +37,6 @@
 int
 main(int argc, char** argv)
 {
-	if (argc < 2)
-	{
-		std::cout << "Usage: rlViewDemo SCENEFILE" << std::endl;
-		return 1;
-	}
-	
 	try
 	{
 		SoDB::init();
@@ -48,24 +44,40 @@ main(int argc, char** argv)
 		QWidget* widget = SoQt::init(argc, argv, argv[0]);
 		widget->resize(800, 600);
 		
-		rl::sg::so::Scene scene;
-		scene.load(argv[1]);
+		QString filename;
 		
-		SoQtExaminerViewer viewer(widget, NULL, true, SoQtFullViewer::BUILD_POPUP);
+		if (argc < 2)
+		{
+			filename = QFileDialog::getOpenFileName(widget, "", filename, "All Formats (*.xml)");
+		}
+		else
+		{
+			filename = argv[1];
+		}
+		
+		rl::sg::so::Scene scene;
+		
+		if (!filename.isEmpty())
+		{
+			scene.load(filename.toStdString());
+		}
+		
+		SoQtExaminerViewer viewer(widget, nullptr, true, SoQtFullViewer::BUILD_POPUP);
 		viewer.setSceneGraph(scene.root);
 		viewer.setTransparencyType(SoGLRenderAction::SORTED_OBJECT_BLEND);
 		viewer.show();
 		
-		widget->setWindowTitle(QString(argv[1]) + " - rlViewDemo");
+		widget->setWindowTitle(filename + (filename.isEmpty() ? "" : " - ") + "rlViewDemo");
 		
 		SoQt::show(widget);
 		SoQt::mainLoop();
 		
-		return 0;
+		return EXIT_SUCCESS;
 	}
 	catch (const std::exception& e)
 	{
-		std::cerr << e.what() << std::endl;
-		return -1;
+		QApplication application(argc, argv);
+		QMessageBox::critical(nullptr, "Error", e.what());
+		return EXIT_FAILURE;
 	}
 }

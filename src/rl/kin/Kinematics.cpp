@@ -33,6 +33,7 @@
 #include <rl/xml/Node.h>
 #include <rl/xml/Object.h>
 #include <rl/xml/Path.h>
+#include <rl/xml/Stylesheet.h>
 
 #include "Element.h"
 #include "Exception.h"
@@ -126,29 +127,42 @@ namespace rl
 		Kinematics*
 		Kinematics::create(const ::std::string& filename)
 		{
-			Kinematics* kinematics = NULL;
+			Kinematics* kinematics = nullptr;
 			
 			::rl::xml::DomParser parser;
 			
-			::rl::xml::Document doc = parser.readFile(filename, "", XML_PARSE_NOENT | XML_PARSE_XINCLUDE);
+			::rl::xml::Document document = parser.readFile(filename, "", XML_PARSE_NOENT | XML_PARSE_XINCLUDE);
+			document.substitute(XML_PARSE_NOENT | XML_PARSE_XINCLUDE);
 			
-			doc.substitute(XML_PARSE_NOENT | XML_PARSE_XINCLUDE);
-			
-			::rl::xml::Path path(doc);
-			
-			::rl::xml::Object instance = path.eval("//kinematics|//puma|//rhino");
-			
-			for (int i = 0; i < ::std::min(1, instance.getNodeNr()); ++i)
+			if ("stylesheet" == document.getRootElement().getName() || "transform" == document.getRootElement().getName())
 			{
-				if ("puma" == instance.getNodeTab(i).getName())
+				if ("1.0" == document.getRootElement().getProperty("version"))
+				{
+					if (document.getRootElement().hasNamespace() && "http://www.w3.org/1999/XSL/Transform" == document.getRootElement().getNamespace().getHref())
+					{
+						rl::xml::Stylesheet stylesheet(document);
+						document = stylesheet.apply();
+					}
+				}
+			}
+			
+			::rl::xml::Path path(document);
+			
+			::rl::xml::NodeSet instances = path.eval("(/rl/kin|/rlkin)/kinematics|(/rl/kin|/rlkin)/puma|(/rl/kin|/rlkin)/rhino").getValue< ::rl::xml::NodeSet>();
+			
+			for (int i = 0; i < ::std::min(1, instances.size()); ++i)
+			{
+				::rl::xml::Path path(document, instances[i]);
+				
+				if ("puma" == instances[i].getName())
 				{
 					kinematics = new Puma();
 				}
-				else if ("rhino" == instance.getNodeTab(i).getName())
+				else if ("rhino" == instances[i].getName())
 				{
 					kinematics = new Rhino();
 				}
-				else if ("kinematics" == instance.getNodeTab(i).getName())
+				else if ("kinematics" == instances[i].getName())
 				{
 					kinematics = new Kinematics();
 				}
@@ -159,101 +173,105 @@ namespace rl
 				
 				// manufacturer
 				
-				kinematics->manufacturer = path.eval("string(manufacturer)", instance.getNodeTab(i)).getStringval();
+				kinematics->manufacturer = path.eval("string(manufacturer)").getValue< ::std::string>();
 				
 				// name
 				
-				kinematics->name = path.eval("string(name)", instance.getNodeTab(i)).getStringval();
+				kinematics->name = path.eval("string(name)").getValue< ::std::string>();
 				
 				// frames
 				
-				::rl::xml::Object frames = path.eval("frame|link|world", instance.getNodeTab(i));
+				::rl::xml::NodeSet frames = path.eval("frame|link|world").getValue< ::rl::xml::NodeSet>();
 				
-				::std::map< ::std::string, Vertex > id2vertex;
+				::std::map< ::std::string, Vertex> id2vertex;
 				
-				for (int j = 0; j < frames.getNodeNr(); ++j)
+				for (int j = 0; j < frames.size(); ++j)
 				{
+					::rl::xml::Path path(document, frames[j]);
+					
 					Vertex v = ::boost::add_vertex(kinematics->tree);
 					
-					if ("frame" == frames.getNodeTab(j).getName())
+					if ("frame" == frames[j].getName())
 					{
 						Frame* f = new Frame();
 						
-						f->name = path.eval("string(@id)", frames.getNodeTab(j)).getStringval();
+						f->name = path.eval("string(@id)").getValue< ::std::string>();
 						
 						f->frame.setIdentity();
 						
 						f->frame = ::rl::math::AngleAxis(
-							path.eval("number(rotation/z)", frames.getNodeTab(j)).getFloatval(0) * ::rl::math::DEG2RAD,
+							path.eval("number(rotation/z)").getValue< ::rl::math::Real>(0) * ::rl::math::DEG2RAD,
 							::rl::math::Vector3::UnitZ()
 						) * ::rl::math::AngleAxis(
-							path.eval("number(rotation/y)", frames.getNodeTab(j)).getFloatval(0) * ::rl::math::DEG2RAD,
+							path.eval("number(rotation/y)").getValue< ::rl::math::Real>(0) * ::rl::math::DEG2RAD,
 							::rl::math::Vector3::UnitY()
 						) * ::rl::math::AngleAxis(
-							path.eval("number(rotation/x)", frames.getNodeTab(j)).getFloatval(0) * ::rl::math::DEG2RAD,
+							path.eval("number(rotation/x)").getValue< ::rl::math::Real>(0) * ::rl::math::DEG2RAD,
 							::rl::math::Vector3::UnitX()
 						);
 						
-						f->frame.translation().x() = path.eval("number(translation/x)", frames.getNodeTab(j)).getFloatval(0);
-						f->frame.translation().y() = path.eval("number(translation/y)", frames.getNodeTab(j)).getFloatval(0);
-						f->frame.translation().z() = path.eval("number(translation/z)", frames.getNodeTab(j)).getFloatval(0);
+						f->frame.translation().x() = path.eval("number(translation/x)").getValue< ::rl::math::Real>(0);
+						f->frame.translation().y() = path.eval("number(translation/y)").getValue< ::rl::math::Real>(0);
+						f->frame.translation().z() = path.eval("number(translation/z)").getValue< ::rl::math::Real>(0);
 						
 						kinematics->tree[v].reset(f);
 					}
-					else if ("link" == frames.getNodeTab(j).getName())
+					else if ("link" == frames[j].getName())
 					{
 						Link* l = new Link();
 						
-						l->name = path.eval("string(@id)", frames.getNodeTab(j)).getStringval();
+						l->name = path.eval("string(@id)").getValue< ::std::string>();
 						
 						kinematics->tree[v].reset(l);
 					}
-					else if ("world" == frames.getNodeTab(j).getName())
+					else if ("world" == frames[j].getName())
 					{
 						Frame* f = new Frame();
 						
-						f->name = path.eval("string(@id)", frames.getNodeTab(j)).getStringval();
+						f->name = path.eval("string(@id)").getValue< ::std::string>();
 						
 						f->frame.setIdentity();
 						
 						f->frame = ::rl::math::AngleAxis(
-							path.eval("number(rotation/z)", frames.getNodeTab(j)).getFloatval(0) * ::rl::math::DEG2RAD,
+							path.eval("number(rotation/z)").getValue< ::rl::math::Real>(0) * ::rl::math::DEG2RAD,
 							::rl::math::Vector3::UnitZ()
 						) * ::rl::math::AngleAxis(
-							path.eval("number(rotation/y)", frames.getNodeTab(j)).getFloatval(0) * ::rl::math::DEG2RAD,
+							path.eval("number(rotation/y)").getValue< ::rl::math::Real>(0) * ::rl::math::DEG2RAD,
 							::rl::math::Vector3::UnitY()
 						) * ::rl::math::AngleAxis(
-							path.eval("number(rotation/x)", frames.getNodeTab(j)).getFloatval(0) * ::rl::math::DEG2RAD,
+							path.eval("number(rotation/x)").getValue< ::rl::math::Real>(0) * ::rl::math::DEG2RAD,
 							::rl::math::Vector3::UnitX()
 						);
 						
-						f->frame.translation().x() = path.eval("number(translation/x)", frames.getNodeTab(j)).getFloatval(0);
-						f->frame.translation().y() = path.eval("number(translation/y)", frames.getNodeTab(j)).getFloatval(0);
-						f->frame.translation().z() = path.eval("number(translation/z)", frames.getNodeTab(j)).getFloatval(0);
+						f->frame.translation().x() = path.eval("number(translation/x)").getValue< ::rl::math::Real>(0);
+						f->frame.translation().y() = path.eval("number(translation/y)").getValue< ::rl::math::Real>(0);
+						f->frame.translation().z() = path.eval("number(translation/z)").getValue< ::rl::math::Real>(0);
 						
 						kinematics->root = v;
 						
 						kinematics->tree[v].reset(f);
 					}
 					
-					id2vertex[path.eval("string(@id)", frames.getNodeTab(j)).getStringval()] = v;
+					id2vertex[path.eval("string(@id)").getValue< ::std::string>()] = v;
 				}
 				
-				for (int j = 0; j < frames.getNodeNr(); ++j)
+				for (int j = 0; j < frames.size(); ++j)
 				{
-					if ("link" == frames.getNodeTab(j).getName())
+					::rl::xml::Path path(document, frames[j]);
+					
+					if ("link" == frames[j].getName())
 					{
-						Vertex v1 = id2vertex[path.eval("string(@id)", frames.getNodeTab(j)).getStringval()];
-						Link* l1 = dynamic_cast< Link* >(kinematics->tree[v1].get());
+						Vertex v1 = id2vertex[path.eval("string(@id)").getValue< ::std::string>()];
+						Link* l1 = dynamic_cast<Link*>(kinematics->tree[v1].get());
 						
-						::rl::xml::Object ignores = path.eval("ignore", frames.getNodeTab(j));
+						::rl::xml::NodeSet ignores = path.eval("ignore").getValue< ::rl::xml::NodeSet>();
 						
-						for (int k = 0; k < ignores.getNodeNr(); ++k)
+						for (int k = 0; k < ignores.size(); ++k)
 						{
-							if (ignores.getNodeTab(k).hasAttribute("idref"))
+							if (!ignores[k].getProperty("idref").empty())
 							{
-								Vertex v2 = id2vertex[ignores.getNodeTab(k).getAttribute("idref").getValue()];
-								Link* l2 = dynamic_cast< Link* >(kinematics->tree[v2].get());
+								Vertex v2 = id2vertex[ignores[k].getProperty("idref")];
+								Link* l2 = dynamic_cast<Link*>(kinematics->tree[v2].get());
 								
 								l1->selfcollision.insert(l2);
 								l2->selfcollision.insert(l1);
@@ -268,51 +286,53 @@ namespace rl
 				
 				// transforms
 				
-				::rl::xml::Object transforms = path.eval("prismatic|revolute|transform", instance.getNodeTab(i));
+				::rl::xml::NodeSet transforms = path.eval("prismatic|revolute|transform").getValue< ::rl::xml::NodeSet>();
 				
-				for (int j = 0; j < transforms.getNodeNr(); ++j)
+				for (int j = 0; j < transforms.size(); ++j)
 				{
-					Vertex a = id2vertex[path.eval("string(frame/a/@idref)", transforms.getNodeTab(j)).getStringval()];
-					Vertex b = id2vertex[path.eval("string(frame/b/@idref)", transforms.getNodeTab(j)).getStringval()];
+					::rl::xml::Path path(document, transforms[j]);
+					
+					Vertex a = id2vertex[path.eval("string(frame/a/@idref)").getValue< ::std::string>()];
+					Vertex b = id2vertex[path.eval("string(frame/b/@idref)").getValue< ::std::string>()];
 					
 					Edge e = ::boost::add_edge(a, b, kinematics->tree).first;
 					
-					if ("prismatic" == transforms.getNodeTab(j).getName())
+					if ("prismatic" == transforms[j].getName())
 					{
 						Prismatic* p = new Prismatic();
 						
-						p->name = path.eval("string(@id)", transforms.getNodeTab(j)).getStringval();
+						p->name = path.eval("string(@id)").getValue< ::std::string>();
 						
-						p->a = path.eval("number(dh/a)", transforms.getNodeTab(j)).getFloatval(0);
-						p->alpha = path.eval("number(dh/alpha)", transforms.getNodeTab(j)).getFloatval(0);
-						p->d = path.eval("number(dh/d)", transforms.getNodeTab(j)).getFloatval(0);
-						p->max = path.eval("number(max)", transforms.getNodeTab(j)).getFloatval(::std::numeric_limits< ::rl::math::Real >::max());
-						p->min = path.eval("number(min)", transforms.getNodeTab(j)).getFloatval(-::std::numeric_limits< ::rl::math::Real >::max());
-						p->offset = path.eval("number(offset)", transforms.getNodeTab(j)).getFloatval(0);
-						p->speed = path.eval("number(speed)", transforms.getNodeTab(j)).getFloatval(0);
-						p->theta = path.eval("number(dh/theta)", transforms.getNodeTab(j)).getFloatval(0);
-						p->wraparound = path.eval("count(wraparound) > 0", transforms.getNodeTab(j)).getBoolval();
+						p->a = path.eval("number(dh/a)").getValue< ::rl::math::Real>(0);
+						p->alpha = path.eval("number(dh/alpha)").getValue< ::rl::math::Real>(0);
+						p->d = path.eval("number(dh/d)").getValue< ::rl::math::Real>(0);
+						p->max = path.eval("number(max)").getValue< ::rl::math::Real>(::std::numeric_limits< ::rl::math::Real>::max());
+						p->min = path.eval("number(min)").getValue< ::rl::math::Real>(-::std::numeric_limits< ::rl::math::Real>::max());
+						p->offset = path.eval("number(offset)").getValue< ::rl::math::Real>(0);
+						p->speed = path.eval("number(speed)").getValue< ::rl::math::Real>(0);
+						p->theta = path.eval("number(dh/theta)").getValue< ::rl::math::Real>(0);
+						p->wraparound = path.eval("count(wraparound) > 0").getValue<bool>();
 						
 						p->alpha *= ::rl::math::DEG2RAD;
 						p->theta *= ::rl::math::DEG2RAD;
 						
 						kinematics->tree[e].reset(p);
 					}
-					else if ("revolute" == transforms.getNodeTab(j).getName())
+					else if ("revolute" == transforms[j].getName())
 					{
 						Revolute* r = new Revolute();
 						
-						r->name = path.eval("string(@id)", transforms.getNodeTab(j)).getStringval();
+						r->name = path.eval("string(@id)").getValue< ::std::string>();
 						
-						r->a = path.eval("number(dh/a)", transforms.getNodeTab(j)).getFloatval(0);
-						r->alpha = path.eval("number(dh/alpha)", transforms.getNodeTab(j)).getFloatval(0);
-						r->d = path.eval("number(dh/d)", transforms.getNodeTab(j)).getFloatval(0);
-						r->max = path.eval("number(max)", transforms.getNodeTab(j)).getFloatval(::std::numeric_limits< ::rl::math::Real >::max());
-						r->min = path.eval("number(min)", transforms.getNodeTab(j)).getFloatval(-::std::numeric_limits< ::rl::math::Real >::max());
-						r->offset = path.eval("number(offset)", transforms.getNodeTab(j)).getFloatval(0);
-						r->speed = path.eval("number(speed)", transforms.getNodeTab(j)).getFloatval(0);
-						r->theta = path.eval("number(dh/theta)", transforms.getNodeTab(j)).getFloatval(0);
-						r->wraparound = path.eval("count(wraparound) > 0", transforms.getNodeTab(j)).getBoolval();
+						r->a = path.eval("number(dh/a)").getValue< ::rl::math::Real>(0);
+						r->alpha = path.eval("number(dh/alpha)").getValue< ::rl::math::Real>(0);
+						r->d = path.eval("number(dh/d)").getValue< ::rl::math::Real>(0);
+						r->max = path.eval("number(max)").getValue< ::rl::math::Real>(::std::numeric_limits< ::rl::math::Real>::max());
+						r->min = path.eval("number(min)").getValue< ::rl::math::Real>(-::std::numeric_limits< ::rl::math::Real>::max());
+						r->offset = path.eval("number(offset)").getValue< ::rl::math::Real>(0);
+						r->speed = path.eval("number(speed)").getValue< ::rl::math::Real>(0);
+						r->theta = path.eval("number(dh/theta)").getValue< ::rl::math::Real>(0);
+						r->wraparound = path.eval("count(wraparound) > 0").getValue<bool>();
 						
 						r->alpha *= ::rl::math::DEG2RAD;
 						r->max *= ::rl::math::DEG2RAD;
@@ -323,28 +343,28 @@ namespace rl
 						
 						kinematics->tree[e].reset(r);
 					}
-					else if ("transform" == transforms.getNodeTab(j).getName())
+					else if ("transform" == transforms[j].getName())
 					{
 						Transform* t = new Transform();
 						
-						t->name = path.eval("string(@id)", transforms.getNodeTab(j)).getStringval();
+						t->name = path.eval("string(@id)").getValue< ::std::string>();
 						
 						t->transform.setIdentity();
 						
 						t->transform = ::rl::math::AngleAxis(
-							path.eval("number(rotation/z)", transforms.getNodeTab(j)).getFloatval(0) * ::rl::math::DEG2RAD,
+							path.eval("number(rotation/z)").getValue< ::rl::math::Real>(0) * ::rl::math::DEG2RAD,
 							::rl::math::Vector3::UnitZ()
 						) * ::rl::math::AngleAxis(
-							path.eval("number(rotation/y)", transforms.getNodeTab(j)).getFloatval(0) * ::rl::math::DEG2RAD,
+							path.eval("number(rotation/y)").getValue< ::rl::math::Real>(0) * ::rl::math::DEG2RAD,
 							::rl::math::Vector3::UnitY()
 						) * ::rl::math::AngleAxis(
-							path.eval("number(rotation/x)", transforms.getNodeTab(j)).getFloatval(0) * ::rl::math::DEG2RAD,
+							path.eval("number(rotation/x)").getValue< ::rl::math::Real>(0) * ::rl::math::DEG2RAD,
 							::rl::math::Vector3::UnitX()
 						);
 						
-						t->transform.translation().x() = path.eval("number(translation/x)", transforms.getNodeTab(j)).getFloatval(0);
-						t->transform.translation().y() = path.eval("number(translation/y)", transforms.getNodeTab(j)).getFloatval(0);
-						t->transform.translation().z() = path.eval("number(translation/z)", transforms.getNodeTab(j)).getFloatval(0);
+						t->transform.translation().x() = path.eval("number(translation/x)").getValue< ::rl::math::Real>(0);
+						t->transform.translation().y() = path.eval("number(translation/y)").getValue< ::rl::math::Real>(0);
+						t->transform.translation().z() = path.eval("number(translation/z)").getValue< ::rl::math::Real>(0);
 						
 						kinematics->tree[e].reset(t);
 					}
@@ -353,20 +373,20 @@ namespace rl
 			
 			kinematics->update();
 			
-			if (dynamic_cast< Puma* >(kinematics))
+			if (dynamic_cast<Puma*>(kinematics))
 			{
 				if (kinematics->joints.size() != 6 || kinematics->links.size() != 7 || kinematics->transforms.size() != 8 || kinematics->frames.size() != 9)
 				{
 					delete kinematics;
-					kinematics = NULL;
+					kinematics = nullptr;
 				}
 			}
-			else if (dynamic_cast< Rhino* >(kinematics))
+			else if (dynamic_cast<Rhino*>(kinematics))
 			{
 				if (kinematics->joints.size() != 5 || kinematics->links.size() != 6 || kinematics->transforms.size() != 7 || kinematics->frames.size() != 8)
 				{
 					delete kinematics;
-					kinematics = NULL;
+					kinematics = nullptr;
 				}
 			}
 			
@@ -401,6 +421,34 @@ namespace rl
 			assert(xdot.size() <= this->getOperationalDof() * 6);
 			
 			xdot = this->jacobian * qdot;
+		}
+		
+		::rl::math::Vector
+		Kinematics::generatePositionGaussian(const ::rl::math::Vector& rand, const ::rl::math::Vector& mean, const ::rl::math::Vector& sigma) const
+		{
+			::rl::math::Vector q(this->getDof());
+			
+			for (::std::size_t i = 0; i < this->getDof(); ++i)
+			{
+				q(i) = mean(i) + rand(i) * sigma(i);
+			}
+			
+			this->clip(q);
+			
+			return q;
+		}
+		
+		::rl::math::Vector
+		Kinematics::generatePositionUniform(const ::rl::math::Vector& rand) const
+		{
+			::rl::math::Vector q(this->getDof());
+			
+			for (::std::size_t i = 0; i < this->getDof(); ++i)
+			{
+				q(i) = this->getMinimum(i) + rand(i) * (this->getMaximum(i) - this->getMinimum(i));
+			}
+			
+			return q;
 		}
 		
 		::std::size_t
@@ -513,7 +561,7 @@ namespace rl
 		}
 		
 		void
-		Kinematics::getPositionUnits(::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1 >& units) const
+		Kinematics::getPositionUnits(::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1>& units) const
 		{
 			for (::std::size_t i = 0; i < this->joints.size(); ++i)
 			{
@@ -531,7 +579,7 @@ namespace rl
 		}
 		
 		void
-		Kinematics::getSpeedUnits(::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1 >& units) const
+		Kinematics::getSpeedUnits(::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1>& units) const
 		{
 			for (::std::size_t i = 0; i < this->joints.size(); ++i)
 			{
@@ -620,7 +668,7 @@ namespace rl
 				this->updateFrames();
 				
 				::rl::math::VectorBlock dxi = dx.segment(6 * leaf, 6);
-				::rl::math::transform::toDelta(this->forwardPosition(leaf), x, dxi);
+				dxi = this->forwardPosition(leaf).toDelta(x);
 				
 				this->updateJacobian();
 				this->updateJacobianInverse();
@@ -646,11 +694,11 @@ namespace rl
 			
 			for (::std::size_t i = 0; i < this->getDof(); ++i)
 			{
-				q(i) = ::std::fmod(q(i), 2.0f * static_cast< ::rl::math::Real >(M_PI));
+				q(i) = ::std::fmod(q(i), 2.0f * static_cast< ::rl::math::Real>(M_PI));
 				
 				if (q(i) < this->joints[i]->min)
 				{
-					q(i) += 2.0f * static_cast< ::rl::math::Real >(M_PI);
+					q(i) += 2.0f * static_cast< ::rl::math::Real>(M_PI);
 					
 					if (q(i) < this->joints[i]->min || q(i) > this->joints[i]->max)
 					{
@@ -659,7 +707,7 @@ namespace rl
 				}
 				else if (q(i) > this->joints[i]->max)
 				{
-					q(i) -= 2.0f * static_cast< ::rl::math::Real >(M_PI);
+					q(i) -= 2.0f * static_cast< ::rl::math::Real>(M_PI);
 					
 					if (q(i) < this->joints[i]->min || q(i) > this->joints[i]->max)
 					{
@@ -694,8 +742,8 @@ namespace rl
 #if 0
 			return !(this->getManipulabilityMeasure() > 0);
 #else
-			::Eigen::JacobiSVD< ::rl::math::Matrix > svd(this->jacobian);
-			return (::std::abs(svd.singularValues()(svd.singularValues().size() - 1)) > ::std::numeric_limits< ::rl::math::Real >::epsilon()) ? false : true;
+			::Eigen::JacobiSVD< ::rl::math::Matrix> svd(this->jacobian);
+			return (::std::abs(svd.singularValues()(svd.singularValues().size() - 1)) > ::std::numeric_limits< ::rl::math::Real>::epsilon()) ? false : true;
 #endif
 		}
 		
@@ -881,6 +929,22 @@ namespace rl
 			return d;
 		}
 		
+		::rl::math::Real
+		Kinematics::transformedDistance(const ::rl::math::Real& q1, const ::rl::math::Real& q2, const ::std::size_t& i) const
+		{
+			::rl::math::Real delta = ::std::abs(q1 - q2);
+			
+			if (this->joints[i]->wraparound)
+			{
+				::rl::math::Real range = ::std::abs(this->joints[i]->max - this->joints[i]->min);
+				return this->transformedDistance(::std::max(delta, ::std::abs(range - delta)));
+			}
+			else
+			{
+				return this->transformedDistance(delta);
+			}
+		}
+		
 		void
 		Kinematics::update()
 		{
@@ -893,7 +957,7 @@ namespace rl
 			
 			this->update(this->root);
 			
-			for (::std::vector< Vertex >::iterator i = this->leaves.begin(); i != this->leaves.end(); ++i)
+			for (::std::vector<Vertex>::iterator i = this->leaves.begin(); i != this->leaves.end(); ++i)
 			{
 				Vertex v = *i;
 				
@@ -902,7 +966,7 @@ namespace rl
 					Edge e = *::boost::in_edges(v, this->tree).first;
 					Transform* transform = this->tree[e].get();
 					
-					if (Joint* joint = dynamic_cast< Joint* >(transform))
+					if (Joint* joint = dynamic_cast<Joint*>(transform))
 					{
 						joint->leaves.insert(*i);
 					}
@@ -922,7 +986,7 @@ namespace rl
 			this->elements.push_back(frame);
 			this->frames.push_back(frame);
 			
-			if (Link* link = dynamic_cast< Link* >(frame))
+			if (Link* link = dynamic_cast<Link*>(frame))
 			{
 				this->links.push_back(link);
 			}
@@ -940,7 +1004,7 @@ namespace rl
 					transform->in = this->tree[u].get();
 					transform->out = this->tree[v].get();
 					
-					if (Joint* joint = dynamic_cast< Joint* >(transform))
+					if (Joint* joint = dynamic_cast<Joint*>(transform))
 					{
 						joint->leaves.clear();
 						this->joints.push_back(joint);
@@ -963,7 +1027,7 @@ namespace rl
 		void
 		Kinematics::updateFrames()
 		{
-			for (::std::vector< Transform* >::iterator i = this->transforms.begin(); i != this->transforms.end(); ++i)
+			for (::std::vector<Transform*>::iterator i = this->transforms.begin(); i != this->transforms.end(); ++i)
 			{
 				(*i)->updateFrames();
 			}
@@ -994,7 +1058,7 @@ namespace rl
 			{
 				this->jacobianInverse.setZero();
 				
-				::Eigen::JacobiSVD< ::rl::math::Matrix > svd(this->jacobian, ::Eigen::ComputeFullU | ::Eigen::ComputeFullV);
+				::Eigen::JacobiSVD< ::rl::math::Matrix> svd(this->jacobian, ::Eigen::ComputeFullU | ::Eigen::ComputeFullV);
 				
 				::rl::math::Real wMin = svd.singularValues().minCoeff();
 				::rl::math::Real lambdaSqr = wMin < 1.0e-9f ? (1 - ::std::pow((wMin / 1.0e-9f), 2)) * ::std::pow(lambda, 2) : 0;

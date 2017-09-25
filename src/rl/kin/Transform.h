@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_KIN_TRANSFORM_H_
-#define _RL_KIN_TRANSFORM_H_
+#ifndef RL_KIN_TRANSFORM_H
+#define RL_KIN_TRANSFORM_H
 
 #include <rl/math/Transform.h>
 
@@ -62,4 +62,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_KIN_TRANSFORM_H_
+#endif // RL_KIN_TRANSFORM_H

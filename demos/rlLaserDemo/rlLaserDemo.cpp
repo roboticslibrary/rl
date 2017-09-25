@@ -73,10 +73,10 @@ main(int argc, char** argv)
 	
 	FILE* gnuplot = popen(GNUPLOT, "w");
 	
-	if (NULL == gnuplot)
+	if (nullptr == gnuplot)
 	{
 		std::cerr << "cannot open " << GNUPLOT << std::endl;
-		return 1;
+		return EXIT_FAILURE;
 	}
 	
 	try
@@ -116,20 +116,16 @@ main(int argc, char** argv)
 		
 		laser.start();
 		
-		rl::math::Vector data(laser.getDistancesCount());
-		rl::math::Real resolution = laser.getResolution();
-		rl::math::Real startAngle = laser.getStartAngle();
-		
 		while (running)
 		{
 			laser.step();
-			laser.getDistances(data);
+			rl::math::Vector data = laser.getDistances();
 			
 			fprintf(gnuplot, "plot '-' with lines\n");
 			
 			for (std::ptrdiff_t i = 0; i < data.size(); ++i)
 			{
-				fprintf(gnuplot, "%f %f\n", startAngle + resolution * i, data(i));
+				fprintf(gnuplot, "%f %f\n", laser.getStartAngle() + laser.getResolution() * i, data(i));
 			}
 			
 			fprintf(gnuplot, "e\n");
@@ -145,8 +141,8 @@ main(int argc, char** argv)
 	{
 		pclose(gnuplot);
 		std::cerr << e.what() << std::endl;
-		return 1;
+		return EXIT_FAILURE;
 	}
 	
-	return 0;
+	return EXIT_SUCCESS;
 }

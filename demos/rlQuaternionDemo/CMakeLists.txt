@@ -1,5 +1,3 @@
-project(rlQuaternionDemo)
-
 add_executable(
 	rlQuaternionDemo
 	rlQuaternionDemo.cpp
@@ -7,5 +5,5 @@ add_executable(
 
 target_link_libraries(
 	rlQuaternionDemo
-	rlmath
+	math
 )

@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_SG_SCENE_H_
-#define _RL_SG_SCENE_H_
+#ifndef RL_SG_SCENE_H
+#define RL_SG_SCENE_H
 
 #include <string>
 #include <vector>
@@ -34,6 +34,9 @@
 
 namespace rl
 {
+	/**
+	 * Scene graph abstraction.
+	 */
 	namespace sg
 	{
 		class Model;
@@ -41,7 +44,7 @@ namespace rl
 		class Scene
 		{
 		public:
-			typedef ::std::vector< Model* >::iterator Iterator;
+			typedef ::std::vector<Model*>::iterator Iterator;
 			
 			Scene();
 			
@@ -70,14 +73,14 @@ namespace rl
 		protected:
 			bool isScalingSupported;
 			
-			::std::vector< Model* > models;
+			::std::vector<Model*> models;
 			
 		private:
-			static void triangleCallback(void* userData, SoCallbackAction* action, const SoPrimitiveVertex* v1, const SoPrimitiveVertex* v2, const SoPrimitiveVertex* v3);
+			static void triangleCallback(void* userData, ::SoCallbackAction* action, const ::SoPrimitiveVertex* v1, const ::SoPrimitiveVertex* v2, const ::SoPrimitiveVertex* v3);
 			
 			::std::string name;
 		};
 	}
 }
 
-#endif // _RL_SG_SCENE_H_
+#endif // RL_SG_SCENE_H

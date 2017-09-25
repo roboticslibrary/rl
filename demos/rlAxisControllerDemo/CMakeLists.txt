@@ -1,5 +1,3 @@
-project(rlAxisControllerDemo)
-
 add_executable(
 	rlAxisControllerDemo
 	rlAxisControllerDemo.cpp
@@ -7,6 +5,6 @@ add_executable(
 
 target_link_libraries(
 	rlAxisControllerDemo
-	rlhal
-	rlmath
+	hal
+	math
 )

@@ -24,23 +24,24 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_HAL_GNUPLOT_H_
-#define _RL_HAL_GNUPLOT_H_
+#ifndef RL_HAL_GNUPLOT_H
+#define RL_HAL_GNUPLOT_H
 
 #include <list>
 
+#include "CyclicDevice.h"
 #include "JointPositionActuator.h"
 
 namespace rl
 {
 	namespace hal
 	{
-		class Gnuplot : public JointPositionActuator
+		class Gnuplot : public CyclicDevice, public JointPositionActuator
 		{
 		public:
 			Gnuplot(
 				const ::std::size_t& dof,
-				const ::rl::math::Real& updateRate,
+				const ::std::chrono::nanoseconds& updateRate,
 				const ::rl::math::Real& ymin,
 				const ::rl::math::Real& ymax,
 				const ::std::size_t& max = 200
@@ -67,7 +68,7 @@ namespace rl
 		private:
 			FILE* fp;
 			
-			::std::list< ::rl::math::Vector > history;
+			::std::list< ::rl::math::Vector> history;
 			
 			::std::size_t max;
 			
@@ -78,4 +79,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_HAL_GNUPLOT_H_
+#endif // RL_HAL_GNUPLOT_H

@@ -25,9 +25,9 @@
 //
 
 #include <iostream>
+#include <memory>
 #include <stdexcept>
 #include <boost/lexical_cast.hpp>
-#include <boost/shared_ptr.hpp>
 #include <rl/mdl/Dynamic.h>
 #include <rl/mdl/Model.h>
 #include <rl/mdl/XmlFactory.h>
@@ -38,26 +38,25 @@ main(int argc, char** argv)
 	if (argc < 2)
 	{
 		std::cout << "Usage: rlDynamics1Demo MODELFILE Q1 ... Qn QD1 ... QDn QDD1 ... QDDn" << std::endl;
-		return 1;
+		return EXIT_FAILURE;
 	}
 	
 	try
 	{
 		rl::mdl::XmlFactory factory;
-		boost::shared_ptr< rl::mdl::Model > model(factory.create(argv[1]));
+		std::shared_ptr<rl::mdl::Model> model(factory.create(argv[1]));
 		
-		rl::mdl::Dynamic* dynamic = dynamic_cast< rl::mdl::Dynamic* >(model.get());
+		rl::mdl::Dynamic* dynamic = dynamic_cast<rl::mdl::Dynamic*>(model.get());
 		
 		rl::math::Vector q(model->getDof());
 		rl::math::Vector qd(model->getDof());
 		rl::math::Vector qdd(model->getDof());
-		rl::math::Vector tau(model->getDof());
 		
 		for (std::size_t i = 0; i < model->getDof(); ++i)
 		{
-			q(i) = boost::lexical_cast< rl::math::Real >(argv[i + 2]);
-			qd(i) = boost::lexical_cast< rl::math::Real >(argv[i + 2 + model->getDof()]);
-			qdd(i) = boost::lexical_cast< rl::math::Real >(argv[i + 2 + 2 * model->getDof()]);
+			q(i) = boost::lexical_cast<rl::math::Real>(argv[i + 2]);
+			qd(i) = boost::lexical_cast<rl::math::Real>(argv[i + 2 + model->getDof()]);
+			qdd(i) = boost::lexical_cast<rl::math::Real>(argv[i + 2 + 2 * model->getDof()]);
 		}
 		
 		dynamic->setPosition(q);
@@ -65,24 +64,20 @@ main(int argc, char** argv)
 		dynamic->setAcceleration(qdd);
 		
 		dynamic->inverseDynamics();
-		dynamic->getTorque(tau);
-		std::cout << "tau = " << tau.transpose() << std::endl;
+		std::cout << "tau = " << dynamic->getTorque().transpose() << std::endl;
 		
 		dynamic->forwardDynamics();
-		dynamic->getAcceleration(qdd);
-		std::cout << "qdd = " << qdd.transpose() << std::endl;
+		std::cout << "qdd = " << dynamic->getAcceleration().transpose() << std::endl;
 		
 		dynamic->rungeKuttaNystrom(1);
-		dynamic->getPosition(q);
-		dynamic->getVelocity(qd);
-		std::cout << "q = " << q.transpose() << std::endl;
-		std::cout << "qd = " << qd.transpose() << std::endl;
+		std::cout << "q = " << dynamic->getPosition().transpose() << std::endl;
+		std::cout << "qd = " << dynamic->getVelocity().transpose() << std::endl;
 	}
 	catch (const std::exception& e)
 	{
 		std::cout << e.what() << std::endl;
-		return 1;
+		return EXIT_FAILURE;
 	}
 	
-	return 0;
+	return EXIT_SUCCESS;
 }

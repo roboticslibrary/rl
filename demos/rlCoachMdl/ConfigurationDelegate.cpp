@@ -48,24 +48,23 @@ ConfigurationDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem&
 {
 	QDoubleSpinBox* editor = new QDoubleSpinBox(parent);
 	
-	rl::math::Vector maximum(MainWindow::instance()->kinematicModels[this->id]->getDof());
-	MainWindow::instance()->kinematicModels[this->id]->getMaximum(maximum);
-	rl::math::Vector minimum(MainWindow::instance()->kinematicModels[this->id]->getDof());
-	MainWindow::instance()->kinematicModels[this->id]->getMinimum(minimum);
-	Eigen::Matrix< rl::math::Unit, Eigen::Dynamic, 1 > qUnits(MainWindow::instance()->kinematicModels[this->id]->getDof());
-	MainWindow::instance()->kinematicModels[this->id]->getPositionUnits(qUnits);
+	rl::math::Vector maximum = MainWindow::instance()->kinematicModels[this->id]->getMaximum();
+	rl::math::Vector minimum = MainWindow::instance()->kinematicModels[this->id]->getMinimum();
+	Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> qUnits = MainWindow::instance()->kinematicModels[this->id]->getPositionUnits();
 	
 	if (rl::math::UNIT_RADIAN == qUnits(index.row()))
 	{
+		editor->setDecimals(2);
 		editor->setMinimum(minimum(index.row()) * rl::math::RAD2DEG);
 		editor->setMaximum(maximum(index.row()) * rl::math::RAD2DEG);
 		editor->setSingleStep(1.0f);
 	}
 	else
 	{
+		editor->setDecimals(4);
 		editor->setMinimum(minimum(index.row()));
 		editor->setMaximum(maximum(index.row()));
-		editor->setSingleStep(0.1f);
+		editor->setSingleStep(0.01f);
 	}
 	
 	QObject::connect(editor, SIGNAL(valueChanged(double)), this, SLOT(valueChanged(double)));
@@ -76,19 +75,19 @@ ConfigurationDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem&
 void
 ConfigurationDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const
 {
-	QDoubleSpinBox* doubleSpinBox = static_cast< QDoubleSpinBox* >(editor);
-	doubleSpinBox->setValue(index.model()->data(index, Qt::DisplayRole).toDouble());
+	QDoubleSpinBox* doubleSpinBox = static_cast<QDoubleSpinBox*>(editor);
+	doubleSpinBox->setValue(index.model()->data(index, Qt::EditRole).toDouble());
 }
 
 void
 ConfigurationDelegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const
 {
-	QDoubleSpinBox* doubleSpinBox = static_cast< QDoubleSpinBox* >(editor);
+	QDoubleSpinBox* doubleSpinBox = static_cast<QDoubleSpinBox*>(editor);
 	doubleSpinBox->interpretText();
 	
 	if (!model->setData(index, doubleSpinBox->value(), Qt::EditRole))
 	{
-		doubleSpinBox->setValue(index.model()->data(index, Qt::DisplayRole).toDouble());
+		doubleSpinBox->setValue(index.model()->data(index, Qt::EditRole).toDouble());
 	}
 }
 
@@ -101,5 +100,5 @@ ConfigurationDelegate::updateEditorGeometry(QWidget* editor, const QStyleOptionV
 void
 ConfigurationDelegate::valueChanged(double d)
 {
-	emit commitData(static_cast< QWidget* >(QObject::sender()));
+	emit commitData(static_cast<QWidget*>(QObject::sender()));
 }

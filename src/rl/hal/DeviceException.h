@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_HAL_DEVICEEXCEPTION_H_
-#define _RL_HAL_DEVICEEXCEPTION_H_
+#ifndef RL_HAL_DEVICEEXCEPTION_H
+#define RL_HAL_DEVICEEXCEPTION_H
 
 #include "Exception.h"
 
@@ -38,6 +38,8 @@ namespace rl
 		public:
 			DeviceException(const ::std::string& what_arg);
 			
+			DeviceException(const int& errnum);
+			
 			virtual ~DeviceException() throw();
 			
 		protected:
@@ -48,4 +50,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_HAL_DEVICEEXCEPTION_H_
+#endif // RL_HAL_DEVICEEXCEPTION_H

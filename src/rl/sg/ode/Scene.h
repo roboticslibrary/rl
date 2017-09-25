@@ -24,11 +24,12 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_SG_ODE_SCENE_H_
-#define _RL_SG_ODE_SCENE_H_
+#ifndef RL_SG_ODE_SCENE_H
+#define RL_SG_ODE_SCENE_H
 
 #include <ode/ode.h>
 
+#include "../DepthScene.h"
 #include "../RaycastScene.h"
 #include "../SimpleScene.h"
 
@@ -36,9 +37,14 @@ namespace rl
 {
 	namespace sg
 	{
+		/**
+		 * Open Dynamics Engine.
+		 * 
+		 * http://www.ode.org/
+		 */
 		namespace ode
 		{
-			class Scene : public ::rl::sg::RaycastScene, public ::rl::sg::SimpleScene
+			class Scene : public ::rl::sg::DepthScene, public ::rl::sg::RaycastScene, public ::rl::sg::SimpleScene
 			{
 			public:
 				Scene();
@@ -53,29 +59,35 @@ namespace rl
 				
 				::rl::sg::Model* create();
 				
+				::rl::math::Real depth(::rl::sg::Shape* first, ::rl::sg::Shape* second, ::rl::math::Vector3& point1, ::rl::math::Vector3& point2);
+				
 				bool isColliding();
 				
 				::rl::sg::Shape* raycast(const ::rl::math::Vector3& source, const ::rl::math::Vector3& target, ::rl::math::Real& distance);
 				
 				bool raycast(::rl::sg::Shape* shape, const ::rl::math::Vector3& source, const ::rl::math::Vector3& target, ::rl::math::Real& distance);
 				
-				dSpaceID space;
+				::dSpaceID space;
 				
-				dWorldID world;
+				::dWorldID world;
 				
 			protected:
 				
 			private:
-				static void bodyNearCallback(void* data, dGeomID o1, dGeomID o2);
+				static void bodyDepthCallback(void* data, ::dGeomID o1, ::dGeomID o2);
 				
-				static void modelNearCallback(void* data, dGeomID o1, dGeomID o2);
+				static void bodySimpleCallback(void* data, ::dGeomID o1, ::dGeomID o2);
 				
-				static void rayNearCallback(void* data, dGeomID o1, dGeomID o2);
+				static void modelSimpleCallback(void* data, ::dGeomID o1, ::dGeomID o2);
 				
-				static void shapeNearCallback(void* data, dGeomID o1, dGeomID o2);
+				static void rayNearCallback(void* data, ::dGeomID o1, ::dGeomID o2);
+				
+				static void shapeDepthCallback(void* data, ::dGeomID o1, ::dGeomID o2);
+				
+				static void shapeSimpleCallback(void* data, ::dGeomID o1, ::dGeomID o2);
 			};
 		}
 	}
 }
 
-#endif // _RL_SG_ODE_SCENE_H_
+#endif // RL_SG_ODE_SCENE_H

@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_SG_PQP_BODY_H_
-#define _RL_SG_PQP_BODY_H_
+#ifndef RL_SG_PQP_BODY_H
+#define RL_SG_PQP_BODY_H
 
 #include "../Body.h"
 
@@ -46,7 +46,7 @@ namespace rl
 				
 				virtual ~Body();
 				
-				::rl::sg::Shape* create(SoVRMLShape* shape);
+				::rl::sg::Shape* create(::SoVRMLShape* shape);
 				
 				void getFrame(::rl::math::Transform& frame);
 				
@@ -63,4 +63,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_SG_PQP_BODY_H_
+#endif // RL_SG_PQP_BODY_H

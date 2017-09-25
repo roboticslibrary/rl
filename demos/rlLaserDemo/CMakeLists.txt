@@ -1,5 +1,3 @@
-project(rlLaserDemo)
-
 add_executable(
 	rlLaserDemo
 	rlLaserDemo.cpp
@@ -7,5 +5,5 @@ add_executable(
 
 target_link_libraries(
 	rlLaserDemo
-	rlhal
+	hal
 )

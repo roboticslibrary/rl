@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2013, Andre Gaschler
+// Copyright (c) 2013, Andre Gaschler, Markus Rickert
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -25,29 +25,242 @@
 //
 
 #include <cassert>
-#include <rl/hal/endian.h>
+#include <cmath>
+#include <iomanip>
+#include <iostream>
+#include <rl/hal/Endian.h>
 
 int
 main(int argc, char** argv)
 {
 	{
-		uint16_t word = 0x42EC;
-		assert(rl::hal::hostEndianWord(rl::hal::highByteFromHostEndian(word), rl::hal::lowByteFromHostEndian(word)) == word);
-		assert(rl::hal::littleEndianWord(rl::hal::highByteFromLittleEndian(word), rl::hal::lowByteFromLittleEndian(word)) == word);
-		assert(rl::hal::bigEndianWord(rl::hal::highByteFromBigEndian(word), rl::hal::lowByteFromBigEndian(word)) == word);
+		::std::uint16_t wordBefore = 0x42EC;
+		
+		std::cout << "host   " << std::hex << wordBefore << std::endl;
+		
+		::std::uint16_t word = rl::hal::Endian::hostWord(
+			rl::hal::Endian::hostHighByte(wordBefore),
+			rl::hal::Endian::hostLowByte(wordBefore)
+		);
+		
+		std::cout << "host   " << std::hex << word << std::endl;
+		
+		if (word != wordBefore)
+		{
+			std::cout << std::hex << word << " != " << wordBefore << std::endl;
+			return EXIT_FAILURE;
+		}
+		
+		word = rl::hal::Endian::littleWord(
+			rl::hal::Endian::littleHighByte(wordBefore),
+			rl::hal::Endian::littleLowByte(wordBefore)
+		);
+		
+		std::cout << "little " << std::hex << word << std::endl;
+		
+		if (word != wordBefore)
+		{
+			std::cout << std::hex << word << " != " << wordBefore << std::endl;
+			return EXIT_FAILURE;
+		}
+		
+		word = rl::hal::Endian::bigWord(
+			rl::hal::Endian::bigHighByte(wordBefore),
+			rl::hal::Endian::bigLowByte(wordBefore)
+		);
+		
+		std::cout << "big    " << std::hex << word << std::endl;
+		
+		if (word != wordBefore)
+		{
+			std::cout << std::hex << word << " != " << wordBefore << std::endl;
+			return EXIT_FAILURE;
+		}
 	}
+	
+	std::cout << std::endl;
+	
 	{
-		uint16_t wordBefore = 0x42EC;
-		uint16_t word = wordBefore;
-		rl::hal::swapByteOrder(word);
-		rl::hal::swapByteOrder(word);
-		assert(word == wordBefore);
+		::std::uint16_t wordBefore = 0x42EC;
+		std::cout << std::hex << "                word   " << wordBefore << std::endl;
+		::std::uint16_t word = wordBefore;
+		rl::hal::Endian::reverse(word);
+		std::cout << std::hex << "        reverse(word)  " << word << std::endl;
+		rl::hal::Endian::reverse(word);
+		std::cout << std::hex << "reverse(reverse(word)) " << word << std::endl;
+		
+		if (word != wordBefore)
+		{
+			std::cout << std::hex << word << " != " << wordBefore << std::endl;
+			return EXIT_FAILURE;
+		}
 	}
+	
+	std::cout << std::endl;
+	
 	{
-		uint32_t doubleWord = 0x42EC7654;
-		assert(rl::hal::hostEndianDoubleWord(rl::hal::highWordFromHostEndian(doubleWord), rl::hal::lowWordFromHostEndian(doubleWord)) == doubleWord);
-		assert(rl::hal::littleEndianDoubleWord(rl::hal::highWordFromLittleEndian(doubleWord), rl::hal::lowWordFromLittleEndian(doubleWord)) == doubleWord);
-		assert(rl::hal::bigEndianDoubleWord(rl::hal::highWordFromBigEndian(doubleWord), rl::hal::lowWordFromBigEndian(doubleWord)) == doubleWord);
+		::std::uint32_t doubleWordBefore = 0x42EC7654;
+		
+		std::cout << "host   " << std::hex << doubleWordBefore << std::endl;
+		
+		::std::uint32_t doubleWord = rl::hal::Endian::hostDoubleWord(
+			rl::hal::Endian::hostHighWord(doubleWordBefore),
+			rl::hal::Endian::hostLowWord(doubleWordBefore)
+		);
+		
+		std::cout << "host   " << std::hex << doubleWord << std::endl;
+		
+		if (doubleWord != doubleWordBefore)
+		{
+			std::cout << std::hex << doubleWord << " != " << doubleWordBefore << std::endl;
+			return EXIT_FAILURE;
+		}
+		
+		doubleWord = rl::hal::Endian::littleDoubleWord(
+			rl::hal::Endian::littleHighWord(doubleWordBefore),
+			rl::hal::Endian::littleLowWord(doubleWordBefore)
+		);
+		
+		std::cout << "little " << std::hex << doubleWord << std::endl;
+		
+		if (doubleWord != doubleWordBefore)
+		{
+			std::cout << std::hex << doubleWord << " != " << doubleWordBefore << std::endl;
+			return EXIT_FAILURE;
+		}
+		
+		doubleWord = rl::hal::Endian::bigDoubleWord(
+			rl::hal::Endian::bigHighWord(doubleWordBefore),
+			rl::hal::Endian::bigLowWord(doubleWordBefore)
+		);
+		
+		std::cout << "big    " << std::hex << doubleWord << std::endl;
+		
+		if (doubleWord != doubleWordBefore)
+		{
+			std::cout << std::hex << doubleWord << " != " << doubleWordBefore << std::endl;
+			return EXIT_FAILURE;
+		}
 	}
-	return 0;
+	
+	std::cout << std::endl;
+	
+	{
+		::std::uint32_t doubleWordBefore = 0x42EC7654;
+		std::cout << std::hex << "                doubleWord   " << doubleWordBefore << std::endl;
+		::std::uint32_t doubleWord = doubleWordBefore;
+		rl::hal::Endian::reverse(doubleWord);
+		std::cout << std::hex << "        reverse(doubleWord)  " << doubleWord << std::endl;
+		rl::hal::Endian::reverse(doubleWord);
+		std::cout << std::hex << "reverse(reverse(doubleWord)) " << doubleWord << std::endl;
+		
+		if (doubleWord != doubleWordBefore)
+		{
+			std::cout << std::hex << doubleWord << " != " << doubleWordBefore << std::endl;
+			return EXIT_FAILURE;
+		}
+	}
+	
+	std::cout << std::endl;
+	
+	{
+		float real32Before = std::sqrt(2.0f);
+		std::cout << "                float   " << real32Before << std::endl;
+		float real32 = real32Before;
+		rl::hal::Endian::reverse(real32);
+		std::cout << "        reverse(float)  " << real32 << std::endl;
+		rl::hal::Endian::reverse(real32);
+		std::cout << "reverse(reverse(float)) " << real32 << std::endl;
+		
+		if (real32 != real32Before)
+		{
+			std::cout << std::hex << real32 << " != " << real32Before << std::endl;
+			return EXIT_FAILURE;
+		}
+	}
+	
+	std::cout << std::endl;
+	
+	{
+		::std::uint64_t quadWordBefore = 0x42EC7654C5BD91E0;
+		
+		std::cout << "host   " << std::hex << quadWordBefore << std::endl;
+		
+		::std::uint64_t quadWord = rl::hal::Endian::hostQuadWord(
+			rl::hal::Endian::hostHighDoubleWord(quadWordBefore),
+			rl::hal::Endian::hostLowDoubleWord(quadWordBefore)
+		);
+		
+		std::cout << "host   " << std::hex << quadWord << std::endl;
+		
+		if (quadWord != quadWordBefore)
+		{
+			std::cout << std::hex << quadWord << " != " << quadWordBefore << std::endl;
+			return EXIT_FAILURE;
+		}
+		
+		quadWord = rl::hal::Endian::littleQuadWord(
+			rl::hal::Endian::littleHighDoubleWord(quadWordBefore),
+			rl::hal::Endian::littleLowDoubleWord(quadWordBefore)
+		);
+		
+		std::cout << "little " << std::hex << quadWord << std::endl;
+		
+		if (quadWord != quadWordBefore)
+		{
+			std::cout << std::hex << quadWord << " != " << quadWordBefore << std::endl;
+			return EXIT_FAILURE;
+		}
+		
+		quadWord = rl::hal::Endian::bigQuadWord(
+			rl::hal::Endian::bigHighDoubleWord(quadWordBefore),
+			rl::hal::Endian::bigLowDoubleWord(quadWordBefore)
+		);
+		
+		std::cout << "big    " << std::hex << quadWord << std::endl;
+		
+		if (quadWord != quadWordBefore)
+		{
+			std::cout << std::hex << quadWord << " != " << quadWordBefore << std::endl;
+			return EXIT_FAILURE;
+		}
+	}
+	
+	std::cout << std::endl;
+	
+	{
+		::std::uint64_t quadWordBefore = 0x42EC76546D8B43AC;
+		std::cout << std::hex << "                quadWord   " << quadWordBefore << std::endl;
+		::std::uint64_t quadWord = quadWordBefore;
+		rl::hal::Endian::reverse(quadWord);
+		std::cout << std::hex << "        reverse(quadWord)  " << quadWord << std::endl;
+		rl::hal::Endian::reverse(quadWord);
+		std::cout << std::hex << "reverse(reverse(quadWord)) " << quadWord << std::endl;
+		
+		if (quadWord != quadWordBefore)
+		{
+			std::cout << std::hex << quadWord << " != " << quadWordBefore << std::endl;
+			return EXIT_FAILURE;
+		}
+	}
+	
+	std::cout << std::endl;
+	
+	{
+		double real64Before = std::sqrt(2.0);
+		std::cout << std::hex << "                double   " << real64Before << std::endl;
+		double real64 = real64Before;
+		rl::hal::Endian::reverse(real64);
+		std::cout << std::hex << "        reverse(double)  " << real64 << std::endl;
+		rl::hal::Endian::reverse(real64);
+		std::cout << std::hex << "reverse(reverse(double)) " << real64 << std::endl;
+		
+		if (real64 != real64Before)
+		{
+			std::cout << std::hex << real64 << " != " << real64Before << std::endl;
+			return EXIT_FAILURE;
+		}
+	}
+	
+	return EXIT_SUCCESS;
 }

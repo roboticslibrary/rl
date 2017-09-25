@@ -26,58 +26,23 @@
 
 #include <cassert>
 #include <iostream>
+#include <thread>
 #include <rl/math/Unit.h>
 
-#include "ComException.h"
-#include "endian.h"
+#include "Endian.h"
 #include "DeviceException.h"
 #include "LeuzeRs4.h"
-#include "Serial.h"
-#include "TimeoutException.h"
 
 namespace rl
 {
 	namespace hal
 	{
-		inline
-		const uint8_t&
-		get(const uint8_t*& ptr)
-		{
-			if (0x00 == ptr[-1] && 0x00 == ptr[0])
-			{
-				++ptr;
-				++ptr;
-				return ptr[-2];
-			}
-			else
-			{
-				++ptr;
-				return ptr[-1];
-			}
-			
-		}
-		
-		inline
-		void
-		set(const uint8_t& value, uint8_t*& ptr, ::std::size_t& len)
-		{
-			ptr[0] = value;
-			++ptr;
-			++len;
-			
-			if (0x00 == ptr[-2] && 0x00 == ptr[-1])
-			{
-				ptr[0] = 0xFF;
-				++ptr;
-				++len;
-			}
-		}
-		
 		LeuzeRs4::LeuzeRs4(
 			const ::std::string& filename,
 			const BaudRate& baudRate,
 			const ::std::string& password
 		) :
+			CyclicDevice(::std::chrono::nanoseconds::zero()),
 			Lidar(),
 			baudRate(BAUDRATE_57600BPS),
 			data(),
@@ -89,19 +54,16 @@ namespace rl
 			near2(false),
 			password(password),
 			serial(
-				new Serial(
-					filename,
-					Serial::BAUDRATE_57600BPS,
-					Serial::DATABITS_8BITS,
-					Serial::FLOWCONTROL_OFF,
-					Serial::PARITY_NOPARITY,
-					Serial::STOPBITS_1BIT
-				)
+				filename,
+				Serial::BAUDRATE_57600BPS,
+				Serial::DATABITS_8BITS,
+				Serial::FLOWCONTROL_OFF,
+				Serial::PARITY_NOPARITY,
+				Serial::STOPBITS_1BIT
 			),
 			startIndex(0xFFFF),
 			stepSize(0xFFFF),
 			stopIndex(0xFFFF),
-			timer(),
 			type(0)
 		{
 			assert(password.length() < 9);
@@ -109,7 +71,6 @@ namespace rl
 		
 		LeuzeRs4::~LeuzeRs4()
 		{
-			delete this->serial;
 		}
 		
 		void
@@ -127,15 +88,15 @@ namespace rl
 //				this->setBaudRate(BAUDRATE_57600BPS);
 //			}
 			
-			this->serial->close();
+			this->serial.close();
 			
 			this->setConnected(false);
 		}
 		
-		uint8_t
-		LeuzeRs4::crc(const uint8_t* buf, const ::std::size_t& len) const
+		::std::uint8_t
+		LeuzeRs4::crc(const ::std::uint8_t* buf, const ::std::size_t& len) const
 		{	
-			uint8_t checksum = buf[0];
+			::std::uint8_t checksum = buf[0];
 			
 			for (::std::size_t i = 1; i < len; ++i)
 			{
@@ -150,6 +111,23 @@ namespace rl
 			return checksum;
 		}
 		
+		const ::std::uint8_t&
+		LeuzeRs4::get(const ::std::uint8_t*& ptr) const
+		{
+			if (0x00 == ptr[-1] && 0x00 == ptr[0])
+			{
+				++ptr;
+				++ptr;
+				return ptr[-2];
+			}
+			else
+			{
+				++ptr;
+				return ptr[-1];
+			}
+			
+		}
+		
 		LeuzeRs4::BaudRate
 		LeuzeRs4::getBaudRate() const
 		{
@@ -162,48 +140,48 @@ namespace rl
 			assert(this->isConnected());
 			assert(distances.size() >= this->getDistancesCount());
 			
-			const uint8_t* ptr;
+			const ::std::uint8_t* ptr;
 			
 			if (this->data[3] & 2)
 			{
-				ptr = this->data + 5;
+				ptr = this->data.data() + 5;
 				
 				if ((this->data[3] & 3) && (this->data[4] & 128))
 				{
-					ptr = this->data + 6;
+					ptr = this->data.data() + 6;
 				}
 			}
 			else
 			{
-				ptr = this->data + 4;
+				ptr = this->data.data() + 4;
 			}
 			
-			const uint8_t& number1 = get(ptr);
-			get(ptr);//bool motion = get(ptr) & 64 ? true : false;
-			const uint8_t& number2 = get(ptr);
-			get(ptr);
-			const uint8_t& number3 = get(ptr);
-			get(ptr);
-			const uint8_t& number4 = get(ptr);
-			get(ptr);
+			const ::std::uint8_t& number1 = this->get(ptr);
+			this->get(ptr);//bool motion = this->get(ptr) & 64 ? true : false;
+			const ::std::uint8_t& number2 = this->get(ptr);
+			this->get(ptr);
+			const ::std::uint8_t& number3 = this->get(ptr);
+			this->get(ptr);
+			const ::std::uint8_t& number4 = this->get(ptr);
+			this->get(ptr);
 			
-			/*int number = */hostEndianDoubleWord(hostEndianWord(number1, number2), hostEndianWord(number3, number4));
+			/*int number = */Endian::hostDoubleWord(Endian::hostWord(number1, number2), Endian::hostWord(number3, number4));
 			
-			int step = get(ptr);
+			int step = this->get(ptr);
 			
-			const uint8_t& startHigh = get(ptr);
-			const uint8_t& startLow = get(ptr);
-			int start = hostEndianWord(startHigh, startLow);
+			const ::std::uint8_t& startHigh = this->get(ptr);
+			const ::std::uint8_t& startLow = this->get(ptr);
+			int start = Endian::hostWord(startHigh, startLow);
 			
-			const uint8_t& stopHigh = get(ptr);
-			const uint8_t& stopLow = get(ptr);
-			int stop = hostEndianWord(stopHigh, stopLow);
+			const ::std::uint8_t& stopHigh = this->get(ptr);
+			const ::std::uint8_t& stopLow = this->get(ptr);
+			int stop = Endian::hostWord(stopHigh, stopLow);
 			
 			for (int i = 0; i < (stop - start) / step + 1; ++i)
 			{
-				const uint8_t& dataHigh = get(ptr);
-				const uint8_t& dataLow = get(ptr);
-				distances(distances.size() - 1 - i) = hostEndianWord(dataHigh, dataLow & 254) / 1000.0f;
+				const ::std::uint8_t& dataHigh = this->get(ptr);
+				const ::std::uint8_t& dataLow = this->get(ptr);
+				distances(distances.size() - 1 - i) = Endian::hostWord(dataHigh, dataLow & 254) / 1000.0f;
 			}
 		}
 		
@@ -258,12 +236,12 @@ namespace rl
 		void
 		LeuzeRs4::open()
 		{
-			this->serial->open();
+			this->serial.open();
 			
 			this->setConnected(true);
 			
 #if 0
-			uint8_t buf[1099];
+			::std::array< ::std::uint8_t, 1099> buf;
 			
 			// synchronize baud rates
 			
@@ -283,9 +261,9 @@ namespace rl
 			
 			for (::std::size_t i = 0; i < 6; ++i)
 			{
-				this->serial->setBaudRate(baudRates[i]);
-				this->serial->changeParameters();
-				this->send(buf, 1 + 1 + 2 + 1 + 1 + 2);
+				this->serial.setBaudRate(baudRates[i]);
+				this->serial.changeParameters();
+				this->send(buf.data(), 1 + 1 + 2 + 1 + 1 + 2);
 				
 				if (this->waitAck())
 				{
@@ -298,7 +276,7 @@ namespace rl
 				}
 			}
 			
-			this->recv(buf, 1 + 1 + 2 + 1 + 1 + 1 + 2, 0xA0);
+			this->recv(buf.data(), 1 + 1 + 2 + 1 + 1 + 1 + 2, 0xA0);
 			
 			switch (buf[5])
 			{
@@ -318,11 +296,11 @@ namespace rl
 			
 			do
 			{
-				this->send(buf, 1 + 1 + 2 + 1 + 2);
+				this->send(buf.data(), 1 + 1 + 2 + 1 + 2);
 			}
 			while (!this->waitAck());
 			
-			this->recv(buf, 1 + 1 + 2 + 1 + 152 + 1 + 2, 0xB1);
+			this->recv(buf.data(), 1 + 1 + 2 + 1 + 152 + 1 + 2, 0xB1);
 			
 			// baud rate
 			
@@ -361,12 +339,12 @@ namespace rl
 		}
 		
 		::std::size_t
-		LeuzeRs4::recv(uint8_t* buf, const ::std::size_t& len)
+		LeuzeRs4::recv(::std::uint8_t* buf, const ::std::size_t& len)
 		{
 			assert(this->isConnected());
 			assert(len > 7);
 			
-			uint8_t* ptr;
+			::std::uint8_t* ptr;
 			::std::size_t sumbytes;
 			::std::size_t numbytes;
 			
@@ -379,21 +357,21 @@ namespace rl
 					
 					do
 					{
-						numbytes = this->serial->read(ptr, 1);
+						numbytes = this->serial.read(ptr, 1);
 					}
 					while (buf[0] != 0x00);
 					
 					ptr += numbytes;
 					sumbytes += numbytes;
 					
-					numbytes = this->serial->read(ptr, 1);
+					numbytes = this->serial.read(ptr, 1);
 				}
 				while (buf[1] != 0x00);
 				
 				ptr += numbytes;
 				sumbytes += numbytes;
 				
-				numbytes = this->serial->read(ptr, 1);
+				numbytes = this->serial.read(ptr, 1);
 			}
 			while (buf[2] == 0x00 || buf[2] == 0xFF);
 			
@@ -402,7 +380,7 @@ namespace rl
 			
 			do
 			{
-				numbytes = this->serial->read(ptr, 1);
+				numbytes = this->serial.read(ptr, 1);
 				
 				ptr += numbytes;
 				sumbytes += numbytes;
@@ -480,7 +458,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			uint8_t buf[1099];
+			::std::array< ::std::uint8_t, 1099> buf;
 			
 			buf[2] = 0x10;
 			buf[3] = 0x21;
@@ -495,9 +473,9 @@ namespace rl
 				buf[4 + i] = 0xFF;
 			}
 			
-			uint8_t buf2[1099];
+			::std::uint8_t buf2[1099];
 			
-			this->send(buf, 2 + 1 + 1 + 8 + 1 + 3);
+			this->send(buf.data(), 2 + 1 + 1 + 8 + 1 + 3);
 			
 			do
 			{
@@ -513,7 +491,7 @@ namespace rl
 		}
 		
 		void
-		LeuzeRs4::send(uint8_t* buf, const ::std::size_t& len)
+		LeuzeRs4::send(::std::uint8_t* buf, const ::std::size_t& len)
 		{
 			assert(this->isConnected());
 			assert(len > 7);
@@ -533,17 +511,32 @@ namespace rl
 			{
 				if (i > 0)
 				{
-					::rl::util::Timer::sleep(40.0f / 1000.0f);
+					::std::this_thread::sleep_for(std::chrono::milliseconds(40));
 				}
 				
 				do
 				{
-					numbytes = this->serial->write(&buf[i], 1);
+					numbytes = this->serial.write(&buf[i], 1);
 				}
 				while (numbytes < 1);
 			}
 			
-			this->serial->flush(true, false);
+			this->serial.flush(true, false);
+		}
+		
+		void
+		LeuzeRs4::set(const ::std::uint8_t& value, ::std::uint8_t*& ptr, ::std::size_t& len) const
+		{
+			ptr[0] = value;
+			++ptr;
+			++len;
+			
+			if (0x00 == ptr[-2] && 0x00 == ptr[-1])
+			{
+				ptr[0] = 0xFF;
+				++ptr;
+				++len;
+			}
 		}
 		
 #if 0
@@ -552,65 +545,65 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			uint8_t buf[1099];
+			::std::array< ::std::uint8_t, 1099> buf;
 			
 			buf[2] = 0x19;
 			buf[3] = 0x41;
 			
-			uint8_t* ptr = buf + 4;
+			::std::uint8_t* ptr = buf + 4;
 			::std::size_t len = 0;
 			
 			switch (baudRate)
 			{
 			case BAUDRATE_4800BPS:
 ::std::cout << "setting to 4,800 baud" << ::std::endl;
-				set(0x00, ptr, len);
-				set(0x00, ptr, len);
+				this->set(0x00, ptr, len);
+				this->set(0x00, ptr, len);
 				break;
 			case BAUDRATE_9600BPS:
 ::std::cout << "setting to 9,600 baud" << ::std::endl;
-				set(0x00, ptr, len);
-				set(0x01, ptr, len);
+				this->set(0x00, ptr, len);
+				this->set(0x01, ptr, len);
 				break;
 			case BAUDRATE_19200BPS:
 ::std::cout << "setting to 19,200 baud" << ::std::endl;
-				set(0x00, ptr, len);
-				set(0x02, ptr, len);
+				this->set(0x00, ptr, len);
+				this->set(0x02, ptr, len);
 				break;
 			case BAUDRATE_38400BPS:
 ::std::cout << "setting to 38,400 baud" << ::std::endl;
-				set(0x00, ptr, len);
-				set(0x03, ptr, len);
+				this->set(0x00, ptr, len);
+				this->set(0x03, ptr, len);
 				break;
 			case BAUDRATE_57600BPS:
 ::std::cout << "setting to 57,600 baud" << ::std::endl;
-				set(0x00, ptr, len);
-				set(0x04, ptr, len);
+				this->set(0x00, ptr, len);
+				this->set(0x04, ptr, len);
 				break;
 			case BAUDRATE_115200BPS:
 ::std::cout << "setting to 115,200 baud" << ::std::endl;
-				set(0x00, ptr, len);
-				set(0x05, ptr, len);
+				this->set(0x00, ptr, len);
+				this->set(0x05, ptr, len);
 				break;
 //			case BAUDRATE_345600BPS:
 //::std::cout << "setting to 345,600 baud" << ::std::endl;
-//				set(0x00, ptr, len);
-//				set(0x06, ptr, len);
+//				this->set(0x00, ptr, len);
+//				this->set(0x06, ptr, len);
 //				break;
 //			case BAUDRATE_625000BPS:
 //::std::cout << "setting to 625,000 baud" << ::std::endl;
-//				set(0x00, ptr, len);
-//				set(0xFF, ptr, len);
+//				this->set(0x00, ptr, len);
+//				this->set(0xFF, ptr, len);
 //				break;
 			default:
 				break;
 			}
 			
-			uint8_t buf2[1099];
+			::std::uint8_t buf2[1099];
 			
 			do
 			{
-				this->send(buf, 2 + 1 + 1 + len + 1 + 3);
+				this->send(buf.data(), 2 + 1 + 1 + len + 1 + 3);
 				this->recv(buf2, 1099);//2 + 1 + 1 + 1 + 3);
 			}
 			while (0x16 != buf2[2]);
@@ -618,68 +611,68 @@ namespace rl
 			switch (baudRate)
 			{
 			case BAUDRATE_4800BPS:
-				this->serial->setBaudRate(Serial::BAUDRATE_4800BPS);
+				this->serial.setBaudRate(Serial::BAUDRATE_4800BPS);
 				break;
 			case BAUDRATE_9600BPS:
-				this->serial->setBaudRate(Serial::BAUDRATE_9600BPS);
+				this->serial.setBaudRate(Serial::BAUDRATE_9600BPS);
 				break;
 			case BAUDRATE_19200BPS:
-				this->serial->setBaudRate(Serial::BAUDRATE_19200BPS);
+				this->serial.setBaudRate(Serial::BAUDRATE_19200BPS);
 				break;
 			case BAUDRATE_38400BPS:
-				this->serial->setBaudRate(Serial::BAUDRATE_38400BPS);
+				this->serial.setBaudRate(Serial::BAUDRATE_38400BPS);
 				break;
 			case BAUDRATE_57600BPS:
-				this->serial->setBaudRate(Serial::BAUDRATE_57600BPS);
+				this->serial.setBaudRate(Serial::BAUDRATE_57600BPS);
 				break;
 			case BAUDRATE_115200BPS:
-				this->serial->setBaudRate(Serial::BAUDRATE_115200BPS);
+				this->serial.setBaudRate(Serial::BAUDRATE_115200BPS);
 				break;
 //			case BAUDRATE_345600BPS:
-//				this->serial->setBaudRate(Serial::BAUDRATE_345600BPS);
+//				this->serial.setBaudRate(Serial::BAUDRATE_345600BPS);
 //				break;
 //			case BAUDRATE_625000BPS:
-//				this->serial->setBaudRate(Serial::BAUDRATE_625000BPS);
+//				this->serial.setBaudRate(Serial::BAUDRATE_625000BPS);
 //				break;
 			default:
 				break;
 			}
 			
-			this->serial->changeParameters();
+			this->serial.changeParameters();
 			
 			this->baudRate = baudRate;
 		}
 		
 		void
-		LeuzeRs4::setOutputParameters(const uint16_t& startIndex, const uint16_t& stopIndex, const uint16_t& stepSize, const uint16_t& type)
+		LeuzeRs4::setOutputParameters(const ::std::uint16_t& startIndex, const ::std::uint16_t& stopIndex, const ::std::uint16_t& stepSize, const ::std::uint16_t& type)
 		{
 			assert(this->isConnected());
 			
-			uint8_t buf[1099];
+			::std::array< ::std::uint8_t, 1099> buf;
 			
 			buf[2] = 0x1A;
 			buf[3] = 0x41;
 			
-			uint8_t* ptr = buf + 4;
+			::std::uint8_t* ptr = buf + 4;
 			::std::size_t len = 0;
 			
-			set(highByteFromHostEndian(startIndex), ptr, len);
-			set(lowByteFromHostEndian(startIndex), ptr, len);
+			this->set(Endian::hostHighByte(startIndex), ptr, len);
+			this->set(Endian::hostLowByte(startIndex), ptr, len);
 			
-			set(highByteFromHostEndian(stopIndex), ptr, len);
-			set(lowByteFromHostEndian(stopIndex), ptr, len);
+			this->set(Endian::hostHighByte(stopIndex), ptr, len);
+			this->set(Endian::hostLowByte(stopIndex), ptr, len);
 			
-			set(highByteFromHostEndian(stepSize), ptr, len);
-			set(lowByteFromHostEndian(stepSize), ptr, len);
+			this->set(Endian::hostHighByte(stepSize), ptr, len);
+			this->set(Endian::hostLowByte(stepSize), ptr, len);
 			
-			set(highByteFromHostEndian(type), ptr, len);
-			set(lowByteFromHostEndian(type), ptr, len);
+			this->set(Endian::hostHighByte(type), ptr, len);
+			this->set(Endian::hostLowByte(type), ptr, len);
 			
-			uint8_t buf2[1099];
+			::std::uint8_t buf2[1099];
 			
 			do
 			{
-				this->send(buf, 2 + 1 + 1 + len + 1 + 3);
+				this->send(buf.data(), 2 + 1 + 1 + len + 1 + 3);
 				this->recv(buf2, 1099);//2 + 1 + 1 + 1 + 3);
 			}
 			while (0x16 != buf2[2]);
@@ -704,15 +697,15 @@ namespace rl
 			
 			if (2 == this->type)
 			{
-				uint8_t buf[1099];
+				::std::array< ::std::uint8_t, 1099> buf;
 				
 				buf[2] = 0x24;
 				buf[3] = 0x01;
 				
-				this->send(buf, 2 + 1 + 1 + 1 + 3);
+				this->send(buf.data(), 2 + 1 + 1 + 1 + 3);
 			}
 			
-			this->recv(this->data, 1099);
+			this->recv(this->data.data(), 1099);
 			
 			if (0x23 != this->data[2])
 			{

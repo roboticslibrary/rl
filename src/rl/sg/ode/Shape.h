@@ -24,11 +24,10 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_SG_ODE_SHAPE_H_
-#define _RL_SG_ODE_SHAPE_H_
+#ifndef RL_SG_ODE_SHAPE_H
+#define RL_SG_ODE_SHAPE_H
 
-#include <Inventor/fields/SoMFInt32.h>
-#include <Inventor/fields/SoMFVec3f.h>
+#include <Inventor/actions/SoCallbackAction.h>
 #include <ode/ode.h>
 
 #include "../Shape.h"
@@ -42,7 +41,9 @@ namespace rl
 			class Shape : public ::rl::sg::Shape
 			{
 			public:
-				Shape(SoVRMLShape* shape, Body* body);
+				EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+				
+				Shape(::SoVRMLShape* shape, Body* body);
 				
 				virtual ~Shape();
 				
@@ -50,19 +51,23 @@ namespace rl
 				
 				void setTransform(const ::rl::math::Transform& transform);
 				
-				dGeomID geom;
+				::dGeomID geom;
 				
 			protected:
 				
 			private:
-				void create(const SoMFVec3f& point, const SoMFInt32& coordIndex, dReal* vertices, dTriIndex* indices) const;
+				static void triangleCallback(void* userData, ::SoCallbackAction* action, const ::SoPrimitiveVertex* v1, const ::SoPrimitiveVertex* v2, const ::SoPrimitiveVertex* v3);
 				
-				dTriIndex* indices;
+				::rl::math::Transform baseTransform;
 				
-				dReal* vertices;
+				::std::vector< ::dTriIndex> indices;
+				
+				::rl::math::Transform transform;
+				
+				::std::vector< ::dReal> vertices;
 			};
 		}
 	}
 }
 
-#endif // _RL_SG_ODE_SHAPE_H_
+#endif // RL_SG_ODE_SHAPE_H

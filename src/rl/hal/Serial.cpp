@@ -24,13 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <cassert>
-#include <cstring>
-#include <iostream>
-
 #ifndef WIN32
-#include <errno.h>
-#include <fcntl.h>
+#include <cerrno>
 #include <unistd.h>
 #include <sys/ioctl.h>
 #ifdef __QNX__
@@ -42,6 +37,10 @@
 #endif // __APPLE__
 #include <sys/types.h>
 #endif // WIN32
+
+#include <cassert>
+#include <cstring>
+#include <iostream>
 
 #include "ComException.h"
 #include "Serial.h"
@@ -61,7 +60,8 @@ namespace rl
 			const DataBits& dataBits,
 			const FlowControl& flowControl,
 			const Parity& parity,
-			const StopBits& stopBits
+			const StopBits& stopBits,
+			const int& flags
 		) :
 			Com(),
 			baudRate(baudRate),
@@ -69,13 +69,14 @@ namespace rl
 			dataBits(dataBits),
 			fd(0),
 			filename(filename),
+			flags(flags),
 			flowControl(flowControl),
 			parity(parity),
 			restore(),
 			stopBits(stopBits)
 		{
 #ifndef WIN32
-			cfmakeraw(&this->current);
+			::cfmakeraw(&this->current);
 #endif // WIN32
 			this->setBaudRate(this->baudRate);
 			this->setDataBits(this->dataBits);
@@ -96,18 +97,14 @@ namespace rl
 		Serial::changeParameters()
 		{
 #ifdef WIN32
-			if (0 == SetCommState(this->fd, &this->current))
+			if (0 == ::SetCommState(this->fd, &this->current))
 			{
-				LPTSTR buffer = NULL;
-				FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0, buffer, 0, NULL);
-				ComException e(NULL != buffer ? buffer : "ComException");
-				LocalFree(buffer);
-				throw e;
+				throw ComException(::GetLastError());
 			}
 #else // WIN32
-			if (-1 == tcsetattr(this->fd, TCSANOW, &this->current))
+			if (-1 == ::tcsetattr(this->fd, TCSANOW, &this->current))
 			{
-				throw ComException(strerror(errno));
+				throw ComException(errno);
 			}
 #endif // WIN32
 		}
@@ -118,36 +115,28 @@ namespace rl
 			assert(this->isConnected());
 			
 #ifdef WIN32
-			if (0 == SetCommState(this->fd, &this->restore))
+			if (0 == ::SetCommState(this->fd, &this->restore))
 			{
-				LPTSTR buffer = NULL;
-				FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0, buffer, 0, NULL);
-				ComException e(NULL != buffer ? buffer : "ComException");
-				LocalFree(buffer);
-				throw e;
+				throw ComException(::GetLastError());
 			}
 			
 			this->flush(true, true);
 			
-			if (0 == CloseHandle(this->fd))
+			if (0 == ::CloseHandle(this->fd))
 			{
-				LPTSTR buffer = NULL;
-				FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0, buffer, 0, NULL);
-				ComException e(NULL != buffer ? buffer : "ComException");
-				LocalFree(buffer);
-				throw e;
+				throw ComException(::GetLastError());
 			}
 #else // WIN32
-			if (-1 == tcsetattr(this->fd, TCSANOW, &this->restore))
+			if (-1 == ::tcsetattr(this->fd, TCSANOW, &this->restore))
 			{
-				throw ComException(strerror(errno));
+				throw ComException(errno);
 			}
 			
 			this->flush(true, true);
 			
 			if (-1 == ::close(this->fd))
 			{
-				throw ComException(strerror(errno));
+				throw ComException(errno);
 			}
 #endif // WIN32
 			
@@ -158,18 +147,14 @@ namespace rl
 		Serial::doBreak(const bool& doOn)
 		{
 #ifdef WIN32
-			if (0 == EscapeCommFunction(this->fd, doOn ? SETBREAK : CLRBREAK))
+			if (0 == ::EscapeCommFunction(this->fd, doOn ? SETBREAK : CLRBREAK))
 			{
-				LPTSTR buffer = NULL;
-				FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0, buffer, 0, NULL);
-				ComException e(NULL != buffer ? buffer : "ComException");
-				LocalFree(buffer);
-				throw e;
+				throw ComException(::GetLastError());
 			}
 #else // WIN32
-			if (-1 == ioctl(this->fd, doOn ? TIOCSBRK : TIOCCBRK))
+			if (-1 == ::ioctl(this->fd, doOn ? TIOCSBRK : TIOCCBRK))
 			{
-				throw ComException(strerror(errno));
+				throw ComException(errno);
 			}
 #endif // WIN32
 		}
@@ -178,18 +163,14 @@ namespace rl
 		Serial::doDtr(const bool& doOn)
 		{
 #ifdef WIN32
-			if (0 == EscapeCommFunction(this->fd, doOn ? SETDTR : CLRDTR))
+			if (0 == ::EscapeCommFunction(this->fd, doOn ? SETDTR : CLRDTR))
 			{
-				LPTSTR buffer = NULL;
-				FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0, buffer, 0, NULL);
-				ComException e(NULL != buffer ? buffer : "ComException");
-				LocalFree(buffer);
-				throw e;
+				throw ComException(::GetLastError());
 			}
 #else // WIN32
-			if (-1 == ioctl(this->fd, doOn ? TIOCMBIS : TIOCMBIC, TIOCM_DTR))
+			if (-1 == ::ioctl(this->fd, doOn ? TIOCMBIS : TIOCMBIC, TIOCM_DTR))
 			{
-				throw ComException(strerror(errno));
+				throw ComException(errno);
 			}
 #endif // WIN32
 		}
@@ -198,15 +179,11 @@ namespace rl
 		Serial::doModemStatus(bool& ctsOn, bool& dsrOn, bool& riOn, bool& dcdOn)
 		{
 #ifdef WIN32
-			DWORD status;
+			::DWORD status;
 			
-			if (0 == GetCommModemStatus(this->fd, &status))
+			if (0 == ::GetCommModemStatus(this->fd, &status))
 			{
-				LPTSTR buffer = NULL;
-				FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0, buffer, 0, NULL);
-				ComException e(NULL != buffer ? buffer : "ComException");
-				LocalFree(buffer);
-				throw e;
+				throw ComException(::GetLastError());
 			}
 			
 			ctsOn = status & MS_CTS_ON ? true : false;
@@ -216,9 +193,9 @@ namespace rl
 #else // WIN32
 			int status = 0;
 			
-			if (-1 == ioctl(this->fd, TIOCMGET, status))
+			if (-1 == ::ioctl(this->fd, TIOCMGET, status))
 			{
-				throw ComException(strerror(errno));
+				throw ComException(errno);
 			}
 			
 			ctsOn = status & TIOCM_CTS;
@@ -232,18 +209,14 @@ namespace rl
 		Serial::doRts(const bool& doOn)
 		{
 #ifdef WIN32
-			if (0 == EscapeCommFunction(this->fd, doOn ? SETRTS : CLRRTS))
+			if (0 == ::EscapeCommFunction(this->fd, doOn ? SETRTS : CLRRTS))
 			{
-				LPTSTR buffer = NULL;
-				FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0, buffer, 0, NULL);
-				ComException e(NULL != buffer ? buffer : "ComException");
-				LocalFree(buffer);
-				throw e;
+				throw ComException(::GetLastError());
 			}
 #else // WIN32
-			if (-1 == ioctl(this->fd, doOn ? TIOCMBIS : TIOCMBIC, TIOCM_RTS))
+			if (-1 == ::ioctl(this->fd, doOn ? TIOCMBIS : TIOCMBIC, TIOCM_RTS))
 			{
-				throw ComException(strerror(errno));
+				throw ComException(errno);
 			}
 #endif // WIN32
 		}
@@ -256,93 +229,81 @@ namespace rl
 #ifdef WIN32
 			if (read && write)
 			{
-				if (0 == PurgeComm(this->fd, PURGE_RXCLEAR | PURGE_TXCLEAR))
+				if (0 == ::PurgeComm(this->fd, PURGE_RXCLEAR | PURGE_TXCLEAR))
 				{
-					LPTSTR buffer = NULL;
-					FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0, buffer, 0, NULL);
-					ComException e(NULL != buffer ? buffer : "ComException");
-					LocalFree(buffer);
-					throw e;
+					throw ComException(::GetLastError());
 				}
 			}
 			else if (read)
 			{
-				if (0 == PurgeComm(this->fd, PURGE_RXCLEAR))
+				if (0 == ::PurgeComm(this->fd, PURGE_RXCLEAR))
 				{
-					LPTSTR buffer = NULL;
-					FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0, buffer, 0, NULL);
-					ComException e(NULL != buffer ? buffer : "ComException");
-					LocalFree(buffer);
-					throw e;
+					throw ComException(::GetLastError());
 				}
 			}
 			else if (write)
 			{
-				if (0 == PurgeComm(this->fd, PURGE_TXCLEAR))
+				if (0 == ::PurgeComm(this->fd, PURGE_TXCLEAR))
 				{
-					LPTSTR buffer = NULL;
-					FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0, buffer, 0, NULL);
-					ComException e(NULL != buffer ? buffer : "ComException");
-					LocalFree(buffer);
-					throw e;
+					throw ComException(::GetLastError());
 				}
 			}
 #else // WIN32
 			if (read && write)
 			{
-				if (-1 == tcflush(this->fd, TCIOFLUSH))
+				if (-1 == ::tcflush(this->fd, TCIOFLUSH))
 				{
-					throw ComException(strerror(errno));
+					throw ComException(errno);
 				}
 			}
 			else if (read)
 			{
-				if (-1 == tcflush(this->fd, TCIFLUSH))
+				if (-1 == ::tcflush(this->fd, TCIFLUSH))
 				{
-					throw ComException(strerror(errno));
+					throw ComException(errno);
 				}
 			}
 			else if (write)
 			{
-				if (-1 == tcflush(this->fd, TCOFLUSH))
+				if (-1 == ::tcflush(this->fd, TCOFLUSH))
 				{
-					throw ComException(strerror(errno));
+					throw ComException(errno);
 				}
 			}
 #endif // WIN32
 		}
 		
-		Serial::BaudRate
+		const Serial::BaudRate&
 		Serial::getBaudRate() const
 		{
 			return this->baudRate;
 		}
 		
-		Serial::DataBits
+		const Serial::DataBits&
 		Serial::getDataBits() const
 		{
 			return this->dataBits;
 		}
 		
-		::std::string
+		const ::std::string&
 		Serial::getFilename() const
 		{
 			return this->filename;
 		}
 		
-		Serial::FlowControl
+		const Serial::FlowControl&
 		Serial::getFlowControl() const
 		{
 			return this->flowControl;
 		}
 		
-		Serial::Parity
+		const Serial::Parity&
 		Serial::getParity() const
 		{
 			return this->parity;
 		}
 		
-		Serial::StopBits
+		const Serial::StopBits&
 		Serial::getStopBits() const
 		{
 			return this->stopBits;
@@ -354,61 +315,49 @@ namespace rl
 			assert(!this->isConnected());
 			
 #ifdef WIN32
-			this->fd = ::CreateFile(this->filename.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+			this->fd = ::CreateFile(this->filename.c_str(), this->flags, 0, nullptr, OPEN_EXISTING, 0, nullptr);
 			
 			if (INVALID_HANDLE_VALUE == this->fd)
 			{
 				this->fd = 0;
-				LPTSTR buffer = NULL;
-				FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0, buffer, 0, NULL);
-				ComException e(NULL != buffer ? buffer : "ComException");
-				LocalFree(buffer);
-				throw e;
+				throw ComException(::GetLastError());
 			}
 			
 			this->setConnected(true);
 			
 			if (0 == GetCommState(this->fd, &this->restore))
 			{
-				LPTSTR buffer = NULL;
-				FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0, buffer, 0, NULL);
-				ComException e(NULL != buffer ? buffer : "ComException");
-				LocalFree(buffer);
-				throw e;
+				throw ComException(::GetLastError());
 			}
 			
 			this->flush(true, true);
 			
-			if (0 == SetCommState(this->fd, &this->current))
+			if (0 == ::SetCommState(this->fd, &this->current))
 			{
-				LPTSTR buffer = NULL;
-				FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0, buffer, 0, NULL);
-				ComException e(NULL != buffer ? buffer : "ComException");
-				LocalFree(buffer);
-				throw e;
+				throw ComException(::GetLastError());
 			}
 #else // WIN32
-			this->fd = ::open(this->filename.c_str(), O_RDWR | O_NONBLOCK | O_NOCTTY);
+			this->fd = ::open(this->filename.c_str(), this->flags);
 			
 			if (-1 == this->fd)
 			{
-				throw ComException(strerror(errno));
+				throw ComException(errno);
 			}
 			
 			this->setConnected(true);
 			
-			if (-1 == tcgetattr(this->fd, &this->restore))
+			if (-1 == ::tcgetattr(this->fd, &this->restore))
 			{ 
-				throw ComException(strerror(errno));
+				throw ComException(errno);
 			}
 			
 			this->flush(true, true);
 			
 			this->current.c_cflag |= CREAD | CLOCAL;
 			
-			if (-1 == tcsetattr(this->fd, TCSANOW, &this->current))
+			if (-1 == ::tcsetattr(this->fd, TCSANOW, &this->current))
 			{
-				throw ComException(strerror(errno));
+				throw ComException(errno);
 			}
 #endif // WIN32
 		}
@@ -418,25 +367,21 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			memset(buf, 0, count);
+			::std::memset(buf, 0, count);
 			
 #ifdef WIN32
-			DWORD numbytes;
+			::DWORD numbytes;
 			
-			if (0 == ReadFile(this->fd, buf, count, &numbytes, NULL))
+			if (0 == ::ReadFile(this->fd, buf, count, &numbytes, nullptr))
 			{
-				LPTSTR buffer = NULL;
-				FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0, buffer, 0, NULL);
-				ComException e(NULL != buffer ? buffer : "ComException");
-				LocalFree(buffer);
-				throw e;
+				throw ComException(::GetLastError());
 			}
 #else // WIN32
-			ssize_t numbytes = ::read(this->fd, buf, count);
+			::ssize_t numbytes = ::read(this->fd, buf, count);
 			
 			if (-1 == numbytes)
 			{
-				throw ComException(strerror(errno));
+				throw ComException(errno);
 			}
 #endif // WIN32
 			
@@ -444,46 +389,25 @@ namespace rl
 		}
 		
 		::std::size_t
-		Serial::select(const bool& read, const bool& write, const ::rl::math::Real& timeout)
+		Serial::select(const bool& read, const bool& write, const ::std::chrono::nanoseconds& timeout)
 		{
 #ifdef WIN32
 			assert(false);
 			return 0;
 #else
-			::rl::math::Real tmp = timeout;
+			::timeval tv;
+			tv.tv_sec = ::std::chrono::duration_cast< ::std::chrono::seconds>(timeout).count();
+			tv.tv_usec = ::std::chrono::duration_cast< ::std::chrono::microseconds>(timeout - ::std::chrono::duration_cast< ::std::chrono::seconds>(timeout)).count();
 			
-			struct timeval tv;
-			
-			tv.tv_sec = static_cast< long int >(tmp);
-			tmp -= tv.tv_sec;
-			tv.tv_usec = static_cast< long int >(tmp * 1000000.0f);
-			
-			fd_set readfds;
+			::fd_set readfds;
 			FD_ZERO(&readfds);
 			FD_SET(this->fd, &readfds);
 			
-			fd_set writefds;
+			::fd_set writefds;
 			FD_ZERO(&writefds);
 			FD_SET(this->fd, &writefds);
 			
-			ssize_t numdescriptors;
-			
-			if (read && write)
-			{
-				numdescriptors = ::select(this->fd + 1, &readfds, &writefds, NULL, &tv);
-			}
-			else if (read)
-			{
-				numdescriptors = ::select(this->fd + 1, &readfds, NULL, NULL, &tv);
-			}
-			else if (write)
-			{
-				numdescriptors = ::select(this->fd + 1, NULL, &writefds, NULL, &tv);
-			}
-			else
-			{
-				numdescriptors = ::select(this->fd + 1, NULL, NULL, NULL, &tv);
-			}
+			::ssize_t numdescriptors = ::select(this->fd + 1, read ? &readfds : nullptr, write ? &writefds : nullptr, nullptr, &tv);
 			
 			if (0 == numdescriptors)
 			{
@@ -491,7 +415,7 @@ namespace rl
 			}
 			else if (-1 == numdescriptors)
 			{
-				throw ComException(strerror(errno));
+				throw ComException(errno);
 			}
 			
 			return numdescriptors;
@@ -550,7 +474,7 @@ namespace rl
 				break;
 			}
 #else // WIN32
-			speed_t speed = B110;
+			::speed_t speed = B110;
 			
 			switch (baudRate)
 			{
@@ -634,14 +558,14 @@ namespace rl
 				break;
 			}
 			
-			if (-1 == cfsetispeed(&this->current, speed))
+			if (-1 == ::cfsetispeed(&this->current, speed))
 			{
-				throw ComException(strerror(errno));
+				throw ComException(errno);
 			}
 			
-			if (-1 == cfsetospeed(&this->current, speed))
+			if (-1 == ::cfsetospeed(&this->current, speed))
 			{
-				throw ComException(strerror(errno));
+				throw ComException(errno);
 			}
 #endif // WIN32
 			
@@ -857,22 +781,18 @@ namespace rl
 			assert(this->isConnected());
 			
 #ifdef WIN32
-			DWORD numbytes;
+			::DWORD numbytes;
 			
-			if (0 == WriteFile(this->fd, buf, count, &numbytes, NULL))
+			if (0 == ::WriteFile(this->fd, buf, count, &numbytes, nullptr))
 			{
-				LPTSTR buffer = NULL;
-				FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0, buffer, 0, NULL);
-				ComException e(NULL != buffer ? buffer : "ComException");
-				LocalFree(buffer);
-				throw e;
+				throw ComException(::GetLastError());
 			}
 #else // WIN32
-			ssize_t numbytes = ::write(this->fd, buf, count);
+			::ssize_t numbytes = ::write(this->fd, buf, count);
 			
 			if (-1 == numbytes)
 			{
-				throw ComException(strerror(errno));
+				throw ComException(errno);
 			}
 #endif // WIN32
 			

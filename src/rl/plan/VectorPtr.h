@@ -24,18 +24,18 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_PLAN_VECTORPTR_H_
-#define _RL_PLAN_VECTORPTR_H_
+#ifndef RL_PLAN_VECTORPTR_H
+#define RL_PLAN_VECTORPTR_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <rl/math/Vector.h>
 
 namespace rl
 {
 	namespace plan
 	{
-		typedef ::boost::shared_ptr< ::rl::math::Vector > VectorPtr;
+		typedef ::std::shared_ptr< ::rl::math::Vector> VectorPtr;
 	}
 }
 
-#endif // _RL_PLAN_VECTORPTR_H_
+#endif // RL_PLAN_VECTORPTR_H

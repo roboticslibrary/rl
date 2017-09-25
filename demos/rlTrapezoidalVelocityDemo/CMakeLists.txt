@@ -1,5 +1,3 @@
-project(rlTrapezoidalVelocityDemo)
-
 add_executable(
 	rlTrapezoidalVelocityDemo
 	rlTrapezoidalVelocityDemo.cpp
@@ -7,5 +5,5 @@ add_executable(
 
 target_link_libraries(
 	rlTrapezoidalVelocityDemo
-	rlmath
+	math
 )

@@ -24,24 +24,30 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _MAINWINDOW_H_
-#define _MAINWINDOW_H_
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
 
 #include <QAction>
 #include <QMainWindow>
 #include <QMenuBar>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
 #include <QString>
 #include <string>
 #include <Inventor/SoOffscreenRenderer.h>
 #include <Inventor/nodes/SoSeparator.h>
+#include <Inventor/nodes/SoSwitch.h>
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
+#include <Inventor/VRMLnodes/SoVRMLInline.h>
+
+class SoGradientBackground;
 
 class MainWindow : public QMainWindow
 {
 	Q_OBJECT
 	
 public:
-	MainWindow(QWidget* parent = NULL, Qt::WFlags f = 0);
+	MainWindow(QWidget* parent = nullptr, Qt::WindowFlags f = 0);
 	
 	virtual ~MainWindow();
 	
@@ -54,6 +60,7 @@ private:
 	enum BACKGROUND
 	{
 		BACKGROUND_BLACK,
+		BACKGROUND_GRADIENT,
 		BACKGROUND_WHITE
 	};
 	
@@ -61,6 +68,13 @@ private:
 	{
 		CAMERA_ORTHOGONAL,
 		CAMERA_PERSPECTIVE
+	};
+	
+	enum ORIGIN
+	{
+		ORIGIN_NONE,
+		ORIGIN_1,
+		ORIGIN_1000
 	};
 	
 	enum SIZE
@@ -93,9 +107,15 @@ private:
 	
 	void init();
 	
+	static void inlineFetchUrlCallback(const SbString& url, void* userData, SoVRMLInline* node);
+	
 	void load(const QString filename);
 	
 	void saveImage(bool withAlpha);
+	
+	void saveImageOffscreen(bool withAlpha);
+	
+	SoSwitch* backgroundSwitch;
 	
 	QMenu* displayMenu;
 	
@@ -103,9 +123,17 @@ private:
 	
 	QString filename;
 	
+	SoGradientBackground* gradientBackground;
+	
+	SoInput input;
+	
+	QNetworkAccessManager* manager;
+	
 	SoOffscreenRenderer* offscreenRenderer;
 	
-	SoSeparator* offscreenRoot;
+	SoSwitch* origin1Switch;
+	
+	SoSwitch* origin1000Switch;
 	
 	SoSeparator* root;
 	
@@ -120,7 +148,11 @@ private slots:
 	
 	void reload();
 	
-	void saveImageOffscreen();
+	void replyFinished(QNetworkReply* reply);
+	
+	void saveImageOffscreenWithAlpha();
+
+	void saveImageOffscreenWithoutAlpha();
 	
 	void saveImageWithAlpha();
 
@@ -129,6 +161,8 @@ private slots:
 	void selectBackground(QAction* action);
 	
 	void selectCamera(QAction* action);
+	
+	void selectOrigin(QAction* action);
 	
 	void selectSize(QAction* action);
 	
@@ -139,4 +173,4 @@ private slots:
 	void toggleFullScreen();
 };
 
-#endif // _MAINWINDOW_H_
+#endif // MAINWINDOW_H

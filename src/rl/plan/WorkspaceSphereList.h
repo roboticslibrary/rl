@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_PLAN_WORKSPACESPHERELIST_H_
-#define _RL_PLAN_WORKSPACESPHERELIST_H_
+#ifndef RL_PLAN_WORKSPACESPHERELIST_H
+#define RL_PLAN_WORKSPACESPHERELIST_H
 
 #include <list>
 
@@ -35,8 +35,8 @@ namespace rl
 {
 	namespace plan
 	{
-		typedef ::std::list< WorkspaceSphere > WorkspaceSphereList;
+		typedef ::std::list<WorkspaceSphere> WorkspaceSphereList;
 	}
 }
 
-#endif // _RL_PLAN_WORKSPACESPHERELIST_H_
+#endif // RL_PLAN_WORKSPACESPHERELIST_H

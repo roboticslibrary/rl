@@ -26,14 +26,16 @@
 
 #include <QApplication>
 #include <QMetaType>
+#include <QMessageBox>
 #include <stdexcept>
+#include <string>
 #include <rl/math/Transform.h>
 #include <rl/math/Vector.h>
 #include <rl/plan/VectorList.h>
 
 #include "MainWindow.h"
 
-MainWindow* MainWindow::singleton = NULL;
+MainWindow* MainWindow::singleton = nullptr;
 
 int
 main(int argc, char** argv)
@@ -42,10 +44,11 @@ main(int argc, char** argv)
 	{
 		QApplication application(argc, argv);
 		
-		qRegisterMetaType< rl::math::Real >("rl::math::Real");
-		qRegisterMetaType< rl::math::Transform >("rl::math::Transform");
-		qRegisterMetaType< rl::math::Vector >("rl::math::Vector");
-		qRegisterMetaType< rl::plan::VectorList >("rl::plan::VectorList");
+		qRegisterMetaType<rl::math::Real>("rl::math::Real");
+		qRegisterMetaType<rl::math::Transform>("rl::math::Transform");
+		qRegisterMetaType<rl::math::Vector>("rl::math::Vector");
+		qRegisterMetaType<rl::plan::VectorList>("rl::plan::VectorList");
+		qRegisterMetaType<std::string>("std::string");
 		
 		QObject::connect(&application, SIGNAL(lastWindowClosed()), &application, SLOT(quit()));
 		
@@ -55,7 +58,8 @@ main(int argc, char** argv)
 	}
 	catch (const std::exception& e)
 	{
-		std::cerr << e.what() << std::endl;
-		return -1;
+		QApplication application(argc, argv);
+		QMessageBox::critical(nullptr, "Error", e.what());
+		return EXIT_FAILURE;
 	}
 }

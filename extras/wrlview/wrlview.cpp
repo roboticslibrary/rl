@@ -24,19 +24,29 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include <iostream>
 #include <QApplication>
+#include <stdexcept>
 
 #include "MainWindow.h"
 
 int
 main(int argc, char** argv)
 {
-	QApplication application(argc, argv);
-	
-	QObject::connect(&application, SIGNAL(lastWindowClosed()), &application, SLOT(quit()));
-	
-	MainWindow mainWindow;
-	mainWindow.show();
-	
-	return application.exec();
+	try
+	{
+		QApplication application(argc, argv);
+		
+		QObject::connect(&application, SIGNAL(lastWindowClosed()), &application, SLOT(quit()));
+		
+		MainWindow mainWindow;
+		mainWindow.show();
+		
+		return application.exec();
+	}
+	catch (const std::exception& e)
+	{
+		std::cerr << e.what() << std::endl;
+		return EXIT_FAILURE;
+	}
 }

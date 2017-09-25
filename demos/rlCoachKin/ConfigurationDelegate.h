@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _CONFIGURATIONDELEGATE_H_
-#define _CONFIGURATIONDELEGATE_H_
+#ifndef CONFIGURATIONDELEGATE_H
+#define CONFIGURATIONDELEGATE_H
 
 #include <QItemDelegate>
 
@@ -34,16 +34,16 @@ class ConfigurationDelegate : public QItemDelegate
 	Q_OBJECT
 	
 public:
-	ConfigurationDelegate(QObject* parent = NULL);
+	ConfigurationDelegate(QObject* parent = nullptr);
 	
 	virtual ~ConfigurationDelegate();
 	
 	QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const;
-    
+	
 	void setEditorData(QWidget* editor, const QModelIndex& index) const;
-    
+	
 	void setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const;
-    
+	
 	void updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex& index) const;	
 	
 	std::size_t id;
@@ -57,4 +57,4 @@ private:
 	
 };
 
-#endif // _CONFIGURATIONDELEGATE_H_
+#endif // CONFIGURATIONDELEGATE_H

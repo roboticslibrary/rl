@@ -1,25 +1,43 @@
-project(rlPlanDemo)
-
 find_package(Boost REQUIRED)
 find_package(OpenGL REQUIRED)
-find_package(Qt4 COMPONENTS QtCore QtGui QtOpenGL)
-include(${QT_USE_FILE})
-
-find_package(Bullet)
-find_package(Ode)
-find_package(Pqp)
-find_package(Solid)
 find_package(SoQt)
 
-if(QT_FOUND AND SOQT_FOUND AND (BULLET_FOUND OR ODE_FOUND OR PQP_FOUND OR SOLID_FOUND))
+if(USE_QT5 AND SoQt5_FOUND)
+	find_package(Qt5 COMPONENTS Core Gui OpenGL PrintSupport Widgets QUIET)
+endif()
+
+if(Qt5_FOUND)
+	set(QT_LIBRARIES ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5OpenGL_LIBRARIES} ${Qt5PrintSupport_LIBRARIES} ${Qt5Widgets_LIBRARIES})
+	set(QT_FOUND Qt5_FOUND)
+else()
+	set(QT_USE_IMPORTED_TARGETS ON)
+	find_package(Qt4 COMPONENTS QtCore QtGui QtOpenGL)
+	set(QT_USE_QTMAIN ON)
+	include(${QT_USE_FILE})
+endif()
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+find_package(Bullet)
+find_package(ccd)
+find_package(FCL)
+find_package(ODE)
+find_package(PQP)
+find_package(SOLID3)
+
+if(QT_FOUND AND SoQt_FOUND AND (Bullet_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE_FOUND OR PQP_FOUND OR SOLID3_FOUND))
 	set(
 		HDRS
 		ConfigurationDelegate.h
 		ConfigurationModel.h
+		ConfigurationSpaceModel.h
 		ConfigurationSpaceScene.h
 		ConfigurationSpaceThread.h
+		GraphicsView.h
 		MainWindow.h
 		PlannerModel.h
+		SoGradientBackground.h
 		Thread.h
 		Viewer.h
 	)
@@ -28,66 +46,63 @@ if(QT_FOUND AND SOQT_FOUND AND (BULLET_FOUND OR ODE_FOUND OR PQP_FOUND OR SOLID_
 		SRCS
 		ConfigurationDelegate.cpp
 		ConfigurationModel.cpp
+		ConfigurationSpaceModel.cpp
 		ConfigurationSpaceScene.cpp
 		ConfigurationSpaceThread.cpp
+		GraphicsView.cpp
 		MainWindow.cpp
 		PlannerModel.cpp
 		rlPlanDemo.cpp
+		SoGradientBackground.cpp
 		Thread.cpp
 		Viewer.cpp
 		${rl_SOURCE_DIR}/robotics-library.rc
 	)
 	
-	qt4_wrap_cpp(
-		MOC_SRCS
-		ConfigurationDelegate.h
-		ConfigurationSpaceScene.h
-		ConfigurationSpaceThread.h
-		MainWindow.h
-		Thread.h
-		Viewer.h
-		OPTIONS
-		-DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED
-	)
-	
 	add_executable(
 		rlPlanDemo
+		WIN32
 		${HDRS}
 		${SRCS}
-		${MOC_SRCS}
 	)
 	
 	target_compile_definitions(
 		rlPlanDemo
 		PUBLIC
-		${QT_DEFINITIONS}
-		${SOQT_DEFINITIONS}
+		${SoQt_DEFINITIONS}
 	)
 	
 	target_include_directories(
 		rlPlanDemo
 		PUBLIC
+		${Boost_INCLUDE_DIR}
 		${OPENGL_INCLUDE_DIR}
-		${QT_INCLUDES}
-		${SOQT_INCLUDE_DIRS}
+		${SoQt_INCLUDE_DIRS}
 	)
 	
 	target_link_libraries(
 		rlPlanDemo
-		rlplan
-		rlkin
-		rlsg
+		plan
+		kin
+		sg
 		${OPENGL_LIBRARIES}
 		${QT_LIBRARIES}
-		${SOQT_LIBRARIES}
+		${SoQt_LIBRARIES}
 	)
 	
 	set_target_properties(
 		rlPlanDemo
 		PROPERTIES
 		VERSION ${VERSION}
-		DEBUG_POSTFIX d
 	)
+	
+	if(WIN32)
+		set_target_properties(
+			rlPlanDemo
+			PROPERTIES
+			DEBUG_POSTFIX d
+		)
+	endif()
 	
 	install(
 		TARGETS rlPlanDemo
@@ -97,50 +112,41 @@ if(QT_FOUND AND SOQT_FOUND AND (BULLET_FOUND OR ODE_FOUND OR PQP_FOUND OR SOLID_
 		RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 	)
 	
+	if(MSVC AND BUILD_SHARED_LIBS AND NOT CMAKE_VERSION VERSION_LESS 3.1)
+		install(FILES $<TARGET_PDB_FILE:rlPlanDemo> DESTINATION ${CMAKE_INSTALL_BINDIR} CONFIGURATIONS Debug RelWithDebInfo COMPONENT demos)
+	endif()
+	
 	if(UNIX)
-		install(FILES rlPlanDemo.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications COMPONENT demos)
-	endif(UNIX)
+		configure_file(rlPlanDemo.desktop.in rlPlanDemo.desktop @ONLY)
+		install(FILES ${CMAKE_CURRENT_BINARY_DIR}/rlPlanDemo.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications COMPONENT demos)
+	endif()
 	
 	set(
-		CPACK_NSIS_EXTRA_INSTALL_COMMANDS
-		${CPACK_NSIS_EXTRA_INSTALL_COMMANDS}
+		CPACK_NSIS_CREATE_ICONS_EXTRA
+		${CPACK_NSIS_CREATE_ICONS_EXTRA}
 		"CreateShortCut \\\\
 			\\\"$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\rlPlanDemo.lnk\\\" \\\\
 			\\\"$INSTDIR\\\\${CMAKE_INSTALL_BINDIR}\\\\rlPlanDemo.exe\\\" \\\\
 			\\\"\\\\
-				\\\$\\\\\\\"$INSTDIR\\\\${CMAKE_INSTALL_DATADIR}\\\\rl\\\\examples\\\\rlplan\\\\unimation-puma560_boxes_rrtConCon.xml\\\$\\\\\\\"\\\\
+				\\\$\\\\\\\"$INSTDIR\\\\${CMAKE_INSTALL_DATADIR}\\\\rl-${VERSION}\\\\examples\\\\rlplan\\\\unimation-puma560_boxes_rrtConCon.xml\\\$\\\\\\\"\\\\
 			\\\" \\\\
 			\\\"\\\" \\\"\\\" \\\"\\\" \\\"\\\" \\\\
 			\\\"Path planning demo with Unimation Puma 560 and RRT algorithm\\\""
-	)
-	set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS ${CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS} "Delete \\\"$SMPROGRAMS\\\\$START_MENU\\\\rlPlanDemo.lnk\\\"")
-	
-	set(
-		CPACK_NSIS_EXTRA_INSTALL_COMMANDS
-		${CPACK_NSIS_EXTRA_INSTALL_COMMANDS}
-		"CreateShortCut \\\\
-			\\\"$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\rlPlanDemo2.lnk\\\" \\\\
-			\\\"$INSTDIR\\\\${CMAKE_INSTALL_BINDIR}\\\\rlPlanDemo.exe\\\" \\\\
-			\\\"\\\\
-				\\\$\\\\\\\"$INSTDIR\\\\${CMAKE_INSTALL_DATADIR}\\\\rl\\\\examples\\\\rlplan\\\\staeubli-tx60l_wall_rrtConCon.xml\\\$\\\\\\\"\\\\
-			\\\" \\\\
-			\\\"\\\" \\\"\\\" \\\"\\\" \\\"\\\" \\\\
-			\\\"Path planning demo with Staeubli TX-60L and RRT algorithm\\\""
-	)
-	set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS ${CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS} "Delete \\\"$SMPROGRAMS\\\\$START_MENU\\\\rlPlanDemo2.lnk\\\"")
-	
-	set(
-		CPACK_NSIS_EXTRA_INSTALL_COMMANDS
-		${CPACK_NSIS_EXTRA_INSTALL_COMMANDS}
-		"CreateShortCut \\\\
-			\\\"$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\rlPlanDemo3.lnk\\\" \\\\
-			\\\"$INSTDIR\\\\${CMAKE_INSTALL_BINDIR}\\\\rlPlanDemo.exe\\\" \\\\
-			\\\"\\\\
-				\\\$\\\\\\\"$INSTDIR\\\\${CMAKE_INSTALL_DATADIR}\\\\rl\\\\examples\\\\rlplan\\\\mitsubishi-rv6sl_boxes_rrtConCon.xml\\\$\\\\\\\"\\\\
-			\\\" \\\\
-			\\\"\\\" \\\"\\\" \\\"\\\" \\\"\\\" \\\\
-			\\\"Path planning demo with Mitsubishi RV-6SL and RRT algorithm\\\""
 		PARENT_SCOPE
 	)
-	set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS ${CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS} "Delete \\\"$SMPROGRAMS\\\\$START_MENU\\\\rlPlanDemo3.lnk\\\"" PARENT_SCOPE)
-endif(QT_FOUND AND SOQT_FOUND AND (BULLET_FOUND OR ODE_FOUND OR PQP_FOUND OR SOLID_FOUND))
+	set(CPACK_NSIS_DELETE_ICONS_EXTRA ${CPACK_NSIS_DELETE_ICONS_EXTRA} "Delete \\\"$SMPROGRAMS\\\\$START_MENU\\\\rlPlanDemo.lnk\\\"" PARENT_SCOPE)
+	
+	set(
+		WIX_SHORTCUTS
+		${WIX_SHORTCUTS}
+		"<Shortcut
+			Arguments=\"&quot;[INSTALL_ROOT]${CMAKE_INSTALL_DATADIR}\\rl-${VERSION}\\examples\\rlplan\\unimation-puma560_boxes_rrtConCon.xml&quot;\"
+			Description=\"Path planning demo with Unimation Puma 560 and RRT algorithm\"
+			Id=\"CM_SP_bin.rlPlanDemo.exe\"
+			Name=\"rlPlanDemo\"
+			Target=\"[#CM_FP_bin.rlPlanDemo.exe]\"
+			WorkingDirectory=\"CM_DP_bin\"
+		/>"
+		PARENT_SCOPE
+	)
+endif()

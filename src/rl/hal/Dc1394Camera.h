@@ -24,10 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_HAL_DC1394CAMERA_H_
-#define _RL_HAL_DC1394CAMERA_H_
-
-#include <string>
+#ifndef RL_HAL_DC1394CAMERA_H
+#define RL_HAL_DC1394CAMERA_H
 
 #if (LIBDC1394_VERSION_MAJOR > 10)
 #include <dc1394/dc1394.h>
@@ -36,13 +34,20 @@
 #include <libraw1394/raw1394.h>
 #endif
 
+#include <string>
+
 #include "Camera.h"
+#include "CyclicDevice.h"
+#include "DeviceException.h"
 
 namespace rl
 {
 	namespace hal
 	{
-		class Dc1394Camera : public Camera
+		/**
+		 * IEEE 1394 based cameras. 
+		 */
+		class Dc1394Camera : public Camera, public CyclicDevice
 		{
 			public:
 				enum ColorCoding
@@ -201,6 +206,35 @@ namespace rl
 					VIDEO_MODE_FORMAT7_7
 				};
 				
+				class Exception : public DeviceException
+				{
+				public:
+#if (LIBDC1394_VERSION_MAJOR > 10)
+					Exception(const ::dc1394error_t& error);
+#else
+					Exception(const int& error);
+#endif
+					
+					virtual ~Exception() throw();
+					
+#if (LIBDC1394_VERSION_MAJOR > 10)
+					::dc1394error_t getError() const;
+#else
+					int getError() const;
+#endif
+					
+					virtual const char* what() const throw();
+					
+				protected:
+					
+				private:
+#if (LIBDC1394_VERSION_MAJOR > 10)
+					::dc1394error_t error;
+#else
+					int error;
+#endif
+				};
+				
 				Dc1394Camera(const ::std::string& filename = "", const unsigned int& node = 0);
 				
 				virtual ~Dc1394Camera();
@@ -246,6 +280,8 @@ namespace rl
 				unsigned int getSize() const;
 				
 				IsoSpeed getSpeed() const;
+				
+				::std::chrono::nanoseconds getUpdateRate() const;
 				
 				VideoMode getVideoMode() const;
 				
@@ -305,17 +341,17 @@ namespace rl
 #if (LIBDC1394_VERSION_MAJOR > 10)
 				unsigned int buffer;
 				
-				dc1394camera_t* camera;
+				::dc1394camera_t* camera;
 				
 				int cameras;
 				
 				ColorCoding colorCoding;
 				
-				dc1394_t* dc1394;
+				::dc1394_t* dc1394;
 				
 				::std::string filename;
 				
-				dc1394video_frame_t* frame;
+				::dc1394video_frame_t* frame;
 				
 				Framerate framerate;
 				
@@ -335,7 +371,7 @@ namespace rl
 #else
 				unsigned int buffer;
 				
-				dc1394_cameracapture camera;
+				::dc1394_cameracapture camera;
 				
 				int cameras;
 				
@@ -349,11 +385,11 @@ namespace rl
 				
 				Framerate framerate;
 				
-				raw1394handle_t handle;
+				::raw1394handle_t handle;
 				
 				unsigned int height;
 				
-				dc1394_camerainfo info;
+				::dc1394_camerainfo info;
 				
 				unsigned int left;
 				
@@ -375,4 +411,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_HAL_DC1394CAMERA_H_
+#endif // RL_HAL_DC1394CAMERA_H

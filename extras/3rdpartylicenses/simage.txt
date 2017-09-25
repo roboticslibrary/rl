@@ -1,8 +1,0 @@
-All files in this library are public domain, except the files in the 
-mpeg2enc directory.
-
-The license for the files in the mpeg2enc directory can be found
-in the file mpeg2enc/mpeg2enc.h.
-
-Please send patches for bugs and new features to: Peder Blekken,
-<pederb@sim.no>.

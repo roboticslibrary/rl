@@ -24,7 +24,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <rl/util/Timer.h>
+#include <chrono>
 
 #include "RrtGoalBias.h"
 #include "Sampler.h"
@@ -36,10 +36,8 @@ namespace rl
 		RrtGoalBias::RrtGoalBias() :
 			Rrt(),
 			probability(0.05f),
-			rand(
-				::boost::mt19937(static_cast< ::boost::mt19937::result_type >(::rl::util::Timer::now() * 1000000.0f)),
-				::boost::uniform_real< ::rl::math::Real >(0.0f, 1.0f)
-			)
+			randDistribution(0, 1),
+			randEngine(::std::random_device()())
 		{
 		}
 		
@@ -47,16 +45,16 @@ namespace rl
 		{
 		}
 		
-		void
-		RrtGoalBias::choose(::rl::math::Vector& chosen)
+		::rl::math::Vector
+		RrtGoalBias::choose()
 		{
 			if (this->rand() > this->probability)
 			{
-				Rrt::choose(chosen);
+				return Rrt::choose();
 			}
 			else
 			{
-				chosen = *this->goal;
+				return *this->goal;
 			}
 		}
 		
@@ -66,10 +64,16 @@ namespace rl
 			return "RRT Goal Bias";
 		}
 		
-		void
-		RrtGoalBias::seed(const ::boost::mt19937::result_type& value)
+		::std::uniform_real_distribution< ::rl::math::Real>::result_type
+		RrtGoalBias::rand()
 		{
-			this->rand.engine().seed(value);
+			return this->randDistribution(this->randEngine);
+		}
+		
+		void
+		RrtGoalBias::seed(const ::std::mt19937::result_type& value)
+		{
+			this->randEngine.seed(value);
 		}
 	}
 }

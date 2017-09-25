@@ -24,6 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include <QHostAddress>
+#include <QStatusBar>
 #include <QTextStream>
 #include <rl/math/Rotation.h>
 #include <rl/sg/Body.h>
@@ -47,45 +49,43 @@ Socket::~Socket()
 void
 Socket::readClient()
 {
+	MainWindow::instance()->statusBar()->showMessage("Received data from " + this->peerAddress().toString() + ":" + QString::number(this->peerPort()), 1000);
+	
 	QTextStream textStream(this);
 	
-	while (this->canReadLine())
+	for (QString line = textStream.readLine(); QString() != line; line = textStream.readLine())
 	{
-		std::size_t cmd = 0;
-		textStream >> cmd;
+		QStringList list = line.split(" ");
+		
+		if (list.size() < 1)
+		{
+			continue;
+		}
+		
+		std::size_t cmd = list[0].toUInt();
 		
 		switch (cmd)
 		{
 		case 0:
 			{
-				std::size_t i = 0;
-				textStream >> i;
+				if (9 != list.size())
+				{
+					continue;
+				}
 				
-				std::size_t j = 0;
-				textStream >> j;
-				
-				rl::math::Real x = 0;
-				textStream >> x;
-				
-				rl::math::Real y = 0;
-				textStream >> y;
-				
-				rl::math::Real z = 0;
-				textStream >> z;
-				
-				rl::math::Real a = 0;
-				textStream >> a;
-				
-				rl::math::Real b = 0;
-				textStream >> b;
-				
-				rl::math::Real c = 0;
-				textStream >> c;
+				std::size_t i = list[1].toUInt();
+				std::size_t j = list[2].toUInt();
+				rl::math::Real x = list[3].toDouble();
+				rl::math::Real y = list[4].toDouble();
+				rl::math::Real z = list[5].toDouble();
+				rl::math::Real a = list[6].toDouble();
+				rl::math::Real b = list[7].toDouble();
+				rl::math::Real c = list[8].toDouble();
 				
 				rl::math::Transform t;
-				t = rl::math::AngleAxis(a, rl::math::Vector3::UnitZ()) *
+				t = rl::math::AngleAxis(c, rl::math::Vector3::UnitZ()) *
 					rl::math::AngleAxis(b, rl::math::Vector3::UnitY()) *
-					rl::math::AngleAxis(c, rl::math::Vector3::UnitX());
+					rl::math::AngleAxis(a, rl::math::Vector3::UnitX());
 				t.translation().x() = x;
 				t.translation().y() = y;
 				t.translation().z() = z;
@@ -101,37 +101,25 @@ Socket::readClient()
 			break;
 		case 1:
 			{
-				std::size_t i = 0;
-				textStream >> i;
+				if (10 != list.size())
+				{
+					continue;
+				}
 				
-				std::size_t j = 0;
-				textStream >> j;
-				
-				std::size_t k = 0;
-				textStream >> k;
-				
-				rl::math::Real x = 0;
-				textStream >> x;
-				
-				rl::math::Real y = 0;
-				textStream >> y;
-				
-				rl::math::Real z = 0;
-				textStream >> z;
-				
-				rl::math::Real a = 0;
-				textStream >> a;
-				
-				rl::math::Real b = 0;
-				textStream >> b;
-				
-				rl::math::Real c = 0;
-				textStream >> c;
+				std::size_t i = list[1].toUInt();
+				std::size_t j = list[2].toUInt();
+				std::size_t k = list[3].toUInt();
+				rl::math::Real x = list[4].toDouble();
+				rl::math::Real y = list[5].toDouble();
+				rl::math::Real z = list[6].toDouble();
+				rl::math::Real a = list[7].toDouble();
+				rl::math::Real b = list[8].toDouble();
+				rl::math::Real c = list[9].toDouble();
 				
 				rl::math::Transform t;
-				t = rl::math::AngleAxis(a, rl::math::Vector3::UnitZ()) *
+				t = rl::math::AngleAxis(c, rl::math::Vector3::UnitZ()) *
 					rl::math::AngleAxis(b, rl::math::Vector3::UnitY()) *
-					rl::math::AngleAxis(c, rl::math::Vector3::UnitX());
+					rl::math::AngleAxis(a, rl::math::Vector3::UnitX());
 				t.translation().x() = x;
 				t.translation().y() = y;
 				t.translation().z() = z;
@@ -150,27 +138,60 @@ Socket::readClient()
 			break;
 		case 2:
 			{
-				std::size_t i = 0;
-				textStream >> i;
+				if (list.size() < 2)
+				{
+					continue;
+				}
+				
+				std::size_t i = list[1].toUInt();
+				
+				if (2 + MainWindow::instance()->kinematicModels[i]->getDofPosition() != list.size())
+				{
+					continue;
+				}
 				
 				if (i < MainWindow::instance()->kinematicModels.size())
 				{
-					rl::math::Vector q(MainWindow::instance()->kinematicModels[i]->getDof());
+					rl::math::Vector q(MainWindow::instance()->kinematicModels[i]->getDofPosition());
 					q.setZero();
 					
 					for (std::ptrdiff_t j = 0; j < q.size(); ++j)
 					{
-						textStream >> q(j);
+						q(j) = list[2 + j].toDouble();
 					}
 					
 					MainWindow::instance()->configurationModels[i]->setData(q);
 				}
 			}
 			break;
+		case 6:
+			{
+				textStream << cmd;
+				
+				if (list.size() < 2)
+				{
+					textStream << endl;
+					continue;
+				}
+				
+				std::size_t i = list[1].toUInt();
+				textStream << " " << i;
+				
+				if (i < MainWindow::instance()->kinematicModels.size())
+				{
+					rl::math::Vector q = MainWindow::instance()->kinematicModels[i]->getPosition();
+					
+					for (std::size_t i = 0; i < q.size(); ++i)
+					{
+						textStream << " " << q(i);
+					}
+				}
+				
+				textStream << endl;
+			}
+			break;
 		default:
 			break;
 		}
-		
-		textStream << endl;
 	}
 }

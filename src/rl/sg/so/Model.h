@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_SG_SO_MODEL_H_
-#define _RL_SG_SO_MODEL_H_
+#ifndef RL_SG_SO_MODEL_H
+#define RL_SG_SO_MODEL_H
 
 #include "../Model.h"
 
@@ -54,7 +54,7 @@ namespace rl
 				
 				void setName(const ::std::string& name);
 				
-				SoVRMLGroup* root;
+				::SoVRMLGroup* root;
 				
 			protected:
 				
@@ -65,4 +65,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_SG_SO_MODEL_H_
+#endif // RL_SG_SO_MODEL_H

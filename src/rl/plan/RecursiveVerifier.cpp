@@ -43,12 +43,12 @@ namespace rl
 		bool
 		RecursiveVerifier::isColliding(const ::rl::math::Vector& u, const ::rl::math::Vector& v, const ::rl::math::Real& d)
 		{
-			assert(u.size() == this->model->getDof());
-			assert(v.size() == this->model->getDof());
+			assert(u.size() == this->model->getDofPosition());
+			assert(v.size() == this->model->getDofPosition());
 			
 			::rl::math::Real exponent = ::std::ceil(
 				::std::log(d / this->delta) /
-				::std::log(static_cast< ::rl::math::Real >(2))
+				::std::log(static_cast< ::rl::math::Real>(2))
 			);
 			
 			::rl::math::Real steps = ::std::pow(2, exponent);

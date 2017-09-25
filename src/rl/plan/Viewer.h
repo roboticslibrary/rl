@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_PLAN_VIEWER_H_
-#define _RL_PLAN_VIEWER_H_
+#ifndef RL_PLAN_VIEWER_H
+#define RL_PLAN_VIEWER_H
 
 #include <rl/math/Transform.h>
 #include <rl/math/Vector.h>
@@ -77,6 +77,8 @@ namespace rl
 			
 			virtual void resetVertices() = 0;
 			
+			virtual void showMessage(const ::std::string& message) = 0;
+			
 		protected:
 			
 		private:
@@ -85,4 +87,4 @@ namespace rl
 	}
 }
 
-#endif // VIEWER_H_
+#endif // VIEWER_H

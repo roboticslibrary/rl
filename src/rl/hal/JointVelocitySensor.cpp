@@ -30,8 +30,8 @@ namespace rl
 {
 	namespace hal
 	{
-		JointVelocitySensor::JointVelocitySensor(const ::std::size_t& dof, const ::rl::math::Real& updateRate) :
-			AxisController(dof, updateRate)
+		JointVelocitySensor::JointVelocitySensor(const ::std::size_t& dof) :
+			AxisController(dof)
 		{
 		}
 		

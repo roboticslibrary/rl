@@ -1,5 +1,3 @@
-project(rlLoadXmlDemo)
-
 add_executable(
 	rlLoadXmlDemo
 	rlLoadXmlDemo.cpp
@@ -7,5 +5,5 @@ add_executable(
 
 target_link_libraries(
 	rlLoadXmlDemo
-	rlxml
+	xml
 )

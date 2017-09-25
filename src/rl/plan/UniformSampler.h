@@ -24,12 +24,10 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_PLAN_UNIFORMSAMPLER_H_
-#define _RL_PLAN_UNIFORMSAMPLER_H_
+#ifndef RL_PLAN_UNIFORMSAMPLER_H
+#define RL_PLAN_UNIFORMSAMPLER_H
 
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/random/uniform_real.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <random>
 
 #include "Sampler.h"
 
@@ -37,6 +35,9 @@ namespace rl
 {
 	namespace plan
 	{
+		/**
+		 * Uniform random sampling strategy.
+		 */
 		class UniformSampler : public Sampler
 		{
 		public:
@@ -44,12 +45,16 @@ namespace rl
 			
 			virtual ~UniformSampler();
 			
-			void generate(::rl::math::Vector& q);
+			::rl::math::Vector generate();
 			
-			virtual void seed(const ::boost::mt19937::result_type& value);
+			virtual void seed(const ::std::mt19937::result_type& value);
 			
 		protected:
-			::boost::variate_generator< ::boost::mt19937, ::boost::uniform_real< ::rl::math::Real > > rand;
+			::std::uniform_real_distribution< ::rl::math::Real>::result_type rand();
+			
+			::std::uniform_real_distribution< ::rl::math::Real> randDistribution;
+			
+			::std::mt19937 randEngine;
 			
 		private:
 			
@@ -57,4 +62,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_PLAN_UNIFORMSAMPLER_H_
+#endif // RL_PLAN_UNIFORMSAMPLER_H

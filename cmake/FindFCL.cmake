@@ -1,0 +1,155 @@
+include(FindPackageHandleStandardArgs)
+include(GNUInstallDirs)
+include(SelectLibraryConfigurations)
+
+foreach(PATH ${CMAKE_PREFIX_PATH})
+	file(
+		GLOB
+		HINTS
+		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
+		${PATH}/FCL*/${CMAKE_INSTALL_INCLUDEDIR}
+	)
+	list(APPEND FCL_INCLUDE_HINTS ${HINTS})
+endforeach()
+
+list(
+	APPEND
+	FCL_INCLUDE_HINTS
+	$ENV{FCL_DIR}/${CMAKE_INSTALL_INCLUDEDIR}
+)
+
+foreach(PATH $ENV{CMAKE_PREFIX_PATH})
+	file(
+		GLOB
+		HINTS
+		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
+		${PATH}/FCL*/${CMAKE_INSTALL_INCLUDEDIR}
+	)
+	list(APPEND FCL_INCLUDE_HINTS ${HINTS})
+endforeach()
+
+foreach(PATH $ENV{PATH})
+	file(
+		GLOB
+		HINTS
+		${PATH}/../${CMAKE_INSTALL_INCLUDEDIR}
+	)
+	list(APPEND FCL_INCLUDE_HINTS ${HINTS})
+endforeach()
+
+file(
+	GLOB
+	FCL_INCLUDE_PATHS
+	$ENV{HOME}/include
+	/usr/local/include
+	/opt/local/include
+	/usr/include
+)
+
+find_path(
+	FCL_INCLUDE_DIRS
+	NAMES
+	fcl/distance.h
+	HINTS
+	${FCL_INCLUDE_HINTS}
+	PATHS
+	${FCL_INCLUDE_PATHS}
+)
+
+mark_as_advanced(FCL_INCLUDE_DIRS)
+
+foreach(PATH ${CMAKE_PREFIX_PATH})
+	file(
+		GLOB
+		HINTS
+		${PATH}/${CMAKE_INSTALL_LIBDIR}
+		${PATH}/FCL*/${CMAKE_INSTALL_LIBDIR}
+	)
+	list(APPEND FCL_LIBRARY_HINTS ${HINTS})
+endforeach()
+
+list(
+	APPEND
+	FCL_LIBRARY_HINTS
+	$ENV{FCL_DIR}/${CMAKE_INSTALL_LIBDIR}
+)
+
+foreach(PATH $ENV{CMAKE_PREFIX_PATH})
+	file(
+		GLOB
+		HINTS
+		${PATH}/${CMAKE_INSTALL_LIBDIR}
+		${PATH}/FCL*/${CMAKE_INSTALL_LIBDIR}
+	)
+	list(APPEND FCL_LIBRARY_HINTS ${HINTS})
+endforeach()
+
+foreach(PATH $ENV{PATH})
+	file(
+		GLOB
+		HINTS
+		${PATH}/../${CMAKE_INSTALL_LIBDIR}
+	)
+	list(APPEND FCL_LIBRARY_HINTS ${HINTS})
+endforeach()
+
+file(
+	GLOB
+	FCL_LIBRARY_PATHS
+	$ENV{HOME}/lib
+	/usr/local/lib
+	/opt/local/lib
+	/usr/lib
+)
+
+find_library(
+	FCL_LIBRARY_DEBUG
+	NAMES
+	fcld
+	HINTS
+	${FCL_LIBRARY_HINTS}
+	PATHS
+	${FCL_LIBRARY_PATHS}
+)
+
+find_library(
+	FCL_LIBRARY_RELEASE
+	NAMES
+	fcl
+	HINTS
+	${FCL_LIBRARY_HINTS}
+	PATHS
+	${FCL_LIBRARY_PATHS}
+)
+
+select_library_configurations(FCL)
+
+set(FCL_DEFINITIONS -DBOOST_ALL_NO_LIB -DBOOST_SYSTEM_NO_DEPRECATED)
+
+mark_as_advanced(FCL_DEFINITIONS)
+
+find_package_handle_standard_args(
+	FCL
+	FOUND_VAR FCL_FOUND
+	REQUIRED_VARS FCL_INCLUDE_DIRS FCL_LIBRARIES
+)
+
+if(FCL_FOUND AND NOT TARGET FCL::FCL)
+	add_library(FCL::FCL UNKNOWN IMPORTED)
+	
+	if(FCL_LIBRARY_RELEASE)
+		set_property(TARGET FCL::FCL APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+		set_target_properties(FCL::FCL PROPERTIES IMPORTED_LOCATION_RELEASE "${FCL_LIBRARY_RELEASE}")
+	endif()
+	
+	if(FCL_LIBRARY_DEBUG)
+		set_property(TARGET FCL::FCL APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
+		set_target_properties(FCL::FCL PROPERTIES IMPORTED_LOCATION_DEBUG "${FCL_LIBRARY_DEBUG}")
+	endif()
+	
+	set_target_properties(
+		FCL::FCL PROPERTIES
+		INTERFACE_COMPILE_DEFINITIONS "${FCL_DEFINITIONS}"
+		INTERFACE_INCLUDE_DIRECTORIES "${FCL_INCLUDE_DIRS}"
+	)
+endif()

@@ -1,0 +1,24 @@
+diff -Naur ATIDAQ%20C%20Library.orig/Samples/calinfo.c ATIDAQ%20C%20Library/Samples/calinfo.c
+--- ATIDAQ%20C%20Library.orig/Samples/calinfo.c	2013-06-17 15:28:44.974930600 +0200
++++ ATIDAQ%20C%20Library/Samples/calinfo.c	2015-11-14 15:52:05.938150000 +0100
+@@ -29,7 +29,7 @@
+ 
+ #include <stdio.h>
+ #include <stdlib.h>
+-#include "..\ATIDAQ\ftconfig.h"
++#include "../ATIDAQ/ftconfig.h"
+ 
+ int main(int argc, char *argv[]) {
+ 	char *calfilepath;      // name of calibration file
+diff -Naur ATIDAQ%20C%20Library.orig/Samples/ftconvert.c ATIDAQ%20C%20Library/Samples/ftconvert.c
+--- ATIDAQ%20C%20Library.orig/Samples/ftconvert.c	2013-06-17 15:28:44.993932500 +0200
++++ ATIDAQ%20C%20Library/Samples/ftconvert.c	2015-11-14 15:52:01.514088300 +0100
+@@ -32,7 +32,7 @@
+ 
+ #include <stdio.h>
+ #include <stdlib.h>
+-#include "..\atidaq\ftconfig.h"
++#include "../ATIDAQ/ftconfig.h"
+ 
+ int main(int argc, char *argv[]) {
+ 	char *calfilepath;      // name of calibration file

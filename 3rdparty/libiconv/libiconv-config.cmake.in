@@ -1,0 +1,12 @@
+set(libiconv_VERSION "@VERSION@")
+set(libiconv_VERSION_MAJOR "@VERSION_MAJOR@")
+set(libiconv_VERSION_MINOR "@VERSION_MINOR@")
+
+@PACKAGE_INIT@
+
+include("${CMAKE_CURRENT_LIST_DIR}/libiconv-export.cmake")
+
+set(libiconv_DEFINITIONS "")
+set(libiconv_INCLUDE_DIRS "")
+set(libiconv_LIBRARY_DIRS "")
+set(libiconv_LIBRARIES "libiconv::libiconv")

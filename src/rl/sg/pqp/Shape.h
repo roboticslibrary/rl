@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_SG_PQP_SHAPE_H_
-#define _RL_SG_PQP_SHAPE_H_
+#ifndef RL_SG_PQP_SHAPE_H
+#define RL_SG_PQP_SHAPE_H
 
 #include <PQP.h>
 #include <utility>
@@ -46,7 +46,7 @@ namespace rl
 			public:
 				EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 				
-				Shape(SoVRMLShape* shape, Body* body);
+				Shape(::SoVRMLShape* shape, Body* body);
 				
 				virtual ~Shape();
 				
@@ -58,7 +58,7 @@ namespace rl
 				
 				void update();
 				
-				PQP_Model model;
+				::PQP_Model model;
 				
 				PQP_REAL rotation[3][3];
 				
@@ -67,9 +67,9 @@ namespace rl
 			protected:
 				
 			private:
-				typedef ::std::pair< PQP_Model*, ::std::size_t > Model;
+				typedef ::std::pair< ::PQP_Model*, ::std::size_t> Model;
 				
-				static void triangleCallback(void* userData, SoCallbackAction* action, const SoPrimitiveVertex* v1, const SoPrimitiveVertex* v2, const SoPrimitiveVertex* v3);
+				static void triangleCallback(void* userData, ::SoCallbackAction* action, const ::SoPrimitiveVertex* v1, const SoPrimitiveVertex* v2, const ::SoPrimitiveVertex* v3);
 				
 				::rl::math::Transform frame;
 				
@@ -79,4 +79,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_SG_PQP_SHAPE_H_
+#endif // RL_SG_PQP_SHAPE_H

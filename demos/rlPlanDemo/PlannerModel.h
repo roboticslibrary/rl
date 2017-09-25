@@ -24,15 +24,15 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _PLANNERMODEL_H_
-#define _PLANNERMODEL_H_
+#ifndef PLANNERMODEL_H
+#define PLANNERMODEL_H
 
 #include <QAbstractTableModel>
 
 class PlannerModel : public QAbstractTableModel
 {
 public:
-	PlannerModel(QObject* parent = NULL);
+	PlannerModel(QObject* parent = nullptr);
 	
 	virtual ~PlannerModel();
 	
@@ -56,4 +56,4 @@ private:
 	
 };
 
-#endif // _PLANNERMODEL_H_
+#endif // PLANNERMODEL_H

@@ -1,0 +1,105 @@
+Source: rl
+Priority: extra
+Maintainer: Robotics Library Team <roblib-developers@lists.sourceforge.net>
+Build-Depends: debhelper (>= 7.0.50~),
+ cmake (>= 2.8.11),
+ doxygen,
+ graphviz,
+ libboost-all-dev (>= 1.46),
+ libbullet-dev,
+ libcoin60-dev | libcoin80-dev,
+ libcomedi-dev,
+ libdc1394-22-dev (>= 2.1),
+ libeigen3-dev (>= 3.2.0),
+ libnlopt-dev (>= 2.4.1),
+ libode-dev (>= 2:0.11),
+ libqt4-dev,
+ libqt4-opengl-dev,
+ libsimage-dev,
+ libsolid3d-dev (>= 3.5.6),
+ libsoqt4-dev,
+ libxml2-dev (>= 2.7),
+ libxslt1-dev (>= 1.1.26)
+Standards-Version: 3.9.1
+Section: libs
+Homepage: http://www.roboticslibrary.org/
+
+Package: librl
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Runtime files for the Robotics Library
+ The Robotics Library (RL) is a self-contained C++ library for robot
+ kinematics, visualization, motion planning, and control.
+ This package contains the runtime files for RL.
+
+Package: librl-dbg
+Section: debug
+Architecture: any
+Priority: extra
+Depends: librl (= ${binary:Version}), ${misc:Depends}
+Description: Debugging symbols for the Robotics Library
+ The Robotics Library (RL) is a self-contained C++ library for robot
+ kinematics, visualization, motion planning, and control.
+ This package contains the debugging symbols for RL.
+
+Package: librl-demos
+Section: misc
+Architecture: any
+Depends: librl (= ${binary:Version}), librl-examples (= ${binary:Version}),
+ ${shlibs:Depends}, ${misc:Depends}
+Description: Demo programs for the Robotics Library
+ The Robotics Library (RL) is a self-contained C++ library for robot
+ kinematics, visualization, motion planning, and control.
+ This package contains the demo programs for RL.
+
+Package: librl-dev
+Section: libdevel
+Architecture: any
+Depends: librl (= ${binary:Version}),
+ libboost-all-dev (>= 1.46),
+ libbullet-dev,
+ libcoin60-dev | libcoin80-dev,
+ libcomedi-dev,
+ libdc1394-22-dev (>= 2.1),
+ libeigen3-dev (>= 3.2.0),
+ libnlopt-dev (>= 2.4.1),
+ libode-dev (>= 2:0.11),
+ libqt4-dev,
+ libqt4-opengl-dev,
+ libsimage-dev,
+ libsolid3d-dev (>= 3.5.6),
+ libsoqt4-dev,
+ libxml2-dev (>= 2.7),
+ libxslt1-dev (>= 1.1.26)
+Description: Development files for the Robotics Library
+ The Robotics Library (RL) is a self-contained C++ library for robot
+ kinematics, visualization, motion planning, and control.
+ This package contains the development files for RL.
+
+Package: librl-doc
+Section: doc
+Architecture: all
+Priority: extra
+Description: Documentation for the Robotics Library
+ The Robotics Library (RL) is a self-contained C++ library for robot
+ kinematics, visualization, motion planning, and control.
+ This package contains the documentation for RL.
+
+Package: librl-examples
+Section: misc
+Architecture: all
+Description: Example files for the Robotics Library
+ The Robotics Library (RL) is a self-contained C++ library for robot
+ kinematics, visualization, motion planning, and control.
+ This package contains the example files for RL.
+
+Package: librl-extras
+Section: misc
+Architecture: any
+Priority: extra
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Extra programs for the Robotics Library
+ The Robotics Library (RL) is a self-contained C++ library for robot
+ kinematics, visualization, motion planning, and control.
+ This package contains the extra programs for RL.

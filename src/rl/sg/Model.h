@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_SG_MODEL_H_
-#define _RL_SG_MODEL_H_
+#ifndef RL_SG_MODEL_H
+#define RL_SG_MODEL_H
 
 #include <string>
 #include <vector>
@@ -42,7 +42,7 @@ namespace rl
 		class Model
 		{
 		public:
-			typedef ::std::vector< Body* >::iterator Iterator;
+			typedef ::std::vector<Body*>::iterator Iterator;
 			
 			Model(Scene* scene);
 			
@@ -69,7 +69,7 @@ namespace rl
 			virtual void setName(const ::std::string& name);
 			
 		protected:
-			::std::vector< Body* > bodies;
+			::std::vector<Body*> bodies;
 			
 			Scene* scene;
 			
@@ -79,4 +79,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_SG_MODEL_H_
+#endif // RL_SG_MODEL_H

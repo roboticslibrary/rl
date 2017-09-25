@@ -1,14 +1,29 @@
-project(rlSixAxisForceTorqueSensorDemo)
+if(MSVC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 19.00.23918)
+	find_package(Boost REQUIRED COMPONENTS thread)
+endif()
 
-if(COMEDI_FOUND)
-	add_executable(
+add_executable(
+	rlSixAxisForceTorqueSensorDemo
+	rlSixAxisForceTorqueSensorDemo.cpp
+)
+
+if(MSVC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 19.00.23918)
+	target_compile_definitions(
 		rlSixAxisForceTorqueSensorDemo
-		rlSixAxisForceTorqueSensorDemo.cpp
+		PUBLIC
+		-DBOOST_ALL_NO_LIB
+		-DBOOST_CHRONO_HEADER_ONLY
+		-DBOOST_ERROR_CODE_HEADER_ONLY
+		-DBOOST_SYSTEM_NO_DEPRECATED
 	)
-	
-	target_link_libraries(
-		rlSixAxisForceTorqueSensorDemo
-		rlhal
-		rlutil
-	)
-endif(COMEDI_FOUND)
+endif()
+
+target_link_libraries(
+	rlSixAxisForceTorqueSensorDemo
+	hal
+	util
+)
+
+if(MSVC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 19.00.23918)
+	target_link_libraries(rlSixAxisForceTorqueSensorDemo ${Boost_LIBRARIES})
+endif()

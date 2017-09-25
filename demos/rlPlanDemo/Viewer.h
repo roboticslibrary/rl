@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _VIEWER_H_
-#define _VIEWER_H_
+#ifndef VIEWER_H
+#define VIEWER_H
 
 #include <QWidget>
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
@@ -44,16 +44,22 @@
 #include <rl/plan/VectorList.h>
 #include <rl/plan/Viewer.h>
 
+class SoGradientBackground;
+
 class Viewer : public QWidget, public rl::plan::Viewer
 {
 	Q_OBJECT
 	
 public:
-	Viewer(QWidget* parent = NULL, Qt::WindowFlags f = 0);
+	Viewer(QWidget* parent = nullptr, Qt::WindowFlags f = 0);
 	
 	virtual ~Viewer();
 	
+	void setBackgroundColor(const QColor& color);
+	
 	rl::math::Real delta;
+	
+	rl::math::Real deltaSwept;
 	
 	rl::plan::Model* model;
 	
@@ -98,9 +104,11 @@ public slots:
 	
 	void resetVertices();
 	
-	void saveImage(const QString& filename);
+	void saveImage(bool withAlpha);
 	
-	void saveScene(const QString& filename);
+	void saveScene();
+	
+	void showMessage(const std::string& message);
 	
 	void toggleConfigurationEdges(const bool& doOn);
 	
@@ -108,15 +116,23 @@ public slots:
 	
 	void toggleLines(const bool& doOn);
 	
+	void togglePath(const bool& doOn);
+	
 	void togglePoints(const bool& doOn);
 	
 	void toggleSpheres(const bool& doOn);
+	
+	void toggleSweptVolume(const bool& doOn);
 	
 	void toggleWorkFrames(const bool& doOn);
 	
 protected:
 	
 private:
+	SoVRMLSwitch* background;
+	
+	SoGradientBackground* backgroundGradientBackground;
+	
 	SoVRMLSwitch* edges;
 	
 	SoVRMLSwitch* edgesColliding;
@@ -280,4 +296,4 @@ private:
 	SoVRMLTransform* workTransform;
 };
 
-#endif // _VIEWER_H_
+#endif // VIEWER_H

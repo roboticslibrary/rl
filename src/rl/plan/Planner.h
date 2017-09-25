@@ -24,17 +24,20 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_PLAN_PLANNER_H_
-#define _RL_PLAN_PLANNER_H_
+#ifndef RL_PLAN_PLANNER_H
+#define RL_PLAN_PLANNER_H
 
+#include <chrono>
 #include <string>
 #include <rl/math/Vector.h>
-#include <rl/util/Timer.h>
 
 #include "VectorList.h"
 
 namespace rl
 {
+	/**
+	 * Collision-free path planning. 
+	 */
 	namespace plan
 	{
 		class SimpleModel;
@@ -52,9 +55,9 @@ namespace rl
 			/**
 			 * Get solution path.
 			 * 
-			 * \pre solve()
+			 * @pre solve()
 			 */
-			virtual void getPath(VectorList& path) = 0;
+			virtual VectorList getPath() = 0;
 			
 			/**
 			 * Reset planner.
@@ -71,8 +74,8 @@ namespace rl
 			 */
 			bool verify();
 			
-			/** Upper bound for search [s]. */
-			::rl::math::Real duration;
+			/** Upper bound for search. */
+			::std::chrono::steady_clock::duration duration;
 			
 			/** Goal configuration. */
 			::rl::math::Vector* goal;
@@ -85,7 +88,7 @@ namespace rl
 			Viewer* viewer;
 			
 		protected:
-			::rl::util::Timer timer;
+			::std::chrono::steady_clock::time_point time;
 			
 		private:
 			
@@ -93,4 +96,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_PLAN_PLANNER_H_
+#endif // RL_PLAN_PLANNER_H

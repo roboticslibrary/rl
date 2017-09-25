@@ -25,12 +25,12 @@
 //
 
 #include <iostream>
+#include <memory>
+#include <random>
 #include <stdexcept>
-#include <boost/shared_ptr.hpp>
 #include <rl/mdl/Dynamic.h>
 #include <rl/mdl/Model.h>
 #include <rl/mdl/XmlFactory.h>
-#include <rl/util/Timer.h>
 
 int
 main(int argc, char** argv)
@@ -38,31 +38,21 @@ main(int argc, char** argv)
 	if (argc < 3)
 	{
 		std::cout << "Usage: rlDynamicsTest MODELFILE LOOP" << std::endl;
-		return 1;
+		return EXIT_FAILURE;
 	}
 	
 	try
 	{
-		srand(static_cast< unsigned int >(rl::util::Timer::now() * 1000000.0f));
+		srand(std::random_device()());
 		
 		rl::mdl::XmlFactory factory;
-		boost::shared_ptr< rl::mdl::Model > model(factory.create(argv[1]));
+		std::shared_ptr<rl::mdl::Model> model(factory.create(argv[1]));
 		
-		rl::mdl::Dynamic* dynamic = dynamic_cast< rl::mdl::Dynamic* >(model.get());
+		rl::mdl::Dynamic* dynamic = dynamic_cast<rl::mdl::Dynamic*>(model.get());
 		
 		rl::math::Vector q0(model->getDofPosition());
 		rl::math::Vector qd0(model->getDof());
 		rl::math::Vector qdd0(model->getDof());
-		
-		rl::math::Vector xdRecursive(6 * dynamic->getOperationalDof());
-		rl::math::Vector xdMatrices(6 * dynamic->getOperationalDof());
-		rl::math::Vector xddRecursive(6 * dynamic->getOperationalDof());
-		rl::math::Vector xddMatrices(6 * dynamic->getOperationalDof());
-		
-		rl::math::Vector tauRecursive(model->getDof());
-		rl::math::Vector tauMatrices(model->getDof());
-		rl::math::Vector qdd1Recursive(model->getDof());
-		rl::math::Vector qdd1Matrices(model->getDof());
 		
 		for (::std::size_t i = 0; i < atoi(argv[2]); ++i)
 		{
@@ -85,6 +75,8 @@ main(int argc, char** argv)
 			dynamic->setVelocity(qd0);
 			dynamic->forwardVelocity();
 			
+			rl::math::Vector xdRecursive(6 * dynamic->getOperationalDof());
+			
 			for (::std::size_t j = 0; j < dynamic->getOperationalDof(); ++j)
 			{
 				xdRecursive.segment(6 * j, 3) = dynamic->getOperationalVelocity(j).linear();
@@ -96,7 +88,7 @@ main(int argc, char** argv)
 			dynamic->setPosition(q0);
 			dynamic->calculateJacobian();
 			
-			xdMatrices = dynamic->getJacobian() * qd0;
+			rl::math::Vector xdMatrices = dynamic->getJacobian() * qd0;
 			
 			if (!xdMatrices.isApprox(xdRecursive))
 			{
@@ -104,7 +96,7 @@ main(int argc, char** argv)
 				std::cerr << "qd0 = " << qd0.transpose() << std::endl;
 				std::cerr << "xd (recursive) = " << xdRecursive.transpose() << std::endl;
 				std::cerr << "xd (matrices) = " << xdMatrices.transpose() << std::endl;
-				return 1;
+				return EXIT_FAILURE;
 			}
 			
 			// forward acceleration (recursive)
@@ -114,6 +106,8 @@ main(int argc, char** argv)
 			dynamic->setAcceleration(qdd0);
 			dynamic->forwardVelocity();
 			dynamic->forwardAcceleration();
+			
+			rl::math::Vector xddRecursive(6 * dynamic->getOperationalDof());
 			
 			for (::std::size_t j = 0; j < dynamic->getOperationalDof(); ++j)
 			{
@@ -128,7 +122,7 @@ main(int argc, char** argv)
 			dynamic->setVelocity(qd0);
 			dynamic->calculateJacobianDerivative();
 			
-			xddMatrices = dynamic->getJacobian() * qdd0 + dynamic->getJacobianDerivative();
+			rl::math::Vector xddMatrices = dynamic->getJacobian() * qdd0 + dynamic->getJacobianDerivative();
 			
 			if (!xddMatrices.isApprox(xddRecursive))
 			{
@@ -137,7 +131,7 @@ main(int argc, char** argv)
 				std::cerr << "qdd0 = " << qdd0.transpose() << std::endl;
 				std::cerr << "xdd (recursive) = " << xddRecursive.transpose() << std::endl;
 				std::cerr << "xdd (matrices) = " << xddMatrices.transpose() << std::endl;
-				return 1;
+				return EXIT_FAILURE;
 			}
 			
 			// inverse dynamics (recursive)
@@ -146,21 +140,20 @@ main(int argc, char** argv)
 			dynamic->setVelocity(qd0);
 			dynamic->setAcceleration(qdd0);
 			dynamic->inverseDynamics();
-			dynamic->getTorque(tauRecursive);
+			
+			rl::math::Vector tauRecursive = dynamic->getTorque();
 			
 			// inverse dynamics (matrices)
 			
 			dynamic->setPosition(q0);
 			dynamic->calculateMassMatrix();
-			
 			dynamic->setPosition(q0);
 			dynamic->setVelocity(qd0);
 			dynamic->calculateCentrifugalCoriolis();
-			
 			dynamic->setPosition(q0);
 			dynamic->calculateGravity();
 			
-			tauMatrices = dynamic->getMassMatrix() * qdd0 + dynamic->getCentrifugalCoriolis() + dynamic->getGravity();
+			rl::math::Vector tauMatrices = dynamic->getMassMatrix() * qdd0 + dynamic->getCentrifugalCoriolis() + dynamic->getGravity();
 			
 			if (!tauMatrices.isApprox(tauRecursive))
 			{
@@ -169,7 +162,7 @@ main(int argc, char** argv)
 				std::cerr << "qdd0 = " << qdd0.transpose() << std::endl;
 				std::cerr << "tau (recursive) = " << tauRecursive.transpose() << std::endl;
 				std::cerr << "tau (matrices) = " << tauMatrices.transpose() << std::endl;
-				return 1;
+				return EXIT_FAILURE;
 			}
 			
 			// forward dynamics (recursive)
@@ -178,7 +171,8 @@ main(int argc, char** argv)
 			dynamic->setVelocity(qd0);
 			dynamic->setTorque(tauRecursive);
 			dynamic->forwardDynamics();
-			dynamic->getAcceleration(qdd1Recursive);
+			
+			rl::math::Vector qdd1Recursive = dynamic->getAcceleration();
 			
 			if (!qdd1Recursive.isApprox(qdd0))
 			{
@@ -188,15 +182,20 @@ main(int argc, char** argv)
 				std::cerr << "tau (recursive) = " << tauRecursive.transpose() << std::endl;
 				std::cerr << "tau (matrices) = " << tauMatrices.transpose() << std::endl;
 				std::cerr << "qdd1 (recursive) = " << qdd1Recursive.transpose() << std::endl;
-				return 1;
+				return EXIT_FAILURE;
 			}
 			
 			// forward dynamics (matrices)
 			
 			dynamic->setPosition(q0);
 			dynamic->calculateMassMatrixInverse();
+			dynamic->setPosition(q0);
+			dynamic->setVelocity(qd0);
+			dynamic->calculateCentrifugalCoriolis();
+			dynamic->setPosition(q0);
+			dynamic->calculateGravity();
 			
-			qdd1Matrices = dynamic->getMassMatrixInverse() * (tauMatrices - dynamic->getCentrifugalCoriolis() - dynamic->getGravity());
+			rl::math::Vector qdd1Matrices = dynamic->getMassMatrixInverse() * (tauMatrices - dynamic->getCentrifugalCoriolis() - dynamic->getGravity());
 			
 			if (!qdd1Matrices.isApprox(qdd1Recursive))
 			{
@@ -207,15 +206,15 @@ main(int argc, char** argv)
 				std::cerr << "tau (matrices) = " << tauMatrices.transpose() << std::endl;
 				std::cerr << "qdd1 (recursive) = " << qdd1Recursive.transpose() << std::endl;
 				std::cerr << "qdd1 (matrices) = " << qdd1Matrices.transpose() << std::endl;
-				return 1;
+				return EXIT_FAILURE;
 			}
 		}
 	}
 	catch (const std::exception& e)
 	{
 		std::cout << e.what() << std::endl;
-		return 1;
+		return EXIT_FAILURE;
 	}
 	
-	return 0;
+	return EXIT_SUCCESS;
 }

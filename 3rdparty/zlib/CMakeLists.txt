@@ -1,0 +1,16 @@
+cmake_minimum_required(VERSION 2.8.11)
+
+project(zlib)
+
+include(ExternalProject)
+
+ExternalProject_Add(
+	zlib
+	#GIT_REPOSITORY git://github.com/madler/zlib.git
+	#GIT_TAG v1.2.8
+	URL https://github.com/roboticslibrary/zlib/archive/patch.zip
+	#URL ${CMAKE_CURRENT_SOURCE_DIR}/zlib-1.2.8.tar.gz
+	#URL_MD5 44d667c142d7cda120332623eab69f40
+	CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_CFG_INTDIR=${CMAKE_CFG_INTDIR} -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH} -DCMAKE_TRY_COMPILE_CONFIGURATION=${CMAKE_TRY_COMPILE_CONFIGURATION}
+	INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
+)

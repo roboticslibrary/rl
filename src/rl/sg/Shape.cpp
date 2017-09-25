@@ -31,7 +31,7 @@ namespace rl
 {
 	namespace sg
 	{
-		Shape::Shape(SoVRMLShape* shape, Body* body) :
+		Shape::Shape(::SoVRMLShape* shape, Body* body) :
 			body(body),
 			name()
 		{

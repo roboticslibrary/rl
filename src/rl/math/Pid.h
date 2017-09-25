@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_MATH_PID_H_
-#define _RL_MATH_PID_H_
+#ifndef RL_MATH_PID_H
+#define RL_MATH_PID_H
 
 #include "Real.h"
 
@@ -36,7 +36,7 @@ namespace rl
 		/**
 		 * Proportional-Integral-Derivative controller.
 		 */
-		template< typename T >
+		template<typename T>
 		class Pid
 		{
 		public:
@@ -56,9 +56,11 @@ namespace rl
 			}
 			
 			/**
-			 * \f[ K_p e(t) + K_i \int_{0}^{t} e(\tau) \, d\tau + K_d \frac{de}{dt} \f]
+			 * Calculate next step.
 			 * 
-			 * @param dt \f$ dt \f$
+			 * \f[ k_{\mathrm{p}} \, e(t) + k_{\mathrm{i}} \int_{0}^{t} e(\tau) \, \mathrm{d}\tau + k_{\mathrm{d}} \, \frac{\mathrm{d}}{\mathrm{d}t} \, e(t) \f]
+			 * 
+			 * @param[in] dt \f$\mathrm{d}t\f$
 			 */
 			T operator()(const T& x, const Real& dt)
 			{
@@ -76,13 +78,22 @@ namespace rl
 				this->i = 0;
 			}
 			
-			/** Derivative gain \f$ K_d \f$. */
+			/**
+			 * Derivative gain.
+			 * \f[ k_{\mathrm{d}} \f]
+			 * */
 			T kd;
 			
-			/** Integral gain \f$ K_i \f$. */
+			/**
+			 * Integral gain.
+			 * \f[ k_{\mathrm{i}} \f]
+			 * */
 			T ki;
 			
-			/** Proportional gain \f$ K_p \f$. */
+			/**
+			 * Proportional gain.
+			 * \f[ k_{\mathrm{p}} \f]
+			 * */
 			T kp;
 			
 			/** Setpoint. */
@@ -94,10 +105,13 @@ namespace rl
 			/** Previous error. */
 			T e;
 			
-			/** Integral output \f$ K_i \int_{0}^{t} e(\tau) \, d\tau \f$. */
+			/**
+			 * Integral output.
+			 * \f[ k_{\mathrm{i}} \int_{0}^{t} e(\tau) \, \mathrm{d}\tau \f]
+			 * */
 			T i;
 		};
 	}
 }
 
-#endif // _RL_MATH_PID_H_
+#endif // RL_MATH_PID_H

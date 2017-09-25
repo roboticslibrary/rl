@@ -24,12 +24,12 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_MDL_MODEL_H_
-#define _RL_MDL_MODEL_H_
+#ifndef RL_MDL_MODEL_H
+#define RL_MDL_MODEL_H
 
+#include <memory>
 #include <string>
 #include <vector>
-#include <boost/shared_ptr.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <rl/math/Transform.h>
 #include <rl/math/Unit.h>
@@ -40,6 +40,12 @@
 
 namespace rl
 {
+	/**
+	 * Rigid body kinematics and dynamics.
+	 * 
+	 * Roy Featherstone. Rigid Body Dynamics Algorithms. Springer, New
+	 * York, NY, USA, 2008.
+	 */
 	namespace mdl
 	{
 		class Body;
@@ -63,9 +69,13 @@ namespace rl
 			
 			Model* clone() const;
 			
-			void getAcceleration(::rl::math::Vector& qdd) const;
+			::rl::math::Vector generatePositionGaussian(const ::rl::math::Vector& rand, const ::rl::math::Vector& mean, const ::rl::math::Vector& sigma) const;
 			
-			void getAccelerationUnits(::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1 >& units) const;
+			::rl::math::Vector generatePositionUniform(const ::rl::math::Vector& rand) const;
+			
+			::rl::math::Vector getAcceleration() const;
+			
+			::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1> getAccelerationUnits() const;
 			
 			::std::size_t getBodies() const;
 			
@@ -76,6 +86,16 @@ namespace rl
 			::std::size_t getDofPosition() const;
 			
 			const ::rl::math::Transform& getFrame(const ::std::size_t& i) const;
+			
+			const ::rl::math::Matrix& getGammaPosition() const;
+			
+			const ::rl::math::Matrix& getGammaVelocity() const;
+			
+			const ::rl::math::Matrix& getGammaPositionInverse() const;
+			
+			const ::rl::math::Matrix& getGammaVelocityInverse() const;
+			
+			::rl::math::Vector getHomePosition() const;
 			
 			Joint* getJoint(const ::std::size_t& i) const;
 			
@@ -93,27 +113,27 @@ namespace rl
 			
 			const ::std::string& getManufacturer() const;
 			
-			void getMaximum(::rl::math::Vector& max) const;
+			::rl::math::Vector getMaximum() const;
 			
-			void getMinimum(::rl::math::Vector& min) const;
+			::rl::math::Vector getMinimum() const;
 			
 			const ::std::string& getName() const;
 			
-			void getPosition(::rl::math::Vector& q) const;
+			::rl::math::Vector getPosition() const;
 			
-			void getPositionUnits(::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1 >& units) const;
+			::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1> getPositionUnits() const;
 			
-			void getTorque(::rl::math::Vector& tau) const;
+			::rl::math::Vector getTorque() const;
 			
-			void getTorqueUnits(::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1 >& units) const;
+			::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1> getTorqueUnits() const;
 			
-			void getSpeed(::rl::math::Vector& speed) const;
+			::rl::math::Vector getSpeed() const;
 			
-			void getSpeedUnits(::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1 >& units) const;
+			::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1> getSpeedUnits() const;
 			
-			void getVelocity(::rl::math::Vector& qd) const;
+			::rl::math::Vector getVelocity() const;
 			
-			void getVelocityUnits(::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1 >& units) const;
+			::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1> getVelocityUnits() const;
 			
 			bool isColliding(const ::std::size_t& i) const;
 			
@@ -128,6 +148,12 @@ namespace rl
 			void remove(Transform* transform);
 			
 			void setAcceleration(const ::rl::math::Vector& qdd);
+			
+			void setGammaPosition(const ::rl::math::Matrix& gammaPosition);
+			
+			void setGammaVelocity(const ::rl::math::Matrix& gammaVelocity);
+			
+			void setHomePosition(const ::rl::math::Vector& home);
 			
 			void setManufacturer(const ::std::string& manufacturer);
 			
@@ -160,47 +186,57 @@ namespace rl
 				::boost::bidirectionalS,
 				::boost::property<
 					::boost::vertex_color_t, Compound*,
-					::boost::shared_ptr< Frame >
+					::std::shared_ptr<Frame>
 				>,
 				::boost::property<
 					::boost::edge_weight_t, Compound*,
-					::boost::shared_ptr< Transform >
+					::std::shared_ptr<Transform>
 				>,
 				::boost::no_property,
 				::boost::listS
 			> Tree;
 			
-			typedef ::boost::graph_traits< Tree >::edge_descriptor Edge;
+			typedef ::boost::graph_traits<Tree>::edge_descriptor Edge;
 			
-			typedef ::boost::graph_traits< Tree >::edge_iterator EdgeIterator;
+			typedef ::boost::graph_traits<Tree>::edge_iterator EdgeIterator;
 			
-			typedef ::std::pair< EdgeIterator, EdgeIterator > EdgeIteratorPair;
+			typedef ::std::pair<EdgeIterator, EdgeIterator> EdgeIteratorPair;
 			
-			typedef ::boost::graph_traits< Tree >::in_edge_iterator InEdgeIterator;
+			typedef ::boost::graph_traits<Tree>::in_edge_iterator InEdgeIterator;
 			
-			typedef ::std::pair< InEdgeIterator, InEdgeIterator > InEdgeIteratorPair;
+			typedef ::std::pair<InEdgeIterator, InEdgeIterator> InEdgeIteratorPair;
 			
-			typedef ::boost::graph_traits< Tree >::out_edge_iterator OutEdgeIterator;
+			typedef ::boost::graph_traits<Tree>::out_edge_iterator OutEdgeIterator;
 			
-			typedef ::std::pair< OutEdgeIterator, OutEdgeIterator > OutEdgeIteratorPair;
+			typedef ::std::pair<OutEdgeIterator, OutEdgeIterator> OutEdgeIteratorPair;
 			
-			typedef ::boost::graph_traits< Tree >::vertex_descriptor Vertex;
+			typedef ::boost::graph_traits<Tree>::vertex_descriptor Vertex;
 			
-			typedef ::boost::graph_traits< Tree >::vertex_iterator VertexIterator;
+			typedef ::boost::graph_traits<Tree>::vertex_iterator VertexIterator;
 			
-			typedef ::std::pair< VertexIterator, VertexIterator > VertexIteratorPair;
+			typedef ::std::pair<VertexIterator, VertexIterator> VertexIteratorPair;
 			
 			void update(const Vertex& u);
 			
-			::std::vector< Body* > bodies;
+			::std::vector<Body*> bodies;
 			
-			::std::vector< Element* > elements;
+			::std::vector<Element*> elements;
 			
-			::std::vector< Frame* > frames;
+			::std::vector<Frame*> frames;
 			
-			::std::vector< Joint* > joints;
+			::rl::math::Matrix gammaPosition;
 			
-			::std::vector< Vertex > leaves;
+			::rl::math::Matrix gammaVelocity;
+			
+			::rl::math::Vector home;
+			
+			::rl::math::Matrix invGammaPosition;
+			
+			::rl::math::Matrix invGammaVelocity;
+			
+			::std::vector<Joint*> joints;
+			
+			::std::vector<Vertex> leaves;
 			
 			::std::string manufacturer;
 			
@@ -208,9 +244,9 @@ namespace rl
 			
 			Vertex root;
 			
-			::std::vector< Edge > tools;
+			::std::vector<Edge> tools;
 			
-			::std::vector< Transform* > transforms;
+			::std::vector<Transform*> transforms;
 			
 			Tree tree;
 			
@@ -220,4 +256,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_MDL_MODEL_H_
+#endif // RL_MDL_MODEL_H

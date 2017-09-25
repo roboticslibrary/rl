@@ -1,8 +1,0 @@
-[Desktop Entry]
-Categories=Science;Robotics;
-Comment=Path planning demo with Unimation Puma 560 and RRT algorithm
-Exec=sh -c "rlPlanDemo $(dirname %k)/../rl/examples/rlplan/unimation-puma560_boxes_rrtConCon.xml"
-Icon=robotics-library
-Name=Robotics Library (rlPlanDemo)
-Type=Application
-X-Unity-IconBackgroundColor=#ffffff

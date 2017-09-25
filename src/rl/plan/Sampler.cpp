@@ -32,7 +32,7 @@ namespace rl
 	namespace plan
 	{
 		Sampler::Sampler() :
-			model(NULL)
+			model(nullptr)
 		{
 		}
 		
@@ -40,18 +40,20 @@ namespace rl
 		{
 		}
 		
-		void
-		Sampler::generateCollisionFree(::rl::math::Vector& q)
+		::rl::math::Vector
+		Sampler::generateCollisionFree()
 		{
-			assert(q.size() == this->model->getDof());
+			::rl::math::Vector q(this->model->getDofPosition());
 			
 			do
 			{
-				this->generate(q);
+				q = this->generate();
 				this->model->setPosition(q);
 				this->model->updateFrames();
 			}
 			while (this->model->isColliding());
+			
+			return q;
 		}
 	}
 }

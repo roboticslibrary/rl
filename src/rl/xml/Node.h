@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_XML_NODE_H_
-#define _RL_XML_NODE_H_
+#ifndef RL_XML_NODE_H
+#define RL_XML_NODE_H
 
 #include <cstring>
 #include <string>
@@ -36,6 +36,7 @@
 
 #include "Attribute.h"
 #include "Exception.h"
+#include "Namespace.h"
 
 namespace rl
 {
@@ -44,103 +45,111 @@ namespace rl
 		class Node
 		{
 		public:
-			Node(xmlNodePtr node) :
+			explicit Node(::xmlNodePtr node) :
 				node(node)
 			{
 			}
 			
-			Node(const ::std::string& name) :
+			explicit Node(const ::std::string& name) :
 				node(
-					xmlNewNode(
-						NULL,
-						reinterpret_cast< const xmlChar* >(name.c_str())
+					::xmlNewNode(
+						nullptr,
+						reinterpret_cast<const ::xmlChar*>(name.c_str())
 					)
 				)
 			{
 			}
 			
-			virtual ~Node()
+			~Node()
 			{
-				if (NULL == this->node->doc)
+				if (nullptr != this->node && nullptr == this->node->doc)
 				{
-					xmlFree(this->node);
+					::xmlFree(this->node);
 				}
 			}
 			
 			static Node Text(const ::std::string& content)
 			{
-				return xmlNewText(
-					reinterpret_cast< const xmlChar* >(content.c_str())
-				);
+				return Node(::xmlNewText(reinterpret_cast<const ::xmlChar*>(content.c_str())));
 			}
 			
 			Node addChild(const Node& node)
 			{
-				return xmlAddChild(this->node, node());
+				return Node(::xmlAddChild(this->node, node.get()));
 			}
 			
 			Node addNextSibling(const Node& node)
 			{
-				return xmlAddNextSibling(this->node, node());
+				return Node(::xmlAddNextSibling(this->node, node.get()));
 			}
 			
 			Node addPrevSibling(const Node& node)
 			{
-				return xmlAddPrevSibling(this->node, node());
+				return Node(::xmlAddPrevSibling(this->node, node.get()));
 			}
 			
 			Node addSibling(const Node& node)
 			{
-				return xmlAddSibling(this->node, node());
+				return Node(::xmlAddSibling(this->node, node.get()));
 			}
 			
-			Attribute getAttribute(const ::std::string& name) const
+			::xmlNodePtr get() const
 			{
-				return Attribute(
-					xmlHasProp(
-						this->node,
-						reinterpret_cast< const xmlChar* >(name.c_str())
-					)
-				);
+				return this->node;
 			}
 			
 			unsigned long getChildElementCount() const
 			{
-				return xmlChildElementCount(this->node);
+				return ::xmlChildElementCount(this->node);
 			}
 			
 			::std::string getContent() const
 			{
-				::boost::shared_array< xmlChar > content(
-					xmlNodeGetContent(this->node),
-					xmlFree
+				::boost::shared_array< ::xmlChar> content(
+					::xmlNodeGetContent(this->node),
+					 ::xmlFree
 				);
 				
-				return reinterpret_cast< char* >(content.get());
+				return nullptr != content.get() ? reinterpret_cast<char*>(content.get()) : ::std::string();
+			}
+			
+			Node getFirstChild() const
+			{
+				return Node(this->node->children);
+			}
+			
+			Attribute getFirstProperty() const
+			{
+				return Attribute(this->node->properties);
+			}
+			
+			unsigned short int getLine() const
+			{
+				return this->node->line;
 			}
 			
 			::std::string getLocalPath(const ::std::string& uri) const
 			{
-				::boost::shared_array< xmlChar > absolute(
-					xmlBuildURI(
-						reinterpret_cast< const xmlChar* >(uri.c_str()),
-						xmlNodeGetBase(this->node->doc, this->node)
+				::boost::shared_array< ::xmlChar> absolute(
+					::xmlBuildURI(
+						reinterpret_cast<const ::xmlChar*>(uri.c_str()),
+						::xmlNodeGetBase(this->node->doc, this->node)
 					),
-					xmlFree
+					::xmlFree
 				);
 				
-				::boost::shared_array< char > unescaped(
-					xmlURIUnescapeString(
-						reinterpret_cast< char* >(absolute.get()),
+				::boost::shared_array<char> unescaped(
+					::xmlURIUnescapeString(
+						reinterpret_cast<char*>(absolute.get()),
 						0,
-						NULL
+						nullptr
 					),
-					xmlFree
+					::xmlFree
 				);
 				
 				char* path;
 				
-				if (0 == strncmp(unescaped.get(), "file://localhost/", 17))
+				if (0 == ::strncmp(unescaped.get(), "file://localhost/", 17))
 				{
 #ifdef WIN32
 					path = &unescaped.get()[17];
@@ -148,7 +157,7 @@ namespace rl
 					path = &unescaped.get()[16];
 #endif // WIN32
 				}
-				else if (0 == strncmp(unescaped.get(), "file:///", 8))
+				else if (0 == ::strncmp(unescaped.get(), "file:///", 8))
 				{
 #ifdef WIN32
 					path = &unescaped.get()[8];
@@ -156,88 +165,209 @@ namespace rl
 					path = &unescaped.get()[7];
 #endif // WIN32
 				}
+				else if (0 == ::strncmp(unescaped.get(), "file:/", 6))
+				{
+#ifdef WIN32
+					path = &unescaped.get()[6];
+#else // WIN32
+					path = &unescaped.get()[5];
+#endif // WIN32
+				}
 				else
 				{
 					path = unescaped.get();
 				}
 				
-				return path;
+				return nullptr != path ? path : ::std::string();
 			}
 			
 			::std::string getName() const
 			{
-				return reinterpret_cast< const char* >(this->node->name);
+				return nullptr != this->node->name ? reinterpret_cast<const char*>(this->node->name) : ::std::string();
+			}
+			
+			Namespace getNamespace() const
+			{
+				return Namespace(this->node->ns);
+			}
+			
+			Node getNext() const
+			{
+				return Node(this->node->next);
+			}
+			
+			Node getParent() const
+			{
+				return Node(this->node->parent);
+			}
+			
+			Node getPrevious() const
+			{
+				return Node(this->node->prev);
+			}
+			
+			::std::string getProperty(const ::std::string& name) const
+			{
+				::boost::shared_array< ::xmlChar> prop(
+					::xmlGetProp(
+						this->node,
+						reinterpret_cast<const ::xmlChar*>(name.c_str())
+					),
+					::xmlFree
+				);
+				
+				return nullptr != prop.get() ? reinterpret_cast<char*>(prop.get()) : ::std::string();
+			}
+			
+			::std::string getProperty(const ::std::string& name, const ::std::string& nameSpace) const
+			{
+				::boost::shared_array< ::xmlChar> prop(
+					::xmlGetNsProp(
+						this->node,
+						reinterpret_cast<const ::xmlChar*>(name.c_str()),
+						reinterpret_cast<const ::xmlChar*>(nameSpace.c_str())
+					),
+					::xmlFree
+				);
+				
+				return nullptr != prop.get() ? reinterpret_cast<char*>(prop.get()) : ::std::string();
 			}
 			
 			::std::string getRelativeUri(const ::std::string& uri) const
 			{
-				::boost::shared_array<xmlChar> relative(
-					xmlBuildRelativeURI(
-						reinterpret_cast< const xmlChar* >(uri.c_str()),
-						xmlNodeGetBase(this->node->doc, this->node)
+				::boost::shared_array< ::xmlChar> relative(
+					::xmlBuildRelativeURI(
+						reinterpret_cast<const ::xmlChar*>(uri.c_str()),
+						::xmlNodeGetBase(this->node->doc, this->node)
 					),
-					xmlFree
+					::xmlFree
 				);
 				
-				return reinterpret_cast< char* >(relative.get());
+				return nullptr != relative.get() ? reinterpret_cast<char*>(relative.get()) : ::std::string();
 			}
 			
 			::std::string getUri(const ::std::string& uri) const
 			{
-				::boost::shared_array< xmlChar > absolute(
-					xmlBuildURI(
-						reinterpret_cast< const xmlChar* >(uri.c_str()),
-						xmlNodeGetBase(this->node->doc, this->node)
+				::boost::shared_array< ::xmlChar> absolute(
+					::xmlBuildURI(
+						reinterpret_cast<const ::xmlChar*>(uri.c_str()),
+						::xmlNodeGetBase(this->node->doc, this->node)
 					),
-					xmlFree
+					::xmlFree
 				);
 				
-				return reinterpret_cast< char* >(absolute.get());
+				return nullptr != absolute.get() ? reinterpret_cast<char*>(absolute.get()) : ::std::string();
 			}
 			
-			bool hasAttribute(const ::std::string& name) const
+			bool hasChildren() const
 			{
-				return NULL != xmlHasProp(
-					this->node,
-					reinterpret_cast< const xmlChar* >(name.c_str())
-				) ? true : false;
+				return nullptr != this->node->children;
+			}
+			
+			bool hasNamespace() const
+			{
+				return nullptr != this->node->ns;
+			}
+			
+			bool hasParent() const
+			{
+				return nullptr != this->node->parent;
+			}
+			
+			bool hasProperties() const
+			{
+				return nullptr != this->node->properties;
+			}
+			
+			Attribute hasProperty(const ::std::string& name) const
+			{
+				return Attribute(
+					::xmlHasProp(
+						this->node,
+						reinterpret_cast<const ::xmlChar*>(name.c_str())
+					)
+				);
+			}
+			
+			Attribute hasProperty(const ::std::string& name, const ::std::string& nameSpace) const
+			{
+				return Attribute(
+					::xmlHasNsProp(
+						this->node,
+						reinterpret_cast<const ::xmlChar*>(name.c_str()),
+						reinterpret_cast<const ::xmlChar*>(nameSpace.c_str())
+					)
+				);
+			}
+			
+			bool isBlank() const
+			{
+				return 1 == ::xmlIsBlankNode(this->node) ? true : false;
 			}
 			
 			bool isText() const
 			{
-				return 1 == xmlNodeIsText(this->node) ? true : false;
+				return 1 == ::xmlNodeIsText(this->node) ? true : false;
 			}
 			
-			xmlNodePtr operator()() const
+			::xmlNode& operator*() const
 			{
-				return this->node;
+				return *this->node;
+			}
+			
+			bool removeAttribute(const Attribute& attribute)
+			{
+				return 0 == ::xmlRemoveProp(attribute.get()) ? true : false;
 			}
 			
 			Node replace(const Node& node)
 			{
-				return xmlReplaceNode(this->node, node());
+				return Node(::xmlReplaceNode(this->node, node.get()));
 			}
 			
 			void setContent(const ::std::string& content)
 			{
-				xmlNodeSetContent(
+				::xmlNodeSetContent(
 					this->node,
-					reinterpret_cast< const xmlChar* >(content.c_str())
+					reinterpret_cast<const ::xmlChar*>(content.c_str())
 				);
 			}
 			
 			void setName(const ::std::string& name)
 			{
-				xmlNodeSetName(this->node, reinterpret_cast< const xmlChar* >(name.c_str()));
+				::xmlNodeSetName(this->node, reinterpret_cast<const ::xmlChar*>(name.c_str()));
+			}
+			
+			Attribute setProperty(const ::std::string& name, const ::std::string& value)
+			{
+				return Attribute(
+					::xmlSetProp(
+						this->node,
+						reinterpret_cast<const ::xmlChar*>(name.c_str()),
+						reinterpret_cast<const ::xmlChar*>(value.c_str())
+					)
+				);
+			}
+			
+			Attribute setProperty(const Namespace& nameSpace, const ::std::string& name, const ::std::string& value)
+			{
+				return Attribute(
+					::xmlSetNsProp(
+						this->node,
+						nameSpace.get(),
+						reinterpret_cast<const ::xmlChar*>(name.c_str()),
+						reinterpret_cast<const ::xmlChar*>(value.c_str())
+					)
+				);
 			}
 			
 			int substitute(const int& flags = 0)
 			{
-				int substitutions = xmlXIncludeProcessTreeFlags(this->node, flags);
+				int substitutions = ::xmlXIncludeProcessTreeFlags(this->node, flags);
 				
 				if (-1 == substitutions)
 				{
-					throw Exception(xmlGetLastError()->message);
+					throw Exception(::xmlGetLastError()->message);
 				}
 				
 				return substitutions;
@@ -245,15 +375,15 @@ namespace rl
 			
 			void unlink()
 			{
-				xmlUnlinkNode(this->node);
+				::xmlUnlinkNode(this->node);
 			}
 			
 		protected:
 			
 		private:
-			xmlNodePtr node;
+			::xmlNodePtr node;
 		};
 	}
 }
 
-#endif // _RL_XML_NODE_H_
+#endif // RL_XML_NODE_H

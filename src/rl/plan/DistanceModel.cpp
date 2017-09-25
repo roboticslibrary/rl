@@ -45,7 +45,7 @@ namespace rl
 		::rl::math::Real
 		DistanceModel::distance(const ::rl::math::Vector3& point)
 		{
-			::rl::math::Real distance = ::std::numeric_limits< ::rl::math::Real >::max();
+			::rl::math::Real distance = ::std::numeric_limits< ::rl::math::Real>::max();
 			::rl::math::Vector3 point1;
 			::rl::math::Vector3 point2;
 			
@@ -53,7 +53,7 @@ namespace rl
 			{
 				if (*i != this->model)
 				{
-					distance = ::std::min(distance, dynamic_cast< ::rl::sg::DistanceScene* >(this->scene)->distance(*i, point, point1, point2));
+					distance = ::std::min(distance, dynamic_cast< ::rl::sg::DistanceScene*>(this->scene)->distance(*i, point, point1, point2));
 				}
 			}
 			
@@ -65,7 +65,7 @@ namespace rl
 		{
 			assert(body < this->model->getNumBodies());
 			
-			::rl::math::Real distance = ::std::numeric_limits< ::rl::math::Real >::max();
+			::rl::math::Real distance = ::std::numeric_limits< ::rl::math::Real>::max();
 			
 			::rl::math::Vector3 tmpPoint1;
 			::rl::math::Vector3 tmpPoint2;
@@ -78,7 +78,7 @@ namespace rl
 					{
 						for (::rl::sg::Model::Iterator j = (*i)->begin(); j != (*i)->end(); ++j)
 						{
-							::rl::math::Real tmpDistance = dynamic_cast< ::rl::sg::DistanceScene* >(this->scene)->distance(this->model->getBody(body), *j, tmpPoint1, tmpPoint2);
+							::rl::math::Real tmpDistance = dynamic_cast< ::rl::sg::DistanceScene*>(this->scene)->distance(this->model->getBody(body), *j, tmpPoint1, tmpPoint2);
 							
 							if (tmpDistance < distance)
 							{
@@ -96,7 +96,7 @@ namespace rl
 					{
 						if (this->areColliding(body, i))
 						{
-							::rl::math::Real tmpDistance = dynamic_cast< ::rl::sg::DistanceScene* >(this->scene)->distance(this->model->getBody(body), this->model->getBody(i), tmpPoint1, tmpPoint2);
+							::rl::math::Real tmpDistance = dynamic_cast< ::rl::sg::DistanceScene*>(this->scene)->distance(this->model->getBody(body), this->model->getBody(i), tmpPoint1, tmpPoint2);
 							
 							if (tmpDistance < distance)
 							{
@@ -139,7 +139,7 @@ namespace rl
 									::rl::math::Vector3 tmpPoint1;
 									::rl::math::Vector3 tmpPoint2;
 									
-									::rl::math::Real tmpDistance = dynamic_cast< ::rl::sg::DistanceScene* >(this->scene)->distance(
+									::rl::math::Real tmpDistance = dynamic_cast< ::rl::sg::DistanceScene*>(this->scene)->distance(
 										*k,
 										*l,
 										tmpPoint1,
@@ -168,7 +168,7 @@ namespace rl
 									::rl::math::Vector3 tmpPoint1;
 									::rl::math::Vector3 tmpPoint2;
 									
-									::rl::math::Real tmpDistance = dynamic_cast< ::rl::sg::DistanceScene* >(this->scene)->distance(
+									::rl::math::Real tmpDistance = dynamic_cast< ::rl::sg::DistanceScene*>(this->scene)->distance(
 										*k,
 										*l,
 										tmpPoint1,

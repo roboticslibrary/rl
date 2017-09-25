@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_MDL_ELEMENT_H_
-#define _RL_MDL_ELEMENT_H_
+#ifndef RL_MDL_ELEMENT_H
+#define RL_MDL_ELEMENT_H
 
 #include <string>
 #include <rl/math/Real.h>
@@ -75,4 +75,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_MDL_ELEMENT_H_
+#endif // RL_MDL_ELEMENT_H

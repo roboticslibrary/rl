@@ -30,8 +30,8 @@ namespace rl
 {
 	namespace hal
 	{
-		JointPositionSensor::JointPositionSensor(const ::std::size_t& dof, const ::rl::math::Real& updateRate) :
-			AxisController(dof, updateRate)
+		JointPositionSensor::JointPositionSensor(const ::std::size_t& dof) :
+			AxisController(dof)
 		{
 		}
 		

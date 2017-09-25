@@ -1,5 +1,3 @@
-project(rlHalEndianTest)
-
 add_executable(
 	rlHalEndianTest
 	rlHalEndianTest.cpp
@@ -7,7 +5,7 @@ add_executable(
 
 target_link_libraries(
 	rlHalEndianTest
-	rlhal
+	hal
 )
 
 add_test(

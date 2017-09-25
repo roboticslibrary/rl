@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_PLAN_VECTOR3LIST_H_
-#define _RL_PLAN_VECTOR3LIST_H_
+#ifndef RL_PLAN_VECTOR3LIST_H
+#define RL_PLAN_VECTOR3LIST_H
 
 #include <list>
 #include <rl/math/Vector.h>
@@ -34,8 +34,8 @@ namespace rl
 {
 	namespace plan
 	{
-		typedef ::std::list< ::rl::math::Vector3 > Vector3List;
+		typedef ::std::list< ::rl::math::Vector3> Vector3List;
 	}
 }
 
-#endif // _RL_PLAN_VECTOR3LIST_H_
+#endif // RL_PLAN_VECTOR3LIST_H

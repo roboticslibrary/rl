@@ -51,13 +51,14 @@ OperationalModel::columnCount(const QModelIndex& parent) const
 void
 OperationalModel::configurationChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight)
 {
-	this->reset();
+	this->beginResetModel();
+	this->endResetModel();
 }
 
 QVariant
 OperationalModel::data(const QModelIndex& index, int role) const
 {
-	if (NULL == MainWindow::instance()->kinematicModels[this->id])
+	if (nullptr == MainWindow::instance()->kinematicModels[this->id])
 	{
 		return QVariant();
 	}
@@ -67,41 +68,48 @@ OperationalModel::data(const QModelIndex& index, int role) const
 		return QVariant();
 	}
 	
+	const rl::math::Transform& transform = MainWindow::instance()->kinematicModels[this->id]->forwardPosition(index.row());
+	rl::math::Transform::ConstTranslationPart position = transform.translation();
+	rl::math::Vector3 orientation = transform.rotation().eulerAngles(2, 1, 0).reverse();
+	
 	switch (role)
 	{
 	case Qt::DisplayRole:
-	case Qt::EditRole:
+		switch (index.column())
 		{
-			const rl::math::Transform::ConstTranslationPart& position = MainWindow::instance()->kinematicModels[this->id]->forwardPosition(index.row()).translation();
-			rl::math::Vector3 orientation = MainWindow::instance()->kinematicModels[this->id]->forwardPosition(index.row()).rotation().eulerAngles(2, 1, 0).reverse();
-			
-			switch (index.column())
-			{
-			case 0:
-				return position.x();
-				break;
-			case 1:
-				return position.y();
-				break;
-			case 2:
-				return position.z();
-				break;
-			case 3:
-				return orientation.x() * rl::math::RAD2DEG;
-				break;
-			case 4:
-				return orientation.y() * rl::math::RAD2DEG;
-				break;
-			case 5:
-				return orientation.z() * rl::math::RAD2DEG;
-				break;
-			default:
-				break;
-			}
+		case 0:
+		case 1:
+		case 2:
+			return QString::number(position(index.column()), 'f', 4) + QString(" m");
+			break;
+		case 3:
+		case 4:
+		case 5:
+			return QString::number(orientation(index.column() - 3) * rl::math::RAD2DEG, 'f', 2) + QChar(176);
+			break;
+		default:
+			break;
+		}
+		break;
+	case Qt::EditRole:
+		switch (index.column())
+		{
+		case 0:
+		case 1:
+		case 2:
+			return position(index.column());
+			break;
+		case 3:
+		case 4:
+		case 5:
+			return orientation(index.column() - 3) * rl::math::RAD2DEG;
+			break;
+		default:
+			break;
 		}
 		break;
 	case Qt::TextAlignmentRole:
-		return Qt::AlignRight;
+		return QVariant(Qt::AlignRight | Qt::AlignVCenter);
 		break;
 	default:
 		break;
@@ -124,7 +132,7 @@ OperationalModel::flags(const QModelIndex &index) const
 QVariant
 OperationalModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-	if (NULL == MainWindow::instance()->kinematicModels[this->id])
+	if (nullptr == MainWindow::instance()->kinematicModels[this->id])
 	{
 		return QVariant();
 	}
@@ -167,7 +175,7 @@ OperationalModel::headerData(int section, Qt::Orientation orientation, int role)
 int
 OperationalModel::rowCount(const QModelIndex& parent) const
 {
-	if (NULL == MainWindow::instance()->kinematicModels[this->id])
+	if (nullptr == MainWindow::instance()->kinematicModels[this->id])
 	{
 		return 0;
 	}
@@ -178,46 +186,40 @@ OperationalModel::rowCount(const QModelIndex& parent) const
 bool
 OperationalModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
-	if (NULL == MainWindow::instance()->kinematicModels[this->id])
+	if (nullptr == MainWindow::instance()->kinematicModels[this->id])
 	{
 		return false;
 	}
 	
 	if (index.isValid() && Qt::EditRole == role)
 	{
-		rl::math::Transform x = MainWindow::instance()->kinematicModels[this->id]->forwardPosition(index.row());
-		
-		rl::math::Transform::TranslationPart position = x.translation();
-		rl::math::Vector3 orientation = x.linear().eulerAngles(2, 1, 0).reverse();
+		rl::math::Transform transform = MainWindow::instance()->kinematicModels[this->id]->forwardPosition(index.row());
+		rl::math::Vector3 orientation = transform.linear().eulerAngles(2, 1, 0).reverse();
 		
 		switch (index.column())
 		{
 		case 0:
-			x.translation().x() = value.value< rl::math::Real >();
-			break;
 		case 1:
-			x.translation().y() = value.value< rl::math::Real >();
-			break;
 		case 2:
-			x.translation().z() = value.value< rl::math::Real >();
+			transform.translation()(index.column()) = value.value<rl::math::Real>();
 			break;
 		case 3:
-			x.linear() = (
+			transform.linear() = (
 				rl::math::AngleAxis(orientation.z(), rl::math::Vector3::UnitZ()) *
 				rl::math::AngleAxis(orientation.y(), rl::math::Vector3::UnitY()) *
-				rl::math::AngleAxis(value.value< rl::math::Real >() * rl::math::DEG2RAD, rl::math::Vector3::UnitX())
+				rl::math::AngleAxis(value.value<rl::math::Real>() * rl::math::DEG2RAD, rl::math::Vector3::UnitX())
 			).toRotationMatrix();
 			break;
 		case 4:
-			x.linear() = (
+			transform.linear() = (
 				rl::math::AngleAxis(orientation.z(), rl::math::Vector3::UnitZ()) *
-				rl::math::AngleAxis(value.value< rl::math::Real >() * rl::math::DEG2RAD, rl::math::Vector3::UnitY()) *
+				rl::math::AngleAxis(value.value<rl::math::Real>() * rl::math::DEG2RAD, rl::math::Vector3::UnitY()) *
 				rl::math::AngleAxis(orientation.x(), rl::math::Vector3::UnitX())
 			).toRotationMatrix();
 			break;
 		case 5:
-			x.linear() = (
-				rl::math::AngleAxis(value.value< rl::math::Real >() * rl::math::DEG2RAD, rl::math::Vector3::UnitZ()) *
+			transform.linear() = (
+				rl::math::AngleAxis(value.value<rl::math::Real>() * rl::math::DEG2RAD, rl::math::Vector3::UnitZ()) *
 				rl::math::AngleAxis(orientation.y(), rl::math::Vector3::UnitY()) *
 				rl::math::AngleAxis(orientation.x(), rl::math::Vector3::UnitX())
 			).toRotationMatrix();
@@ -230,7 +232,7 @@ OperationalModel::setData(const QModelIndex& index, const QVariant& value, int r
 		MainWindow::instance()->kinematicModels[this->id]->getPosition(q);
 		rl::math::Vector qInv(MainWindow::instance()->kinematicModels[this->id]->getDof());
 		
-		if (MainWindow::instance()->kinematicModels[this->id]->inversePosition(x, qInv, index.row(), 1.0f))
+		if (MainWindow::instance()->kinematicModels[this->id]->inversePosition(transform, qInv, index.row(), 1.0f))
 		{
 			MainWindow::instance()->kinematicModels[this->id]->setPosition(qInv);
 			MainWindow::instance()->kinematicModels[this->id]->updateFrames();

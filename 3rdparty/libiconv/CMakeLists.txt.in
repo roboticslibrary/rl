@@ -1,0 +1,843 @@
+cmake_minimum_required(VERSION 2.8.11)
+
+project(libiconv)
+
+include(CheckCCompilerFlag)
+include(CheckCSourceCompiles)
+include(CheckCSourceRuns)
+include(CheckFunctionExists)
+include(CheckIncludeFiles)
+include(CheckSymbolExists)
+include(CheckTypeSize)
+include(CMakePackageConfigHelpers)
+include(GNUInstallDirs)
+include(TestBigEndian)
+
+function(CHECK_RAW_SYMBOL_EXISTS SYMBOL FILES VARIABLE)
+	foreach(FILE ${FILES})
+		list(APPEND SOURCE "#include <${FILE}>\n")
+	endforeach()
+	list(APPEND SOURCE "int main()\n{\n#undef ${SYMBOL}\n(void) ${SYMBOL};\nreturn 0;\n}")
+	check_c_source_compiles("${SOURCE}" "${VARIABLE}")
+endfunction()
+
+set(CMAKE_IMPORT_LIBRARY_PREFIX "")
+set(CMAKE_SHARED_LIBRARY_PREFIX "")
+set(CMAKE_STATIC_LIBRARY_PREFIX "")
+
+set(VERSION_MAJOR 1)
+set(VERSION_MINOR 15)
+set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR})
+
+option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+
+check_type_size("ptrdiff_t" BITSIZEOF_PTRDIFF_T)
+set(CMAKE_EXTRA_INCLUDE_FILES "signal.h")
+check_type_size("sig_atomic_t" BITSIZEOF_SIG_ATOMIC_T)
+unset(CMAKE_EXTRA_INCLUDE_FILES)
+check_type_size("size_t" BITSIZEOF_SIZE_T)
+check_type_size("wchar_t" BITSIZEOF_WCHAR_T)
+check_type_size("wint_t" BITSIZEOF_WINT_T)
+#CRAY_STACKSEG_END
+#C_ALLOCA
+#DOUBLE_SLASH_IS_DISTINCT_ROOT
+check_symbol_exists(EILSEQ "errno.h" HAVE_EILSEQ)
+if(NOT HAVE_EILSEQ)
+	set(EILSEQ "ENOENT")
+endif()
+option(ENABLE_EXTRA "Enable a few rarely used encodings" OFF)
+option(ENABLE_NLS "Translate program messages to user's native language" OFF)
+option(ENABLE_RELOCATABLE "Install a package that can be moved in the file system" ON)
+check_c_source_runs("
+	#include <signal.h>
+	static void exception_handler(int sig) { exit (1); }
+	static void nocrash_init(void)
+	{
+	#ifdef SIGSEGV
+		signal (SIGSEGV, exception_handler);
+	#endif
+	#ifdef SIGBUS
+		signal (SIGBUS, exception_handler);
+	#endif
+	}
+	#include <stdlib.h>
+	#include <string.h>
+	int main()
+	{
+		int result = 0;
+		{
+			char *name = realpath(\"${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt\", NULL);
+			if (!(name && *name == '/')) result |= 1;
+		}
+		{
+			char *name = realpath(\"conftest.b/../conftest.a\", NULL);
+			if (name != NULL) result |= 2;
+		}
+		{
+			char *name = realpath(\"${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt/\", NULL);
+			if (name != NULL) result |= 4;
+		}
+		{
+			char *name1 = realpath(\".\", NULL);
+			char *name2 = realpath(\"${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles//./..\", NULL);
+			if (strcmp(name1, name2) != 0) result |= 8;
+		}
+		return result;
+	}
+" FUNC_REALPATH_WORKS)
+set(GNULIB_CANONICALIZE_LGPL ON)
+#GNULIB_SIGPIPE
+check_c_source_runs("
+	#include <string.h>
+	int main() { if (!*strerror(-2)) return 1; return 0; }
+" GNULIB_STRERROR)
+set(GNULIB_TEST_CANONICALIZE_FILE_NAME 1)
+set(GNULIB_TEST_ENVIRON ON)
+set(GNULIB_TEST_LSTAT ON)
+set(GNULIB_TEST_READ ON)
+set(GNULIB_TEST_READLINK ON)
+set(GNULIB_TEST_REALPATH ON)
+set(GNULIB_TEST_SIGPROCMASK ON)
+set(GNULIB_TEST_STAT ON)
+set(GNULIB_TEST_STRERROR ON)
+check_symbol_exists(alloca "alloca.h" HAVE_ALLOCA)
+check_include_files(alloca.h HAVE_ALLOCA_H)
+#HAVE_CANONICALIZE_FILE_NAME
+check_c_source_compiles("
+	#include <CoreFoundation/CFLocale.h>
+	int main() { CFLocaleCopyCurrent(); return 0; }
+" HAVE_CFLOCALECOPYCURRENT)
+check_c_source_compiles("
+	#include <CoreFoundation/CFPreferences.h>
+	int main() { CFPreferencesCopyAppValue(NULL, NULL); return 0; }
+" HAVE_CFPREFERENCESCOPYAPPVALUE)
+check_function_exists(dcgettext HAVE_DCGETTEXT)
+check_symbol_exists(clearerr_unlocked "stdio.h" HAVE_DECL_CLEARERR_UNLOCKED)
+check_symbol_exists(feof_unlocked "stdio.h" HAVE_DECL_FEOF_UNLOCKED)
+check_symbol_exists(ferror_unlocked "stdio.h" HAVE_DECL_FERROR_UNLOCKED)
+check_symbol_exists(fflush_unlocked "stdio.h" HAVE_DECL_FFLUSH_UNLOCKED)
+check_symbol_exists(fgets_unlocked "stdio.h" HAVE_DECL_FGETS_UNLOCKED)
+check_symbol_exists(fputc_unlocked "stdio.h" HAVE_DECL_FPUTC_UNLOCKED)
+check_symbol_exists(fputs_unlocked "stdio.h" HAVE_DECL_FPUTS_UNLOCKED)
+check_symbol_exists(fread_unlocked "stdio.h" HAVE_DECL_FREAD_UNLOCKED)
+check_symbol_exists(fwrite_unlocked "stdio.h" HAVE_DECL_FWRITE_UNLOCKED)
+check_symbol_exists(getchar_unlocked "stdio.h" HAVE_DECL_GETCHAR_UNLOCKED)
+check_symbol_exists(getc_unlocked "stdio.h" HAVE_DECL_GETC_UNLOCKED)
+check_symbol_exists(program_invocation_name "errno.h" HAVE_DECL_PROGRAM_INVOCATION_NAME)
+check_symbol_exists(program_invocation_short_name "errno.h" HAVE_DECL_PROGRAM_INVOCATION_SHORT_NAME)
+check_symbol_exists(putchar_unlocked "stdio.h" HAVE_DECL_PUTCHAR_UNLOCKED)
+check_symbol_exists(putc_unlocked "stdio.h" HAVE_DECL_PUTC_UNLOCKED)
+check_symbol_exists(setenv "stdlib.h" HAVE_DECL_SETENV)
+check_symbol_exists(strerror_r "string.h" HAVE_DECL_STRERROR_R)
+check_include_files(dlfcn.h HAVE_DLFCN_H)
+check_c_source_compiles("
+	#include <unistd.h>
+	extern struct { int foo; } environ;
+	int main() { environ.foo = 1; return 0; }
+" HAVE_ENVIRON_DECL)
+check_function_exists(getcwd HAVE_GETCWD)
+check_function_exists(getc_unlocked HAVE_GETC_UNLOCKED)
+check_function_exists(iconv HAVE_ICONV)
+check_include_files(inttypes.h HAVE_INTTYPES_H)
+check_c_source_compiles("
+	#include <langinfo.h>
+	int main() { char* cs = nl_langinfo(CODESET); return !cs; }
+" HAVE_LANGINFO_CODESET)
+check_type_size("long long int" LONG_LONG_INT)
+check_function_exists(lstat HAVE_LSTAT)
+check_include_files(mach-o/dyld.h HAVE_MACH_O_DYLD_H)
+check_function_exists(mbrtowc HAVE_MBRTOWC)
+check_function_exists(mbsinit HAVE_MBSINIT)
+check_c_source_compiles("
+	#include <stddef.h>
+	#include <stdio.h>
+	#include <time.h>
+	#include <wchar.h>
+	int main() { mbstate_t x; return sizeof x; }
+" HAVE_MBSTATE_T)
+check_function_exists(memmove HAVE_MEMMOVE)
+check_include_files(memory.h HAVE_MEMORY_H)
+foreach(
+	FUNCTION
+	"chown" "dup2" "dup3" "endusershell" "environ" "euidaccess" "faccessat" "fchdir"
+	"fchownat" "fsync" "ftruncate" "getcwd" "getdomainname" "getdtablesize" "getgroups"
+	"gethostname" "getlogin" "getlogin_r" "getpagesize" "getusershell" "group_member" "lchown"
+	"link" "linkat" "lseek" "pipe" "pipe2" "pread" "pwrite" "readlink" "readlinkat" "rmdir"
+	"setusershell" "sleep" "symlink" "symlinkat" "ttyname_r" "unlink" "unlinkat" "usleep"
+)
+	string(TOUPPER ${FUNCTION} FUNCTION_UPPER)
+	check_c_source_compiles("
+		#include <unistd.h>
+		#if !(defined(__GLIBC__) && !defined(__UCLIBC__))
+		#include <fcntl.h>
+		#include <stdio.h>
+		#include <stdlib.h>
+		#if (defined(_WIN32) || defined(__WIN32__)) && !defined(__CYGWIN__)
+		#include <io.h>
+		#endif
+		#endif
+		int main () {
+		#undef ${FUNCTION}
+			(void) ${FUNCTION}; return 0;
+		}
+	" HAVE_RAW_DECL_${FUNCTION_UPPER})
+endforeach()
+foreach(FUNCTION "dprintf" "fpurge" "fseeko" "ftello" "getdelim" "getline" "popen" "renameat" "snprintf" "tmpfile" "vdprintf" "vsnprintf")
+	string(TOUPPER ${FUNCTION} FUNCTION_UPPER)
+	check_raw_symbol_exists(${FUNCTION} "stdio.h" HAVE_RAW_DECL_${FUNCTION_UPPER})
+endforeach()
+foreach(FUNCTION "fchmodat" "fstatat" "futimens" "lchmod" "lstat" "mkdirat" "mkfifo" "mkfifoat" "mknod" "mknodat" "stat" "utimensat")
+	string(TOUPPER ${FUNCTION} FUNCTION_UPPER)
+	check_raw_symbol_exists(${FUNCTION} "sys/stat.h" HAVE_RAW_DECL_${FUNCTION_UPPER})
+endforeach()
+foreach(FUNCTION "fcntl" "openat")
+	string(TOUPPER ${FUNCTION} FUNCTION_UPPER)
+	check_raw_symbol_exists(${FUNCTION} "fcntl.h" HAVE_RAW_DECL_${FUNCTION_UPPER})
+endforeach()
+foreach(FUNCTION "ffsl" "ffsll" "memmem" "mempcpy" "memrchr" "rawmemchr" "stpcpy" "stpncpy" "strcasestr" "strchrnul" "strdup" "strerror_r" "strncat" "strndup" "strnlen" "strpbrk" "strsep" "strsignal" "strtok_r" "strverscmp")
+	string(TOUPPER ${FUNCTION} FUNCTION_UPPER)
+	check_raw_symbol_exists(${FUNCTION} "string.h" HAVE_RAW_DECL_${FUNCTION_UPPER})
+endforeach()
+foreach(FUNCTION "pthread_sigmask" "sigaction" "sigaddset" "sigdelset" "sigemptyset" "sigfillset" "sigismember" "sigpending" "sigprocmask")
+	string(TOUPPER ${FUNCTION} FUNCTION_UPPER)
+	check_raw_symbol_exists(${FUNCTION} "signal.h" HAVE_RAW_DECL_${FUNCTION_UPPER})
+endforeach()
+check_function_exists(readlink HAVE_READLINK)
+check_function_exists(readlinkat HAVE_READLINKAT)
+check_function_exists(realpath HAVE_REALPATH)
+check_include_files(search.h HAVE_SEARCH_H)
+check_function_exists(setenv HAVE_SETENV)
+check_function_exists(setlocale HAVE_SETLOCALE)
+#HAVE_SIGNED_SIG_ATOMIC_T
+#HAVE_SIGNED_WCHAR_T
+#HAVE_SIGNED_WINT_T
+check_symbol_exists(sigset_t "signal.h;sys/types.h" HAVE_SIGSET_T)
+check_include_files(stdint.h HAVE_STDINT_H)
+check_include_files(stdlib.h HAVE_STDLIB_H)
+check_function_exists(strerror_r HAVE_STRERROR_R)
+check_include_files(strings.h HAVE_STRINGS_H)
+check_include_files(string.h HAVE_STRING_H)
+check_include_files(sys/bitypes.h HAVE_SYS_BITYPES_H)
+check_include_files(sys/inttypes.h HAVE_SYS_INTTYPES_H)
+check_include_files(sys/loadavg.h HAVE_SYS_LOADAVG_H)
+check_include_files(sys/param.h HAVE_SYS_PARAM_H)
+check_include_files(sys/socket.h HAVE_SYS_SOCKET_H)
+check_include_files(sys/stat.h HAVE_SYS_STAT_H)
+check_include_files(sys/time.h HAVE_SYS_TIME_H)
+check_include_files(sys/types.h HAVE_SYS_TYPES_H)
+check_function_exists(tsearch HAVE_TSEARCH)
+check_include_files(unistd.h HAVE_UNISTD_H)
+check_type_size("unsigned long long int" UNSIGNED_LONG_LONG_INT)
+check_c_compiler_flag("-fvisibility=hidden -Werror" HAVE_VISIBILITY)
+check_include_files(wchar.h HAVE_WCHAR_H)
+check_type_size(wchar_t WCHAR_T)
+check_function_exists(wcrtomb HAVE_WCRTOMB)
+check_include_files(winsock2.h HAVE_WINSOCK2_H)
+check_c_source_runs("
+	#include <sys/types.h>
+	#include <sys/stat.h>
+	#include <unistd.h>
+	#include <fcntl.h>
+	#ifndef O_NOATIME
+	#define O_NOATIME 0
+	#endif
+	#ifndef O_NOFOLLOW
+	#define O_NOFOLLOW 0
+	#endif
+	static int const constants[] = { O_CREAT, O_EXCL, O_NOCTTY, O_TRUNC, O_APPEND, O_NONBLOCK, O_SYNC, O_ACCMODE, O_RDONLY, O_RDWR, O_WRONLY };
+	int main()
+	{
+		int status = !constants;
+		{
+			static char const sym[] = \"conftest.sym\";
+			if (symlink(\".\", sym) != 0 || close(open(sym, O_RDONLY | O_NOFOLLOW)) == 0)
+				status |= 32;
+			unlink(sym);
+		}
+		{
+			static char const file[] = \"${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt\";
+			int fd = open(file, O_RDONLY | O_NOATIME);
+			char c; struct stat st0, st1;
+			if (fd < 0 || fstat(fd, &st0) != 0 || sleep(1) != 0 || read(fd, &c, 1) != 1 || close(fd) != 0 || stat(file, &st1) != 0 || st0.st_atime != st1.st_atime)
+				status |= 64;
+		}
+		return status;
+	}
+" HAVE_WORKING_O_NOATIME_O_NOFOLLOW)
+if(HAVE_WORKING_O_NOATIME_O_NOFOLLOW)
+	set(HAVE_WORKING_O_NOATIME 1)
+	set(HAVE_WORKING_O_NOFOLLOW 1)
+elseif(HAVE_WORKING_O_NOATIME_O_NOFOLLOW_EXITCODE EQUAL "32")
+	set(HAVE_WORKING_O_NOATIME 1)
+	set(HAVE_WORKING_O_NOFOLLOW 0)
+elseif(HAVE_WORKING_O_NOATIME_O_NOFOLLOW_EXITCODE EQUAL "64")
+	set(HAVE_WORKING_O_NOATIME 0)
+	set(HAVE_WORKING_O_NOFOLLOW 1)
+else()
+	set(HAVE_WORKING_O_NOATIME 0)
+	set(HAVE_WORKING_O_NOFOLLOW 0)
+endif()
+check_type_size("_Bool" _BOOL)
+check_c_source_compiles("
+	#include <mach-o/dyld.h>
+	int main() { _NSGetExecutablePath(NULL, NULL); return 0; }
+" HAVE__NSGETEXECUTABLEPATH)
+check_c_source_compiles("
+	#include <stdlib.h>
+	#include <iconv.h>
+	extern
+	#ifdef __cplusplus
+	\"C\"
+	#endif
+	#if defined(__STDC__) || defined(__cplusplus)
+	size_t iconv(iconv_t cd, char** inbuf, size_t* inbytesleft, char** outbuf, size_t* outbytesleft);
+	#else
+	size_t iconv();
+	#endif
+	int main() { return 0; }
+" ICONV_CONST_TEST)
+if(NOT ICONV_CONST_TEST)
+	set(ICONV_CONST "const")
+endif()
+set(INSTALLPREFIX ${CMAKE_INSTALL_PREFIX})
+if(UNIX)
+	execute_process(COMMAND "${CMAKE_COMMAND}" "-E" "create_symlink" "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt" "${CMAKE_CURRENT_BINARY_DIR}/conftest.sym")
+	check_c_source_runs("
+		#include <sys/stat.h>
+		int main() { struct stat sbuf; return lstat(\"${CMAKE_CURRENT_BINARY_DIR}/conftest.sym/\", &sbuf) == 0; }
+	" LSTAT_FOLLOWS_SLASHED_SYMLINK)
+endif()
+#LT_OBJDIR
+#NO_MINUS_C_MINUS_O
+set(PACKAGE "libiconv")
+set(PACKAGE_BUGREPORT "bug-gnu-libiconv@gnu.org")
+set(PACKAGE_NAME "libiconv")
+set(PACKAGE_STRING "libiconv ${VERSION}")
+set(PACKAGE_TARNAME "libiconv")
+set(PACKAGE_URL "https://www.gnu.org/software/libiconv/")
+set(PACKAGE_VERSION ${VERSION})
+#PTRDIFF_T_SUFFIX
+#READLINK_TRAILING_SLASH_BUG
+check_c_source_runs("
+	#include <string.h>
+	#include <errno.h>
+	int main() {
+	int result = 0;
+	   char *str; errno = 0; str = strerror(0);
+	   if (!*str) result |= 1;
+	   if (errno) result |= 2;
+	   if (strstr(str, \"nknown\") || strstr(str, \"ndefined\")) result |= 4;
+	   return result;
+	}
+" HAVE_WORKING_STRERROR_0)
+if(HAVE_WORKING_STRERROR_0)
+	set(REPLACE_STRERROR_0 OFF)
+else()
+	set(REPLACE_STRERROR_0 ON)
+endif()
+#SIG_ATOMIC_T_SUFFIX
+#SIZE_T_SUFFIX
+#STACK_DIRECTION
+check_c_source_compiles("
+	#include <sys/types.h>
+	#include <sys/stat.h>
+	#if defined(S_ISBLK) && defined(S_IFDIR)
+	extern char c1[S_ISBLK (S_IFDIR) ? -1 : 1];
+	#endif
+	#if defined(S_ISBLK) && defined(S_IFCHR)
+	extern char c2[S_ISBLK (S_IFCHR) ? -1 : 1];
+	#endif
+	#if defined(S_ISLNK) && defined(S_IFREG)
+	extern char c3[S_ISLNK (S_IFREG) ? -1 : 1];
+	#endif
+	#if defined(S_ISSOCK) && defined(S_IFREG)
+	extern char c4[S_ISSOCK (S_IFREG) ? -1 : 1];
+	#endif
+	int main() { return 0; }
+" STAT_MACROS_WORKING)
+if(STAT_MACROS_WORKING)
+	set(STAT_MACROS_BROKEN OFF)
+else()
+	set(STAT_MACROS_BROKEN ON)
+endif()
+check_include_files("assert.h;ctype.h;errno.h;float.h;limits.h;locale.h;math.h;setjmp.h;signal.h;stdarg.h;stddef.h;stdio.h;stdlib.h;string.h;time.h" STDC_HEADERS)
+check_c_source_runs("
+	extern char *strerror_r();
+	int main() { char buf[100]; char x = *strerror_r(0, buf, sizeof buf); return !isalpha(x); }
+" STRERROR_R_CHAR_P)
+#USER_LABEL_PREFIX
+#USE_UNLOCKED_IO
+#WCHAR_T_SUFFIX
+#WINT_T_SUFFIX
+test_big_endian(WORDS_BIGENDIAN)
+if(WORDS_BIGENDIAN)
+	set(WORDS_LITTLEENDIAN OFF)
+else()
+	set(WORDS_LITTLEENDIAN ON)
+endif()
+check_include_files(minix/config.h HAVE_MINIX_CONFIG_H)
+#_XOPEN_SOURCE
+set(_ALL_SOURCE ON)
+set(_DARWIN_C_SOURCE ON)
+set(_GNU_SOURCE ON)
+set(_POSIX_PTHREAD_SEMANTICS ON)
+set(_TANDEM_SOURCE ON)
+check_c_source_compiles("
+	#define __EXTENSIONS__ 1
+	int main() { return 0; }
+" __EXTENSIONS__)
+check_type_size("gid_t" GID_T)
+if(NOT HAVE_GID_T)
+	set(gid_t "int")
+endif()
+set(inline "")
+foreach(INLINE_KEYWORD "__inline" "__inline__" "inline")
+	check_c_source_compiles("
+		typedef int foo_t;
+		static ${INLINE_KEYWORD} foo_t static_foo() { return 0; }
+		${INLINE_KEYWORD} foo_t foo() { return 0; }
+		int main() { return 0; }
+	" HAVE_INLINE_KEYWORD)
+	if(HAVE_INLINE_KEYWORD)
+		set(inline ${INLINE_KEYWORD})
+	endif()
+endforeach()
+if("x${inline}" STREQUAL "xinline")
+	unset(inline)
+endif()
+if(NOT HAVE_MBSTATE_T)
+	set(mbstate_t "int")
+endif()
+check_type_size("nlink_t" NLINK_T)
+if(NOT HAVE_NLINK_T)
+	set(NLINK_T "int")
+endif()
+set(restrict "")
+foreach(RESTRICT_KEYWORD "__restrict" "__restrict__" "_Restrict" "restrict")
+	check_c_source_compiles("
+		typedef int* int_ptr;
+		int foo (int_ptr ${RESTRICT_KEYWORD} ip) { return ip[0]; }
+		int main() { int s[1]; int* ${RESTRICT_KEYWORD} t = s; t[0] = 0; return foo(t); }
+	" HAVE_RESTRICT_KEYWORD)
+	if(HAVE_RESTRICT_KEYWORD)
+		set(restrict ${RESTRICT_KEYWORD})
+	endif()
+endforeach()
+if("x${restrict}" STREQUAL "xrestrict")
+	unset(restrict)
+endif()
+check_type_size("size_t" SIZE_T)
+if(NOT HAVE_SIZE_T)
+	set(size_t "unsigned int")
+endif()
+check_type_size("ssize_t" SSIZE_T)
+if(NOT HAVE_SSIZE_T)
+	set(ssize_t "int")
+endif()
+check_type_size("uid_t" UID_T)
+if(NOT HAVE_UID_T)
+	set(uid_t "int")
+endif()
+
+if(HAVE_LSTAT)
+	if(UNIX)
+		execute_process(COMMAND "${CMAKE_COMMAND}" "-E" "create_symlink" "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt" "${CMAKE_CURRENT_BINARY_DIR}/conftest.sym")
+	endif()
+	list(APPEND CMAKE_REQUIRED_DEFINITIONS -DHAVE_LSTAT)
+endif()
+check_c_source_runs("
+	#include <sys/stat.h>
+	int main() {
+		int result = 0;
+		struct stat st;
+		if (!stat(\"${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt/\", &st)) result |= 1;
+	#if HAVE_LSTAT
+		if (!stat(\"${CMAKE_CURRENT_BINARY_DIR}/conftest.sym/\", &st)) result |= 2;
+	#endif
+		return result;
+	}
+" HAVE_WORKING_FUNC_STAT_DIR_FILE)
+if(HAVE_WORKING_FUNC_STAT_DIR_FILE)
+	set(REPLACE_FUNC_STAT_DIR OFF)
+	set(REPLACE_FUNC_STAT_FILE OFF)
+else()
+	set(REPLACE_FUNC_STAT_DIR ON)
+	set(REPLACE_FUNC_STAT_FILE ON)
+endif()
+unset(CMAKE_REQUIRED_DEFINITIONS)
+
+foreach(
+	FUNCTION
+	"_Exit" "atoll" "canonicalize_file_name" "getloadavg" "getsubopt" "grantpt" "initstat_r"
+	"mkdtemp" "mkostemp" "mkostemps" "mkstemp" "mkstemps" "ptsname" "random_r" "realpath"
+	"rpmatch" "setenv" "setstate_r" "srandom_r" "strtod" "strtoll" "strtoull" "unlockpt" "unsetenv"
+)
+	string(TOUPPER ${FUNCTION} FUNCTION_UPPER)
+	set(FILES "stdlib.h")
+	if(HAVE_SYS_LOADAVG_H)
+		list(APPEND FILES "sys/loadavg.h")
+	endif()
+	if(HAVE_RANDOM_H)
+		list(APPEND FILES "random.h")
+	endif()
+	check_raw_symbol_exists(${FUNCTION} ${FILES} HAVE_RAW_DECL_${FUNCTION_UPPER})
+endforeach()
+
+if(STDC_HEADERS)
+	list(APPEND CMAKE_REQUIRED_DEFINITIONS -DSTDC_HEADERS)
+endif()
+if(HAVE_STDLIB_H)
+	list(APPEND CMAKE_REQUIRED_DEFINITIONS -DHAVE_STDLIB_H)
+endif()
+check_c_source_compiles("
+	#if defined(STDC_HEADERS) || defined(HAVE_STDLIB_H)
+	#include <stdlib.h>
+	#endif
+	int main() { return !malloc(0); }
+" MALLOC_0_IS_NONNULL)
+unset(CMAKE_REQUIRED_DEFINITIONS)
+
+if(HAVE_MINIX_CONFIG_H)
+	set(_MINIX ON)
+	set(_POSIX_1_SOURCE ON)
+	set(_POSIX_SOURCE ON)
+endif()
+
+configure_file(config.h.cmake.in config.h @ONLY)
+
+if(HAVE_MBSTATE_T)
+	set(USE_MBSTATE_T 1)
+else()
+	set(USE_MBSTATE_T 0)
+endif()
+
+if(HAVE_VISIBILTY)
+	list(APPEND CMAKE_C_FLAGS "-fvisibility=hidden")
+	list(APPEND CMAKE_CXX_FLAGS "-fvisibility=hidden")
+	set(HAVE_VISIBILITY 1)
+else()
+	set(HAVE_VISIBILITY 0)
+endif()
+
+if(HAVE_WCHAR_T)
+	set(BROKEN_WCHAR_H 0)
+	set(HAVE_WCHAR_T 1)
+else()
+	set(BROKEN_WCHAR_H 1)
+	set(HAVE_WCHAR_T 0)
+endif()
+
+if(HAVE_WINSOCK2_H)
+	set(UNISTD_H_HAVE_WINSOCK2_H 1)
+	set(SYS_IOCTL_H_HAVE_WINSOCK2_H 1)
+else()
+	set(UNISTD_H_HAVE_WINSOCK2_H 0)
+	set(SYS_IOCTL_H_HAVE_WINSOCK2_H 0)
+endif()
+
+configure_file(include/iconv.h.build.in include/iconv.h @ONLY)
+configure_file(libcharset/include/localcharset.h.build.in include/localcharset.h @ONLY)
+
+if(BUILD_SHARED_LIBS AND MSVC)
+	set(DLL_VARIABLE "__declspec (dllimport)")
+endif()
+
+configure_file(include/iconv.h.in include/iconv.h.inst @ONLY)
+configure_file(libcharset/include/libcharset.h.in include/libcharset.h @ONLY)
+
+add_library(
+	libcharset
+	libcharset/lib/localcharset.c
+	libcharset/lib/relocatable.c
+)
+
+target_compile_definitions(
+	libcharset
+	PRIVATE
+	-DBUILDING_LIBCHARSET
+	-DHAVE_CONFIG_H
+	-DIN_LIBRARY
+	-DINSTALLDIR="${CMAKE_INSTALL_LIBDIR}"
+	-DLIBDIR="${CMAKE_INSTALL_LIBDIR}"
+	-DNO_XMALLOC
+	-Drelocate=libcharset_relocate
+	-Dset_relocation_prefix=libcharset_set_relocation_prefix
+)
+
+if(BUILD_SHARED_LIBS)
+	target_compile_definitions(libcharset PRIVATE -D_DLL -DBUILDING_DLL)
+endif()
+
+if(ENABLE_EXTRA)
+	target_compile_definitions(libcharset PRIVATE -DENABLE_EXTRA=1)
+else()
+	target_compile_definitions(libcharset PRIVATE -DENABLE_EXTRA=0)
+endif()
+
+if(ENABLE_NLS)
+	target_compile_definitions(libcharset PRIVATE -DENABLE_NLS=1)
+else()
+	target_compile_definitions(libcharset PRIVATE -DENABLE_NLS=0)
+endif()
+
+if(ENABLE_RELOCATABLE)
+	target_compile_definitions(libcharset PRIVATE -DENABLE_RELOCATABLE=1)
+else()
+	target_compile_definitions(libcharset PRIVATE -DENABLE_RELOCATABLE=0)
+endif()
+
+target_include_directories(
+	libcharset
+	PUBLIC
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+	$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}>
+)
+
+set_target_properties(libcharset PROPERTIES DEBUG_POSTFIX d VERSION ${VERSION})
+
+add_library(
+	libiconv
+	lib/iconv.c
+	lib/relocatable.c
+	libcharset/lib/localcharset.c
+)
+
+target_compile_definitions(
+	libiconv
+	PRIVATE
+	-DBUILDING_LIBICONV
+	-DHAVE_CONFIG_H
+	-DIN_LIBRARY
+	-DINSTALLDIR="${CMAKE_INSTALL_LIBDIR}"
+	-DLIBDIR="${CMAKE_INSTALL_LIBDIR}"
+	-DNO_XMALLOC
+	-Drelocate=libiconv_relocate
+	-Dset_relocation_prefix=libiconv_set_relocation_prefix
+)
+
+if(BUILD_SHARED_LIBS)
+	target_compile_definitions(libiconv PRIVATE -D_DLL -DBUILDING_DLL)
+endif()
+
+if(ENABLE_EXTRA)
+	target_compile_definitions(libiconv PRIVATE -DENABLE_EXTRA=1)
+else()
+	target_compile_definitions(libiconv PRIVATE -DENABLE_EXTRA=0)
+endif()
+
+if(ENABLE_NLS)
+	target_compile_definitions(libiconv PRIVATE -DENABLE_NLS=1)
+else()
+	target_compile_definitions(libiconv PRIVATE -DENABLE_NLS=0)
+endif()
+
+if(ENABLE_RELOCATABLE)
+	target_compile_definitions(libiconv PRIVATE -DENABLE_RELOCATABLE=1)
+else()
+	target_compile_definitions(libiconv PRIVATE -DENABLE_RELOCATABLE=0)
+endif()
+
+target_include_directories(
+	libiconv
+	PUBLIC
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+	$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}>
+)
+
+target_link_libraries(libiconv libcharset)
+
+set_target_properties(libiconv PROPERTIES DEBUG_POSTFIX d VERSION ${VERSION})
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/include/iconv.h.inst DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} RENAME iconv.h COMPONENT development)
+
+install(
+	TARGETS	libcharset libiconv
+	EXPORT libiconv
+	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT development
+	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT runtime NAMELINK_SKIP
+	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT runtime
+)
+
+if(BUILD_SHARED_LIBS)
+	install(
+		TARGETS	libcharset libiconv
+		EXPORT libiconv
+		LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT development NAMELINK_ONLY
+	)
+endif()
+
+if(MSVC AND BUILD_SHARED_LIBS AND ${CMAKE_MAJOR_VERSION} GREATER 2 AND ${CMAKE_MINOR_VERSION} GREATER 0)
+	install(FILES $<TARGET_PDB_FILE:libcharset> DESTINATION ${CMAKE_INSTALL_BINDIR} CONFIGURATIONS Debug RelWithDebInfo COMPONENT debug)
+	install(FILES $<TARGET_PDB_FILE:libiconv> DESTINATION ${CMAKE_INSTALL_BINDIR} CONFIGURATIONS Debug RelWithDebInfo COMPONENT debug)
+endif()
+
+#configure_file(srclib/stdbool.in.h include/stdbool.h @ONLY)
+#configure_file(srclib/unistd.in.h include/unistd.h @ONLY)
+#configure_file(srclib/unitypes.in.h include/unitypes.h @ONLY)
+#configure_file(srclib/uniwidth.in.h include/uniwidth.h @ONLY)
+#
+#add_executable(
+#	iconv
+#	src/iconv.c
+#	srclib/allocator.c
+#	srclib/areadlink.c
+#	srclib/canonicalize-lgpl.c
+#	srclib/careadlinkat.c
+#	srclib/c-ctype.c
+#	srclib/error.c
+#	srclib/lstat.c
+#	srclib/malloca.c
+#	srclib/memmove.c
+#	srclib/progname.c
+#	srclib/progreloc.c
+#	srclib/read.c
+#	srclib/readlink.c
+#	srclib/relocwrapper.c
+#	srclib/safe-read.c
+#	srclib/setenv.c
+#	srclib/sigprocmask.c
+#	srclib/stat.c
+#	srclib/stdio-write.c
+#	srclib/strerror.c
+#	srclib/strerror-override.c
+#	srclib/xmalloc.c
+#	srclib/xreadlink.c
+#	srclib/xstrdup.c
+#)
+#
+#target_compile_definitions(
+#	iconv
+#	PRIVATE
+#	-DEXEEXT="${CMAKE_EXECUTABLE_SUFFIX}"
+#	-DINSTALLDIR="${CMAKE_INSTALL_BINDIR}"
+#	-DINSTALLPREFIX="${CMAKE_INSTALL_PREFIX}"
+#	-DLIBPATHVAR=""
+#	-DLIBDIRS=""
+#	-DLOCALEDIR="${CMAKE_INSTALL_LOCALEDIR}"
+#	-DNO_XMALLOC
+#)
+#
+#if(ENABLE_EXTRA)
+#	target_compile_definitions(iconv PRIVATE -DENABLE_EXTRA=1)
+#else()
+#	target_compile_definitions(iconv PRIVATE -DENABLE_EXTRA=0)
+#endif()
+#
+#if(ENABLE_NLS)
+#	target_compile_definitions(iconv PRIVATE -DENABLE_NLS=1)
+#else()
+#	target_compile_definitions(iconv PRIVATE -DENABLE_NLS=0)
+#endif()
+#
+#if(ENABLE_RELOCATABLE)
+#	target_compile_definitions(iconv PRIVATE -DENABLE_RELOCATABLE=1)
+#else()
+#	target_compile_definitions(iconv PRIVATE -DENABLE_RELOCATABLE=0)
+#endif()
+#
+#target_include_directories(
+#	iconv
+#	PUBLIC
+#	$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+#	$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+#	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/srclib>
+#)
+#
+#target_link_libraries(iconv libiconv)
+#
+#install(
+#	TARGETS	iconv
+#	COMPONENT programs
+#	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+#	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+#	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+#)
+
+install(FILES man/iconv.1 DESTINATION ${CMAKE_INSTALL_MANDIR}/man1 COMPONENT documentation)
+install(FILES man/iconv.3 DESTINATION ${CMAKE_INSTALL_MANDIR}/man3 COMPONENT documentation)
+install(FILES man/iconv_close.3 DESTINATION ${CMAKE_INSTALL_MANDIR}/man3 COMPONENT documentation)
+install(FILES man/iconv_open.3 DESTINATION ${CMAKE_INSTALL_MANDIR}/man3 COMPONENT documentation)
+install(FILES man/iconv_open_into.3 DESTINATION ${CMAKE_INSTALL_MANDIR}/man3 COMPONENT documentation)
+install(FILES man/iconvctl.3 DESTINATION ${CMAKE_INSTALL_MANDIR}/man3 COMPONENT documentation)
+
+install(FILES man/iconv.1.html DESTINATION ${CMAKE_INSTALL_DATADIR}/doc/libiconv COMPONENT documentation)
+install(FILES man/iconv.3.html DESTINATION ${CMAKE_INSTALL_DATADIR}/doc/libiconv COMPONENT documentation)
+install(FILES man/iconv_close.3.html DESTINATION ${CMAKE_INSTALL_DATADIR}/doc/libiconv COMPONENT documentation)
+install(FILES man/iconv_open.3.html DESTINATION ${CMAKE_INSTALL_DATADIR}/doc/libiconv COMPONENT documentation)
+install(FILES man/iconv_open_into.3.html DESTINATION ${CMAKE_INSTALL_DATADIR}/doc/libiconv COMPONENT documentation)
+install(FILES man/iconvctl.3.html DESTINATION ${CMAKE_INSTALL_DATADIR}/doc/libiconv COMPONENT documentation)
+
+configure_package_config_file(
+  libiconv-config.cmake.in libiconv-config.cmake
+  INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/libiconv-${VERSION}
+)
+
+install(
+	FILES ${CMAKE_CURRENT_BINARY_DIR}/libiconv-config.cmake
+	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/libiconv-${VERSION}
+)
+
+write_basic_package_version_file(
+	${CMAKE_CURRENT_BINARY_DIR}/libiconv-config-version.cmake
+	VERSION ${VERSION}
+	COMPATIBILITY ExactVersion
+)
+
+install(
+	FILES ${CMAKE_CURRENT_BINARY_DIR}/libiconv-config-version.cmake
+	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/libiconv-${VERSION}
+	COMPONENT development
+)
+
+install(
+	EXPORT libiconv
+	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/libiconv-${VERSION}
+	NAMESPACE libiconv::
+	FILE libiconv-export.cmake
+	COMPONENT development
+)
+
+set(CPACK_COMPONENT_DEVELOPMENT_DEPENDS runtime)
+set(CPACK_DEB_COMPONENT_INSTALL ON)
+set(CPACK_DEBIAN_DEVELOPMENT_PACKAGE_DEPENDS "${PACKAGE_TARNAME}")
+set(CPACK_DEBIAN_DEVELOPMENT_PACKAGE_NAME "libiconv-dev")
+set(CPACK_DEBIAN_DEVELOPMENT_PACKAGE_SECTION "libdevel")
+set(CPACK_DEBIAN_DOCUMENTATION_PACKAGE_NAME "libiconv-doc")
+set(CPACK_DEBIAN_DOCUMENTATION_PACKAGE_SECTION "doc")
+set(CPACK_DEBIAN_PACKAGE_HOMEPAGE ${PACKAGE_URL})
+set(CPACK_DEBIAN_PACKAGE_NAME ${PACKAGE_TARNAME})
+set(CPACK_DEBIAN_PACKAGE_SECTION "devel")
+#set(CPACK_DEBIAN_PROGRAMS_PACKAGE_DEPENDS "${PACKAGE_TARNAME}")
+#set(CPACK_DEBIAN_PROGRAMS_PACKAGE_NAME "${PACKAGE_TARNAME}-utils")
+#set(CPACK_DEBIAN_PROGRAMS_PACKAGE_SECTION "utils")
+set(CPACK_DEBIAN_RUNTIME_PACKAGE_NAME "${PACKAGE_TARNAME}")
+#set(CPACK_DEBIAN_RUNTIME_PACKAGE_RECOMMENDS "${PACKAGE_TARNAME}-programs")
+set(CPACK_DEBIAN_RUNTIME_PACKAGE_SECTION "libs")
+set(CPACK_NSIS_PACKAGE_NAME ${PACKAGE_STRING})
+set(CPACK_NSIS_URL_INFO_ABOUT ${PACKAGE_URL})
+set(CPACK_PACKAGE_CONTACT ${PACKAGE_BUGREPORT})
+set(CPACK_PACKAGE_DISPLAY_NAME ${PACKAGE_STRING})
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "${PACKAGE_TARNAME}-${PACKAGE_VERSION}")
+set(CPACK_PACKAGE_NAME ${PACKAGE_TARNAME})
+set(CPACK_PACKAGE_VERSION ${PACKAGE_VERSION})
+set(CPACK_PACKAGE_VERSION_MAJOR ${VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${VERSION_MINOR})
+set(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_CURRENT_SOURCE_DIR}/COPYING)
+set(CPACK_RPM_COMPONENT_INSTALL ON)
+set(CPACK_RPM_development_PACKAGE_NAME "${PACKAGE_TARNAME}-devel")
+set(CPACK_RPM_development_PACKAGE_REQUIRES "${PACKAGE_TARNAME}")
+set(CPACK_RPM_PACKAGE_GROUP "Development/Libraries")
+set(CPACK_RPM_PACKAGE_LICENSE "GPL")
+set(CPACK_RPM_PACKAGE_NAME ${PACKAGE_TARNAME})
+set(CPACK_RPM_PACKAGE_URL ${PACKAGE_URL})
+set(CPACK_RPM_programs_PACKAGE_NAME "${PACKAGE_NAME}-utils")
+set(CPACK_RPM_programs_PACKAGE_REQUIRES "${PACKAGE_NAME}")
+#set(CPACK_RPM_runtime_PACKAGE_SUGGESTS "${PACKAGE_NAME}-utils")
+
+if(WIN32 AND CMAKE_SIZEOF_VOID_P EQUAL 8)
+	set(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES64")
+endif()
+
+include(CPack)

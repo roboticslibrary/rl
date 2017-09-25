@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _OPERATIONALMODEL_H_
-#define _OPERATIONALMODEL_H_
+#ifndef OPERATIONALMODEL_H
+#define OPERATIONALMODEL_H
 
 #include <QAbstractTableModel>
 
@@ -34,7 +34,7 @@ class OperationalModel : public QAbstractTableModel
 	Q_OBJECT
 	
 public:
-	OperationalModel(QObject* parent = NULL);
+	OperationalModel(QObject* parent = nullptr);
 	
 	virtual ~OperationalModel();
 	
@@ -61,4 +61,4 @@ private:
 	
 };
 
-#endif // _OPERATIONALMODEL_H_
+#endif // OPERATIONALMODEL_H

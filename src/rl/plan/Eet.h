@@ -2,17 +2,36 @@
 // Copyright (c) 2009, Markus Rickert
 // All rights reserved.
 //
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+// * Redistributions of source code must retain the above copyright notice,
+//   this list of conditions and the following disclaimer.
+// * Redistributions in binary form must reproduce the above copyright notice,
+//   this list of conditions and the following disclaimer in the documentation
+//   and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
+//
 
-#ifndef _RL_PLAN_EET_H_
-#define _RL_PLAN_EET_H_
+#ifndef RL_PLAN_EET_H
+#define RL_PLAN_EET_H
 
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/random/normal_distribution.hpp>
-#include <boost/random/uniform_real.hpp>
-#include <boost/random/variate_generator.hpp>
-#include <rl/util/Timer.h>
+#include <random>
+#include <rl/math/GnatNearestNeighbors.h>
 
 #include "RrtCon.h"
+#include "WorkspaceMetric.h"
 
 namespace rl
 {
@@ -23,10 +42,11 @@ namespace rl
 		/**
 		 * Exploring/Exploiting Trees
 		 * 
-		 * Markus Rickert, Oliver Brock, and Alois Knoll. Balancing exploration
-		 * and exploitation in motion planning. In Proceedings of the IEEE
-		 * International Conference on Robotics and Automation, pages 2812-2817,
-		 * Pasadena, CA, USA, May 2008.
+		 * Markus Rickert, Arne Sieverling, and Oliver Brock. Balancing exploration
+		 * and exploitation in sampling-based motion planning. IEEE Transactions on
+		 * Robotics, 30(6):1305-1317, December 2014.
+		 * 
+		 * http://dx.doi.org/10.1109/TRO.2014.2340191
 		 */
 		class Eet : public RrtCon
 		{
@@ -50,7 +70,7 @@ namespace rl
 			
 			virtual ~Eet();
 			
-			::rl::math::Real getExplorationTime() const;
+			::std::chrono::steady_clock::duration getExplorationDuration() const;
 			
 			virtual ::std::string getName() const;
 			
@@ -58,9 +78,9 @@ namespace rl
 			
 			virtual ::std::size_t getNumVertices() const;
 			
-			void getPath(VectorList& path);
+			VectorList getPath();
 			
-			void seed(const ::boost::mt19937::result_type& value);
+			void seed(const ::std::mt19937::result_type& value);
 			
 			void reset();
 			
@@ -72,12 +92,15 @@ namespace rl
 			/** Better performance in certain scenarios. */
 			bool alternativeDistanceComputation;
 			
-			/** Weight factor translation vs. orientation. */
+			/** Threshold for switching to uniform orientation sampling. */
+			::rl::math::Real beta;
+			
+			/** Weight factor translation vs.\ orientation. */
 			::rl::math::Real distanceWeight;
 			
-			::std::vector< WorkspaceSphereExplorer* > explorers;
+			::std::vector<WorkspaceSphereExplorer*> explorers;
 			
-			::std::vector< ExplorerSetup > explorersSetup;
+			::std::vector<ExplorerSetup> explorersSetup;
 			
 			/** Initialization value for exploration/exploitation balance. */
 			::rl::math::Real gamma;
@@ -95,37 +118,53 @@ namespace rl
 			::rl::math::Vector3 min;
 			
 		protected:
-			using RrtCon::connect;
-			
-			using RrtCon::extend;
-			
-			using RrtCon::nearest;
+			struct VertexBundle : Rrt::VertexBundle
+			{
+				TransformPtr t;
+			};
 			
 			Edge addEdge(const Vertex& u, const Vertex& v, Tree& tree);
+			
+			Vertex addVertex(Tree& tree, const VectorPtr& q);
+			
+			using RrtCon::connect;
 			
 			Vertex connect(Tree& tree, const Neighbor& nearest, const ::rl::math::Transform& chosen);
 			
 			::rl::math::Real distance(const ::rl::math::Transform& t1, const ::rl::math::Transform& t2) const;
 			
-			int expand(const VertexBundle& nearest, const ::rl::math::Transform& nearest2, const ::rl::math::Transform& chosen, const ::rl::math::Real& distance, VertexBundle& expanded);
+			int expand(const VertexBundle* nearest, const ::rl::math::Transform& nearest2, const ::rl::math::Transform& chosen, const ::rl::math::Real& distance, VertexBundle& expanded);
+			
+			using RrtCon::extend;
 			
 			Vertex extend(Tree& tree, const Neighbor& nearest, const ::rl::math::Transform& chosen);
 			
+			::std::normal_distribution< ::rl::math::Real>::result_type gauss();
+			
+			static VertexBundle* get(const Tree& tree, const Vertex& v);
+			
+			using RrtCon::nearest;
+			
 			Neighbor nearest(const Tree& tree, const ::rl::math::Transform& chosen);
 			
-			::boost::variate_generator< ::boost::mt19937, ::boost::normal_distribution< ::rl::math::Real > > gauss;
+			::std::uniform_real_distribution< ::rl::math::Real>::result_type rand();
 			
-			::boost::variate_generator< ::boost::mt19937, ::boost::uniform_real< ::rl::math::Real > > rand;
+			::std::normal_distribution< ::rl::math::Real> gaussDistribution;
+			
+			::std::mt19937 gaussEngine;
+			
+			::std::uniform_real_distribution< ::rl::math::Real> randDistribution;
+			
+			::std::mt19937 randEngine;
 			
 		private:
-			::rl::util::Timer exploration;
+			::std::chrono::steady_clock::time_point explorationTimeStart;
 			
-			/** Vertices for nearest neighbor search. */
-			::std::vector< Vertex > selected;
+			::std::chrono::steady_clock::time_point explorationTimeStop;
 			
-			::rl::util::Timer timer;
+			::rl::math::GnatNearestNeighbors<WorkspaceMetric> nn;
 		};
 	}
 }
 
-#endif // _RL_PLAN_EET_H_
+#endif // RL_PLAN_EET_H

@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_PLAN_REALLIST_H_
-#define _RL_PLAN_REALLIST_H_
+#ifndef RL_PLAN_REALLIST_H
+#define RL_PLAN_REALLIST_H
 
 #include <list>
 #include <rl/math/Real.h>
@@ -34,8 +34,8 @@ namespace rl
 {
 	namespace plan
 	{
-		typedef ::std::list< ::rl::math::Real > RealList;
+		typedef ::std::list< ::rl::math::Real> RealList;
 	}
 }
 
-#endif // _RL_PLAN_REALLIST_H_
+#endif // RL_PLAN_REALLIST_H

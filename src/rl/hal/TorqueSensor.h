@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_HAL_TORQUESENSOR_H_
-#define _RL_HAL_TORQUESENSOR_H_
+#ifndef RL_HAL_TORQUESENSOR_H
+#define RL_HAL_TORQUESENSOR_H
 
 #include <rl/math/Vector.h>
 
@@ -43,9 +43,9 @@ namespace rl
 			virtual ~TorqueSensor();
 			
 			/**
-			 * @param torques [Nm]
+			 * @param[out] torques [Nm]
 			 */
-			virtual void getTorques(::rl::math::Vector& torques) const = 0;
+			virtual ::rl::math::Vector getTorques() const = 0;
 			
 			virtual ::std::size_t getTorquesCount() const = 0;
 			
@@ -67,4 +67,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_HAL_TORQUESENSOR_H_
+#endif // RL_HAL_TORQUESENSOR_H

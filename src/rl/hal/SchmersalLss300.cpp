@@ -28,11 +28,9 @@
 #include <iostream>
 #include <rl/math/Unit.h>
 
-#include "ComException.h"
 #include "DeviceException.h"
-#include "endian.h"
+#include "Endian.h"
 #include "SchmersalLss300.h"
-#include "Serial.h"
 #include "TimeoutException.h"
 
 namespace rl
@@ -45,31 +43,27 @@ namespace rl
 			const Monitoring& monitoring,
 			const ::std::string& password
 		) :
+			CyclicDevice(::std::chrono::nanoseconds::zero()),
 			Lidar(),
 			baudRate(BAUDRATE_9600BPS),
-			configuration(0x00),
 			data(),
 			desired(baudRate),
 			monitoring(monitoring),
 			password(password),
 			serial(
-				new Serial(
-					filename,
-					Serial::BAUDRATE_9600BPS,
-					Serial::DATABITS_8BITS,
-					Serial::FLOWCONTROL_OFF,
-					Serial::PARITY_NOPARITY,
-					Serial::STOPBITS_1BIT
-				)
-			),
-			timer()
+				filename,
+				Serial::BAUDRATE_9600BPS,
+				Serial::DATABITS_8BITS,
+				Serial::FLOWCONTROL_OFF,
+				Serial::PARITY_NOPARITY,
+				Serial::STOPBITS_1BIT
+			)
 		{
 			assert(8 == password.length());
 		}
 		
 		SchmersalLss300::~SchmersalLss300()
 		{
-			delete this->serial;
 		}
 		
 		void
@@ -87,15 +81,15 @@ namespace rl
 				this->setBaudRate(BAUDRATE_9600BPS);
 			}
 			
-			this->serial->close();
+			this->serial.close();
 			
 			this->setConnected(false);
 		}
 		
-		uint16_t
-		SchmersalLss300::crc(const uint8_t* buf, const ::std::size_t& len) const
+		::std::uint16_t
+		SchmersalLss300::crc(const ::std::uint8_t* buf, const ::std::size_t& len) const
 		{	
-			uint16_t checksum = buf[0];
+			::std::uint16_t checksum = buf[0];
 			
 			for (::std::size_t i = 1; i < len; ++i)
 			{
@@ -121,30 +115,31 @@ namespace rl
 			return this->baudRate;
 		}
 		
-		void
-		SchmersalLss300::getDistances(::rl::math::Vector& distances) const
+		::rl::math::Vector
+		SchmersalLss300::getDistances() const
 		{
 			assert(this->isConnected());
-			assert(distances.size() >= this->getDistancesCount());
+			
+			::rl::math::Vector distances(this->getDistancesCount());
 			
 			::rl::math::Real scale = 0.01f;
-			
-			uint16_t count = hostEndianWord(this->data[8], this->data[7]);
-			
-			uint8_t mask = 0x1F;
+			::std::uint16_t count = Endian::hostWord(this->data[8], this->data[7]);
+			::std::uint8_t mask = 0x1F;
 			
 			for (::std::size_t i = 0; i < count; ++i)
 			{
 				if (this->data[10 + i * 2] & 32)
 				{
-					distances(i) = ::std::numeric_limits< ::rl::math::Real >::quiet_NaN();
+					distances(i) = ::std::numeric_limits< ::rl::math::Real>::quiet_NaN();
 				}
 				else
 				{
-					distances(i) = hostEndianWord(this->data[10 + i * 2] & mask, this->data[9 + i * 2]);
+					distances(i) = Endian::hostWord(this->data[10 + i * 2] & mask, this->data[9 + i * 2]);
 					distances(i) *= scale;
 				}
 			}
+			
+			return distances;
 		}
 		
 		::std::size_t
@@ -206,25 +201,25 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			uint8_t buf[1013];
+			::std::array< ::std::uint8_t, 1013> buf;
 			
 			buf[4] = 0x00;
 			
 			do
 			{
-				this->send(buf, 1 + 1 + 2 + 1 + 2);
+				this->send(buf.data(), 1 + 1 + 2 + 1 + 2);
 			}
 			while (!this->waitAck());
 			
-			this->recv(buf, 1 + 1 + 2 + 1 + 1 + 8 + 2, 0x80);
+			this->recv(buf.data(), 1 + 1 + 2 + 1 + 1 + 8 + 2, 0x80);
 			
 			switch (buf[5])
 			{
 			case 0x01:
-				return "LSS 1;V" + ::std::string(reinterpret_cast< char* >(buf + 6), 8);
+				return "LSS 1;V" + ::std::string(reinterpret_cast<char*>(buf.data() + 6), 8);
 				break;
 			case 0x02:
-				return "LSS 2;V" + ::std::string(reinterpret_cast< char* >(buf + 6), 8);
+				return "LSS 2;V" + ::std::string(reinterpret_cast<char*>(buf.data() + 6), 8);
 				break;
 			default:
 				break;
@@ -236,11 +231,11 @@ namespace rl
 		void
 		SchmersalLss300::open()
 		{
-			this->serial->open();
+			this->serial.open();
 			
 			this->setConnected(true);
 			
-			uint8_t buf[1013];
+			::std::array< ::std::uint8_t, 1013> buf;
 			
 			// synchronize baud rates
 			
@@ -256,9 +251,9 @@ namespace rl
 			
 			for (::std::size_t i = 0; i < 4; ++i)
 			{
-				this->serial->setBaudRate(baudRates[i]);
-				this->serial->changeParameters();
-				this->send(buf, 1 + 1 + 2 + 1 + 1 + 2);
+				this->serial.setBaudRate(baudRates[i]);
+				this->serial.changeParameters();
+				this->send(buf.data(), 1 + 1 + 2 + 1 + 1 + 2);
 				
 				if (this->waitAck())
 				{
@@ -271,7 +266,7 @@ namespace rl
 				}
 			}
 			
-			this->recv(buf, 1 + 1 + 2 + 1 + 1 + 2, 0xE6);
+			this->recv(buf.data(), 1 + 1 + 2 + 1 + 1 + 2, 0xE6);
 			
 			if (0x81 == buf[5])
 			{
@@ -284,11 +279,11 @@ namespace rl
 			
 			do
 			{
-				this->send(buf, 1 + 1 + 2 + 1 + 2);
+				this->send(buf.data(), 1 + 1 + 2 + 1 + 2);
 			}
 			while (!this->waitAck());
 			
-			this->recv(buf, 1 + 1 + 2 + 1 + 1 + 1 + 9 + 17 + 17 + 17 + 17 + 1 + 1 + 4 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 2 + 4 + 50 + 2, 0xB1);
+			this->recv(buf.data(), 1 + 1 + 2 + 1 + 1 + 1 + 9 + 17 + 17 + 17 + 17 + 1 + 1 + 4 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 2 + 4 + 50 + 2, 0xB1);
 			
 			// baud rate
 			
@@ -306,12 +301,12 @@ namespace rl
 		}
 		
 		::std::size_t
-		SchmersalLss300::recv(uint8_t* buf, const ::std::size_t& len, const uint8_t& command)
+		SchmersalLss300::recv(::std::uint8_t* buf, const ::std::size_t& len, const ::std::uint8_t& command)
 		{
 			assert(this->isConnected());
 			assert(len > 6);
 			
-			uint8_t* ptr;
+			::std::uint8_t* ptr;
 			::std::size_t sumbytes;
 			::std::size_t numbytes;
 			
@@ -324,14 +319,14 @@ namespace rl
 					
 					do
 					{
-						numbytes = this->serial->read(ptr, 1);
+						numbytes = this->serial.read(ptr, 1);
 					}
 					while (0x02 != buf[0]);
 					
 					ptr += numbytes;
 					sumbytes += numbytes;
 					
-					numbytes = this->serial->read(ptr, 1);
+					numbytes = this->serial.read(ptr, 1);
 				}
 				while (0x80 != buf[1]);
 				
@@ -340,7 +335,7 @@ namespace rl
 				
 				for (::std::size_t i = 0; i < 4; ++i)
 				{
-					numbytes = this->serial->read(ptr, 1);
+					numbytes = this->serial.read(ptr, 1);
 					
 					ptr += numbytes;
 					sumbytes += numbytes;
@@ -348,22 +343,22 @@ namespace rl
 			}
 			while (command != buf[4]);
 			
-			uint16_t length = hostEndianWord(buf[3], buf[2]);
+			::std::uint16_t length = Endian::hostWord(buf[3], buf[2]);
 			
-			if (len != static_cast< ::std::size_t >(length) + 6)
+			if (len != static_cast< ::std::size_t>(length) + 6)
 			{
-				throw DeviceException("data length mismatch in command " + command);
+				throw DeviceException("data length mismatch in command " + ::std::to_string(command));
 			}
 			
 			while (sumbytes < len)
 			{
-				numbytes = this->serial->read(ptr, len - sumbytes);
+				numbytes = this->serial.read(ptr, len - sumbytes);
 				
 				ptr += numbytes;
 				sumbytes += numbytes;
 			}
 			
-			if (this->crc(buf, sumbytes - 2) != hostEndianWord(buf[sumbytes - 1], buf[sumbytes - 2]))
+			if (this->crc(buf, sumbytes - 2) != Endian::hostWord(buf[sumbytes - 1], buf[sumbytes - 2]))
 			{
 				throw DeviceException("checksum error");
 			}
@@ -376,21 +371,21 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			uint8_t buf[1013];
+			::std::array< ::std::uint8_t, 1013> buf;
 			
 			buf[4] = 0x10;
 			
 			do
 			{
-				this->send(buf, 1 + 1 + 2 + 1 + 2);
+				this->send(buf.data(), 1 + 1 + 2 + 1 + 2);
 			}
 			while (!this->waitAck());
 			
-			this->recv(buf, 1 + 1 + 2 + 1 + 2, 0x90);
+			this->recv(buf.data(), 1 + 1 + 2 + 1 + 2, 0x90);
 		}
 		
 		void
-		SchmersalLss300::send(uint8_t* buf, const ::std::size_t& len)
+		SchmersalLss300::send(::std::uint8_t* buf, const ::std::size_t& len)
 		{
 			assert(this->isConnected());
 			assert(len > 6);
@@ -398,22 +393,22 @@ namespace rl
 			buf[0] = 0x02;
 			buf[1] = 0x00;
 			
-			uint16_t length = len - 6;
+			::std::uint16_t length = len - 6;
 			
-			buf[2] = lowByteFromHostEndian(length);
-			buf[3] = highByteFromHostEndian(length);
+			buf[2] = Endian::hostLowByte(length);
+			buf[3] = Endian::hostHighByte(length);
 			
-			uint16_t checksum = this->crc(buf, len - 2);
+			::std::uint16_t checksum = this->crc(buf, len - 2);
 			
-			buf[len - 2] = lowByteFromHostEndian(checksum);
-			buf[len - 1] = highByteFromHostEndian(checksum);
+			buf[len - 2] = Endian::hostLowByte(checksum);
+			buf[len - 1] = Endian::hostHighByte(checksum);
 			
-			if (len != this->serial->write(buf, len))
+			if (len != this->serial.write(buf, len))
 			{
 				throw DeviceException("could not send complete data");
 			}
 			
-			this->serial->flush(true, false);
+			this->serial.flush(true, false);
 		}
 		
 		void
@@ -421,7 +416,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			uint8_t buf[1013];
+			::std::array< ::std::uint8_t, 1013> buf;
 			
 			buf[4] = 0x66;
 			
@@ -445,11 +440,11 @@ namespace rl
 			
 			do
 			{
-				this->send(buf, 1 + 1 + 2 + 1 + 1 + 2);
+				this->send(buf.data(), 1 + 1 + 2 + 1 + 1 + 2);
 			}
 			while (!this->waitAck());
 			
-			this->recv(buf, 1 + 1 + 2 + 1 + 1 + 2, 0xE6);
+			this->recv(buf.data(), 1 + 1 + 2 + 1 + 1 + 2, 0xE6);
 			
 			if (0x81 == buf[5])
 			{
@@ -459,22 +454,22 @@ namespace rl
 			switch (baudRate)
 			{
 			case BAUDRATE_9600BPS:
-				this->serial->setBaudRate(Serial::BAUDRATE_9600BPS);
+				this->serial.setBaudRate(Serial::BAUDRATE_9600BPS);
 				break;
 			case BAUDRATE_19200BPS:
-				this->serial->setBaudRate(Serial::BAUDRATE_19200BPS);
+				this->serial.setBaudRate(Serial::BAUDRATE_19200BPS);
 				break;
 			case BAUDRATE_38400BPS:
-				this->serial->setBaudRate(Serial::BAUDRATE_38400BPS);
+				this->serial.setBaudRate(Serial::BAUDRATE_38400BPS);
 				break;
 			case BAUDRATE_57600BPS:
-				this->serial->setBaudRate(Serial::BAUDRATE_57600BPS);
+				this->serial.setBaudRate(Serial::BAUDRATE_57600BPS);
 				break;
 			default:
 				break;
 			}
 			
-			this->serial->changeParameters();
+			this->serial.changeParameters();
 			
 			this->baudRate = baudRate;
 		}
@@ -484,7 +479,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			uint8_t buf[1013];
+			::std::array< ::std::uint8_t, 1013> buf;
 			
 			buf[4] = 0x20;
 			
@@ -502,11 +497,11 @@ namespace rl
 			
 			do
 			{
-				this->send(buf, 1 + 1 + 2 + 1 + 1 + 2);
+				this->send(buf.data(), 1 + 1 + 2 + 1 + 1 + 2);
 			}
 			while (!this->waitAck());
 			
-			this->recv(buf, 1 + 1 + 2 + 1 + 1 + 2, 0xA0);
+			this->recv(buf.data(), 1 + 1 + 2 + 1 + 1 + 2, 0xA0);
 			
 			switch (buf[5])
 			{
@@ -552,12 +547,12 @@ namespace rl
 				
 				do
 				{
-					this->send(this->data, 1 + 1 + 2 + 1 + 1 + 2);
+					this->send(this->data.data(), 1 + 1 + 2 + 1 + 1 + 2);
 				}
 				while (!this->waitAck());
 			}
 			
-			this->recv(this->data, 1 + 1 + 2 + 1 + 1 + 1 + 2 + 1002 + 2, 0xB0);
+			this->recv(this->data.data(), 1 + 1 + 2 + 1 + 1 + 1 + 2 + 1002 + 2, 0xB0);
 		}
 		
 		void
@@ -576,16 +571,16 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			uint8_t ack;
+			::std::uint8_t ack;
 			
 			try
 			{
-				this->timer.start();
+				::std::chrono::steady_clock::time_point start = ::std::chrono::steady_clock::now();
 				
 				do
 				{
-					this->serial->select(true, false, 0.06f);
-					this->serial->read(&ack, 1);
+					this->serial.select(true, false, ::std::chrono::milliseconds(60));
+					this->serial.read(&ack, 1);
 					
 					switch (ack)
 					{
@@ -598,10 +593,8 @@ namespace rl
 					default:
 						break;
 					}
-					
-					this->timer.stop();
 				}
-				while (this->timer.elapsed() < 0.06f);
+				while ((::std::chrono::steady_clock::now() - start) < ::std::chrono::milliseconds(60));
 			}
 			catch (const TimeoutException&)
 			{

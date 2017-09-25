@@ -66,7 +66,7 @@ namespace rl
 						++k;
 						path.erase(l);
 						
-						if (NULL != this->viewer)
+						if (nullptr != this->viewer)
 						{
 							this->viewer->drawConfigurationPath(path);
 						}

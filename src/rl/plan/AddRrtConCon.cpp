@@ -24,10 +24,9 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <boost/make_shared.hpp>
-
 #include "AddRrtConCon.h"
 #include "SimpleModel.h"
+#include "Viewer.h"
 
 namespace rl
 {
@@ -45,6 +44,33 @@ namespace rl
 		{
 		}
 		
+		Rrt::Vertex
+		AddRrtConCon::addVertex(Tree& tree, const VectorPtr& q)
+		{
+			::std::shared_ptr<VertexBundle> bundle = ::std::make_shared<VertexBundle>();
+			bundle->index = ::boost::num_vertices(tree) - 1;
+			bundle->q = q;
+			bundle->radius = ::std::numeric_limits< ::rl::math::Real>::max();
+			
+			Vertex v = ::boost::add_vertex(tree);
+			tree[v] = bundle;
+			
+			tree[::boost::graph_bundle].nn->push(Metric::Value(q.get(), v));
+			
+			if (nullptr != this->viewer)
+			{
+				this->viewer->drawConfigurationVertex(*get(tree, v)->q);
+			}
+			
+			return v;
+		}
+		
+		AddRrtConCon::VertexBundle*
+		AddRrtConCon::get(const Tree& tree, const Vertex& v)
+		{
+			return static_cast<VertexBundle*>(tree[v].get());
+		}
+		
 		::std::string
 		AddRrtConCon::getName() const
 		{
@@ -54,18 +80,17 @@ namespace rl
 		bool
 		AddRrtConCon::solve()
 		{
-			this->begin[0] = this->addVertex(this->tree[0], ::boost::make_shared< ::rl::math::Vector >(*this->start));
-			this->begin[1] = this->addVertex(this->tree[1], ::boost::make_shared< ::rl::math::Vector >(*this->goal));
+			this->time = ::std::chrono::steady_clock::now();
+			
+			this->begin[0] = this->addVertex(this->tree[0], ::std::make_shared< ::rl::math::Vector>(*this->start));
+			this->begin[1] = this->addVertex(this->tree[1], ::std::make_shared< ::rl::math::Vector>(*this->goal));
 			
 			Tree* a = &this->tree[0];
 			Tree* b = &this->tree[1];
 			
-			::rl::math::Vector chosen(this->model->getDof());
+			::rl::math::Vector chosen(this->model->getDofPosition());
 			
-			timer.start();
-			timer.stop();
-			
-			while (timer.elapsed() < this->duration)
+			while ((::std::chrono::steady_clock::now() - this->time) < this->duration)
 			{
 				for (::std::size_t j = 0; j < 2; ++j)
 				{
@@ -73,28 +98,26 @@ namespace rl
 					
 					do
 					{
-						this->choose(chosen);
-						
+						chosen = this->choose();
 						aNearest = this->nearest(*a, chosen);
 					}
-					while (aNearest.second > (*a)[aNearest.first].radius);
+					while (aNearest.first > get(*a, aNearest.second)->radius);
 					
 					Vertex aConnected = this->connect(*a, aNearest, chosen);
 					
-					if (NULL != aConnected)
+					if (nullptr != aConnected)
 					{
-						if ((*a)[aNearest.first].radius < ::std::numeric_limits< ::rl::math::Real >::max())
+						if (get(*a, aNearest.second)->radius < ::std::numeric_limits< ::rl::math::Real>::max())
 						{
-							(*a)[aNearest.first].radius *= (1.0f + this->alpha);
+							get(*a, aNearest.second)->radius *= (1.0f + this->alpha);
 						}
 						
 						Neighbor bNearest = this->nearest(*b, chosen);
+						Vertex bConnected = this->connect(*b, bNearest, *get(*a, aConnected)->q);
 						
-						Vertex bConnected = this->connect(*b, bNearest, *(*a)[aConnected].q);
-						
-						if (NULL != bConnected)
+						if (nullptr != bConnected)
 						{
-							if (this->areEqual(*(*a)[aConnected].q, *(*b)[bConnected].q))
+							if (this->areEqual(*get(*a, aConnected)->q, *get(*b, bConnected)->q))
 							{
 								this->end[0] = &this->tree[0] == a ? aConnected : bConnected;
 								this->end[1] = &this->tree[1] == b ? bConnected : aConnected;
@@ -104,21 +127,20 @@ namespace rl
 					}
 					else
 					{
-						if ((*a)[aNearest.first].radius < ::std::numeric_limits< ::rl::math::Real >::max())
+						if (get(*a, aNearest.second)->radius < ::std::numeric_limits< ::rl::math::Real>::max())
 						{
-							(*a)[aNearest.first].radius *= (1.0f - this->alpha);
-							(*a)[aNearest.first].radius = ::std::max(this->lower, (*a)[aNearest.first].radius);
+							get(*a, aNearest.second)->radius *= (1.0f - this->alpha);
+							get(*a, aNearest.second)->radius = ::std::max(this->lower, get(*a, aNearest.second)->radius);
 						}
 						else
 						{
-							(*a)[aNearest.first].radius = this->radius;
+							get(*a, aNearest.second)->radius = this->radius;
 						}
 					}
 					
-					::std::swap(a, b);
+					using ::std::swap;
+					swap(a, b);
 				}
-				
-				timer.stop();
 			}
 			
 			return false;

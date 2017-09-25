@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_KIN_PUMA_H_
-#define _RL_KIN_PUMA_H_
+#ifndef RL_KIN_PUMA_H
+#define RL_KIN_PUMA_H
 
 #include "Kinematics.h"
 
@@ -73,7 +73,7 @@ namespace rl
 				const ::rl::math::Transform& x,
 				::rl::math::Vector& q,
 				const ::std::size_t& leaf = 0,
-				const ::rl::math::Real& delta = ::std::numeric_limits< ::rl::math::Real >::infinity(),
+				const ::rl::math::Real& delta = ::std::numeric_limits< ::rl::math::Real>::infinity(),
 				const ::rl::math::Real& epsilon = 1.0e-3f,
 				const ::std::size_t& iterations = 1000
 			);
@@ -91,19 +91,19 @@ namespace rl
 		protected:
 			
 		private:
-			template< typename T > T atan2(const T& y, const T& x) const
+			template<typename T> T atan2(const T& y, const T& x) const
 			{
 				T a = ::std::atan2(y, x);
 				return (::std::abs(a) <= 1.0e-6f) ? 0.0f : a;
 			}
 			
-			template< typename T > T cos(const T& x) const
+			template<typename T> T cos(const T& x) const
 			{
 				T c = ::std::cos(x);
 				return (::std::abs(c) <= 1.0e-6f) ? 0.0f : c;
 			}
 			
-			template< typename T > T sin(const T& x) const
+			template<typename T> T sin(const T& x) const
 			{
 				T s = ::std::sin(x);
 				return (::std::abs(s) <= 1.0e-6f) ? 0.0f : s;
@@ -118,5 +118,5 @@ namespace rl
 	}
 }
 
-#endif // _RL_KIN_PUMA_H_
+#endif // RL_KIN_PUMA_H
 	

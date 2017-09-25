@@ -1,14 +1,0 @@
-#VRML V2.0 utf8
-Transform {
-	children [
-		DEF mitsubishi-rv6sl Transform {
-			children [
-				Inline {
-					url "mitsubishi-rv6sl.convex/mitsubishi-rv6sl.wrl"
-				}			]
-		}
-		DEF boxes Inline {
-			url "boxes.wrl"
-		}	]
-}
-

@@ -1,5 +1,3 @@
-project(rlkin)
-
 find_package(Boost REQUIRED)
 
 set(
@@ -16,6 +14,7 @@ set(
 	Rhino.h
 	Transform.h
 )
+
 set(
 	SRCS
 	Element.cpp
@@ -31,48 +30,75 @@ set(
 	Transform.cpp
 )
 
-if(WIN32)
-	add_library(
-		rlkin
-		STATIC
-		${HDRS}
-		${SRCS}
-	)
-else(WIN32)
-	add_library(
-		rlkin
-		SHARED
-		${HDRS}
-		${SRCS}
-	)
-endif(WIN32)
+add_library(
+	kin
+	${HDRS}
+	${SRCS}
+)
+
+if(NOT CMAKE_VERSION VERSION_LESS 3.8)
+	target_compile_features(kin PUBLIC cxx_std_11)
+endif()
 
 target_include_directories(
-	rlkin
+	kin
 	PUBLIC
+	$<BUILD_INTERFACE:${rl_SOURCE_DIR}/src>
+	$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}>
 	${Boost_INCLUDE_DIR}
 )
 
 target_link_libraries(
-	rlkin
-	rlmath
-	rlxml
+	kin
+	math
+	xml
 )
 
 set_target_properties(
-	rlkin
+	kin
 	PROPERTIES
+	OUTPUT_NAME rlkin
+	POSITION_INDEPENDENT_CODE ON
 	VERSION ${VERSION}
-	DEBUG_POSTFIX d
 )
 
-install(FILES ${HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl/kin COMPONENT headers)
+if(WIN32)
+	if(BUILD_SHARED_LIBS)
+		set_target_properties(
+			kin
+			PROPERTIES
+			DEBUG_POSTFIX d
+		)
+	else()
+		set_target_properties(
+			kin
+			PROPERTIES
+			DEBUG_POSTFIX sd
+			MINSIZEREL_POSTFIX s
+			RELEASE_POSTFIX s
+			RELWITHDEBINFO_POSTFIX s
+		)
+	endif()
+endif()
+
+install(FILES ${HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/kin COMPONENT development)
 
 install(
-	TARGETS rlkin
+	TARGETS kin
 	EXPORT rl
-	COMPONENT libraries
-	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT development
+	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT runtime NAMELINK_SKIP
+	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT runtime
 )
+
+if(BUILD_SHARED_LIBS)
+	install(
+		TARGETS kin
+		EXPORT rl
+		LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT development NAMELINK_ONLY
+	)
+endif()
+
+if(MSVC AND BUILD_SHARED_LIBS AND NOT CMAKE_VERSION VERSION_LESS 3.1)
+	install(FILES $<TARGET_PDB_FILE:kin> DESTINATION ${CMAKE_INSTALL_BINDIR} CONFIGURATIONS Debug RelWithDebInfo COMPONENT debug)
+endif()

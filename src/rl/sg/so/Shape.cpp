@@ -38,9 +38,9 @@ namespace rl
 	{
 		namespace so
 		{
-			Shape::Shape(SoVRMLShape* shape, Body* body) :
+			Shape::Shape(::SoVRMLShape* shape, Body* body) :
 				::rl::sg::Shape(shape, body),
-				root(new SoVRMLTransform()),
+				root(new ::SoVRMLTransform()),
 				shape(shape)
 			{
 				this->root->ref();
@@ -68,14 +68,14 @@ namespace rl
 			void
 			Shape::getTransform(::rl::math::Transform& transform)
 			{
-				SoSearchAction searchAction;
+				::SoSearchAction searchAction;
 				searchAction.setNode(this->shape);
 				searchAction.apply(this->root);
 				
-				SbViewportRegion viewportRegion;
-				SoGetMatrixAction getMatrixAction(viewportRegion);
+				::SbViewportRegion viewportRegion;
+				::SoGetMatrixAction getMatrixAction(viewportRegion);
 				getMatrixAction.apply(searchAction.getPath());
-				SbMatrix matrix = getMatrixAction.getMatrix();
+				::SbMatrix matrix = getMatrixAction.getMatrix();
 				
 				for (int i = 0; i < 4; ++i)
 				{
@@ -95,13 +95,13 @@ namespace rl
 			void
 			Shape::setTransform(const ::rl::math::Transform& transform)
 			{
-				SbMatrix matrix;
+				::SbMatrix matrix;
 				
 				for (int i = 0; i < 4; ++i)
 				{
 					for (int j = 0; j < 4; ++j)
 					{
-						matrix[i][j] = static_cast< float >(transform(j, i));
+						matrix[i][j] = static_cast<float>(transform(j, i));
 					}
 				}
 				

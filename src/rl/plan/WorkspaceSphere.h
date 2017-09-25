@@ -24,10 +24,11 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_PLAN_WORKSPACESPHERE_H_
-#define _RL_PLAN_WORKSPACESPHERE_H_
+#ifndef RL_PLAN_WORKSPACESPHERE_H
+#define RL_PLAN_WORKSPACESPHERE_H
 
 #include <vector>
+#include <boost/graph/adjacency_list.hpp>
 
 #include "Vector3Ptr.h"
 
@@ -35,33 +36,27 @@ namespace rl
 {
 	namespace plan
 	{
-		class WorkspaceSphere
+		struct WorkspaceSphere
 		{
-		public:
-			WorkspaceSphere();
-			
-			virtual ~WorkspaceSphere();
+			typedef ::boost::adjacency_list_traits<
+				::boost::listS,
+				::boost::listS,
+				::boost::bidirectionalS
+			>::vertex_descriptor Vertex; 
 			
 			bool operator<(const WorkspaceSphere& rhs) const;
 			
 			Vector3Ptr center;
 			
-			void* parent;
+			Vertex parent;
 			
 			::rl::math::Real priority;
 			
 			::rl::math::Real radius;
 			
 			::rl::math::Real radiusSum;
-			
-			::std::vector<void*> v;
-			
-		protected:
-			
-		private:
-			
 		};
 	}
 }
 
-#endif // _RL_PLAN_WORKSPACESPHERE_H_
+#endif // RL_PLAN_WORKSPACESPHERE_H

@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_HAL_FORCETORQUESENSOR_H_
-#define _RL_HAL_FORCETORQUESENSOR_H_
+#ifndef RL_HAL_FORCETORQUESENSOR_H
+#define RL_HAL_FORCETORQUESENSOR_H
 
 #include <rl/math/Vector.h>
 
@@ -50,9 +50,9 @@ namespace rl
 			::rl::math::Real getForcesMinimum(const ::std::size_t& i) const;
 			
 			/**
-			 * @param forcesTorques [N],[N],[N],[Nm],[Nm],[Nm]
+			 * @param[in] forcesTorques [N],[N],[N],[Nm],[Nm],[Nm]
 			 */
-			virtual void getForcesTorques(::rl::math::Vector& forcesTorques) const = 0;
+			virtual ::rl::math::Vector getForcesTorques() const = 0;
 			
 			/**
 			 * @return [N],[N],[N],[Nm],[Nm],[Nm]
@@ -78,4 +78,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_HAL_FORCETORQUESENSOR_H_
+#endif // RL_HAL_FORCETORQUESENSOR_H

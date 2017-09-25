@@ -24,128 +24,79 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_HAL_WEISSWSG50_H_
-#define _RL_HAL_WEISSWSG50_H_
+#ifndef RL_HAL_WEISSWSG50_H
+#define RL_HAL_WEISSWSG50_H
 
+#include <cstdint>
 #include <string>
 
+#include "CyclicDevice.h"
 #include "Device.h"
-#include "DeviceException.h"
 #include "Gripper.h"
-#include "types.h"
-#include "TcpSocket.h"
+#include "Socket.h"
 
 namespace rl
 {
 	namespace hal
 	{
 		/**
-		 * Weiss Robotics WSG 50 / Schunk WSG 50
+		 * Weiss Robotics Universal Gripper WSG 50.
 		 * 
 		 * See "WSG Series of Intelligent Servo-Electric Grippers: Command Set Reference Manual":
-		 * <http://www.schunk.com/schunk_files/attachments/WSG__Command_Set_Reference_Manual__2013-01_EN.pdf>
+		 * <http://www.weiss-robotics.de/en/download.html?cid=1&fid=37&id=314>
 		 * 
 		 * Important: Before use, you usually need to set "Part Width Tolerance"
 		 * and "Default Clamping Travel" to maximum in the web interface.
 		 * Otherwise, the gripper will not grasp if object width is different
 		 * from the given value.
 		 */
-		class WeissWsg50 : public Gripper
+		class WeissWsg50 : public CyclicDevice, public Gripper
 		{
 		public:
-			class Exception : public DeviceException
-			{
-			public:
-				enum Error
-				{
-					ERROR_SUCCESS = 0,
-					ERROR_NOT_AVAILABLE,
-					ERROR_NO_SENSOR,
-					ERROR_NOT_INITIALIZED,
-					ERROR_ALREADY_RUNNING,
-					ERROR_FEATURE_NOT_SUPPORTED,
-					ERROR_INCONSISTENT_DATA,
-					ERROR_TIMEOUT,
-					ERROR_READ_ERROR,
-					ERROR_WRITE_ERROR,
-					ERROR_INSUFFICIENT_RESOURCES,
-					ERROR_CHECKSUM_ERROR,
-					ERROR_NO_PARAM_EXPECTED,
-					ERROR_NOT_ENOUGH_PARAMS,
-					ERROR_CMD_UNKNOWN,
-					ERROR_CMD_FORMAT_ERROR,
-					ERROR_ACCESS_DENIED,
-					ERROR_ALREADY_OPEN,
-					ERROR_CMD_FAILED,
-					ERROR_CMD_ABORTED,
-					ERROR_INVALID_HANDLE,
-					ERROR_NOT_FOUND,
-					ERROR_NOT_OPEN,
-					ERROR_IO_ERROR,
-					ERROR_INVALID_PARAMETER,
-					ERROR_INDEX_OUT_OF_BOUNDS,
-					ERROR_CMD_PENDING,
-					ERROR_OVERRUN,
-					ERROR_RANGE_ERROR,
-					ERROR_AXIS_BLOCKED,
-					ERROR_FILE_EXISTS
-				};
-				
-				Exception(const Error& error);
-				
-				virtual ~Exception() throw();
-				
-				Error getError() const;
-				
-				virtual const char* what() const throw();
-				
-			protected:
-				
-			private:
-				Error error;
-			};
-			
 			enum GraspingState
 			{
 				GRASPING_STATE_IDLE = 0,
-				GRASPING_STATE_GRASPING,
-				GRASPING_STATE_NO_PART_FOUND,
-				GRASPING_STATE_PART_LOST,
-				GRASPING_STATE_HOLDING,
-				GRASPING_STATE_RELEASING
+				GRASPING_STATE_GRIPPING = 1,
+				GRASPING_STATE_NO_PART_FOUND = 2,
+				GRASPING_STATE_PART_LOST = 3,
+				GRASPING_STATE_HOLDING = 4,
+				GRASPING_STATE_RELEASING = 5,
+				GRASPING_STATE_POSITIONING = 6,
+				GRASPING_STATE_ERROR = 7
 			};
 			
 			enum SystemState
 			{
-				SYSTEM_STATE_SCRIPT_FAILURE,
-				SYSTEM_STATE_SCRIPT_RUNNING,
-				SYSTEM_STATE_CMD_FAILURE,
-				SYSTEM_STATE_FINGER_FAULT,
-				SYSTEM_STATE_CURR_FAULT,
-				SYSTEM_STATE_POWER_FAULT,
-				SYSTEM_STATE_TEMP_FAULT,
-				SYSTEM_STATE_TEMP_WARNING,
-				SYSTEM_STATE_FAST_STOP,
-				SYSTEM_STATE_OVERDRIVE_MODE,
-				SYSTEM_STATE_TARGET_POS_REACHED,
-				SYSTEM_STATE_AXIS_STOPPED,
-				SYSTEM_STATE_SOFT_LIMIT_PLUS,
-				SYSTEM_STATE_SOFT_LIMIT_MINUS,
-				SYSTEM_STATE_BLOCKED_PLUS,
-				SYSTEM_STATE_BLOCKED_MINUS,
-				SYSTEM_STATE_MOVING,
-				SYSTEM_STATE_REFERENCED
+				SYSTEM_STATE_SCRIPT_FAILURE = 1048576,
+				SYSTEM_STATE_SCRIPT_RUNNING = 524288,
+				SYSTEM_STATE_COMMAND_FAILURE = 262144,
+				SYSTEM_STATE_FINGER_FAULT = 131072,
+				SYSTEM_STATE_CURRENT_FAULT = 65536,
+				SYSTEM_STATE_POWER_FAULT = 32768,
+				SYSTEM_STATE_TEMPERATURE_FAULT = 16384,
+				SYSTEM_STATE_TEMPERATURE_WARNING = 8192,
+				SYSTEM_STATE_FAST_STOP = 4096,
+				SYSTEM_STATE_FORCE_CONTROL_MODE = 512,
+				SYSTEM_STATE_OVERDRIVE_MODE = 256,
+				SYSTEM_STATE_TARGET_POSITION_REACHED = 128,
+				SYSTEM_STATE_AXIS_STOPPED = 64,
+				SYSTEM_STATE_SOFT_LIMIT_PLUS = 32,
+				SYSTEM_STATE_SOFT_LIMIT_MINUS = 16,
+				SYSTEM_STATE_AXIS_BLOCKED_PLUS = 8,
+				SYSTEM_STATE_AXIS_BLOCKED_MINUS = 4,
+				SYSTEM_STATE_MOVING = 2,
+				SYSTEM_STATE_REFERENCED = 1
 			};
 			
 			/**
-			 * @param hostname tcp hostname
-			 * @param port tcp port
-			 * @param acceleration [0.1,..,5] [m/s^2]
-			 * @param forceLimit [5,..,80] [N]
-			 * @param period default automatic update period [ms]
+			 * @param[in] address TCP hostname
+			 * @param[in] port TCP port
+			 * @param[in] acceleration [0.1,..,5] [m/s^2]
+			 * @param[in] forceLimit [5,..,80] [N]
+			 * @param[in] period Default automatic update period [ms]
 			 */
 			WeissWsg50(
-				const ::std::string& hostname = "192.168.1.20",
+				const ::std::string& address = "192.168.1.20",
 				const unsigned short int& port = 1000,
 				const float& acceleration = 3.0f,
 				const float& forceLimit = 40.0f,
@@ -192,46 +143,47 @@ namespace rl
 			float doGetTemperature();
 			
 			/**
-			 * @param width [0,..,0.11] [m]
-			 * @param speed [0,..,0.4] [m/s]
+			 * @param[in] width[in] [0,..,0.11] [m]
+			 * @param[in] speed[in] [0,..,0.4] [m/s]
 			 */
 			void doGraspPart(const float& width, const float& speed);
 			
 			/**
 			 * Perform necessary homing motion for calibration.
+			 * 
 			 * This function call is blocking until the calibration is complete.
 			 * 
-			 * @param direction 0 = default from system configuration, 1 = positive movement, 2 = negative movement
+			 * @param[in] direction 0 = default from system configuration, 1 = positive movement, 2 = negative movement
 			 */
 			void doHomingMotion(const unsigned int& direction = 0);
 			
 			void doOverdriveMode(const bool& doOverdriveMode);
 			
 			/**
-			 * @param width [0,..,0.11] [m]
-			 * @param speed [0,..,0.4] [m/s]
+			 * @param[in] width [0,..,0.11] [m]
+			 * @param[in] speed [0,..,0.4] [m/s]
 			 */
-			void doPrePositionFingers(const float& width, const float& speed = 0.2f, const bool& doRelativeMovement = false, const bool& doStopOnBlock = false);
+			void doPrePositionFingers(const float& width, const float& speed, const bool& doRelativeMovement = false, const bool& doStopOnBlock = false);
 			
 			/**
-			 * @param width [0,..,0.11] [m]
-			 * @param speed [0.005,..,0.4] [m/s]
+			 * @param[in] width [0,..,0.11] [m]
+			 * @param[in] speed [0.005,..,0.4] [m/s]
 			 */
-			void doReleasePart(const float& width = 0.11f, const float& speed = 0.4f);
+			void doReleasePart(const float& width, const float& speed);
 			
 			/**
-			 * @param acceleration [0.1,..,5] [m/s^2]
+			 * @param[in] acceleration [0.1,..,5] [m/s^2]
 			 */
-			void doSetAcceleration(const float& acceleration = 2.0f);
+			void doSetAcceleration(const float& acceleration);
 			
 			/**
-			 * @param force [5,..,80] [N]
+			 * @param[in] force [5,..,80] [N]
 			 */
-			void doSetForceLimit(const float& force = 40.0f);
+			void doSetForceLimit(const float& force);
 			
 			/**
-			 * @param limitMinus [m]
-			 * @param limitPlus [m]
+			 * @param[in] limitMinus [m]
+			 * @param[in] limitPlus [m]
 			 */
 			void doSetSoftLimits(const float& limitMinus, const float& limitPlus);
 			
@@ -285,15 +237,15 @@ namespace rl
 		protected:
 			
 		private:
-			uint16_t crc(const uint8_t* buf, const ::std::size_t& len) const;
+			::std::uint16_t crc(const ::std::uint8_t* buf, const ::std::size_t& len) const;
 			
 			void doDisconnectAnnouncement();
 			
-			::std::size_t recv(uint8_t* buf);
+			::std::size_t recv(::std::uint8_t* buf);
 			
-			::std::size_t recv(uint8_t* buf, const ::std::size_t& len, const uint8_t& command);
+			::std::size_t recv(::std::uint8_t* buf, const ::std::size_t& len, const ::std::uint8_t& command);
 			
-			void send(uint8_t* buf, const ::std::size_t& len);
+			void send(::std::uint8_t* buf, const ::std::size_t& len);
 			
 			static const ::std::size_t HEADER_SIZE = 6;
 			
@@ -323,6 +275,8 @@ namespace rl
 			
 			unsigned int period;
 			
+			Socket socket;
+			
 			float speed;
 			
 			float speedMaximum;
@@ -332,10 +286,8 @@ namespace rl
 			float stroke;
 			
 			SystemState systemState;
-			
-			TcpSocket tcp;
 		};
 	}
 }
 
-#endif // _RL_HAL_WEISSWSG50_H_
+#endif // RL_HAL_WEISSWSG50_H

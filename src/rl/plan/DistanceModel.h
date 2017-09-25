@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_PLAN_DISTANCEMODEL_H_
-#define _RL_PLAN_DISTANCEMODEL_H_
+#ifndef RL_PLAN_DISTANCEMODEL_H
+#define RL_PLAN_DISTANCEMODEL_H
 
 #include <rl/sg/DistanceScene.h>
 
@@ -60,4 +60,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_PLAN_DISTANCEMODEL_H_
+#endif // RL_PLAN_DISTANCEMODEL_H

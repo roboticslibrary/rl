@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _OPERATIONALDELEGATE_H_
-#define _OPERATIONALDELEGATE_H_
+#ifndef OPERATIONALDELEGATE_H
+#define OPERATIONALDELEGATE_H
 
 #include <QItemDelegate>
 
@@ -34,16 +34,16 @@ class OperationalDelegate : public QItemDelegate
 	Q_OBJECT
 	
 public:
-	OperationalDelegate(QObject* parent = NULL);
+	OperationalDelegate(QObject* parent = nullptr);
 	
 	virtual ~OperationalDelegate();
 	
 	QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const;
-    
+	
 	void setEditorData(QWidget* editor, const QModelIndex& index) const;
-    
+	
 	void setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const;
-    
+	
 	void updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex& index) const;	
 	
 public slots:
@@ -55,4 +55,4 @@ private:
 	
 };
 
-#endif // _OPERATIONALDELEGATE_H_
+#endif // OPERATIONALDELEGATE_H

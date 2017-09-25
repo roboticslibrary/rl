@@ -1,0 +1,16 @@
+#!/usr/bin/make -f
+
+export DH_VERBOSE=1
+export DEB_BUILD_OPTIONS=parallel=4
+
+override_dh_auto_configure:
+	dh_auto_configure -- -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_DOCUMENTATION=ON
+
+override_dh_auto_test:
+	dh_auto_test -- ARGS+=--output-on-failure
+
+override_dh_strip:
+	dh_strip --dbg-package=librl-dbg
+
+%:
+	dh $@ --buildsystem=cmake --parallel

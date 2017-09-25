@@ -24,15 +24,15 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _CONFIGURATIONMODEL_H_
-#define _CONFIGURATIONMODEL_H_
+#ifndef CONFIGURATIONMODEL_H
+#define CONFIGURATIONMODEL_H
 
 #include <QAbstractTableModel>
 
 class ConfigurationModel : public QAbstractTableModel
 {
 public:
-	ConfigurationModel(QObject* parent = NULL);
+	ConfigurationModel(QObject* parent = nullptr);
 	
 	virtual ~ConfigurationModel();
 	
@@ -56,4 +56,4 @@ private:
 	
 };
 
-#endif // _CONFIGURATIONMODEL_H_
+#endif // CONFIGURATIONMODEL_H

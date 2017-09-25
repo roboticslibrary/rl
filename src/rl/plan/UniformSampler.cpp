@@ -24,7 +24,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <rl/util/Timer.h>
+#include <chrono>
 
 #include "SimpleModel.h"
 #include "UniformSampler.h"
@@ -35,10 +35,8 @@ namespace rl
 	{
 		UniformSampler::UniformSampler() :
 			Sampler(),
-			rand(
-				::boost::mt19937(static_cast< ::boost::mt19937::result_type >(::rl::util::Timer::now() * 1000000.0f)),
-				::boost::uniform_real< ::rl::math::Real >(0.0f, 1.0f)
-			)
+			randDistribution(0, 1),
+			randEngine(::std::random_device()())
 		{
 		}
 		
@@ -46,28 +44,29 @@ namespace rl
 		{
 		}
 		
-		void
-		UniformSampler::generate(::rl::math::Vector& q)
+		::rl::math::Vector
+		UniformSampler::generate()
 		{
-			assert(q.size() == this->model->getDof());
-			
-			::rl::math::Vector maximum(this->model->getDof());
-			this->model->getMaximum(maximum);
-			::rl::math::Vector minimum(this->model->getDof());
-			this->model->getMinimum(minimum);
+			::rl::math::Vector rand(this->model->getDof());
 			
 			for (::std::size_t i = 0; i < this->model->getDof(); ++i)
 			{
-				q(i) = minimum(i) + this->rand() * (maximum(i) - minimum(i));
+				rand(i) = this->rand();
 			}
 			
-			this->model->clip(q);
+			return this->model->generatePositionUniform(rand);
+		}
+		
+		::std::uniform_real_distribution< ::rl::math::Real>::result_type
+		UniformSampler::rand()
+		{
+			return this->randDistribution(this->randEngine);
 		}
 		
 		void
-		UniformSampler::seed(const ::boost::mt19937::result_type& value)
+		UniformSampler::seed(const ::std::mt19937::result_type& value)
 		{
-			this->rand.engine().seed(value);
+			this->randEngine.seed(value);
 		}
 	}
 }

@@ -1,5 +1,5 @@
-#ifndef _RL_SG_SOLID_BODY_H_
-#define _RL_SG_SOLID_BODY_H_
+#ifndef RL_SG_SOLID_BODY_H
+#define RL_SG_SOLID_BODY_H
 
 #include "../Body.h"
 
@@ -39,4 +39,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_SG_SOLID_BODY_H_
+#endif // RL_SG_SOLID_BODY_H

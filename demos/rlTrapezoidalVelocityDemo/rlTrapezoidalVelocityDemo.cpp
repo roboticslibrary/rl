@@ -30,7 +30,7 @@
 int
 main(int argc, char** argv)
 {
-	rl::math::TrapezoidalVelocity< rl::math::Real > interpolator;
+	rl::math::TrapezoidalVelocity<rl::math::Real> interpolator;
 	
 	interpolator.x0 = 50.0;
 	interpolator.xe = -200.0;
@@ -63,5 +63,5 @@ main(int argc, char** argv)
 		interpolator.v0 = v;
 	}
 	
-	return 0;
+	return EXIT_SUCCESS;
 }

@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_PLAN_EXCEPTION_H_
-#define _RL_PLAN_EXCEPTION_H_
+#ifndef RL_PLAN_EXCEPTION_H
+#define RL_PLAN_EXCEPTION_H
 
 #include <stdexcept>
 
@@ -48,4 +48,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_PLAN_EXCEPTION_H_
+#endif // RL_PLAN_EXCEPTION_H

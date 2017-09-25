@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_PLAN_SIMPLEOPTIMIZER_H_
-#define _RL_PLAN_SIMPLEOPTIMIZER_H_
+#ifndef RL_PLAN_SIMPLEOPTIMIZER_H
+#define RL_PLAN_SIMPLEOPTIMIZER_H
 
 #include "Optimizer.h"
 
@@ -50,4 +50,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_PLAN_SIMPLEOPTIMIZER_H_
+#endif // RL_PLAN_SIMPLEOPTIMIZER_H

@@ -24,17 +24,13 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <boost/make_shared.hpp>
-
 #include "Rrt.h"
 #include "Sampler.h"
 #include "SimpleModel.h"
 #include "Verifier.h"
 #include "Viewer.h"
 
-#if _MSC_VER < 1600
-#define nullptr NULL // TODO
-#endif
+#include "NearestNeighbors.h"
 
 namespace rl
 {
@@ -44,10 +40,9 @@ namespace rl
 			Planner(),
 			delta(1.0f),
 			epsilon(1.0e-3f),
-			kd(true),
-			sampler(NULL),
-			begin(trees, NULL),
-			end(trees, NULL),
+			sampler(nullptr),
+			begin(trees, nullptr),
+			end(trees, nullptr),
 			tree(trees)
 		{
 		}
@@ -61,66 +56,29 @@ namespace rl
 		{
 			Edge e = ::boost::add_edge(u, v, tree).first;
 			
-			if (NULL != this->viewer)
+			if (nullptr != this->viewer)
 			{
-				this->viewer->drawConfigurationEdge(*tree[u].q, *tree[v].q);
+				this->viewer->drawConfigurationEdge(*get(tree, u)->q, *get(tree, v)->q);
 			}
 			
 			return e;
 		}
 		
-		void
-		Rrt::addPoint(NearestNeighbors& nn, const QueryItem& p)
-		{
-			NearestNeighbors::iterator i;
-			
-			for (i = nn.begin(); i != nn.end(); ++i)
-			{
-				if (NULL == *i)
-				{
-					break;
-				}
-			}
-			
-			NeighborSearchTreePtr tree(new NeighborSearchTree());
-			
-			if (nn.end() == i)
-			{
-				i = nn.insert(i, tree);
-			}
-			else
-			{
-				*i = tree;
-			}
-			
-			for (NearestNeighbors::iterator j = nn.begin(); j != i; ++j)
-			{
-				if (NULL != *j)
-				{
-					(*i)->insert((*j)->begin(), (*j)->end());
-					j->reset();
-				}
-			}
-			
-			tree->insert(p);
-		}
-		
 		Rrt::Vertex
 		Rrt::addVertex(Tree& tree, const VectorPtr& q)
 		{
+			::std::shared_ptr<VertexBundle> bundle = ::std::make_shared<VertexBundle>();
+			bundle->index = ::boost::num_vertices(tree) - 1;
+			bundle->q = q;
+			
 			Vertex v = ::boost::add_vertex(tree);
-			tree[v].index = ::boost::num_vertices(tree) - 1;
-			tree[v].q = q;
-			tree[v].radius = ::std::numeric_limits< ::rl::math::Real >::max();
+			tree[v] = bundle;
 			
-			if (this->kd)
-			{
-				this->addPoint(tree[::boost::graph_bundle].nn, QueryItem(q.get(), v));
-			}
+			tree[::boost::graph_bundle].nn->push(Metric::Value(q.get(), v));
 			
-			if (NULL != this->viewer)
+			if (nullptr != this->viewer)
 			{
-				this->viewer->drawConfigurationVertex(*tree[v].q);
+				this->viewer->drawConfigurationVertex(*get(tree, v)->q);
 			}
 			
 			return v;
@@ -139,16 +97,16 @@ namespace rl
 			}
 		}
 		
-		void
-		Rrt::choose(::rl::math::Vector& chosen)
+		::rl::math::Vector
+		Rrt::choose()
 		{
-			this->sampler->generate(chosen);
+			return this->sampler->generate();
 		}
 		
 		Rrt::Vertex
 		Rrt::connect(Tree& tree, const Neighbor& nearest, const ::rl::math::Vector& chosen)
 		{
-			::rl::math::Real distance = nearest.second;
+			::rl::math::Real distance = nearest.first;
 			::rl::math::Real step = distance;
 			
 			bool reached = false;
@@ -162,11 +120,11 @@ namespace rl
 				step = this->delta;
 			}
 			
-			VectorPtr last = ::boost::make_shared< ::rl::math::Vector >(this->model->getDof());
+			VectorPtr last = ::std::make_shared< ::rl::math::Vector>(this->model->getDofPosition());
 			
-			this->model->interpolate(*tree[nearest.first].q, chosen, step / distance, *last);
+			this->model->interpolate(*get(tree, nearest.second)->q, chosen, step / distance, *last);
 			
-			if (NULL != this->viewer)
+			if (nullptr != this->viewer)
 			{
 //				this->viewer->drawConfiguration(*last);
 			}
@@ -176,10 +134,10 @@ namespace rl
 			
 			if (this->model->isColliding())
 			{
-				return NULL;
+				return nullptr;
 			}
 			
-			::rl::math::Vector next(this->model->getDof());
+			::rl::math::Vector next(this->model->getDofPosition());
 			
 			while (!reached)
 			{
@@ -197,7 +155,7 @@ namespace rl
 				
 				this->model->interpolate(*last, chosen, step / distance, next);
 				
-				if (NULL != this->viewer)
+				if (nullptr != this->viewer)
 				{
 //					this->viewer->drawConfiguration(next);
 				}
@@ -214,19 +172,19 @@ namespace rl
 			}
 			
 			Vertex connected = this->addVertex(tree, last);
-			this->addEdge(nearest.first, connected, tree);
+			this->addEdge(nearest.second, connected, tree);
 			return connected;
 		}
 		
 		Rrt::Vertex
 		Rrt::extend(Tree& tree, const Neighbor& nearest, const ::rl::math::Vector& chosen)
 		{
-			::rl::math::Real distance = nearest.second;
+			::rl::math::Real distance = nearest.first;
 			::rl::math::Real step = ::std::min(distance, this->delta);
 			
-			VectorPtr next = ::boost::make_shared< ::rl::math::Vector >(this->model->getDof());
+			VectorPtr next = ::std::make_shared< ::rl::math::Vector>(this->model->getDofPosition());
 			
-			this->model->interpolate(*tree[nearest.first].q, chosen, step / distance, *next);
+			this->model->interpolate(*get(tree, nearest.second)->q, chosen, step / distance, *next);
 			
 			this->model->setPosition(*next);
 			this->model->updateFrames();
@@ -234,17 +192,29 @@ namespace rl
 			if (!this->model->isColliding())
 			{
 				Vertex extended = this->addVertex(tree, next);
-				this->addEdge(nearest.first, extended, tree);
+				this->addEdge(nearest.second, extended, tree);
 				return extended;
 			}
 			
-			return NULL;
+			return nullptr;
+		}
+		
+		Rrt::VertexBundle*
+		Rrt::get(const Tree& tree, const Vertex& v)
+		{
+			return tree[v].get();
 		}
 		
 		::std::string
 		Rrt::getName() const
 		{
 			return "RRT";
+		}
+		
+		NearestNeighbors*
+		Rrt::getNearestNeighbors(const ::std::size_t& i) const
+		{
+			return this->tree[i][::boost::graph_bundle].nn;
 		}
 		
 		::std::size_t
@@ -273,67 +243,32 @@ namespace rl
 			return vertices;
 		}
 		
-		void
-		Rrt::getPath(VectorList& path)
+		VectorList
+		Rrt::getPath()
 		{
+			VectorList path;
+			
 			Vertex i = this->end[0];
 			
 			while (i != this->begin[0])
 			{
-				path.push_front(*this->tree[0][i].q);
+				path.push_front(*get(this->tree[0], i)->q);
 				i = ::boost::source(*::boost::in_edges(i, this->tree[0]).first, this->tree[0]);
 			}
 			
-			path.push_front(*this->tree[0][i].q);
+			path.push_front(*get(this->tree[0], i)->q);
+			
+			return path;
 		}
 		
 		Rrt::Neighbor
 		Rrt::nearest(const Tree& tree, const ::rl::math::Vector& chosen)
 		{
-			Neighbor p(nullptr, ::std::numeric_limits< ::rl::math::Real >::max());
-			
-			if (this->kd)
-			{
-				QueryItem query(&chosen, nullptr);
-				
-				for (NearestNeighbors::const_iterator i = tree[::boost::graph_bundle].nn.begin(); i != tree[::boost::graph_bundle].nn.end(); ++i)
-				{
-					if (NULL != *i)
-					{
-						NeighborSearch search(
-							*i->get(),
-							query,
-							1,
-							0,
-							true,
-							Distance(this->model)
-						);
-						
-						if (search.begin()->second < p.second)
-						{
-							p.first = search.begin()->first.second;
-							p.second = search.begin()->second;
-						}
-					}
-				}
-			}
-			else
-			{
-				for (VertexIteratorPair i = ::boost::vertices(tree); i.first != i.second; ++i.first)
-				{
-					::rl::math::Real d = this->model->transformedDistance(chosen, *tree[*i.first].q);
-					
-					if (d < p.second)
-					{
-						p.first = *i.first;
-						p.second = d;
-					}
-				}
-			}
-			
-			p.second = this->model->inverseOfTransformedDistance(p.second);
-			
-			return p;
+			::std::vector<NearestNeighbors::Neighbor> neighbors = tree[::boost::graph_bundle].nn->nearest(Metric::Value(&chosen, Vertex()), 1);
+			return Neighbor(
+				tree[::boost::graph_bundle].nn->isTransformedDistance() ? this->model->inverseOfTransformedDistance(neighbors.front().first) : neighbors.front().first,
+				neighbors.front().second.second
+			);
 		}
 		
 		void
@@ -342,129 +277,42 @@ namespace rl
 			for (::std::size_t i = 0; i < this->tree.size(); ++i)
 			{
 				this->tree[i].clear();
-				this->tree[i][::boost::graph_bundle].nn.clear();
-				this->begin[i] = NULL;
-				this->end[i] = NULL;
+				this->tree[i][::boost::graph_bundle].nn->clear();
+				this->begin[i] = nullptr;
+				this->end[i] = nullptr;
 			}
+		}
+		
+		void
+		Rrt::setNearestNeighbors(NearestNeighbors* nearestNeighbors, const ::std::size_t& i)
+		{
+			this->tree[i][::boost::graph_bundle].nn = nearestNeighbors;
 		}
 		
 		bool
 		Rrt::solve()
 		{
-			this->begin[0] = this->addVertex(this->tree[0], ::boost::make_shared< ::rl::math::Vector >(*this->start));
+			this->time = ::std::chrono::steady_clock::now();
 			
-			::rl::math::Vector chosen(this->model->getDof());
+			this->begin[0] = this->addVertex(this->tree[0], ::std::make_shared< ::rl::math::Vector>(*this->start));
 			
-			timer.start();
-			timer.stop();
-			
-			while (timer.elapsed() < this->duration)
+			while ((::std::chrono::steady_clock::now() - this->time) < this->duration)
 			{
-				this->choose(chosen);
-				
+				::rl::math::Vector chosen = this->choose();
 				Neighbor nearest = this->nearest(this->tree[0], chosen);
-				
 				Vertex extended = this->extend(this->tree[0], nearest, chosen);
 				
-				if (NULL != extended)
+				if (nullptr != extended)
 				{
-					if (this->areEqual(*this->tree[0][extended].q, *this->goal))
+					if (this->areEqual(*get(this->tree[0], extended)->q, *this->goal))
 					{
 						this->end[0] = extended;
 						return true;
 					}
 				}
-				
-				timer.stop();
 			}
 			
 			return false;
-		}
-		
-		const ::rl::math::Real*
-		Rrt::CartesianIterator::operator()(const QueryItem& p) const
-		{
-			return p.first->data(); // TODO
-		}
-		
-		const ::rl::math::Real*
-		Rrt::CartesianIterator::operator()(const QueryItem& p, const int&) const
-		{
-			return p.first->data() + p.first->size(); // TODO
-		}
-		
-		Rrt::Distance::Distance() :
-			model(NULL)
-		{
-		}
-		
-		Rrt::Distance::Distance(Model* model) :
-			model(model)
-		{
-		}
-		
-		template<>
-		::rl::math::Real
-#if (CGAL_VERSION_NR > 1030801000)
-		Rrt::Distance::max_distance_to_rectangle(const Query_item& q, const ::CGAL::Kd_tree_rectangle< Rrt::SearchTraits::FT >& r) const
-#else
-		Rrt::Distance::max_distance_to_rectangle(const Query_item& q, const ::CGAL::Kd_tree_rectangle< Rrt::SearchTraits >& r) const
-#endif
-		{
-			::rl::math::Vector min(r.dimension());
-			::rl::math::Vector max(r.dimension());
-			
-			for (int i = 0; i < r.dimension(); ++i)
-			{
-				min(i) = r.min_coord(i);
-				max(i) = r.max_coord(i);
-			}
-			
-			return this->model->maxDistanceToRectangle(*q.first, min, max);
-		}
-		
-		template<>
-		::rl::math::Real
-#if (CGAL_VERSION_NR > 1030801000)
-		Rrt::Distance::min_distance_to_rectangle(const Query_item& q, const ::CGAL::Kd_tree_rectangle< Rrt::SearchTraits::FT >& r) const
-#else
-		Rrt::Distance::min_distance_to_rectangle(const Query_item& q, const ::CGAL::Kd_tree_rectangle< Rrt::SearchTraits >& r) const
-#endif
-		{
-			::rl::math::Vector min(r.dimension());
-			::rl::math::Vector max(r.dimension());
-			
-			for (int i = 0; i < r.dimension(); ++i)
-			{
-				min(i) = r.min_coord(i);
-				max(i) = r.max_coord(i);
-			}
-			
-			return this->model->minDistanceToRectangle(*q.first, min, max);
-		}
-		
-		::rl::math::Real
-		Rrt::Distance::min_distance_to_rectangle(const ::rl::math::Real& q, const ::rl::math::Real& min, const ::rl::math::Real& max, const ::std::size_t& cutting_dimension) const
-		{
-			return this->model->minDistanceToRectangle(q, min, max, cutting_dimension);
-		}
-		
-		::rl::math::Real
-		Rrt::Distance::new_distance(const ::rl::math::Real& dist, const ::rl::math::Real& old_off, const ::rl::math::Real& new_off, const int& cutting_dimension) const
-		{
-			return this->model->newDistance(dist, old_off, new_off, cutting_dimension);
-		}
-		
-		::rl::math::Real
-		Rrt::Distance::transformed_distance(const ::rl::math::Real& d) const
-		{
-			return this->model->transformedDistance(d);
-		}
-		
-		::rl::math::Real
-		Rrt::Distance::transformed_distance(const Query_item& q1, const Query_item& q2) const
-		{
-			return this->model->transformedDistance(*q1.first, *q2.first);
 		}
 	}
 }

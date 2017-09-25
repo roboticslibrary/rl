@@ -48,7 +48,7 @@ ConfigurationModel::columnCount(const QModelIndex& parent) const
 QVariant
 ConfigurationModel::data(const QModelIndex& index, int role) const
 {
-	if (NULL == MainWindow::instance()->kinematicModels[this->id])
+	if (nullptr == MainWindow::instance()->kinematicModels[this->id])
 	{
 		return QVariant();
 	}
@@ -58,28 +58,39 @@ ConfigurationModel::data(const QModelIndex& index, int role) const
 		return QVariant();
 	}
 	
+	rl::math::Vector q(MainWindow::instance()->kinematicModels[this->id]->getDof());
+	MainWindow::instance()->kinematicModels[this->id]->getPosition(q);
+	Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> qUnits(MainWindow::instance()->kinematicModels[this->id]->getDof());
+	MainWindow::instance()->kinematicModels[this->id]->getPositionUnits(qUnits);
+	
 	switch (role)
 	{
 	case Qt::DisplayRole:
-	case Qt::EditRole:
+		switch (qUnits(index.row()))
 		{
-			rl::math::Vector q(MainWindow::instance()->kinematicModels[this->id]->getDof());
-			MainWindow::instance()->kinematicModels[this->id]->getPosition(q);
-			Eigen::Matrix< rl::math::Unit, Eigen::Dynamic, 1 > qUnits(MainWindow::instance()->kinematicModels[this->id]->getDof());
-			MainWindow::instance()->kinematicModels[this->id]->getPositionUnits(qUnits);
-			
-			if (rl::math::UNIT_RADIAN == qUnits(index.row()))
-			{
-				return q(index.row()) * rl::math::RAD2DEG;
-			}
-			else
-			{
-				return q(index.row());
-			}
+		case rl::math::UNIT_METER:
+			return QString::number(q(index.row()), 'f', 4) + QString(" m");
+			break;
+		case rl::math::UNIT_RADIAN:
+			return QString::number(q(index.row()) * rl::math::RAD2DEG, 'f', 2) + QChar(176);
+			break;
+		default:
+			return q(index.row());
+			break;
+		}
+		break;
+	case Qt::EditRole:
+		if (rl::math::UNIT_RADIAN == qUnits(index.row()))
+		{
+			return q(index.row()) * rl::math::RAD2DEG;
+		}
+		else
+		{
+			return q(index.row());
 		}
 		break;
 	case Qt::TextAlignmentRole:
-		return Qt::AlignRight;
+		return QVariant(Qt::AlignRight | Qt::AlignVCenter);
 		break;
 	default:
 		break;
@@ -113,13 +124,14 @@ ConfigurationModel::headerData(int section, Qt::Orientation orientation, int rol
 void
 ConfigurationModel::operationalChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight)
 {
-	this->reset();
+	this->beginResetModel();
+	this->endResetModel();
 }
 
 int
 ConfigurationModel::rowCount(const QModelIndex& parent) const
 {
-	if (NULL == MainWindow::instance()->kinematicModels[this->id])
+	if (nullptr == MainWindow::instance()->kinematicModels[this->id])
 	{
 		return 0;
 	}
@@ -130,7 +142,7 @@ ConfigurationModel::rowCount(const QModelIndex& parent) const
 bool
 ConfigurationModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
-	if (NULL == MainWindow::instance()->kinematicModels[this->id])
+	if (nullptr == MainWindow::instance()->kinematicModels[this->id])
 	{
 		return false;
 	}
@@ -139,25 +151,25 @@ ConfigurationModel::setData(const QModelIndex& index, const QVariant& value, int
 	{
 		rl::math::Vector q(MainWindow::instance()->kinematicModels[this->id]->getDof());
 		MainWindow::instance()->kinematicModels[this->id]->getPosition(q);
-		Eigen::Matrix< rl::math::Unit, Eigen::Dynamic, 1 > qUnits(MainWindow::instance()->kinematicModels[this->id]->getDof());
+		Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> qUnits(MainWindow::instance()->kinematicModels[this->id]->getDof());
 		MainWindow::instance()->kinematicModels[this->id]->getPositionUnits(qUnits);
 		
 		if (rl::math::UNIT_RADIAN == qUnits(index.row()))
 		{
-			q(index.row()) = value.value< ::rl::math::Real >() * rl::math::DEG2RAD;
+			q(index.row()) = value.value<rl::math::Real>() * rl::math::DEG2RAD;
 		}
 		else
 		{
-			q(index.row()) = value.value< ::rl::math::Real >();
+			q(index.row()) = value.value<rl::math::Real>();
 		}
 		
 		MainWindow::instance()->kinematicModels[this->id]->setPosition(q);
 		MainWindow::instance()->kinematicModels[this->id]->updateFrames();
-			
-			for (std::size_t i = 0; i < MainWindow::instance()->geometryModels[this->id]->getNumBodies(); ++i)
-			{
-				MainWindow::instance()->geometryModels[this->id]->getBody(i)->setFrame(MainWindow::instance()->kinematicModels[this->id]->getFrame(i));
-			}
+		
+		for (std::size_t i = 0; i < MainWindow::instance()->geometryModels[this->id]->getNumBodies(); ++i)
+		{
+			MainWindow::instance()->geometryModels[this->id]->getBody(i)->setFrame(MainWindow::instance()->kinematicModels[this->id]->getFrame(i));
+		}
 		
 		emit dataChanged(index, index);
 		
@@ -170,7 +182,7 @@ ConfigurationModel::setData(const QModelIndex& index, const QVariant& value, int
 bool
 ConfigurationModel::setData(const rl::math::Vector& q)
 {
-	if (NULL == MainWindow::instance()->kinematicModels[this->id])
+	if (nullptr == MainWindow::instance()->kinematicModels[this->id])
 	{
 		return false;
 	}

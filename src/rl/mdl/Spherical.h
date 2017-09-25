@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_MDL_SPHERICAL_H_
-#define _RL_MDL_SPHERICAL_H_
+#ifndef RL_MDL_SPHERICAL_H
+#define RL_MDL_SPHERICAL_H
 
 #include "Joint.h"
 
@@ -40,9 +40,21 @@ namespace rl
 			
 			virtual ~Spherical();
 			
+			void clip(::rl::math::Vector& q) const;
+			
 			::rl::math::Real distance(const ::rl::math::Vector& q1, const ::rl::math::Vector& q2) const;
 			
+			::rl::math::Vector generatePositionGaussian(const ::rl::math::ConstVectorRef& rand, const ::rl::math::ConstVectorRef& mean, const ::rl::math::ConstVectorRef& sigma) const;
+			
+			::rl::math::Vector generatePositionUniform(const ::rl::math::ConstVectorRef& rand) const;
+			
+			void interpolate(const ::rl::math::Vector& q1, const ::rl::math::Vector& q2, const ::rl::math::Real& alpha, ::rl::math::Vector& q) const;
+			
+			void normalize(::rl::math::Vector& q) const;
+			
 			void setPosition(const ::rl::math::Vector& q);
+			
+			void step(const ::rl::math::Vector& q1, const ::rl::math::Vector& qdot, ::rl::math::Vector& q2) const;
 			
 			::rl::math::Real transformedDistance(const ::rl::math::Vector& q1, const ::rl::math::Vector& q2) const;
 			
@@ -54,4 +66,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_MDL_SPHERICAL_H_
+#endif // RL_MDL_SPHERICAL_H

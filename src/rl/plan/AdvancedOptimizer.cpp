@@ -53,7 +53,7 @@ namespace rl
 			VectorList::iterator j;
 			VectorList::iterator k;
 			
-			::rl::math::Vector inter(this->model->getDof());
+			::rl::math::Vector inter(this->model->getDofPosition());
 			
 			while (changed && path.size() > 2)
 			{
@@ -87,7 +87,7 @@ namespace rl
 								++k;
 								path.erase(l);
 								
-								if (NULL != this->viewer)
+								if (nullptr != this->viewer)
 								{
 									this->viewer->drawConfigurationPath(path);
 								}
@@ -121,7 +121,7 @@ namespace rl
 						
 						j = path.insert(j, inter);
 						
-						if (NULL != this->viewer)
+						if (nullptr != this->viewer)
 						{
 							this->viewer->drawConfigurationPath(path);
 						}

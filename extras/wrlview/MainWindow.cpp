@@ -35,27 +35,45 @@
 #include <QMessageBox>
 #include <QMimeData>
 #include <QUrl>
+#include <Inventor/errors/SoReadError.h>
 #include <Inventor/nodes/SoCamera.h>
+#include <Inventor/nodes/SoCoordinate3.h>
 #include <Inventor/nodes/SoDirectionalLight.h>
+#include <Inventor/nodes/SoIndexedLineSet.h>
+#include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/nodes/SoMaterialBinding.h>
 #include <Inventor/nodes/SoOrthographicCamera.h>
 #include <Inventor/nodes/SoPerspectiveCamera.h>
+#include <Inventor/nodes/SoScale.h>
 #include <Inventor/Qt/SoQt.h>
 
 #include "MainWindow.h"
+#include "SoGradientBackground.h"
 
-MainWindow::MainWindow(QWidget* parent, Qt::WFlags f) :
+MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	QMainWindow(parent, f),
-	displayMenu(NULL),
-	fileMenu(NULL),
+	backgroundSwitch(nullptr),
+	displayMenu(nullptr),
+	fileMenu(nullptr),
 	filename(),
-	offscreenRenderer(NULL),
-	offscreenRoot(NULL),
-	root(NULL),
-	viewer(NULL),
+	gradientBackground(),
+	input(),
+	manager(new QNetworkAccessManager(this)),
+	offscreenRenderer(nullptr),
+	origin1Switch(nullptr),
+	origin1000Switch(nullptr),
+	root(nullptr),
+	viewer(nullptr),
 	widget(new QWidget(this))
 {
 	SoQt::init(this);
 	SoDB::init();
+	SoGradientBackground::initClass();
+	
+	SoVRMLInline::setFetchURLCallBack(&MainWindow::inlineFetchUrlCallback, this);
+	SoVRMLInline::setReadAsSoFile(false);
+	
+	QObject::connect(this->manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
 	
 	QGLFormat format;
 	format.setAlpha(true);
@@ -68,6 +86,69 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags f) :
 	this->viewer->setDecoration(false);
 	this->viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_BLEND);
 	
+	this->gradientBackground = new SoGradientBackground();
+	this->gradientBackground->color0.setValue(0.8f, 0.8f, 0.8f);
+	this->gradientBackground->color1.setValue(1.0f, 1.0f, 1.0f);
+	
+	this->backgroundSwitch = new SoSwitch();
+	this->backgroundSwitch->whichChild = SO_SWITCH_ALL;
+	this->backgroundSwitch->ref();
+	this->backgroundSwitch->addChild(this->gradientBackground);
+	
+	SoCoordinate3* originCoordinate3 = new SoCoordinate3();
+	originCoordinate3->point.set1Value(0, SbVec3f(0, 0, 0));
+	originCoordinate3->point.set1Value(1, SbVec3f(1, 0, 0));
+	originCoordinate3->point.set1Value(2, SbVec3f(0, 1, 0));
+	originCoordinate3->point.set1Value(3, SbVec3f(0, 0, 1));
+	
+	SoMaterial* originMaterial = new SoMaterial();
+	originMaterial->diffuseColor.set1Value(0, SbColor(1, 0, 0));
+	originMaterial->diffuseColor.set1Value(1, SbColor(0, 1, 0));
+	originMaterial->diffuseColor.set1Value(2, SbColor(0, 0, 1));
+	
+	SoMaterialBinding* originMaterialBinding = new SoMaterialBinding();
+	originMaterialBinding->value.setValue(SoMaterialBindingElement::PER_PART);
+	
+	SoIndexedLineSet* originIndexedLineSet = new SoIndexedLineSet();
+	originIndexedLineSet->coordIndex.set1Value(0, 0);
+	originIndexedLineSet->coordIndex.set1Value(1, 1);
+	originIndexedLineSet->coordIndex.set1Value(2, SO_END_LINE_INDEX);
+	originIndexedLineSet->coordIndex.set1Value(3, 0);
+	originIndexedLineSet->coordIndex.set1Value(4, 2);
+	originIndexedLineSet->coordIndex.set1Value(5, SO_END_LINE_INDEX);
+	originIndexedLineSet->coordIndex.set1Value(6, 0);
+	originIndexedLineSet->coordIndex.set1Value(7, 3);
+	originIndexedLineSet->coordIndex.set1Value(8, SO_END_LINE_INDEX);
+	originIndexedLineSet->materialIndex.set1Value(0, 0);
+	originIndexedLineSet->materialIndex.set1Value(1, 1);
+	originIndexedLineSet->materialIndex.set1Value(2, 2);
+	
+	SoSeparator* origin1Separator = new SoSeparator();
+	origin1Separator->addChild(originCoordinate3);
+	origin1Separator->addChild(originMaterial);
+	origin1Separator->addChild(originMaterialBinding);
+	origin1Separator->addChild(originIndexedLineSet);
+	
+	this->origin1Switch = new SoSwitch();
+	this->origin1Switch->whichChild = SO_SWITCH_NONE;
+	this->origin1Switch->ref();
+	this->origin1Switch->addChild(origin1Separator);
+	
+	SoScale* origin1000Scale = new SoScale();
+	origin1000Scale->scaleFactor.setValue(1000, 1000, 1000);
+	
+	SoSeparator* origin1000Separator = new SoSeparator();
+	origin1000Separator->addChild(origin1000Scale);
+	origin1000Separator->addChild(originCoordinate3);
+	origin1000Separator->addChild(originMaterial);
+	origin1000Separator->addChild(originMaterialBinding);
+	origin1000Separator->addChild(originIndexedLineSet);
+	
+	this->origin1000Switch = new SoSwitch();
+	this->origin1000Switch->whichChild = SO_SWITCH_NONE;
+	this->origin1000Switch->ref();
+	this->origin1000Switch->addChild(origin1000Separator);
+	
 	this->offscreenRenderer = new SoOffscreenRenderer(this->viewer->getViewportRegion());
 	
 	this->setCentralWidget(this->widget);
@@ -76,9 +157,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags f) :
 	this->init();
 	
 	this->resize(800, 600);
-	
-	this->offscreenRoot = new SoSeparator();
-	this->offscreenRoot->ref();
 	
 	if (QCoreApplication::arguments().size() > 1)
 	{
@@ -95,17 +173,16 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags f) :
 
 MainWindow::~MainWindow()
 {
-	if (NULL != this->root)
+	this->backgroundSwitch->unref();
+	this->origin1Switch->unref();
+	this->origin1000Switch->unref();
+	
+	if (nullptr != this->root)
 	{
 		this->root->unref();
 	}
 	
-	if (NULL != this->offscreenRoot)
-	{
-		this->offscreenRoot->unref();
-	}
-	
-	if (NULL != this->offscreenRenderer)
+	if (nullptr != this->offscreenRenderer)
 	{
 		delete this->offscreenRenderer;
 	}
@@ -163,11 +240,19 @@ MainWindow::init()
 	this->addAction(saveImageWithAlphaAction);
 	this->fileMenu->addAction(saveImageWithAlphaAction);
 	
-	QAction* saveImageOffscreenAction = new QAction("Save Image Offscreen", this);
-	saveImageOffscreenAction->setShortcut(QKeySequence("Backspace"));
-	QObject::connect(saveImageOffscreenAction, SIGNAL(triggered()), this, SLOT(saveImageOffscreen()));
-	this->addAction(saveImageOffscreenAction);
-	this->fileMenu->addAction(saveImageOffscreenAction);
+	this->fileMenu->addSeparator();
+	
+	QAction* saveImageOffscreenWithoutAlphaAction = new QAction("Save Image Offscreen w/o Alpha", this);
+	saveImageOffscreenWithoutAlphaAction->setShortcut(QKeySequence("Backspace"));
+	QObject::connect(saveImageOffscreenWithoutAlphaAction, SIGNAL(triggered()), this, SLOT(saveImageOffscreenWithoutAlpha()));
+	this->addAction(saveImageOffscreenWithoutAlphaAction);
+	this->fileMenu->addAction(saveImageOffscreenWithoutAlphaAction);
+	
+	QAction* saveImageOffscreenWithAlphaAction = new QAction("Save Image Offscreen w/ Alpha", this);
+	saveImageOffscreenWithAlphaAction->setShortcut(QKeySequence("Shift+Backspace"));
+	QObject::connect(saveImageOffscreenWithAlphaAction, SIGNAL(triggered()), this, SLOT(saveImageOffscreenWithAlpha()));
+	this->addAction(saveImageOffscreenWithAlphaAction);
+	this->fileMenu->addAction(saveImageOffscreenWithAlphaAction);
 	
 	this->fileMenu->addSeparator();
 	
@@ -241,6 +326,30 @@ MainWindow::init()
 	
 	this->displayMenu->addSeparator();
 	
+	QActionGroup* originUnitActionGroup = new QActionGroup(this);
+	QObject::connect(originUnitActionGroup, SIGNAL(triggered(QAction*)), this, SLOT(selectOrigin(QAction*)));
+	
+	QAction* originNoneAction = new QAction("Hide Origin", this);
+	originNoneAction->setCheckable(true);
+	originNoneAction->setChecked(true);
+	originNoneAction->setData(ORIGIN_NONE);
+	originUnitActionGroup->addAction(originNoneAction);
+	this->displayMenu->addAction(originNoneAction);
+	
+	QAction* origin1Action = new QAction("Show Origin (Scale 1)", this);
+	origin1Action->setCheckable(true);
+	origin1Action->setData(ORIGIN_1);
+	originUnitActionGroup->addAction(origin1Action);
+	this->displayMenu->addAction(origin1Action);
+	
+	QAction* origin1000Action = new QAction("Show Origin (Scale 1000)", this);
+	origin1000Action->setCheckable(true);
+	origin1000Action->setData(ORIGIN_1000);
+	originUnitActionGroup->addAction(origin1000Action);
+	this->displayMenu->addAction(origin1000Action);
+	
+	this->displayMenu->addSeparator();
+	
 	QAction* toggleFullScreenAction = new QAction("Full Screen", this);
 	toggleFullScreenAction->setShortcut(QKeySequence("Alt+Return"));
 	QObject::connect(toggleFullScreenAction, SIGNAL(triggered()), this, SLOT(toggleFullScreen()));
@@ -254,11 +363,14 @@ MainWindow::init()
 	QObject::connect(cameraActionGroup, SIGNAL(triggered(QAction*)), this, SLOT(selectCamera(QAction*)));
 	
 	QAction* cameraOrthogonalAction = new QAction("Orthogonal Camera", this);
+	cameraOrthogonalAction->setCheckable(true);
 	cameraOrthogonalAction->setData(CAMERA_ORTHOGONAL);
 	cameraActionGroup->addAction(cameraOrthogonalAction);
 	this->displayMenu->addAction(cameraOrthogonalAction);
 	
 	QAction* cameraPerspectiveAction = new QAction("Perspective Camera", this);
+	cameraPerspectiveAction->setCheckable(true);
+	cameraPerspectiveAction->setChecked(true);
 	cameraPerspectiveAction->setData(CAMERA_PERSPECTIVE);
 	cameraActionGroup->addAction(cameraPerspectiveAction);
 	this->displayMenu->addAction(cameraPerspectiveAction);
@@ -270,11 +382,20 @@ MainWindow::init()
 	QObject::connect(backgroundActionGroup, SIGNAL(triggered(QAction*)), this, SLOT(selectBackground(QAction*)));
 	
 	QAction* backgroundBlackAction = new QAction("Black Background", this);
+	backgroundBlackAction->setCheckable(true);
 	backgroundBlackAction->setData(BACKGROUND_BLACK);
 	backgroundActionGroup->addAction(backgroundBlackAction);
 	this->displayMenu->addAction(backgroundBlackAction);
 	
+	QAction* backgroundGradientAction = new QAction("Gradient Background", this);
+	backgroundGradientAction->setCheckable(true);
+	backgroundGradientAction->setChecked(true);
+	backgroundGradientAction->setData(BACKGROUND_GRADIENT);
+	backgroundActionGroup->addAction(backgroundGradientAction);
+	this->displayMenu->addAction(backgroundGradientAction);
+	
 	QAction* backgroundWhiteAction = new QAction("White Background", this);
+	backgroundWhiteAction->setCheckable(true);
 	backgroundWhiteAction->setData(BACKGROUND_WHITE);
 	backgroundActionGroup->addAction(backgroundWhiteAction);
 	this->displayMenu->addAction(backgroundWhiteAction);
@@ -337,6 +458,51 @@ MainWindow::init()
 }
 
 void
+MainWindow::inlineFetchUrlCallback(const SbString& url, void* userData, SoVRMLInline* node)
+{
+	MainWindow* mainWindow = static_cast<MainWindow*>(userData);
+	
+	QString string(node->url.getValues(0)->getString());
+	
+	if (string.startsWith("http://") || string.startsWith("ftp://"))
+	{
+		QNetworkReply* reply = mainWindow->manager->get(QNetworkRequest(QUrl(node->url.getValues(0)->getString())));
+		reply->setProperty("node", QVariant::fromValue(static_cast<void*>(node)));
+	}
+	else
+	{
+		if (!mainWindow->input.pushFile(node->url.getValues(0)->getString()))
+		{
+			return;
+		}
+		
+		SoSeparator* root = SoDB::readAll(&mainWindow->input);
+		
+		if (nullptr == root)
+		{
+			if (mainWindow->input.getCurFileName() == node->getFullURLName())
+			{
+				char dummy;
+				while (!mainWindow->input.eof() && mainWindow->input.get(dummy));
+				assert(mainWindow->input.eof());
+				
+				if (mainWindow->input.get(dummy))
+				{
+					mainWindow->input.putBack(dummy);
+				}
+			}
+			
+			SoReadError::post(&mainWindow->input, "Unable to read Inline file: ``%s''", node->url.getValues(0)->getString());
+			return;
+		}
+		
+		root->ref();
+		node->setChildData(root);
+		root->unref();
+	}
+}
+
+void
 MainWindow::load(const QString filename)
 {
 	if (!(filename.endsWith(".iv") || filename.endsWith(".wrl") || filename.endsWith(".wrl.gz") || filename.endsWith(".wrz")))
@@ -345,34 +511,35 @@ MainWindow::load(const QString filename)
 		return;
 	}
 	
-	SoInput input;
-	
-	if (!input.openFile(filename.toStdString().c_str(), true))
+	if (!this->input.openFile(filename.toStdString().c_str(), true))
 	{
 		QMessageBox::critical(this, "Error", "File not found.");
 		return;
 	}
 	
-	if (NULL != this->root)
+	if (nullptr != this->root)
 	{
 		this->root->unref();
-		this->root = NULL;
-		this->viewer->setSceneGraph(NULL);
+		this->root = nullptr;
+		this->viewer->setSceneGraph(nullptr);
 		this->filename.clear();
 		this->setWindowTitle("wrlview");
 	}
 	
-	this->root = SoDB::readAll(&input);
+	this->root = SoDB::readAll(&this->input);
 	
-	input.closeFile();
+	this->input.closeFile();
 	
-	if (NULL == this->root)
+	if (nullptr == this->root)
 	{
 		QMessageBox::critical(this, "Error", "Error reading file.");
 		return;
 	}
 	
 	this->root->ref();
+	this->root->insertChild(this->origin1Switch, 0);
+	this->root->insertChild(this->origin1000Switch, 0);
+	this->root->insertChild(this->backgroundSwitch, 0);
 	this->viewer->setSceneGraph(this->root);
 	this->filename = filename;
 	this->setWindowTitle(filename + " - wrlview");
@@ -401,12 +568,36 @@ MainWindow::reload()
 }
 
 void
+MainWindow::replyFinished(QNetworkReply* reply)
+{
+	QByteArray data = reply->readAll();
+	
+	SoInput input;
+	input.setBuffer(data.data(), data.size());
+	
+	SoSeparator* root = SoDB::readAll(&input);
+	
+	if (nullptr == root)
+	{
+		SoReadError::post(&this->input, "Unable to read Inline file: ``%s''", reply->url().toString().toStdString().c_str());
+		return;
+	}
+	
+	root->ref();
+	SoVRMLInline* node = static_cast<SoVRMLInline*>(reply->property("node").value<void*>());
+	node->setChildData(root);
+	root->unref();
+	
+	this->viewer->viewAll();
+}
+
+void
 MainWindow::saveImage(bool withAlpha)
 {
 	QString filename = "wrlview-" + QDateTime::currentDateTime().toString("yyyyMMdd-HHmmsszzz") + ".png";
 	
 	glReadBuffer(GL_FRONT);
-	QImage image = static_cast< QGLWidget* >(this->viewer->getGLWidget())->grabFrameBuffer(withAlpha);
+	QImage image = static_cast<QGLWidget*>(this->viewer->getGLWidget())->grabFrameBuffer(withAlpha);
 	
 	QString format = filename.right(filename.length() - filename.lastIndexOf('.') - 1).toUpper();
 	
@@ -422,33 +613,23 @@ MainWindow::saveImage(bool withAlpha)
 }
 
 void
-MainWindow::saveImageOffscreen()
+MainWindow::saveImageOffscreen(bool withAlpha)
 {
 	QString filename = "wrlview-" + QDateTime::currentDateTime().toString("yyyyMMdd-HHmmsszzz") + ".png";
 	
-	this->offscreenRoot->removeAllChildren();
-	
-	if (-1 == this->root->findChild(this->viewer->getCamera()))
-	{
-		this->offscreenRoot->addChild(this->viewer->getCamera());
-	}
-	
-	if (this->viewer->isHeadlight())
-	{
-		this->offscreenRoot->addChild(this->viewer->getHeadlight());
-	}
-	
-	this->offscreenRoot->addChild(this->root);
+	SbViewportRegion viewportRegion(this->viewer->getViewportRegion());
+	viewportRegion.setPixelsPerInch(300);
+	viewportRegion.setWindowSize(
+		viewportRegion.getViewportSizePixels()[0] * viewportRegion.getPixelsPerInch() / SoOffscreenRenderer::getScreenPixelsPerInch(),
+		viewportRegion.getViewportSizePixels()[1] * viewportRegion.getPixelsPerInch() / SoOffscreenRenderer::getScreenPixelsPerInch()
+	);
 	
 	this->offscreenRenderer->setBackgroundColor(this->viewer->getBackgroundColor());
-	
-	SbViewportRegion viewportRegion(this->viewer->getViewportRegion());
-	viewportRegion.setWindowSize(viewportRegion.getWindowSize()[0] * 300.0f / 72.0f, viewportRegion.getWindowSize()[1] * 300.0f / 72.0f);
+	this->offscreenRenderer->setComponents(withAlpha ? SoOffscreenRenderer::RGB_TRANSPARENCY : SoOffscreenRenderer::RGB);
 	this->offscreenRenderer->setViewportRegion(viewportRegion);
-	
 	this->offscreenRenderer->getGLRenderAction()->setNumPasses(8);
 	
-	if (!this->offscreenRenderer->render(this->offscreenRoot))
+	if (!this->offscreenRenderer->render(this->viewer->getSceneManager()->getSceneGraph()))
 	{
 		QMessageBox::critical(this, "Error", "Error rendering " + filename + ".");
 		return;
@@ -465,6 +646,18 @@ MainWindow::saveImageOffscreen()
 		QMessageBox::critical(this, "Error", "Error writing " + filename + ".");
 		return;
 	}
+}
+
+void
+MainWindow::saveImageOffscreenWithAlpha()
+{
+	this->saveImageOffscreen(true);
+}
+
+void
+MainWindow::saveImageOffscreenWithoutAlpha()
+{
+	this->saveImageOffscreen(false);
 }
 
 void
@@ -485,9 +678,14 @@ MainWindow::selectBackground(QAction* action)
 	switch (action->data().toInt())
 	{
 	case BACKGROUND_BLACK:
+		this->backgroundSwitch->whichChild = SO_SWITCH_NONE;
 		this->viewer->setBackgroundColor(SbColor(0, 0, 0));
 		break;
+	case BACKGROUND_GRADIENT:
+		this->backgroundSwitch->whichChild = SO_SWITCH_ALL;
+		break;
 	case BACKGROUND_WHITE:
+		this->backgroundSwitch->whichChild = SO_SWITCH_NONE;
 		this->viewer->setBackgroundColor(SbColor(255, 255, 255));
 		break;
 	default:
@@ -512,6 +710,28 @@ MainWindow::selectCamera(QAction* action)
 	
 	this->viewer->getCamera()->setToDefaults();
 	this->viewer->viewAll();
+}
+
+void
+MainWindow::selectOrigin(QAction* action)
+{
+	switch (action->data().toInt())
+	{
+	case ORIGIN_NONE:
+		this->origin1Switch->whichChild = SO_SWITCH_NONE;
+		this->origin1000Switch->whichChild = SO_SWITCH_NONE;
+		break;
+	case ORIGIN_1:
+		this->origin1000Switch->whichChild = SO_SWITCH_NONE;
+		this->origin1Switch->whichChild = SO_SWITCH_ALL;
+		break;
+	case ORIGIN_1000:
+		this->origin1Switch->whichChild = SO_SWITCH_NONE;
+		this->origin1000Switch->whichChild = SO_SWITCH_ALL;
+		break;
+	default:
+		break;
+	}
 }
 
 void

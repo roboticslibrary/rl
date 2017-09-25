@@ -24,14 +24,15 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_PLAN_RRT_H_
-#define _RL_PLAN_RRT_H_
+#ifndef RL_PLAN_RRT_H
+#define RL_PLAN_RRT_H
 
+#include <memory>
 #include <boost/graph/adjacency_list.hpp>
-#include <CGAL/Search_traits.h>
 
 #include "MatrixPtr.h"
-#include "Orthogonal_k_neighbor_search.h"
+#include "Metric.h"
+#include "NearestNeighbors.h"
 #include "Planner.h"
 #include "TransformPtr.h"
 #include "VectorPtr.h"
@@ -46,6 +47,12 @@ namespace rl
 		
 		/**
 		 * Rapidly-Exploring Random Trees.
+		 * 
+		 * Steven M. LaValle. Rapidly-exploring random trees: A new tool for path
+		 * planning. Technical Report TR 98-11, Iowa State University, Ames, IA,
+		 * USA, October 1998.
+		 * 
+		 * http://msl.cs.uiuc.edu/~lavalle/papers/Lav98c.pdf
 		 */
 		class Rrt : public Planner
 		{
@@ -56,13 +63,17 @@ namespace rl
 			
 			virtual ::std::string getName() const;
 			
+			NearestNeighbors* getNearestNeighbors(const ::std::size_t& i) const;
+			
 			virtual ::std::size_t getNumEdges() const;
 			
 			virtual ::std::size_t getNumVertices() const;
 			
-			virtual void getPath(VectorList& path);
+			virtual VectorList getPath();
 			
 			virtual void reset();
+			
+			void setNearestNeighbors(NearestNeighbors* nearestNeighbors, const ::std::size_t& i);
 			
 			virtual bool solve();
 			
@@ -72,9 +83,6 @@ namespace rl
 			/** Epsilon for configuration comparison. */
 			::rl::math::Real epsilon;
 			
-			/** Use kd-tree for nearest neighbor search instead of brute-force. */
-			bool kd;
-			
 			Sampler* sampler;
 			
 		protected:
@@ -83,10 +91,6 @@ namespace rl
 				::std::size_t index;
 				
 				VectorPtr q;
-				
-				::rl::math::Real radius;
-				
-				TransformPtr t;
 			};
 			
 			struct TreeBundle;
@@ -95,7 +99,7 @@ namespace rl
 				::boost::listS,
 				::boost::listS,
 				::boost::bidirectionalS,
-				VertexBundle,
+				::std::shared_ptr<VertexBundle>,
 				::boost::no_property,
 				TreeBundle
 			> Tree;
@@ -107,88 +111,44 @@ namespace rl
 				::boost::listS
 			>::vertex_descriptor Vertex; 
 			
-			typedef ::std::pair< const ::rl::math::Vector*, Vertex > QueryItem;
-			
-			struct CartesianIterator
-			{
-				typedef const ::rl::math::Real* result_type;
-				
-				const ::rl::math::Real* operator()(const QueryItem& p) const;
-				
-				const ::rl::math::Real* operator()(const QueryItem& p, const int&) const;
-			};
-			
-			struct Distance
-			{
-				typedef QueryItem Query_item;
-				
-				Distance();
-				
-				Distance(Model* model);
-				
-				template< typename SearchTraits > ::rl::math::Real max_distance_to_rectangle(const Query_item& q, const ::CGAL::Kd_tree_rectangle< SearchTraits >& r) const;
-				
-				template< typename SearchTraits > ::rl::math::Real min_distance_to_rectangle(const Query_item& q, const ::CGAL::Kd_tree_rectangle< SearchTraits >& r) const;
-				
-				::rl::math::Real min_distance_to_rectangle(const ::rl::math::Real& q, const ::rl::math::Real& min, const ::rl::math::Real& max, const ::std::size_t& cutting_dimension) const;
-				
-				::rl::math::Real new_distance(const ::rl::math::Real& dist, const ::rl::math::Real& old_off, const ::rl::math::Real& new_off, const int& cutting_dimension) const;
-				
-				::rl::math::Real transformed_distance(const ::rl::math::Real& d) const;
-				
-				::rl::math::Real transformed_distance(const Query_item& q1, const Query_item& q2) const;
-				
-				Model* model;
-			};
-			
-			typedef ::CGAL::Search_traits< ::rl::math::Real, QueryItem, const ::rl::math::Real*, CartesianIterator > SearchTraits;
-			
-			typedef Orthogonal_k_neighbor_search< SearchTraits, Distance > NeighborSearch;
-			
-			typedef NeighborSearch::Tree NeighborSearchTree;
-			
-			typedef ::boost::shared_ptr< NeighborSearchTree > NeighborSearchTreePtr;
-			
-			typedef ::std::vector< NeighborSearchTreePtr > NearestNeighbors;
-			
 			struct TreeBundle
 			{
-				NearestNeighbors nn;
+				NearestNeighbors* nn;
 			};
 			
-			typedef ::boost::graph_traits< Tree >::edge_descriptor Edge;
+			typedef ::boost::graph_traits<Tree>::edge_descriptor Edge;
 			
-			typedef ::boost::graph_traits< Tree >::edge_iterator EdgeIterator;
+			typedef ::boost::graph_traits<Tree>::edge_iterator EdgeIterator;
 			
-			typedef ::std::pair< EdgeIterator, EdgeIterator > EdgeIteratorPair;
+			typedef ::std::pair<EdgeIterator, EdgeIterator> EdgeIteratorPair;
 			
-			typedef ::boost::graph_traits< Tree >::vertex_iterator VertexIterator;
+			typedef ::std::pair< ::rl::math::Real, Vertex> Neighbor;
 			
-			typedef ::std::pair< VertexIterator, VertexIterator > VertexIteratorPair;
+			typedef ::boost::graph_traits<Tree>::vertex_iterator VertexIterator;
 			
-			typedef ::std::pair< Vertex, ::rl::math::Real > Neighbor;
+			typedef ::std::pair<VertexIterator, VertexIterator> VertexIteratorPair;
 			
 			virtual Edge addEdge(const Vertex& u, const Vertex& v, Tree& tree);
 			
-			void addPoint(NearestNeighbors& nn, const QueryItem& p);
-			
-			Vertex addVertex(Tree& tree, const VectorPtr& q);
+			virtual Vertex addVertex(Tree& tree, const VectorPtr& q);
 			
 			bool areEqual(const ::rl::math::Vector& lhs, const ::rl::math::Vector& rhs) const;
 			
-			virtual void choose(::rl::math::Vector& chosen);
+			virtual ::rl::math::Vector choose();
 			
 			virtual Vertex connect(Tree& tree, const Neighbor& nearest, const ::rl::math::Vector& chosen);
 			
 			virtual Vertex extend(Tree& tree, const Neighbor& nearest, const ::rl::math::Vector& chosen);
 			
+			static VertexBundle* get(const Tree& tree, const Vertex& v);
+			
 			virtual Neighbor nearest(const Tree& tree, const ::rl::math::Vector& chosen);
 			
-			::std::vector< Vertex > begin;
+			::std::vector<Vertex> begin;
 			
-			::std::vector< Vertex > end;
+			::std::vector<Vertex> end;
 			
-			::std::vector< Tree > tree;
+			::std::vector<Tree> tree;
 			
 		private:
 			
@@ -196,4 +156,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_PLAN_RRT_H_
+#endif // RL_PLAN_RRT_H

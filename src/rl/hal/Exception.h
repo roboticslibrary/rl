@@ -24,10 +24,11 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_HAL_EXCEPTION_H_
-#define _RL_HAL_EXCEPTION_H_
+#ifndef RL_HAL_EXCEPTION_H
+#define RL_HAL_EXCEPTION_H
 
 #include <stdexcept>
+#include <string>
 
 namespace rl
 {
@@ -38,7 +39,11 @@ namespace rl
 		public:
 			Exception(const ::std::string& what_arg);
 			
+			Exception(const int& errnum);
+			
 			virtual ~Exception() throw();
+			
+			static ::std::string strerror(const int& errnum);
 			
 		protected:
 			
@@ -48,4 +53,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_HAL_EXCEPTION_H_
+#endif // RL_HAL_EXCEPTION_H

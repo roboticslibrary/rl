@@ -32,7 +32,7 @@ namespace rl
 	{
 		Verifier::Verifier() :
 			delta(1.0f),
-			model(NULL)
+			model(nullptr)
 		{
 		}
 		

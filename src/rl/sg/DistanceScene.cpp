@@ -44,7 +44,7 @@ namespace rl
 		::rl::math::Real
 		DistanceScene::distance(const ::rl::math::Vector3& point, ::rl::math::Vector3& point1, ::rl::math::Vector3& point2)
 		{
-			::rl::math::Real distance = ::std::numeric_limits< ::rl::math::Real >::max();
+			::rl::math::Real distance = ::std::numeric_limits< ::rl::math::Real>::max();
 			
 			for (Scene::Iterator i = this->begin(); i != this->end(); ++i)
 			{
@@ -72,7 +72,7 @@ namespace rl
 		::rl::math::Real
 		DistanceScene::distance(Body* first, Body* second, ::rl::math::Vector3& point1, ::rl::math::Vector3& point2)
 		{
-			::rl::math::Real distance = ::std::numeric_limits< ::rl::math::Real >::max();
+			::rl::math::Real distance = ::std::numeric_limits< ::rl::math::Real>::max();
 			
 			for (Body::Iterator i = first->begin(); i != first->end(); ++i)
 			{
@@ -103,7 +103,7 @@ namespace rl
 		::rl::math::Real
 		DistanceScene::distance(Body* body, const ::rl::math::Vector3& point, ::rl::math::Vector3& point1, ::rl::math::Vector3& point2)
 		{
-			::rl::math::Real distance = ::std::numeric_limits< ::rl::math::Real >::max();
+			::rl::math::Real distance = ::std::numeric_limits< ::rl::math::Real>::max();
 			
 			for (Body::Iterator i = body->begin(); i != body->end(); ++i)
 			{
@@ -131,7 +131,7 @@ namespace rl
 		::rl::math::Real
 		DistanceScene::distance(Model* first, Model* second, ::rl::math::Vector3& point1, ::rl::math::Vector3& point2)
 		{
-			::rl::math::Real distance = ::std::numeric_limits< ::rl::math::Real >::max();
+			::rl::math::Real distance = ::std::numeric_limits< ::rl::math::Real>::max();
 			
 			for (Model::Iterator i = first->begin(); i != first->end(); ++i)
 			{
@@ -162,7 +162,7 @@ namespace rl
 		::rl::math::Real
 		DistanceScene::distance(Model* model, const ::rl::math::Vector3& point, ::rl::math::Vector3& point1, ::rl::math::Vector3& point2)
 		{
-			::rl::math::Real distance = ::std::numeric_limits< ::rl::math::Real >::max();
+			::rl::math::Real distance = ::std::numeric_limits< ::rl::math::Real>::max();
 			
 			for (Model::Iterator i = model->begin(); i != model->end(); ++i)
 			{

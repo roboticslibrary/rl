@@ -30,8 +30,8 @@ namespace rl
 {
 	namespace hal
 	{
-		JointPositionActuator::JointPositionActuator(const ::std::size_t& dof, const ::rl::math::Real& updateRate) :
-			AxisController(dof, updateRate)
+		JointPositionActuator::JointPositionActuator(const ::std::size_t& dof) :
+			AxisController(dof)
 		{
 		}
 		

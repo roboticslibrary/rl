@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_HAL_FORCESENSOR_H_
-#define _RL_HAL_FORCESENSOR_H_
+#ifndef RL_HAL_FORCESENSOR_H
+#define RL_HAL_FORCESENSOR_H
 
 #include <rl/math/Vector.h>
 
@@ -43,9 +43,9 @@ namespace rl
 			virtual ~ForceSensor();
 			
 			/**
-			 * @param forces [N]
+			 * @param[out] forces [N]
 			 */
-			virtual void getForces(::rl::math::Vector& forces) const = 0;
+			virtual ::rl::math::Vector getForces() const = 0;
 			
 			virtual ::std::size_t getForcesCount() const = 0;
 			
@@ -67,4 +67,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_HAL_FORCESENSOR_H_
+#endif // RL_HAL_FORCESENSOR_H

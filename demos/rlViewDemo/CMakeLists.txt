@@ -1,13 +1,26 @@
-project(rlViewDemo)
-
-find_package(Qt4 COMPONENTS QtCore QtGui QtOpenGL)
-include(${QT_USE_FILE})
-
 find_package(SoQt)
 
-if(QT_FOUND AND SOQT_FOUND)
+if(USE_QT5 AND SoQt5_FOUND)
+	find_package(Qt5 COMPONENTS Core Gui OpenGL Widgets QUIET)
+endif()
+
+if(Qt5_FOUND)
+	set(QT_LIBRARIES ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5OpenGL_LIBRARIES} ${Qt5Widgets_LIBRARIES})
+	set(QT_FOUND Qt5_FOUND)
+else()
+	set(QT_USE_IMPORTED_TARGETS ON)
+	find_package(Qt4 COMPONENTS QtCore QtGui QtOpenGL)
+	set(QT_USE_QTMAIN ON)
+	include(${QT_USE_FILE})
+endif()
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+if(QT_FOUND AND SoQt_FOUND)
 	add_executable(
 		rlViewDemo
+		WIN32
 		rlViewDemo.cpp
 		${rl_SOURCE_DIR}/robotics-library.rc
 	)
@@ -15,30 +28,35 @@ if(QT_FOUND AND SOQT_FOUND)
 	target_compile_definitions(
 		rlViewDemo
 		PUBLIC
-		${QT_DEFINITIONS}
-		${SOQT_DEFINITIONS}
+		${SoQt_DEFINITIONS}
 	)
 	
 	include_directories(
 		rlViewDemo
 		PUBLIC
-		${QT_INCLUDES}
-		${SOQT_INCLUDE_DIRS}
+		${SoQt_INCLUDE_DIRS}
 	)
 	
 	target_link_libraries(
 		rlViewDemo
-		rlsg
+		sg
 		${QT_LIBRARIES}
-		${SOQT_LIBRARIES}
+		${SoQt_LIBRARIES}
 	)
 	
 	set_target_properties(
 		rlViewDemo
 		PROPERTIES
 		VERSION ${VERSION}
-		DEBUG_POSTFIX d
 	)
+	
+	if(WIN32)
+		set_target_properties(
+			rlViewDemo
+			PROPERTIES
+			DEBUG_POSTFIX d
+		)
+	endif()
 	
 	install(
 		TARGETS rlViewDemo
@@ -48,22 +66,41 @@ if(QT_FOUND AND SOQT_FOUND)
 		RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 	)
 	
+	if(MSVC AND BUILD_SHARED_LIBS AND NOT CMAKE_VERSION VERSION_LESS 3.1)
+		install(FILES $<TARGET_PDB_FILE:rlViewDemo> DESTINATION ${CMAKE_INSTALL_BINDIR} CONFIGURATIONS Debug RelWithDebInfo COMPONENT demos)
+	endif()
+	
 	if(UNIX)
-		install(FILES rlViewDemo.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications COMPONENT demos)
-	endif(UNIX)
+		configure_file(rlViewDemo.desktop.in rlViewDemo.desktop @ONLY)
+		install(FILES ${CMAKE_CURRENT_BINARY_DIR}/rlViewDemo.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications COMPONENT demos)
+	endif()
 	
 	set(
-		CPACK_NSIS_EXTRA_INSTALL_COMMANDS
-		${CPACK_NSIS_EXTRA_INSTALL_COMMANDS}
+		CPACK_NSIS_CREATE_ICONS_EXTRA
+		${CPACK_NSIS_CREATE_ICONS_EXTRA}
 		"CreateShortCut \\\\
 			\\\"$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\rlViewDemo.lnk\\\" \\\\
 			\\\"$INSTDIR\\\\${CMAKE_INSTALL_BINDIR}\\\\rlViewDemo.exe\\\" \\\\
 			\\\"\\\\
-				\\\$\\\\\\\"$INSTDIR\\\\${CMAKE_INSTALL_DATADIR}\\\\rl\\\\examples\\\\rlsg\\\\unimation-puma560_boxes.xml\\\$\\\\\\\"\\\\
+				\\\$\\\\\\\"$INSTDIR\\\\${CMAKE_INSTALL_DATADIR}\\\\rl-${VERSION}\\\\examples\\\\rlsg\\\\unimation-puma560_boxes.xml\\\$\\\\\\\"\\\\
 			\\\" \\\\
 			\\\"\\\" \\\"\\\" \\\"\\\" \\\"\\\" \\\\
 			\\\"Visualization demo with Unimation Puma 560\\\""
 		PARENT_SCOPE
 	)
-	set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS ${CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS} "Delete \\\"$SMPROGRAMS\\\\$START_MENU\\\\rlViewDemo.lnk\\\"" PARENT_SCOPE)
-endif(QT_FOUND AND SOQT_FOUND)
+	set(CPACK_NSIS_DELETE_ICONS_EXTRA ${CPACK_NSIS_DELETE_ICONS_EXTRA} "Delete \\\"$SMPROGRAMS\\\\$START_MENU\\\\rlViewDemo.lnk\\\"" PARENT_SCOPE)
+	
+	set(
+		WIX_SHORTCUTS
+		${WIX_SHORTCUTS}
+		"<Shortcut
+			Arguments=\"&quot;[INSTALL_ROOT]${CMAKE_INSTALL_DATADIR}\\rl-${VERSION}\\examples\\rlsg\\unimation-puma560_boxes.xml&quot;\"
+			Description=\"Visualization demo with Unimation Puma 560\"
+			Id=\"CM_SP_bin.rlViewDemo.exe\"
+			Name=\"rlViewDemo\"
+			Target=\"[#CM_FP_bin.rlViewDemo.exe]\"
+			WorkingDirectory=\"CM_DP_bin\"
+		/>"
+		PARENT_SCOPE
+	)
+endif()

@@ -25,9 +25,9 @@
 //
 
 #include <iostream>
+#include <memory>
 #include <stdexcept>
 #include <boost/lexical_cast.hpp>
-#include <boost/shared_ptr.hpp>
 #include <rl/kin/Kinematics.h>
 #include <rl/math/Unit.h>
 
@@ -37,25 +37,25 @@ main(int argc, char** argv)
 	if (argc < 2)
 	{
 		std::cout << "Usage: rlJacobianDemo KINEMATICSFILE Q1 ... Qn QD1 ... QDn" << std::endl;
-		return 1;
+		return EXIT_FAILURE;
 	}
 	
 	try
 	{
-		boost::shared_ptr< rl::kin::Kinematics > kinematics(rl::kin::Kinematics::create(argv[1]));
+		std::shared_ptr<rl::kin::Kinematics> kinematics(rl::kin::Kinematics::create(argv[1]));
 		
 		rl::math::Vector q(kinematics->getDof());
 		
 		for (std::ptrdiff_t i = 0; i < q.size(); ++i)
 		{
-			q(i) = boost::lexical_cast< rl::math::Real >(argv[i + 2]);
+			q(i) = boost::lexical_cast<rl::math::Real>(argv[i + 2]);
 		}
 		
 		rl::math::Vector qdot(kinematics->getDof());
 		
 		for (std::ptrdiff_t i = 0; i < qdot.size(); ++i)
 		{
-			qdot(i) = boost::lexical_cast< rl::math::Real >(argv[q.size() + i + 2]);
+			qdot(i) = boost::lexical_cast<rl::math::Real>(argv[q.size() + i + 2]);
 		}
 		
 		kinematics->setPosition(q);
@@ -86,8 +86,8 @@ main(int argc, char** argv)
 	catch (const std::exception& e)
 	{
 		std::cout << e.what() << std::endl;
-		return 1;
+		return EXIT_FAILURE;
 	}
 	
-	return 0;
+	return EXIT_SUCCESS;
 }

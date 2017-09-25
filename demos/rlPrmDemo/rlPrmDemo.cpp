@@ -25,11 +25,12 @@
 //
 
 #include <iostream>
+#include <memory>
 #include <stdexcept>
 #include <boost/lexical_cast.hpp>
-#include <boost/shared_ptr.hpp>
 #include <rl/kin/Kinematics.h>
 #include <rl/math/Unit.h>
+#include <rl/plan/KdtreeNearestNeighbors.h>
 #include <rl/plan/Prm.h>
 #include <rl/plan/RecursiveVerifier.h>
 #include <rl/plan/SimpleModel.h>
@@ -37,7 +38,6 @@
 #include <rl/plan/UniformSampler.h>
 #include <rl/sg/solid/Model.h>
 #include <rl/sg/solid/Scene.h>
-#include <rl/util/Timer.h>
 
 int
 main(int argc, char** argv)
@@ -45,7 +45,7 @@ main(int argc, char** argv)
 	if (argc < 3)
 	{
 		std::cout << "Usage: rlPrmDemo SCENEFILE KINEMATICSFILE START1 ... STARTn GOAL1 ... GOALn" << std::endl;
-		return 1;
+		return EXIT_FAILURE;
 	}
 	
 	try
@@ -53,18 +53,20 @@ main(int argc, char** argv)
 		rl::sg::solid::Scene scene;
 		scene.load(argv[1]);
 		
-		::boost::shared_ptr< ::rl::kin::Kinematics > kinematics(::rl::kin::Kinematics::create(argv[2]));
+		std::shared_ptr<rl::kin::Kinematics> kinematics(rl::kin::Kinematics::create(argv[2]));
 		
 		rl::plan::SimpleModel model;
 		model.kin = kinematics.get();
 		model.model = scene.getModel(0);
 		model.scene = &scene;
 		
+		rl::plan::KdtreeNearestNeighbors nearestNeighbors(&model);
 		rl::plan::Prm planner;
 		rl::plan::UniformSampler sampler;
 		rl::plan::RecursiveVerifier verifier;
 		
 		planner.model = &model;
+		planner.setNearestNeighbors(&nearestNeighbors);
 		planner.sampler = &sampler;
 		planner.verifier = &verifier;
 		
@@ -77,7 +79,7 @@ main(int argc, char** argv)
 		
 		for (std::size_t i = 0; i < kinematics->getDof(); ++i)
 		{
-			start(i) = boost::lexical_cast< rl::math::Real >(argv[i + 3]);
+			start(i) = boost::lexical_cast<rl::math::Real>(argv[i + 3]);
 		}
 		
 		planner.start = &start;
@@ -86,30 +88,28 @@ main(int argc, char** argv)
 		
 		for (std::size_t i = 0; i < kinematics->getDof(); ++i)
 		{
-			goal(i) = boost::lexical_cast< rl::math::Real >(argv[kinematics->getDof() + i + 3]);
+			goal(i) = boost::lexical_cast<rl::math::Real>(argv[kinematics->getDof() + i + 3]);
 		}
 		
 		planner.goal = &goal;
 		
-		rl::util::Timer timer;
-		
 		std::cout << "construct() ... " << std::endl;;
-		timer.start();
+		std::chrono::steady_clock::time_point startTime = std::chrono::steady_clock::now();
 		planner.construct(15);
-		timer.stop();
-		std::cout << "construct() " << timer.elapsed() * 1000.0f << " ms" << std::endl;
+		std::chrono::steady_clock::time_point stopTime = std::chrono::steady_clock::now();
+		std::cout << "construct() " << std::chrono::duration_cast<std::chrono::duration<double>>(stopTime - startTime).count() * 1000 << " ms" << std::endl;
 		
 		std::cout << "solve() ... " << std::endl;;
-		timer.start();
+		startTime = std::chrono::steady_clock::now();
 		bool solved = planner.solve();
-		timer.stop();
-		std::cout << "solve() " << (solved ? "true" : "false") << " " << timer.elapsed() * 1000.0f << " ms" << std::endl;
+		stopTime = std::chrono::steady_clock::now();
+		std::cout << "solve() " << (solved ? "true" : "false") << " " << std::chrono::duration_cast<std::chrono::duration<double>>(stopTime - startTime).count() * 1000 << " ms" << std::endl;
 		
-		return 0;
+		return EXIT_SUCCESS;
 	}
 	catch (const std::exception& e)
 	{
 		std::cerr << e.what() << std::endl;
-		return -1;
+		return EXIT_FAILURE;
 	}
 }

@@ -24,16 +24,18 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _MAINWINDOW_H_
-#define _MAINWINDOW_H_
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
 
+#include <memory>
 #include <QAction>
 #include <QDockWidget>
+#include <QComboBox>
 #include <QMainWindow>
+#include <QSpinBox>
 #include <QTableView>
 #include <QTabWidget>
 #include <vector>
-#include <boost/shared_ptr.hpp>
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #include <rl/mdl/Model.h>
 #include <rl/sg/Model.h>
@@ -44,6 +46,7 @@ class ConfigurationModel;
 class OperationalDelegate;
 class OperationalModel;
 class Server;
+class SoGradientBackground;
 
 class MainWindow : public QMainWindow
 {
@@ -54,44 +57,64 @@ public:
 	
 	static MainWindow* instance();
 	
-	std::vector< ConfigurationModel* > configurationModels;
+	std::vector<ConfigurationModel*> configurationModels;
 	
-	std::vector< rl::sg::Model* > geometryModels;
+	std::vector<rl::sg::Model*> geometryModels;
 	
-	std::vector< boost::shared_ptr< rl::mdl::Model > > kinematicModels;
+	QComboBox* ikAlgorithmComboBox;
 	
-	std::vector< OperationalModel* > operationalModels;
+	QSpinBox* ikDurationSpinBox;
 	
-	boost::shared_ptr< rl::sg::so::Scene > scene;
+	QComboBox* ikJacobianComboBox;
+	
+	QComboBox* ikJacobianInverseComboBox;
+	
+	std::vector<std::shared_ptr<rl::mdl::Model>> kinematicModels;
+	
+	std::vector<OperationalModel*> operationalModels;
+	
+	std::shared_ptr<rl::sg::so::Scene> scene;
 	
 public slots:
-	void saveImage();
+	void changeIkAlgorithm();
+	
+	void changeIkJacobian();
+	
+	void saveImageWithAlpha();
+	
+	void saveImageWithoutAlpha();
 	
 	void saveScene();
 	
 protected:
-	MainWindow(QWidget* parent = NULL, Qt::WindowFlags f = 0);
+	MainWindow(QWidget* parent = nullptr, Qt::WindowFlags f = 0);
 	
 private:
 	void init();
 	
-	std::vector< ConfigurationDelegate* > configurationDelegates;
+	void saveImage(bool withAlpha);
+	
+	std::vector<ConfigurationDelegate*> configurationDelegates;
 	
 	QDockWidget* configurationDockWidget;
 	
 	QTabWidget* configurationTabWidget;
 	
-	std::vector< QTableView* > configurationViews;
+	std::vector<QTableView*> configurationViews;
 	
-	std::vector< OperationalDelegate* > operationalDelegates;
+	SoGradientBackground* gradientBackground;
+	
+	std::vector<OperationalDelegate*> operationalDelegates;
 	
 	QDockWidget* operationalDockWidget;
 	
 	QTabWidget* operationalTabWidget;
 	
-	std::vector< QTableView* > operationalViews;
+	std::vector<QTableView*> operationalViews;
 	
-	QAction* saveImageAction;
+	QAction* saveImageWithAlphaAction;
+	
+	QAction* saveImageWithoutAlphaAction;
 	
 	QAction* saveSceneAction;
 	
@@ -102,4 +125,4 @@ private:
 	SoQtExaminerViewer* viewer;
 };
 
-#endif // _MAINWINDOW_H_
+#endif // MAINWINDOW_H

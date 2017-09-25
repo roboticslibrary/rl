@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_SG_SIMPLESCENE_H_
-#define _RL_SG_SIMPLESCENE_H_
+#ifndef RL_SG_SIMPLESCENE_H
+#define RL_SG_SIMPLESCENE_H
 
 #include "Scene.h"
 
@@ -60,4 +60,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_SG_SIMPLESCENE_H_
+#endif // RL_SG_SIMPLESCENE_H

@@ -30,10 +30,9 @@ namespace rl
 {
 	namespace hal
 	{
-		AxisController::AxisController(const ::std::size_t& dof, const ::rl::math::Real& updateRate) :
+		AxisController::AxisController(const ::std::size_t& dof) :
 			Device(),
-			dof(dof),
-			updateRate(updateRate)
+			dof(dof)
 		{
 		}
 		
@@ -45,12 +44,6 @@ namespace rl
 		AxisController::getDof() const
 		{
 			return this->dof;
-		}
-		
-		::rl::math::Real
-		AxisController::getUpdateRate() const
-		{
-			return this->updateRate;
 		}
 	}
 }

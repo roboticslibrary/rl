@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_MDL_COMPOUND_H_
-#define _RL_MDL_COMPOUND_H_
+#ifndef RL_MDL_COMPOUND_H
+#define RL_MDL_COMPOUND_H
 
 #include <boost/graph/filtered_graph.hpp>
 
@@ -68,7 +68,7 @@ namespace rl
 			
 			typedef ::boost::property_map< Model::Tree, ::boost::vertex_color_t>::type VertexColorMapType;
 			
-			template< typename EdgeWeightMap >
+			template<typename EdgeWeightMap>
 			struct EdgePredicate
 			{
 				EdgePredicate()
@@ -80,7 +80,7 @@ namespace rl
 				{
 				}
 				
-				template< typename Edge >
+				template<typename Edge>
 				bool operator()(const Edge& e) const
 				{
 					return this == get(weight, e);
@@ -89,7 +89,7 @@ namespace rl
 				EdgeWeightMap weight;
 			};
 			
-			template< typename VertexColorMap >
+			template<typename VertexColorMap>
 			struct VertexPredicate
 			{
 				VertexPredicate()
@@ -101,7 +101,7 @@ namespace rl
 				{
 				}
 				
-				template< typename Vertex >
+				template<typename Vertex>
 				bool operator()(const Vertex& v) const
 				{
 					return this == get(color, v);
@@ -110,7 +110,7 @@ namespace rl
 				VertexColorMap color;
 			};
 			
-			typedef ::boost::filtered_graph< Model::Tree, EdgePredicate< EdgeWeightMapType >, VertexPredicate< VertexColorMapType > > Tree;
+			typedef ::boost::filtered_graph<Model::Tree, EdgePredicate<EdgeWeightMapType>, VertexPredicate<VertexColorMapType>> Tree;
 			
 			Model* model;
 			
@@ -119,4 +119,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_MDL_COMPOUND_H_
+#endif // RL_MDL_COMPOUND_H

@@ -24,6 +24,14 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#ifdef WIN32
+#include <windows.h>
+#endif // WIN32
+
+#include <cstring>
+#include <sstream>
+#include <boost/lexical_cast.hpp>
+
 #include "Exception.h"
 
 namespace rl
@@ -35,8 +43,27 @@ namespace rl
 		{
 		}
 		
+		Exception::Exception(const int& errnum) :
+			::std::runtime_error(Exception::strerror(errnum))
+		{
+		}
+		
 		Exception::~Exception() throw()
 		{
+		}
+		
+		::std::string
+		Exception::strerror(const int& errnum)
+		{
+#ifdef WIN32
+			::LPTSTR buffer = nullptr;
+			::FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, nullptr, errnum, 0, buffer, 0, nullptr);
+			::std::string message = nullptr != buffer ? buffer : ::boost::lexical_cast< ::std::string>(errnum);
+			::LocalFree(buffer);
+			return message;
+#else // WIN32
+			return ::strerror(errnum);
+#endif // WIN32
 		}
 	}
 }

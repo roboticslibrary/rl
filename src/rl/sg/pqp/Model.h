@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_SG_PQP_MODEL_H_
-#define _RL_SG_PQP_MODEL_H_
+#ifndef RL_SG_PQP_MODEL_H
+#define RL_SG_PQP_MODEL_H
 
 #include "../Model.h"
 
@@ -55,4 +55,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_SG_PQP_MODEL_H_
+#endif // RL_SG_PQP_MODEL_H

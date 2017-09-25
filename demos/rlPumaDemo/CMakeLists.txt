@@ -1,5 +1,3 @@
-project(rlPumaDemo)
-
 find_package(Boost REQUIRED)
 
 add_executable(
@@ -15,5 +13,5 @@ target_include_directories(
 
 target_link_libraries(
 	rlPumaDemo
-	rlkin
+	kin
 )

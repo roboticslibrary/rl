@@ -30,8 +30,8 @@ namespace rl
 {
 	namespace hal
 	{
-		CartesianPositionSensor::CartesianPositionSensor(const ::std::size_t& dof, const ::rl::math::Real& updateRate) :
-			AxisController(dof, updateRate)
+		CartesianPositionSensor::CartesianPositionSensor(const ::std::size_t& dof) :
+			AxisController(dof)
 		{
 		}
 		

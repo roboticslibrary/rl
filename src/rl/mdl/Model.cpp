@@ -39,6 +39,11 @@ namespace rl
 			bodies(),
 			elements(),
 			frames(),
+			gammaPosition(),
+			gammaVelocity(),
+			home(),
+			invGammaPosition(),
+			invGammaVelocity(),
 			joints(),
 			leaves(),
 			manufacturer(),
@@ -71,7 +76,7 @@ namespace rl
 			frame->setVertexDescriptor(vertex);
 			this->tree[vertex].reset(frame);
 			
-			if (dynamic_cast< World* >(frame))
+			if (dynamic_cast<World*>(frame))
 			{
 				this->root = vertex;
 			}
@@ -107,22 +112,60 @@ namespace rl
 			return new Model(*this);
 		}
 		
-		void
-		Model::getAcceleration(::rl::math::Vector& qdd) const
+		::rl::math::Vector
+		Model::generatePositionGaussian(const ::rl::math::Vector& rand, const ::rl::math::Vector& mean, const ::rl::math::Vector& sigma) const
 		{
+			::rl::math::Vector q(this->getDofPosition());
+			
+			for (::std::size_t i = 0, j = 0, k = 0; i < this->joints.size(); k += this->joints[i]->getDof(), j += this->joints[i]->getDofPosition(), ++i)
+			{
+				q.segment(j, this->joints[i]->getDofPosition()) = this->joints[i]->generatePositionGaussian(
+					rand.segment(k, this->joints[i]->getDof()),
+					mean.segment(j, this->joints[i]->getDofPosition()),
+					sigma.segment(k, this->joints[i]->getDof())
+				);
+			}
+			
+			return q;
+		}
+		
+		::rl::math::Vector
+		Model::generatePositionUniform(const ::rl::math::Vector& rand) const
+		{
+			::rl::math::Vector q(this->getDofPosition());
+			
+			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDofPosition(), ++i)
+			{
+				q.segment(j, this->joints[i]->getDofPosition()) = this->joints[i]->generatePositionUniform(rand.segment(j, this->joints[i]->getDofPosition()));
+			}
+			
+			return q;
+		}
+		
+		::rl::math::Vector
+		Model::getAcceleration() const
+		{
+			::rl::math::Vector qdd(this->getDof());
+			
 			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDof(), ++i)
 			{
 				qdd.segment(j, this->joints[i]->getDof()) = this->joints[i]->getAcceleration();
 			}
+			
+			return this->invGammaVelocity * qdd;
 		}
 		
-		void
-		Model::getAccelerationUnits(::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1 >& units) const
+		::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1>
+		Model::getAccelerationUnits() const
 		{
+			::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1> units(this->getDof());
+			
 			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDof(), ++i)
 			{
 				units.segment(j, this->joints[i]->getDof()) = this->joints[i]->getAccelerationUnits();
 			}
+			
+			return units;
 		}
 		
 		::std::size_t
@@ -171,6 +214,36 @@ namespace rl
 			assert(i < this->getBodies());
 			
 			return this->bodies[i]->t;
+		}
+		
+		const ::rl::math::Matrix&
+		Model::getGammaPosition() const
+		{
+			return this->gammaPosition;
+		}
+		
+		const ::rl::math::Matrix&
+		Model::getGammaVelocity() const
+		{
+			return this->gammaVelocity;
+		}
+		
+		const ::rl::math::Matrix&
+		Model::getGammaPositionInverse() const
+		{
+			return this->invGammaPosition;
+		}
+		
+		const ::rl::math::Matrix&
+		Model::getGammaVelocityInverse() const
+		{
+			return this->invGammaVelocity;
+		}
+		
+		::rl::math::Vector
+		Model::getHomePosition() const
+		{
+			return this->home;
 		}
 		
 		Joint*
@@ -231,22 +304,30 @@ namespace rl
 			return this->manufacturer;
 		}
 		
-		void
-		Model::getMaximum(::rl::math::Vector& max) const
+		::rl::math::Vector
+		Model::getMaximum() const
 		{
+			::rl::math::Vector max(this->getDofPosition());
+			
 			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDofPosition(), ++i)
 			{
 				max.segment(j, this->joints[i]->getDofPosition()) = this->joints[i]->getMaximum();
 			}
+			
+			return max;
 		}
 		
-		void
-		Model::getMinimum(::rl::math::Vector& min) const
+		::rl::math::Vector
+		Model::getMinimum() const
 		{
+			::rl::math::Vector min(this->getDofPosition());
+			
 			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDofPosition(), ++i)
 			{
 				min.segment(j, this->joints[i]->getDofPosition()) = this->joints[i]->getMinimum();
 			}
+			
+			return min;
 		}
 		
 		const ::std::string&
@@ -255,76 +336,108 @@ namespace rl
 			return this->name;
 		}
 		
-		void
-		Model::getPosition(::rl::math::Vector& q) const
+		::rl::math::Vector
+		Model::getPosition() const
 		{
+			::rl::math::Vector q(this->getDofPosition());
+			
 			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDofPosition(), ++i)
 			{
 				q.segment(j, this->joints[i]->getDofPosition()) = this->joints[i]->getPosition();
 			}
+			
+			return this->invGammaPosition * q;
 		}
 		
-		void
-		Model::getPositionUnits(::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1 >& units) const
+		::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1>
+		Model::getPositionUnits() const
 		{
+			::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1> units(this->getDofPosition());
+			
 			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDofPosition(), ++i)
 			{
 				units.segment(j, this->joints[i]->getDofPosition()) = this->joints[i]->getPositionUnits();
 			}
+			
+			return units;
 		}
 		
-		void
-		Model::getTorque(::rl::math::Vector& tau) const
+		::rl::math::Vector
+		Model::getTorque() const
 		{
+			::rl::math::Vector tau(this->getDof());
+			
 			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDof(), ++i)
 			{
 				tau.segment(j, this->joints[i]->getDof()) = this->joints[i]->getTorque();
 			}
+			
+			return tau;
 		}
 		
-		void
-		Model::getTorqueUnits(::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1 >& units) const
+		::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1>
+		Model::getTorqueUnits() const
 		{
+			::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1> units(this->getDof());
+			
 			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDof(), ++i)
 			{
 				units.segment(j, this->joints[i]->getDof()) = this->joints[i]->getTorqueUnits();
 			}
+			
+			return units;
 		}
 		
-		void
-		Model::getSpeed(::rl::math::Vector& speed) const
+		::rl::math::Vector
+		Model::getSpeed() const
 		{
+			::rl::math::Vector speed(this->getDof());
+			
 			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDof(), ++i)
 			{
 				speed.segment(j, this->joints[i]->getDof()) = this->joints[i]->getSpeed();
 			}
+			
+			return speed;
 		}
 		
-		void
-		Model::getSpeedUnits(::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1 >& units) const
+		::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1>
+		Model::getSpeedUnits() const
 		{
+			::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1> units(this->getDof());
+			
 			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDof(), ++i)
 			{
 				units.segment(j, this->joints[i]->getDof()) = this->joints[i]->getSpeedUnits();
 			}
+			
+			return units;
 		}
 		
-		void
-		Model::getVelocity(::rl::math::Vector& qd) const
+		::rl::math::Vector
+		Model::getVelocity() const
 		{
+			::rl::math::Vector qd(this->getDof());
+			
 			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDof(), ++i)
 			{
 				qd.segment(j, this->joints[i]->getDof()) = this->joints[i]->getVelocity();
 			}
+			
+			return this->invGammaVelocity * qd;
 		}
 		
-		void
-		Model::getVelocityUnits(::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1 >& units) const
+		::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1>
+		Model::getVelocityUnits() const
 		{
+			::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1> units(this->getDof());
+			
 			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDof(), ++i)
 			{
 				units.segment(j, this->joints[i]->getDof()) = this->joints[i]->getVelocityUnits();
 			}
+			
+			return units;
 		}
 		
 		bool
@@ -361,7 +474,7 @@ namespace rl
 		{
 			::boost::clear_vertex(frame->getVertexDescriptor(), this->tree);
 			
-			if (dynamic_cast< World* >(frame))
+			if (dynamic_cast<World*>(frame))
 			{
 				this->root = 0;
 			}
@@ -376,12 +489,50 @@ namespace rl
 		}
 		
 		void
-		Model::setAcceleration(const ::rl::math::Vector& qdd)
+		Model::setAcceleration(const ::rl::math::Vector& ydd)
 		{
+			::rl::math::Vector qdd = this->gammaVelocity * ydd;
+			
 			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDof(), ++i)
 			{
 				this->joints[i]->setAcceleration(qdd.segment(j, this->joints[i]->getDof()));
 			}
+		}
+		
+		void
+		Model::setGammaPosition(const ::rl::math::Matrix& gammaPosition)
+		{
+			this->gammaPosition = gammaPosition;
+			::Eigen::JacobiSVD< ::rl::math::Matrix> svd(this->gammaPosition, ::Eigen::ComputeThinU | ::Eigen::ComputeThinV);
+			::rl::math::Vector singularValues(svd.singularValues().size());
+			
+			for (::std::ptrdiff_t i = 0; i < svd.singularValues().size(); ++i)
+			{
+				singularValues[i] = svd.singularValues()[i] > std::numeric_limits< ::rl::math::Real>::epsilon() ? 1 / svd.singularValues()[i] : 0;
+			}
+			
+			this->invGammaPosition = svd.matrixV() * singularValues.asDiagonal() * svd.matrixU().transpose();
+		}
+		
+		void
+		Model::setGammaVelocity(const ::rl::math::Matrix& gammaVelocity)
+		{
+			this->gammaVelocity = gammaVelocity;
+			::Eigen::JacobiSVD< ::rl::math::Matrix> svd(this->gammaVelocity, ::Eigen::ComputeThinU | ::Eigen::ComputeThinV);
+			::rl::math::Vector singularValues(svd.singularValues().size());
+			
+			for (::std::ptrdiff_t i = 0; i < svd.singularValues().size(); ++i)
+			{
+				singularValues[i] = svd.singularValues()[i] > std::numeric_limits< ::rl::math::Real>::epsilon() ? 1 / svd.singularValues()[i] : 0;
+			}
+			
+			this->invGammaVelocity = svd.matrixV() * singularValues.asDiagonal() * svd.matrixU().transpose();
+		}
+		
+		void
+		Model::setHomePosition(const ::rl::math::Vector& home)
+		{
+			this->home = home;
 		}
 		
 		void
@@ -403,8 +554,10 @@ namespace rl
 		}
 		
 		void
-		Model::setPosition(const ::rl::math::Vector& q)
+		Model::setPosition(const ::rl::math::Vector& y)
 		{
+			::rl::math::Vector q = this->gammaPosition * y;
+			
 			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDofPosition(), ++i)
 			{
 				this->joints[i]->setPosition(q.segment(j, this->joints[i]->getDofPosition()));
@@ -421,8 +574,10 @@ namespace rl
 		}
 		
 		void
-		Model::setVelocity(const ::rl::math::Vector& qd)
+		Model::setVelocity(const ::rl::math::Vector& yd)
 		{
+			::rl::math::Vector qd = this->gammaVelocity * yd;
+			
 			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDof(), ++i)
 			{
 				this->joints[i]->setVelocity(qd.segment(j, this->joints[i]->getDof()));
@@ -465,7 +620,7 @@ namespace rl
 			this->elements.push_back(frame);
 			this->frames.push_back(frame);
 			
-			if (Body* body = dynamic_cast< Body* >(frame))
+			if (Body* body = dynamic_cast<Body*>(frame))
 			{
 				this->bodies.push_back(body);
 			}
@@ -483,7 +638,7 @@ namespace rl
 					transform->in = this->tree[u].get();
 					transform->out = this->tree[v].get();
 					
-					if (Joint* joint = dynamic_cast< Joint* >(transform))
+					if (Joint* joint = dynamic_cast<Joint*>(transform))
 					{
 						this->joints.push_back(joint);
 					}
@@ -500,6 +655,17 @@ namespace rl
 					this->tools.push_back(*i.first);
 				}
 			}
+			
+			this->gammaPosition.resize(this->getDofPosition(), this->getDofPosition());
+			this->gammaPosition.setIdentity();
+			this->gammaVelocity.resize(this->getDof(), this->getDof());
+			this->gammaVelocity.setIdentity();
+			this->home.resize(this->getDofPosition());
+			this->home.setZero();
+			this->invGammaPosition.resize(this->getDofPosition(), this->getDofPosition());
+			this->invGammaPosition.setIdentity();
+			this->invGammaVelocity.resize(this->getDof(), this->getDof());
+			this->invGammaVelocity.setIdentity();
 		}
 		
 		::rl::math::Transform&

@@ -41,7 +41,7 @@ namespace rl
 		{
 			Body::Body(Model* model) :
 				::rl::sg::Body(model),
-				root(new SoVRMLTransform())
+				root(new ::SoVRMLTransform())
 			{
 				this->root->ref();
 				this->root->setUserData(this);
@@ -66,11 +66,11 @@ namespace rl
 			{
 				::rl::sg::Body::add(shape);
 				
-				this->root->addChild(static_cast< Shape* >(shape)->root);
+				this->root->addChild(static_cast<Shape*>(shape)->root);
 			}
 			
 			::rl::sg::Shape*
-			Body::create(SoVRMLShape* shape)
+			Body::create(::SoVRMLShape* shape)
 			{
 				return new Shape(shape, this);
 			}
@@ -78,14 +78,14 @@ namespace rl
 			void
 			Body::getFrame(::rl::math::Transform& frame)
 			{
-				SoSearchAction searchAction;
+				::SoSearchAction searchAction;
 				searchAction.setNode(this->root);
-				searchAction.apply(static_cast< Scene* >(this->getModel()->getScene())->root);
+				searchAction.apply(static_cast<Scene*>(this->getModel()->getScene())->root);
 				
-				SbViewportRegion viewportRegion;
-				SoGetMatrixAction getMatrixAction(viewportRegion);
+				::SbViewportRegion viewportRegion;
+				::SoGetMatrixAction getMatrixAction(viewportRegion);
 				getMatrixAction.apply(searchAction.getPath());
-				SbMatrix matrix = getMatrixAction.getMatrix();
+				::SbMatrix matrix = getMatrixAction.getMatrix();
 				
 				for (int i = 0; i < 4; ++i)
 				{
@@ -105,7 +105,7 @@ namespace rl
 			void
 			Body::remove(::rl::sg::Shape* shape)
 			{
-				this->root->removeChild(static_cast< Shape* >(shape)->root);
+				this->root->removeChild(static_cast<Shape*>(shape)->root);
 				
 				::rl::sg::Body::remove(shape);
 			}
@@ -113,13 +113,13 @@ namespace rl
 			void
 			Body::setFrame(const ::rl::math::Transform& frame)
 			{
-				SbMatrix matrix;
+				::SbMatrix matrix;
 				
 				for (int i = 0; i < 4; ++i)
 				{
 					for (int j = 0; j < 4; ++j)
 					{
-						matrix[i][j] = static_cast< float >(frame(j, i));
+						matrix[i][j] = static_cast<float>(frame(j, i));
 					}
 				}
 				

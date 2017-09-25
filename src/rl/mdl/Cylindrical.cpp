@@ -57,9 +57,9 @@ namespace rl
 		Cylindrical::setPosition(const ::rl::math::Vector& q)
 		{
 			this->q = q;
-			this->t = ::rl::math::AngleAxis(this->q(0) + this->offset(0), this->S.block< 3, 1 >(0, 0));
+			this->t = ::rl::math::AngleAxis(this->q(0) + this->offset(0), this->S.block<3, 1>(0, 0));
 			this->x.rotation() = this->t.linear().transpose();
-			this->t.translation() = this->S.block< 3, 1 >(3, 1) * (this->q(1) + this->offset(1));
+			this->t.translation() = this->S.block<3, 1>(3, 1) * (this->q(1) + this->offset(1));
 			this->x.translation() = this->t.translation();
 		}
 	}

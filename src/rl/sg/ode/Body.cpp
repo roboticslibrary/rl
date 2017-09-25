@@ -37,8 +37,8 @@ namespace rl
 		{
 			Body::Body(Model* model) :
 				::rl::sg::Body(model),
-				body(dBodyCreate(dynamic_cast< Scene* >(getModel()->getScene())->world)),
-				space(dSimpleSpaceCreate(static_cast< Model* >(getModel())->space))
+				body(::dBodyCreate(dynamic_cast<Scene*>(getModel()->getScene())->world)),
+				space(::dSimpleSpaceCreate(static_cast<Model*>(getModel())->space))
 			{
 				this->getModel()->add(this);
 			}
@@ -52,12 +52,12 @@ namespace rl
 				
 				this->getModel()->remove(this);
 				
-				dBodyDestroy(this->body);
-				dSpaceDestroy(this->space);
+				::dBodyDestroy(this->body);
+				::dSpaceDestroy(this->space);
 			}
 			
 			::rl::sg::Shape*
-			Body::create(SoVRMLShape* shape)
+			Body::create(::SoVRMLShape* shape)
 			{
 				return new Shape(shape, this);
 			}
@@ -65,13 +65,13 @@ namespace rl
 			void
 			Body::getFrame(::rl::math::Transform& frame)
 			{
-				const dReal* position = dBodyGetPosition(this->body);
+				const ::dReal* position = ::dBodyGetPosition(this->body);
 				
 				frame(0, 3) = position[0];
 				frame(1, 3) = position[1];
 				frame(2, 3) = position[2];
 				
-				const dReal* rotation = dBodyGetRotation(this->body);
+				const ::dReal* rotation = ::dBodyGetRotation(this->body);
 				
 				for (::std::size_t i = 0; i < 3; ++i)
 				{
@@ -85,20 +85,20 @@ namespace rl
 			void
 			Body::setFrame(const ::rl::math::Transform& frame)
 			{
-				dBodySetPosition(
+				::dBodySetPosition(
 					this->body,
-					static_cast< dReal >(frame(0, 3)),
-					static_cast< dReal >(frame(1, 3)),
-					static_cast< dReal >(frame(2, 3))
+					static_cast<dReal>(frame(0, 3)),
+					static_cast<dReal>(frame(1, 3)),
+					static_cast<dReal>(frame(2, 3))
 				);
 				
-				dMatrix3 rotation;
+				::dMatrix3 rotation;
 				
 				for (::std::size_t i = 0; i < 3; ++i)
 				{
 					for (::std::size_t j = 0; j < 3; ++j)
 					{
-						rotation[i * 4 + j] = static_cast< dReal >(frame(i, j));
+						rotation[i * 4 + j] = static_cast< ::dReal>(frame(i, j));
 					}
 				}
 				
@@ -106,7 +106,7 @@ namespace rl
 				rotation[7] = 0.0f;
 				rotation[11] = 0.0f;
 				
-				dBodySetRotation(this->body, rotation);
+				::dBodySetRotation(this->body, rotation);
 			}
 		}
 	}

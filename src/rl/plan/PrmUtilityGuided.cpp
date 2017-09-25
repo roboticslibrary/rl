@@ -24,7 +24,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <boost/make_shared.hpp>
+#include <chrono>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 
 #include "PrmUtilityGuided.h"
@@ -42,10 +42,8 @@ namespace rl
 			Prm(),
 			numNeighbors(5), //TODO check for optimal value
 			numSamples(3), //TODO check for optimal value
-			rand(
-				::boost::mt19937(static_cast< ::boost::mt19937::result_type >(::rl::util::Timer::now() * 1000000.0f)),
-				::boost::uniform_real< ::rl::math::Real >(0.0f, 1.0f)
-			),
+			randDistribution(0, 1),
+			randEngine(::std::random_device()()),
 			variance(1) //TODO change this value dynamically or use xml-input
 		{
 		}
@@ -59,8 +57,8 @@ namespace rl
 		{
 			for (::std::size_t i = 0; i < steps; ++i)
 			{
-				Sample sample(this->model->getDof());
-				Sample bestSample(this->model->getDof());
+				Sample sample(this->model->getDofPosition());
+				Sample bestSample(this->model->getDofPosition());
 				::rl::math::Real pBest = -1.0f;
 				
 				// From numSamples samples, get the one with the best probability for being free.
@@ -97,7 +95,7 @@ namespace rl
 				{
 					// store the sample in the graph
 					bestSample.isColliding = false;
-					Vertex v = this->addVertex(::boost::make_shared< ::rl::math::Vector >(bestSample.q));
+					Vertex v = this->addVertex(::std::make_shared< ::rl::math::Vector>(bestSample.q));
 					this->insert(v);
 				}
 				
@@ -112,13 +110,13 @@ namespace rl
 			// indices for two random vertices
 			// the first sample uses the start ot the end component
 #ifdef ORIGINAL_VERSION
-			::std::size_t randIndex1 = static_cast< ::std::size_t >(::std::floor(this->rand() * this->getNumVertices()));
+			::std::size_t randIndex1 = static_cast< ::std::size_t>(::std::floor(this->rand() * this->getNumVertices()));
 #else
 			// here we always pick a component containing the beginning or end vertex
 			// this prevents roadmap building in remote areas.
-			::std::size_t randIndex1 = static_cast< ::std::size_t >(::std::floor(this->rand() * 2.0f));
+			::std::size_t randIndex1 = static_cast< ::std::size_t>(::std::floor(this->rand() * 2.0f));
 #endif
-			::std::size_t randIndex2 = static_cast< ::std::size_t >(::std::floor(this->rand() * this->getNumVertices()));
+			::std::size_t randIndex2 = static_cast< ::std::size_t>(::std::floor(this->rand() * this->getNumVertices()));
 			
 			// two random vertices
 			Vertex sample1 = ::boost::vertex(randIndex1, this->graph);
@@ -156,9 +154,9 @@ namespace rl
 			::std::size_t collisionCount = 0;
 			
 			// Sorted queue for finding the nearest neighbours
-			::std::priority_queue< Sample*, ::std::vector< Sample* >, CompareSample > queue;
+			::std::priority_queue<Sample*, ::std::vector<Sample*>, CompareSample> queue;
 			
-			::std::vector< Sample* >::iterator it;
+			::std::vector<Sample*>::iterator it;
 			// iterate over vector
 			// TODO use kd tree!!!
 			for (::std::size_t i = 0; i < this->samples.size(); ++i)
@@ -179,7 +177,7 @@ namespace rl
 				queue.pop(); 
 			}
 			
-			return 1.0f - static_cast< ::rl::math::Real >(collisionCount) / static_cast< ::rl::math::Real >(count);
+			return 1.0f - static_cast< ::rl::math::Real>(collisionCount) / static_cast< ::rl::math::Real>(count);
 		}
 		
 		::std::string
@@ -188,22 +186,28 @@ namespace rl
 			return "PRM Utility Guided"; 
 		}
 		
-		void
-		PrmUtilityGuided::seed(const ::boost::mt19937::result_type& value)
+		::std::uniform_real_distribution< ::rl::math::Real>::result_type
+		PrmUtilityGuided::rand()
 		{
-			this->rand.engine().seed(value);
+			return this->randDistribution(this->randEngine);
+		}
+		
+		void
+		PrmUtilityGuided::seed(const ::std::mt19937::result_type& value)
+		{
+			this->randEngine.seed(value);
 		}
 		
 		bool
 		PrmUtilityGuided::solve()
 		{
 			// Add the start and end configurations as samples
-			Sample first(this->model->getDof());
+			Sample first(this->model->getDofPosition());
 			first.isColliding = false;
 			first.q = *this->start;
 			this->samples.push_back(first);
 			
-			Sample last(this->model->getDof());
+			Sample last(this->model->getDofPosition());
 			last.isColliding = false;
 			last.q = *this->goal;
 			this->samples.push_back(last);

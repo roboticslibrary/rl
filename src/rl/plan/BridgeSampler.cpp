@@ -24,8 +24,6 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <rl/util/Timer.h>
-
 #include "BridgeSampler.h"
 #include "SimpleModel.h"
 
@@ -43,23 +41,21 @@ namespace rl
 		{
 		}
 		
-		void
-		BridgeSampler::generateCollisionFree(::rl::math::Vector& q)
+		::rl::math::Vector
+		BridgeSampler::generateCollisionFree()
 		{
-			assert(q.size() == this->model->getDof());
-			
 			if (this->rand() > this->ratio)
 			{
-				this->generate(q);
+				return this->generate();
 			}
 			else
 			{
-				::rl::math::Vector q2(this->model->getDof());
+				::rl::math::Vector q(this->model->getDof());
 				::rl::math::Vector q3(this->model->getDof());
 				
 				while (true)
 				{
-					this->generate(q2);
+					::rl::math::Vector q2 = this->generate();
 					
 					this->model->setPosition(q2);
 					this->model->updateFrames();
@@ -82,7 +78,7 @@ namespace rl
 							
 							if (!this->model->isColliding())
 							{
-								return;
+								return q;
 							}
 						}
 					}

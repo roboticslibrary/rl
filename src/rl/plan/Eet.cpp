@@ -2,14 +2,32 @@
 // Copyright (c) 2009, Markus Rickert
 // All rights reserved.
 //
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+// * Redistributions of source code must retain the above copyright notice,
+//   this list of conditions and the following disclaimer.
+// * Redistributions in binary form must reproduce the above copyright notice,
+//   this list of conditions and the following disclaimer in the documentation
+//   and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
+//
 
-//#define CSPACE
-
-#include <boost/make_shared.hpp>
+#include <chrono>
 #include <rl/math/Quaternion.h>
 #include <rl/math/Rotation.h>
 #include <rl/math/Unit.h>
-#include <rl/util/Timer.h>
 
 #include "DistanceModel.h"
 #include "Eet.h"
@@ -20,13 +38,9 @@
 #include "WorkspaceSphereExplorer.h"
 #include "WorkspaceSphereVector.h"
 
-#if _MSC_VER < 1600
-#define nullptr NULL // TODO
-#endif
-
 struct Compare
 {
-	bool operator()(const ::std::pair< void*, ::std::size_t >& lhs, const ::std::pair< void*, ::std::size_t >& rhs) const
+	bool operator()(const ::std::pair<void*, ::std::size_t>& lhs, const ::std::pair<void*, ::std::size_t>& rhs) const
 	{
 		return lhs.second < rhs.second;
 	}
@@ -40,6 +54,7 @@ namespace rl
 			RrtCon(),
 			alpha(0.01f),
 			alternativeDistanceComputation(false),
+			beta(0),
 			distanceWeight(0.1f),
 			explorers(),
 			explorersSetup(),
@@ -48,18 +63,14 @@ namespace rl
 			goalEpsilonUseOrientation(false),
 			max(::rl::math::Vector3::Zero()),
 			min(::rl::math::Vector3::Zero()),
-			gauss(
-				::boost::mt19937(static_cast< ::boost::mt19937::result_type >(::rl::util::Timer::now() * 1000000.0f)),
-				::boost::normal_distribution< ::rl::math::Real >(0.0f, 1.0f)
-			),
-			rand(
-				::boost::mt19937(static_cast< ::boost::mt19937::result_type >(::rl::util::Timer::now() * 1000000.0f)),
-				::boost::uniform_real< ::rl::math::Real >(0.0f, 1.0f)
-			),
-			exploration(),
-			timer()
+			gaussDistribution(0, 1),
+			gaussEngine(::std::random_device()()),
+			randDistribution(0, 1),
+			randEngine(::std::random_device()()),
+			explorationTimeStart(),
+			explorationTimeStop(),
+			nn(WorkspaceMetric(&this->distanceWeight, &this->alternativeDistanceComputation))
 		{
-			this->kd = false;
 		}
 		
 		Eet::~Eet()
@@ -71,39 +82,57 @@ namespace rl
 		{
 			Edge e = ::boost::add_edge(u, v, tree).first;
 			
-			if (NULL != this->viewer)
+			if (nullptr != this->viewer)
 			{
-				this->viewer->drawConfigurationEdge(*tree[u].q, *tree[v].q);
+				this->viewer->drawConfigurationEdge(*get(tree, u)->q, *get(tree, v)->q);
 			}
 			
 			return e;
 		}
 		
+		Eet::Vertex
+		Eet::addVertex(Tree& tree, const VectorPtr& q)
+		{
+			::std::shared_ptr<VertexBundle> bundle = ::std::make_shared<VertexBundle>();
+			bundle->index = ::boost::num_vertices(tree) - 1;
+			bundle->q = q;
+			
+			Vertex v = ::boost::add_vertex(tree);
+			tree[v] = bundle;
+			
+			if (nullptr != this->viewer)
+			{
+				this->viewer->drawConfigurationVertex(*get(tree, v)->q);
+			}
+			
+			return v;
+		}
+		
 		Rrt::Vertex
 		Eet::connect(Tree& tree, const Neighbor& nearest, const ::rl::math::Transform& chosen)
 		{
-			::rl::math::Real distance = this->distance(*tree[nearest.first].t, chosen);
+			::rl::math::Real distance = this->distance(*get(tree, nearest.second)->t, chosen);
 			
-			Vertex connected = NULL;
-			Vertex n = nearest.first;
+			Vertex connected = nullptr;
+			Vertex n = nearest.second;
 			int state = 1;
 			
 			do
 			{
 				VertexBundle best;
-				best.q = ::boost::make_shared< ::rl::math::Vector >(this->model->getDof());
-				best.t = ::boost::make_shared< ::rl::math::Transform >();
+				best.q = ::std::make_shared< ::rl::math::Vector>(this->model->getDofPosition());
+				best.t = ::std::make_shared< ::rl::math::Transform>();
 				
-				state = this->expand(tree[n], *tree[nearest.first].t, chosen, distance, best); // TODO
+				state = this->expand(get(tree, n), *get(tree, nearest.second)->t, chosen, distance, best); // TODO
 				
 				if (state >= 0)
 				{
 					connected = this->addVertex(tree, best.q);
-					tree[connected].t = best.t;
+					get(tree, connected)->t = best.t;
 					this->addEdge(n, connected, tree);
 					n = connected;
 					
-					::rl::math::Real distance2 = this->distance(*tree[n].t, chosen);
+					::rl::math::Real distance2 = this->distance(*get(tree, n)->t, chosen);
 					
 					if (distance2 > distance)
 					{
@@ -119,9 +148,9 @@ namespace rl
 			}
 			while (state > 0);
 			
-			if (NULL != connected)
+			if (nullptr != connected)
 			{
-				this->selected.push_back(connected);
+				this->nn.push(WorkspaceMetric::Value(get(tree, connected)->t.get(), connected));
 			}
 			
 			return connected;
@@ -132,25 +161,23 @@ namespace rl
 		{
 			if (this->alternativeDistanceComputation)
 			{
-				::rl::math::Vector6 delta;
-				::rl::math::transform::toDelta(t1, t2, delta);
+				::rl::math::Vector6 delta = t1.toDelta(t2, true);
 				return delta.norm();
 			}
 			else
 			{
-				return ::rl::math::transform::distance(t1, t2, this->distanceWeight);
+				return t1.distance(t2, this->distanceWeight);
 			}
 		}
 		
 		int
-		Eet::expand(const VertexBundle& nearest, const ::rl::math::Transform& nearest2, const ::rl::math::Transform& chosen, const ::rl::math::Real& distance, VertexBundle& expanded)
+		Eet::expand(const VertexBundle* nearest, const ::rl::math::Transform& nearest2, const ::rl::math::Transform& chosen, const ::rl::math::Real& distance, VertexBundle& expanded)
 		{
 			int state = 1;
 			
-			::rl::math::Vector6 tdot;
-			::rl::math::transform::toDelta(nearest2, chosen, tdot);
+			::rl::math::Vector6 tdot = nearest2.toDelta(chosen, true);
 			
-			this->model->setPosition(*nearest.q);
+			this->model->setPosition(*nearest->q);
 			this->model->updateFrames();
 			this->model->updateJacobian();
 			this->model->updateJacobianInverse();
@@ -162,13 +189,6 @@ namespace rl
 			this->model->inverseVelocity(tdot, qdot2);
 			qdot += qdot2;
 			
-			::rl::math::Vector3 d;
-			::rl::math::Vector3 omega;
-			RealList distances;
-			Vector3List points1;
-			Vector3List points2;
-			::rl::math::Vector3 v;
-			
 			if (qdot.norm() <= this->delta)
 			{
 				state = 0;
@@ -179,13 +199,13 @@ namespace rl
 				qdot *= this->delta;
 			}
 			
-			this->model->step(*nearest.q, qdot, *expanded.q);
+			this->model->step(*nearest->q, qdot, *expanded.q);
 			
 			if (this->model->getManipulabilityMeasure() < 1.0e-3f) // within singularity
 			{
-				this->sampler->generate(*expanded.q); // uniform sampling for singularities
-				::rl::math::Real tmp = this->model->distance(*nearest.q, *expanded.q);
-				this->model->interpolate(*nearest.q, *expanded.q, this->delta / tmp, *expanded.q);
+				*expanded.q = this->sampler->generate(); // uniform sampling for singularities
+				::rl::math::Real tmp = this->model->distance(*nearest->q, *expanded.q);
+				this->model->interpolate(*nearest->q, *expanded.q, this->delta / tmp, *expanded.q);
 			}
 			
 			if (!this->model->isValid(*expanded.q))
@@ -193,7 +213,7 @@ namespace rl
 				return -1;
 			}
 			
-			if (NULL != this->viewer)
+			if (nullptr != this->viewer)
 			{
 				this->viewer->drawConfiguration(*expanded.q);
 			}
@@ -214,28 +234,40 @@ namespace rl
 		Rrt::Vertex
 		Eet::extend(Tree& tree, const Neighbor& nearest, const ::rl::math::Transform& chosen)
 		{
-			::rl::math::Real distance = this->distance(*tree[nearest.first].t, chosen);
+			::rl::math::Real distance = this->distance(*get(tree, nearest.second)->t, chosen);
 			
-			Vertex extended = NULL;
+			Vertex extended = nullptr;
 			
 			VertexBundle best;
-			best.q = ::boost::make_shared< ::rl::math::Vector >(this->model->getDof());
-			best.t = ::boost::make_shared< ::rl::math::Transform >();
+			best.q = ::std::make_shared< ::rl::math::Vector>(this->model->getDofPosition());
+			best.t = ::std::make_shared< ::rl::math::Transform>();
 			
-			if (this->expand(tree[nearest.first], *tree[nearest.first].t, chosen, distance, best) >= 0)
+			if (this->expand(get(tree, nearest.second), *get(tree, nearest.second)->t, chosen, distance, best) >= 0)
 			{
 				extended = this->addVertex(tree, best.q);
-				tree[extended].t = best.t;
-				this->addEdge(nearest.first, extended, tree);
+				get(tree, extended)->t = best.t;
+				this->addEdge(nearest.second, extended, tree);
 			}
 			
 			return extended;
 		}
 		
-		::rl::math::Real
-		Eet::getExplorationTime() const
+		::std::normal_distribution< ::rl::math::Real>::result_type
+		Eet::gauss()
 		{
-			return this->exploration.elapsed();
+			return this->gaussDistribution(this->gaussEngine);
+		}
+		
+		Eet::VertexBundle*
+		Eet::get(const Tree& tree, const Vertex& v)
+		{
+			return static_cast<VertexBundle*>(tree[v].get());
+		}
+		
+		::std::chrono::steady_clock::duration
+		Eet::getExplorationDuration() const
+		{
+			return this->explorationTimeStop - this->explorationTimeStart;
 		}
 		
 		::std::string
@@ -247,38 +279,32 @@ namespace rl
 		::std::size_t
 		Eet::getNumEdges() const
 		{
-			return this->selected.size() - 1;
+			return this->nn.size() - 1;
 		}
 		
 		::std::size_t
 		Eet::getNumVertices() const
 		{
-			return this->selected.size();
+			return this->nn.size();
 		}
 		
-		void
-		Eet::getPath(VectorList& path)
+		VectorList
+		Eet::getPath()
 		{
-			Rrt::getPath(path);
+			return Rrt::getPath();
 		}
 		
 		Rrt::Neighbor
 		Eet::nearest(const Tree& tree, const ::rl::math::Transform& chosen)
 		{
-			Neighbor p(nullptr, ::std::numeric_limits< ::rl::math::Real >::max());
-			
-			for (std::vector< Vertex >::iterator i = this->selected.begin(); i != this->selected.end(); ++i)
-			{
-				::rl::math::Real d = this->distance(chosen, *tree[*i].t);
-				
-				if (d < p.second)
-				{
-					p.first = *i;
-					p.second = d;
-				}
-			}
-			
-			return p;
+			::std::vector< ::rl::math::GnatNearestNeighbors<WorkspaceMetric>::Neighbor> neighbors = this->nn.nearest(WorkspaceMetric::Value(&chosen, Vertex()), 1);
+			return Neighbor(neighbors.front().first, neighbors.front().second.second);
+		}
+		
+		::std::uniform_real_distribution< ::rl::math::Real>::result_type
+		Eet::rand()
+		{
+			return this->randDistribution(this->randEngine);
 		}
 		
 		void
@@ -291,14 +317,15 @@ namespace rl
 				(*i)->reset();
 			}
 			
-			this->selected.clear();
+			this->nn.clear();
 		}
 		
 		void
-		Eet::seed(const ::boost::mt19937::result_type& value)
+		Eet::seed(const ::std::mt19937::result_type& value)
 		{
-			this->gauss.engine().seed(value);
-			this->rand.engine().seed(value);
+			this->gaussEngine.seed(value);
+			this->nn.seed(value);
+			this->randEngine.seed(value);
 		}
 		
 		bool
@@ -309,14 +336,15 @@ namespace rl
 				throw("::rl::plan::Eet::solve() - branched kinematics not supported");
 			}
 			
-			this->timer.start();
-			this->exploration.start();
+			this->time = ::std::chrono::steady_clock::now();
+			
+			this->explorationTimeStart = ::std::chrono::steady_clock::now();
 			
 			// initialize workspace explorers
 			
 			for (::std::size_t i = 0; i < this->explorersSetup.size(); ++i)
 			{
-				if (NULL != this->explorersSetup[i].startConfiguration)
+				if (nullptr != this->explorersSetup[i].startConfiguration)
 				{
 					this->model->setPosition(*this->explorersSetup[i].startConfiguration);
 					this->model->updateFrames(false);
@@ -331,7 +359,7 @@ namespace rl
 					}
 				}
 				
-				if (NULL != this->explorersSetup[i].goalConfiguration)
+				if (nullptr != this->explorersSetup[i].goalConfiguration)
 				{
 					this->model->setPosition(*this->explorersSetup[i].goalConfiguration);
 					this->model->updateFrames(false);
@@ -351,27 +379,26 @@ namespace rl
 			
 			WorkspaceSphereVector path;
 			
-			for (::std::vector< WorkspaceSphereExplorer* >::iterator j = this->explorers.begin(); j != this->explorers.end(); ++j)
+			for (::std::vector<WorkspaceSphereExplorer*>::iterator j = this->explorers.begin(); j != this->explorers.end(); ++j)
 			{
 				if (!(*j)->explore())
 				{
 					return false;
 				}
 				
-				WorkspaceSphereList path2;
-				(*j)->getPath(path2);
+				WorkspaceSphereList path2 = (*j)->getPath();
 				path.insert(path.end(), path2.begin(), path2.end());
 			}
 			
-			this->exploration.stop();
+			this->explorationTimeStop = ::std::chrono::steady_clock::now();
 			
 			// tree initialization with start configuration
 			
-			this->begin[0] = this->addVertex(this->tree[0], ::boost::make_shared< ::rl::math::Vector >(*this->start));
-			this->selected.push_back(this->begin[0]);
+			this->begin[0] = this->addVertex(this->tree[0], ::std::make_shared< ::rl::math::Vector>(*this->start));
 			this->model->setPosition(*this->start);
 			this->model->updateFrames();
-			this->tree[0][this->begin[0]].t = ::boost::make_shared< ::rl::math::Transform >(this->model->forwardPosition());
+			get(this->tree[0], this->begin[0])->t = ::std::make_shared< ::rl::math::Transform>(this->model->forwardPosition());
+			this->nn.push(WorkspaceMetric::Value(get(this->tree[0], this->begin[0])->t.get(), begin[0]));
 			
 			::rl::math::Transform chosen;
 			chosen.setIdentity();
@@ -385,7 +412,7 @@ namespace rl
 			WorkspaceSphereVector::iterator i = ++path.begin();
 			::rl::math::Real sigma = gamma; // initialize exploration/exploitation balance
 			
-			while (timer.elapsed() < this->duration) // search until goal reached
+			while ((::std::chrono::steady_clock::now() - this->time) < this->duration) // search until goal reached
 			{
 				if (sigma < 1.0f) // sample is within current sphere
 				{
@@ -412,24 +439,40 @@ namespace rl
 						
 						// uniform sampling for orientation
 						
-						quaternion.fromUniform(this->rand(), this->rand(), this->rand());
+						quaternion.setFromUniform(::rl::math::Vector3(this->rand(), this->rand(), this->rand()));
 						chosen.linear() = quaternion.toRotationMatrix();
 						
 						nearest = this->nearest(this->tree[0], chosen); // nearest vertex in tree
+						
+						if (sigma < this->beta) // maintain orientation for small sigma
+						{
+							// Gauss sampling for orientation
+							
+							::rl::math::Real x = this->gauss() * sigma * 180.0f * ::rl::math::DEG2RAD / this->beta;
+							::rl::math::Real y = this->gauss() * sigma * 180.0f * ::rl::math::DEG2RAD / this->beta;
+							::rl::math::Real z = this->gauss() * sigma * 180.0f * ::rl::math::DEG2RAD / this->beta;
+							
+							// orientation similar to nearest vertex
+							
+							chosen.linear() = (*get(this->tree[0], nearest.second)->t).linear() *
+								::rl::math::AngleAxis(z, ::rl::math::Vector3::UnitZ()) *
+								::rl::math::AngleAxis(y, ::rl::math::Vector3::UnitY()) *
+								::rl::math::AngleAxis(x, ::rl::math::Vector3::UnitX());
+						}
 					}
 					
-					if (NULL != this->viewer)
+					if (nullptr != this->viewer)
 					{
 						this->viewer->drawWork(chosen);
 					}
 					
 					Vertex connected = this->connect(this->tree[0], nearest, chosen);
 					
-					if (NULL != connected)
+					if (nullptr != connected)
 					{
 						if (this->goalEpsilonUseOrientation)
 						{
-							if (this->distance(*this->tree[0][connected].t, goal) < this->goalEpsilon)
+							if (this->distance(*get(this->tree[0], connected)->t, goal) < this->goalEpsilon)
 							{
 								this->end[0] = connected;
 								return true;
@@ -437,7 +480,7 @@ namespace rl
 						}
 						else
 						{
-							if ((this->tree[0][connected].t->translation() - goal.translation()).norm() < this->goalEpsilon)
+							if ((get(this->tree[0], connected)->t->translation() - goal.translation()).norm() < this->goalEpsilon)
 							{
 								this->end[0] = connected;
 								return true;
@@ -445,11 +488,11 @@ namespace rl
 						}
 						
 						sigma *= 1.0f - this->alpha; // increase exploitation
-						sigma = ::std::max(static_cast< ::rl::math::Real >(0.1f), sigma);
+						sigma = ::std::max(static_cast< ::rl::math::Real>(0.1f), sigma);
 						
 						for (WorkspaceSphereVector::reverse_iterator k = ++path.rbegin(); k.base() != i; ++k) // search spheres backwards
 						{
-							if (((*this->tree[0][connected].t).translation() - *k->center).norm() < k->radius) // position is within sphere
+							if (((*get(this->tree[0], connected)->t).translation() - *k->center).norm() < k->radius) // position is within sphere
 							{
 								i = k.base(); // advance to matching sphere
 								sigma = gamma; // reset exploration/exploitation balance
@@ -470,8 +513,6 @@ namespace rl
 						sigma = gamma; // reset exploration/exploitation balance
 					}
 				}
-				
-				timer.stop();
 			}
 			
 			return false;

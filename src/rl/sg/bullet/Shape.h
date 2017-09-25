@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_SG_BULLET_SHAPE_H_
-#define _RL_SG_BULLET_SHAPE_H_
+#ifndef RL_SG_BULLET_SHAPE_H
+#define RL_SG_BULLET_SHAPE_H
 
 #include <btBulletCollisionCommon.h>
 #include <Inventor/actions/SoCallbackAction.h>
@@ -41,7 +41,7 @@ namespace rl
 			class Shape : public ::rl::sg::Shape
 			{
 			public:
-				Shape(SoVRMLShape* shape, Body* body);
+				Shape(::SoVRMLShape* shape, Body* body);
 				
 				virtual ~Shape();
 				
@@ -49,23 +49,23 @@ namespace rl
 				
 				void setTransform(const ::rl::math::Transform& transform);
 				
-				btCollisionShape* shape;
+				::btCollisionShape* shape;
 				
-				btTransform transform;
+				::btTransform transform;
 				
 			protected:
 				
 			private:
-				static void triangleCallback(void* userData, SoCallbackAction* action, const SoPrimitiveVertex* v1, const SoPrimitiveVertex* v2, const SoPrimitiveVertex* v3);
+				static void triangleCallback(void* userData, ::SoCallbackAction* action, const ::SoPrimitiveVertex* v1, const ::SoPrimitiveVertex* v2, const ::SoPrimitiveVertex* v3);
 				
-				::std::vector< int > indices;
+				::std::vector<int> indices;
 				
-				btTriangleIndexVertexArray* triangleIndexVertexArray;
+				::btTriangleIndexVertexArray* triangleIndexVertexArray;
 				
-				::std::vector< btScalar > vertices;
+				::std::vector< ::btScalar> vertices;
 			};
 		}
 	}
 }
 
-#endif // _RL_SG_BULLET_SHAPE_H_
+#endif // RL_SG_BULLET_SHAPE_H

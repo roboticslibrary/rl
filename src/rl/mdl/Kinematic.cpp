@@ -56,8 +56,7 @@ namespace rl
 		bool
 		Kinematic::calculateInversePosition(const ::rl::math::Transform& x, const ::std::size_t& leaf, const ::rl::math::Real& delta, const ::rl::math::Real& epsilon, const ::std::size_t& iterations)
 		{
-			::rl::math::Vector q(this->getDofPosition());
-			this->getPosition(q);
+			::rl::math::Vector q = this->getPosition();
 			::rl::math::Vector dq(this->getDofPosition());
 			::rl::math::Vector dx(6 * this->getOperationalDof());
 			dx.setZero();
@@ -69,7 +68,7 @@ namespace rl
 				this->forwardPosition();
 				
 				::rl::math::VectorBlock dxi = dx.segment(6 * leaf, 6);
-				::rl::math::transform::toDelta(this->getOperationalPosition(leaf), x, dxi);
+				dxi = this->getOperationalPosition(leaf).toDelta(x);
 				
 				this->calculateJacobian();
 				this->calculateJacobianInverse();
@@ -93,48 +92,20 @@ namespace rl
 				return false;
 			}
 			
-			::rl::math::Vector max(this->getDofPosition());
-			this->getMaximum(max);
-			::rl::math::Vector min(this->getDofPosition());
-			this->getMinimum(min);
-			
-			for (::std::size_t i = 0; i < this->getDofPosition(); ++i)
-			{
-				q(i) = ::std::fmod(q(i), 2.0f * static_cast< ::rl::math::Real >(M_PI));
-				
-				if (q(i) < min(i))
-				{
-					q(i) += 2.0f * static_cast< ::rl::math::Real >(M_PI);
-					
-					if (q(i) < min(i) || q(i) > max(i))
-					{
-						return false;
-					}
-				}
-				else if (q(i) > max(i))
-				{
-					q(i) -= 2.0f * static_cast< ::rl::math::Real >(M_PI);
-					
-					if (q(i) < min(i) || q(i) > max(i))
-					{
-						return false;
-					}
-				}
-			}
-			
+			this->normalize(q);
 			this->setPosition(q);
 			
-			return true;
+			return this->isValid(q);
 		}
 		
 		void
-		Kinematic::calculateJacobian()
+		Kinematic::calculateJacobian(const bool& inWorldFrame)
 		{
-			this->calculateJacobian(this->J);
+			this->calculateJacobian(this->J, inWorldFrame);
 		}
 		
 		void
-		Kinematic::calculateJacobian(::rl::math::Matrix& J)
+		Kinematic::calculateJacobian(::rl::math::Matrix& J, const bool& inWorldFrame)
 		{
 			assert(J.rows() == this->getOperationalDof() * 6);
 			assert(J.cols() == this->getDof());
@@ -153,22 +124,28 @@ namespace rl
 				
 				for (::std::size_t j = 0; j < this->getOperationalDof(); ++j)
 				{
-					J.block(j * 6, i, 3, 1) = this->getOperationalVelocity(j).linear();
-					J.block(j * 6 + 3, i, 3, 1) = this->getOperationalVelocity(j).angular();
-J.block(j * 6, i, 3, 1) = this->getOperationalPosition(j).linear() * this->getOperationalVelocity(j).linear(); // TODO
-J.block(j * 6 + 3, i, 3, 1) = this->getOperationalPosition(j).linear() * this->getOperationalVelocity(j).angular(); // TODO
+					if (inWorldFrame)
+					{
+						J.block(j * 6, i, 3, 1) = this->getOperationalPosition(j).linear() * this->getOperationalVelocity(j).linear();
+						J.block(j * 6 + 3, i, 3, 1) = this->getOperationalPosition(j).linear() * this->getOperationalVelocity(j).angular();
+					}
+					else
+					{
+						J.block(j * 6, i, 3, 1) = this->getOperationalVelocity(j).linear();
+						J.block(j * 6 + 3, i, 3, 1) = this->getOperationalVelocity(j).angular();
+					}
 				}
 			}
 		}
 		
 		void
-		Kinematic::calculateJacobianDerivative()
+		Kinematic::calculateJacobianDerivative(const bool& inWorldFrame)
 		{
-			this->calculateJacobianDerivative(this->Jdqd);
+			this->calculateJacobianDerivative(this->Jdqd, inWorldFrame);
 		}
 		
 		void
-		Kinematic::calculateJacobianDerivative(::rl::math::Vector& Jdqd)
+		Kinematic::calculateJacobianDerivative(::rl::math::Vector& Jdqd, const bool& inWorldFrame)
 		{
 			::rl::math::Vector tmp(this->getDof());
 			tmp.setZero(); // TODO
@@ -179,10 +156,16 @@ J.block(j * 6 + 3, i, 3, 1) = this->getOperationalPosition(j).linear() * this->g
 			
 			for (::std::size_t j = 0; j < this->getOperationalDof(); ++j)
 			{
-				Jdqd.segment(j * 6, 3) = this->getOperationalAcceleration(j).linear();
-				Jdqd.segment(j * 6 + 3, 3) = this->getOperationalAcceleration(j).angular();
-Jdqd.segment(j * 6, 3) = this->getOperationalPosition(j).linear() * this->getOperationalAcceleration(j).linear(); // TODO
-Jdqd.segment(j * 6 + 3, 3) = this->getOperationalPosition(j).linear() * this->getOperationalAcceleration(j).angular(); // TODO
+				if (inWorldFrame)
+				{
+					Jdqd.segment(j * 6, 3) = this->getOperationalPosition(j).linear() * this->getOperationalAcceleration(j).linear();
+					Jdqd.segment(j * 6 + 3, 3) = this->getOperationalPosition(j).linear() * this->getOperationalAcceleration(j).angular();
+				}
+				else
+				{
+					Jdqd.segment(j * 6, 3) = this->getOperationalAcceleration(j).linear();
+					Jdqd.segment(j * 6 + 3, 3) = this->getOperationalAcceleration(j).angular();
+				}
 			}
 		}
 		
@@ -199,7 +182,7 @@ Jdqd.segment(j * 6 + 3, 3) = this->getOperationalPosition(j).linear() * this->ge
 			{
 				invJ.setZero();
 				
-				::Eigen::JacobiSVD< ::rl::math::Matrix > svd(J, ::Eigen::ComputeFullU | ::Eigen::ComputeFullV);
+				::Eigen::JacobiSVD< ::rl::math::Matrix> svd(J, ::Eigen::ComputeFullU | ::Eigen::ComputeFullV);
 				
 				::rl::math::Real wMin = svd.singularValues().minCoeff();
 				::rl::math::Real lambdaSqr = wMin < 1.0e-9f ? (1 - ::std::pow((wMin / 1.0e-9f), 2)) * ::std::pow(lambda, 2) : 0;
@@ -242,7 +225,7 @@ Jdqd.segment(j * 6 + 3, 3) = this->getOperationalPosition(j).linear() * this->ge
 		void
 		Kinematic::forwardAcceleration()
 		{
-			for (::std::vector< Element* >::iterator i = this->elements.begin(); i != this->elements.end(); ++i)
+			for (::std::vector<Element*>::iterator i = this->elements.begin(); i != this->elements.end(); ++i)
 			{
 				(*i)->forwardAcceleration();
 			}
@@ -251,7 +234,7 @@ Jdqd.segment(j * 6 + 3, 3) = this->getOperationalPosition(j).linear() * this->ge
 		void
 		Kinematic::forwardPosition()
 		{
-			for (::std::vector< Element* >::iterator i = this->elements.begin(); i != this->elements.end(); ++i)
+			for (::std::vector<Element*>::iterator i = this->elements.begin(); i != this->elements.end(); ++i)
 			{
 				(*i)->forwardPosition();
 			}
@@ -260,7 +243,7 @@ Jdqd.segment(j * 6 + 3, 3) = this->getOperationalPosition(j).linear() * this->ge
 		void
 		Kinematic::forwardVelocity()
 		{
-			for (::std::vector< Element* >::iterator i = this->elements.begin(); i != this->elements.end(); ++i)
+			for (::std::vector<Element*>::iterator i = this->elements.begin(); i != this->elements.end(); ++i)
 			{
 				(*i)->forwardVelocity();
 			}
@@ -293,8 +276,8 @@ Jdqd.segment(j * 6 + 3, 3) = this->getOperationalPosition(j).linear() * this->ge
 		bool
 		Kinematic::isSingular(const ::rl::math::Matrix& J) const
 		{
-			::Eigen::JacobiSVD< ::rl::math::Matrix > svd(J);
-			return (::std::abs(svd.singularValues()(svd.singularValues().size() - 1)) > ::std::numeric_limits< ::rl::math::Real >::epsilon()) ? false : true;
+			::Eigen::JacobiSVD< ::rl::math::Matrix> svd(J);
+			return (::std::abs(svd.singularValues()(svd.singularValues().size() - 1)) > ::std::numeric_limits< ::rl::math::Real>::epsilon()) ? false : true;
 		}
 		
 		void

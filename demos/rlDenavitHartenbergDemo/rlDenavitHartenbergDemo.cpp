@@ -39,26 +39,26 @@ main(int argc, char** argv)
 	rl::math::Real d = 101.0f;
 	rl::math::Real theta = 181.0f * rl::math::DEG2RAD;
 	
-	rl::math::Transform t_d(::rl::math::Translation(0, 0, d));
+	rl::math::Transform t_d(rl::math::Translation(0, 0, d));
 	
 	std::cout << "T_d = " << std::endl << t_d.matrix() << std::endl;
 	
 	rl::math::Transform t_theta(
-		::rl::math::AngleAxis(theta, ::rl::math::Vector3::UnitZ()) *
-		::rl::math::AngleAxis(0, ::rl::math::Vector3::UnitY()) *
-		::rl::math::AngleAxis(0, ::rl::math::Vector3::UnitX())
+		rl::math::AngleAxis(theta, rl::math::Vector3::UnitZ()) *
+		rl::math::AngleAxis(0, rl::math::Vector3::UnitY()) *
+		rl::math::AngleAxis(0, rl::math::Vector3::UnitX())
 	);
 	
 	std::cout << "T_theta = " << std::endl << t_theta.matrix() << std::endl;
 	
-	rl::math::Transform t_a(::rl::math::Translation(a, 0, 0));
+	rl::math::Transform t_a(rl::math::Translation(a, 0, 0));
 	
 	std::cout << "T_a = " << std::endl << t_a.matrix() << std::endl;
 	
 	rl::math::Transform t_alpha(
-		::rl::math::AngleAxis(0, ::rl::math::Vector3::UnitZ()) *
-		::rl::math::AngleAxis(0, ::rl::math::Vector3::UnitY()) *
-		::rl::math::AngleAxis(alpha, ::rl::math::Vector3::UnitX())
+		rl::math::AngleAxis(0, rl::math::Vector3::UnitZ()) *
+		rl::math::AngleAxis(0, rl::math::Vector3::UnitY()) *
+		rl::math::AngleAxis(alpha, rl::math::Vector3::UnitX())
 	);
 	
 	std::cout << "T_alpha = " << std::endl << t_alpha.matrix() << std::endl;
@@ -68,16 +68,16 @@ main(int argc, char** argv)
 	std::cout << "A = " << std::endl << t.matrix() << std::endl;
 	
 	rl::math::Transform dh;
-	rl::math::transform::setDenavitHartenberg(d, theta, a, alpha, dh);
+	dh.fromDenavitHartenbergPaul(d, theta, a, alpha);
 	
 	std::cout << "A = " << std::endl << dh.matrix() << std::endl;
 	
-	rl::math::transform::getDenavitHartenberg(dh, d, theta, a, alpha);
+	dh.toDenavitHartenbergPaul(d, theta, a, alpha);
 	
 	std::cout << "a = " << a << std::endl;
 	std::cout << "alpha = " << alpha * rl::math::RAD2DEG << std::endl;
 	std::cout << "d = " << d << std::endl;
 	std::cout << "theta = " << theta * rl::math::RAD2DEG << std::endl;
 	
-	return 0;
+	return EXIT_SUCCESS;
 }

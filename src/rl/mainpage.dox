@@ -1,0 +1,68 @@
+namespace rl 
+{
+/** 
+\mainpage Robotics Library
+
+For first time users, please have a look at our <a href="http://www.roboticslibrary.org/">website</a>. Also, please refer to the website for <a href="http://www.roboticslibrary.org/tutorials">tutorials</a>, a <a href="http://www.roboticslibrary.org/api">high-level API description</a> and answers on <a href="http://www.roboticslibrary.org/faq">frequently asked questions</a> (FAQ).
+
+\section api API Overview
+
+\subsection rlmath Basic Structures, Algorithms and OS Abstraction
+
+  - rl::math - General mathematical data structures and algorithms.
+  	- Basic linear algebra data structures rl::math::Vector, rl::math::Matrix, rl::math::Array, rl::math::Transform, rl::math::Quaternion
+  	- Spatial vector algebra rl::math::MotionVector, rl::math::ForceVector, rl::math::PlueckerTransform, rl::math::RigidBodyInertia, rl::math::ArticulatedBodyInertia
+  	- Generic functions rl::math::Function, rl::math::Polynomial, rl::math::Circular
+  	- Piecewise polynomial spline function rl::math::Spline
+  	- Generic metrics for L2 rl::math::metrics::L2 and squared L2 rl::math::metrics::L2Squared
+  	- Nearest neighbors search rl::math::LinearNearestNeighbors, rl::math::GnatNearestNeighbors, rl::math::KdtreeNearestNeighbors, rl::math::KdtreeBoundingBoxNearestNeighbors
+  	- Generic PID controller rl::math::Pid
+  	- Generic Kalman filter rl::math::Kalman and low-pass filter rl::math::LowPass
+  	
+  - rl::util - Operation system abstraction and utility functions.
+  	
+  - rl::xml - XML abstraction including XPath support
+
+\subsection rlhal Hardware Interfaces
+
+  - rl::hal - Hardware abstraction layer for sensors, actuators, and robots
+    - Abstract devices rl::hal::JointPositionSensor, rl::hal::JointPositionActuator, rl::hal::Camera, rl::hal::RangeSensor
+    - Cross-platform socket implementation rl::hal::Socket, cross-platform serial communication rl::hal::Serial
+    - Robot drivers rl::hal::Coach, rl::hal::MitsubishiH7, rl::hal::UniversalRobotsRtde
+    - Gripper driver rl::hal::WeissWsg50
+    - Laser scanner and range sensor drivers rl::hal::LeuzeRs4, rl::hal::SchmersalLss300, rl::hal::SickLms200, rl::hal::SickS300, rl::hal::SchunkFpsF5
+    - Camera driver rl::hal::Dc1394Camera
+    - Force-torque sensor driver rl::hal::Ati, rl::hal::Jr3, rl::hal::WeissKms40
+
+\subsection rlmdl Kinematics, Dynamics and Trajectory Generation
+
+  - rl::mdl - Kinematic and dynamic spatial vector calculations, including several joint types and branched kinematics
+  	- Generic model rl::mdl::model with joint types rl::mdl::Revolute, rl::mdl::Prismatic, rl::mdl::Cylindrical, rl::mdl::Helical, rl::mdl::Spherical
+  	- Kinematic model specialization rl::mdl::Kinematic with forward kinematics rl::mdl::Kinematic::forwardPosition
+  	- Dynamic model specialization rl::mdl::Dynamic with forward rl::mdl::Dynamic::forwardDynamics and inverse dynamics rl::mdl::Dynamic::inverseDynamics using spatial vector algorithms, including external forces
+  	- Inverse kinematics rl::mdl::JacobianInverseKinematics, rl::mdl::NloptInverseKinematics
+  	- XML loader for kinematics and dynamics rl::mdl::XmlFactory
+  	- URDF loader for kinematics and dynamics rl::mdl::UrdfFactory
+
+\subsection rlsg Collision Checking, Visualization and Path Planning
+
+  - rl::sg - Scene graph abstraction for collision checking, distance queries, raycasts, and visualization
+  	- Basic scene graph hierarchy of a rl::sg::Scene containing multiple rl::sg::Model containing multiple rigid rl::sg::Body
+  	- Scene loader for XML/VRML files rl::sg::Scene::load
+  	- Abstract collision checking call rl::sg::SimpleScene::areColliding
+  	- Transparent wrappers for several collision checking libraries, Bullet Physics rl::sg::bullet::Scene, FCL rl::sg::fcl::Scene, Open Dynamics Engine rl::sg::ode::Scene, Proximity Query Package rl::sg::pqp::Scene, SOLID rl::sg::solid::Scene
+  	- Visualization with Coin3D data structure with the VRML scene node rl::sg::so::Scene::root
+  	
+  - rl::plan - Robot path planning algorithms
+  	- Path planning problem with robot kinematic and collision scene rl::plan::Model
+  	- Sampling techniques in configuration spaces rl::plan::UniformSampler, rl::plan::GaussianSampler, rl::plan::BridgeSampler
+  	- Collision-free path verification rl::plan::SequentialVerifier, rl::plan::RecursiveVerifier
+  	- Configuration space metric rl::plan::Metric and workspace metric rl::plan::WorkspaceMetric
+  	- Configuration space nearest neighbors search rl::plan::LinearNearestNeighbors, rl::plan::GnatNearestNeighbors, rl::plan::KdtreeNearestNeighbors, rl::plan::KdtreeBoundingBoxNearestNeighbors
+  	- Path planning algorithms related to rapidly-exploring random trees rl::plan::Rrt, rl::plan::RrtDual, rl::plan::RrtCon, rl::plan::RrtExtCon, rl::plan::RrtConCon, rl::plan::RrtExtExt
+  	- Path planning algorithms related to probabilistic roadmaps rl::plan::Prm, rl::plan::PrmUtilityGuided
+  	- Exploring/exploiting tree path planner rl::plan::Eet
+  	- Path optimization algorithms rl::plan::SimpleOptimizer, rl::plan::AdvancedOptimizer
+  	
+*/  
+}

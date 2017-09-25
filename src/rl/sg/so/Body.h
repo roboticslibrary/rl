@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_SG_SO_BODY_H_
-#define _RL_SG_SO_BODY_H_
+#ifndef RL_SG_SO_BODY_H
+#define RL_SG_SO_BODY_H
 
 #include <Inventor/VRMLnodes/SoVRMLTransform.h>
 
@@ -48,7 +48,7 @@ namespace rl
 				
 				void add(::rl::sg::Shape* shape);
 				
-				::rl::sg::Shape* create(SoVRMLShape* shape);
+				::rl::sg::Shape* create(::SoVRMLShape* shape);
 				
 				void getFrame(::rl::math::Transform& frame);
 				
@@ -60,7 +60,7 @@ namespace rl
 				
 				void setName(const ::std::string& name);
 				
-				SoVRMLTransform* root;
+				::SoVRMLTransform* root;
 				
 			protected:
 				
@@ -71,4 +71,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_SG_SO_BODY_H_
+#endif // RL_SG_SO_BODY_H

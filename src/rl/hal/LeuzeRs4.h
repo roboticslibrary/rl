@@ -24,22 +24,25 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_HAL_LEUZERS4_H_
-#define _RL_HAL_LEUZERS4_H_
+#ifndef RL_HAL_LEUZERS4_H
+#define RL_HAL_LEUZERS4_H
 
-#include <rl/util/Timer.h>
+#include <array>
+#include <cstdint>
 
+#include "CyclicDevice.h"
 #include "Device.h"
 #include "Lidar.h"
-#include "types.h"
+#include "Serial.h"
 
 namespace rl
 {
 	namespace hal
 	{
-		class Serial;
-		
-		class LeuzeRs4 : public Lidar
+		/**
+		 * Leuze RS4 safety laser scanner.
+		 */
+		class LeuzeRs4 : public CyclicDevice, public Lidar
 		{
 		public:
 			enum BaudRate
@@ -63,7 +66,7 @@ namespace rl
 			};
 			
 			/**
-			 * @param password String with 8 characters.
+			 * @param[in] password String with 8 characters.
 			 */
 			LeuzeRs4(
 				const ::std::string& device = "/dev/ttyS0",
@@ -98,7 +101,7 @@ namespace rl
 #if 0
 			void setBaudRate(const BaudRate& baudRate);
 			
-			void setOutputParameters(const uint16_t& startIndex, const uint16_t& stopIndex, const uint16_t& step, const uint16_t& type);
+			void setOutputParameters(const ::std::uint16_t& startIndex, const ::std::uint16_t& stopIndex, const ::std::uint16_t& step, const ::std::uint16_t& type);
 #endif
 			
 			void start();
@@ -110,15 +113,19 @@ namespace rl
 		protected:
 			
 		private:
-			uint8_t crc(const uint8_t* buf, const ::std::size_t& len) const;
+			::std::uint8_t crc(const ::std::uint8_t* buf, const ::std::size_t& len) const;
+			
+			const ::std::uint8_t& get(const ::std::uint8_t*& ptr) const;
 			
 			::std::size_t recv(uint8_t* buf, const ::std::size_t& len);
 			
 			void send(uint8_t* buf, const ::std::size_t& len);
 			
+			void set(const ::std::uint8_t& value, ::std::uint8_t*& ptr, ::std::size_t& len) const;
+			
 			BaudRate baudRate;
 			
-			uint8_t data[1099];
+			::std::array< ::std::uint8_t, 1099> data;
 			
 			BaudRate desired;
 			
@@ -134,19 +141,17 @@ namespace rl
 			
 			::std::string password;
 			
-			Serial* serial;
+			Serial serial;
 			
-			uint16_t startIndex;
+			::std::uint16_t startIndex;
 			
-			uint16_t stepSize;
+			::std::uint16_t stepSize;
 			
-			uint16_t stopIndex;
+			::std::uint16_t stopIndex;
 			
-			::rl::util::Timer timer;
-			
-			uint16_t type;
+			::std::uint16_t type;
 		};
 	}
 }
 
-#endif // _RL_HAL_LEUZERS4_H_
+#endif // RL_HAL_LEUZERS4_H

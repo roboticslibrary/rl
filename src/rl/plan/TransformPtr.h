@@ -24,18 +24,18 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_PLAN_TRANSFORMPTR_H_
-#define _RL_PLAN_TRANSFORMPTR_H_
+#ifndef RL_PLAN_TRANSFORMPTR_H
+#define RL_PLAN_TRANSFORMPTR_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <rl/math/Transform.h>
 
 namespace rl
 {
 	namespace plan
 	{
-		typedef ::boost::shared_ptr< ::rl::math::Transform > TransformPtr;
+		typedef ::std::shared_ptr< ::rl::math::Transform> TransformPtr;
 	}
 }
 
-#endif // _RL_PLAN_TRANSFORMPTR_H_
+#endif // RL_PLAN_TRANSFORMPTR_H

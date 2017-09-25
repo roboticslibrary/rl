@@ -35,6 +35,11 @@ namespace rl
 		{
 		}
 		
+		ComException::ComException(const int& errnum) :
+			Exception(errnum)
+		{
+		}
+		
 		ComException::~ComException() throw()
 		{
 		}

@@ -1,0 +1,51 @@
+#VRML V2.0 utf8
+Transform {
+	children [
+		DEF box-6d-300505 Transform {
+			translation 2 1 1
+			children [
+				DEF link0 Transform {
+					children [
+					]
+				}
+				DEF link1 Transform {
+					children [
+					]
+				}
+				DEF link2 Transform {
+					children [
+					]
+				}
+				DEF link3 Transform {
+					children [
+					]
+				}
+				DEF link4 Transform {
+					children [
+					]
+				}
+				DEF link5 Transform {
+					children [
+					]
+				}
+				DEF body1 Transform {
+					children [
+						Shape {
+							appearance Appearance {
+								material Material {
+									diffuseColor 1.0 1.0 0.0
+								}
+							}
+							geometry Box {
+								size 3.0 0.5 0.5
+							}
+						}
+					]
+				}
+			]
+		}
+		DEF maze Inline {
+			url "maze.wrl"
+		}	]
+}
+

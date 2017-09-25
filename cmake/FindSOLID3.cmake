@@ -1,0 +1,150 @@
+include(FindPackageHandleStandardArgs)
+include(GNUInstallDirs)
+include(SelectLibraryConfigurations)
+
+foreach(PATH ${CMAKE_PREFIX_PATH})
+	file(
+		GLOB
+		HINTS
+		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
+		${PATH}/SOLID*/${CMAKE_INSTALL_INCLUDEDIR}
+	)
+	list(APPEND SOLID3_INCLUDE_HINTS ${HINTS})
+endforeach()
+
+list(
+	APPEND
+	SOLID3_INCLUDE_HINTS
+	$ENV{SOLID3_DIR}/${CMAKE_INSTALL_INCLUDEDIR}
+)
+
+foreach(PATH $ENV{CMAKE_PREFIX_PATH})
+	file(
+		GLOB
+		HINTS
+		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
+		${PATH}/SOLID*/${CMAKE_INSTALL_INCLUDEDIR}
+	)
+	list(APPEND SOLID3_INCLUDE_HINTS ${HINTS})
+endforeach()
+
+foreach(PATH $ENV{PATH})
+	file(
+		GLOB
+		HINTS
+		${PATH}/../${CMAKE_INSTALL_INCLUDEDIR}
+	)
+	list(APPEND SOLID3_INCLUDE_HINTS ${HINTS})
+endforeach()
+
+file(
+	GLOB
+	SOLID3_INCLUDE_PATHS
+	$ENV{HOME}/include
+	/usr/local/include
+	/opt/local/include
+	/usr/include
+)
+
+find_path(
+SOLID3_INCLUDE_DIRS
+	NAMES
+	SOLID/SOLID.h
+	HINTS
+	${SOLID3_INCLUDE_HINTS}
+	PATHS
+	${SOLID3_INCLUDE_PATHS}
+)
+
+mark_as_advanced(SOLID3_INCLUDE_DIRS)
+
+foreach(PATH ${CMAKE_PREFIX_PATH})
+	file(
+		GLOB
+		HINTS
+		${PATH}/${CMAKE_INSTALL_LIBDIR}
+		${PATH}/SOLID*/${CMAKE_INSTALL_LIBDIR}
+	)
+	list(APPEND SOLID3_LIBRARY_HINTS ${HINTS})
+endforeach()
+
+list(
+	APPEND
+	SOLID3_LIBRARY_HINTS
+	$ENV{SOLID3_DIR}/${CMAKE_INSTALL_LIBDIR}
+)
+
+foreach(PATH $ENV{CMAKE_PREFIX_PATH})
+	file(
+		GLOB
+		HINTS
+		${PATH}/${CMAKE_INSTALL_LIBDIR}
+		${PATH}/SOLID*/${CMAKE_INSTALL_LIBDIR}
+	)
+	list(APPEND SOLID3_LIBRARY_HINTS ${HINTS})
+endforeach()
+
+foreach(PATH $ENV{PATH})
+	file(
+		GLOB
+		HINTS
+		${PATH}/../${CMAKE_INSTALL_LIBDIR}
+	)
+	list(APPEND SOLID3_LIBRARY_HINTS ${HINTS})
+endforeach()
+
+file(
+	GLOB
+	SOLID3_LIBRARY_PATHS
+	$ENV{HOME}/lib
+	/usr/local/lib
+	/opt/local/lib
+	/usr/lib
+)
+
+find_library(
+	SOLID3_LIBRARY_DEBUG
+	NAMES
+	solid3d_d solid3_d solidd solidsd
+	HINTS
+	${SOLID3_LIBRARY_HINTS}
+	PATHS
+	${SOLID3_LIBRARY_PATHS}
+)
+
+find_library(
+	SOLID3_LIBRARY_RELEASE
+	NAMES
+	solid3d solid3 solid solids
+	HINTS
+	${SOLID3_LIBRARY_HINTS}
+	PATHS
+	${SOLID3_LIBRARY_PATHS}
+)
+
+select_library_configurations(SOLID3)
+
+find_package_handle_standard_args(
+	SOLID3
+	FOUND_VAR SOLID3_FOUND
+	REQUIRED_VARS SOLID3_INCLUDE_DIRS SOLID3_LIBRARIES
+)
+
+if(SOLID3_FOUND AND NOT TARGET solid3::solid3)
+	add_library(solid3::solid3 UNKNOWN IMPORTED)
+	
+	if(SOLID3_LIBRARY_RELEASE)
+		set_property(TARGET solid3::solid3 APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+		set_target_properties(solid3::solid3 PROPERTIES IMPORTED_LOCATION_RELEASE "${SOLID3_LIBRARY_RELEASE}")
+	endif()
+	
+	if(SOLID3_LIBRARY_DEBUG)
+		set_property(TARGET solid3::solid3 APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
+		set_target_properties(solid3::solid3 PROPERTIES IMPORTED_LOCATION_DEBUG "${SOLID3_LIBRARY_DEBUG}")
+	endif()
+	
+	set_target_properties(
+		solid3::solid3 PROPERTIES
+		INTERFACE_INCLUDE_DIRECTORIES "${SOLID3_INCLUDE_DIRS}"
+	)
+endif()

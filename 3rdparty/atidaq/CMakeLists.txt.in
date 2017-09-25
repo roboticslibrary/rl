@@ -1,0 +1,183 @@
+cmake_minimum_required(VERSION 2.8.11)
+
+project(atidaq)
+
+include(CMakePackageConfigHelpers)
+include(GNUInstallDirs)
+
+set(VERSION_MAJOR 1)
+set(VERSION_MINOR 0)
+set(VERSION_PATCH 7)
+set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
+
+if(WIN32)
+	set(BUILD_SHARED_LIBS OFF)
+else()
+	option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+endif()
+
+set(
+	HDRS
+	ATIDAQ/ascii.h
+	ATIDAQ/asciitab.h
+	ATIDAQ/dom.h
+	ATIDAQ/ftconfig.h
+	ATIDAQ/ftrt.h
+	ATIDAQ/ftsharedrt.h
+	ATIDAQ/iasciitab.h
+	ATIDAQ/latin1tab.h
+	ATIDAQ/nametab.h
+	ATIDAQ/stack.h
+	ATIDAQ/utf8tab.h
+	ATIDAQ/xmldef.h
+	ATIDAQ/xmlparse.h
+	ATIDAQ/xmlrole.h
+	ATIDAQ/xmltok.h
+	ATIDAQ/xmltok_impl.h
+)
+
+set(
+	SRCS
+	ATIDAQ/dom.c
+	ATIDAQ/expatls.c
+	ATIDAQ/ftconfig.c
+	ATIDAQ/ftrt.c
+	ATIDAQ/node.c
+	ATIDAQ/stack.c
+	ATIDAQ/xmlparse.c
+	ATIDAQ/xmlrole.c
+	ATIDAQ/xmltok.c
+)
+
+add_library(atidaq ${HDRS} ${SRCS})
+
+target_include_directories(
+	atidaq
+	INTERFACE
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/ATIDAQ>
+	$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}>
+)
+
+if(UNIX)
+	target_link_libraries(atidaq m)
+endif()
+
+set_target_properties(atidaq PROPERTIES DEBUG_POSTFIX d VERSION ${VERSION})
+
+install(FILES ${HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/atidaq COMPONENT development)
+
+install(
+	TARGETS	atidaq
+	EXPORT atidaq
+	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT development
+	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT runtime NAMELINK_SKIP
+	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT runtime
+)
+
+if(BUILD_SHARED_LIBS)
+	install(
+		TARGETS	atidaq
+		EXPORT atidaq
+		LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT development NAMELINK_ONLY
+	)
+endif()
+
+if(MSVC AND BUILD_SHARED_LIBS AND ${CMAKE_MAJOR_VERSION} GREATER 2 AND ${CMAKE_MINOR_VERSION} GREATER 0)
+	install(FILES $<TARGET_PDB_FILE:atidaq> DESTINATION ${CMAKE_INSTALL_BINDIR} CONFIGURATIONS Debug RelWithDebInfo COMPONENT debug)
+endif()
+
+add_executable(calinfo Samples/calinfo.c)
+target_link_libraries(calinfo atidaq)
+
+install(
+	TARGETS	calinfo
+	COMPONENT programs
+	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
+add_executable(ftconvert Samples/ftconvert.c)
+target_link_libraries(ftconvert atidaq)
+
+install(
+	TARGETS	ftconvert
+	COMPONENT programs
+	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
+configure_package_config_file(
+  atidaq-config.cmake.in atidaq-config.cmake
+  INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/atidaq-${VERSION}
+)
+
+install(
+	FILES ${CMAKE_CURRENT_BINARY_DIR}/atidaq-config.cmake
+	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/atidaq-${VERSION}
+	COMPONENT development
+)
+
+write_basic_package_version_file(
+	${CMAKE_CURRENT_BINARY_DIR}/atidaq-config-version.cmake
+	VERSION ${VERSION}
+	COMPATIBILITY ExactVersion
+)
+
+install(
+	FILES ${CMAKE_CURRENT_BINARY_DIR}/atidaq-config-version.cmake
+	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/atidaq-${VERSION}
+	COMPONENT development
+)
+
+install(
+	EXPORT atidaq
+	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/atidaq-${VERSION}
+	NAMESPACE atidaq::
+	FILE atidaq-export.cmake
+	COMPONENT development
+)
+
+set(CPACK_COMPONENT_DEVELOPMENT_DEPENDS runtime)
+set(CPACK_COMPONENT_PROGRAMS_DEPENDS runtime)
+set(CPACK_DEB_COMPONENT_INSTALL ON)
+set(CPACK_DEBIAN_DEVELOPMENT_PACKAGE_DEPENDS "libatidaq")
+set(CPACK_DEBIAN_DEVELOPMENT_PACKAGE_NAME "libatidaq-dev")
+set(CPACK_DEBIAN_DEVELOPMENT_PACKAGE_SECTION "libdevel")
+set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "http://www.ati-ia.com/Products/ft/software/daq_software.aspx")
+set(CPACK_DEBIAN_PACKAGE_NAME "libatidaq")
+set(CPACK_DEBIAN_PACKAGE_SECTION "devel")
+set(CPACK_DEBIAN_PROGRAMS_PACKAGE_DEPENDS "libatidaq")
+set(CPACK_DEBIAN_PROGRAMS_PACKAGE_NAME "libatidaq-utils")
+set(CPACK_DEBIAN_PROGRAMS_PACKAGE_SECTION "utils")
+set(CPACK_DEBIAN_RUNTIME_PACKAGE_NAME "libatidaq")
+set(CPACK_DEBIAN_RUNTIME_PACKAGE_RECOMMENDS "libatidaq-utils")
+set(CPACK_DEBIAN_RUNTIME_PACKAGE_SECTION "libs")
+set(CPACK_NSIS_PACKAGE_NAME "ATIDAQ ${VERSION}")
+set(CPACK_NSIS_URL_INFO_ABOUT ${CPACK_DEBIAN_PACKAGE_HOMEPAGE})
+set(CPACK_PACKAGE_CONTACT "info@ati-ia.com")
+set(CPACK_PACKAGE_DISPLAY_NAME "ATIDAQ ${VERSION}")
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "ATIDAQ-${VERSION}")
+set(CPACK_PACKAGE_NAME "atidaq")
+set(CPACK_PACKAGE_VERSION ${VERSION})
+set(CPACK_PACKAGE_VERSION_MAJOR ${VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${VERSION_PATCH})
+set(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_CURRENT_SOURCE_DIR}/readme.txt)
+set(CPACK_RPM_COMPONENT_INSTALL ON)
+set(CPACK_RPM_development_PACKAGE_NAME "atidaq-devel")
+set(CPACK_RPM_development_PACKAGE_REQUIRES "atidaq")
+set(CPACK_RPM_PACKAGE_GROUP "Development/Libraries")
+set(CPACK_RPM_PACKAGE_NAME "atidaq")
+set(CPACK_RPM_PACKAGE_URL ${CPACK_DEBIAN_PACKAGE_HOMEPAGE})
+set(CPACK_RPM_programs_PACKAGE_NAME "atidaq-utils")
+set(CPACK_RPM_programs_PACKAGE_REQUIRES "atidaq")
+set(CPACK_RPM_runtime_PACKAGE_NAME "atidaq")
+set(CPACK_RPM_runtime_PACKAGE_SUGGESTS "atidaq-utils")
+
+if(WIN32 AND CMAKE_SIZEOF_VOID_P EQUAL 8)
+	set(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES64")
+endif()
+
+include(CPack)

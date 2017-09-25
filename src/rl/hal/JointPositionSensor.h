@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_HAL_JOINTPOSITIONSENSOR_H_
-#define _RL_HAL_JOINTPOSITIONSENSOR_H_
+#ifndef RL_HAL_JOINTPOSITIONSENSOR_H
+#define RL_HAL_JOINTPOSITIONSENSOR_H
 
 #include <rl/math/Vector.h>
 
@@ -38,11 +38,11 @@ namespace rl
 		class JointPositionSensor : public virtual AxisController
 		{
 		public:
-			JointPositionSensor(const ::std::size_t& dof, const ::rl::math::Real& updateRate);
+			JointPositionSensor(const ::std::size_t& dof);
 			
 			virtual ~JointPositionSensor();
 			
-			virtual void getJointPosition(::rl::math::Vector& q) const = 0;
+			virtual ::rl::math::Vector getJointPosition() const = 0;
 			
 		protected:
 			
@@ -52,4 +52,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_HAL_JOINTPOSITIONSENSOR_H_
+#endif // RL_HAL_JOINTPOSITIONSENSOR_H

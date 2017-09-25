@@ -1,8 +1,0 @@
-[Desktop Entry]
-Categories=Science;Robotics;
-Comment=Collision detection and distance computation demo with basic scene
-Exec=sh -c "rlCollisionDemo $(dirname %k)/../rl/examples/rlsg/scene.xml"
-Icon=robotics-library
-Name=Robotics Library (rlCollisionDemo)
-Type=Application
-X-Unity-IconBackgroundColor=#ffffff

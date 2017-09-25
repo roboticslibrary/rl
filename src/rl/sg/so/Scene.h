@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_SG_SO_SCENE_H_
-#define _RL_SG_SO_SCENE_H_
+#ifndef RL_SG_SO_SCENE_H
+#define RL_SG_SO_SCENE_H
 
 #include "../Scene.h"
 
@@ -33,6 +33,9 @@ namespace rl
 {
 	namespace sg
 	{
+		/**
+		 * Open Inventor.
+		 */
 		namespace so
 		{
 			class Scene : public ::rl::sg::Scene
@@ -48,7 +51,7 @@ namespace rl
 				
 				void remove(::rl::sg::Model* model);
 				
-				SoVRMLGroup* root;
+				::SoVRMLGroup* root;
 				
 			protected:
 				
@@ -59,4 +62,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_SG_SO_SCENE_H_
+#endif // RL_SG_SO_SCENE_H

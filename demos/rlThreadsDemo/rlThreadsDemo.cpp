@@ -24,65 +24,44 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include <chrono>
+#include <functional>
 #include <iostream>
+#include <random>
+#include <thread>
 #include <vector>
-#include <rl/util/Thread.h>
-#include <rl/util/Timer.h>
 
-class TestThread : public rl::util::Thread
+void run(const std::size_t& i)
 {
-public:
-	TestThread(const std::size_t& i = 0) :
-		i(i)
-	{
-	};
+	std::function<double()> rand = std::bind(std::uniform_real_distribution<double>(0.0, 2.0), std::mt19937(std::random_device()()));
 	
-	virtual ~TestThread()
+	for (std::size_t j = 0; j < 5; ++j)
 	{
-	};
-	
-	void run()
-	{
-#ifdef WIN32
-		srand(static_cast< unsigned int >(rl::util::Timer::now() * 1000000.0f));
-#endif // WIN32
-		
-		for (std::size_t j = 0; j < 5; ++j)
-		{
-			std::size_t time = rand() % 1000 + 100; 
-			sleep(time / 1000.0f);
-			std::cout << "TestThread[" << i << "]::run() - " << j << " - " << time / 1000.0f << " seconds" << std::endl;
-		}
+		double seconds = rand(); 
+		std::this_thread::sleep_for(std::chrono::duration<double>(seconds));
+		std::cout << "Thread[" << i << "] - " << j << " - " << seconds << " seconds" << std::endl;
 	}
-	
-private:
-	std::size_t i;
-};
+}
 
 int
 main(int argc, char** argv)
 {
-	srand(static_cast< unsigned int >(rl::util::Timer::now() * 1000000.0f));
-	
-	std::vector< rl::util::Thread* > threads;
+	std::vector<std::thread> threads;
 	
 	for (std::size_t i = 0; i < 5; ++i)
 	{
-		std::cout << "TestThread[" << i << "]" << std::endl;
-		TestThread* thread = new TestThread(i);
-		std::cout << "TestThread[" << i << "]::start()" << std::endl;
-		thread->start();
-		threads.push_back(thread);
+		std::cout << "Thread[" << i << "]" << std::endl;
+		threads.push_back(std::thread(run, i));
 	}
 	
 	std::cout << "before join()" << std::endl;
 	
-	for (std::size_t i = 0; i < 5; ++i)
+	for (std::size_t i = 0; i < threads.size(); ++i)
 	{
-		threads[i]->join();
+		threads[i].join();
 	}
 	
 	std::cout << "after join()" << std::endl;
 	
-	return 0;
+	return EXIT_SUCCESS;
 }

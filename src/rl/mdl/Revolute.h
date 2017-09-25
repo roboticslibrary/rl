@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_MDL_REVOLUTE_H_
-#define _RL_MDL_REVOLUTE_H_
+#ifndef RL_MDL_REVOLUTE_H
+#define RL_MDL_REVOLUTE_H
 
 #include "Joint.h"
 
@@ -44,6 +44,8 @@ namespace rl
 			
 			void interpolate(const ::rl::math::Vector& q1, const ::rl::math::Vector& q2, const ::rl::math::Real& alpha, ::rl::math::Vector& q) const;
 			
+			void normalize(::rl::math::Vector& q) const;
+			
 			void setPosition(const ::rl::math::Vector& q);
 			
 			::rl::math::Real transformedDistance(const ::rl::math::Vector& q1, const ::rl::math::Vector& q2) const;
@@ -56,4 +58,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_MDL_REVOLUTE_H_
+#endif // RL_MDL_REVOLUTE_H

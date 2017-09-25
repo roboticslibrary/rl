@@ -24,8 +24,6 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <boost/make_shared.hpp>
-
 #include "RrtCon.h"
 #include "SimpleModel.h"
 
@@ -51,31 +49,24 @@ namespace rl
 		bool
 		RrtCon::solve()
 		{
-			this->begin[0] = this->addVertex(this->tree[0], ::boost::make_shared< ::rl::math::Vector >(*this->start));
+			this->time = ::std::chrono::steady_clock::now();
 			
-			::rl::math::Vector chosen(this->model->getDof());
+			this->begin[0] = this->addVertex(this->tree[0], ::std::make_shared< ::rl::math::Vector>(*this->start));
 			
-			timer.start();
-			timer.stop();
-			
-			while (timer.elapsed() < this->duration)
+			while ((::std::chrono::steady_clock::now() - this->time) < this->duration)
 			{
-				this->choose(chosen);
-				
+				::rl::math::Vector chosen = this->choose();
 				Neighbor nearest = this->nearest(this->tree[0], chosen);
-				
 				Vertex connected = this->connect(this->tree[0], nearest, chosen);
 				
-				if (NULL != connected)
+				if (nullptr != connected)
 				{
-					if (this->areEqual(*this->tree[0][connected].q, *this->goal))
+					if (this->areEqual(*get(this->tree[0], connected)->q, *this->goal))
 					{
 						this->end[0] = connected;
 						return true;
 					}
 				}
-				
-				timer.stop();
 			}
 			
 			return false;

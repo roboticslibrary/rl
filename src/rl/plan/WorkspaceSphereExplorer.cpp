@@ -24,8 +24,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <boost/make_shared.hpp>
-#include <rl/util/Timer.h>
+#include <chrono>
 
 #include "DistanceModel.h"
 #include "Viewer.h"
@@ -40,19 +39,19 @@ namespace rl
 		WorkspaceSphereExplorer::WorkspaceSphereExplorer() :
 			goal(),
 			greedy(GREEDY_SPACE),
-			model(NULL),
+			model(nullptr),
 			radius(0.0f),
-			range(::std::numeric_limits< ::rl::math::Real >::max()),
+			range(::std::numeric_limits< ::rl::math::Real>::max()),
 			samples(10),
 			start(),
-			viewer(NULL),
-			begin(NULL),
-			end(NULL),
+			viewer(nullptr),
+			begin(nullptr),
+			end(nullptr),
 			graph(),
 			queue(),
 			rand(
-				::boost::mt19937(static_cast< ::boost::mt19937::result_type >(::rl::util::Timer::now() * 1000000.0f)),
-				::boost::uniform_on_sphere< ::rl::math::Real >(3)
+				::std::mt19937(::std::random_device()()),
+				::boost::uniform_on_sphere< ::rl::math::Real>(3)
 			)
 		{
 		}
@@ -66,7 +65,7 @@ namespace rl
 		{
 			Edge edge = ::boost::add_edge(u, v, this->graph).first;
 			
-			if (NULL != this->viewer)
+			if (nullptr != this->viewer)
 			{
 				this->viewer->drawWorkEdge(*this->graph[u].sphere.center, *this->graph[v].sphere.center);
 			}
@@ -81,7 +80,7 @@ namespace rl
 			this->graph[vertex].sphere = sphere;
 			
 #ifndef PRINT_WORKSPACE_PATH
-			if (NULL != this->viewer)
+			if (nullptr != this->viewer)
 			{
 				this->viewer->drawSphere(*this->graph[vertex].sphere.center, this->graph[vertex].sphere.radius);
 				this->viewer->drawWorkVertex(*this->graph[vertex].sphere.center);
@@ -95,16 +94,14 @@ namespace rl
 		WorkspaceSphereExplorer::explore()
 		{
 			WorkspaceSphere start;
-			start.center = ::boost::make_shared< ::rl::math::Vector3 >(*this->start);
+			start.center = ::std::make_shared< ::rl::math::Vector3>(*this->start);
 			start.radius = this->model->distance(*start.center);
-            start.radiusSum = start.radius;
-			start.parent = NULL;
+			start.radiusSum = start.radius;
+			start.parent = nullptr;
 
 			start.priority = (*this->goal - *start.center).norm() - start.radius;
 			
 			this->queue.insert(start);
-			
-			::std::vector< ::rl::math::Real > sample(3);
 			
 			while (!this->queue.empty())
 			{
@@ -116,7 +113,7 @@ namespace rl
 				{
 					Vertex vertex = this->addVertex(top);
 					
-					if (NULL != top.parent)
+					if (nullptr != top.parent)
 					{
 						this->addEdge(top.parent, vertex);
 					}
@@ -128,14 +125,14 @@ namespace rl
 					if ((*this->goal - *top.center).norm() < top.radius)
 					{
 						WorkspaceSphere goal;
-						goal.center = ::boost::make_shared< ::rl::math::Vector3 >(*this->goal);
+						goal.center = ::std::make_shared< ::rl::math::Vector3>(*this->goal);
 						goal.radius = this->model->distance(*goal.center);
 						goal.parent = vertex;
 						goal.priority = (*this->goal - *goal.center).norm() - goal.radius;
 						
 						this->end = this->addVertex(goal);
 						
-						if (NULL != top.parent)
+						if (nullptr != top.parent)
 						{
 							this->addEdge(top.parent, this->end);
 						}
@@ -147,8 +144,8 @@ namespace rl
 						return true;
 					}
 					
-					::std::multiset< WorkspaceSphere >::iterator i = this->queue.begin();
-					::std::multiset< WorkspaceSphere >::iterator j;
+					::std::multiset<WorkspaceSphere>::iterator i = this->queue.begin();
+					::std::multiset<WorkspaceSphere>::iterator j;
 					
 					while (i != this->queue.end())
 					{
@@ -171,9 +168,9 @@ namespace rl
 						
 						sphere.parent = vertex;
 						
-						sample = this->rand();
+						::boost::uniform_on_sphere< ::rl::math::Real>::result_type sample = this->rand();
 						
-						sphere.center = ::boost::make_shared< ::rl::math::Vector3 >(
+						sphere.center = ::std::make_shared< ::rl::math::Vector3>(
 							top.radius * ::rl::math::Vector3(sample[0], sample[1], sample[2]) + *top.center // TODO
 						);
 						
@@ -212,9 +209,11 @@ namespace rl
 			return false;
 		}
 		
-		void
-		WorkspaceSphereExplorer::getPath(WorkspaceSphereList& path) const
+		WorkspaceSphereList
+		WorkspaceSphereExplorer::getPath() const
 		{
+			WorkspaceSphereList path;
+			
 			Vertex i = this->end;
 			
 			while (i != this->begin)
@@ -222,7 +221,7 @@ namespace rl
 				path.push_front(this->graph[i].sphere);
 				
 #ifdef PRINT_WORKSPACE_PATH
-				if (NULL != this->viewer)
+				if (nullptr != this->viewer)
 				{
 					this->viewer->drawSphere(*this->graph[i].sphere.center, this->graph[i].sphere.radius);
 					this->viewer->drawWorkVertex(*this->graph[i].sphere.center);
@@ -235,12 +234,14 @@ namespace rl
 			path.push_front(this->graph[i].sphere);
 			
 #ifdef PRINT_WORKSPACE_PATH
-			if (NULL != this->viewer)
+			if (nullptr != this->viewer)
 			{
 				this->viewer->drawSphere(*this->graph[i].sphere.center, this->graph[i].sphere.radius);
 				this->viewer->drawWorkVertex(*this->graph[i].sphere.center);
 			}
 #endif
+			
+			return path;
 		}
 		
 		bool
@@ -279,12 +280,12 @@ namespace rl
 		{
 			this->graph.clear();
 			this->queue.clear();
-			this->begin = NULL;
-			this->end = NULL;
+			this->begin = nullptr;
+			this->end = nullptr;
 		}
 		
 		void
-		WorkspaceSphereExplorer::seed(const ::boost::mt19937::result_type& value)
+		WorkspaceSphereExplorer::seed(const ::std::mt19937::result_type& value)
 		{
 			this->rand.engine().seed(value);
 		}

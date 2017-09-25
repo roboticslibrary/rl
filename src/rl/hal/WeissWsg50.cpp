@@ -24,9 +24,11 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include <array>
 #include <cassert>
 #include <cstring>
 #include <iostream>
+#include <rl/math/Unit.h>
 
 //#define DEBUG_TCP_DATA
 
@@ -34,12 +36,11 @@
 #include <cstdio>
 #endif
 
-#include "ComException.h"
-#include "DeviceException.h"
-#include "endian.h"
+#include "Endian.h"
+#include "WeissException.h"
 #include "WeissWsg50.h"
 
-static const uint16_t CRC_TABLE_CCITT16[256] = {
+static const ::std::uint16_t CRC_TABLE_CCITT16[256] = {
 	0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50A5, 0x60C6, 0x70E7,
 	0x8108, 0x9129, 0xA14A, 0xB16B, 0xC18C, 0xD1AD, 0xE1CE, 0xF1EF,
 	0x1231, 0x0210, 0x3273, 0x2252, 0x52B5, 0x4294, 0x72F7, 0x62D6,
@@ -79,12 +80,13 @@ namespace rl
 	namespace hal
 	{
 		WeissWsg50::WeissWsg50(
-			const ::std::string& hostname,
+			const ::std::string& address,
 			const unsigned short int& port,
 			const float& acceleration,
 			const float& forceLimit,
 			const unsigned int& period
 		) :
+			CyclicDevice(::std::chrono::milliseconds(period)),
 			Gripper(),
 			acceleration(acceleration),
 			accelerationMaximum(0),
@@ -99,12 +101,12 @@ namespace rl
 			limitPlus(0),
 			openingWidth(0),
 			period(period),
+			socket(Socket::Tcp(Socket::Address::Ipv4(address, port))),
 			speed(0),
 			speedMaximum(0),
 			speedMinimum(0),
 			stroke(0),
-			systemState(),
-			tcp(hostname, port)
+			systemState(SYSTEM_STATE_REFERENCED)
 		{
 			
 		}
@@ -122,18 +124,18 @@ namespace rl
 		{
 			assert(this->isConnected());
 			this->doDisconnectAnnouncement();
-			this->tcp.close();
+			this->socket.close();
 			this->setConnected(false);
 		}
 		
-		uint16_t
-		WeissWsg50::crc(const uint8_t* buf, const ::std::size_t& len) const
+		::std::uint16_t
+		WeissWsg50::crc(const ::std::uint8_t* buf, const ::std::size_t& len) const
 		{
-			uint16_t checksum = 0xFFFF;
+			::std::uint16_t checksum = 0xFFFF;
 			
 			for (::std::size_t i = 0; i < len; ++i)
 			{
-				uint8_t index = checksum ^ buf[i];
+				::std::uint8_t index = checksum ^ buf[i];
 				checksum = CRC_TABLE_CCITT16[index] ^ (checksum >> 8);
 			}
 			
@@ -145,15 +147,15 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			uint8_t buf[64];
+			::std::array< ::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x24;
 			buf[this->HEADER_SIZE] = 0x61;
 			buf[this->HEADER_SIZE + 1] = 0x63;
 			buf[this->HEADER_SIZE + 2] = 0x6B;
 			
-			this->send(buf, this->HEADER_SIZE + 3 + 2);
-			this->recv(buf, this->HEADER_SIZE + 2 + 0 + 2, 0x24);
+			this->send(buf.data(), this->HEADER_SIZE + 3 + 2);
+			this->recv(buf.data(), this->HEADER_SIZE + 2 + 0 + 2, 0x24);
 		}
 		
 		void
@@ -161,12 +163,12 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			uint8_t buf[64];
+			::std::array< ::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x36;
 			
-			this->send(buf, this->HEADER_SIZE + 0 + 2);
-			this->recv(buf, this->HEADER_SIZE + 2 + 0 + 2, 0x36);
+			this->send(buf.data(), this->HEADER_SIZE + 0 + 2);
+			this->recv(buf.data(), this->HEADER_SIZE + 2 + 0 + 2, 0x36);
 			
 			this->limitMinus = 0;
 			this->limitPlus = 0;
@@ -177,12 +179,12 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			uint8_t buf[64];
+			::std::array< ::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x07;
 			
-			this->send(buf, this->HEADER_SIZE + 0 + 2);
-			this->recv(buf, this->HEADER_SIZE + 2 + 0 + 2, 0x07);
+			this->send(buf.data(), this->HEADER_SIZE + 0 + 2);
+			this->recv(buf.data(), this->HEADER_SIZE + 2 + 0 + 2, 0x07);
 		}
 		
 		void
@@ -190,12 +192,12 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			uint8_t buf[64];
+			::std::array< ::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x23;
 			
-			this->send(buf, this->HEADER_SIZE + 0 + 2);
-			this->recv(buf, this->HEADER_SIZE + 2 + 0 + 2, 0x23);
+			this->send(buf.data(), this->HEADER_SIZE + 0 + 2);
+			this->recv(buf.data(), this->HEADER_SIZE + 2 + 0 + 2, 0x23);
 		}
 		
 		void
@@ -203,14 +205,16 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			uint8_t buf[64];
+			::std::array< ::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x31;
 			
-			this->send(buf, this->HEADER_SIZE + 0 + 2);
-			this->recv(buf, this->HEADER_SIZE + 2 + 4 + 2, 0x31);
+			this->send(buf.data(), this->HEADER_SIZE + 0 + 2);
+			this->recv(buf.data(), this->HEADER_SIZE + 2 + 4 + 2, 0x31);
 			
-			this->acceleration = *reinterpret_cast< float* >(&buf[this->HEADER_SIZE + 2]) / 1000.0f;
+			::std::memcpy(&this->acceleration, &buf[this->HEADER_SIZE + 2], sizeof(this->acceleration));
+			
+			this->acceleration *= static_cast<float>(::rl::math::MILLI2UNIT);
 		}
 		
 		void
@@ -218,16 +222,15 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			uint8_t buf[64];
+			::std::array< ::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x45;
-			
 			buf[this->HEADER_SIZE] = 0x00 | (doAutomaticUpdate << 0) | (doAutomaticUpdate << 1);
-			buf[this->HEADER_SIZE + 1] = lowByteFromHostEndian(period);
-			buf[this->HEADER_SIZE + 2] = highByteFromHostEndian(period);
+			buf[this->HEADER_SIZE + 1] = Endian::hostLowByte(period);
+			buf[this->HEADER_SIZE + 2] = Endian::hostHighByte(period);
 			
-			this->send(buf, this->HEADER_SIZE + 3 + 2);
-			this->recv(buf, this->HEADER_SIZE + 2 + 4 + 2, 0x45);
+			this->send(buf.data(), this->HEADER_SIZE + 3 + 2);
+			this->recv(buf.data(), this->HEADER_SIZE + 2 + 4 + 2, 0x45);
 		}
 		
 		void
@@ -235,14 +238,14 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			uint8_t buf[64];
+			::std::array< ::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x33;
 			
-			this->send(buf, this->HEADER_SIZE + 0 + 2);
-			this->recv(buf, this->HEADER_SIZE + 2 + 4 + 2, 0x33);
+			this->send(buf.data(), this->HEADER_SIZE + 0 + 2);
+			this->recv(buf.data(), this->HEADER_SIZE + 2 + 4 + 2, 0x33);
 			
-			this->forceLimit = *reinterpret_cast< float* >(&buf[this->HEADER_SIZE + 2]);
+			::std::memcpy(&this->forceLimit, &buf[this->HEADER_SIZE + 2], sizeof(this->forceLimit));
 		}
 		
 		void
@@ -250,16 +253,15 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			uint8_t buf[64];
+			::std::array< ::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x41;
-			
 			buf[this->HEADER_SIZE] = 0x00 | (doAutomaticUpdate << 0) | (doUpdateOnChange << 1);
-			buf[this->HEADER_SIZE + 1] = lowByteFromHostEndian(period);
-			buf[this->HEADER_SIZE + 2] = highByteFromHostEndian(period);
+			buf[this->HEADER_SIZE + 1] = Endian::hostLowByte(period);
+			buf[this->HEADER_SIZE + 2] = Endian::hostHighByte(period);
 			
-			this->send(buf, this->HEADER_SIZE + 3 + 2);
-			this->recv(buf, this->HEADER_SIZE + 2 + 1 + 2, 0x41);
+			this->send(buf.data(), this->HEADER_SIZE + 3 + 2);
+			this->recv(buf.data(), this->HEADER_SIZE + 2 + 1 + 2, 0x41);
 		}
 		
 		void
@@ -267,17 +269,17 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			uint8_t buf[64];
+			::std::array< ::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x42;
 			buf[this->HEADER_SIZE] = 0x00 | doReset;
 			
-			this->send(buf, this->HEADER_SIZE + 1 + 2);
-			this->recv(buf, this->HEADER_SIZE + 2 + 8 + 2, 0x42);
+			this->send(buf.data(), this->HEADER_SIZE + 1 + 2);
+			this->recv(buf.data(), this->HEADER_SIZE + 2 + 8 + 2, 0x42);
 			
-			numberGraspsTotal = hostEndianDoubleWord(hostEndianWord(buf[11], buf[10]), hostEndianWord(buf[9], buf[8]));
-			numberGraspsNoPart = hostEndianWord(buf[13], buf[12]);
-			numberGraspsLostPart = hostEndianWord(buf[15], buf[14]);
+			numberGraspsTotal = Endian::hostDoubleWord(Endian::hostWord(buf[11], buf[10]), Endian::hostWord(buf[9], buf[8]));
+			numberGraspsNoPart = Endian::hostWord(buf[13], buf[12]);
+			numberGraspsLostPart = Endian::hostWord(buf[15], buf[14]);
 		}
 		
 		void
@@ -285,15 +287,15 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			uint8_t buf[64];
+			::std::array< ::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x43;
 			buf[this->HEADER_SIZE] = 0x00 | (doAutomaticUpdate << 0) | (doUpdateOnChange << 1);
-			buf[this->HEADER_SIZE + 1] = lowByteFromHostEndian(period);
-			buf[this->HEADER_SIZE + 2] = highByteFromHostEndian(period);
+			buf[this->HEADER_SIZE + 1] = Endian::hostLowByte(period);
+			buf[this->HEADER_SIZE + 2] = Endian::hostHighByte(period);
 			
-			this->send(buf, this->HEADER_SIZE + 3 + 2);
-			this->recv(buf, this->HEADER_SIZE + 2 + 4 + 2, 0x43);
+			this->send(buf.data(), this->HEADER_SIZE + 3 + 2);
+			this->recv(buf.data(), this->HEADER_SIZE + 2 + 4 + 2, 0x43);
 		}
 		
 		void
@@ -301,15 +303,18 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			uint8_t buf[64];
+			::std::array< ::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x35;
 			
-			this->send(buf, this->HEADER_SIZE + 0 + 2);
-			this->recv(buf, this->HEADER_SIZE + 2 + 8 + 2, 0x35);
+			this->send(buf.data(), this->HEADER_SIZE + 0 + 2);
+			this->recv(buf.data(), this->HEADER_SIZE + 2 + 8 + 2, 0x35);
 			
-			this->limitMinus = *reinterpret_cast< float* >(&buf[this->HEADER_SIZE + 2]);
-			this->limitPlus = *reinterpret_cast< float* >(&buf[this->HEADER_SIZE + 2 + 4]);
+			::std::memcpy(&this->limitMinus, &buf[this->HEADER_SIZE + 2], sizeof(this->limitMinus));
+			::std::memcpy(&this->limitPlus, &buf[this->HEADER_SIZE + 2 + 4], sizeof(this->limitPlus));
+			
+			this->limitMinus *= static_cast<float>(::rl::math::MILLI2UNIT);
+			this->limitPlus *= static_cast<float>(::rl::math::MILLI2UNIT);
 		}
 		
 		void
@@ -317,15 +322,15 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			uint8_t buf[64];
+			::std::array< ::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x44;
 			buf[this->HEADER_SIZE] = 0x00 | (doAutomaticUpdate << 0) | (doUpdateOnChange << 1);
-			buf[this->HEADER_SIZE + 1] = lowByteFromHostEndian(period);
-			buf[this->HEADER_SIZE + 2] = highByteFromHostEndian(period);
+			buf[this->HEADER_SIZE + 1] = Endian::hostLowByte(period);
+			buf[this->HEADER_SIZE + 2] = Endian::hostHighByte(period);
 			
-			this->send(buf, this->HEADER_SIZE + 3 + 2);
-			this->recv(buf, this->HEADER_SIZE + 2 + 4 + 2, 0x44);
+			this->send(buf.data(), this->HEADER_SIZE + 3 + 2);
+			this->recv(buf.data(), this->HEADER_SIZE + 2 + 4 + 2, 0x44);
 		}
 		
 		void
@@ -333,17 +338,17 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			uint8_t buf[64];
+			::std::array< ::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x50;
 			
-			this->send(buf, this->HEADER_SIZE + 0 + 2);
-			this->recv(buf, this->HEADER_SIZE + 2 + 8 + 2, 0x50);
+			this->send(buf.data(), this->HEADER_SIZE + 0 + 2);
+			this->recv(buf.data(), this->HEADER_SIZE + 2 + 8 + 2, 0x50);
 			
 			isWsg50 = (1 == buf[8]) ? true : false;
 			hardwareRevision = buf[9];
-			firmwareRevision = hostEndianWord(buf[11], buf[10]);
-			serialNumber = hostEndianDoubleWord(hostEndianWord(buf[15], buf[14]), hostEndianWord(buf[13], buf[12]));
+			firmwareRevision = Endian::hostWord(buf[11], buf[10]);
+			serialNumber = Endian::hostDoubleWord(Endian::hostWord(buf[15], buf[14]), Endian::hostWord(buf[13], buf[12]));
 		}
 		
 		void
@@ -351,21 +356,27 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			uint8_t buf[64];
+			::std::array< ::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x53;
 			
-			this->send(buf, this->HEADER_SIZE + 0 + 2);
-			this->recv(buf, this->HEADER_SIZE + 2 + 32 + 2, 0x53);
+			this->send(buf.data(), this->HEADER_SIZE + 0 + 2);
+			this->recv(buf.data(), this->HEADER_SIZE + 2 + 32 + 2, 0x53);
 			
-			this->stroke = *reinterpret_cast< float* >(&buf[8]) / 1000.0f;
-			this->speedMinimum = *reinterpret_cast< float* >(&buf[12]) / 1000.0f;
-			this->speedMaximum = *reinterpret_cast< float* >(&buf[16]) / 1000.0f;
-			this->accelerationMinimum = *reinterpret_cast< float* >(&buf[20]) / 1000.0f;
-			this->accelerationMaximum = *reinterpret_cast< float* >(&buf[24]) / 1000.0f;
-			this->forceMinimum = *reinterpret_cast< float* >(&buf[28]);
-			this->forceNominal = *reinterpret_cast< float* >(&buf[32]);
-			this->forceOverdrive = *reinterpret_cast< float* >(&buf[36]);
+			::std::memcpy(&this->stroke, &buf[8], sizeof(this->stroke));
+			::std::memcpy(&this->speedMinimum, &buf[12], sizeof(this->speedMinimum));
+			::std::memcpy(&this->speedMaximum, &buf[16], sizeof(this->speedMaximum));
+			::std::memcpy(&this->accelerationMinimum, &buf[20], sizeof(this->accelerationMinimum));
+			::std::memcpy(&this->accelerationMaximum, &buf[24], sizeof(this->accelerationMaximum));
+			::std::memcpy(&this->forceMinimum, &buf[28], sizeof(this->forceMinimum));
+			::std::memcpy(&this->forceNominal, &buf[32], sizeof(this->forceNominal));
+			::std::memcpy(&this->forceOverdrive, &buf[36], sizeof(this->forceOverdrive));
+			
+			this->stroke *= static_cast<float>(::rl::math::MILLI2UNIT);
+			this->speedMinimum *= static_cast<float>(::rl::math::MILLI2UNIT);
+			this->speedMaximum *= static_cast<float>(::rl::math::MILLI2UNIT);
+			this->accelerationMinimum *= static_cast<float>(::rl::math::MILLI2UNIT);
+			this->accelerationMaximum *= static_cast<float>(::rl::math::MILLI2UNIT);
 		}
 		
 		void
@@ -373,17 +384,22 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			uint8_t buf[64];
+			::std::array< ::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x40;
 			buf[this->HEADER_SIZE] = 0x00 | (doAutomaticUpdate << 0) | (doUpdateOnChange << 1);
-			buf[this->HEADER_SIZE + 1] = lowByteFromHostEndian(period);
-			buf[this->HEADER_SIZE + 2] = highByteFromHostEndian(period);
+			buf[this->HEADER_SIZE + 1] = Endian::hostLowByte(period);
+			buf[this->HEADER_SIZE + 2] = Endian::hostHighByte(period);
 			
-			this->send(buf, this->HEADER_SIZE + 3 + 2);
-			this->recv(buf, this->HEADER_SIZE + 2 + 4 + 2, 0x40);
+			this->send(buf.data(), this->HEADER_SIZE + 3 + 2);
+			this->recv(buf.data(), this->HEADER_SIZE + 2 + 4 + 2, 0x40);
 			
-			this->systemState = static_cast< SystemState >(buf[this->HEADER_SIZE + 2]);
+			this->systemState = static_cast<SystemState>(
+				Endian::hostDoubleWord(
+					Endian::hostWord(buf[this->HEADER_SIZE + 5], buf[this->HEADER_SIZE + 4]),
+					Endian::hostWord(buf[this->HEADER_SIZE + 3], buf[this->HEADER_SIZE + 2])
+				)
+			);
 		}
 		
 		float
@@ -391,14 +407,14 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			uint8_t buf[64];
+			::std::array< ::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x46;
 			
-			this->send(buf, this->HEADER_SIZE + 0 + 2);
-			this->recv(buf, this->HEADER_SIZE + 2 + 2 + 2, 0x46);
+			this->send(buf.data(), this->HEADER_SIZE + 0 + 2);
+			this->recv(buf.data(), this->HEADER_SIZE + 2 + 2 + 2, 0x46);
 			
-			int16_t temperature = hostEndianWord(buf[9], buf[8]);
+			::std::int16_t temperature = Endian::hostWord(buf[9], buf[8]);
 			
 			return temperature / 10.0f;
 		}
@@ -410,15 +426,17 @@ namespace rl
 			assert(width >= 0.0f && width <= 0.11f);
 			assert(speed >= 0.0f && speed <= 0.4f);
 			
-			uint8_t buf[64];
+			float widthMilli = width * static_cast<float>(::rl::math::UNIT2MILLI);
+			float speedMilli = speed * static_cast<float>(::rl::math::UNIT2MILLI);
+			
+			::std::array< ::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x25;
+			::std::memcpy(&buf[this->HEADER_SIZE], &widthMilli, sizeof(widthMilli));
+			::std::memcpy(&buf[this->HEADER_SIZE + 4], &speedMilli, sizeof(speedMilli));
 			
-			*reinterpret_cast< float * >(&buf[this->HEADER_SIZE]) = width * 1000.0f;
-			*reinterpret_cast< float * >(&buf[this->HEADER_SIZE + 4]) = speed * 1000.0f;
-			
-			this->send(buf, this->HEADER_SIZE + 8 + 2);
-			this->recv(buf, this->HEADER_SIZE + 2 + 0 + 2, 0x25);
+			this->send(buf.data(), this->HEADER_SIZE + 8 + 2);
+			this->recv(buf.data(), this->HEADER_SIZE + 2 + 0 + 2, 0x25);
 		}
 		
 		// Perform necessary homing motion for calibration.
@@ -429,14 +447,14 @@ namespace rl
 			assert(this->isConnected());
 			assert(direction < 3);
 			
-			uint8_t buf[64];
+			::std::array< ::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x20;
 			buf[this->HEADER_SIZE] = direction;
 			
-			this->send(buf, this->HEADER_SIZE + 1 + 2);
-			this->recv(buf, this->HEADER_SIZE + 2 + 0 + 2, 0x20);
-			this->recv(buf, this->HEADER_SIZE + 2 + 0 + 2, 0x20); // wait for completion message
+			this->send(buf.data(), this->HEADER_SIZE + 1 + 2);
+			this->recv(buf.data(), this->HEADER_SIZE + 2 + 0 + 2, 0x20);
+			this->recv(buf.data(), this->HEADER_SIZE + 2 + 0 + 2, 0x20); // wait for completion message
 		}
 		
 		void
@@ -444,7 +462,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			uint8_t buf[64];
+			::std::array< ::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x37;
 			buf[4] = 0x00;
@@ -454,8 +472,8 @@ namespace rl
 				buf[4] |= 1;
 			}
 			
-			this->send(buf, this->HEADER_SIZE + 1 + 2);
-			this->recv(buf, this->HEADER_SIZE + 2 + 0 + 2, 0x37);
+			this->send(buf.data(), this->HEADER_SIZE + 1 + 2);
+			this->recv(buf.data(), this->HEADER_SIZE + 2 + 0 + 2, 0x37);
 		}
 		
 		void
@@ -465,7 +483,10 @@ namespace rl
 			assert(width >= 0.0f && width <= 0.11f);
 			assert(speed >= 0.0f && speed <= 0.4f);
 			
-			uint8_t buf[64];
+			float widthMilli = width * static_cast<float>(::rl::math::UNIT2MILLI);
+			float speedMilli = speed * static_cast<float>(::rl::math::UNIT2MILLI);
+			
+			::std::array< ::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x21;
 			buf[this->HEADER_SIZE] = 0x00;
@@ -480,12 +501,12 @@ namespace rl
 				buf[this->HEADER_SIZE] |= 2;
 			}
 			
-			*reinterpret_cast< float * >(&buf[this->HEADER_SIZE + 1]) = width * 1000.0f;
-			*reinterpret_cast< float * >(&buf[this->HEADER_SIZE + 4 + 1]) = speed * 1000.0f;
+			::std::memcpy(&buf[this->HEADER_SIZE + 1], &widthMilli, sizeof(widthMilli));
+			::std::memcpy(&buf[this->HEADER_SIZE + 4 + 1], &speedMilli, sizeof(speedMilli));
 			
-			this->send(buf, this->HEADER_SIZE + 9 + 2);
-			this->recv(buf, this->HEADER_SIZE + 2 + 0 + 2, 0x21);
-			this->recv(buf, this->HEADER_SIZE + 2 + 0 + 2, 0x21); // wait for completion
+			this->send(buf.data(), this->HEADER_SIZE + 9 + 2);
+			this->recv(buf.data(), this->HEADER_SIZE + 2 + 0 + 2, 0x21);
+			this->recv(buf.data(), this->HEADER_SIZE + 2 + 0 + 2, 0x21); // wait for completion
 		}
 		
 		void
@@ -495,15 +516,17 @@ namespace rl
 			assert(width >= 0.0f && width <= 0.11f);
 			assert(speed >= 0.005f && speed <= 0.4f);
 			
-			uint8_t buf[64];
+			float widthMilli = width * static_cast<float>(::rl::math::UNIT2MILLI);
+			float speedMilli = speed * static_cast<float>(::rl::math::UNIT2MILLI);
+			
+			::std::array< ::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x26;
+			::std::memcpy(&buf[this->HEADER_SIZE], &widthMilli, sizeof(widthMilli));
+			::std::memcpy(&buf[this->HEADER_SIZE + 4], &speedMilli, sizeof(speedMilli));
 			
-			*reinterpret_cast< float * >(&buf[this->HEADER_SIZE]) = width * 1000.0f;
-			*reinterpret_cast< float * >(&buf[this->HEADER_SIZE + 4]) = speed * 1000.0f;
-			
-			this->send(buf, this->HEADER_SIZE + 8 + 2);
-			this->recv(buf, this->HEADER_SIZE + 2 + 0 + 2, 0x26);
+			this->send(buf.data(), this->HEADER_SIZE + 8 + 2);
+			this->recv(buf.data(), this->HEADER_SIZE + 2 + 0 + 2, 0x26);
 		}
 		
 		void
@@ -512,13 +535,15 @@ namespace rl
 			assert(this->isConnected());
 			assert(acceleration >= 0.1f && acceleration <= 5.0f);
 			
-			uint8_t buf[64];
+			float accelerationMilli = acceleration * static_cast<float>(::rl::math::UNIT2MILLI);
+			
+			::std::array< ::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x30;
-			*reinterpret_cast< float * >(&buf[this->HEADER_SIZE]) = acceleration * 1000.0f;
+			::std::memcpy(&buf[this->HEADER_SIZE], &accelerationMilli, sizeof(accelerationMilli));
 			
-			this->send(buf, this->HEADER_SIZE + 4 + 2);
-			this->recv(buf, this->HEADER_SIZE + 2 + 0 + 2, 0x30);
+			this->send(buf.data(), this->HEADER_SIZE + 4 + 2);
+			this->recv(buf.data(), this->HEADER_SIZE + 2 + 0 + 2, 0x30);
 			
 			this->acceleration = acceleration;
 		}
@@ -529,13 +554,13 @@ namespace rl
 			assert(this->isConnected());
 			assert(force >= 5.0f && force <= 80.0f);
 			
-			uint8_t buf[64];
+			::std::array< ::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x32;
-			*reinterpret_cast< float * >(&buf[this->HEADER_SIZE]) = force;
+			::std::memcpy(&buf[this->HEADER_SIZE], &force, sizeof(force));
 			
-			this->send(buf, this->HEADER_SIZE + 4 + 2);
-			this->recv(buf, this->HEADER_SIZE + 2 + 0 + 2, 0x32);
+			this->send(buf.data(), this->HEADER_SIZE + 4 + 2);
+			this->recv(buf.data(), this->HEADER_SIZE + 2 + 0 + 2, 0x32);
 			
 			this->forceLimit = force;
 		}
@@ -545,15 +570,17 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			uint8_t buf[64];
+			float limitMinusMilli = limitMinus * static_cast<float>(::rl::math::UNIT2MILLI);
+			float limitPlusMilli = limitPlus * static_cast<float>(::rl::math::UNIT2MILLI);
+			
+			::std::array< ::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x34;
+			::std::memcpy(&buf[this->HEADER_SIZE], &limitMinusMilli, sizeof(limitMinusMilli));
+			::std::memcpy(&buf[this->HEADER_SIZE] + 4, &limitPlusMilli, sizeof(limitPlusMilli));
 			
-			*reinterpret_cast< float * >(&buf[this->HEADER_SIZE]) = limitMinus / 1000.0f;
-			*reinterpret_cast< float * >(&buf[this->HEADER_SIZE + 4]) = limitPlus / 1000.0f;
-			
-			this->send(buf, this->HEADER_SIZE + 8 + 2);
-			this->recv(buf, this->HEADER_SIZE + 2 + 0 + 2, 0x34);
+			this->send(buf.data(), this->HEADER_SIZE + 8 + 2);
+			this->recv(buf.data(), this->HEADER_SIZE + 2 + 0 + 2, 0x34);
 			
 			this->limitMinus = limitMinus;
 			this->limitPlus = limitPlus;
@@ -564,12 +591,12 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			uint8_t buf[64];
+			::std::array< ::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x22;
 			
-			this->send(buf, this->HEADER_SIZE + 0 + 2);
-			this->recv(buf, this->HEADER_SIZE + 2 + 0 + 2, 0x22);
+			this->send(buf.data(), this->HEADER_SIZE + 0 + 2);
+			this->recv(buf.data(), this->HEADER_SIZE + 2 + 0 + 2, 0x22);
 		}
 		
 		void
@@ -577,12 +604,12 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			uint8_t buf[64];
+			::std::array< ::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x38;
 			
-			this->send(buf, this->HEADER_SIZE + 0 + 2);
-			this->recv(buf, this->HEADER_SIZE + 2 + 0 + 2, 0x38);
+			this->send(buf.data(), this->HEADER_SIZE + 0 + 2);
+			this->recv(buf.data(), this->HEADER_SIZE + 2 + 0 + 2, 0x38);
 		}
 		
 		float
@@ -631,24 +658,26 @@ namespace rl
 		WeissWsg50::halt()
 		{
 			assert(this->isConnected());
-			// TODO
+			
+			this->doStop();
 		}
 		
 		void
 		WeissWsg50::open()
 		{
 			assert(!this->isConnected());
-			this->tcp.open();
+			this->socket.open();
+			this->socket.connect();
 			this->setConnected(true);
 			this->doAcknowledgeFaults();
 		}
 		
 		::std::size_t
-		WeissWsg50::recv(uint8_t* buf)
+		WeissWsg50::recv(::std::uint8_t* buf)
 		{
 			assert(this->isConnected());
 			
-			uint8_t* ptr;
+			::std::uint8_t* ptr;
 			::std::size_t sumbytes;
 			::std::size_t numbytes;
 			
@@ -661,34 +690,34 @@ namespace rl
 					
 					do
 					{
-						numbytes = this->tcp.read(ptr, 1);
+						numbytes = this->socket.recv(ptr, 1);
 					}
 					while (0xAA != buf[0]);
 					
 					ptr += numbytes;
 					sumbytes += numbytes;
 					
-					numbytes = this->tcp.read(ptr, 1);
+					numbytes = this->socket.recv(ptr, 1);
 				}
 				while (0xAA != buf[1]);
 				
 				ptr += numbytes;
 				sumbytes += numbytes;
 				
-				numbytes = this->tcp.read(ptr, 1);
+				numbytes = this->socket.recv(ptr, 1);
 			}
 			while (0xAA != buf[2]);
 			
 			ptr += numbytes;
 			sumbytes += numbytes;
 			
-			numbytes = this->tcp.read(ptr, 1);
+			numbytes = this->socket.recv(ptr, 1);
 			ptr += numbytes;
 			sumbytes += numbytes;
 			
 			for (::std::size_t i = 0; i < 2 + 2; ++i)
 			{
-				numbytes = this->tcp.read(ptr, 1);
+				numbytes = this->socket.recv(ptr, 1);
 				ptr += numbytes;
 				sumbytes += numbytes;
 			}
@@ -702,21 +731,21 @@ namespace rl
 			fflush(stdout);
 #endif
 			
-			uint16_t length = hostEndianWord(buf[5], buf[4]);
+			::std::uint16_t length = Endian::hostWord(buf[5], buf[4]);
 			
-			Exception::Error errorCode = static_cast< Exception::Error >(hostEndianWord(buf[7], buf[6]));
+			WeissException::Code code = static_cast<WeissException::Code>(Endian::hostWord(buf[7], buf[6]));
 			
-			switch (errorCode)
+			switch (code)
 			{
-			case Exception::ERROR_SUCCESS:
+			case WeissException::CODE_SUCCESS:
 				break;
-			case Exception::ERROR_CMD_PENDING:
+			case WeissException::CODE_COMMAND_PENDING:
 				break;
-			case Exception::ERROR_AXIS_BLOCKED:
+			case WeissException::CODE_AXIS_BLOCKED:
 				break;
 			default:
-//				::std::cerr << "Debug: errorCode: " << errorCode << ::std::endl;
-				throw Exception(errorCode);
+//				::std::cerr << "Debug: error: " << error << ::std::endl;
+				throw WeissException(code);
 				break;
 			}
 			
@@ -724,7 +753,7 @@ namespace rl
 			
 			while (sumbytes < len)
 			{
-				numbytes = this->tcp.read(ptr, len - sumbytes);
+				numbytes = this->socket.recv(ptr, len - sumbytes);
 				
 				ptr += numbytes;
 				sumbytes += numbytes;
@@ -739,24 +768,35 @@ namespace rl
 			fflush(stdout);
 #endif
 			
-			if (this->crc(buf, sumbytes - 2) != hostEndianWord(buf[sumbytes - 1], buf[sumbytes - 2]))
+			if (this->crc(buf, sumbytes - 2) != Endian::hostWord(buf[sumbytes - 1], buf[sumbytes - 2]))
 			{
 				throw DeviceException("Checksum error.");
 			}
 			
 			switch (buf[3])
 			{
+			case 0x40:
+				this->systemState = static_cast<SystemState>(
+					Endian::hostDoubleWord(
+						Endian::hostWord(buf[11], buf[10]),
+						Endian::hostWord(buf[9], buf[8])
+					)
+				);
+				break;
 			case 0x41:
-				this->graspingState = static_cast< GraspingState >(buf[8]);
+				this->graspingState = static_cast<GraspingState>(buf[8]);
 				break;
 			case 0x43:
-				this->openingWidth = *reinterpret_cast< float* >(&buf[8]) / 1000.0f;
+				::std::memcpy(&this->openingWidth, &buf[8], sizeof(this->openingWidth));
+				this->openingWidth *= static_cast<float>(::rl::math::MILLI2UNIT);
 				break;
 			case 0x44:
-				this->speed = *reinterpret_cast< float* >(&buf[8]) / 1000.0f;
+				::std::memcpy(&this->speed, &buf[8], sizeof(this->speed));
+				this->speed *= static_cast<float>(::rl::math::MILLI2UNIT);
 				break;
 			case 0x45:
-				this->force = *reinterpret_cast< float* >(&buf[8]);
+				this->force = *reinterpret_cast<float*>(&buf[8]);
+				::std::memcpy(&this->force, &buf[8], sizeof(this->force));
 				break;
 			default:
 				break;
@@ -766,7 +806,7 @@ namespace rl
 		}
 		
 		::std::size_t
-		WeissWsg50::recv(uint8_t* buf, const ::std::size_t& len, const uint8_t& command)
+		WeissWsg50::recv(::std::uint8_t* buf, const ::std::size_t& len, const ::std::uint8_t& command)
 		{
 			assert(this->isConnected());
 			assert(len > 9);
@@ -786,11 +826,12 @@ namespace rl
 		WeissWsg50::release()
 		{
 			assert(this->isConnected());
-			// TODO
+			
+			this->doReleasePart(0.1097f, 0.2f);
 		}
 		
 		void
-		WeissWsg50::send(uint8_t* buf, const ::std::size_t& len)
+		WeissWsg50::send(::std::uint8_t* buf, const ::std::size_t& len)
 		{
 			assert(this->isConnected());
 			assert(len > 6);
@@ -799,17 +840,17 @@ namespace rl
 			buf[1] = 0xAA;
 			buf[2] = 0xAA;
 			
-			uint16_t length = len - this->HEADER_SIZE - 2;
+			::std::uint16_t length = len - this->HEADER_SIZE - 2;
 			
-			buf[4] = lowByteFromHostEndian(length);
-			buf[5] = highByteFromHostEndian(length);
+			buf[4] = Endian::hostLowByte(length);
+			buf[5] = Endian::hostHighByte(length);
 			
-			uint16_t checksum = this->crc(buf, len - 2);
+			::std::uint16_t checksum = this->crc(buf, len - 2);
 			
-			buf[len - 2] = lowByteFromHostEndian(checksum);
-			buf[len - 1] = highByteFromHostEndian(checksum);
+			buf[len - 2] = Endian::hostLowByte(checksum);
+			buf[len - 1] = Endian::hostHighByte(checksum);
 			
-			if (len != this->tcp.write(buf, len))
+			if (len != this->socket.send(buf, len))
 			{
 				throw DeviceException("Could not send complete data.");
 			}
@@ -829,7 +870,8 @@ namespace rl
 		WeissWsg50::shut()
 		{
 			assert(this->isConnected());
-			// TODO
+			
+			this->doGraspPart(0, 0.2f);
 		}
 		
 		void
@@ -837,20 +879,21 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
+			this->doHomingMotion();
+			
 			this->doGetAcceleration();
 			this->doGetForceLimit();
-			//TODO this->doGetSoftLimits();
+			// TODO this->doGetSoftLimits();
 			this->doGetSystemLimits();
 			
-			this->doGetForce(true, true, this->period);
-			this->doGetGraspingState(true, true, this->period);
-			this->doGetOpeningWidth(true, true, this->period);
-			this->doGetSpeed(true, true, this->period);
-			this->doGetSystemState(true, true, this->period);
-			
-			this->doHomingMotion();
 			this->doSetAcceleration(this->acceleration);
 			this->doSetForceLimit(this->forceLimit);
+			
+			this->doGetForce(true, false, this->period);
+			this->doGetGraspingState(true, false, this->period);
+			this->doGetOpeningWidth(true, false, this->period);
+			this->doGetSpeed(true, false, this->period);
+			this->doGetSystemState(true, false, this->period);
 			
 			this->setRunning(true);
 		}
@@ -861,9 +904,13 @@ namespace rl
 			assert(this->isConnected());
 			assert(this->isRunning());
 			
-			uint8_t buf[64];
+			::std::array< ::std::uint8_t, 64> buf;
 			
-			// TODO: implement
+			this->recv(buf.data()); // doGetForce
+			this->recv(buf.data()); // doGetGraspingState
+			this->recv(buf.data()); // doGetOpeningWidth
+			this->recv(buf.data()); // doGetSpeed
+			this->recv(buf.data()); // doGetSystemState
 		}
 		
 		void
@@ -881,126 +928,6 @@ namespace rl
 			this->doGetSystemState(false, false);
 			
 			this->setRunning(false);
-		}
-		
-		WeissWsg50::Exception::Exception(const Error& error) :
-			DeviceException(""),
-			error(error)
-		{
-		}
-		
-		WeissWsg50::Exception::~Exception() throw()
-		{
-		}
-		
-		WeissWsg50::Exception::Error
-		WeissWsg50::Exception::getError() const
-		{
-			return this->error;
-		}
-		
-		const char*
-		WeissWsg50::Exception::what() const throw()
-		{
-			switch (this->error)
-			{
-			case ERROR_SUCCESS:
-				return "No error.";
-				break;
-			case ERROR_NOT_AVAILABLE:
-				return "Device, service or data is not available.";
-				break;
-			case ERROR_NO_SENSOR:
-				return "No sensor connected.";
-				break;
-			case ERROR_NOT_INITIALIZED:
-				return "The device is not initialized.";
-				break;
-			case ERROR_ALREADY_RUNNING:
-				return "Service is already running.";
-				break;
-			case ERROR_FEATURE_NOT_SUPPORTED:
-				return "The asked feature is not supported.";
-				break;
-			case ERROR_INCONSISTENT_DATA:
-				return "One or more dependent parameters mismatch.";
-				break;
-			case ERROR_TIMEOUT:
-				return "Timeout error.";
-				break;
-			case ERROR_READ_ERROR:
-				return "Error while reading from a device.";
-				break;
-			case ERROR_WRITE_ERROR:
-				return "Error while writing to a device.";
-				break;
-			case ERROR_INSUFFICIENT_RESOURCES:
-				return "No memory available.";
-				break;
-			case ERROR_CHECKSUM_ERROR:
-				return "Checksum error.";
-				break;
-			case ERROR_NO_PARAM_EXPECTED:
-				return "No parameters expected.";
-				break;
-			case ERROR_NOT_ENOUGH_PARAMS:
-				return "Not enough parameters.";
-				break;
-			case ERROR_CMD_UNKNOWN:
-				return "Unknown command.";
-				break;
-			case ERROR_CMD_FORMAT_ERROR:
-				return "Command format error.";
-				break;
-			case ERROR_ACCESS_DENIED:
-				return "Access denied.";
-				break;
-			case ERROR_ALREADY_OPEN:
-				return "The interface is already open.";
-				break;
-			case ERROR_CMD_FAILED:
-				return "Command failed.";
-				break;
-			case ERROR_CMD_ABORTED:
-				return "Command aborted.";
-				break;
-			case ERROR_INVALID_HANDLE:
-				return "invalid handle.";
-				break;
-			case ERROR_NOT_FOUND:
-				return "device not found.";
-				break;
-			case ERROR_NOT_OPEN:
-				return "device not open.";
-				break;
-			case ERROR_IO_ERROR:
-				return "I/O error.";
-				break;
-			case ERROR_INVALID_PARAMETER:
-				return "invalid parameter.";
-				break;
-			case ERROR_INDEX_OUT_OF_BOUNDS:
-				return "index out of bounds.";
-				break;
-			case ERROR_CMD_PENDING:
-				return "Command was received correctly, but the execution needs more time. If the command was completely processed, another status message is returned indicating the command's result.";
-				break;
-			case ERROR_OVERRUN:
-				return "Data overrun.";
-				break;
-			case ERROR_RANGE_ERROR:
-				return "Range error.";
-				break;
-			case ERROR_AXIS_BLOCKED:
-				return "Axis is blocked.";
-				break;
-			case ERROR_FILE_EXISTS:
-				return "File already exists.";
-				break;
-			default:
-				return "Unknown error.";
-				break;
-			}
 		}
 	}
 }

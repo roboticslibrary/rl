@@ -105,87 +105,88 @@ namespace rl
 		{
 			::rl::xml::DomParser parser;
 			
-			::rl::xml::Document doc = parser.readFile(filename, "", XML_PARSE_NOENT | XML_PARSE_XINCLUDE);
+			::rl::xml::Document document = parser.readFile(filename, "", XML_PARSE_NOENT | XML_PARSE_XINCLUDE);
+			document.substitute(XML_PARSE_NOENT | XML_PARSE_XINCLUDE);
 			
-			doc.substitute(XML_PARSE_NOENT | XML_PARSE_XINCLUDE);
+			::rl::xml::Path path(document);
 			
-			::rl::xml::Path path(doc);
+			::rl::xml::NodeSet scenes = path.eval("(/rl/sg|/rlsg)/scene").getValue< ::rl::xml::NodeSet>();
 			
-			::rl::xml::Object scenes = path.eval("//scene");
-			
-			for (int i = 0; i < ::std::min(1, scenes.getNodeNr()); ++i)
+			for (int i = 0; i < ::std::min(1, scenes.size()); ++i)
 			{
-				SoInput input;
+				::SoInput input;
 				
-				if (!input.openFile(scenes.getNodeTab(i).getLocalPath(scenes.getNodeTab(i).getAttribute("href").getValue()).c_str() ,true))
+				if (!input.openFile(scenes[i].getLocalPath(scenes[i].getProperty("href")).c_str() ,true))
 				{
 					throw Exception("::rl::sg::Scene::load() - failed to open file");
 				}
 				
-				SoVRMLGroup* root = SoDB::readAllVRML(&input);
+				::SoVRMLGroup* root = SoDB::readAllVRML(&input);
 				
-				if (NULL == root)
+				if (nullptr == root)
 				{
 					throw Exception("::rl::sg::Scene::load() - failed to read file");
 				}
 				
-				SbViewportRegion viewportRegion;
+				::SbViewportRegion viewportRegion;
 				
 				root->ref();
 				
 				// model
 				
-				::rl::xml::Object models = path.eval("model", scenes.getNodeTab(i));
+				::rl::xml::NodeSet models = ::rl::xml::Path(document, scenes[i]).eval("model").getValue< ::rl::xml::NodeSet>();
 				
-				for (int j = 0; j < models.getNodeNr(); ++j)
+				for (int j = 0; j < models.size(); ++j)
 				{
-					SoSearchAction modelSearchAction;
-					modelSearchAction.setName(models.getNodeTab(j).getAttribute("name").getValue().c_str());
+					::rl::xml::Path path(document, models[j]);
+					
+					::SoSearchAction modelSearchAction;
+					modelSearchAction.setName(models[j].getProperty("name").c_str());
 					modelSearchAction.apply(root);
 					
-					if (NULL == modelSearchAction.getPath())
+					if (nullptr == modelSearchAction.getPath())
 					{
 						continue;
 					}
 					
 					Model* model = this->create();
 					
-					model->setName(models.getNodeTab(j).getAttribute("name").getValue());
+					model->setName(models[j].getProperty("name"));
 					
 					// body
 					
-					::rl::xml::Object bodies = path.eval("body", models.getNodeTab(j));
+					::rl::xml::NodeSet bodies = path.eval("body").getValue< ::rl::xml::NodeSet>();
 					
-					for (int k = 0; k < bodies.getNodeNr(); ++k)
+					for (int k = 0; k < bodies.size(); ++k)
 					{
-						SoSearchAction bodySearchAction;
-						bodySearchAction.setName(bodies.getNodeTab(k).getAttribute("name").getValue().c_str());
-						bodySearchAction.apply(static_cast< SoFullPath* >(modelSearchAction.getPath())->getTail());
+						::SoSearchAction bodySearchAction;
+						bodySearchAction.setName(bodies[k].getProperty("name").c_str());
+						bodySearchAction.apply(static_cast< ::SoFullPath*>(modelSearchAction.getPath())->getTail());
 						
-						if (NULL == bodySearchAction.getPath())
+						if (nullptr == bodySearchAction.getPath())
 						{
 							continue;
 						}
 						
 						Body* body = model->create();
 						
-						body->setName(bodies.getNodeTab(k).getAttribute("name").getValue());
+						body->setName(bodies[k].getProperty("name"));
 						
-						SoSearchAction pathSearchAction;
-						pathSearchAction.setNode(static_cast< SoFullPath* >(bodySearchAction.getPath())->getTail());
+						::SoSearchAction pathSearchAction;
+						pathSearchAction.setNode(static_cast< ::SoFullPath*>(bodySearchAction.getPath())->getTail());
 						pathSearchAction.apply(root);
 						
-						SoGetMatrixAction bodyGetMatrixAction(viewportRegion);
-						bodyGetMatrixAction.apply(static_cast< SoFullPath* >(pathSearchAction.getPath()));
-						SbMatrix bodyMatrix = bodyGetMatrixAction.getMatrix();
+						::SoGetMatrixAction bodyGetMatrixAction(viewportRegion);
+						bodyGetMatrixAction.apply(static_cast< ::SoFullPath*>(pathSearchAction.getPath()));
+						::SbMatrix bodyMatrix = bodyGetMatrixAction.getMatrix();
 						
 						if (!this->isScalingSupported)
 						{
-							SbVec3f bodyTranslation;
-							SbRotation bodyRotation;
-							SbVec3f bodyScaleFactor;
-							SbRotation bodyScaleOrientation;
-							SbVec3f bodyCenter;
+							::SbVec3f bodyTranslation;
+							::SbRotation bodyRotation;
+							::SbVec3f bodyScaleFactor;
+							::SbRotation bodyScaleOrientation;
+							::SbVec3f bodyCenter;
 							bodyMatrix.getTransform(bodyTranslation, bodyRotation, bodyScaleFactor, bodyScaleOrientation, bodyCenter);
 							
 							for (int l = 0; l < 3; ++l)
@@ -209,9 +210,9 @@ namespace rl
 						
 						body->setFrame(frame);
 						
-						if (static_cast< SoFullPath* >(bodySearchAction.getPath())->getTail()->isOfType(SoVRMLTransform::getClassTypeId()))
+						if (static_cast< ::SoFullPath*>(bodySearchAction.getPath())->getTail()->isOfType(::SoVRMLTransform::getClassTypeId()))
 						{
-							SoVRMLTransform* bodyVrmlTransform = static_cast< SoVRMLTransform* >(static_cast< SoFullPath* >(bodySearchAction.getPath())->getTail());
+							::SoVRMLTransform* bodyVrmlTransform = static_cast< ::SoVRMLTransform*>(static_cast< ::SoFullPath*>(bodySearchAction.getPath())->getTail());
 							
 							for (int l = 0; l < 3; ++l)
 							{
@@ -219,37 +220,37 @@ namespace rl
 							}
 						}
 						
-						SoPathList pathList;
+						::SoPathList pathList;
 						
 						// shape
 						
-						SoSearchAction shapeSearchAction;
-						shapeSearchAction.setInterest(SoSearchAction::ALL);
-						shapeSearchAction.setType(SoVRMLShape::getClassTypeId());
-						shapeSearchAction.apply(static_cast< SoFullPath* >(bodySearchAction.getPath())->getTail());
+						::SoSearchAction shapeSearchAction;
+						shapeSearchAction.setInterest(::SoSearchAction::ALL);
+						shapeSearchAction.setType(::SoVRMLShape::getClassTypeId());
+						shapeSearchAction.apply(static_cast< ::SoFullPath*>(bodySearchAction.getPath())->getTail());
 						
 						for (int l = 0; l < shapeSearchAction.getPaths().getLength(); ++l)
 						{
-							SoFullPath* path = static_cast< SoFullPath* >(shapeSearchAction.getPaths()[l]);
+							::SoFullPath* path = static_cast< ::SoFullPath*>(shapeSearchAction.getPaths()[l]);
 							
 							if (path->getLength() > 1)
 							{
-								path = static_cast< SoFullPath* >(shapeSearchAction.getPaths()[l]->copy(1, static_cast< SoFullPath* >(shapeSearchAction.getPaths()[l])->getLength() - 1));
+								path = static_cast< ::SoFullPath*>(shapeSearchAction.getPaths()[l]->copy(1, static_cast< ::SoFullPath*>(shapeSearchAction.getPaths()[l])->getLength() - 1));
 							}
 							
 							pathList.append(path);
 							
-							SoGetMatrixAction shapeGetMatrixAction(viewportRegion);
+							::SoGetMatrixAction shapeGetMatrixAction(viewportRegion);
 							shapeGetMatrixAction.apply(path);
-							SbMatrix shapeMatrix = shapeGetMatrixAction.getMatrix();
+							::SbMatrix shapeMatrix = shapeGetMatrixAction.getMatrix();
 							
 							if (!this->isScalingSupported)
 							{
-								SbVec3f shapeTranslation;
-								SbRotation shapeRotation;
-								SbVec3f shapeScaleFactor;
-								SbRotation shapeScaleOrientation;
-								SbVec3f shapeCenter;
+								::SbVec3f shapeTranslation;
+								::SbRotation shapeRotation;
+								::SbVec3f shapeScaleFactor;
+								::SbRotation shapeScaleOrientation;
+								::SbVec3f shapeCenter;
 								shapeMatrix.getTransform(shapeTranslation, shapeRotation, shapeScaleFactor, shapeScaleOrientation, shapeCenter);
 								
 								for (int m = 0; m < 3; ++m)
@@ -261,7 +262,7 @@ namespace rl
 								}
 							}
 							
-							SoVRMLShape* shapeVrmlShape = static_cast< SoVRMLShape* >(static_cast< SoFullPath* >(shapeSearchAction.getPaths()[l])->getTail());
+							::SoVRMLShape* shapeVrmlShape = static_cast< ::SoVRMLShape*>(static_cast< ::SoFullPath*>(shapeSearchAction.getPaths()[l])->getTail());
 							
 							Shape* shape = body->create(shapeVrmlShape);
 							
@@ -284,9 +285,9 @@ namespace rl
 						
 						if (doBoundingBoxPoints)
 						{
-							SoGetBoundingBoxAction getBoundingBoxAction(viewportRegion);
+							::SoGetBoundingBoxAction getBoundingBoxAction(viewportRegion);
 							getBoundingBoxAction.apply(pathList);
-							SbBox3f boundingBox = getBoundingBoxAction.getBoundingBox();
+							::SbBox3f boundingBox = getBoundingBoxAction.getBoundingBox();
 							
 							for (int l = 0; l < 3; ++l)
 							{
@@ -299,8 +300,8 @@ namespace rl
 						
 						if (doPoints)
 						{
-							SoCallbackAction callbackAction;
-							callbackAction.addTriangleCallback(SoVRMLGeometry::getClassTypeId(), Scene::triangleCallback, &body->points);
+							::SoCallbackAction callbackAction;
+							callbackAction.addTriangleCallback(::SoVRMLGeometry::getClassTypeId(), Scene::triangleCallback, &body->points);
 							callbackAction.apply(pathList);
 						}
 					}
@@ -330,7 +331,7 @@ namespace rl
 		void
 		Scene::triangleCallback(void* userData, SoCallbackAction* action, const SoPrimitiveVertex* v1, const SoPrimitiveVertex* v2, const SoPrimitiveVertex* v3)
 		{
-			::std::vector< ::rl::math::Vector3 >* points = static_cast< ::std::vector< ::rl::math::Vector3 >* >(userData);
+			::std::vector< ::rl::math::Vector3>* points = static_cast< ::std::vector< ::rl::math::Vector3>*>(userData);
 			
 			::rl::math::Vector3 p1;
 			p1(0) = v1->getPoint()[0];

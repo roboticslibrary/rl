@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_SG_PQP_SCENE_H_
-#define _RL_SG_PQP_SCENE_H_
+#ifndef RL_SG_PQP_SCENE_H
+#define RL_SG_PQP_SCENE_H
 
 #include <PQP.h>
 #include <vector>
@@ -37,6 +37,11 @@ namespace rl
 {
 	namespace sg
 	{
+		/**
+		 * Proximity Query Package.
+		 * 
+		 * http://gamma.cs.unc.edu/SSV/
+		 */
 		namespace pqp
 		{
 			class Scene : public ::rl::sg::DistanceScene, public ::rl::sg::SimpleScene
@@ -65,4 +70,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_SG_PQP_SCENE_H_
+#endif // RL_SG_PQP_SCENE_H

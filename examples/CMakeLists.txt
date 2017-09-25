@@ -1,29 +1,29 @@
-project(examples)
-
 install(
-	DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/rlkin/
-	DESTINATION ${CMAKE_INSTALL_DATADIR}/rl/examples/rlkin
+	DIRECTORY rlkin
+	DESTINATION ${CMAKE_INSTALL_DATADIR}/rl-${VERSION}/examples
 	COMPONENT examples
-	PATTERN .svn EXCLUDE
 )
 
 install(
-	DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/rlmdl/
-	DESTINATION ${CMAKE_INSTALL_DATADIR}/rl/examples/rlmdl
+	DIRECTORY rlmdl
+	DESTINATION ${CMAKE_INSTALL_DATADIR}/rl-${VERSION}/examples
 	COMPONENT examples
-	PATTERN .svn EXCLUDE
 )
 
 install(
-	DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/rlplan/
-	DESTINATION ${CMAKE_INSTALL_DATADIR}/rl/examples/rlplan
+	DIRECTORY rlplan
+	DESTINATION ${CMAKE_INSTALL_DATADIR}/rl-${VERSION}/examples
 	COMPONENT examples
-	PATTERN .svn EXCLUDE
 )
 
 install(
-	DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/rlsg/
-	DESTINATION ${CMAKE_INSTALL_DATADIR}/rl/examples/rlsg
+	DIRECTORY rlsg
+	DESTINATION ${CMAKE_INSTALL_DATADIR}/rl-${VERSION}/examples
 	COMPONENT examples
-	PATTERN .svn EXCLUDE
 )
+
+install(FILES unimation-puma560.mdl.sg.xml DESTINATION ${CMAKE_INSTALL_DATADIR}/rl-${VERSION}/examples COMPONENT examples)
+
+if(UNIX)
+	install(FILES vrml.lang DESTINATION ${CMAKE_INSTALL_DATADIR}/gtksourceview-3.0/language-specs COMPONENT examples)
+endif()

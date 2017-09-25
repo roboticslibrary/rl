@@ -24,15 +24,10 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef _RL_KIN_LINK_H_
-#define _RL_KIN_LINK_H_
+#ifndef RL_KIN_LINK_H
+#define RL_KIN_LINK_H
 
-#ifdef WIN32
 #include <unordered_set>
-#else // WIN32
-#include <tr1/unordered_set>
-#endif // WIN32
-
 #include <rl/math/Vector.h>
 
 #include "Frame.h"
@@ -56,7 +51,7 @@ namespace rl
 			
 			::rl::math::Real mass;
 			
-			::std::tr1::unordered_set< Link* > selfcollision;
+			::std::unordered_set<Link*> selfcollision;
 			
 		protected:
 			
@@ -66,4 +61,4 @@ namespace rl
 	}
 }
 
-#endif // _RL_KIN_LINK_H_
+#endif // RL_KIN_LINK_H

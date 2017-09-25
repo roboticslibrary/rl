@@ -33,10 +33,10 @@ namespace rl
 	namespace mdl
 	{
 		Compound::Compound(Model* model) :
-			inFrame(NULL),
-			inTransform(NULL),
-			outFrame(NULL),
-			outTransform(NULL),
+			inFrame(nullptr),
+			inTransform(nullptr),
+			outFrame(nullptr),
+			outTransform(nullptr),
 			model(model),
 			tree(
 				model->tree,
@@ -65,13 +65,13 @@ namespace rl
 		void
 		Compound::remove(Frame* frame)
 		{
-			frame->compound = NULL;
+			frame->compound = nullptr;
 		}
 		
 		void
 		Compound::remove(Transform* transform)
 		{
-			transform->compound = NULL;
+			transform->compound = nullptr;
 		}
 	}
 }
