@@ -1,3 +1,4 @@
+find_package(Boost REQUIRED COMPONENTS system)
 find_package(OpenGL REQUIRED)
 find_package(SoQt)
 
@@ -71,6 +72,7 @@ if(QT_FOUND AND SoQt_FOUND)
 			${OPENGL_LIBRARIES}
 			${QT_LIBRARIES}
 			${SoQt_LIBRARIES}
+			${Boost_LIBRARIES}
 		)
 		
 		set_target_properties(

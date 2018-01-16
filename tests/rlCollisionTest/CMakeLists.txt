@@ -1,4 +1,4 @@
-find_package(Boost REQUIRED)
+find_package(Boost REQUIRED COMPONENTS system)
 
 find_package(Bullet)
 find_package(ccd)
@@ -23,6 +23,7 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE_FOUND OR PQP_FOUND OR SOLID3
 		rlCollisionTest
 		mdl
 		sg
+		${Boost_LIBRARIES}
 	)
 	
 	add_test(
@@ -41,6 +42,7 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE_FOUND OR PQP_FOUND OR SOLID3
 	target_link_libraries(
 		rlSceneCollisionTest
 		sg
+		${Boost_LIBRARIES}
 	)
 	
 	add_test(
