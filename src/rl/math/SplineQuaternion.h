@@ -255,7 +255,7 @@ namespace rl
 
 				for (; x > x0 + this->polynomials[i].duration() && i < this->polynomials.size(); ++i)
 				{
-					x0 += this->polynomials[i].duration();			
+					x0 += this->polynomials[i].duration();
 				}
 				
 				return this->polynomials[i](x - x0, derivative);

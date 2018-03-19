@@ -46,7 +46,7 @@ main(int argc, char** argv)
 		std::mt19937 randomGenerator(0);
 		std::uniform_real_distribution<rl::math::Real> randomDistribution(-180 * rl::math::DEG2RAD, 180 * rl::math::DEG2RAD);
 		
-		std::shared_ptr<rl::kin::Kinematics> kinematics(rl::kin::Kinematics::create(argv[1]));		
+		std::shared_ptr<rl::kin::Kinematics> kinematics(rl::kin::Kinematics::create(argv[1]));
 		
 		std::size_t nTests;
 		

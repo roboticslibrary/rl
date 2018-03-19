@@ -155,5 +155,5 @@ main(int argc, char** argv)
 	
 	fclose(f);
 	
-	return EXIT_SUCCESS;	
+	return EXIT_SUCCESS;
 }

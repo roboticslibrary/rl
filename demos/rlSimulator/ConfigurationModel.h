@@ -54,7 +54,7 @@ public:
 	bool setData(const rl::math::Vector& q); 
 	
 public slots:
-	void operationalChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight);	
+	void operationalChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight);
 	
 protected:
 	

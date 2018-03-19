@@ -56,7 +56,7 @@ public:
 	std::size_t id;
 	
 public slots:
-	void operationalChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight);	
+	void operationalChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight);
 	
 protected:
 	

@@ -48,7 +48,7 @@ main(int argc, char** argv)
 		
 		rl::mdl::XmlFactory factory;
 		std::shared_ptr<rl::mdl::Model> model(factory.create(argv[1]));
-		rl::mdl::Kinematic* kinematics = dynamic_cast<rl::mdl::Kinematic*>(model.get());	
+		rl::mdl::Kinematic* kinematics = dynamic_cast<rl::mdl::Kinematic*>(model.get());
 		
 		std::size_t nTests;
 		

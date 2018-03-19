@@ -53,7 +53,7 @@ public:
 	std::size_t id;
 	
 public slots:
-	void configurationChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight);	
+	void configurationChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight);
 	
 protected:
 	
