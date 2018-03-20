@@ -1,0 +1,8 @@
+[Desktop Entry]
+Categories=Science;Robotics;
+Comment=Rotation conversion demo
+Exec=rlRotationConverterDemo
+Icon=robotics-library
+Name=Robotics Library (rlRotationConverterDemo)
+Type=Application
+X-Unity-IconBackgroundColor=#ffffff
