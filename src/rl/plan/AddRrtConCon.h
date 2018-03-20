@@ -79,4 +79,4 @@ namespace rl
 	}
 }
 
-#endif //_RL_PLAN_ADDRRTCONCON_H
+#endif // RL_PLAN_ADDRRTCONCON_H
