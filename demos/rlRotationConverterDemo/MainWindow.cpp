@@ -379,6 +379,7 @@ MainWindow::angleAxisToggled(bool on)
 {
 	if (on)
 	{
+		this->inputAngleAxisTableView->setFocus();
 		this->inputEulerAnglesGroupBox->setChecked(false);
 		this->inputEulerAnglesTableView->clearSelection();
 		this->inputQuaternionGroupBox->setChecked(false);
@@ -407,6 +408,7 @@ MainWindow::eulerAnglesToggled(bool on)
 	{
 		this->inputAngleAxisGroupBox->setChecked(false);
 		this->inputAngleAxisTableView->clearSelection();
+		this->inputEulerAnglesTableView->setFocus();
 		this->inputQuaternionGroupBox->setChecked(false);
 		this->inputQuaternionTableView->clearSelection();
 		this->inputRotationMatrixGroupBox->setChecked(false);
@@ -603,6 +605,7 @@ MainWindow::quaternionToggled(bool on)
 		this->inputAngleAxisTableView->clearSelection();
 		this->inputEulerAnglesGroupBox->setChecked(false);
 		this->inputEulerAnglesTableView->clearSelection();
+		this->inputQuaternionTableView->setFocus();
 		this->inputRotationMatrixGroupBox->setChecked(false);
 		this->inputRotationMatrixTableView->clearSelection();
 		
@@ -631,6 +634,7 @@ MainWindow::rotationMatrixToggled(bool on)
 		this->inputEulerAnglesTableView->clearSelection();
 		this->inputQuaternionGroupBox->setChecked(false);
 		this->inputQuaternionTableView->clearSelection();
+		this->inputRotationMatrixTableView->setFocus();
 		
 		this->fromRotationMatrix();
 	}
