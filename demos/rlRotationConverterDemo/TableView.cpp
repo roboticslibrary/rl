@@ -49,6 +49,8 @@ TableView::keyPressEvent(QKeyEvent* event)
 		QString text;
 		
 		QModelIndexList indices = this->selectedIndexes();
+		qSort(indices);
+		
 		QModelIndexList::iterator i = indices.begin();
 		QModelIndexList::iterator j = ++indices.begin();
 		
