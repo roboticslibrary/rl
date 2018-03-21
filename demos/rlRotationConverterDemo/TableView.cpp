@@ -64,7 +64,7 @@ TableView::keyPressEvent(QKeyEvent* event)
 			}
 			else if (j != indices.end() && j->column() > i->column())
 			{
-				text += " ";
+				text += "\t";
 			}
 		}
 		
