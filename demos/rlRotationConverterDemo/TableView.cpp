@@ -44,31 +44,45 @@ TableView::~TableView()
 void
 TableView::keyPressEvent(QKeyEvent* event)
 {
-	if (event->matches(QKeySequence::Copy))
+	if (event->matches(QKeySequence::Copy) && this->selectionModel()->hasSelection())
 	{
 		QString text;
 		
-		QModelIndexList indices = this->selectedIndexes();
-		qSort(indices);
+		QItemSelectionRange range = this->selectionModel()->selection().first();
 		
-		QModelIndexList::iterator i = indices.begin();
-		QModelIndexList::iterator j = ++indices.begin();
-		
-		for (; i != indices.end(); ++i, ++j)
+		for (int i = range.top(); i <= range.bottom(); ++i)
 		{
-			text += i->data().toString();
+			QStringList rowContents;
 			
-			if (j != indices.end() && j->row() > i->row())
+			for (int j = range.left(); j <= range.right(); ++j)
 			{
-				text += "\n";
+				rowContents << this->model()->index(i, j).data().toString();
 			}
-			else if (j != indices.end() && j->column() > i->column())
-			{
-				text += "\t";
-			}
+			
+			text += rowContents.join("\t");
+			text += "\n";
 		}
 		
 		QApplication::clipboard()->setText(text);
+	}
+	else if (event->matches(QKeySequence::Paste) && this->selectionModel()->hasSelection() && QAbstractItemView::NoEditTriggers != this->editTriggers())
+	{
+		QString text = QApplication::clipboard()->text();
+		
+		QStringList rowContents = text.split("\n", QString::SkipEmptyParts);
+		
+		QModelIndex first = this->selectedIndexes().first();
+		QItemSelectionRange range = this->selectionModel()->selection().first();
+		
+		for (int i = 0; i < std::min(rowContents.size(), range.height()); ++i)
+		{
+			QStringList columnContents = rowContents.at(i).split("\t");
+			
+			for (int j = 0; j < std::min(columnContents.size(), range.width()); ++j)
+			{
+				this->model()->setData(this->model()->index(first.row() + i, first.column() + j), columnContents[j]);
+			}
+		}
 	}
 	
 	QTableView::keyPressEvent(event);
