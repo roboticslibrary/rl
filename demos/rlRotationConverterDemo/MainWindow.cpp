@@ -33,6 +33,7 @@
 
 #include "AngleAxisModel.h"
 #include "EulerAnglesModel.h"
+#include "GroupBox.h"
 #include "MainWindow.h"
 #include "QuaternionModel.h"
 #include "RotationMatrixModel.h"
@@ -41,12 +42,20 @@
 MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	QMainWindow(parent, f),
 	inputAngleAxis(0, rl::math::Vector3::UnitZ()),
+	inputAngleAxisGroupBox(new GroupBox(this)),
 	inputAngleAxisModel(new AngleAxisModel(this)),
+	inputAngleAxisTableView(new TableView(this)),
 	inputEulerAngles(rl::math::Vector3::Zero()),
+	inputEulerAnglesGroupBox(new GroupBox(this)),
 	inputEulerAnglesModel(new EulerAnglesModel(this)),
+	inputEulerAnglesTableView(new TableView(this)),
 	inputEulerAxes(),
 	inputQuaternion(rl::math::Quaternion::Identity()),
+	inputQuaternionGroupBox(new GroupBox(this)),
+	inputQuaternionTableView(new TableView(this)),
 	inputRotationMatrix(rl::math::Rotation::Identity()),
+	inputRotationMatrixGroupBox(new GroupBox(this)),
+	inputRotationMatrixTableView(new TableView(this)),
 	inputUnitRadians(false),
 	outputAngleAxis(0, rl::math::Vector3::UnitZ()),
 	outputAngleAxisModel(new AngleAxisModel(this)),
@@ -167,7 +176,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	
 	// rotation matrix
 	
-	QGroupBox* inputRotationMatrixGroupBox = new QGroupBox(this);
+	inputRotationMatrixGroupBox->setCheckable(true);
 	inputRotationMatrixGroupBox->setFlat(true);
 	inputRotationMatrixGroupBox->setTitle("Rotation Matrix (Input)");
 	gridLayout->addWidget(inputRotationMatrixGroupBox, gridLayout->rowCount(), 0);
@@ -175,12 +184,18 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	RotationMatrixModel* inputRotationMatrixModel = new RotationMatrixModel(this);
 	inputRotationMatrixModel->rotation = &this->inputRotationMatrix;
 	
-	TableView* inputRotationMatrixTableView = new TableView(this);
 	inputRotationMatrixTableView->setModel(inputRotationMatrixModel);
 	inputRotationMatrixTableView->verticalHeader()->setMinimumWidth(20);
 	
 	QVBoxLayout* inputRotationMatrixLayout = new QVBoxLayout(inputRotationMatrixGroupBox);
 	inputRotationMatrixLayout->addWidget(inputRotationMatrixTableView);
+	
+	QObject::connect(
+		inputRotationMatrixGroupBox,
+		SIGNAL(toggled(bool)),
+		this,
+		SLOT(rotationMatrixToggled(bool))
+	);
 	
 	QObject::connect(
 		inputRotationMatrixModel,
@@ -206,7 +221,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	
 	// angle axis
 	
-	QGroupBox* inputAngleAxisGroupBox = new QGroupBox(this);
+	inputAngleAxisGroupBox->setCheckable(true);
 	inputAngleAxisGroupBox->setFlat(true);
 	inputAngleAxisGroupBox->setTitle("Angle Axis (Input)");
 	gridLayout->addWidget(inputAngleAxisGroupBox, gridLayout->rowCount(), 0);
@@ -214,12 +229,18 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	inputAngleAxisModel->angleAxis = &this->inputAngleAxis;
 	inputAngleAxisModel->angleRadians = &this->inputUnitRadians;
 	
-	TableView* inputAngleAxisTableView = new TableView(this);
 	inputAngleAxisTableView->setModel(inputAngleAxisModel);
 	inputAngleAxisTableView->verticalHeader()->setMinimumWidth(20);
 	
 	QVBoxLayout* inputAngleAxisLayout = new QVBoxLayout(inputAngleAxisGroupBox);
 	inputAngleAxisLayout->addWidget(inputAngleAxisTableView);
+	
+	QObject::connect(
+		inputAngleAxisGroupBox,
+		SIGNAL(toggled(bool)),
+		this,
+		SLOT(angleAxisToggled(bool))
+	);
 	
 	QObject::connect(
 		inputAngleAxisModel,
@@ -246,7 +267,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	
 	// quaternion
 	
-	QGroupBox* inputQuaternionGroupBox = new QGroupBox(this);
+	inputQuaternionGroupBox->setCheckable(true);
 	inputQuaternionGroupBox->setFlat(true);
 	inputQuaternionGroupBox->setTitle("Quaternion (Input)");
 	gridLayout->addWidget(inputQuaternionGroupBox, gridLayout->rowCount(), 0);
@@ -254,12 +275,18 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	QuaternionModel* inputQuaternionModel = new QuaternionModel(this);
 	inputQuaternionModel->quaternion = &this->inputQuaternion;
 	
-	TableView* inputQuaternionTableView = new TableView(this);
 	inputQuaternionTableView->setModel(inputQuaternionModel);
 	inputQuaternionTableView->verticalHeader()->setMinimumWidth(20);
 	
 	QVBoxLayout* inputQuaternionLayout = new QVBoxLayout(inputQuaternionGroupBox);
 	inputQuaternionLayout->addWidget(inputQuaternionTableView);
+	
+	QObject::connect(
+		inputQuaternionGroupBox,
+		SIGNAL(toggled(bool)),
+		this,
+		SLOT(quaternionToggled(bool))
+	);
 	
 	QObject::connect(
 		inputQuaternionModel,
@@ -285,7 +312,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	
 	// eulerAngles
 	
-	QGroupBox* inputEulerAnglesGroupBox = new QGroupBox(this);
+	inputEulerAnglesGroupBox->setCheckable(true);
 	inputEulerAnglesGroupBox->setFlat(true);
 	inputEulerAnglesGroupBox->setTitle("Euler Angles (Input)");
 	gridLayout->addWidget(inputEulerAnglesGroupBox, gridLayout->rowCount(), 0);
@@ -294,12 +321,18 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	inputEulerAnglesModel->eulerAnglesRadians = &this->inputUnitRadians;
 	inputEulerAnglesModel->eulerAxes = &this->inputEulerAxes;
 	
-	TableView* inputEulerAnglesTableView = new TableView(this);
 	inputEulerAnglesTableView->setModel(inputEulerAnglesModel);
 	inputEulerAnglesTableView->verticalHeader()->setMinimumWidth(20);
 	
 	QVBoxLayout* inputEulerAnglesLayout = new QVBoxLayout(inputEulerAnglesGroupBox);
 	inputEulerAnglesLayout->addWidget(inputEulerAnglesTableView);
+	
+	QObject::connect(
+		inputEulerAnglesGroupBox,
+		SIGNAL(toggled(bool)),
+		this,
+		SLOT(eulerAnglesToggled(bool))
+	);
 	
 	QObject::connect(
 		inputEulerAnglesModel,
@@ -324,6 +357,10 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	
 	QVBoxLayout* outputEulerAnglesLayout = new QVBoxLayout(outputEulerAnglesGroupBox);
 	outputEulerAnglesLayout->addWidget(outputEulerAnglesTableView);
+	
+	inputAngleAxisGroupBox->setChecked(false);
+	inputQuaternionGroupBox->setChecked(false);
+	inputEulerAnglesGroupBox->setChecked(false);
 }
 
 MainWindow::~MainWindow()
@@ -333,6 +370,58 @@ MainWindow::~MainWindow()
 
 void
 MainWindow::angleAxisChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight)
+{
+	this->fromAngleAxis();
+}
+
+void
+MainWindow::angleAxisToggled(bool on)
+{
+	if (on)
+	{
+		this->inputEulerAnglesGroupBox->setChecked(false);
+		this->inputEulerAnglesTableView->clearSelection();
+		this->inputQuaternionGroupBox->setChecked(false);
+		this->inputQuaternionTableView->clearSelection();
+		this->inputRotationMatrixGroupBox->setChecked(false);
+		this->inputRotationMatrixTableView->clearSelection();
+		
+		this->fromAngleAxis();
+	}
+	else
+	{
+		this->inputAngleAxisTableView->clearSelection();
+	}
+}
+
+void
+MainWindow::eulerAnglesChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight)
+{
+	this->fromEulerAngles();
+}
+
+void
+MainWindow::eulerAnglesToggled(bool on)
+{
+	if (on)
+	{
+		this->inputAngleAxisGroupBox->setChecked(false);
+		this->inputAngleAxisTableView->clearSelection();
+		this->inputQuaternionGroupBox->setChecked(false);
+		this->inputQuaternionTableView->clearSelection();
+		this->inputRotationMatrixGroupBox->setChecked(false);
+		this->inputRotationMatrixTableView->clearSelection();
+		
+		this->fromEulerAngles();
+	}
+	else
+	{
+		this->inputEulerAnglesTableView->clearSelection();
+	}
+}
+
+void
+MainWindow::fromAngleAxis()
 {
 	this->outputAngleAxis = this->inputAngleAxis;
 	this->outputQuaternion = this->inputAngleAxis;
@@ -347,7 +436,7 @@ MainWindow::angleAxisChanged(const QModelIndex& topLeft, const QModelIndex& bott
 }
 
 void
-MainWindow::eulerAnglesChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight)
+MainWindow::fromEulerAngles()
 {
 	this->outputQuaternion = rl::math::AngleAxis(
 		this->inputEulerAngles[0],
@@ -362,6 +451,36 @@ MainWindow::eulerAnglesChanged(const QModelIndex& topLeft, const QModelIndex& bo
 	
 	this->outputAngleAxis = this->outputQuaternion;
 	this->outputRotationMatrix = this->outputQuaternion;
+	
+	this->outputEulerAngles = this->outputRotationMatrix.eulerAngles(this->outputEulerAxes[0], this->outputEulerAxes[1], this->outputEulerAxes[2]);
+	
+	this->outputAngleAxisModel->invalidate();
+	this->outputEulerAnglesModel->invalidate();
+	this->outputQuaternionModel->invalidate();
+	this->outputRotationMatrixModel->invalidate();
+}
+
+void
+MainWindow::fromQuaternion()
+{
+	this->outputAngleAxis = this->inputQuaternion;
+	this->outputQuaternion = this->inputQuaternion;
+	this->outputRotationMatrix = this->inputQuaternion;
+	
+	this->outputEulerAngles = this->outputRotationMatrix.eulerAngles(this->outputEulerAxes[0], this->outputEulerAxes[1], this->outputEulerAxes[2]);
+	
+	this->outputAngleAxisModel->invalidate();
+	this->outputEulerAnglesModel->invalidate();
+	this->outputQuaternionModel->invalidate();
+	this->outputRotationMatrixModel->invalidate();
+}
+
+void
+MainWindow::fromRotationMatrix()
+{
+	this->outputAngleAxis = this->inputRotationMatrix;
+	this->outputQuaternion = this->inputRotationMatrix;
+	this->outputRotationMatrix = this->inputRotationMatrix;
 	
 	this->outputEulerAngles = this->outputRotationMatrix.eulerAngles(this->outputEulerAxes[0], this->outputEulerAxes[1], this->outputEulerAxes[2]);
 	
@@ -386,26 +505,10 @@ MainWindow::inputEulerAxesChanged(int index)
 	
 	this->inputEulerAnglesModel->invalidate();
 	
-	this->outputQuaternion = rl::math::AngleAxis(
-		this->inputEulerAngles[0],
-		rl::math::Vector3::Unit(this->inputEulerAxes[0])
-	) * rl::math::AngleAxis(
-		this->inputEulerAngles[1],
-		rl::math::Vector3::Unit(this->inputEulerAxes[1])
-	) * rl::math::AngleAxis(
-		this->inputEulerAngles[2],
-		rl::math::Vector3::Unit(this->inputEulerAxes[2])
-	);
-	
-	this->outputAngleAxis = this->outputQuaternion;
-	this->outputRotationMatrix = this->outputQuaternion;
-	
-	this->outputEulerAngles = this->outputRotationMatrix.eulerAngles(this->outputEulerAxes[0], this->outputEulerAxes[1], this->outputEulerAxes[2]);
-	
-	this->outputAngleAxisModel->invalidate();
-	this->outputEulerAnglesModel->invalidate();
-	this->outputQuaternionModel->invalidate();
-	this->outputRotationMatrixModel->invalidate();
+	if (this->inputEulerAnglesGroupBox->isChecked())
+	{
+		this->fromEulerAngles();
+	}
 }
 
 void
@@ -488,31 +591,53 @@ MainWindow::outputUnitChanged(int index)
 void
 MainWindow::quaternionChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight)
 {
-	this->outputAngleAxis = this->inputQuaternion;
-	this->outputQuaternion = this->inputQuaternion;
-	this->outputRotationMatrix = this->inputQuaternion;
-	
-	this->outputEulerAngles = this->outputRotationMatrix.eulerAngles(this->outputEulerAxes[0], this->outputEulerAxes[1], this->outputEulerAxes[2]);
-	
-	this->outputAngleAxisModel->invalidate();
-	this->outputEulerAnglesModel->invalidate();
-	this->outputQuaternionModel->invalidate();
-	this->outputRotationMatrixModel->invalidate();
+	this->fromQuaternion();
+}
+
+void
+MainWindow::quaternionToggled(bool on)
+{
+	if (on)
+	{
+		this->inputAngleAxisGroupBox->setChecked(false);
+		this->inputAngleAxisTableView->clearSelection();
+		this->inputEulerAnglesGroupBox->setChecked(false);
+		this->inputEulerAnglesTableView->clearSelection();
+		this->inputRotationMatrixGroupBox->setChecked(false);
+		this->inputRotationMatrixTableView->clearSelection();
+		
+		this->fromQuaternion();
+	}
+	else
+	{
+		this->inputQuaternionTableView->clearSelection();
+	}
 }
 
 void
 MainWindow::rotationMatrixChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight)
 {
-	this->outputAngleAxis = this->inputRotationMatrix;
-	this->outputQuaternion = this->inputRotationMatrix;
-	this->outputRotationMatrix = this->inputRotationMatrix;
-	
-	this->outputEulerAngles = this->outputRotationMatrix.eulerAngles(this->outputEulerAxes[0], this->outputEulerAxes[1], this->outputEulerAxes[2]);
-	
-	this->outputAngleAxisModel->invalidate();
-	this->outputEulerAnglesModel->invalidate();
-	this->outputQuaternionModel->invalidate();
-	this->outputRotationMatrixModel->invalidate();
+	this->fromRotationMatrix();
+}
+
+void
+MainWindow::rotationMatrixToggled(bool on)
+{
+	if (on)
+	{
+		this->inputAngleAxisGroupBox->setChecked(false);
+		this->inputAngleAxisTableView->clearSelection();
+		this->inputEulerAnglesGroupBox->setChecked(false);
+		this->inputEulerAnglesTableView->clearSelection();
+		this->inputQuaternionGroupBox->setChecked(false);
+		this->inputQuaternionTableView->clearSelection();
+		
+		this->fromRotationMatrix();
+	}
+	else
+	{
+		this->inputRotationMatrixTableView->clearSelection();
+	}
 }
 
 std::size_t MainWindow::EULER_ANGLES[12][3] = {

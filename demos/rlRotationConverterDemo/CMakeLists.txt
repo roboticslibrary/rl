@@ -20,6 +20,7 @@ if(QT_FOUND)
 		HDRS
 		AngleAxisModel.h
 		EulerAnglesModel.h
+		GroupBox.h
 		MainWindow.h
 		QuaternionModel.h
 		RotationMatrixModel.h
@@ -30,6 +31,7 @@ if(QT_FOUND)
 		SRCS
 		AngleAxisModel.cpp
 		EulerAnglesModel.cpp
+		GroupBox.cpp
 		MainWindow.cpp
 		QuaternionModel.cpp
 		rlRotationConverterDemo.cpp

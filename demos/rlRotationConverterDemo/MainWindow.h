@@ -36,8 +36,10 @@
 
 class AngleAxisModel;
 class EulerAnglesModel;
+class GroupBox;
 class QuaternionModel;
 class RotationMatrixModel;
+class TableView;
 
 class MainWindow : public QMainWindow
 {
@@ -51,7 +53,11 @@ public:
 public slots:
 	void angleAxisChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight);
 	
+	void angleAxisToggled(bool on);
+	
 	void eulerAnglesChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight);
+	
+	void eulerAnglesToggled(bool on);
 	
 	void inputEulerAxesChanged(int index);
 	
@@ -63,27 +69,55 @@ public slots:
 	
 	void quaternionChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight);
 	
+	void quaternionToggled(bool on);
+	
 	void rotationMatrixChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight);
+	
+	void rotationMatrixToggled(bool on);
 	
 protected:
 	MainWindow(QWidget* parent = nullptr, Qt::WindowFlags f = 0);
 	
 private:
+	void fromAngleAxis();
+	
+	void fromEulerAngles();
+	
+	void fromQuaternion();
+	
+	void fromRotationMatrix();
+	
 	static std::size_t EULER_ANGLES[12][3];
 	
 	rl::math::AngleAxis inputAngleAxis;
 	
+	GroupBox* inputAngleAxisGroupBox;
+	
 	AngleAxisModel* inputAngleAxisModel;
+	
+	TableView* inputAngleAxisTableView;
 	
 	rl::math::Vector3 inputEulerAngles;
 	
+	GroupBox* inputEulerAnglesGroupBox;
+	
 	EulerAnglesModel* inputEulerAnglesModel;
+	
+	TableView* inputEulerAnglesTableView;
 	
 	std::array<std::size_t, 3> inputEulerAxes;
 	
 	rl::math::Quaternion inputQuaternion;
 	
+	GroupBox* inputQuaternionGroupBox;
+	
+	TableView* inputQuaternionTableView;
+	
 	rl::math::Rotation inputRotationMatrix;
+	
+	GroupBox* inputRotationMatrixGroupBox;
+	
+	TableView* inputRotationMatrixTableView;
 	
 	bool inputUnitRadians;
 	
