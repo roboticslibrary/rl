@@ -61,9 +61,13 @@ public slots:
 	
 	void inputEulerAxesChanged(int index);
 	
+	void inputPrecisionChanged(int precision);
+	
 	void inputUnitChanged(int index);
 	
 	void outputEulerAxesChanged(int index);
+	
+	void outputPrecisionChanged(int precision);
 	
 	void outputUnitChanged(int index);
 	
@@ -107,15 +111,21 @@ private:
 	
 	std::array<std::size_t, 3> inputEulerAxes;
 	
+	int inputPrecision;
+	
 	rl::math::Quaternion inputQuaternion;
 	
 	GroupBox* inputQuaternionGroupBox;
+	
+	QuaternionModel* inputQuaternionModel;
 	
 	TableView* inputQuaternionTableView;
 	
 	rl::math::Rotation inputRotationMatrix;
 	
 	GroupBox* inputRotationMatrixGroupBox;
+	
+	RotationMatrixModel* inputRotationMatrixModel;
 	
 	TableView* inputRotationMatrixTableView;
 	
@@ -130,6 +140,8 @@ private:
 	EulerAnglesModel* outputEulerAnglesModel;
 	
 	std::array<std::size_t, 3> outputEulerAxes;
+	
+	int outputPrecision;
 	
 	rl::math::Quaternion outputQuaternion;
 	

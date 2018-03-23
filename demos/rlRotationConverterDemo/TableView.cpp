@@ -33,7 +33,8 @@
 #include "TableView.h"
 
 TableView::TableView(QWidget* parent) :
-	QTableView(parent)
+	QTableView(parent),
+	precision(nullptr)
 {
 }
 
@@ -56,7 +57,7 @@ TableView::keyPressEvent(QKeyEvent* event)
 			
 			for (int j = range.left(); j <= range.right(); ++j)
 			{
-				rowContents << this->model()->index(i, j).data().toString();
+				rowContents << QString::number(this->model()->index(i, j).data().toDouble(), 'g', nullptr != this->precision ? *this->precision : 8);
 			}
 			
 			text += rowContents.join("\t");

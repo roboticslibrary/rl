@@ -19,6 +19,7 @@ if(QT_FOUND)
 	set(
 		HDRS
 		AngleAxisModel.h
+		Delegate.h
 		EulerAnglesModel.h
 		GroupBox.h
 		MainWindow.h
@@ -30,6 +31,7 @@ if(QT_FOUND)
 	set(
 		SRCS
 		AngleAxisModel.cpp
+		Delegate.cpp
 		EulerAnglesModel.cpp
 		GroupBox.cpp
 		MainWindow.cpp

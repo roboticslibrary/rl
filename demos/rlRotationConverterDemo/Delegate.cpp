@@ -24,29 +24,33 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef TABLEVIEW_H
-#define TABLEVIEW_H
+#include <QDoubleSpinBox>
+#include <QModelIndex>
 
-#include <QTableView>
+#include "Delegate.h"
 
-class TableView : public QTableView
+Delegate::Delegate(QObject* parent) :
+	QStyledItemDelegate(parent),
+	precision(nullptr)
 {
-public:
-	TableView(QWidget* parent = nullptr);
-	
-	virtual ~TableView();
-	
-	virtual QSize minimumSizeHint() const;
-	
-	virtual QSize sizeHint() const;
-	
-	int* precision;
-	
-protected:
-	virtual void keyPressEvent(QKeyEvent* event);
-	
-private:
-	
-};
+}
 
-#endif // TABLEVIEW_H
+Delegate::~Delegate()
+{
+}
+
+QWidget*
+Delegate::createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const
+{
+	QDoubleSpinBox* editor = new QDoubleSpinBox(parent);
+	editor->setDecimals(std::numeric_limits<double>::digits10);
+	editor->setMaximum(std::numeric_limits<double>::max());
+	editor->setMinimum(-std::numeric_limits<double>::max());
+	return editor;
+}
+
+QString
+Delegate::displayText(const QVariant& value, const QLocale& locale) const
+{
+	return QString::number(value.toDouble(), 'g', nullptr != this->precision ? *this->precision : 8);
+}

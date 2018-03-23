@@ -24,29 +24,30 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef TABLEVIEW_H
-#define TABLEVIEW_H
+#ifndef DELEGATE_H
+#define DELEGATE_H
 
-#include <QTableView>
+#include <QStyledItemDelegate>
 
-class TableView : public QTableView
+class Delegate : public QStyledItemDelegate
 {
+	Q_OBJECT
+	
 public:
-	TableView(QWidget* parent = nullptr);
+	Delegate(QObject* parent = nullptr);
 	
-	virtual ~TableView();
+	virtual ~Delegate();
 	
-	virtual QSize minimumSizeHint() const;
+	QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const;
 	
-	virtual QSize sizeHint() const;
+	virtual QString displayText(const QVariant& value, const QLocale& locale) const;
 	
 	int* precision;
 	
 protected:
-	virtual void keyPressEvent(QKeyEvent* event);
 	
 private:
 	
 };
 
-#endif // TABLEVIEW_H
+#endif // DELEGATE_H

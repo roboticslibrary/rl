@@ -29,9 +29,11 @@
 #include <QGroupBox>
 #include <QHeaderView>
 #include <QScrollBar>
+#include <QSpinBox>
 #include <rl/math/Vector.h>
 
 #include "AngleAxisModel.h"
+#include "Delegate.h"
 #include "EulerAnglesModel.h"
 #include "GroupBox.h"
 #include "MainWindow.h"
@@ -50,11 +52,14 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	inputEulerAnglesModel(new EulerAnglesModel(this)),
 	inputEulerAnglesTableView(new TableView(this)),
 	inputEulerAxes(),
+	inputPrecision(8),
 	inputQuaternion(rl::math::Quaternion::Identity()),
 	inputQuaternionGroupBox(new GroupBox(this)),
+	inputQuaternionModel(new QuaternionModel(this)),
 	inputQuaternionTableView(new TableView(this)),
 	inputRotationMatrix(rl::math::Rotation::Identity()),
 	inputRotationMatrixGroupBox(new GroupBox(this)),
+	inputRotationMatrixModel(new RotationMatrixModel(this)),
 	inputRotationMatrixTableView(new TableView(this)),
 	inputUnitRadians(false),
 	outputAngleAxis(0, rl::math::Vector3::UnitZ()),
@@ -62,6 +67,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	outputEulerAngles(rl::math::Vector3::Zero()),
 	outputEulerAnglesModel(new EulerAnglesModel(this)),
 	outputEulerAxes(),
+	outputPrecision(8),
 	outputQuaternion(rl::math::Quaternion::Identity()),
 	outputQuaternionModel(new QuaternionModel(this)),
 	outputRotationMatrix(rl::math::Rotation::Identity()),
@@ -83,6 +89,12 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	
 	QGridLayout* gridLayout = new QGridLayout(centralWidget);
 	
+	Delegate* inputDelegate = new Delegate(this);
+	inputDelegate->precision = &this->inputPrecision;
+	
+	Delegate* outputDelegate = new Delegate(this);
+	outputDelegate->precision = &this->outputPrecision;
+	
 	// settings
 	
 	QGroupBox* inputSettingsGroupBox = new QGroupBox(this);
@@ -96,9 +108,15 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	
 	QComboBox* inputEulerAxesComboBox = new QComboBox(this);
 	
+	QSpinBox* inputPrecisionSpinBox = new QSpinBox(this);
+	inputPrecisionSpinBox->setMaximum(std::numeric_limits<double>::digits10);
+	inputPrecisionSpinBox->setSuffix(" Digits");
+	inputPrecisionSpinBox->setValue(this->inputPrecision);
+	
 	QHBoxLayout* inputSettingsLayout = new QHBoxLayout(inputSettingsGroupBox);
 	inputSettingsLayout->addWidget(inputUnitComboBox);
 	inputSettingsLayout->addWidget(inputEulerAxesComboBox);
+	inputSettingsLayout->addWidget(inputPrecisionSpinBox);
 	
 	QObject::connect(
 		inputUnitComboBox,
@@ -114,6 +132,13 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 		SLOT(inputEulerAxesChanged(int))
 	);
 	
+	QObject::connect(
+		inputPrecisionSpinBox,
+		SIGNAL(valueChanged(int)),
+		this,
+		SLOT(inputPrecisionChanged(int))
+	);
+	
 	QGroupBox* outputSettingsGroupBox = new QGroupBox(this);
 	outputSettingsGroupBox->setFlat(true);
 	outputSettingsGroupBox->setTitle("Settings (Output)");
@@ -125,9 +150,15 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	
 	QComboBox* outputEulerAxesComboBox = new QComboBox(this);
 	
+	QSpinBox* outputPrecisionSpinBox = new QSpinBox(this);
+	outputPrecisionSpinBox->setMaximum(std::numeric_limits<double>::digits10);
+	outputPrecisionSpinBox->setSuffix(" Digits");
+	outputPrecisionSpinBox->setValue(this->outputPrecision);
+	
 	QHBoxLayout* outputSettingsLayout = new QHBoxLayout(outputSettingsGroupBox);
 	outputSettingsLayout->addWidget(outputUnitComboBox);
 	outputSettingsLayout->addWidget(outputEulerAxesComboBox);
+	outputSettingsLayout->addWidget(outputPrecisionSpinBox);
 	
 	QObject::connect(
 		outputUnitComboBox,
@@ -141,6 +172,13 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 		SIGNAL(currentIndexChanged(int)),
 		this,
 		SLOT(outputEulerAxesChanged(int))
+	);
+	
+	QObject::connect(
+		outputPrecisionSpinBox,
+		SIGNAL(valueChanged(int)),
+		this,
+		SLOT(outputPrecisionChanged(int))
 	);
 	
 	for (std::size_t i = 0; i < 12; ++i)
@@ -181,9 +219,10 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	inputRotationMatrixGroupBox->setTitle("Rotation Matrix (Input)");
 	gridLayout->addWidget(inputRotationMatrixGroupBox, gridLayout->rowCount(), 0);
 	
-	RotationMatrixModel* inputRotationMatrixModel = new RotationMatrixModel(this);
 	inputRotationMatrixModel->rotation = &this->inputRotationMatrix;
 	
+	inputRotationMatrixTableView->precision = &this->inputPrecision;
+	inputRotationMatrixTableView->setItemDelegate(inputDelegate);
 	inputRotationMatrixTableView->setModel(inputRotationMatrixModel);
 	inputRotationMatrixTableView->verticalHeader()->setMinimumWidth(20);
 	
@@ -212,7 +251,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	outputRotationMatrixModel->rotation = &this->outputRotationMatrix;
 	
 	TableView* outputRotationMatrixTableView = new TableView(this);
+	outputRotationMatrixTableView->precision = &this->outputPrecision;
 	outputRotationMatrixTableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+	outputRotationMatrixTableView->setItemDelegate(outputDelegate);
 	outputRotationMatrixTableView->setModel(outputRotationMatrixModel);
 	outputRotationMatrixTableView->verticalHeader()->setMinimumWidth(20);
 	
@@ -229,6 +270,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	inputAngleAxisModel->angleAxis = &this->inputAngleAxis;
 	inputAngleAxisModel->angleRadians = &this->inputUnitRadians;
 	
+	inputAngleAxisTableView->precision = &this->inputPrecision;
+	inputAngleAxisTableView->setItemDelegate(inputDelegate);
 	inputAngleAxisTableView->setModel(inputAngleAxisModel);
 	inputAngleAxisTableView->verticalHeader()->setMinimumWidth(20);
 	
@@ -258,7 +301,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	outputAngleAxisModel->angleRadians = &this->outputUnitRadians;
 	
 	TableView* outputAngleAxisTableView = new TableView(this);
+	outputAngleAxisTableView->precision = &this->outputPrecision;
 	outputAngleAxisTableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+	outputAngleAxisTableView->setItemDelegate(outputDelegate);
 	outputAngleAxisTableView->setModel(outputAngleAxisModel);
 	outputAngleAxisTableView->verticalHeader()->setMinimumWidth(20);
 	
@@ -272,9 +317,10 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	inputQuaternionGroupBox->setTitle("Quaternion (Input)");
 	gridLayout->addWidget(inputQuaternionGroupBox, gridLayout->rowCount(), 0);
 	
-	QuaternionModel* inputQuaternionModel = new QuaternionModel(this);
 	inputQuaternionModel->quaternion = &this->inputQuaternion;
 	
+	inputQuaternionTableView->precision = &this->inputPrecision;
+	inputQuaternionTableView->setItemDelegate(inputDelegate);
 	inputQuaternionTableView->setModel(inputQuaternionModel);
 	inputQuaternionTableView->verticalHeader()->setMinimumWidth(20);
 	
@@ -303,7 +349,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	outputQuaternionModel->quaternion = &this->outputQuaternion;
 	
 	TableView* outputQuaternionTableView = new TableView(this);
+	outputQuaternionTableView->precision = &this->outputPrecision;
 	outputQuaternionTableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+	outputQuaternionTableView->setItemDelegate(outputDelegate);
 	outputQuaternionTableView->setModel(outputQuaternionModel);
 	outputQuaternionTableView->verticalHeader()->setMinimumWidth(20);
 	
@@ -321,6 +369,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	inputEulerAnglesModel->eulerAnglesRadians = &this->inputUnitRadians;
 	inputEulerAnglesModel->eulerAxes = &this->inputEulerAxes;
 	
+	inputEulerAnglesTableView->precision = &this->inputPrecision;
+	inputEulerAnglesTableView->setItemDelegate(inputDelegate);
 	inputEulerAnglesTableView->setModel(inputEulerAnglesModel);
 	inputEulerAnglesTableView->verticalHeader()->setMinimumWidth(20);
 	
@@ -351,7 +401,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	outputEulerAnglesModel->eulerAxes = &this->outputEulerAxes;
 	
 	TableView* outputEulerAnglesTableView = new TableView(this);
+	outputEulerAnglesTableView->precision = &this->outputPrecision;
 	outputEulerAnglesTableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+	outputEulerAnglesTableView->setItemDelegate(outputDelegate);
 	outputEulerAnglesTableView->setModel(outputEulerAnglesModel);
 	outputEulerAnglesTableView->verticalHeader()->setMinimumWidth(20);
 	
@@ -514,6 +566,17 @@ MainWindow::inputEulerAxesChanged(int index)
 }
 
 void
+MainWindow::inputPrecisionChanged(int precision)
+{
+	this->inputPrecision = precision;
+	
+	this->inputAngleAxisModel->invalidate();
+	this->inputEulerAnglesModel->invalidate();
+	this->inputQuaternionModel->invalidate();
+	this->inputRotationMatrixModel->invalidate();
+}
+
+void
 MainWindow::inputUnitChanged(int index)
 {
 	if (index < 0 || index > 1)
@@ -564,6 +627,17 @@ MainWindow::outputEulerAxesChanged(int index)
 	this->outputEulerAngles = this->outputRotationMatrix.eulerAngles(this->outputEulerAxes[0], this->outputEulerAxes[1], this->outputEulerAxes[2]);
 	
 	this->outputEulerAnglesModel->invalidate();
+}
+
+void
+MainWindow::outputPrecisionChanged(int precision)
+{
+	this->outputPrecision = precision;
+	
+	this->outputAngleAxisModel->invalidate();
+	this->outputEulerAnglesModel->invalidate();
+	this->outputQuaternionModel->invalidate();
+	this->outputRotationMatrixModel->invalidate();
 }
 
 void
