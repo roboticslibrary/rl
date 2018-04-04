@@ -1812,7 +1812,7 @@ MainWindow::load(const QString& filename)
 		{
 			prm->setNearestNeighbors(nearestNeighbors.get());
 		}
-		if (rl::plan::Rrt* rrt = dynamic_cast<rl::plan::Rrt*>(this->planner.get()))
+		else if (rl::plan::Rrt* rrt = dynamic_cast<rl::plan::Rrt*>(this->planner.get()))
 		{
 			rrt->setNearestNeighbors(nearestNeighbors.get(), i);
 		}
