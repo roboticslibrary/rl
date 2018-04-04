@@ -77,6 +77,12 @@ namespace rl
 			this->container.push(value);
 		}
 		
+		::std::vector<NearestNeighbors::Neighbor>
+		KdtreeNearestNeighbors::radius(const NearestNeighbors::Value& query, const Distance& radius, const bool& sorted) const
+		{
+			return this->container.radius(query, radius, sorted);
+		}
+		
 		void
 		KdtreeNearestNeighbors::setChecks(const ::boost::optional< ::std::size_t>& checks)
 		{

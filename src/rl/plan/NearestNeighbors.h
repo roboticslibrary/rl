@@ -61,6 +61,8 @@ namespace rl
 			
 			virtual void push(const Value& value) = 0;
 			
+			virtual ::std::vector<Neighbor> radius(const Value& query, const Distance& radius, const bool& sorted = true) const = 0;
+			
 			virtual ::std::size_t size() const = 0;
 			
 		protected:

@@ -62,6 +62,8 @@ namespace rl
 			
 			void push(const NearestNeighbors::Value& value);
 			
+			::std::vector<NearestNeighbors::Neighbor> radius(const Value& query, const Distance& radius, const bool& sorted = true) const;
+			
 			void seed(const ::std::mt19937::result_type& value);
 			
 			void setChecks(const ::boost::optional< ::std::size_t>& checks);

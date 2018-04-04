@@ -65,6 +65,12 @@ namespace rl
 			this->container.push(value);
 		}
 		
+		::std::vector<NearestNeighbors::Neighbor>
+		LinearNearestNeighbors::radius(const NearestNeighbors::Value& query, const Distance& radius, const bool& sorted) const
+		{
+			return this->container.radius(query, radius, sorted);
+		}
+		
 		::std::size_t
 		LinearNearestNeighbors::size() const
 		{

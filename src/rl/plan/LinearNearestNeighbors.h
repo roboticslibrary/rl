@@ -50,6 +50,8 @@ namespace rl
 			
 			::std::vector<NearestNeighbors::Neighbor> nearest(const NearestNeighbors::Value& query, const ::std::size_t& k, const bool& sorted = true) const;
 			
+			::std::vector<NearestNeighbors::Neighbor> radius(const Value& query, const Distance& radius, const bool& sorted = true) const;
+			
 			void push(const NearestNeighbors::Value& value);
 			
 			::std::size_t size() const;

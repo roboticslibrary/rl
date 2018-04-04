@@ -95,6 +95,12 @@ namespace rl
 			this->container.push(value);
 		}
 		
+		::std::vector<NearestNeighbors::Neighbor>
+		GnatNearestNeighbors::radius(const NearestNeighbors::Value& query, const Distance& radius, const bool& sorted) const
+		{
+			return this->container.radius(query, radius, sorted);
+		}
+		
 		void
 		GnatNearestNeighbors::seed(const ::std::mt19937::result_type& value)
 		{

@@ -56,6 +56,8 @@ namespace rl
 			
 			void push(const NearestNeighbors::Value& value);
 			
+			::std::vector<NearestNeighbors::Neighbor> radius(const Value& query, const Distance& radius, const bool& sorted = true) const;
+			
 			void setChecks(const ::boost::optional< ::std::size_t>& checks);
 			
 			void setNodeDataMax(const ::std::size_t& nodeDataMax);
