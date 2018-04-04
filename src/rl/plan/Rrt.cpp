@@ -27,7 +27,6 @@
 #include "Rrt.h"
 #include "Sampler.h"
 #include "SimpleModel.h"
-#include "Verifier.h"
 #include "Viewer.h"
 
 #include "NearestNeighbors.h"

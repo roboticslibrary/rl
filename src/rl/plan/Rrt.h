@@ -30,11 +30,9 @@
 #include <memory>
 #include <boost/graph/adjacency_list.hpp>
 
-#include "MatrixPtr.h"
 #include "Metric.h"
 #include "NearestNeighbors.h"
 #include "Planner.h"
-#include "TransformPtr.h"
 #include "VectorPtr.h"
 
 namespace rl
@@ -43,7 +41,6 @@ namespace rl
 	{
 		class Model;
 		class Sampler;
-		class Verifier;
 		
 		/**
 		 * Rapidly-Exploring Random Trees.

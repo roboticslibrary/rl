@@ -31,6 +31,7 @@
 #include <rl/math/GnatNearestNeighbors.h>
 
 #include "RrtCon.h"
+#include "TransformPtr.h"
 #include "WorkspaceMetric.h"
 
 namespace rl
