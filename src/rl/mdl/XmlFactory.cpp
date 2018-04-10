@@ -24,7 +24,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <queue>
+#include <unordered_map>
 #include <boost/lexical_cast.hpp>
 #include <rl/math/Quaternion.h>
 #include <rl/math/Rotation.h>
@@ -104,11 +104,13 @@ namespace rl
 				
 				::rl::xml::NodeSet frames = path.eval("body|frame|world").getValue< ::rl::xml::NodeSet>();
 				
-				::std::map< ::std::string, Frame*> id2frame;
+				::std::unordered_map< ::std::string, Frame*> id2frame;
 				
 				for (int j = 0; j < frames.size(); ++j)
 				{
 					::rl::xml::Path path(document, frames[j]);
+					
+					Frame* frame = nullptr;
 					
 					if ("body" == frames[j].getName())
 					{
@@ -135,9 +137,7 @@ namespace rl
 							path.eval("number(m)").getValue< ::rl::math::Real>(1)
 						);
 						
-						b->setName(path.eval("string(@id)").getValue< ::std::string>());
-						
-						id2frame[path.eval("string(@id)").getValue< ::std::string>()] = b;
+						frame = b;
 					}
 					else if ("frame" == frames[j].getName())
 					{
@@ -145,9 +145,7 @@ namespace rl
 						
 						model->add(f);
 						
-						f->setName(path.eval("string(@id)").getValue< ::std::string>());
-						
-						id2frame[path.eval("string(@id)").getValue< ::std::string>()] = f;
+						frame = f;
 					}
 					else if ("world" == frames[j].getName())
 					{
@@ -176,9 +174,19 @@ namespace rl
 							path.eval("number(g/z)").getValue< ::rl::math::Real>(0)
 						);
 						
-						w->setName(path.eval("string(@id)").getValue< ::std::string>());
+						frame = w;
+					}
+					
+					if (nullptr != frame)
+					{
+						frame->setName(path.eval("string(@id)").getValue< ::std::string>());
 						
-						id2frame[path.eval("string(@id)").getValue< ::std::string>()] = w;
+						if (id2frame.find(frame->getName()) != id2frame.end())
+						{
+							throw Exception("Frame with ID " + frame->getName() + " not unique in file " + filename);
+						}
+						
+						id2frame[frame->getName()] = frame;
 					}
 				}
 				
@@ -190,7 +198,14 @@ namespace rl
 					
 					if ("body" == frames[j].getName())
 					{
-						Body* b1 = dynamic_cast<Body*>(id2frame[path.eval("string(@id)").getValue< ::std::string>()]);
+						::std::string b1IdRef = path.eval("string(@id)").getValue< ::std::string>();
+						
+						if (id2frame.find(b1IdRef) == id2frame.end())
+						{
+							throw Exception("Body with IDREF " + b1IdRef + " not found in file " + filename);
+						}
+						
+						Body* b1 = dynamic_cast<Body*>(id2frame[b1IdRef]);
 						
 						::rl::xml::NodeSet ignores = path.eval("ignore").getValue< ::rl::xml::NodeSet>();
 						
@@ -198,7 +213,14 @@ namespace rl
 						{
 							if (!ignores[k].getProperty("idref").empty())
 							{
-								Body* b2 = dynamic_cast<Body*>(id2frame[ignores[k].getProperty("idref")]);
+								::std::string b2IdRef = ignores[k].getProperty("idref");
+								
+								if (id2frame.find(b2IdRef) == id2frame.end())
+								{
+									throw Exception("Body with IDREF " + b2IdRef + " in Body with ID " + b1IdRef + " not found in file " + filename);
+								}
+								
+								Body* b2 = dynamic_cast<Body*>(id2frame[b2IdRef]);
 								
 								b1->selfcollision.insert(b2);
 								b2->selfcollision.insert(b1);
@@ -219,8 +241,27 @@ namespace rl
 				{
 					::rl::xml::Path path(document, transforms[j]);
 					
-					Frame* a = id2frame[path.eval("string(frame/a/@idref)").getValue< ::std::string>()];
-					Frame* b = id2frame[path.eval("string(frame/b/@idref)").getValue< ::std::string>()];
+					::std::string name = path.eval("string(@id)").getValue< ::std::string>();
+					
+					::std::string aIdRef = path.eval("string(frame/a/@idref)").getValue< ::std::string>();
+					
+					if (id2frame.find(aIdRef) == id2frame.end())
+					{
+						throw Exception("Frame A with IDREF " + aIdRef + " in Transform with ID " + name + " not found in file " + filename);
+					}
+					
+					Frame* a = id2frame[aIdRef];
+					
+					::std::string bIdRef = path.eval("string(frame/b/@idref)").getValue< ::std::string>();
+					
+					if (id2frame.find(bIdRef) == id2frame.end())
+					{
+						throw Exception("Frame B with IDREF " + bIdRef + " in Transform with ID " + name + " not found in file " + filename);
+					}
+					
+					Frame* b = id2frame[bIdRef];
+					
+					Transform* transform = nullptr;
 					
 					if ("cylindrical" == transforms[j].getName())
 					{
@@ -248,7 +289,7 @@ namespace rl
 						c->S(4, 1) = path.eval("number(axis[2]/y)").getValue< ::rl::math::Real>(0);
 						c->S(5, 1) = path.eval("number(axis[2]/z)").getValue< ::rl::math::Real>(1);
 						
-						c->setName(path.eval("string(@id)").getValue< ::std::string>());
+						transform = c;
 					}
 					else if ("fixed" == transforms[j].getName())
 					{
@@ -274,7 +315,7 @@ namespace rl
 						f->x.rotation() = f->t.linear().transpose();
 						f->x.translation() = f->t.translation();
 						
-						f->setName(path.eval("string(@id)").getValue< ::std::string>());
+						transform = f;
 					}
 					else if ("helical" == transforms[j].getName())
 					{
@@ -298,7 +339,7 @@ namespace rl
 						
 						h->setPitch(path.eval("number(pitch)").getValue< ::rl::math::Real>(1));
 						
-						h->setName(path.eval("string(@id)").getValue< ::std::string>());
+						transform = h;
 					}
 					else if ("prismatic" == transforms[j].getName())
 					{
@@ -316,7 +357,7 @@ namespace rl
 						p->S(4, 0) = path.eval("number(axis/y)").getValue< ::rl::math::Real>(0);
 						p->S(5, 0) = path.eval("number(axis/z)").getValue< ::rl::math::Real>(1);
 						
-						p->setName(path.eval("string(@id)").getValue< ::std::string>());
+						transform = p;
 					}
 					else if ("revolute" == transforms[j].getName())
 					{
@@ -339,7 +380,7 @@ namespace rl
 						r->offset *= ::rl::math::DEG2RAD;
 						r->speed *= ::rl::math::DEG2RAD;
 						
-						r->setName(path.eval("string(@id)").getValue< ::std::string>());
+						transform = r;
 					}
 					else if ("spherical" == transforms[j].getName())
 					{
@@ -347,7 +388,12 @@ namespace rl
 						
 						model->add(s, a, b);
 						
-						s->setName(path.eval("string(@id)").getValue< ::std::string>());
+						transform = s;
+					}
+					
+					if (nullptr != transform)
+					{
+						transform->setName(name);
 					}
 				}
 				
@@ -357,6 +403,11 @@ namespace rl
 				
 				if (home.size() > 0)
 				{
+					if (home.size() != model->getDofPosition())
+					{
+						throw Exception("Incorrect size of home position vector in file " + filename);
+					}
+					
 					::rl::math::Vector q(home.size());
 					
 					for (int j = 0; j < home.size(); ++j)
@@ -381,6 +432,11 @@ namespace rl
 					::std::size_t m = path.eval("count(row)").getValue< ::std::size_t>(0);
 					::std::size_t n = path.eval("count(row[1]/col)").getValue< ::std::size_t>(0);
 					
+					if (m != model->getDofPosition())
+					{
+						throw Exception("Incorrect number of rows in gamma position matrix in file " + filename);
+					}
+					
 					::rl::math::Matrix G(m, n);
 					
 					::rl::xml::NodeSet rows = path.eval("row").getValue< ::rl::xml::NodeSet>();
@@ -388,6 +444,11 @@ namespace rl
 					for (int k = 0; k < rows.size(); ++k)
 					{
 						::rl::xml::Path path(document, rows[k]);
+						
+						if (path.eval("count(col)").getValue< ::std::size_t>(0) != model->getDofPosition())
+						{
+							throw Exception("Incorrect number of columns in gamma position matrix in file " + filename);
+						}
 						
 						::rl::xml::NodeSet cols = path.eval("col").getValue< ::rl::xml::NodeSet>();
 						
@@ -409,6 +470,11 @@ namespace rl
 					::std::size_t m = path.eval("count(row)").getValue< ::std::size_t>(0);
 					::std::size_t n = path.eval("count(row[1]/col)").getValue< ::std::size_t>(0);
 					
+					if (m != model->getDof())
+					{
+						throw Exception("Incorrect number of rows in gamma velocity matrix in file " + filename);
+					}
+					
 					::rl::math::Matrix G(m, n);
 					
 					::rl::xml::NodeSet rows = path.eval("row").getValue< ::rl::xml::NodeSet>();
@@ -416,6 +482,11 @@ namespace rl
 					for (int k = 0; k < rows.size(); ++k)
 					{
 						::rl::xml::Path path(document, rows[k]);
+						
+						if (path.eval("count(col)").getValue< ::std::size_t>(0) != model->getDof())
+						{
+							throw Exception("Incorrect number of columns in gamma velocity matrix in file " + filename);
+						}
 						
 						::rl::xml::NodeSet cols = path.eval("col").getValue< ::rl::xml::NodeSet>();
 						
