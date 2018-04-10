@@ -33,11 +33,6 @@ namespace rl
 {
 	namespace plan
 	{
-		/**
-		 * Recursive binary strategy using the van der Corput sequence.
-		 * 
-		 * \f[ \frac{1}{2}, \frac{1}{4}, \frac{3}{4}, \frac{1}{8}, \frac{5}{8}, \frac{3}{8}, \frac{7}{8}, \ldots \f].
-		 */
 		class RecursiveVerifier : public Verifier
 		{
 		public:

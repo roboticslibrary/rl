@@ -24,6 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include <queue>
+
 #include "RecursiveVerifier.h"
 #include "SimpleModel.h"
 
@@ -46,42 +48,45 @@ namespace rl
 			assert(u.size() == this->model->getDofPosition());
 			assert(v.size() == this->model->getDofPosition());
 			
-			::rl::math::Real exponent = ::std::ceil(
-				::std::log(d / this->delta) /
-				::std::log(static_cast< ::rl::math::Real>(2))
-			);
+			::std::size_t steps = this->getSteps(d);
 			
-			::rl::math::Real steps = ::std::pow(2, exponent);
-			
-			::rl::math::Vector inter(u.size());
-			
-			for (int i = 0; i < steps - 1; ++i)
+			if (steps > 1)
 			{
-				// reverse bits
+				::std::queue< ::std::pair< ::std::size_t, ::std::size_t>> queue;
+				queue.push(::std::make_pair(1, steps - 1));
 				
-				::std::size_t tmp = i + 1;
-				::std::size_t tmp2 = tmp & 1;
+				::rl::math::Vector inter(u.size());
 				
-				for (int j = 0; j < exponent - 1; ++j)
+				while (!queue.empty())
 				{
-					tmp >>= 1;
-					tmp2 <<= 1;
-					tmp2 |= tmp & 1;
-				}
-				
-				this->model->interpolate(u, v, tmp2 / steps, inter);
-				
-				if (!this->model->isValid(inter))
-				{
-					return true;
-				}
-				
-				this->model->setPosition(inter);
-				this->model->updateFrames();
-				
-				if (this->model->isColliding())
-				{
-					return true;
+					::std::size_t midpoint = (queue.front().first + queue.front().second) / 2;
+					
+					this->model->interpolate(u, v, static_cast< ::rl::math::Real>(midpoint) / static_cast< ::rl::math::Real>(steps), inter);
+					
+					if (!this->model->isValid(inter))
+					{
+						return true;
+					}
+					
+					this->model->setPosition(inter);
+					this->model->updateFrames();
+					
+					if (this->model->isColliding())
+					{
+						return true;
+					}
+					
+					if (queue.front().first < midpoint)
+					{
+						queue.push(::std::make_pair(queue.front().first, midpoint - 1));
+					}
+					
+					if (queue.front().second > midpoint)
+					{
+						queue.push(::std::make_pair(midpoint + 1, queue.front().second));
+					}
+					
+					queue.pop();
 				}
 			}
 			

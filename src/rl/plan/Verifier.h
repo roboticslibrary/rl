@@ -42,6 +42,8 @@ namespace rl
 			
 			virtual ~Verifier();
 			
+			virtual ::std::size_t getSteps(const ::rl::math::Real& d);
+			
 			virtual bool isColliding(const ::rl::math::Vector& u, const ::rl::math::Vector& v, const ::rl::math::Real& d) = 0;
 			
 			::rl::math::Real delta;

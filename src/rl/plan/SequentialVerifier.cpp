@@ -46,13 +46,13 @@ namespace rl
 			assert(u.size() == this->model->getDofPosition());
 			assert(v.size() == this->model->getDofPosition());
 			
-			::std::size_t steps = static_cast< ::std::size_t>(::std::ceil(d / this->delta)) - 1;
+			::std::size_t steps = this->getSteps(d);;
 			
 			::rl::math::Vector inter(u.size());
 			
-			for (::std::size_t i = 0; i < steps; ++i)
+			for (::std::size_t i = 0; i < steps - 1; ++i)
 			{
-				this->model->interpolate(u, v, (i + 1.0f) / (steps + 1.0f), inter);
+				this->model->interpolate(u, v, static_cast< ::rl::math::Real>(i + 1) / static_cast< ::rl::math::Real>(steps), inter);
 				
 				if (!this->model->isValid(inter))
 				{
