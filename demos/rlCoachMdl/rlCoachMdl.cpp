@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <iostream>
 #include <QApplication>
+#include <QMessageBox>
 #include <stdexcept>
 
 #include "MainWindow.h"
@@ -35,15 +35,16 @@ MainWindow* MainWindow::singleton = nullptr;
 int
 main(int argc, char** argv)
 {
+	QApplication application(argc, argv);
+	
 	if (argc < 3)
 	{
-		std::cout << "Usage: rlCoachMdl SCENEFILE MODELFILE1 ... MODELFILEn" << std::endl;
+		QMessageBox::information(nullptr, "Usage", "rlCoachMdl SCENEFILE MODELFILE1 ... MODELFILEn");
 		return EXIT_FAILURE;
 	}
 	
 	try
 	{
-		QApplication application(argc, argv);
 		application.setStyleSheet("\
 			QStatusBar QComboBox { background: transparent; border: none; }\
 			QStatusBar QComboBox::drop-down { border: none; }\
@@ -58,7 +59,7 @@ main(int argc, char** argv)
 	}
 	catch (const std::exception& e)
 	{
-		std::cerr << e.what() << std::endl;
+		QMessageBox::critical(nullptr, "Error", e.what());
 		return EXIT_FAILURE;
 	}
 }

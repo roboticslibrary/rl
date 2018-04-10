@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <iostream>
 #include <QApplication>
+#include <QMessageBox>
 #include <stdexcept>
 
 #include "MainWindow.h"
@@ -35,16 +35,16 @@ MainWindow* MainWindow::singleton = nullptr;
 int
 main(int argc, char** argv)
 {
+	QApplication application(argc, argv);
+	
 	if (argc < 3)
 	{
-		std::cout << "Usage: rlSimulator SCENEFILE MODELFILE" << std::endl;
+		QMessageBox::information(nullptr, "Usage", "rlSimulator SCENEFILE MODELFILE");
 		return EXIT_FAILURE;
 	}
 	
 	try
 	{
-		QApplication application(argc, argv);
-		
 		QObject::connect(&application, SIGNAL(lastWindowClosed()), &application, SLOT(quit()));
 		
 		MainWindow::instance()->show();
@@ -53,8 +53,7 @@ main(int argc, char** argv)
 	}
 	catch (const std::exception& e)
 	{
-		std::cerr << e.what() << std::endl;
+		QMessageBox::critical(nullptr, "Error", e.what());
 		return EXIT_FAILURE;
 	}
 }
-

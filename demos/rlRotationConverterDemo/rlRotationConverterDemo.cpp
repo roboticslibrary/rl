@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <iostream>
 #include <QApplication>
+#include <QMessageBox>
 #include <stdexcept>
 
 #include "MainWindow.h"
@@ -47,7 +47,8 @@ main(int argc, char** argv)
 	}
 	catch (const std::exception& e)
 	{
-		std::cerr << e.what() << std::endl;
+		QApplication application(argc, argv);
+		QMessageBox::critical(nullptr, "Error", e.what());
 		return EXIT_FAILURE;
 	}
 }
