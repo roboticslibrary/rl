@@ -25,6 +25,7 @@
 //
 
 #include <chrono>
+#include <queue>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/incremental_components.hpp>
 
