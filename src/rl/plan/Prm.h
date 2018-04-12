@@ -27,7 +27,6 @@
 #ifndef RL_PLAN_PRM_H
 #define RL_PLAN_PRM_H
 
-#include <queue>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/astar_search.hpp>
 #include <boost/pending/disjoint_sets.hpp>
