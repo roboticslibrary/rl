@@ -1493,6 +1493,12 @@ MainWindow::load(const QString& filename)
 			this->planner = std::make_shared<rl::plan::Prm>();
 			rl::plan::Prm* prm = static_cast<rl::plan::Prm*>(this->planner.get());
 			prm->degree = path.eval("number(degree)").getValue<std::size_t>(std::numeric_limits<std::size_t>::max());
+			
+			if (path.eval("count(dijkstra) > 0").getValue<bool>())
+			{
+				prm->astar = false;
+			}
+			
 			prm->k = path.eval("number(k)").getValue<std::size_t>(30);
 			prm->radius = path.eval("number(radius)").getValue<rl::math::Real>(std::numeric_limits<rl::math::Real>::max());
 			
@@ -1509,6 +1515,12 @@ MainWindow::load(const QString& filename)
 			this->planner = std::make_shared<rl::plan::PrmUtilityGuided>();
 			rl::plan::PrmUtilityGuided* prmUtilityGuided = static_cast<rl::plan::PrmUtilityGuided*>(this->planner.get());
 			prmUtilityGuided->degree = path.eval("number(degree)").getValue<std::size_t>(std::numeric_limits<std::size_t>::max());
+			
+			if (path.eval("count(dijkstra) > 0").getValue<bool>())
+			{
+				prmUtilityGuided->astar = false;
+			}
+			
 			prmUtilityGuided->k = path.eval("number(k)").getValue<std::size_t>(30);
 			prmUtilityGuided->radius = path.eval("number(radius)").getValue<rl::math::Real>(std::numeric_limits<rl::math::Real>::max());
 			

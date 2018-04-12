@@ -42,6 +42,7 @@ namespace rl
 	{
 		Prm::Prm() :
 			Planner(),
+			astar(true),
 			degree(::std::numeric_limits< ::std::size_t>::max()),
 			k(30),
 			radius(::std::numeric_limits< ::rl::math::Real>::max()),
@@ -224,21 +225,56 @@ namespace rl
 				return false;
 			}
 			
-			::boost::dijkstra_shortest_paths(
-				this->graph,
-				this->begin,
-				::boost::get(&VertexBundle::predecessor, this->graph),
-				::boost::get(&VertexBundle::distance, this->graph),
-				::boost::get(&EdgeBundle::weight, this->graph),
-				::boost::get(&VertexBundle::index, this->graph),
-				::std::less< ::rl::math::Real>(),
-				::boost::closed_plus< ::rl::math::Real>(),
-				::std::numeric_limits< ::rl::math::Real>::max(),
-				0,
-				::boost::default_dijkstra_visitor()
-			);
+			if (this->astar)
+			{
+				::boost::astar_search(
+					this->graph,
+					this->begin,
+					AStarHeuristic(this->model, this->graph, this->end),
+					::boost::default_astar_visitor(),
+					::boost::get(&VertexBundle::predecessor, this->graph),
+					::boost::get(&VertexBundle::cost, this->graph),
+					::boost::get(&VertexBundle::distance, this->graph),
+					::boost::get(&EdgeBundle::weight, this->graph),
+					::boost::get(&VertexBundle::index, this->graph),
+					::boost::get(&VertexBundle::color, this->graph),
+					::std::less< ::rl::math::Real>(),
+					::std::plus< ::rl::math::Real>(),
+					::std::numeric_limits< ::rl::math::Real>::max(),
+					0
+				);
+			}
+			else
+			{
+				::boost::dijkstra_shortest_paths(
+					this->graph,
+					this->begin,
+					::boost::get(&VertexBundle::predecessor, this->graph),
+					::boost::get(&VertexBundle::distance, this->graph),
+					::boost::get(&EdgeBundle::weight, this->graph),
+					::boost::get(&VertexBundle::index, this->graph),
+					::std::less< ::rl::math::Real>(),
+					::boost::closed_plus< ::rl::math::Real>(),
+					::std::numeric_limits< ::rl::math::Real>::max(),
+					0,
+					::boost::default_dijkstra_visitor()
+				);
+			}
 			
 			return true;
+		}
+		
+		Prm::AStarHeuristic::AStarHeuristic(Model* model, Graph& graph, Vertex& goal) :
+			goal(goal),
+			graph(graph),
+			model(model)
+		{
+		}
+		
+		::rl::math::Real
+		Prm::AStarHeuristic::operator()(Vertex u)
+		{
+			return this->model->transformedDistance(*this->graph[u].q, *this->graph[this->goal].q);
 		}
 	}
 }

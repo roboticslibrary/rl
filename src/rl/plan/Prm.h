@@ -29,6 +29,7 @@
 
 #include <queue>
 #include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/astar_search.hpp>
 #include <boost/pending/disjoint_sets.hpp>
 
 #include "Metric.h"
@@ -86,6 +87,8 @@ namespace rl
 			
 			bool solve();
 			
+			bool astar;
+			
 			/** Maximum degree per vertex. */
 			::std::size_t degree;
 			
@@ -116,6 +119,10 @@ namespace rl
 			
 			struct VertexBundle
 			{
+				::boost::default_color_type color;
+				
+				::rl::math::Real cost;
+				
 				::rl::math::Real distance;
 				
 				::std::size_t index;
@@ -143,6 +150,23 @@ namespace rl
 				NearestNeighbors* nn;
 			};
 			
+			class AStarHeuristic : public ::boost::astar_heuristic<Graph, ::rl::math::Real>
+			{
+			public:
+				AStarHeuristic(Model* model, Graph& graph, Vertex& goal);
+				
+				::rl::math::Real operator()(Vertex u);
+				
+			protected:
+				
+			private:
+				Vertex& goal;
+				
+				Graph& graph;
+				
+				Model* model;
+			};
+			
 			typedef ::boost::graph_traits<Graph>::edge_descriptor Edge;
 			
 			typedef ::boost::graph_traits<Graph>::edge_iterator EdgeIterator;
@@ -155,7 +179,7 @@ namespace rl
 			
 			typedef ::std::pair<VertexIterator, VertexIterator> VertexIteratorPair;
 			
-			typedef ::boost::property_map<Graph, void* VertexBundle::*>::type VertexParentMap;
+			typedef ::boost::property_map<Graph, Vertex VertexBundle::*>::type VertexParentMap;
 			
 			typedef ::boost::property_map<Graph, ::std::size_t VertexBundle::*>::type VertexRankMap;
 			

@@ -336,6 +336,7 @@
 			<xs:extension base="plannerType">
 				<xs:sequence>
 					<xs:element name="degree" type="xs:nonNegativeInteger" minOccurs="0"/>
+					<xs:element name="dijkstra" minOccurs="0"/>
 					<xs:element name="k" type="xs:nonNegativeInteger" minOccurs="0"/>
 					<xs:choice minOccurs="0">
 						<xs:element name="gnatNearestNeighbors" type="gnatNearestNeighborsType"/>
