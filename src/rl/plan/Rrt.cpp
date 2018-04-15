@@ -29,8 +29,6 @@
 #include "SimpleModel.h"
 #include "Viewer.h"
 
-#include "NearestNeighbors.h"
-
 namespace rl
 {
 	namespace plan
