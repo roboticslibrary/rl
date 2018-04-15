@@ -138,19 +138,15 @@ namespace rl
 			
 			while (!reached)
 			{
-				distance = this->model->distance(*last, chosen);
-				step = distance;
+				step += this->delta;
 				
-				if (step <= this->delta)
+				if (step >= distance)
 				{
 					reached = true;
-				}
-				else
-				{
-					step = this->delta;
+					step = distance;
 				}
 				
-				this->model->interpolate(*last, chosen, step / distance, next);
+				this->model->interpolate(*get(tree, nearest.second)->q, chosen, step / distance, next);
 				
 				if (nullptr != this->viewer)
 				{
