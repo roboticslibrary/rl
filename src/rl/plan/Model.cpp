@@ -413,58 +413,6 @@ namespace rl
 			}
 		}
 		
-		::rl::math::Real
-		Model::maxDistanceToRectangle(const ::rl::math::Vector& q, const ::rl::math::Vector& min, const ::rl::math::Vector& max) const
-		{
-			if (nullptr != this->kin)
-			{
-				return this->kin->maxDistanceToRectangle(q, min, max);
-			}
-			else
-			{
-				return this->mdl->maxDistanceToRectangle(q, min, max);
-			}
-		}
-		
-		::rl::math::Real
-		Model::minDistanceToRectangle(const ::rl::math::Vector& q, const ::rl::math::Vector& min, const ::rl::math::Vector& max) const
-		{
-			if (nullptr != this->kin)
-			{
-				return this->kin->minDistanceToRectangle(q, min, max);
-			}
-			else
-			{
-				return this->mdl->minDistanceToRectangle(q, min, max);
-			}
-		}
-		
-		::rl::math::Real
-		Model::minDistanceToRectangle(const ::rl::math::Real& q, const ::rl::math::Real& min, const ::rl::math::Real& max, const ::std::size_t& cuttingDimension) const
-		{
-			if (nullptr != this->kin)
-			{
-				return this->kin->minDistanceToRectangle(q, min, max, cuttingDimension);
-			}
-			else
-			{
-				return this->mdl->minDistanceToRectangle(q, min, max, cuttingDimension);
-			}
-		}
-		
-		::rl::math::Real
-		Model::newDistance(const ::rl::math::Real& dist, const ::rl::math::Real& oldOff, const ::rl::math::Real& newOff, const int& cuttingDimension) const
-		{
-			if (nullptr != this->kin)
-			{
-				return this->kin->newDistance(dist, oldOff, newOff, cuttingDimension);
-			}
-			else
-			{
-				return this->mdl->newDistance(dist, oldOff, newOff, cuttingDimension);
-			}
-		}
-		
 		void
 		Model::reset()
 		{
