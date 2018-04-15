@@ -61,13 +61,13 @@ namespace rl
 		}
 		
 		void
-		Spherical::clip(::rl::math::Vector& q) const
+		Spherical::clip(::rl::math::VectorRef q) const
 		{
 			::Eigen::Map< ::rl::math::Quaternion>(q.data()).normalize();
 		}
 		
 		::rl::math::Real
-		Spherical::distance(const ::rl::math::Vector& q1, const ::rl::math::Vector& q2) const
+		Spherical::distance(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& q2) const
 		{
 			::Eigen::Map<const ::rl::math::Quaternion> quaternion1(q1.data());
 			::Eigen::Map<const ::rl::math::Quaternion> quaternion2(q2.data());
@@ -91,7 +91,7 @@ namespace rl
 		}
 		
 		void
-		Spherical::interpolate(const ::rl::math::Vector& q1, const ::rl::math::Vector& q2, const ::rl::math::Real& alpha, ::rl::math::Vector& q) const
+		Spherical::interpolate(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& q2, const ::rl::math::Real& alpha, ::rl::math::VectorRef q) const
 		{
 			::Eigen::Map<const ::rl::math::Quaternion> quaternion1(q1.data());
 			::Eigen::Map<const ::rl::math::Quaternion> quaternion2(q2.data());
@@ -99,7 +99,7 @@ namespace rl
 		}
 		
 		void
-		Spherical::normalize(::rl::math::Vector& q) const
+		Spherical::normalize(::rl::math::VectorRef q) const
 		{
 			::Eigen::Map< ::rl::math::Quaternion> quaternion(q.data());
 			
@@ -114,7 +114,7 @@ namespace rl
 		}
 		
 		void
-		Spherical::setPosition(const ::rl::math::Vector& q)
+		Spherical::setPosition(const ::rl::math::ConstVectorRef& q)
 		{
 			this->q = q;
 			this->t = ::Eigen::Map<const ::rl::math::Quaternion>(this->q.data());
@@ -122,14 +122,14 @@ namespace rl
 		}
 		
 		void
-		Spherical::step(const ::rl::math::Vector& q1, const ::rl::math::Vector& qdot, ::rl::math::Vector& q2) const
+		Spherical::step(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& qdot, ::rl::math::VectorRef q2) const
 		{
 			::Eigen::Map<const ::rl::math::Quaternion> quaternion1(q1.data());
 			q2 = (quaternion1 * ::rl::math::AngleAxis(qdot.norm(), qdot.normalized())).coeffs();
 		}
 		
 		::rl::math::Real
-		Spherical::transformedDistance(const ::rl::math::Vector& q1, const ::rl::math::Vector& q2) const
+		Spherical::transformedDistance(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& q2) const
 		{
 			return ::std::pow(this->distance(q1, q2), 2);
 		}

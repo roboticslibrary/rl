@@ -40,7 +40,7 @@ namespace rl
 			
 			virtual ~Prismatic();
 			
-			void setPosition(const ::rl::math::Vector& q);
+			void setPosition(const ::rl::math::ConstVectorRef& q);
 			
 		protected:
 			

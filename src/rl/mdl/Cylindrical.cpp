@@ -54,7 +54,7 @@ namespace rl
 		}
 		
 		void
-		Cylindrical::setPosition(const ::rl::math::Vector& q)
+		Cylindrical::setPosition(const ::rl::math::ConstVectorRef& q)
 		{
 			this->q = q;
 			this->t = ::rl::math::AngleAxis(this->q(0) + this->offset(0), this->S.block<3, 1>(0, 0));

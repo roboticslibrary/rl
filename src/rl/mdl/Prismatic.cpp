@@ -46,7 +46,7 @@ namespace rl
 		}
 		
 		void
-		Prismatic::setPosition(const ::rl::math::Vector& q)
+		Prismatic::setPosition(const ::rl::math::ConstVectorRef& q)
 		{
 			this->q = q;
 			this->t.translation() = this->S.block<3, 1>(3, 0) * (this->q(0) + this->offset(0));

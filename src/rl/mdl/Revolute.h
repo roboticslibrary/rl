@@ -40,15 +40,15 @@ namespace rl
 			
 			virtual ~Revolute();
 			
-			::rl::math::Real distance(const ::rl::math::Vector& q1, const ::rl::math::Vector& q2) const;
+			::rl::math::Real distance(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& q2) const;
 			
-			void interpolate(const ::rl::math::Vector& q1, const ::rl::math::Vector& q2, const ::rl::math::Real& alpha, ::rl::math::Vector& q) const;
+			void interpolate(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& q2, const ::rl::math::Real& alpha, ::rl::math::VectorRef q) const;
 			
-			void normalize(::rl::math::Vector& q) const;
+			void normalize(::rl::math::VectorRef q) const;
 			
-			void setPosition(const ::rl::math::Vector& q);
+			void setPosition(const ::rl::math::ConstVectorRef& q);
 			
-			::rl::math::Real transformedDistance(const ::rl::math::Vector& q1, const ::rl::math::Vector& q2) const;
+			::rl::math::Real transformedDistance(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& q2) const;
 			
 		protected:
 			

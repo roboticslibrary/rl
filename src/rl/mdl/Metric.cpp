@@ -47,9 +47,9 @@ namespace rl
 			
 			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDofPosition(), ++i)
 			{
-				::rl::math::Vector qi = q.segment(j, this->joints[i]->getDofPosition()); // TODO
+				::rl::math::VectorBlock qi = q.segment(j, this->joints[i]->getDofPosition());
 				this->joints[i]->clip(qi);
-				q.segment(j, this->joints[i]->getDofPosition()) = qi; // TODO
+				q.segment(j, this->joints[i]->getDofPosition()) = qi;
 			}
 		}
 		
@@ -89,7 +89,7 @@ namespace rl
 			
 			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDofPosition(), ++i)
 			{
-				::rl::math::Vector qi = q.segment(j, this->joints[i]->getDofPosition()); // TODO
+				::rl::math::VectorBlock qi = q.segment(j, this->joints[i]->getDofPosition());
 				
 				this->joints[i]->interpolate(
 					q1.segment(j, this->joints[i]->getDofPosition()),
@@ -98,7 +98,7 @@ namespace rl
 					qi
 				);
 				
-				q.segment(j, this->joints[i]->getDofPosition()) = qi; // TODO
+				q.segment(j, this->joints[i]->getDofPosition()) = qi;
 			}
 		}
 		
@@ -206,9 +206,9 @@ namespace rl
 			
 			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDofPosition(), ++i)
 			{
-				::rl::math::Vector qi = q.segment(j, this->joints[i]->getDofPosition()); // TODO
+				::rl::math::VectorBlock qi = q.segment(j, this->joints[i]->getDofPosition());
 				this->joints[i]->normalize(qi);
-				q.segment(j, this->joints[i]->getDofPosition()) = qi; // TODO
+				q.segment(j, this->joints[i]->getDofPosition()) = qi;
 			}
 		}
 		
@@ -221,7 +221,7 @@ namespace rl
 			
 			for (::std::size_t i = 0, j = 0, k = 0; i < this->joints.size(); j += this->joints[i]->getDofPosition(), k += this->joints[i]->getDof(), ++i)
 			{
-				::rl::math::Vector q2i = q2.segment(j, this->joints[i]->getDofPosition()); // TODO
+				::rl::math::VectorBlock q2i = q2.segment(j, this->joints[i]->getDofPosition());
 				
 				this->joints[i]->step(
 					q1.segment(j, this->joints[i]->getDofPosition()),
@@ -229,7 +229,7 @@ namespace rl
 					q2i
 				);
 				
-				q2.segment(j, this->joints[i]->getDofPosition()) = q2i; // TODO
+				q2.segment(j, this->joints[i]->getDofPosition()) = q2i;
 			}
 		}
 		

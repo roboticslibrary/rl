@@ -44,7 +44,7 @@ namespace rl
 			
 			void setPitch(const ::rl::math::Real& h);
 			
-			void setPosition(const ::rl::math::Vector& q);
+			void setPosition(const ::rl::math::ConstVectorRef& q);
 			
 		protected:
 			

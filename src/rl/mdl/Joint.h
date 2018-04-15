@@ -43,9 +43,9 @@ namespace rl
 			
 			virtual ~Joint();
 			
-			virtual void clip(::rl::math::Vector& q) const;
+			virtual void clip(::rl::math::VectorRef q) const;
 			
-			virtual ::rl::math::Real distance(const ::rl::math::Vector& q1, const ::rl::math::Vector& q2) const;
+			virtual ::rl::math::Real distance(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& q2) const;
 			
 			void forwardAcceleration();
 			
@@ -89,25 +89,25 @@ namespace rl
 			
 			const ::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1>& getVelocityUnits() const;
 			
-			virtual void interpolate(const ::rl::math::Vector& q1, const ::rl::math::Vector& q2, const ::rl::math::Real& alpha, ::rl::math::Vector& q) const;
+			virtual void interpolate(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& q2, const ::rl::math::Real& alpha, ::rl::math::VectorRef q) const;
 			
 			void inverseForce();
 			
-			virtual bool isValid(const ::rl::math::Vector& q) const;
+			virtual bool isValid(const ::rl::math::ConstVectorRef& q) const;
 			
-			virtual void normalize(::rl::math::Vector& q) const;
+			virtual void normalize(::rl::math::VectorRef q) const;
 			
-			void setAcceleration(const ::rl::math::Vector& qdd);
+			void setAcceleration(const ::rl::math::ConstVectorRef& qdd);
 			
-			virtual void setPosition(const ::rl::math::Vector& q) = 0;
+			virtual void setPosition(const ::rl::math::ConstVectorRef& q) = 0;
 			
-			void setTorque(const ::rl::math::Vector& tau);
+			void setTorque(const ::rl::math::ConstVectorRef& tau);
 			
-			void setVelocity(const ::rl::math::Vector& qd);
+			void setVelocity(const ::rl::math::ConstVectorRef& qd);
 			
-			virtual void step(const ::rl::math::Vector& q1, const ::rl::math::Vector& qdot, ::rl::math::Vector& q2) const;
+			virtual void step(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& qdot, ::rl::math::VectorRef q2) const;
 			
-			virtual ::rl::math::Real transformedDistance(const ::rl::math::Vector& q1, const ::rl::math::Vector& q2) const;
+			virtual ::rl::math::Real transformedDistance(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& q2) const;
 			
 			::rl::math::MotionVector a;
 			

@@ -48,7 +48,7 @@ namespace rl
 		}
 		
 		::rl::math::Real
-		Revolute::distance(const ::rl::math::Vector& q1, const ::rl::math::Vector& q2) const
+		Revolute::distance(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& q2) const
 		{
 			::rl::math::Real delta = ::std::abs(q2(0) - q1(0));
 			
@@ -64,7 +64,7 @@ namespace rl
 		}
 		
 		void
-		Revolute::interpolate(const ::rl::math::Vector& q1, const ::rl::math::Vector& q2, const ::rl::math::Real& alpha, ::rl::math::Vector& q) const
+		Revolute::interpolate(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& q2, const ::rl::math::Real& alpha, ::rl::math::VectorRef q) const
 		{
 			if (this->wraparound(0))
 			{
@@ -104,7 +104,7 @@ namespace rl
 		}
 		
 		void
-		Revolute::normalize(::rl::math::Vector& q) const
+		Revolute::normalize(::rl::math::VectorRef q) const
 		{
 			q(0) = ::std::fmod(q(0), 2.0f * static_cast< ::rl::math::Real>(M_PI));
 			
@@ -119,7 +119,7 @@ namespace rl
 		}
 		
 		void
-		Revolute::setPosition(const ::rl::math::Vector& q)
+		Revolute::setPosition(const ::rl::math::ConstVectorRef& q)
 		{
 			this->q = q;
 			this->t = ::rl::math::AngleAxis(this->q(0) + this->offset(0), this->S.block<3, 1>(0, 0));
@@ -127,7 +127,7 @@ namespace rl
 		}
 		
 		::rl::math::Real
-		Revolute::transformedDistance(const ::rl::math::Vector& q1, const ::rl::math::Vector& q2) const
+		Revolute::transformedDistance(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& q2) const
 		{
 			::rl::math::Real delta = ::std::abs(q2(0) - q1(0));
 			

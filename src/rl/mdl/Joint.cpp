@@ -77,7 +77,7 @@ namespace rl
 		}
 		
 		void
-		Joint::clip(::rl::math::Vector& q) const
+		Joint::clip(::rl::math::VectorRef q) const
 		{
 			for (::std::size_t i = 0; i < this->getDofPosition(); ++i)
 			{
@@ -107,7 +107,7 @@ namespace rl
 		}
 		
 		::rl::math::Real
-		Joint::distance(const ::rl::math::Vector& q1, const ::rl::math::Vector& q2) const
+		Joint::distance(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& q2) const
 		{
 			return (q2 - q1).norm();
 		}
@@ -282,7 +282,7 @@ namespace rl
 		}
 		
 		void
-		Joint::interpolate(const ::rl::math::Vector& q1, const ::rl::math::Vector& q2, const ::rl::math::Real& alpha, ::rl::math::Vector& q) const
+		Joint::interpolate(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& q2, const ::rl::math::Real& alpha, ::rl::math::VectorRef q) const
 		{
 			q = (1.0f - alpha) * q1 + alpha * q2;
 		}
@@ -298,7 +298,7 @@ namespace rl
 		}
 		
 		bool
-		Joint::isValid(const ::rl::math::Vector& q) const
+		Joint::isValid(const ::rl::math::ConstVectorRef& q) const
 		{
 			for (::std::size_t i = 0; i < this->getDofPosition(); ++i)
 			{
@@ -312,12 +312,12 @@ namespace rl
 		}
 		
 		void
-		Joint::normalize(::rl::math::Vector& q) const
+		Joint::normalize(::rl::math::VectorRef q) const
 		{
 		}
 		
 		void
-		Joint::setAcceleration(const ::rl::math::Vector& qdd)
+		Joint::setAcceleration(const ::rl::math::ConstVectorRef& qdd)
 		{
 			this->qdd = qdd;
 			
@@ -326,13 +326,13 @@ namespace rl
 		}
 		
 		void
-		Joint::setTorque(const ::rl::math::Vector& tau)
+		Joint::setTorque(const ::rl::math::ConstVectorRef& tau)
 		{
 			this->tau = tau;
 		}
 		
 		void
-		Joint::setVelocity(const ::rl::math::Vector& qd)
+		Joint::setVelocity(const ::rl::math::ConstVectorRef& qd)
 		{
 			this->qd = qd;
 			
@@ -341,14 +341,14 @@ namespace rl
 		}
 		
 		void
-		Joint::step(const ::rl::math::Vector& q1, const ::rl::math::Vector& qdot, ::rl::math::Vector& q2) const
+		Joint::step(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& qdot, ::rl::math::VectorRef q2) const
 		{
 			q2 = q1 + qdot;
 			this->clip(q2);
 		}
 		
 		::rl::math::Real
-		Joint::transformedDistance(const ::rl::math::Vector& q1, const ::rl::math::Vector& q2) const
+		Joint::transformedDistance(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& q2) const
 		{
 			return (q2 - q1).squaredNorm();
 		}
