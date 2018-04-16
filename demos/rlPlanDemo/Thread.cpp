@@ -170,21 +170,19 @@ Thread::run()
 	
 	this->running = true;
 	
-	this->showMessage("Showing start configuration.");
-	this->drawConfiguration(*MainWindow::instance()->planner->start);
-	
 	if (nullptr != MainWindow::instance()->planner->viewer)
 	{
+		emit statusChanged("Showing start configuration.");
+		this->drawConfiguration(*MainWindow::instance()->planner->start);
 		usleep(static_cast<std::size_t>(2.0f * 1000.0f * 1000.0f));
 	}
 	
 	if (!this->running) return;
 	
-	this->showMessage("Showing goal configuration.");
-	this->drawConfiguration(*MainWindow::instance()->planner->goal);
-	
 	if (nullptr != MainWindow::instance()->planner->viewer)
 	{
+		emit statusChanged("Showing goal configuration.");
+		this->drawConfiguration(*MainWindow::instance()->planner->goal);
 		usleep(static_cast<std::size_t>(2.0f * 1000.0f * 1000.0f));
 	}
 	
@@ -192,11 +190,11 @@ Thread::run()
 	
 	if (!MainWindow::instance()->planner->verify())
 	{
-		this->showMessage("Invalid start or goal configuration.");
+		emit statusChanged("Invalid start or goal configuration.");
 		return;
 	}
 	
-	this->showMessage("Solving...");
+	emit statusChanged("Solving...");
 	
 	std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 	bool solved = MainWindow::instance()->planner->solve();
@@ -204,7 +202,7 @@ Thread::run()
 	
 	double plannerDuration = std::chrono::duration_cast<std::chrono::duration<double>>(stop - start).count() * 1000;
 	
-	this->showMessage("Planner " + std::string(solved ? "succeeded" : "failed") + " in " + QString::number(plannerDuration).toStdString() + " ms.");
+	emit statusChanged("Planner " + QString(solved ? "succeeded" : "failed") + " in " + QString::number(plannerDuration) + " ms.");
 	
 	std::fstream benchmark;
 	benchmark.open("benchmark.csv", std::ios::app | std::ios::in | std::ios::out);
@@ -347,15 +345,21 @@ Thread::run()
 	
 	if (solved)
 	{
-		this->drawConfigurationPath(path);
+		if (nullptr != MainWindow::instance()->planner->viewer)
+		{
+			this->drawConfigurationPath(path);
+		}
 		
 		if (!this->running) return;
 		
 		if (nullptr != MainWindow::instance()->optimizer)
 		{
-			usleep(static_cast<std::size_t>(2.0f * 1000.0f * 1000.0f));
+			if (nullptr != MainWindow::instance()->planner->viewer)
+			{
+				usleep(static_cast<std::size_t>(2.0f * 1000.0f * 1000.0f));
+			}
 			
-			this->showMessage("Planner " + std::string(solved ? "succeeded" : "failed") + " in " + QString::number(plannerDuration).toStdString() + " ms. Optimizing...");
+			emit statusChanged("Planner " + QString(solved ? "succeeded" : "failed") + " in " + QString::number(plannerDuration) + " ms. Optimizing...");
 			
 			start = std::chrono::steady_clock::now();
 			MainWindow::instance()->optimizer->process(path);
@@ -363,10 +367,15 @@ Thread::run()
 			
 			double optimizerDuration = std::chrono::duration_cast<std::chrono::duration<double>>(stop - start).count() * 1000;
 			
-			this->showMessage("Planner " + std::string(solved ? "succeeded" : "failed") + " in " + QString::number(plannerDuration).toStdString() + " ms. Optimizer finished in " + QString::number(optimizerDuration).toStdString() + " ms.");
+			emit statusChanged("Planner " + QString(solved ? "succeeded" : "failed") + " in " + QString::number(plannerDuration) + " ms. Optimizer finished in " + QString::number(optimizerDuration) + " ms.");
 			
-			this->drawConfigurationPath(path);
+			if (nullptr != MainWindow::instance()->planner->viewer)
+			{
+				this->drawConfigurationPath(path);
+			}
 		}
+		
+		if (nullptr == MainWindow::instance()->planner->viewer) return;
 		
 		if (this->swept)
 		{

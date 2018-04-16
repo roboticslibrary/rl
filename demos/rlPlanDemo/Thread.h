@@ -119,6 +119,8 @@ signals:
 	
 	void sphereResetRequested();
 	
+	void statusChanged(const QString& message);
+	
 	void sweptVolumeRequested(const rl::plan::VectorList& path);
 	
 	void vertexResetRequested();

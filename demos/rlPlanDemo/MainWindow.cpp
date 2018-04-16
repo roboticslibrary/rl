@@ -259,6 +259,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	
 	this->init();
 	
+	QObject::connect(this->thread, SIGNAL(statusChanged(const QString&)), this->statusBar(), SLOT(showMessage(const QString&)));
+	
 	QStringList engines;
 #ifdef RL_SG_FCL
 	engines.push_back("fcl");
