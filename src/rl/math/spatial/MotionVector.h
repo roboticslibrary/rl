@@ -48,6 +48,8 @@ namespace rl
 				
 				typedef Scalar ScalarType;
 				
+				typedef typename ::Eigen::Matrix<Scalar, 6, 6> CrossType;
+				
 				typedef typename ::Eigen::Matrix<Scalar, 6, 1> MatrixType;
 				
 				typedef const MatrixType ConstMatrixType;
@@ -92,6 +94,26 @@ namespace rl
 					MotionVector res;
 					res.angular() = angular().cross(other.angular());
 					res.linear() = angular().cross(other.linear()) + linear().cross(other.angular());
+					return res;
+				}
+				
+				CrossType cross66Force() const
+				{
+					CrossType res;
+					res.template topLeftCorner<3, 3>() = angular().cross33();
+					res.template topRightCorner<3, 3>() = linear().cross33();
+					res.template bottomLeftCorner<3, 3>().setZero();
+					res.template bottomRightCorner<3, 3>() = angular().cross33();
+					return res;
+				}
+				
+				CrossType cross66Motion() const
+				{
+					CrossType res;
+					res.template topLeftCorner<3, 3>() = angular().cross33();
+					res.template topRightCorner<3, 3>().setZero();
+					res.template bottomLeftCorner<3, 3>() = linear().cross33();
+					res.template bottomRightCorner<3, 3>() = angular().cross33();
 					return res;
 				}
 				
