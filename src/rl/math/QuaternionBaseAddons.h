@@ -48,9 +48,12 @@ angularAcceleration(const QuaternionBase<OtherDerived1>& qd, const QuaternionBas
 Quaternion<Scalar>
 exp() const
 {
+	EIGEN_USING_STD_MATH(cos);
+	EIGEN_USING_STD_MATH(sin);
+	
 	Scalar theta = this->derived().vec().norm();
-	Scalar sinTheta = ::sin(theta);
-	Scalar cosTheta = ::cos(theta);
+	Scalar sinTheta = sin(theta);
+	Scalar cosTheta = cos(theta);
 	
 	Quaternion<Scalar> q;
 	
@@ -83,8 +86,11 @@ Quaternion<Scalar> lerp(const Scalar& t, const QuaternionBase<OtherDerived>& oth
 Quaternion<Scalar>
 log() const
 {
-	Scalar theta = ::acos(this->derived().w());
-	Scalar sinTheta = ::sin(theta);
+	EIGEN_USING_STD_MATH(acos);
+	EIGEN_USING_STD_MATH(sin);
+	
+	Scalar theta = acos(this->derived().w());
+	Scalar sinTheta = sin(theta);
 	
 	Quaternion<Scalar> q;
 	
@@ -186,6 +192,10 @@ setFromGaussian(const Vector3& rand, const QuaternionBase<OtherDerived>& mean, c
 void
 setFromUniform(const Vector3& rand)
 {
+	EIGEN_USING_STD_MATH(cos);
+	EIGEN_USING_STD_MATH(sin);
+	EIGEN_USING_STD_MATH(sqrt);
+	
 	eigen_assert(rand(0) >= Scalar(0));
 	eigen_assert(rand(0) <= Scalar(1));
 	eigen_assert(rand(1) >= Scalar(0));
@@ -193,15 +203,15 @@ setFromUniform(const Vector3& rand)
 	eigen_assert(rand(2) >= Scalar(0));
 	eigen_assert(rand(2) <= Scalar(1));
 	
-	Scalar sigma1 = ::std::sqrt(Scalar(1) - rand(0));
-	Scalar sigma2 = ::std::sqrt(rand(0));
-	Scalar theta1 = Scalar(2) * static_cast<Scalar>(M_PI) * rand(1);
-	Scalar theta2 = Scalar(2) * static_cast<Scalar>(M_PI) * rand(2);
+	Scalar sigma1 = sqrt(Scalar(1) - rand(0));
+	Scalar sigma2 = sqrt(rand(0));
+	Scalar theta1 = Scalar(2 * EIGEN_PI) * rand(1);
+	Scalar theta2 = Scalar(2 * EIGEN_PI) * rand(2);
 	
-	this->derived().w() = ::std::cos(theta2) * sigma2;
-	this->derived().x() = ::std::sin(theta1) * sigma1;
-	this->derived().y() = ::std::cos(theta1) * sigma1;
-	this->derived().z() = ::std::sin(theta2) * sigma2;
+	this->derived().x() = sin(theta1) * sigma1;
+	this->derived().y() = cos(theta1) * sigma1;
+	this->derived().z() = sin(theta2) * sigma2;
+	this->derived().w() = cos(theta2) * sigma2;
 }
 
 template<typename OtherDerived>

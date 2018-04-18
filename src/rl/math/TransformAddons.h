@@ -36,14 +36,17 @@ inline
 Scalar
 distance(const Transform<Scalar, Dim, Mode, Options>& other, const Scalar& weight = 1) const
 {
+	EIGEN_USING_STD_MATH(pow);
+	EIGEN_USING_STD_MATH(sqrt);
+	
 	Quaternion<Scalar> q1(rotation());
 	Quaternion<Scalar> q2(other.rotation());
 	
-	return ::std::sqrt(
-		::std::pow(other(0, 3) - (*this)(0, 3), 2) +
-		::std::pow(other(1, 3) - (*this)(1, 3), 2) +
-		::std::pow(other(2, 3) - (*this)(2, 3), 2) +
-		weight * ::std::pow(q1.angularDistance(q2), 2)
+	return sqrt(
+		pow(other(0, 3) - (*this)(0, 3), 2) +
+		pow(other(1, 3) - (*this)(1, 3), 2) +
+		pow(other(2, 3) - (*this)(2, 3), 2) +
+		weight * pow(q1.angularDistance(q2), 2)
 	);
 }
 
@@ -92,10 +95,13 @@ inline
 void
 fromDenavitHartenbergPaul(const Scalar& d, const Scalar& theta, const Scalar& a, const Scalar& alpha)
 {
-	Scalar cosAlpha = ::std::cos(alpha);
-	Scalar cosTheta = ::std::cos(theta);
-	Scalar sinAlpha = ::std::sin(alpha);
-	Scalar sinTheta = ::std::sin(theta);
+	EIGEN_USING_STD_MATH(cos);
+	EIGEN_USING_STD_MATH(sin);
+	
+	Scalar cosAlpha = cos(alpha);
+	Scalar cosTheta = cos(theta);
+	Scalar sinAlpha = sin(alpha);
+	Scalar sinTheta = sin(theta);
 	
 	(*this)(0, 0) = cosTheta;
 	(*this)(1, 0) = sinTheta;
@@ -193,17 +199,20 @@ inline
 void
 toDenavitHartenbergPaul(Scalar& d, Scalar& theta, Scalar& a, Scalar& alpha) const
 {
-	assert(::std::abs((*this)(2, 0)) <= ::std::numeric_limits<Scalar>::epsilon());
+	EIGEN_USING_STD_MATH(abs);
+	EIGEN_USING_STD_MATH(atan2);
+	
+	assert(abs((*this)(2, 0)) <= ::std::numeric_limits<Scalar>::epsilon());
 	
 	d = (*this)(2, 3);
 	
-	theta = ::std::atan2((*this)(1, 0), (*this)(0, 0));
+	theta = atan2((*this)(1, 0), (*this)(0, 0));
 	
-	if (::std::abs((*this)(0, 0)) <= ::std::numeric_limits<Scalar>::epsilon())
+	if (abs((*this)(0, 0)) <= ::std::numeric_limits<Scalar>::epsilon())
 	{
 		a = (*this)(1, 3) / (*this)(1, 0);
 	}
-	else if (::std::abs((*this)(1, 0)) <= ::std::numeric_limits<Scalar>::epsilon())
+	else if (abs((*this)(1, 0)) <= ::std::numeric_limits<Scalar>::epsilon())
 	{
 		a = (*this)(0, 3) / (*this)(0, 0);
 	}
@@ -212,7 +221,7 @@ toDenavitHartenbergPaul(Scalar& d, Scalar& theta, Scalar& a, Scalar& alpha) cons
 		a = ((*this)(1, 3) / (*this)(1, 0) + (*this)(0, 3) / (*this)(0, 0)) * Scalar(0.5);
 	}
 	
-	alpha = ::std::atan2((*this)(2, 1), (*this)(2, 2));
+	alpha = atan2((*this)(2, 1), (*this)(2, 2));
 }
 
 #ifdef DOXYGEN_SHOULD_PARSE_THIS
