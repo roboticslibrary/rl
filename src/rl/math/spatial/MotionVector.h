@@ -150,6 +150,14 @@ namespace rl
 					return res;
 				}
 				
+				MotionVector operator-() const
+				{
+					MotionVector res;
+					res.angular() = -angular();
+					res.linear() = -linear();
+					return res;
+				}
+				
 				MotionVector operator-(const MotionVector& other) const
 				{
 					MotionVector res;

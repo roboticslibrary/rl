@@ -118,6 +118,14 @@ namespace rl
 					return res;
 				}
 				
+				ForceVector operator-() const
+				{
+					ForceVector res;
+					res.moment() = -moment();
+					res.force() = -force();
+					return res;
+				}
+				
 				ForceVector operator-(const ForceVector& other) const
 				{
 					ForceVector res;
