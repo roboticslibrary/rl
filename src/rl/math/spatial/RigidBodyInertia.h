@@ -100,6 +100,12 @@ namespace rl
 					return inertiaData;
 				}
 				
+				template<typename OtherScalar>
+				bool isApprox(const RigidBodyInertia<OtherScalar>& other, const typename ::Eigen::NumTraits<Scalar>::Real& prec = ::Eigen::NumTraits<Scalar>::dummy_precision()) const
+				{
+					return cog().isApprox(other.cog(), prec) && inertia().isApprox(other.inertia(), prec) && ::Eigen::internal::isApprox(mass(), other.mass(), prec);
+				}
+				
 				MassType& mass()
 				{
 					return massData;
@@ -129,7 +135,8 @@ namespace rl
 					return *this;
 				}
 				
-				RigidBodyInertia operator+(const RigidBodyInertia& other) const
+				template<typename OtherScalar>
+				RigidBodyInertia operator+(const RigidBodyInertia<OtherScalar>& other) const
 				{
 					RigidBodyInertia res;
 					res.cog() = cog() + other.cog();
@@ -138,7 +145,8 @@ namespace rl
 					return res;
 				}
 				
-				RigidBodyInertia operator-(const RigidBodyInertia& other) const
+				template<typename OtherScalar>
+				RigidBodyInertia operator-(const RigidBodyInertia<OtherScalar>& other) const
 				{
 					RigidBodyInertia res;
 					res.cog() = cog() - other.cog();

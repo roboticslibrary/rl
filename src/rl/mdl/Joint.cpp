@@ -137,11 +137,9 @@ namespace rl
 			// tau - S^T * p^A
 			this->u = this->tau - this->S.transpose() * this->out->pA.matrix();
 			// I^A - U * D^-1 * U^T
-			::rl::math::ArticulatedBodyInertia ia;
-			ia = this->out->iA.matrix() - this->U * this->D.inverse() * this->U.transpose();
+			::rl::math::ArticulatedBodyInertia ia(this->out->iA - ::rl::math::ArticulatedBodyInertia(this->U * this->D.inverse() * this->U.transpose()));
 			// p^A + I^a * c + U * D^-1 * u
-			::rl::math::ForceVector pa;
-			pa = this->out->pA + ia * this->out->c + this->U.matrix() * this->D.inverse() * this->u;
+			::rl::math::ForceVector pa(this->out->pA + ia * this->out->c + ::rl::math::ForceVector(this->U * this->D.inverse() * this->u));
 			// I^A + X^* * I^a * X
 			this->in->iA = this->in->iA + this->x / ia;
 			// p^A + X^* * p^a
@@ -152,8 +150,7 @@ namespace rl
 		Joint::forwardDynamics3()
 		{
 			// X * a + c
-			::rl::math::MotionVector a;
-			a = this->x * this->in->a + this->out->c;
+			::rl::math::MotionVector a(this->x * this->in->a + this->out->c);
 			// D^-1 * (u - U^T * a')
 			this->qdd = this->D.inverse() * (this->u - this->U.transpose() * a.matrix());
 			// S * qdd

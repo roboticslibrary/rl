@@ -130,6 +130,12 @@ namespace rl
 					return data.template segment<3>(3);
 				}
 				
+				template<typename OtherScalar>
+				bool isApprox(const MotionVector<OtherScalar>& other, const typename ::Eigen::NumTraits<Scalar>::Real& prec = ::Eigen::NumTraits<Scalar>::dummy_precision()) const
+				{
+					return matrix().isApprox(other.matrix(), prec);
+				}
+				
 				ConstMatrixType& matrix() const
 				{
 					return data;
@@ -142,7 +148,8 @@ namespace rl
 					return *this;
 				}
 				
-				MotionVector operator+(const MotionVector& other) const
+				template<typename OtherScalar>
+				MotionVector operator+(const MotionVector<OtherScalar>& other) const
 				{
 					MotionVector res;
 					res.angular() = angular() + other.angular();
@@ -158,7 +165,8 @@ namespace rl
 					return res;
 				}
 				
-				MotionVector operator-(const MotionVector& other) const
+				template<typename OtherScalar>
+				MotionVector operator-(const MotionVector<OtherScalar>& other) const
 				{
 					MotionVector res;
 					res.angular() = angular() - other.angular();

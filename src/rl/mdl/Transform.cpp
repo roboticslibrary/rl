@@ -67,8 +67,7 @@ namespace rl
 			this->in->iA = this->in->iA + this->x / this->out->iA;
 			
 			// p^A + I^a * c
-			::rl::math::ForceVector pa;
-			pa = this->out->pA + this->out->iA * this->out->c; // TODO
+			::rl::math::ForceVector pa(this->out->pA + this->out->iA * this->out->c);
 			
 			// p^A + X^* * p^a
 			this->in->pA = this->in->pA + this->x / pa;
@@ -85,7 +84,7 @@ namespace rl
 		Transform::forwardPosition()
 		{
 			this->out->t = this->in->t * this->t;
-			this->out->x = this->x * this->in->x;
+			this->out->x = this->out->t;
 		}
 		
 		void

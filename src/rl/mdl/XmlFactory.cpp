@@ -312,8 +312,7 @@ namespace rl
 						f->t.translation().y() = path.eval("number(translation/y)").getValue< ::rl::math::Real>(0);
 						f->t.translation().z() = path.eval("number(translation/z)").getValue< ::rl::math::Real>(0);
 						
-						f->x.rotation() = f->t.linear().transpose();
-						f->x.translation() = f->t.translation();
+						f->x = f->t;
 						
 						transform = f;
 					}

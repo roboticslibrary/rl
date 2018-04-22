@@ -118,7 +118,7 @@ namespace rl
 		{
 			this->q = q;
 			this->t = ::Eigen::Map<const ::rl::math::Quaternion>(this->q.data());
-			this->x.rotation() = this->t.linear().transpose();
+			this->x.rotation() = this->t.linear();
 		}
 		
 		void

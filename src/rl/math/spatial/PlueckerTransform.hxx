@@ -40,8 +40,8 @@ namespace rl
 			PlueckerTransform<Scalar>::operator*(const ForceVector<OtherScalar>& other) const
 			{
 				ForceVector<OtherScalar> res;
-				res.force() = rotation() * other.force();
-				res.moment() = rotation() * (other.moment() - translation().cross(other.force()));
+				res.moment() = rotation().transpose() * (other.moment() - translation().cross(other.force()));
+				res.force() = rotation().transpose() * other.force();
 				return res;
 			}
 			
@@ -52,8 +52,8 @@ namespace rl
 			PlueckerTransform<Scalar>::operator*(const MotionVector<OtherScalar>& other) const
 			{
 				MotionVector<OtherScalar> res;
-				res.linear() = rotation() * (other.linear() - translation().cross(other.angular()));
-				res.angular() = rotation() * other.angular();
+				res.angular() = rotation().transpose() * other.angular();
+				res.linear() = rotation().transpose() * (other.linear() - translation().cross(other.angular()));
 				return res;
 			}
 			
@@ -64,8 +64,10 @@ namespace rl
 			PlueckerTransform<Scalar>::operator*(const RigidBodyInertia<OtherScalar>& other) const
 			{
 				RigidBodyInertia<OtherScalar> res;
-				res.cog() = rotation() * (other.cog() - other.mass() * translation());
-				res.inertia() = rotation() * (other.inertia() + translation().cross(other.cog()).cross33() + (other.cog() - other.mass() * translation()).cross(translation()).cross33()) * rotation().transpose();
+				::Eigen::Matrix<Scalar, 3, 3> px = translation().cross33();
+				::Eigen::Matrix<Scalar, 3, 1> c_m_p = other.cog() - other.mass() * translation();
+				res.cog() = rotation().transpose() * c_m_p;
+				res.inertia() = rotation().transpose() * (other.inertia() + px * other.cog().cross33() + c_m_p.cross33() * px) * rotation();
 				res.mass() = other.mass();
 				return res;
 			}
@@ -77,9 +79,11 @@ namespace rl
 			PlueckerTransform<Scalar>::operator*(const ArticulatedBodyInertia<OtherScalar>& other) const
 			{
 				ArticulatedBodyInertia<OtherScalar> res;
-				res.cog() = rotation() * (other.cog() - translation().cross33() * other.mass()) * rotation().transpose();
-				res.inertia() = rotation() * (other.inertia() - translation().cross33() * other.cog().transpose() + (other.cog() - translation().cross33() * other.mass()) * translation().cross33()) * rotation().transpose();
-				res.mass() = rotation() * other.mass() * rotation().transpose();
+				::Eigen::Matrix<Scalar, 3, 3> px = translation().cross33();
+				::Eigen::Matrix<Scalar, 3, 3> c_px_m = other.cog() - px * other.mass();
+				res.cog() = rotation().transpose() * c_px_m * rotation();
+				res.inertia() = rotation().transpose() * (other.inertia() - px * other.cog().transpose() + c_px_m * px) * rotation();
+				res.mass() = rotation().transpose() * other.mass() * rotation();
 				return res;
 			}
 			
@@ -90,8 +94,8 @@ namespace rl
 			PlueckerTransform<Scalar>::operator/(const ForceVector<OtherScalar>& other) const
 			{
 				ForceVector<OtherScalar> res;
-				res.force() = rotation().transpose() * other.force();
-				res.moment() = rotation().transpose() * other.moment() + translation().cross(rotation().transpose() * other.force());
+				res.moment() = rotation() * other.moment() + translation().cross(rotation() * other.force());
+				res.force() = rotation() * other.force();
 				return res;
 			}
 			
@@ -102,8 +106,8 @@ namespace rl
 			PlueckerTransform<Scalar>::operator/(const MotionVector<OtherScalar>& other) const
 			{
 				MotionVector<OtherScalar> res;
-				res.linear() = rotation().transpose() * other.linear() + translation().cross(rotation().transpose() * other.angular());
-				res.angular() = rotation().transpose() * other.angular();
+				res.angular() = rotation() * other.angular();
+				res.linear() = rotation() * other.linear() + translation().cross(rotation() * other.angular());
 				return res;
 			}
 			
@@ -114,8 +118,11 @@ namespace rl
 			PlueckerTransform<Scalar>::operator/(const RigidBodyInertia<OtherScalar>& other) const
 			{
 				RigidBodyInertia<OtherScalar> res;
-				res.cog() = rotation().transpose() * other.cog() + other.mass() * translation();
-				res.inertia() = rotation().transpose() * other.inertia() * rotation() - translation().cross(rotation().transpose() * other.cog()).cross33() - (rotation().transpose() * other.cog() + other.mass() * translation()).cross(translation()).cross33();
+				::Eigen::Matrix<Scalar, 3, 3> px = translation().cross33();
+				::Eigen::Matrix<Scalar, 3, 1> R_c = rotation() * other.cog();
+				::Eigen::Matrix<Scalar, 3, 1> R_c_m_p = R_c + other.mass() * translation();
+				res.cog() = R_c_m_p;
+				res.inertia() = rotation() * other.inertia() * rotation().transpose() - px * R_c.cross33() - R_c_m_p.cross33() * px;
 				res.mass() = other.mass();
 				return res;
 			}
@@ -127,11 +134,13 @@ namespace rl
 			PlueckerTransform<Scalar>::operator/(const ArticulatedBodyInertia<OtherScalar>& other) const
 			{
 				ArticulatedBodyInertia<OtherScalar> res;
-				typename ArticulatedBodyInertia<OtherScalar>::CenterOfGravityType cog = rotation().transpose() * other.cog() * rotation();
-				typename ArticulatedBodyInertia<OtherScalar>::MassType mass = rotation().transpose() * other.mass() * rotation();
-				res.cog() = cog + translation().cross33() * mass;
-				res.inertia() = rotation().transpose() * other.inertia() * rotation() + translation().cross33() * cog.transpose() - (cog + translation().cross33() * mass) * translation().cross33();
-				res.mass() = mass;
+				typename ArticulatedBodyInertia<OtherScalar>::CenterOfGravityType c = rotation() * other.cog() * rotation().transpose();
+				typename ArticulatedBodyInertia<OtherScalar>::MassType m = rotation() * other.mass() * rotation().transpose();
+				::Eigen::Matrix<Scalar, 3, 3> px = translation().cross33();
+				::Eigen::Matrix<Scalar, 3, 3> c_px_m = c + px * m;
+				res.cog() = c_px_m;
+				res.inertia() = rotation() * other.inertia() * rotation().transpose() + px * c.transpose() - c_px_m * px;
+				res.mass() = m;
 				return res;
 			}
 		}

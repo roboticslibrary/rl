@@ -74,6 +74,13 @@ namespace rl
 				{
 				}
 				
+				template<typename Scalar, int Dim, int Mode, int Options>
+				PlueckerTransform(const ::Eigen::Transform<Scalar, Dim, Mode, Options>& other) :
+					rotationData(other.linear()),
+					translationData(other.translation())
+				{
+				}
+				
 				virtual ~PlueckerTransform()
 				{
 				}
@@ -82,48 +89,62 @@ namespace rl
 				{
 					PlueckerTransform res;
 					res.rotation() = rotation().transpose();
-					res.translation() = -rotation() * translation();
+					res.translation() = -rotation().transpose() * translation();
 					return res;
 				}
 				
 				MatrixType inverseForce() const
 				{
 					MatrixType res;
-					res.template topLeftCorner<3, 3>() = rotation().transpose();
-					res.template topRightCorner<3, 3>() = translation().cross33() * rotation().transpose();
+					res.template topLeftCorner<3, 3>() = rotation();
+					res.template topRightCorner<3, 3>() = translation().cross33() * rotation();
 					res.template bottomLeftCorner<3, 3>().setZero();
-					res.template bottomRightCorner<3, 3>() = rotation().transpose();
+					res.template bottomRightCorner<3, 3>() = rotation();
 					return res;
 				}
 				
 				MatrixType inverseMotion() const
 				{
 					MatrixType res;
-					res.template topLeftCorner<3, 3>() = rotation().transpose();
+					res.template topLeftCorner<3, 3>() = rotation();
 					res.template topRightCorner<3, 3>().setZero();
-					res.template bottomLeftCorner<3, 3>() = translation().cross33() * rotation().transpose();
-					res.template bottomRightCorner<3, 3>() = rotation().transpose();
+					res.template bottomLeftCorner<3, 3>() = translation().cross33() * rotation();
+					res.template bottomRightCorner<3, 3>() = rotation();
 					return res;
+				}
+				
+				template<typename OtherScalar>
+				bool isApprox(const PlueckerTransform<OtherScalar>& other, const typename ::Eigen::NumTraits<Scalar>::Real& prec = ::Eigen::NumTraits<Scalar>::dummy_precision()) const
+				{
+					return rotation().isApprox(other.rotation(), prec) && translation().isApprox(other.translation(), prec);
 				}
 				
 				MatrixType matrixForce() const
 				{
 					MatrixType res;
-					res.template topLeftCorner<3, 3>() = rotation();
-					res.template topRightCorner<3, 3>() = -rotation() * translation().cross33();
+					res.template topLeftCorner<3, 3>() = rotation().transpose();
+					res.template topRightCorner<3, 3>() = -rotation().transpose() * translation().cross33();
 					res.template bottomLeftCorner<3, 3>().setZero();
-					res.template bottomRightCorner<3, 3>() = rotation();
+					res.template bottomRightCorner<3, 3>() = rotation().transpose();
 					return res;
 				}
 				
 				MatrixType matrixMotion() const
 				{
 					MatrixType res;
-					res.template topLeftCorner<3, 3>() = rotation();
+					res.template topLeftCorner<3, 3>() = rotation().transpose();
 					res.template topRightCorner<3, 3>().setZero();
-					res.template bottomLeftCorner<3, 3>() = -rotation() * translation().cross33();
-					res.template bottomRightCorner<3, 3>() = rotation();
+					res.template bottomLeftCorner<3, 3>() = -rotation().transpose() * translation().cross33();
+					res.template bottomRightCorner<3, 3>() = rotation().transpose();
 					return res;
+				}
+				
+				template<typename Scalar, int Dim, int Mode, int Options>
+				PlueckerTransform& operator=(const ::Eigen::Transform<Scalar, Dim, Mode, Options>& other)
+				{
+					rotation() = other.linear();
+					translation() = other.translation();
+					return *this;
 				}
 				
 				template<typename OtherScalar>
@@ -132,11 +153,12 @@ namespace rl
 				template<typename OtherScalar>
 				MotionVector<OtherScalar> operator*(const MotionVector<OtherScalar>& other) const;
 				
-				PlueckerTransform operator*(const PlueckerTransform& other) const
+				template<typename OtherScalar>
+				PlueckerTransform operator*(const PlueckerTransform<OtherScalar>& other) const
 				{
 					PlueckerTransform res;
 					res.rotation() = rotation() * other.rotation();
-					res.translation() = other.translation() + other.rotation().transpose() * translation();
+					res.translation() = rotation() * other.translation() + translation();
 					return res;
 				}
 				
@@ -178,7 +200,7 @@ namespace rl
 				{
 					TransformType res;
 					res.linear() = rotation();
-					res.translation() = -rotation() * translation();
+					res.translation() = translation();
 					return res;
 				}
 				

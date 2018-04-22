@@ -2,6 +2,7 @@ if(BUILD_RL_MATH)
 	add_subdirectory(rlCircularTest)
 	add_subdirectory(rlMathDeltaTest)
 	add_subdirectory(rlNearestNeighborsTest)
+	add_subdirectory(rlSpatialTest)
 	add_subdirectory(rlSplineTest)
 endif()
 

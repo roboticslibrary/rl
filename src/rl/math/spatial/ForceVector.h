@@ -103,6 +103,12 @@ namespace rl
 					return data.template segment<3>(0);
 				}
 				
+				template<typename OtherScalar>
+				bool isApprox(const ForceVector<OtherScalar>& other, const typename ::Eigen::NumTraits<Scalar>::Real& prec = ::Eigen::NumTraits<Scalar>::dummy_precision()) const
+				{
+					return matrix().isApprox(other.matrix(), prec);
+				}
+				
 				template<typename OtherDerived>
 				ForceVector& operator=(const ::Eigen::MatrixBase<OtherDerived>& other)
 				{
@@ -110,7 +116,8 @@ namespace rl
 					return *this;
 				}
 				
-				ForceVector operator+(const ForceVector& other) const
+				template<typename OtherScalar>
+				ForceVector operator+(const ForceVector<OtherScalar>& other) const
 				{
 					ForceVector res;
 					res.moment() = moment() + other.moment();
@@ -126,7 +133,8 @@ namespace rl
 					return res;
 				}
 				
-				ForceVector operator-(const ForceVector& other) const
+				template<typename OtherScalar>
+				ForceVector operator-(const ForceVector<OtherScalar>& other) const
 				{
 					ForceVector res;
 					res.moment() = moment() - other.moment();
@@ -151,8 +159,6 @@ namespace rl
 					res.force() = force() / other;
 					return res;
 				}
-				
-				ArticulatedBodyInertia<Scalar> operator*(const ForceVector& other) const;
 				
 				void setZero()
 				{
