@@ -34,7 +34,15 @@ namespace Eigen { template<typename Derived> class QuaternionBase {
 template<typename OtherDerived1, typename OtherDerived2>
 static Quaternion<Scalar> Random(const QuaternionBase<OtherDerived1>& mean, const MatrixBase<OtherDerived2>& sigma)
 {
-	return Random(Vector3::Random(), mean, sigma);
+	return Random(
+		Vector3(
+			internal::random<Scalar>(0, 1),
+			internal::random<Scalar>(0, 1),
+			internal::random<Scalar>(0, 1)
+		),
+		mean,
+		sigma
+	);
 }
 
 /**
@@ -67,7 +75,13 @@ static Quaternion<Scalar> Random(const MatrixBase<OtherDerived1>& rand, const Qu
 
 static Quaternion<Scalar> Random()
 {
-	return Random(Vector3::Random());
+	return Random(
+		Vector3(
+			internal::random<Scalar>(0, 1),
+			internal::random<Scalar>(0, 1),
+			internal::random<Scalar>(0, 1)
+		)
+	);
 }
 
 /**
