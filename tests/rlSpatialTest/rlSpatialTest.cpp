@@ -38,12 +38,12 @@ testArticulatedBodyInertia()
 	rl::math::ArticulatedBodyInertia abi1;
 	abi1.cog().setRandom();
 	abi1.inertia().setRandom();
-	abi1.mass() = rl::math::Vector3::Random().asDiagonal();
+	abi1.mass() = rl::math::DiagonalMatrix33(rl::math::Vector3::Random());
 	
 	rl::math::ArticulatedBodyInertia abi2;
 	abi2.cog().setRandom();
 	abi2.inertia().setRandom();
-	abi2.mass() = rl::math::Vector3::Random().asDiagonal();
+	abi2.mass() = rl::math::DiagonalMatrix33(rl::math::Vector3::Random());
 	
 	rl::math::ArticulatedBodyInertia abi3 = abi1 + abi2;
 	rl::math::ArticulatedBodyInertia abi4 = abi3 - abi2;
@@ -77,7 +77,7 @@ testArticulatedBodyInertia()
 	}
 	
 	rl::math::PlueckerTransform pt1;
-	pt1.rotation() = rl::math::Quaternion::UnitRandom().toRotationMatrix();
+	pt1.rotation() = rl::math::Rotation(rl::math::Quaternion::UniformRandom());
 	pt1.translation().setRandom();
 	
 	rl::math::ArticulatedBodyInertia abi5 = pt1 * abi1;
@@ -143,7 +143,7 @@ testEuclideanCrossProduct()
 		exit(EXIT_FAILURE);
 	}
 	
-	rl::math::Rotation r = rl::math::Quaternion::UnitRandom().toRotationMatrix();
+	rl::math::Rotation r = rl::math::Rotation(rl::math::Quaternion::UniformRandom());
 	
 	rl::math::Matrix33 m3a = (r * a).cross33();
 	rl::math::Matrix33 m3b = r * a.cross33() * r.transpose();
@@ -414,7 +414,7 @@ void
 testPlueckerTransform()
 {
 	rl::math::Transform t0;
-	t0 = rl::math::Quaternion::UnitRandom();
+	t0 = rl::math::Quaternion::UniformRandom();
 	t0.translation().setRandom();
 	
 	rl::math::PlueckerTransform pt0;
@@ -432,7 +432,7 @@ testPlueckerTransform()
 	}
 	
 	rl::math::Transform t1;
-	t1 = rl::math::Quaternion::UnitRandom();
+	t1 = rl::math::Quaternion::UniformRandom();
 	t1.translation().setRandom();
 	
 	rl::math::PlueckerTransform pt1(t1);
@@ -448,7 +448,7 @@ testPlueckerTransform()
 	}
 	
 	rl::math::Transform t2;
-	t2 = rl::math::Quaternion::UnitRandom();
+	t2 = rl::math::Quaternion::UniformRandom();
 	t2.translation().setRandom();
 	
 	rl::math::PlueckerTransform pt2 = t2;
@@ -550,9 +550,7 @@ testPlueckerTransform()
 	v1.setRandom();
 	
 	{
-		rl::math::MotionVector mv1;
-		mv1.angular() << v1.head<3>();
-		mv1.linear() << v1.tail<3>();
+		rl::math::MotionVector mv1 = v1;
 		
 		rl::math::Vector6 v2 = pt1.matrixMotion() * v1;
 		rl::math::MotionVector mv2 = pt1 * mv1;
@@ -596,9 +594,7 @@ testPlueckerTransform()
 	}
 	
 	{
-		rl::math::ForceVector fv1;
-		fv1.moment() << v1.head<3>();
-		fv1.force() << v1.tail<3>();
+		rl::math::ForceVector fv1 = v1;
 		
 		rl::math::Vector6 v2 = pt1.matrixForce() * v1;
 		rl::math::ForceVector fv2 = pt1 * fv1;
@@ -687,7 +683,7 @@ testRigidBodyInertia()
 	}
 	
 	rl::math::PlueckerTransform pt1;
-	pt1.rotation() = rl::math::Quaternion::UnitRandom().toRotationMatrix();
+	pt1.rotation() = rl::math::Rotation(rl::math::Quaternion::UniformRandom());
 	pt1.translation().setRandom();
 	
 	rl::math::RigidBodyInertia rbi5 = pt1 * rbi1;
@@ -731,13 +727,9 @@ testSpatialCrossProduct()
 	rl::math::Vector6 v2;
 	v2.setRandom();
 	
-	rl::math::MotionVector mv1;
-	mv1.angular() << v1.head<3>();
-	mv1.linear() << v1.tail<3>();
+	rl::math::MotionVector mv1 = v1;
 	
-	rl::math::MotionVector mv2;
-	mv2.angular() << v2.head<3>();
-	mv2.linear() << v2.tail<3>();
+	rl::math::MotionVector mv2 = v2;
 	
 	rl::math::Vector6 v3 = mv1.cross66Motion() * v2;
 	rl::math::MotionVector mv3 = mv1.cross(mv2);
@@ -760,9 +752,7 @@ testSpatialCrossProduct()
 		exit(EXIT_FAILURE);
 	}
 	
-	rl::math::ForceVector fv2;
-	fv2.moment() << v2.head<3>();
-	fv2.force() << v2.tail<3>();
+	rl::math::ForceVector fv2 = v2;
 	
 	rl::math::Vector6 v5 = mv1.cross66Force() * v2;
 	rl::math::ForceVector fv5 = mv1.cross(fv2);
@@ -808,7 +798,7 @@ testSpatialCrossProduct()
 	}
 	
 	rl::math::PlueckerTransform pt;
-	pt.rotation() = rl::math::Quaternion::UnitRandom().toRotationMatrix();
+	pt.rotation() = rl::math::Rotation(rl::math::Quaternion::UniformRandom());
 	pt.translation().setRandom();
 	
 	rl::math::Matrix66 m1 = (pt * mv1).cross66Motion();
