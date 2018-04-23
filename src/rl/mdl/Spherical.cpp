@@ -77,17 +77,13 @@ namespace rl
 		::rl::math::Vector
 		Spherical::generatePositionGaussian(const ::rl::math::ConstVectorRef& rand, const ::rl::math::ConstVectorRef& mean, const ::rl::math::ConstVectorRef& sigma) const
 		{
-			::rl::math::Quaternion quaternion;
-			quaternion.setFromGaussian(rand, ::Eigen::Map< const ::rl::math::Quaternion>(mean.data()), sigma);
-			return quaternion.coeffs();
+			return ::rl::math::Quaternion::Random(rand, ::Eigen::Map< const ::rl::math::Quaternion>(mean.data()), sigma).coeffs();
 		}
 		
 		::rl::math::Vector
 		Spherical::generatePositionUniform(const ::rl::math::ConstVectorRef& rand) const
 		{
-			::rl::math::Quaternion quaternion;
-			quaternion.setFromUniform(rand);
-			return quaternion.coeffs();
+			return ::rl::math::Quaternion::Random(rand).coeffs();
 		}
 		
 		void

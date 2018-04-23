@@ -296,7 +296,6 @@ main(int argc, char** argv)
 		rl::math::Vector3 point(0, 0, 1);
 		
 		std::function<rl::math::Real()> rand = std::bind(std::uniform_real_distribution<rl::math::Real>(0.0, 1.0), std::mt19937(0));
-		rl::math::Quaternion uniform;
 		
 		// splot "uniformQuaternions.dat" using 2:3:4
 		std::ofstream uniformQuaternions;
@@ -304,7 +303,7 @@ main(int argc, char** argv)
 		
 		for (std::size_t i = 0; i < 10000; ++i)
 		{
-			uniform.setFromUniform(rl::math::Vector3(rand(), rand(), rand()));
+			rl::math::Quaternion uniform = rl::math::Quaternion::Random(rl::math::Vector3(rand(), rand(), rand()));
 			rl::math::Vector3 rotated = uniform._transformVector(point);
 			uniformQuaternions << i << "\t" << rotated.transpose() << std::endl;
 		}
@@ -312,7 +311,6 @@ main(int argc, char** argv)
 		uniformQuaternions.close();
 		
 		std::function<rl::math::Real()> gauss = std::bind(std::normal_distribution<rl::math::Real>(0.0, 1.0), std::mt19937(0));
-		rl::math::Quaternion normal;
 		
 		// splot "normalQuaternions.dat" using 2:3:4
 		std::ofstream normalQuaternions;
@@ -320,7 +318,7 @@ main(int argc, char** argv)
 		
 		for (std::size_t i = 0; i < 10000; ++i)
 		{
-			normal.setFromGaussian(rl::math::Vector3(gauss(), gauss(), gauss()), rl::math::Quaternion::Identity(), rl::math::Vector3(0.25, 0.125, 0.0625));
+			rl::math::Quaternion normal = rl::math::Quaternion::Random(rl::math::Vector3(gauss(), gauss(), gauss()), rl::math::Quaternion::Identity(), rl::math::Vector3(0.25, 0.125, 0.0625));
 			rl::math::Vector3 rotated = normal._transformVector(point);
 			normalQuaternions << i << "\t" << rotated.transpose() << std::endl;
 		}

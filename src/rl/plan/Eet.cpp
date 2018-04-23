@@ -403,8 +403,6 @@ namespace rl
 			::rl::math::Transform chosen;
 			chosen.setIdentity();
 			
-			::rl::math::Quaternion quaternion;
-			
 			this->model->setPosition(*this->goal);
 			this->model->updateFrames();
 			::rl::math::Transform goal = this->model->forwardPosition();
@@ -439,8 +437,7 @@ namespace rl
 						
 						// uniform sampling for orientation
 						
-						quaternion.setFromUniform(::rl::math::Vector3(this->rand(), this->rand(), this->rand()));
-						chosen.linear() = quaternion.toRotationMatrix();
+						chosen.linear() = ::rl::math::Matrix33(::rl::math::Quaternion::Random(::rl::math::Vector3(this->rand(), this->rand(), this->rand())));
 						
 						nearest = this->nearest(this->tree[0], chosen); // nearest vertex in tree
 						

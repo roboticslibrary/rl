@@ -31,31 +31,80 @@
 namespace Eigen { template<typename Derived> class QuaternionBase {
 #endif
 
-template<typename OtherDerived, typename Derived2>
-static Quaternion<Scalar> GaussianRandom(const QuaternionBase<OtherDerived>& mean, const MatrixBase<Derived2>& sigma)
+template<typename OtherDerived1, typename OtherDerived2>
+static Quaternion<Scalar> Random(const QuaternionBase<OtherDerived1>& mean, const MatrixBase<OtherDerived2>& sigma)
 {
-	return GaussianRandom(Vector3::Random(), mean, sigma);
+	return Random(Vector3::Random(), mean, sigma);
 }
 
-template<typename Derived1, typename OtherDerived, typename Derived2>
-static Quaternion<Scalar> GaussianRandom(const MatrixBase<Derived1>& rand, const QuaternionBase<OtherDerived>& mean, const MatrixBase<Derived2>& sigma)
+/**
+ * QuTEM (Quaternion Tangent Ellipsoid at the Mean) sampling algorithm.
+ * 
+ * Michael Patrick Johnson. Exploiting Quaternions to Support Expressive
+ * Interactive Character Motion. PhD Thesis, Massachusetts Institute of
+ * Technology, Cambridge, MA, USA, February 2003.
+ * 
+ * http://characters.media.mit.edu/Theses/johnson_phd.pdf
+ */
+template<typename OtherDerived1, typename OtherDerived2, typename OtherDerived3>
+static Quaternion<Scalar> Random(const MatrixBase<OtherDerived1>& rand, const QuaternionBase<OtherDerived2>& mean, const MatrixBase<OtherDerived3>& sigma)
 {
-	Quaternion<Scalar> q;
-	q.setFromGaussian(rand, mean, sigma);
-	return q;
+	eigen_assert(3 == rand.size());
+	eigen_assert(3 == sigma.size());
+	eigen_assert(rand(0) >= Scalar(0));
+	eigen_assert(rand(0) <= Scalar(1));
+	eigen_assert(rand(1) >= Scalar(0));
+	eigen_assert(rand(1) <= Scalar(1));
+	eigen_assert(rand(2) >= Scalar(0));
+	eigen_assert(rand(2) <= Scalar(1));
+	
+	Quaternion<Scalar> tmp;
+	tmp.w() = rand.norm();
+	tmp.vec() = sigma.cwiseProduct(rand);
+	
+	return mean * tmp.exp();
 }
 
-static Quaternion<Scalar> UniformRandom()
+static Quaternion<Scalar> Random()
 {
-	return UniformRandom(Vector3::Random());
+	return Random(Vector3::Random());
 }
 
-template<typename Derived>
-static Quaternion<Scalar> UniformRandom(const MatrixBase<Derived>& rand)
+/**
+ * Generate uniformly-distributed random unit quaternions.
+ * 
+ * James J. Kuffner. Effective Sampling and Distance Metrics for 3D Rigid Body
+ * Path Planning. Proceedings of the IEEE International Conference on Robotics
+ * and Automation, pages 3993-3998. New Orleans, LA, USA, April 2004.
+ * 
+ * https://doi.org/10.1109/ROBOT.2004.1308895
+ */
+template<typename OtherDerived>
+static Quaternion<Scalar> Random(const MatrixBase<OtherDerived>& rand)
 {
-	Quaternion<Scalar> q;
-	q.setFromUniform(rand);
-	return q;
+	using ::std::cos;
+	using ::std::sin;
+	using ::std::sqrt;
+	
+	eigen_assert(3 == rand.size());
+	eigen_assert(rand(0) >= Scalar(0));
+	eigen_assert(rand(0) <= Scalar(1));
+	eigen_assert(rand(1) >= Scalar(0));
+	eigen_assert(rand(1) <= Scalar(1));
+	eigen_assert(rand(2) >= Scalar(0));
+	eigen_assert(rand(2) <= Scalar(1));
+	
+	Scalar sigma1 = sqrt(Scalar(1) - rand(0));
+	Scalar sigma2 = sqrt(rand(0));
+	Scalar theta1 = Scalar(2 * M_PI) * rand(1);
+	Scalar theta2 = Scalar(2 * M_PI) * rand(2);
+	
+	return Quaternion<Scalar>(
+		cos(theta2) * sigma2,
+		sin(theta1) * sigma1,
+		cos(theta1) * sigma1,
+		sin(theta2) * sigma2
+	);
 }
 
 template<typename OtherDerived>
@@ -98,9 +147,9 @@ exp() const
 	return q;
 }
 
-template<typename Derived>
+template<typename OtherDerived>
 Quaternion<Scalar>
-firstDerivative(const MatrixBase<Derived>& omega) const
+firstDerivative(const MatrixBase<OtherDerived>& omega) const
 {
 	eigen_assert(3 == omega.size());
 	return (Quaternion<Scalar>(Scalar(0), omega.x(), omega.y(), omega.z()) * this->derived()) * Scalar(0.5);
@@ -175,78 +224,40 @@ pow(const Scalar& t) const
 	return (this->derived().log() * Scalar(t)).exp();
 }
 
-template<typename OtherDerived, typename Derived1, typename Derived2>
+template<typename OtherDerived1, typename OtherDerived2, typename OtherDerived3>
 Quaternion<Scalar>
-secondDerivative(const QuaternionBase<OtherDerived>& qd, const MatrixBase<Derived1>& omega, const MatrixBase<Derived2>& omegad) const
+secondDerivative(const QuaternionBase<OtherDerived1>& qd, const MatrixBase<OtherDerived2>& omega, const MatrixBase<OtherDerived3>& omegad) const
 {
 	eigen_assert(3 == omega.size());
 	eigen_assert(3 == omegad.size());
 	return (Quaternion<Scalar>(Scalar(0), omegad.x(), omegad.y(), omegad.z()) * this->derived() + Quaternion<Scalar>(Scalar(0), omega.x(), omega.y(), omega.z()) * qd) * Scalar(0.5);
 }
 
-/**
- * QuTEM (Quaternion Tangent Ellipsoid at the Mean) sampling algorithm.
- * 
- * Michael Patrick Johnson. Exploiting Quaternions to Support Expressive
- * Interactive Character Motion. PhD Thesis, Massachusetts Institute of
- * Technology, Cambridge, MA, USA, February 2003.
- * 
- * http://characters.media.mit.edu/Theses/johnson_phd.pdf
- */
-template<typename Derived1, typename OtherDerived, typename Derived2>
-void
-setFromGaussian(const MatrixBase<Derived1>& rand, const QuaternionBase<OtherDerived>& mean, const MatrixBase<Derived2>& sigma)
+Derived&
+setRandom()
 {
-	eigen_assert(3 == rand.size());
-	eigen_assert(3 == sigma.size());
-	eigen_assert(rand(0) >= Scalar(0));
-	eigen_assert(rand(0) <= Scalar(1));
-	eigen_assert(rand(1) >= Scalar(0));
-	eigen_assert(rand(1) <= Scalar(1));
-	eigen_assert(rand(2) >= Scalar(0));
-	eigen_assert(rand(2) <= Scalar(1));
-	
-	Quaternion<Scalar> tmp;
-	tmp.w() = rand.norm();
-	tmp.vec() = sigma.cwiseProduct(rand);
-	
-	this->derived() = mean * tmp.exp();
+	return this->derived() = Random();
 }
 
-/**
- * Generate uniformly-distributed random unit quaternions.
- * 
- * James J. Kuffner. Effective Sampling and Distance Metrics for 3D Rigid Body
- * Path Planning. Proceedings of the IEEE International Conference on Robotics
- * and Automation, pages 3993-3998. New Orleans, LA, USA, April 2004.
- * 
- * https://doi.org/10.1109/ROBOT.2004.1308895
- */
-template<typename Derived>
-void
-setFromUniform(const MatrixBase<Derived>& rand)
+template<typename OtherDerived>
+Derived&
+setRandom(const MatrixBase<OtherDerived>& rand)
 {
-	using ::std::cos;
-	using ::std::sin;
-	using ::std::sqrt;
-	
-	eigen_assert(3 == rand.size());
-	eigen_assert(rand(0) >= Scalar(0));
-	eigen_assert(rand(0) <= Scalar(1));
-	eigen_assert(rand(1) >= Scalar(0));
-	eigen_assert(rand(1) <= Scalar(1));
-	eigen_assert(rand(2) >= Scalar(0));
-	eigen_assert(rand(2) <= Scalar(1));
-	
-	Scalar sigma1 = sqrt(Scalar(1) - rand(0));
-	Scalar sigma2 = sqrt(rand(0));
-	Scalar theta1 = Scalar(2 * M_PI) * rand(1);
-	Scalar theta2 = Scalar(2 * M_PI) * rand(2);
-	
-	this->derived().x() = sin(theta1) * sigma1;
-	this->derived().y() = cos(theta1) * sigma1;
-	this->derived().z() = sin(theta2) * sigma2;
-	this->derived().w() = cos(theta2) * sigma2;
+	return this->derived() = Random(rand);
+}
+
+template<typename OtherDerived1, typename OtherDerived2>
+Derived&
+setRandom(const QuaternionBase<OtherDerived1>& mean, const MatrixBase<OtherDerived2>& sigma)
+{
+	return this->derived() = Random(mean, sigma);
+}
+
+template<typename OtherDerived1, typename OtherDerived2, typename OtherDerived3>
+Derived&
+setRandom(const MatrixBase<OtherDerived1>& rand, const QuaternionBase<OtherDerived2>& mean, const MatrixBase<OtherDerived3>& sigma)
+{
+	return this->derived() = Random(rand, mean, sigma);
 }
 
 template<typename OtherDerived>
