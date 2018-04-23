@@ -68,6 +68,13 @@ namespace rl
 				{
 				}
 				
+				ArticulatedBodyInertia(const CenterOfGravityType& centerOfGravity, const InertiaType& inertia, const MassType& mass) :
+					centerOfGravityData(centerOfGravity),
+					inertiaData(inertia),
+					massData(mass)
+				{
+				}
+				
 				template<typename OtherDerived>
 				ArticulatedBodyInertia(const ::Eigen::DenseBase<OtherDerived>& other) :
 					centerOfGravityData(other.template topRightCorner<3, 3>()),
@@ -82,16 +89,20 @@ namespace rl
 				
 				static ArticulatedBodyInertia Identity()
 				{
-					ArticulatedBodyInertia res;
-					res.setIdentity();
-					return res;
+					return ArticulatedBodyInertia(
+						CenterOfGravityType::Identity(),
+						InertiaType::Identity(),
+						MassType::Identity()
+					);
 				}
 				
 				static ArticulatedBodyInertia Zero()
 				{
-					ArticulatedBodyInertia res;
-					res.setZero();
-					return res;
+					return ArticulatedBodyInertia(
+						CenterOfGravityType::Zero(),
+						InertiaType::Zero(),
+						MassType::Zero()
+					);
 				}
 				
 				CenterOfGravityType& cog()

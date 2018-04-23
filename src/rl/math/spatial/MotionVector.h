@@ -78,9 +78,7 @@ namespace rl
 				
 				static MotionVector Zero()
 				{
-					MotionVector res;
-					res.setZero();
-					return res;
+					return MotionVector(MatrixType::Zero());
 				}
 				
 				AngularType angular()

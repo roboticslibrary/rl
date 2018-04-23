@@ -77,9 +77,7 @@ namespace rl
 				
 				static ForceVector Zero()
 				{
-					ForceVector res;
-					res.setZero();
-					return res;
+					return ForceVector(MatrixType::Zero());
 				}
 				
 				template<typename OtherScalar>

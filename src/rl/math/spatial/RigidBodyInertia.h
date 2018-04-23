@@ -68,6 +68,13 @@ namespace rl
 				{
 				}
 				
+				RigidBodyInertia(const CenterOfGravityType& centerOfGravity, const InertiaType& inertia, const MassType& mass) :
+					centerOfGravityData(centerOfGravity),
+					inertiaData(inertia),
+					massData(mass)
+				{
+				}
+				
 				template<typename OtherDerived>
 				RigidBodyInertia(const ::Eigen::DenseBase<OtherDerived>& other) :
 					centerOfGravityData(other.template topRightCorner<3, 3>().cross3()),
@@ -82,16 +89,20 @@ namespace rl
 				
 				static RigidBodyInertia Identity()
 				{
-					RigidBodyInertia res;
-					res.setIdentity();
-					return res;
+					return RigidBodyInertia(
+						CenterOfGravityType::Zero(),
+						InertiaType::Identity(),
+						1
+					);
 				}
 				
 				static RigidBodyInertia Zero()
 				{
-					RigidBodyInertia res;
-					res.setZero();
-					return res;
+					return RigidBodyInertia(
+						CenterOfGravityType::Zero(),
+						InertiaType::Zero(),
+						0
+					);
 				}
 				
 				CenterOfGravityType& cog()

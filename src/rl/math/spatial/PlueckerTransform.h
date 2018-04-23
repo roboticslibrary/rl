@@ -74,6 +74,12 @@ namespace rl
 				{
 				}
 				
+				PlueckerTransform(const RotationType& rotation, const TranslationType& translation) :
+					rotationData(rotation),
+					translationData(translation)
+				{
+				}
+				
 				template<typename OtherScalar, int Dim, int Mode, int Options>
 				PlueckerTransform(const ::Eigen::Transform<OtherScalar, Dim, Mode, Options>& other) :
 					rotationData(other.linear()),
@@ -87,9 +93,10 @@ namespace rl
 				
 				static PlueckerTransform Identity()
 				{
-					PlueckerTransform res;
-					res.setIdentity();
-					return res;
+					return PlueckerTransform(
+						RotationType::Identity(),
+						TransformType::Zero()
+					);
 				}
 				
 				PlueckerTransform inverse() const
