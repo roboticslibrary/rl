@@ -226,8 +226,7 @@ namespace rl
 ::std::cout << "\torigin.translation: " << fixed->t.translation().transpose() << ::std::endl;
 ::std::cout << "\torigin.rotation: " << fixed->t.rotation().eulerAngles(2, 1, 0).reverse().transpose() * ::rl::math::RAD2DEG << ::std::endl;
 				
-				fixed->x.rotation() = fixed->t.linear().transpose();
-				fixed->x.translation() = fixed->t.translation();
+				fixed->x = fixed->t;
 				
 				// joint
 				
