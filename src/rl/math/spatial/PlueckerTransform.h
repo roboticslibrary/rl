@@ -74,8 +74,8 @@ namespace rl
 				{
 				}
 				
-				template<typename Scalar, int Dim, int Mode, int Options>
-				PlueckerTransform(const ::Eigen::Transform<Scalar, Dim, Mode, Options>& other) :
+				template<typename OtherScalar, int Dim, int Mode, int Options>
+				PlueckerTransform(const ::Eigen::Transform<OtherScalar, Dim, Mode, Options>& other) :
 					rotationData(other.linear()),
 					translationData(other.translation())
 				{
@@ -139,8 +139,8 @@ namespace rl
 					return res;
 				}
 				
-				template<typename Scalar, int Dim, int Mode, int Options>
-				PlueckerTransform& operator=(const ::Eigen::Transform<Scalar, Dim, Mode, Options>& other)
+				template<typename OtherScalar, int Dim, int Mode, int Options>
+				PlueckerTransform& operator=(const ::Eigen::Transform<OtherScalar, Dim, Mode, Options>& other)
 				{
 					rotation() = other.linear();
 					translation() = other.translation();
