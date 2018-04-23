@@ -437,7 +437,7 @@ namespace rl
 						
 						// uniform sampling for orientation
 						
-						chosen.linear() = ::rl::math::Matrix33(::rl::math::Quaternion::Random(::rl::math::Vector3(this->rand(), this->rand(), this->rand())));
+						chosen.linear() = ::rl::math::Quaternion::Random(::rl::math::Vector3(this->rand(), this->rand(), this->rand())).toRotationMatrix();
 						
 						nearest = this->nearest(this->tree[0], chosen); // nearest vertex in tree
 						

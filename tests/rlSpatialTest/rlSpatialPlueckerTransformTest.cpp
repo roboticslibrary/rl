@@ -35,17 +35,17 @@ int
 main(int argc, char** argv)
 {
 	rl::math::Transform t0;
-	t0 = rl::math::Quaternion::Random();
+	t0.linear() = rl::math::Quaternion::Random().toRotationMatrix();
 	t0.translation().setRandom();
 	
 	rl::math::PlueckerTransform pt0;
-	pt0.rotation() = t0.linear();
+	pt0.linear() = t0.linear();
 	pt0.translation() = t0.translation();
 	
-	if (!pt0.rotation().isApprox(t0.linear()) || !pt0.translation().isApprox(t0.translation()))
+	if (!pt0.linear().isApprox(t0.linear()) || !pt0.translation().isApprox(t0.translation()))
 	{
 		std::cerr << "pt0 != t0" << std::endl;
-		std::cerr << "pt0.rotation = " << std::endl << pt0.rotation() << std::endl;
+		std::cerr << "pt0.rotation = " << std::endl << pt0.linear() << std::endl;
 		std::cerr << "pt0.translation = " << pt0.translation().transpose() << std::endl;
 		std::cerr << "t0.linear = " << std::endl << t0.linear() << std::endl;
 		std::cerr << "t0.translation = " << t0.translation().transpose() << std::endl;
@@ -53,15 +53,15 @@ main(int argc, char** argv)
 	}
 	
 	rl::math::Transform t1;
-	t1 = rl::math::Quaternion::Random();
+	t1.linear() = rl::math::Quaternion::Random().toRotationMatrix();
 	t1.translation().setRandom();
 	
 	rl::math::PlueckerTransform pt1(t1);
 	
-	if (!pt1.rotation().isApprox(t1.linear()) || !pt1.translation().isApprox(t1.translation()))
+	if (!pt1.linear().isApprox(t1.linear()) || !pt1.translation().isApprox(t1.translation()))
 	{
 		std::cerr << "pt1(t1) != t1" << std::endl;
-		std::cerr << "pt1(t1).rotation = " << std::endl << pt1.rotation() << std::endl;
+		std::cerr << "pt1(t1).rotation = " << std::endl << pt1.linear() << std::endl;
 		std::cerr << "pt1(t1).translation = " << pt1.translation().transpose() << std::endl;
 		std::cerr << "t1.linear = " << std::endl << t1.linear() << std::endl;
 		std::cerr << "t1.translation = " << t1.translation().transpose() << std::endl;
@@ -69,15 +69,15 @@ main(int argc, char** argv)
 	}
 	
 	rl::math::Transform t2;
-	t2 = rl::math::Quaternion::Random();
+	t2.linear() = rl::math::Quaternion::Random().toRotationMatrix();
 	t2.translation().setRandom();
 	
 	rl::math::PlueckerTransform pt2 = t2;
 	
-	if (!pt2.rotation().isApprox(t2.linear()) || !pt2.translation().isApprox(t2.translation()))
+	if (!pt2.linear().isApprox(t2.linear()) || !pt2.translation().isApprox(t2.translation()))
 	{
 		std::cerr << "(pt2 = t2) != t2" << std::endl;
-		std::cerr << "(pt2 = t2).rotation = " << std::endl << pt2.rotation() << std::endl;
+		std::cerr << "(pt2 = t2).rotation = " << std::endl << pt2.linear() << std::endl;
 		std::cerr << "(pt2 = t2).translation = " << pt2.translation().transpose() << std::endl;
 		std::cerr << "t2.linear = " << std::endl << t2.linear() << std::endl;
 		std::cerr << "t2.translation = " << t2.translation().transpose() << std::endl;
@@ -87,10 +87,10 @@ main(int argc, char** argv)
 	rl::math::Transform t3 = t1 * t2;
 	rl::math::PlueckerTransform pt3 = pt1 * pt2;
 	
-	if (!pt3.rotation().isApprox(t3.linear()) || !pt3.translation().isApprox(t3.translation()))
+	if (!pt3.linear().isApprox(t3.linear()) || !pt3.translation().isApprox(t3.translation()))
 	{
 		std::cerr << "pt1 * pt2 != t1 * t2" << std::endl;
-		std::cerr << "(pt1 * pt2).rotation = " << std::endl << pt3.rotation() << std::endl;
+		std::cerr << "(pt1 * pt2).rotation = " << std::endl << pt3.linear() << std::endl;
 		std::cerr << "(pt1 * pt2).translation = " << pt3.translation().transpose() << std::endl;
 		std::cerr << "(t1 * t2).linear = " << std::endl << t3.linear() << std::endl;
 		std::cerr << "(t1 * t2).translation = " << t3.translation().transpose() << std::endl;
@@ -100,20 +100,20 @@ main(int argc, char** argv)
 	rl::math::Transform t4 = t1.inverse() * t3;
 	rl::math::PlueckerTransform pt4 = pt1.inverse() * pt3;
 	
-	if (!pt4.rotation().isApprox(pt2.rotation()) || !pt4.translation().isApprox(pt2.translation()))
+	if (!pt4.linear().isApprox(pt2.linear()) || !pt4.translation().isApprox(pt2.translation()))
 	{
 		std::cerr << "inv(pt1) * pt1 * pt2 != pt2" << std::endl;
-		std::cerr << "(inv(pt1) * pt1 * pt2).rotation = " << std::endl << pt4.rotation() << std::endl;
+		std::cerr << "(inv(pt1) * pt1 * pt2).rotation = " << std::endl << pt4.linear() << std::endl;
 		std::cerr << "(inv(pt1) * pt1 * pt2).translation = " << pt4.translation().transpose() << std::endl;
-		std::cerr << "pt2.rotation = " << std::endl << pt2.rotation().matrix() << std::endl;
+		std::cerr << "pt2.rotation = " << std::endl << pt2.linear().matrix() << std::endl;
 		std::cerr << "pt2.translation = " << pt2.translation().transpose() << std::endl;
 		exit(EXIT_FAILURE);
 	}
 	
-	if (!pt4.rotation().isApprox(t4.linear()) || !pt4.translation().isApprox(t4.translation()))
+	if (!pt4.linear().isApprox(t4.linear()) || !pt4.translation().isApprox(t4.translation()))
 	{
 		std::cerr << "inv(pt1) * pt3 != inv(t1) * t3" << std::endl;
-		std::cerr << "(inv(pt1) * pt3).rotation = " << std::endl << pt4.rotation() << std::endl;
+		std::cerr << "(inv(pt1) * pt3).rotation = " << std::endl << pt4.linear() << std::endl;
 		std::cerr << "(inv(pt1) * pt3).translation = " << pt4.translation().transpose() << std::endl;
 		std::cerr << "(inv(t1) * t3).linear = " << std::endl << t4.linear() << std::endl;
 		std::cerr << "(inv(t1) * t3).translation = " << t4.translation().transpose() << std::endl;
@@ -124,12 +124,12 @@ main(int argc, char** argv)
 	pt5.setIdentity();
 	rl::math::PlueckerTransform pt6 = pt1.inverse() * pt1;
 	
-	if (!pt5.rotation().isApprox(pt6.rotation()) || !pt5.translation().isMuchSmallerThan(pt6.translation()))
+	if (!pt5.linear().isApprox(pt6.linear()) || !pt5.translation().isMuchSmallerThan(pt6.translation()))
 	{
 		std::cerr << "I != inv(pt1) * pt1" << std::endl;
-		std::cerr << "I.rotation = " << std::endl << pt5.rotation().matrix() << std::endl;
+		std::cerr << "I.rotation = " << std::endl << pt5.linear().matrix() << std::endl;
 		std::cerr << "I.translation = " << pt5.translation().transpose() << std::endl;
-		std::cerr << "(inv(pt1) * pt1).rotation = " << std::endl << pt6.rotation() << std::endl;
+		std::cerr << "(inv(pt1) * pt1).rotation = " << std::endl << pt6.linear() << std::endl;
 		std::cerr << "(inv(pt1) * pt1).translation = " << pt6.translation().transpose() << std::endl;
 		exit(EXIT_FAILURE);
 	}

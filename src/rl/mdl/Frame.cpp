@@ -38,7 +38,6 @@ namespace rl
 			i(),
 			iA(),
 			pA(),
-			t(),
 			v(),
 			x(),
 			descriptor()
@@ -49,7 +48,6 @@ namespace rl
 			this->i.setIdentity(); // TODO
 			this->iA.setIdentity(); // TODO
 			this->pA.setZero(); // TODO
-			this->t.setIdentity(); // TODO
 			this->v.setZero(); // TODO
 			this->x.setIdentity(); // TODO
 		}

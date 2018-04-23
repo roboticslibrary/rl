@@ -59,18 +59,15 @@ namespace rl
 		Helical::setPitch(const ::rl::math::Real& h)
 		{
 			this->h = h;
-			this->t.translation() = this->S.block<3, 1>(3, 0) * this->h * (this->q(0) + this->offset(0));
-			this->x.translation() = this->t.translation();
+			this->x.translation() = this->S.block<3, 1>(3, 0) * this->h * (this->q(0) + this->offset(0));
 		}
 		
 		void
 		Helical::setPosition(const ::rl::math::ConstVectorRef& q)
 		{
 			this->q = q;
-			this->t = ::rl::math::AngleAxis(this->q(0), this->S.block<3, 1>(0, 0));
-			this->x.rotation() = this->t.linear();
-			this->t.translation() = this->S.block<3, 1>(3, 0) * this->h * (this->q(0) + this->offset(0));
-			this->x.translation() = this->t.translation();
+			this->x.linear() = ::rl::math::AngleAxis(this->q(0), this->S.block<3, 1>(0, 0)).toRotationMatrix();
+			this->x.translation() = this->S.block<3, 1>(3, 0) * this->h * (this->q(0) + this->offset(0));
 		}
 	}
 }

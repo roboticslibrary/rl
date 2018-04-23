@@ -153,7 +153,7 @@ namespace rl
 						
 						model->add(w);
 						
-						w->t = ::rl::math::AngleAxis(
+						w->x.linear() = ::rl::math::AngleAxis(
 							path.eval("number(rotation/z)").getValue< ::rl::math::Real>(0) * ::rl::math::DEG2RAD,
 							::rl::math::Vector3::UnitZ()
 						) * ::rl::math::AngleAxis(
@@ -162,11 +162,11 @@ namespace rl
 						) * ::rl::math::AngleAxis(
 							path.eval("number(rotation/x)").getValue< ::rl::math::Real>(0) * ::rl::math::DEG2RAD,
 							::rl::math::Vector3::UnitX()
-						);
+						).toRotationMatrix();
 						
-						w->t.translation().x() = path.eval("number(translation/x)").getValue< ::rl::math::Real>(0);
-						w->t.translation().y() = path.eval("number(translation/y)").getValue< ::rl::math::Real>(0);
-						w->t.translation().z() = path.eval("number(translation/z)").getValue< ::rl::math::Real>(0);
+						w->x.translation().x() = path.eval("number(translation/x)").getValue< ::rl::math::Real>(0);
+						w->x.translation().y() = path.eval("number(translation/y)").getValue< ::rl::math::Real>(0);
+						w->x.translation().z() = path.eval("number(translation/z)").getValue< ::rl::math::Real>(0);
 						
 						w->setGravity(
 							path.eval("number(g/x)").getValue< ::rl::math::Real>(0),
@@ -297,7 +297,7 @@ namespace rl
 						
 						model->add(f, a, b);
 						
-						f->t = ::rl::math::AngleAxis(
+						f->x.linear() = ::rl::math::AngleAxis(
 							path.eval("number(rotation/z)").getValue< ::rl::math::Real>(0) * ::rl::math::DEG2RAD,
 							::rl::math::Vector3::UnitZ()
 						) * ::rl::math::AngleAxis(
@@ -306,13 +306,11 @@ namespace rl
 						) * ::rl::math::AngleAxis(
 							path.eval("number(rotation/x)").getValue< ::rl::math::Real>(0) * ::rl::math::DEG2RAD,
 							::rl::math::Vector3::UnitX()
-						);
+						).toRotationMatrix();
 						
-						f->t.translation().x() = path.eval("number(translation/x)").getValue< ::rl::math::Real>(0);
-						f->t.translation().y() = path.eval("number(translation/y)").getValue< ::rl::math::Real>(0);
-						f->t.translation().z() = path.eval("number(translation/z)").getValue< ::rl::math::Real>(0);
-						
-						f->x = f->t;
+						f->x.translation().x() = path.eval("number(translation/x)").getValue< ::rl::math::Real>(0);
+						f->x.translation().y() = path.eval("number(translation/y)").getValue< ::rl::math::Real>(0);
+						f->x.translation().z() = path.eval("number(translation/z)").getValue< ::rl::math::Real>(0);
 						
 						transform = f;
 					}

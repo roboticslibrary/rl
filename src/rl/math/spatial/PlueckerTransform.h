@@ -60,30 +60,25 @@ namespace rl
 				
 				typedef ::Eigen::Matrix<Scalar, 6, 6> MatrixType;
 				
-				typedef ::Eigen::Matrix<Scalar, 3, 3> RotationType;
-				
-				typedef const RotationType ConstRotationType;
-				
 				typedef ::Eigen::Transform<Scalar, 3, ::Eigen::Affine> TransformType;
 				
-				typedef ::Eigen::Matrix<Scalar, 3, 1> TranslationType;
+				typedef const TransformType ConstTransformType;
 				
-				typedef const TranslationType ConstTranslationType;
+				typedef typename TransformType::LinearPart LinearPart;
+				
+				typedef typename TransformType::ConstLinearPart ConstLinearPart;
+				
+				typedef typename TransformType::TranslationPart TranslationPart;
+				
+				typedef typename TransformType::ConstTranslationPart ConstTranslationPart;
 				
 				PlueckerTransform()
 				{
 				}
 				
-				PlueckerTransform(const RotationType& rotation, const TranslationType& translation) :
-					rotationData(rotation),
-					translationData(translation)
-				{
-				}
-				
 				template<typename OtherScalar, int Dim, int Mode, int Options>
 				PlueckerTransform(const ::Eigen::Transform<OtherScalar, Dim, Mode, Options>& other) :
-					rotationData(other.linear()),
-					translationData(other.translation())
+					data(other)
 				{
 				}
 				
@@ -93,72 +88,71 @@ namespace rl
 				
 				static PlueckerTransform Identity()
 				{
-					return PlueckerTransform(
-						RotationType::Identity(),
-						TransformType::Zero()
-					);
+					return PlueckerTransform(TransformType::Identity());
 				}
 				
 				PlueckerTransform inverse() const
 				{
-					PlueckerTransform res;
-					res.rotation() = rotation().transpose();
-					res.translation() = -rotation().transpose() * translation();
-					return res;
+					return PlueckerTransform(data.inverse());
 				}
 				
 				MatrixType inverseForce() const
 				{
 					MatrixType res;
-					res.template topLeftCorner<3, 3>() = rotation();
-					res.template topRightCorner<3, 3>() = translation().cross33() * rotation();
+					res.template topLeftCorner<3, 3>() = linear();
+					res.template topRightCorner<3, 3>() = translation().cross33() * linear();
 					res.template bottomLeftCorner<3, 3>().setZero();
-					res.template bottomRightCorner<3, 3>() = rotation();
+					res.template bottomRightCorner<3, 3>() = linear();
 					return res;
 				}
 				
 				MatrixType inverseMotion() const
 				{
 					MatrixType res;
-					res.template topLeftCorner<3, 3>() = rotation();
+					res.template topLeftCorner<3, 3>() = linear();
 					res.template topRightCorner<3, 3>().setZero();
-					res.template bottomLeftCorner<3, 3>() = translation().cross33() * rotation();
-					res.template bottomRightCorner<3, 3>() = rotation();
+					res.template bottomLeftCorner<3, 3>() = translation().cross33() * linear();
+					res.template bottomRightCorner<3, 3>() = linear();
 					return res;
 				}
 				
 				template<typename OtherScalar>
 				bool isApprox(const PlueckerTransform<OtherScalar>& other, const typename ::Eigen::NumTraits<Scalar>::Real& prec = ::Eigen::NumTraits<Scalar>::dummy_precision()) const
 				{
-					return rotation().isApprox(other.rotation(), prec) && translation().isApprox(other.translation(), prec);
+					return data.isApprox(other.data, prec);
 				}
 				
 				MatrixType matrixForce() const
 				{
 					MatrixType res;
-					res.template topLeftCorner<3, 3>() = rotation().transpose();
-					res.template topRightCorner<3, 3>() = -rotation().transpose() * translation().cross33();
+					res.template topLeftCorner<3, 3>() = linear().transpose();
+					res.template topRightCorner<3, 3>() = -linear().transpose() * translation().cross33();
 					res.template bottomLeftCorner<3, 3>().setZero();
-					res.template bottomRightCorner<3, 3>() = rotation().transpose();
+					res.template bottomRightCorner<3, 3>() = linear().transpose();
 					return res;
 				}
 				
 				MatrixType matrixMotion() const
 				{
 					MatrixType res;
-					res.template topLeftCorner<3, 3>() = rotation().transpose();
+					res.template topLeftCorner<3, 3>() = linear().transpose();
 					res.template topRightCorner<3, 3>().setZero();
-					res.template bottomLeftCorner<3, 3>() = -rotation().transpose() * translation().cross33();
-					res.template bottomRightCorner<3, 3>() = rotation().transpose();
+					res.template bottomLeftCorner<3, 3>() = -linear().transpose() * translation().cross33();
+					res.template bottomRightCorner<3, 3>() = linear().transpose();
 					return res;
 				}
 				
 				template<typename OtherScalar, int Dim, int Mode, int Options>
 				PlueckerTransform& operator=(const ::Eigen::Transform<OtherScalar, Dim, Mode, Options>& other)
 				{
-					rotation() = other.linear();
-					translation() = other.translation();
+					data = other;
 					return *this;
+				}
+				
+				template<typename OtherScalar, int Dim, int Mode, int Options>
+				::Eigen::Transform<OtherScalar, Dim, Mode, Options> operator*(const ::Eigen::Transform<OtherScalar, Dim, Mode, Options>& other) const
+				{
+					return data * other;
 				}
 				
 				template<typename OtherScalar>
@@ -170,10 +164,7 @@ namespace rl
 				template<typename OtherScalar>
 				PlueckerTransform operator*(const PlueckerTransform<OtherScalar>& other) const
 				{
-					PlueckerTransform res;
-					res.rotation() = rotation() * other.rotation();
-					res.translation() = rotation() * other.translation() + translation();
-					return res;
+					return PlueckerTransform(data * other.data);
 				}
 				
 				template<typename OtherScalar>
@@ -194,46 +185,45 @@ namespace rl
 				template<typename OtherScalar>
 				ArticulatedBodyInertia<OtherScalar> operator/(const ArticulatedBodyInertia<OtherScalar>& other) const;
 				
-				RotationType& rotation()
+				LinearPart linear()
 				{
-					return rotationData;
+					return data.linear();
 				}
 				
-				ConstRotationType& rotation() const
+				ConstLinearPart linear() const
 				{
-					return rotationData;
+					return data.linear();
 				}
 				
 				void setIdentity()
 				{
-					rotation().setIdentity();
-					translation().setZero();
+					data.setIdentity();
 				}
 				
-				TransformType transform() const
+				TransformType& transform()
 				{
-					TransformType res;
-					res.linear() = rotation();
-					res.translation() = translation();
-					return res;
+					return data;
 				}
 				
-				TranslationType& translation()
+				ConstTransformType transform() const
 				{
-					return translationData;
+					return data;
 				}
 				
-				ConstTranslationType& translation() const
+				TranslationPart translation()
 				{
-					return translationData;
+					return data.translation();
+				}
+				
+				ConstTranslationPart translation() const
+				{
+					return data.translation();
 				}
 				
 			protected:
 				
 			private:
-				RotationType rotationData;
-				
-				TranslationType translationData;
+				TransformType data;
 			};
 		}
 	}

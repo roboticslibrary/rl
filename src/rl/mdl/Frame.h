@@ -90,8 +90,6 @@ namespace rl
 			
 			::rl::math::ForceVector pA;
 			
-			::rl::math::Transform t;
-			
 			::rl::math::MotionVector v;
 			
 			::rl::math::PlueckerTransform x;

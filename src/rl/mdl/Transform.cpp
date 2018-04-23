@@ -35,11 +35,9 @@ namespace rl
 			Element(),
 			in(nullptr),
 			out(nullptr),
-			t(),
 			x(),
 			descriptor()
 		{
-			this->t.setIdentity(); // TODO
 			this->x.setIdentity(); // TODO
 		}
 		
@@ -83,8 +81,7 @@ namespace rl
 		void
 		Transform::forwardPosition()
 		{
-			this->out->t = this->in->t * this->t;
-			this->out->x = this->out->t;
+			this->out->x = this->in->x * this->x;
 		}
 		
 		void

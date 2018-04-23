@@ -122,8 +122,7 @@ namespace rl
 		Revolute::setPosition(const ::rl::math::ConstVectorRef& q)
 		{
 			this->q = q;
-			this->t = ::rl::math::AngleAxis(this->q(0) + this->offset(0), this->S.block<3, 1>(0, 0));
-			this->x.rotation() = this->t.linear();
+			this->x.linear() = ::rl::math::AngleAxis(this->q(0) + this->offset(0), this->S.block<3, 1>(0, 0)).toRotationMatrix();
 		}
 		
 		::rl::math::Real

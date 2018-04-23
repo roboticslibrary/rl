@@ -111,7 +111,7 @@ main(int argc, char** argv)
 	}
 	
 	rl::math::PlueckerTransform pt;
-	pt.rotation() = rl::math::Matrix33(rl::math::Quaternion::Random());
+	pt.linear() = rl::math::Quaternion::Random().toRotationMatrix();
 	pt.translation().setRandom();
 	
 	rl::math::Matrix66 m1 = (pt * mv1).cross66Motion();

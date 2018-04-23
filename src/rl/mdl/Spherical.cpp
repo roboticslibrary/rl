@@ -113,8 +113,7 @@ namespace rl
 		Spherical::setPosition(const ::rl::math::ConstVectorRef& q)
 		{
 			this->q = q;
-			this->t = ::Eigen::Map<const ::rl::math::Quaternion>(this->q.data());
-			this->x.rotation() = this->t.linear();
+			this->x.linear() = ::Eigen::Map<const ::rl::math::Quaternion>(this->q.data()).toRotationMatrix();
 		}
 		
 		void

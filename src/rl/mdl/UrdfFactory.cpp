@@ -201,7 +201,7 @@ namespace rl
 					::std::string tmp = path.eval("string(origin/@rpy)").getValue< ::std::string>();
 					::boost::split(rpy, tmp, ::boost::algorithm::is_space(), ::boost::algorithm::token_compress_on);
 					
-					fixed->t = ::rl::math::AngleAxis(
+					fixed->x.linear() = ::rl::math::AngleAxis(
 						::boost::lexical_cast< ::rl::math::Real>(rpy[2]),
 						 ::rl::math::Vector3::UnitZ()
 					) * ::rl::math::AngleAxis(
@@ -210,7 +210,7 @@ namespace rl
 					) * ::rl::math::AngleAxis(
 						::boost::lexical_cast< ::rl::math::Real>(rpy[0]),
 						::rl::math::Vector3::UnitX()
-					);
+					).toRotationMatrix();
 				}
 				
 				if (path.eval("count(origin/@xyz) > 0").getValue<bool>())
@@ -219,14 +219,12 @@ namespace rl
 					::std::string tmp = path.eval("string(origin/@xyz)").getValue< ::std::string>();
 					::boost::split(xyz, tmp, ::boost::algorithm::is_space(), ::boost::algorithm::token_compress_on);
 					
-					fixed->t.translation().x() = ::boost::lexical_cast< ::rl::math::Real>(xyz[0]);
-					fixed->t.translation().y() = ::boost::lexical_cast< ::rl::math::Real>(xyz[1]);
-					fixed->t.translation().z() = ::boost::lexical_cast< ::rl::math::Real>(xyz[2]);
+					fixed->x.translation().x() = ::boost::lexical_cast< ::rl::math::Real>(xyz[0]);
+					fixed->x.translation().y() = ::boost::lexical_cast< ::rl::math::Real>(xyz[1]);
+					fixed->x.translation().z() = ::boost::lexical_cast< ::rl::math::Real>(xyz[2]);
 				}
-::std::cout << "\torigin.translation: " << fixed->t.translation().transpose() << ::std::endl;
-::std::cout << "\torigin.rotation: " << fixed->t.rotation().eulerAngles(2, 1, 0).reverse().transpose() * ::rl::math::RAD2DEG << ::std::endl;
-				
-				fixed->x = fixed->t;
+::std::cout << "\torigin.translation: " << fixed->x.translation().transpose() << ::std::endl;
+::std::cout << "\torigin.rotation: " << fixed->x.linear().eulerAngles(2, 1, 0).reverse().transpose() * ::rl::math::RAD2DEG << ::std::endl;
 				
 				// joint
 				

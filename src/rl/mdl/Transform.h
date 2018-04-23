@@ -83,8 +83,6 @@ namespace rl
 			
 			Frame* out;
 			
-			::rl::math::Transform t;
-			
 			::rl::math::PlueckerTransform x;
 			
 		protected:

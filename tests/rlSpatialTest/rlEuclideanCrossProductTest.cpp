@@ -61,7 +61,7 @@ main(int argc, char** argv)
 		exit(EXIT_FAILURE);
 	}
 	
-	rl::math::Matrix33 r = rl::math::Matrix33(rl::math::Quaternion::Random());
+	rl::math::Matrix33 r = rl::math::Quaternion::Random().toRotationMatrix();
 	
 	rl::math::Matrix33 m3a = (r * a).cross33();
 	rl::math::Matrix33 m3b = r * a.cross33() * r.transpose();

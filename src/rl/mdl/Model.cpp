@@ -213,7 +213,7 @@ namespace rl
 		{
 			assert(i < this->getBodies());
 			
-			return this->bodies[i]->t;
+			return this->bodies[i]->x.transform();
 		}
 		
 		const ::rl::math::Matrix&
@@ -287,7 +287,7 @@ namespace rl
 		{
 			assert(i < this->getOperationalDof());
 			
-			return this->tree[this->leaves[i]]->t;
+			return this->tree[this->leaves[i]]->x.transform();
 		}
 		
 		const ::rl::math::MotionVector&
@@ -589,7 +589,7 @@ namespace rl
 		{
 			assert(i < this->tools.size());
 			
-			return this->tree[this->tools[i]]->t;
+			return this->tree[this->tools[i]]->x.transform();
 		}
 		
 		const ::rl::math::Transform&
@@ -597,7 +597,7 @@ namespace rl
 		{
 			assert(i < this->tools.size());
 			
-			return this->tree[this->tools[i]]->t;
+			return this->tree[this->tools[i]]->x.transform();
 		}
 		
 		void
@@ -671,13 +671,13 @@ namespace rl
 		::rl::math::Transform&
 		Model::world()
 		{
-			return this->tree[this->root]->t;
+			return this->tree[this->root]->x.transform();
 		}
 		
 		const ::rl::math::Transform&
 		Model::world() const
 		{
-			return this->tree[this->root]->t;
+			return this->tree[this->root]->x.transform();
 		}
 	}
 }

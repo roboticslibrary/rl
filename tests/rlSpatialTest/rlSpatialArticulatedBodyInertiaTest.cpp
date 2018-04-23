@@ -76,7 +76,7 @@ main(int argc, char** argv)
 	}
 	
 	rl::math::PlueckerTransform pt1;
-	pt1.rotation() = rl::math::Matrix33(rl::math::Quaternion::Random());
+	pt1.linear() = rl::math::Quaternion::Random().toRotationMatrix();
 	pt1.translation().setRandom();
 	
 	rl::math::ArticulatedBodyInertia abi5 = pt1 * abi1;
