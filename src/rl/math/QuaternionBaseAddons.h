@@ -205,8 +205,8 @@ setFromUniform(const Vector3& rand)
 	
 	Scalar sigma1 = sqrt(Scalar(1) - rand(0));
 	Scalar sigma2 = sqrt(rand(0));
-	Scalar theta1 = Scalar(2 * EIGEN_PI) * rand(1);
-	Scalar theta2 = Scalar(2 * EIGEN_PI) * rand(2);
+	Scalar theta1 = Scalar(2 * M_PI) * rand(1);
+	Scalar theta2 = Scalar(2 * M_PI) * rand(2);
 	
 	this->derived().x() = sin(theta1) * sigma1;
 	this->derived().y() = cos(theta1) * sigma1;
