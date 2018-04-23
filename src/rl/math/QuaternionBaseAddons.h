@@ -31,6 +31,33 @@
 namespace Eigen { template<typename Derived> class QuaternionBase {
 #endif
 
+template<typename OtherDerived, typename Derived2>
+static Quaternion<Scalar> GaussianRandom(const QuaternionBase<OtherDerived>& mean, const MatrixBase<Derived2>& sigma)
+{
+	return GaussianRandom(Vector3::Random(), mean, sigma);
+}
+
+template<typename Derived1, typename OtherDerived, typename Derived2>
+static Quaternion<Scalar> GaussianRandom(const MatrixBase<Derived1>& rand, const QuaternionBase<OtherDerived>& mean, const MatrixBase<Derived2>& sigma)
+{
+	Quaternion<Scalar> q;
+	q.setFromGaussian(rand, mean, sigma);
+	return q;
+}
+
+static Quaternion<Scalar> UniformRandom()
+{
+	return UniformRandom(Vector3::Random());
+}
+
+template<typename Derived>
+static Quaternion<Scalar> UniformRandom(const MatrixBase<Derived>& rand)
+{
+	Quaternion<Scalar> q;
+	q.setFromUniform(rand);
+	return q;
+}
+
 template<typename OtherDerived>
 Vector3
 angularVelocity(const QuaternionBase<OtherDerived>& qd) const
@@ -71,9 +98,11 @@ exp() const
 	return q;
 }
 
+template<typename Derived>
 Quaternion<Scalar>
-firstDerivative(const Vector3& omega) const
+firstDerivative(const MatrixBase<Derived>& omega) const
 {
+	eigen_assert(3 == omega.size());
 	return (Quaternion<Scalar>(Scalar(0), omega.x(), omega.y(), omega.z()) * this->derived()) * Scalar(0.5);
 }
 
@@ -146,10 +175,12 @@ pow(const Scalar& t) const
 	return (this->derived().log() * Scalar(t)).exp();
 }
 
-template<typename OtherDerived>
+template<typename OtherDerived, typename Derived1, typename Derived2>
 Quaternion<Scalar>
-secondDerivative(const QuaternionBase<OtherDerived>& qd, const Vector3& omega, const Vector3& omegad) const
+secondDerivative(const QuaternionBase<OtherDerived>& qd, const MatrixBase<Derived1>& omega, const MatrixBase<Derived2>& omegad) const
 {
+	eigen_assert(3 == omega.size());
+	eigen_assert(3 == omegad.size());
 	return (Quaternion<Scalar>(Scalar(0), omegad.x(), omegad.y(), omegad.z()) * this->derived() + Quaternion<Scalar>(Scalar(0), omega.x(), omega.y(), omega.z()) * qd) * Scalar(0.5);
 }
 
@@ -162,10 +193,12 @@ secondDerivative(const QuaternionBase<OtherDerived>& qd, const Vector3& omega, c
  * 
  * http://characters.media.mit.edu/Theses/johnson_phd.pdf
  */
-template<typename OtherDerived>
+template<typename Derived1, typename OtherDerived, typename Derived2>
 void
-setFromGaussian(const Vector3& rand, const QuaternionBase<OtherDerived>& mean, const Vector3& sigma)
+setFromGaussian(const MatrixBase<Derived1>& rand, const QuaternionBase<OtherDerived>& mean, const MatrixBase<Derived2>& sigma)
 {
+	eigen_assert(3 == rand.size());
+	eigen_assert(3 == sigma.size());
 	eigen_assert(rand(0) >= Scalar(0));
 	eigen_assert(rand(0) <= Scalar(1));
 	eigen_assert(rand(1) >= Scalar(0));
@@ -189,13 +222,15 @@ setFromGaussian(const Vector3& rand, const QuaternionBase<OtherDerived>& mean, c
  * 
  * https://doi.org/10.1109/ROBOT.2004.1308895
  */
+template<typename Derived>
 void
-setFromUniform(const Vector3& rand)
+setFromUniform(const MatrixBase<Derived>& rand)
 {
 	using ::std::cos;
 	using ::std::sin;
 	using ::std::sqrt;
 	
+	eigen_assert(3 == rand.size());
 	eigen_assert(rand(0) >= Scalar(0));
 	eigen_assert(rand(0) <= Scalar(1));
 	eigen_assert(rand(1) >= Scalar(0));
