@@ -7,7 +7,6 @@ if(BUILD_RL_MATH)
 	add_subdirectory(rlQuaternionDemo)
 	add_subdirectory(rlPolynomialRootsDemo)
 	add_subdirectory(rlRotationConverterDemo)
-	add_subdirectory(rlSpatialDemo)
 	add_subdirectory(rlTrapezoidalVelocityDemo)
 endif()
 
