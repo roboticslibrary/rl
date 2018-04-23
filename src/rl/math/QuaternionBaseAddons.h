@@ -48,8 +48,8 @@ angularAcceleration(const QuaternionBase<OtherDerived1>& qd, const QuaternionBas
 Quaternion<Scalar>
 exp() const
 {
-	EIGEN_USING_STD_MATH(cos);
-	EIGEN_USING_STD_MATH(sin);
+	using ::std::cos;
+	using ::std::sin;
 	
 	Scalar theta = this->derived().vec().norm();
 	Scalar sinTheta = sin(theta);
@@ -86,8 +86,8 @@ Quaternion<Scalar> lerp(const Scalar& t, const QuaternionBase<OtherDerived>& oth
 Quaternion<Scalar>
 log() const
 {
-	EIGEN_USING_STD_MATH(acos);
-	EIGEN_USING_STD_MATH(sin);
+	using ::std::acos;
+	using ::std::sin;
 	
 	Scalar theta = acos(this->derived().w());
 	Scalar sinTheta = sin(theta);
@@ -192,9 +192,9 @@ setFromGaussian(const Vector3& rand, const QuaternionBase<OtherDerived>& mean, c
 void
 setFromUniform(const Vector3& rand)
 {
-	EIGEN_USING_STD_MATH(cos);
-	EIGEN_USING_STD_MATH(sin);
-	EIGEN_USING_STD_MATH(sqrt);
+	using ::std::cos;
+	using ::std::sin;
+	using ::std::sqrt;
 	
 	eigen_assert(rand(0) >= Scalar(0));
 	eigen_assert(rand(0) <= Scalar(1));

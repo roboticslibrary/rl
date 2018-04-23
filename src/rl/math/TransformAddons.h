@@ -36,8 +36,8 @@ inline
 Scalar
 distance(const Transform<Scalar, Dim, Mode, Options>& other, const Scalar& weight = 1) const
 {
-	EIGEN_USING_STD_MATH(pow);
-	EIGEN_USING_STD_MATH(sqrt);
+	using ::std::pow;
+	using ::std::sqrt;
 	
 	Quaternion<Scalar> q1(rotation());
 	Quaternion<Scalar> q2(other.rotation());
@@ -95,8 +95,8 @@ inline
 void
 fromDenavitHartenbergPaul(const Scalar& d, const Scalar& theta, const Scalar& a, const Scalar& alpha)
 {
-	EIGEN_USING_STD_MATH(cos);
-	EIGEN_USING_STD_MATH(sin);
+	using ::std::cos;
+	using ::std::sin;
 	
 	Scalar cosAlpha = cos(alpha);
 	Scalar cosTheta = cos(theta);
@@ -199,8 +199,8 @@ inline
 void
 toDenavitHartenbergPaul(Scalar& d, Scalar& theta, Scalar& a, Scalar& alpha) const
 {
-	EIGEN_USING_STD_MATH(abs);
-	EIGEN_USING_STD_MATH(atan2);
+	using ::std::abs;
+	using ::std::atan2;
 	
 	assert(abs((*this)(2, 0)) <= ::std::numeric_limits<Scalar>::epsilon());
 	
