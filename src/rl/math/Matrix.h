@@ -112,6 +112,16 @@ namespace rl
 		typedef ::Eigen::Ref<Matrix> MatrixRef;
 		
 		typedef ::Eigen::Ref<const Matrix> ConstMatrixRef;
+		
+		typedef ::Eigen::DiagonalMatrix<Real, ::Eigen::Dynamic, ::Eigen::Dynamic> DiagonalMatrix;
+		
+		typedef ::Eigen::DiagonalMatrix<Real, 2, 2> DiagonalMatrix22;
+		
+		typedef ::Eigen::DiagonalMatrix<Real, 3, 3> DiagonalMatrix33;
+		
+		typedef ::Eigen::DiagonalMatrix<Real, 4, 4> DiagonalMatrix44;
+		
+		typedef ::Eigen::DiagonalMatrix<Real, 6, 6> DiagonalMatrix66;
 	}
 }
 
