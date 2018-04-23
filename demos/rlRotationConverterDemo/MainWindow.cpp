@@ -57,7 +57,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	inputQuaternionGroupBox(new GroupBox(this)),
 	inputQuaternionModel(new QuaternionModel(this)),
 	inputQuaternionTableView(new TableView(this)),
-	inputRotationMatrix(rl::math::Rotation::Identity()),
+	inputRotationMatrix(rl::math::Matrix33::Identity()),
 	inputRotationMatrixGroupBox(new GroupBox(this)),
 	inputRotationMatrixModel(new RotationMatrixModel(this)),
 	inputRotationMatrixTableView(new TableView(this)),
@@ -70,7 +70,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	outputPrecision(8),
 	outputQuaternion(rl::math::Quaternion::Identity()),
 	outputQuaternionModel(new QuaternionModel(this)),
-	outputRotationMatrix(rl::math::Rotation::Identity()),
+	outputRotationMatrix(rl::math::Matrix33::Identity()),
 	outputRotationMatrixModel(new RotationMatrixModel(this)),
 	outputUnitRadians(false)
 {

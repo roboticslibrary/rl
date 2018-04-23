@@ -53,7 +53,7 @@ public:
 	
 	bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole); 
 	
-	rl::math::Rotation* rotation;
+	rl::math::Matrix33* rotation;
 	
 protected:
 	

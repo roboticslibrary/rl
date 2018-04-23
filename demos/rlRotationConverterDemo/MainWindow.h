@@ -121,7 +121,7 @@ private:
 	
 	TableView* inputQuaternionTableView;
 	
-	rl::math::Rotation inputRotationMatrix;
+	rl::math::Matrix33 inputRotationMatrix;
 	
 	GroupBox* inputRotationMatrixGroupBox;
 	
@@ -147,7 +147,7 @@ private:
 	
 	QuaternionModel* outputQuaternionModel;
 	
-	rl::math::Rotation outputRotationMatrix;
+	rl::math::Matrix33 outputRotationMatrix;
 	
 	RotationMatrixModel* outputRotationMatrixModel;
 	

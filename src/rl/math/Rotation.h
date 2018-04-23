@@ -39,20 +39,6 @@ namespace rl
 {
 	namespace math
 	{
-		typedef Matrix33 Rotation;
-		
-		typedef Matrix33Block RotationBlock;
-		
-		typedef Matrix33Column RotationColumn;
-		
-		typedef Matrix33Row RotationRow;
-		
-		typedef ConstMatrix33Block ConstRotationBlock;
-		
-		typedef ConstMatrix33Column ConstRotationColumn;
-		
-		typedef ConstMatrix33Row ConstRotationRow;
-		
 		typedef ::Eigen::AngleAxis<Real> AngleAxis;
 	}
 }
