@@ -85,6 +85,13 @@ namespace rl
 				{
 				}
 				
+				static PlueckerTransform Identity()
+				{
+					PlueckerTransform res;
+					res.setIdentity();
+					return res;
+				}
+				
 				PlueckerTransform inverse() const
 				{
 					PlueckerTransform res;

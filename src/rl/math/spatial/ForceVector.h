@@ -75,6 +75,13 @@ namespace rl
 				{
 				}
 				
+				static ForceVector Zero()
+				{
+					ForceVector res;
+					res.setZero();
+					return res;
+				}
+				
 				template<typename OtherScalar>
 				Scalar dot(const MotionVector<OtherScalar>& other) const;
 				

@@ -76,6 +76,13 @@ namespace rl
 				{
 				}
 				
+				static MotionVector Zero()
+				{
+					MotionVector res;
+					res.setZero();
+					return res;
+				}
+				
 				AngularType angular()
 				{
 					return data.template segment<3>(0);

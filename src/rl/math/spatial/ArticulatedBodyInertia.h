@@ -80,6 +80,20 @@ namespace rl
 				{
 				}
 				
+				static ArticulatedBodyInertia Identity()
+				{
+					ArticulatedBodyInertia res;
+					res.setIdentity();
+					return res;
+				}
+				
+				static ArticulatedBodyInertia Zero()
+				{
+					ArticulatedBodyInertia res;
+					res.setZero();
+					return res;
+				}
+				
 				CenterOfGravityType& cog()
 				{
 					return centerOfGravityData;
