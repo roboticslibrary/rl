@@ -50,6 +50,8 @@ namespace rl
 			
 			void interpolate(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& q2, const ::rl::math::Real& alpha, ::rl::math::VectorRef q) const;
 			
+			bool isValid(const ::rl::math::ConstVectorRef& q) const;
+			
 			void normalize(::rl::math::VectorRef q) const;
 			
 			void setPosition(const ::rl::math::ConstVectorRef& q);

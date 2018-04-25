@@ -94,6 +94,12 @@ namespace rl
 			q = quaternion1.slerp(alpha, quaternion2).coeffs();
 		}
 		
+		bool
+		Spherical::isValid(const ::rl::math::ConstVectorRef& q) const
+		{
+			return ::Eigen::internal::isApprox(q.norm(), static_cast< ::rl::math::Real>(1), 1.0e-3f);
+		}
+		
 		void
 		Spherical::normalize(::rl::math::VectorRef q) const
 		{
