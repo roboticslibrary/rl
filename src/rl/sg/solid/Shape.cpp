@@ -201,20 +201,9 @@ namespace rl
 			void
 			Shape::getTransform(::rl::math::Transform& transform)
 			{
-				double m[16];
-				
-				DT_GetMatrixd(this->object, m);
-				
-				for (::std::size_t i = 0; i < 4; ++i)
-				{
-					for (::std::size_t j = 0; j < 4; ++j)
-					{
-						this->frame(i, j) = static_cast< ::rl::math::Real>(m[i + j * 4]);
-					}
-				}
-				
+				DT_GetMatrixd(this->object, this->frame.data());
+
 				this->transform = static_cast<Body*>(this->getBody())->frame.inverse() * this->frame;
-				
 				transform = this->transform;
 			}
 			
@@ -237,20 +226,8 @@ namespace rl
 			{
 				this->frame = static_cast<Body*>(this->getBody())->frame * this->transform;
 				
-				double m[16];
-				
-				for (::std::size_t i = 0; i < 4; ++i)
-				{
-					for (::std::size_t j = 0; j < 4; ++j)
-					{
-						m[i + j * 4] = static_cast<double>(this->frame(i, j));
-					}
-				}
-				
-				DT_SetMatrixd(this->object, m);
-				
+				DT_SetMatrixd(this->object, this->frame.data());
 				DT_GetBBox(this->object, this->min, this->max);
-				
 				BP_SetBBox(this->proxy, this->min, this->max);
 			}
 		}
