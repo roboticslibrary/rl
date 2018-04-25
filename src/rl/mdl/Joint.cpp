@@ -166,32 +166,24 @@ namespace rl
 			this->out->v = this->x * this->in->v + this->v;
 		}
 		
-		::rl::math::Vector
-		Joint::generatePositionGaussian(const ::rl::math::ConstVectorRef& rand, const ::rl::math::ConstVectorRef& mean, const ::rl::math::ConstVectorRef& sigma) const
+		void
+		Joint::generatePositionGaussian(const ::rl::math::ConstVectorRef& rand, const ::rl::math::ConstVectorRef& mean, const ::rl::math::ConstVectorRef& sigma, ::rl::math::VectorRef q) const
 		{
-			::rl::math::Vector q(this->getDofPosition());
-			
 			for (::std::size_t i = 0; i < this->getDofPosition(); ++i)
 			{
 				q(i) = mean(i) + rand(i) * sigma(i);
 			}
 			
 			this->clip(q);
-			
-			return q;
 		}
 		
-		::rl::math::Vector
-		Joint::generatePositionUniform(const ::rl::math::ConstVectorRef& rand) const
+		void
+		Joint::generatePositionUniform(const ::rl::math::ConstVectorRef& rand, ::rl::math::VectorRef q) const
 		{
-			::rl::math::Vector q(this->getDofPosition());
-			
 			for (::std::size_t i = 0; i < this->getDofPosition(); ++i)
 			{
 				q(i) = this->min(i) + rand(i) * (this->max(i) - this->min(i));
 			}
-			
-			return q;
 		}
 		
 		const ::rl::math::Vector&

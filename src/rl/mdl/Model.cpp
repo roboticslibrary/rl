@@ -119,10 +119,11 @@ namespace rl
 			
 			for (::std::size_t i = 0, j = 0, k = 0; i < this->joints.size(); k += this->joints[i]->getDof(), j += this->joints[i]->getDofPosition(), ++i)
 			{
-				q.segment(j, this->joints[i]->getDofPosition()) = this->joints[i]->generatePositionGaussian(
+				this->joints[i]->generatePositionGaussian(
 					rand.segment(k, this->joints[i]->getDof()),
 					mean.segment(j, this->joints[i]->getDofPosition()),
-					sigma.segment(k, this->joints[i]->getDof())
+					sigma.segment(k, this->joints[i]->getDof()),
+					q.segment(j, this->joints[i]->getDofPosition())
 				);
 			}
 			
@@ -136,7 +137,10 @@ namespace rl
 			
 			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDofPosition(), ++i)
 			{
-				q.segment(j, this->joints[i]->getDofPosition()) = this->joints[i]->generatePositionUniform(rand.segment(j, this->joints[i]->getDofPosition()));
+				this->joints[i]->generatePositionUniform(
+					rand.segment(j, this->joints[i]->getDofPosition()),
+					q.segment(j, this->joints[i]->getDofPosition())
+				);
 			}
 			
 			return q;

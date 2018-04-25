@@ -44,9 +44,9 @@ namespace rl
 			
 			::rl::math::Real distance(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& q2) const;
 			
-			::rl::math::Vector generatePositionGaussian(const ::rl::math::ConstVectorRef& rand, const ::rl::math::ConstVectorRef& mean, const ::rl::math::ConstVectorRef& sigma) const;
+			void generatePositionGaussian(const ::rl::math::ConstVectorRef& rand, const ::rl::math::ConstVectorRef& mean, const ::rl::math::ConstVectorRef& sigma, ::rl::math::VectorRef q) const;
 			
-			::rl::math::Vector generatePositionUniform(const ::rl::math::ConstVectorRef& rand) const;
+			void generatePositionUniform(const ::rl::math::ConstVectorRef& rand, ::rl::math::VectorRef q) const;
 			
 			void interpolate(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& q2, const ::rl::math::Real& alpha, ::rl::math::VectorRef q) const;
 			

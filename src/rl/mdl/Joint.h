@@ -57,9 +57,9 @@ namespace rl
 			
 			void forwardVelocity();
 			
-			virtual ::rl::math::Vector generatePositionGaussian(const ::rl::math::ConstVectorRef& rand, const ::rl::math::ConstVectorRef& mean, const ::rl::math::ConstVectorRef& sigma) const;
+			virtual void generatePositionGaussian(const ::rl::math::ConstVectorRef& rand, const ::rl::math::ConstVectorRef& mean, const ::rl::math::ConstVectorRef& sigma, ::rl::math::VectorRef q) const;
 			
-			virtual ::rl::math::Vector generatePositionUniform(const ::rl::math::ConstVectorRef& rand) const;
+			virtual void generatePositionUniform(const ::rl::math::ConstVectorRef& rand, ::rl::math::VectorRef q) const;
 			
 			const ::rl::math::Vector& getAcceleration() const;
 			

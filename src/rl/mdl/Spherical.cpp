@@ -74,16 +74,16 @@ namespace rl
 			return quaternion1.angularDistance(quaternion2);
 		}
 		
-		::rl::math::Vector
-		Spherical::generatePositionGaussian(const ::rl::math::ConstVectorRef& rand, const ::rl::math::ConstVectorRef& mean, const ::rl::math::ConstVectorRef& sigma) const
+		void
+		Spherical::generatePositionGaussian(const ::rl::math::ConstVectorRef& rand, const ::rl::math::ConstVectorRef& mean, const ::rl::math::ConstVectorRef& sigma, ::rl::math::VectorRef q) const
 		{
-			return ::rl::math::Quaternion::Random(rand, ::Eigen::Map< const ::rl::math::Quaternion>(mean.data()), sigma).coeffs();
+			q = ::rl::math::Quaternion::Random(rand, ::Eigen::Map< const ::rl::math::Quaternion>(mean.data()), sigma).coeffs();
 		}
 		
-		::rl::math::Vector
-		Spherical::generatePositionUniform(const ::rl::math::ConstVectorRef& rand) const
+		void
+		Spherical::generatePositionUniform(const ::rl::math::ConstVectorRef& rand, ::rl::math::VectorRef q) const
 		{
-			return ::rl::math::Quaternion::Random(rand).coeffs();
+			q = ::rl::math::Quaternion::Random(rand).coeffs();
 		}
 		
 		void

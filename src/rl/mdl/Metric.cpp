@@ -47,9 +47,7 @@ namespace rl
 			
 			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDofPosition(), ++i)
 			{
-				::rl::math::VectorBlock qi = q.segment(j, this->joints[i]->getDofPosition());
-				this->joints[i]->clip(qi);
-				q.segment(j, this->joints[i]->getDofPosition()) = qi;
+				this->joints[i]->clip(q.segment(j, this->joints[i]->getDofPosition()));
 			}
 		}
 		
@@ -89,16 +87,12 @@ namespace rl
 			
 			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDofPosition(), ++i)
 			{
-				::rl::math::VectorBlock qi = q.segment(j, this->joints[i]->getDofPosition());
-				
 				this->joints[i]->interpolate(
 					q1.segment(j, this->joints[i]->getDofPosition()),
 					q2.segment(j, this->joints[i]->getDofPosition()),
 					alpha,
-					qi
+					q.segment(j, this->joints[i]->getDofPosition())
 				);
-				
-				q.segment(j, this->joints[i]->getDofPosition()) = qi;
 			}
 		}
 		
@@ -131,9 +125,7 @@ namespace rl
 			
 			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDofPosition(), ++i)
 			{
-				::rl::math::VectorBlock qi = q.segment(j, this->joints[i]->getDofPosition());
-				this->joints[i]->normalize(qi);
-				q.segment(j, this->joints[i]->getDofPosition()) = qi;
+				this->joints[i]->normalize(q.segment(j, this->joints[i]->getDofPosition()));
 			}
 		}
 		
@@ -146,15 +138,11 @@ namespace rl
 			
 			for (::std::size_t i = 0, j = 0, k = 0; i < this->joints.size(); j += this->joints[i]->getDofPosition(), k += this->joints[i]->getDof(), ++i)
 			{
-				::rl::math::VectorBlock q2i = q2.segment(j, this->joints[i]->getDofPosition());
-				
 				this->joints[i]->step(
 					q1.segment(j, this->joints[i]->getDofPosition()),
 					qdot.segment(k, this->joints[i]->getDof()),
-					q2i
+					q2.segment(j, this->joints[i]->getDofPosition())
 				);
-				
-				q2.segment(j, this->joints[i]->getDofPosition()) = q2i;
 			}
 		}
 		
