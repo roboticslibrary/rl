@@ -87,9 +87,9 @@ namespace rl
 			{
 				::dBodySetPosition(
 					this->body,
-					static_cast<dReal>(frame(0, 3)),
-					static_cast<dReal>(frame(1, 3)),
-					static_cast<dReal>(frame(2, 3))
+					static_cast< ::dReal>(frame(0, 3)),
+					static_cast< ::dReal>(frame(1, 3)),
+					static_cast< ::dReal>(frame(2, 3))
 				);
 				
 				::dMatrix3 rotation;
