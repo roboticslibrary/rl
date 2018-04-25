@@ -35,6 +35,8 @@ namespace rl
 		Spherical::Spherical() :
 			Joint(4, 3)
 		{
+			this->max.setConstant(1); // TODO
+			this->min.setConstant(-1); // TODO
 			this->qUnits(0) = ::rl::math::UNIT_NONE; // TODO
 			this->qUnits(1) = ::rl::math::UNIT_NONE; // TODO
 			this->qUnits(2) = ::rl::math::UNIT_NONE; // TODO
