@@ -79,7 +79,7 @@ namespace rl
 		void
 		Joint::clip(::rl::math::VectorRef q) const
 		{
-			for (::std::size_t i = 0; i < this->getDofPosition(); ++i)
+			for (::std::size_t i = 0; i < q.size(); ++i)
 			{
 				if (this->wraparound(i))
 				{
@@ -169,7 +169,7 @@ namespace rl
 		void
 		Joint::generatePositionGaussian(const ::rl::math::ConstVectorRef& rand, const ::rl::math::ConstVectorRef& mean, const ::rl::math::ConstVectorRef& sigma, ::rl::math::VectorRef q) const
 		{
-			for (::std::size_t i = 0; i < this->getDofPosition(); ++i)
+			for (::std::size_t i = 0; i < q.size(); ++i)
 			{
 				q(i) = mean(i) + rand(i) * sigma(i);
 			}
@@ -180,7 +180,7 @@ namespace rl
 		void
 		Joint::generatePositionUniform(const ::rl::math::ConstVectorRef& rand, ::rl::math::VectorRef q) const
 		{
-			for (::std::size_t i = 0; i < this->getDofPosition(); ++i)
+			for (::std::size_t i = 0; i < q.size(); ++i)
 			{
 				q(i) = this->min(i) + rand(i) * (this->max(i) - this->min(i));
 			}
@@ -289,7 +289,7 @@ namespace rl
 		bool
 		Joint::isValid(const ::rl::math::ConstVectorRef& q) const
 		{
-			for (::std::size_t i = 0; i < this->getDofPosition(); ++i)
+			for (::std::size_t i = 0; i < q.size(); ++i)
 			{
 				if (q(i) < this->min(i) || q(i) > this->max(i))
 				{

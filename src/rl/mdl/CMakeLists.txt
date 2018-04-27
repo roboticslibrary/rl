@@ -21,6 +21,7 @@ set(
 	Model.h
 	Prismatic.h
 	Revolute.h
+	SixDof.h
 	Spherical.h
 	Transform.h
 	UrdfFactory.h
@@ -48,6 +49,7 @@ set(
 	Model.cpp
 	Prismatic.cpp
 	Revolute.cpp
+	SixDof.cpp
 	Spherical.cpp
 	Transform.cpp
 	UrdfFactory.cpp

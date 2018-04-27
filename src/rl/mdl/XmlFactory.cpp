@@ -48,6 +48,7 @@
 #include "Model.h"
 #include "Prismatic.h"
 #include "Revolute.h"
+#include "SixDof.h"
 #include "Spherical.h"
 #include "World.h"
 #include "XmlFactory.h"
@@ -235,7 +236,7 @@ namespace rl
 				
 				// transforms
 				
-				::rl::xml::NodeSet transforms = path.eval("cylindrical|fixed|helical|prismatic|revolute|spherical").getValue< ::rl::xml::NodeSet>();
+				::rl::xml::NodeSet transforms = path.eval("cylindrical|fixed|helical|prismatic|revolute|sixDof|spherical").getValue< ::rl::xml::NodeSet>();
 				
 				for (int j = 0; j < transforms.size(); ++j)
 				{
@@ -378,6 +379,27 @@ namespace rl
 						r->speed *= ::rl::math::DEG2RAD;
 						
 						transform = r;
+					}
+					else if ("sixDof" == transforms[j].getName())
+					{
+						SixDof* s = new SixDof();
+						
+						model->add(s, a, b);
+						
+						s->max(0) = path.eval("number(max[1])").getValue< ::rl::math::Real>(::std::numeric_limits< ::rl::math::Real>::max());
+						s->max(1) = path.eval("number(max[2])").getValue< ::rl::math::Real>(::std::numeric_limits< ::rl::math::Real>::max());
+						s->max(2) = path.eval("number(max[3])").getValue< ::rl::math::Real>(::std::numeric_limits< ::rl::math::Real>::max());
+						s->min(0) = path.eval("number(min[1])").getValue< ::rl::math::Real>(-::std::numeric_limits< ::rl::math::Real>::max());
+						s->min(1) = path.eval("number(min[2])").getValue< ::rl::math::Real>(-::std::numeric_limits< ::rl::math::Real>::max());
+						s->min(2) = path.eval("number(min[3])").getValue< ::rl::math::Real>(-::std::numeric_limits< ::rl::math::Real>::max());
+						s->offset(0) = path.eval("number(offset[1])").getValue< ::rl::math::Real>(0);
+						s->offset(1) = path.eval("number(offset[2])").getValue< ::rl::math::Real>(0);
+						s->offset(2) = path.eval("number(offset[3])").getValue< ::rl::math::Real>(0);
+						s->speed(0) = path.eval("number(speed[1])").getValue< ::rl::math::Real>(0);
+						s->speed(1) = path.eval("number(speed[2])").getValue< ::rl::math::Real>(0);
+						s->speed(2) = path.eval("number(speed[3])").getValue< ::rl::math::Real>(0);
+						
+						transform = s;
 					}
 					else if ("spherical" == transforms[j].getName())
 					{
