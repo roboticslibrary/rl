@@ -35,8 +35,8 @@ namespace rl
 		SixDof::SixDof() :
 			Joint(7, 6)
 		{
-			this->max.tail(4).setConstant(1); // TODO
-			this->min.tail(4).setConstant(-1); // TODO
+			this->max.tail<4>().setConstant(1); // TODO
+			this->min.tail<4>().setConstant(-1); // TODO
 			this->qUnits(0) = ::rl::math::UNIT_METER;
 			this->qUnits(1) = ::rl::math::UNIT_METER;
 			this->qUnits(2) = ::rl::math::UNIT_METER;
@@ -78,67 +78,67 @@ namespace rl
 		void
 		SixDof::clip(::rl::math::VectorRef q) const
 		{
-			Joint::clip(q.head(3));
-			::Eigen::Map< ::rl::math::Quaternion>(q.tail(4).data()).normalize();
+			Joint::clip(q.head<3>());
+			::Eigen::Map< ::rl::math::Quaternion>(q.tail<4>().data()).normalize();
 		}
 		
 		::rl::math::Real
 		SixDof::distance(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& q2) const
 		{
-			::Eigen::Map<const ::rl::math::Quaternion> quaternion1(q1.tail(4).data());
-			::Eigen::Map<const ::rl::math::Quaternion> quaternion2(q2.tail(4).data());
-			return ::std::sqrt(::std::pow(Joint::distance(q1.head(3), q2.head(3)), 2) + ::std::pow(quaternion1.angularDistance(quaternion2), 2));
+			::Eigen::Map<const ::rl::math::Quaternion> quaternion1(q1.tail<4>().data());
+			::Eigen::Map<const ::rl::math::Quaternion> quaternion2(q2.tail<4>().data());
+			return ::std::sqrt(::std::pow(Joint::distance(q1.head<3>(), q2.head<3>()), 2) + ::std::pow(quaternion1.angularDistance(quaternion2), 2));
 		}
 		
 		void
 		SixDof::generatePositionGaussian(const ::rl::math::ConstVectorRef& rand, const ::rl::math::ConstVectorRef& mean, const ::rl::math::ConstVectorRef& sigma, ::rl::math::VectorRef q) const
 		{
-			Joint::generatePositionGaussian(rand.head(3), mean.head(3), sigma.head(3), q.head(3));
-			q.tail(4) = ::rl::math::Quaternion::Random(rand.tail(4), ::Eigen::Map< const ::rl::math::Quaternion>(mean.tail(4).data()), sigma.tail(4)).coeffs();
+			Joint::generatePositionGaussian(rand.head<3>(), mean.head<3>(), sigma.head<3>(), q.head<3>());
+			q.tail<4>() = ::rl::math::Quaternion::Random(rand.tail<3>(), ::Eigen::Map< const ::rl::math::Quaternion>(mean.tail<4>().data()), sigma.tail<3>()).coeffs();
 		}
 		
 		void
 		SixDof::generatePositionUniform(const ::rl::math::ConstVectorRef& rand, ::rl::math::VectorRef q) const
 		{
-			Joint::generatePositionUniform(rand.head(3), q.head(3));
-			q.tail(4) = ::rl::math::Quaternion::Random(rand.tail(4)).coeffs();
+			Joint::generatePositionUniform(rand.head<3>(), q.head<3>());
+			q.tail<4>() = ::rl::math::Quaternion::Random(rand.tail<3>()).coeffs();
 		}
 		
 		void
 		SixDof::interpolate(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& q2, const ::rl::math::Real& alpha, ::rl::math::VectorRef q) const
 		{
-			Joint::interpolate(q1.head(3), q2.head(3), alpha, q.head(3));
-			::Eigen::Map<const ::rl::math::Quaternion> quaternion1(q1.tail(4).data());
-			::Eigen::Map<const ::rl::math::Quaternion> quaternion2(q2.tail(4).data());
-			q.tail(4) = quaternion1.slerp(alpha, quaternion2).coeffs();
+			Joint::interpolate(q1.head<3>(), q2.head<3>(), alpha, q.head<3>());
+			::Eigen::Map<const ::rl::math::Quaternion> quaternion1(q1.tail<4>().data());
+			::Eigen::Map<const ::rl::math::Quaternion> quaternion2(q2.tail<4>().data());
+			q.tail<4>() = quaternion1.slerp(alpha, quaternion2).coeffs();
 		}
 		
 		bool
 		SixDof::isValid(const ::rl::math::ConstVectorRef& q) const
 		{
-			return Joint::isValid(q.head(3)) && ::Eigen::internal::isApprox(q.tail(4).norm(), static_cast< ::rl::math::Real>(1), 1.0e-3f);
+			return Joint::isValid(q.head<3>()) && ::Eigen::internal::isApprox(q.tail<4>().norm(), static_cast< ::rl::math::Real>(1), 1.0e-3f);
 		}
 		
 		void
 		SixDof::normalize(::rl::math::VectorRef q) const
 		{
-			::Eigen::Map< ::rl::math::Quaternion>(q.tail(4).data()).normalize();
+			::Eigen::Map< ::rl::math::Quaternion>(q.tail<4>().data()).normalize();
 		}
 		
 		void
 		SixDof::setPosition(const ::rl::math::ConstVectorRef& q)
 		{
 			this->q = q;
-			this->x.translation() = this->q.head(3) + this->offset.head(3);
-			this->x.linear() = ::Eigen::Map<const ::rl::math::Quaternion>(this->q.tail(4).data()).toRotationMatrix();
+			this->x.translation() = this->q.head<3>() + this->offset.head<3>();
+			this->x.linear() = ::Eigen::Map<const ::rl::math::Quaternion>(this->q.tail<4>().data()).toRotationMatrix();
 		}
 		
 		void
 		SixDof::step(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& qdot, ::rl::math::VectorRef q2) const
 		{
-			Joint::step(q1.head(3), qdot.head(3), q2.head(3));
-			::Eigen::Map<const ::rl::math::Quaternion> quaternion1(q1.tail(4).data());
-			q2.tail(4) = (quaternion1 * quaternion1.firstDerivative(qdot)).coeffs();
+			Joint::step(q1.head<3>(), qdot.head<3>(), q2.head<3>());
+			::Eigen::Map<const ::rl::math::Quaternion> quaternion1(q1.tail<4>().data());
+			q2.tail<4>() = (quaternion1 * quaternion1.firstDerivative(qdot.tail<3>())).coeffs();
 		}
 		
 		::rl::math::Real

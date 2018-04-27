@@ -135,10 +135,10 @@ namespace rl
 		{
 			::rl::math::Vector q(this->getDofPosition());
 			
-			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDofPosition(), ++i)
+			for (::std::size_t i = 0, j = 0, k = 0; i < this->joints.size(); k += this->joints[i]->getDof(), j += this->joints[i]->getDofPosition(), ++i)
 			{
 				this->joints[i]->generatePositionUniform(
-					rand.segment(j, this->joints[i]->getDofPosition()),
+					rand.segment(k, this->joints[i]->getDof()),
 					q.segment(j, this->joints[i]->getDofPosition())
 				);
 			}
