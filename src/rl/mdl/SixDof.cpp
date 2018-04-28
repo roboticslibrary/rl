@@ -78,36 +78,62 @@ namespace rl
 		void
 		SixDof::clip(::rl::math::VectorRef q) const
 		{
-			Joint::clip(q.head<3>());
+			for (::std::size_t i = 0; i < 3; ++i)
+			{
+				if (q(i) > this->max(i))
+				{
+					q(i) = this->max(i);
+				}
+				else if (q(i) < this->min(i))
+				{
+					q(i) = this->min(i);
+				}
+			}
+			
 			::Eigen::Map< ::rl::math::Quaternion>(q.tail<4>().data()).normalize();
 		}
 		
 		::rl::math::Real
 		SixDof::distance(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& q2) const
 		{
-			::Eigen::Map<const ::rl::math::Quaternion> quaternion1(q1.tail<4>().data());
-			::Eigen::Map<const ::rl::math::Quaternion> quaternion2(q2.tail<4>().data());
-			return ::std::sqrt(::std::pow(Joint::distance(q1.head<3>(), q2.head<3>()), 2) + ::std::pow(quaternion1.angularDistance(quaternion2), 2));
+			return ::std::sqrt(this->transformedDistance(q1, q2));
 		}
 		
 		void
 		SixDof::generatePositionGaussian(const ::rl::math::ConstVectorRef& rand, const ::rl::math::ConstVectorRef& mean, const ::rl::math::ConstVectorRef& sigma, ::rl::math::VectorRef q) const
 		{
-			Joint::generatePositionGaussian(rand.head<3>(), mean.head<3>(), sigma.head<3>(), q.head<3>());
+			for (::std::size_t i = 0; i < 3; ++i)
+			{
+				q(i) = mean(i) + rand(i) * sigma(i);
+				
+				if (q(i) > this->max(i))
+				{
+					q(i) = this->max(i);
+				}
+				else if (q(i) < this->min(i))
+				{
+					q(i) = this->min(i);
+				}
+			}
+			
 			q.tail<4>() = ::rl::math::Quaternion::Random(rand.tail<3>(), ::Eigen::Map< const ::rl::math::Quaternion>(mean.tail<4>().data()), sigma.tail<3>()).coeffs();
 		}
 		
 		void
 		SixDof::generatePositionUniform(const ::rl::math::ConstVectorRef& rand, ::rl::math::VectorRef q) const
 		{
-			Joint::generatePositionUniform(rand.head<3>(), q.head<3>());
+			for (::std::size_t i = 0; i < 3; ++i)
+			{
+				q(i) = this->min(i) + rand(i) * (this->max(i) - this->min(i));
+			}
+			
 			q.tail<4>() = ::rl::math::Quaternion::Random(rand.tail<3>()).coeffs();
 		}
 		
 		void
 		SixDof::interpolate(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& q2, const ::rl::math::Real& alpha, ::rl::math::VectorRef q) const
 		{
-			Joint::interpolate(q1.head<3>(), q2.head<3>(), alpha, q.head<3>());
+			q.head<3>() = (1.0f - alpha) * q1.head<3>() + alpha * q2.head<3>();
 			::Eigen::Map<const ::rl::math::Quaternion> quaternion1(q1.tail<4>().data());
 			::Eigen::Map<const ::rl::math::Quaternion> quaternion2(q2.tail<4>().data());
 			q.tail<4>() = quaternion1.slerp(alpha, quaternion2).coeffs();
@@ -116,7 +142,15 @@ namespace rl
 		bool
 		SixDof::isValid(const ::rl::math::ConstVectorRef& q) const
 		{
-			return Joint::isValid(q.head<3>()) && ::Eigen::internal::isApprox(q.tail<4>().norm(), static_cast< ::rl::math::Real>(1), 1.0e-3f);
+			for (::std::size_t i = 0; i < 3; ++i)
+			{
+				if (q(i) < this->min(i) || q(i) > this->max(i))
+				{
+					return false;
+				}
+			}
+			
+			return ::Eigen::internal::isApprox(q.tail<4>().norm(), static_cast< ::rl::math::Real>(1), 1.0e-3f);
 		}
 		
 		void
@@ -136,7 +170,20 @@ namespace rl
 		void
 		SixDof::step(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& qdot, ::rl::math::VectorRef q2) const
 		{
-			Joint::step(q1.head<3>(), qdot.head<3>(), q2.head<3>());
+			q2.head<3>() = q1.head<3>() + qdot.head<3>();
+			
+			for (::std::size_t i = 0; i < 3; ++i)
+			{
+				if (q2(i) > this->max(i))
+				{
+					q2(i) = this->max(i);
+				}
+				else if (q2(i) < this->min(i))
+				{
+					q2(i) = this->min(i);
+				}
+			}
+			
 			::Eigen::Map<const ::rl::math::Quaternion> quaternion1(q1.tail<4>().data());
 			q2.tail<4>() = (quaternion1 * quaternion1.firstDerivative(qdot.tail<3>())).coeffs();
 		}
@@ -144,7 +191,9 @@ namespace rl
 		::rl::math::Real
 		SixDof::transformedDistance(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& q2) const
 		{
-			return ::std::pow(this->distance(q1, q2), 2);
+			::Eigen::Map<const ::rl::math::Quaternion> quaternion1(q1.tail<4>().data());
+			::Eigen::Map<const ::rl::math::Quaternion> quaternion2(q2.tail<4>().data());
+			return (q2.head<3>() - q1.head<3>()).squaredNorm() + ::std::pow(quaternion1.angularDistance(quaternion2), 2);
 		}
 	}
 }
