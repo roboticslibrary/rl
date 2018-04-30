@@ -38,12 +38,14 @@ static CartesianFromPolar(const MatrixBase<OtherDerived>& polar)
 	using ::std::cos;
 	using ::std::sin;
 	
+	EIGEN_STATIC_ASSERT_VECTOR_SPECIFIC_SIZE(Derived, 2)
+	
 	eigen_assert(2 == polar.size());
 	
-	Matrix<Scalar, 2, 1> cartesian;
-	cartesian.x() = polar.x() * cos(polar.y());
-	cartesian.y() = polar.x() * sin(polar.y());
-	return cartesian;
+	return Matrix<Scalar, 2, 1>(
+		polar.x() * cos(polar.y()),
+		polar.x() * sin(polar.y())
+	);
 }
 
 template<typename OtherDerived>
@@ -53,13 +55,17 @@ static CartesianFromSpherical(const MatrixBase<OtherDerived>& spherical)
 	using ::std::cos;
 	using ::std::sin;
 	
+	EIGEN_STATIC_ASSERT_VECTOR_SPECIFIC_SIZE(Derived, 3)
+	
 	eigen_assert(3 == spherical.size());
 	
-	Matrix<Scalar, 3, 1> cartesian;
-	cartesian.x() = spherical.x() * sin(spherical.y()) * cos(spherical.z());
-	cartesian.y() = spherical.x() * sin(spherical.y()) * sin(spherical.z());
-	cartesian.z() = spherical.x() * cos(spherical.y());
-	return cartesian;
+	Scalar sin_y = sin(spherical.y());
+	
+	return Matrix<Scalar, 3, 1>(
+		spherical.x() * sin_y * cos(spherical.z()),
+		spherical.x() * sin_y * sin(spherical.z()),
+		spherical.x() * cos(spherical.y())
+	);
 }
 
 template<typename OtherDerived>
@@ -70,12 +76,14 @@ static PolarFromCartesian(const MatrixBase<OtherDerived>& cartesian)
 	using ::std::pow;
 	using ::std::sqrt;
 	
+	EIGEN_STATIC_ASSERT_VECTOR_SPECIFIC_SIZE(Derived, 2)
+	
 	eigen_assert(2 == cartesian.size());
 	
-	Matrix<Scalar, 2, 1> polar;
-	polar.x() = sqrt(pow(cartesian.x(), 2) + pow(cartesian.y(), 2));
-	polar.y() = atan2(cartesian.y(), cartesian.x());
-	return polar;
+	return Matrix<Scalar, 2, 1>(
+		sqrt(pow(cartesian.x(), 2) + pow(cartesian.y(), 2)),
+		atan2(cartesian.y(), cartesian.x())
+	);
 }
 
 Matrix<Scalar, 2, 1>
@@ -95,15 +103,17 @@ static RandomOnCircle(const Scalar& rand)
 	using ::std::cos;
 	using ::std::sin;
 	
+	EIGEN_STATIC_ASSERT_VECTOR_SPECIFIC_SIZE(Derived, 2)
+	
 	eigen_assert(rand >= Scalar(0));
 	eigen_assert(rand <= Scalar(1));
 	
 	Scalar theta = Scalar(2 * M_PI) * rand;
 	
-	Matrix<Scalar, 2, 1> res;
-	res.x() = cos(theta);
-	res.y() = sin(theta);
-	return res;
+	return Matrix<Scalar, 2, 1>(
+		cos(theta),
+		sin(theta)
+	);
 }
 
 Matrix<Scalar, 3, 1>
@@ -131,6 +141,8 @@ static RandomOnSphere(const DenseBase<OtherDerived>& rand)
 	using ::std::sin;
 	using ::std::sqrt;
 	
+	EIGEN_STATIC_ASSERT_VECTOR_SPECIFIC_SIZE(Derived, 3)
+	
 	eigen_assert(2 == rand.size());
 	eigen_assert(rand(0) >= Scalar(0));
 	eigen_assert(rand(0) <= Scalar(1));
@@ -139,12 +151,13 @@ static RandomOnSphere(const DenseBase<OtherDerived>& rand)
 	
 	Scalar theta = Scalar(2 * M_PI) * rand(0);
 	Scalar z = Scalar(2) * rand(1) - Scalar(1);
+	Scalar sqrt_1_z_2 = sqrt(1 - pow(z, 2));
 	
-	Matrix<Scalar, 3, 1> res;
-	res.x() = sqrt(1 - pow(z, 2)) * cos(theta);
-	res.y() = sqrt(1 - pow(z, 2)) * sin(theta);
-	res.z() = z;
-	return res;
+	return Matrix<Scalar, 3, 1>(
+		sqrt_1_z_2 * cos(theta),
+		sqrt_1_z_2 * sin(theta),
+		z
+	);
 }
 
 template<typename OtherDerived>
@@ -155,13 +168,19 @@ static SphericalFromCartesian(const MatrixBase<OtherDerived>& cartesian)
 	using ::std::pow;
 	using ::std::sqrt;
 	
+	EIGEN_STATIC_ASSERT_VECTOR_SPECIFIC_SIZE(Derived, 3)
+	
 	eigen_assert(3 == cartesian.size());
 	
-	Matrix<Scalar, 3, 1> spherical;
-	spherical.x() = sqrt(pow(cartesian.x(), 2) + pow(cartesian.y(), 2) + pow(cartesian.z(), 2));
-	spherical.y() = atan2(sqrt(pow(cartesian.x(), 2) + pow(cartesian.y(), 2)), cartesian.z());
-	spherical.z() = atan2(cartesian.y(), cartesian.x());
-	return spherical;
+	Scalar x_2 = pow(cartesian.x(), 2);
+	Scalar y_2 = pow(cartesian.y(), 2);
+	Scalar z_2 = pow(cartesian.z(), 2);
+	
+	return Matrix<Scalar, 3, 1>(
+		sqrt(x_2 + y_2 + z_2),
+		atan2(sqrt(x_2 + y_2), cartesian.z()),
+		atan2(cartesian.y(), cartesian.x())
+	);
 }
 
 Matrix<Scalar, 3, 1>
