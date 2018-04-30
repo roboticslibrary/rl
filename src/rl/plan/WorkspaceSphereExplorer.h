@@ -31,8 +31,6 @@
 #include <random>
 #include <set>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/random/uniform_on_sphere.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <rl/math/Vector.h>
 
 #include "WorkspaceSphere.h"
@@ -126,6 +124,8 @@ namespace rl
 			
 			bool isCovered(const Vertex& parent, const ::rl::math::Vector3& point) const;
 			
+			::std::uniform_real_distribution< ::rl::math::Real>::result_type rand();
+			
 			Vertex begin;
 			
 			Vertex end;
@@ -134,7 +134,9 @@ namespace rl
 			
 			::std::multiset<WorkspaceSphere> queue;
 			
-			::boost::variate_generator< ::std::mt19937, ::boost::uniform_on_sphere< ::rl::math::Real>> rand;
+			::std::uniform_real_distribution< ::rl::math::Real> randDistribution;
+			
+			::std::mt19937 randEngine;
 			
 		private:
 			

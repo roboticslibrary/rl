@@ -49,10 +49,8 @@ namespace rl
 			end(nullptr),
 			graph(),
 			queue(),
-			rand(
-				::std::mt19937(::std::random_device()()),
-				::boost::uniform_on_sphere< ::rl::math::Real>(3)
-			)
+			randDistribution(0, 1),
+			randEngine(::std::random_device()())
 		{
 		}
 		
@@ -165,13 +163,9 @@ namespace rl
 //for (::std::size_t i = 0; i < this->samples; ++i) // TODO
 					{
 						WorkspaceSphere sphere;
-						
 						sphere.parent = vertex;
-						
-						::boost::uniform_on_sphere< ::rl::math::Real>::result_type sample = this->rand();
-						
 						sphere.center = ::std::make_shared< ::rl::math::Vector3>(
-							top.radius * ::Eigen::Map< ::rl::math::Vector3>(sample.data()) + *top.center
+							top.radius * ::rl::math::Vector3::RandomOnSphere(::rl::math::Vector2(this->rand(), this->rand())) + *top.center
 						);
 						
 						if ((*this->start - *sphere.center).norm() <= this->range)
@@ -275,6 +269,12 @@ namespace rl
 			return false;
 		}
 		
+		::std::uniform_real_distribution< ::rl::math::Real>::result_type
+		WorkspaceSphereExplorer::rand()
+		{
+			return this->randDistribution(this->randEngine);
+		}
+		
 		void
 		WorkspaceSphereExplorer::reset()
 		{
@@ -287,7 +287,7 @@ namespace rl
 		void
 		WorkspaceSphereExplorer::seed(const ::std::mt19937::result_type& value)
 		{
-			this->rand.engine().seed(value);
+			this->randEngine.seed(value);
 		}
 	}
 }
