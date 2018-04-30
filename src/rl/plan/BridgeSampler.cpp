@@ -51,7 +51,7 @@ namespace rl
 			else
 			{
 				::rl::math::Vector q(this->model->getDof());
-				::rl::math::Vector q3(this->model->getDof());
+				::rl::math::Vector gauss(this->model->getDof());
 				
 				while (true)
 				{
@@ -64,10 +64,10 @@ namespace rl
 					{
 						for (::std::size_t i = 0; i < this->model->getDof(); ++i)
 						{
-							q3(i) = this->gauss() * (*this->sigma)(i) + q2(i);
+							gauss(i) = this->gauss();
 						}
 						
-						this->model->clamp(q3);
+						::rl::math::Vector q3 = this->model->generatePositionGaussian(gauss, q2, *this->sigma);
 						
 						if (this->model->isColliding())
 						{
