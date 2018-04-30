@@ -212,32 +212,6 @@ namespace rl
 		static const Real UNIT2MILLI = 1.0e+3f;
 		
 		static const Real UNIT2NANO = 1.0e+9f;
-		
-		inline void cartesianToPolar(const Real& x, const Real& y, Real& r, Real& theta)
-		{
-			r = ::std::sqrt(::std::pow(x, 2) + ::std::pow(y, 2));
-			theta = ::std::atan2(y, x);
-		}
-		
-		inline void cartesianToSpherical(const Real& x, const Real& y, const Real& z, Real& rho, Real& psi, Real& theta)
-		{
-			rho = ::std::sqrt(::std::pow(x, 2) + ::std::pow(y, 2) + ::std::pow(z, 2));
-			psi = ::std::atan2(::std::sqrt(::std::pow(x, 2) + ::std::pow(y, 2)), z);
-			theta = ::std::atan2(y, x);
-		}
-		
-		inline void polarToCartesian(const Real& r, const Real& theta, Real& x, Real& y)
-		{
-			x = r * ::std::cos(theta);
-			y = r * ::std::sin(theta);
-		}
-		
-		inline void sphericalToCartesian(const Real& rho, const Real& psi, const Real& theta, Real& x, Real& y, Real& z)
-		{
-			x = rho * ::std::sin(psi) * ::std::cos(theta);
-			y = rho * ::std::sin(psi) * ::std::sin(theta);
-			z = rho * ::std::cos(psi);
-		}
 	}
 }
 

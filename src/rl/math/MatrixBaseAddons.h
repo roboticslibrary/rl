@@ -31,6 +31,53 @@
 namespace Eigen { template<typename Derived> class MatrixBase {
 #endif
 
+template<typename OtherDerived>
+Matrix<Scalar, 2, 1>
+static CartesianFromPolar(const MatrixBase<OtherDerived>& polar)
+{
+	using ::std::cos;
+	using ::std::sin;
+	
+	eigen_assert(2 == polar.size());
+	
+	Matrix<Scalar, 2, 1> cartesian;
+	cartesian.x() = polar.x() * cos(polar.y());
+	cartesian.y() = polar.x() * sin(polar.y());
+	return cartesian;
+}
+
+template<typename OtherDerived>
+Matrix<Scalar, 3, 1>
+static CartesianFromSpherical(const MatrixBase<OtherDerived>& spherical)
+{
+	using ::std::cos;
+	using ::std::sin;
+	
+	eigen_assert(3 == spherical.size());
+	
+	Matrix<Scalar, 3, 1> cartesian;
+	cartesian.x() = spherical.x() * sin(spherical.y()) * cos(spherical.z());
+	cartesian.y() = spherical.x() * sin(spherical.y()) * sin(spherical.z());
+	cartesian.z() = spherical.x() * cos(spherical.y());
+	return cartesian;
+}
+
+template<typename OtherDerived>
+Matrix<Scalar, 2, 1>
+static PolarFromCartesian(const MatrixBase<OtherDerived>& cartesian)
+{
+	using ::std::atan2;
+	using ::std::pow;
+	using ::std::sqrt;
+	
+	eigen_assert(2 == cartesian.size());
+	
+	Matrix<Scalar, 2, 1> polar;
+	polar.x() = sqrt(pow(cartesian.x(), 2) + pow(cartesian.y(), 2));
+	polar.y() = atan2(cartesian.y(), cartesian.x());
+	return polar;
+}
+
 Matrix<Scalar, 2, 1>
 static RandomOnCircle()
 {
@@ -98,6 +145,23 @@ static RandomOnSphere(const DenseBase<OtherDerived>& rand)
 	res.y() = sqrt(1 - pow(z, 2)) * sin(theta);
 	res.z() = z;
 	return res;
+}
+
+template<typename OtherDerived>
+Matrix<Scalar, 3, 1>
+static SphericalFromCartesian(const MatrixBase<OtherDerived>& cartesian)
+{
+	using ::std::atan2;
+	using ::std::pow;
+	using ::std::sqrt;
+	
+	eigen_assert(3 == cartesian.size());
+	
+	Matrix<Scalar, 3, 1> spherical;
+	spherical.x() = sqrt(pow(cartesian.x(), 2) + pow(cartesian.y(), 2) + pow(cartesian.z(), 2));
+	spherical.y() = atan2(sqrt(pow(cartesian.x(), 2) + pow(cartesian.y(), 2)), cartesian.z());
+	spherical.z() = atan2(cartesian.y(), cartesian.x());
+	return spherical;
 }
 
 Matrix<Scalar, 3, 1>
