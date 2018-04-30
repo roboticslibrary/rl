@@ -31,6 +31,75 @@
 namespace Eigen { template<typename Derived> class MatrixBase {
 #endif
 
+Matrix<Scalar, 2, 1>
+static RandomOnCircle()
+{
+	return RandomOnCircle(internal::random<Scalar>(0, 1));
+}
+
+/**
+ * Generate random point on unit circle.
+ * 
+ * http://mathworld.wolfram.com/CirclePointPicking.html
+ */
+Matrix<Scalar, 2, 1>
+static RandomOnCircle(const Scalar& rand)
+{
+	using ::std::cos;
+	using ::std::sin;
+	
+	eigen_assert(rand >= Scalar(0));
+	eigen_assert(rand <= Scalar(1));
+	
+	Scalar theta = Scalar(2 * M_PI) * rand;
+	
+	Matrix<Scalar, 2, 1> res;
+	res.x() = cos(theta);
+	res.y() = sin(theta);
+	return res;
+}
+
+Matrix<Scalar, 3, 1>
+static RandomOnSphere()
+{
+	return RandomOnSphere(
+		Vector2(
+			internal::random<Scalar>(0, 1),
+			internal::random<Scalar>(0, 1)
+		)
+	);
+}
+
+/**
+ * Generate random point on unit sphere.
+ * 
+ * http://mathworld.wolfram.com/SpherePointPicking.html
+ */
+template<typename OtherDerived>
+Matrix<Scalar, 3, 1>
+static RandomOnSphere(const DenseBase<OtherDerived>& rand)
+{
+	using ::std::cos;
+	using ::std::pow;
+	using ::std::sin;
+	using ::std::sqrt;
+	
+	eigen_assert(2 == rand.size());
+	eigen_assert(rand(0) >= Scalar(0));
+	eigen_assert(rand(0) <= Scalar(1));
+	eigen_assert(rand(1) >= Scalar(0));
+	eigen_assert(rand(1) <= Scalar(1));
+	
+	Scalar theta = Scalar(2 * M_PI) * rand(0);
+	Scalar z = Scalar(2) * rand(1) - Scalar(1);
+	
+	Matrix<Scalar, 3, 1> res;
+	res.x() = sqrt(1 - pow(z, 2)) * cos(theta);
+	res.y() = sqrt(1 - pow(z, 2)) * sin(theta);
+	res.z() = z;
+	return res;
+}
+
 Matrix<Scalar, 3, 1>
 cross3() const
 {
@@ -57,6 +126,32 @@ cross33() const
 	res(2, 1) = this->derived().x();
 	res(2, 2) = 0;
 	return res;
+}
+
+Derived&
+setRandomOnCircle()
+{
+	return this->derived() = RandomOnCircle();
+}
+
+template<typename OtherDerived>
+Derived&
+setRandomOnCircle(const Scalar& rand)
+{
+	return this->derived() = RandomOnCircle(rand);
+}
+
+Derived&
+setRandomOnSphere()
+{
+	return this->derived() = RandomOnSphere();
+}
+
+template<typename OtherDerived>
+Derived&
+setRandomOnSphere(const DenseBase<OtherDerived>& rand)
+{
+	return this->derived() = RandomOnSphere(rand);
 }
 
 Matrix<Scalar, 6, 1>
