@@ -54,20 +54,18 @@ namespace rl
 		::rl::math::Vector
 		GaussianSampler::generateCollisionFree()
 		{
-			::rl::math::Vector q2(this->model->getDof());
+			::rl::math::Vector gauss(this->model->getDof());
 			
 			while (true)
 			{
 				::rl::math::Vector q = this->generate();
-				
-				::rl::math::Vector gauss(this->model->getDof());
 				
 				for (::std::size_t i = 0; i < this->model->getDof(); ++i)
 				{
 					gauss(i) = this->gauss();
 				}
 				
-				q2 = this->model->generatePositionGaussian(gauss, q, *this->sigma);
+				::rl::math::Vector q2 = this->model->generatePositionGaussian(gauss, q, *this->sigma);
 				
 				this->model->setPosition(q);
 				this->model->updateFrames();
@@ -89,8 +87,7 @@ namespace rl
 					
 					if (!this->model->isColliding())
 					{
-						q = q2;
-						return q;
+						return q2;
 					}
 				}
 			}
