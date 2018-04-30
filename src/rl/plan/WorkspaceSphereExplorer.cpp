@@ -163,10 +163,10 @@ namespace rl
 //for (::std::size_t i = 0; i < this->samples; ++i) // TODO
 					{
 						WorkspaceSphere sphere;
-						sphere.parent = vertex;
 						sphere.center = ::std::make_shared< ::rl::math::Vector3>(
 							top.radius * ::rl::math::Vector3::RandomOnSphere(::rl::math::Vector2(this->rand(), this->rand())) + *top.center
 						);
+						sphere.parent = vertex;
 						
 						if ((*this->start - *sphere.center).norm() <= this->range)
 						{
