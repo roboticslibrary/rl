@@ -67,7 +67,7 @@ namespace rl
 							q3(i) = this->gauss() * (*this->sigma)(i) + q2(i);
 						}
 						
-						this->model->clip(q3);
+						this->model->clamp(q3);
 						
 						if (this->model->isColliding())
 						{

@@ -40,7 +40,7 @@ namespace rl
 			
 			virtual ~Spherical();
 			
-			void clip(::rl::math::VectorRef q) const;
+			void clamp(::rl::math::VectorRef q) const;
 			
 			::rl::math::Real distance(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& q2) const;
 			

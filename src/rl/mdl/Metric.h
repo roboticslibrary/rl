@@ -40,7 +40,7 @@ namespace rl
 			
 			virtual ~Metric();
 			
-			void clip(::rl::math::Vector& q) const;
+			void clamp(::rl::math::Vector& q) const;
 			
 			Model* clone() const;
 			

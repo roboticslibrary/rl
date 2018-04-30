@@ -41,13 +41,13 @@ namespace rl
 		}
 		
 		void
-		Metric::clip(::rl::math::Vector& q) const
+		Metric::clamp(::rl::math::Vector& q) const
 		{
 			assert(q.size() == this->getDofPosition());
 			
 			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDofPosition(), ++i)
 			{
-				this->joints[i]->clip(q.segment(j, this->joints[i]->getDofPosition()));
+				this->joints[i]->clamp(q.segment(j, this->joints[i]->getDofPosition()));
 			}
 		}
 		

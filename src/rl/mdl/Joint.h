@@ -43,7 +43,7 @@ namespace rl
 			
 			virtual ~Joint();
 			
-			virtual void clip(::rl::math::VectorRef q) const;
+			virtual void clamp(::rl::math::VectorRef q) const;
 			
 			virtual ::rl::math::Real distance(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& q2) const;
 			

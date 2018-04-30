@@ -63,11 +63,11 @@ namespace rl
 			bool areColliding(const ::std::size_t& i, const ::std::size_t& j) const;
 			
 			/**
-			 * Clip specified configuration to be within joint limits.
+			 * Clamp specified configuration to be within joint limits.
 			 * 
 			 * @param[out] q \f$\vec{q}\f$
 			 */
-			virtual void clip(::rl::math::Vector& q) const;
+			virtual void clamp(::rl::math::Vector& q) const;
 			
 			virtual Kinematics* clone() const;
 			

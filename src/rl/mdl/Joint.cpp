@@ -77,7 +77,7 @@ namespace rl
 		}
 		
 		void
-		Joint::clip(::rl::math::VectorRef q) const
+		Joint::clamp(::rl::math::VectorRef q) const
 		{
 			for (::std::size_t i = 0; i < q.size(); ++i)
 			{
@@ -95,13 +95,9 @@ namespace rl
 						q(i) += range;
 					}
 				}
-				else if (q(i) > this->max(i))
+				else
 				{
-					q(i) = this->max(i);
-				}
-				else if (q(i) < this->min(i))
-				{
-					q(i) = this->min(i);
+					q(i) = ::rl::math::clamp(q(i), this->min(i), this->max(i));
 				}
 			}
 		}
@@ -174,7 +170,7 @@ namespace rl
 				q(i) = mean(i) + rand(i) * sigma(i);
 			}
 			
-			this->clip(q);
+			this->clamp(q);
 		}
 		
 		void
@@ -333,7 +329,7 @@ namespace rl
 		Joint::step(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& qdot, ::rl::math::VectorRef q2) const
 		{
 			q2 = q1 + qdot;
-			this->clip(q2);
+			this->clamp(q2);
 		}
 		
 		::rl::math::Real

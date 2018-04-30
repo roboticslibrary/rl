@@ -58,15 +58,15 @@ namespace rl
 		}
 		
 		void
-		Model::clip(::rl::math::Vector& q) const
+		Model::clamp(::rl::math::Vector& q) const
 		{
 			if (nullptr != this->kin)
 			{
-				this->kin->clip(q);
+				this->kin->clamp(q);
 			}
 			else
 			{
-				this->mdl->clip(q);
+				this->mdl->clamp(q);
 			}
 		}
 		

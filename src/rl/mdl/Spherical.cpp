@@ -63,7 +63,7 @@ namespace rl
 		}
 		
 		void
-		Spherical::clip(::rl::math::VectorRef q) const
+		Spherical::clamp(::rl::math::VectorRef q) const
 		{
 			::Eigen::Map< ::rl::math::Quaternion>(q.data()).normalize();
 		}

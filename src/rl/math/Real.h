@@ -27,6 +27,7 @@
 #ifndef RL_MATH_REAL_H
 #define RL_MATH_REAL_H
 
+#include <cassert>
 #include <cmath>
 
 /**
@@ -52,6 +53,19 @@ namespace rl
 			{
 				return ::std::pow(arg, static_cast<T>(1.0 / 3.0));
 			}
+		}
+		
+		template<typename T>
+		inline const T& clamp(const T& v, const T& lo, const T& hi)
+		{
+			return clamp(v, lo, hi, ::std::less<>());
+		}
+		
+		template<typename T, typename Compare>
+		inline const T& clamp(const T& v, const T& lo, const T& hi, Compare comp)
+		{
+			assert(!comp(hi, lo));
+			return comp(v, lo) ? lo : comp(hi, v) ? hi : v;
 		}
 		
 		template<typename T>

@@ -47,7 +47,7 @@ namespace rl
 			
 			virtual bool areColliding(const ::std::size_t& i, const ::std::size_t& j) const;
 			
-			virtual void clip(::rl::math::Vector& q) const;
+			virtual void clamp(::rl::math::Vector& q) const;
 			
 			virtual ::rl::math::Real distance(const ::rl::math::Vector& q1, const ::rl::math::Vector& q2) const;
 			

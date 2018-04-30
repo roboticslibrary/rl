@@ -76,18 +76,11 @@ namespace rl
 		}
 		
 		void
-		SixDof::clip(::rl::math::VectorRef q) const
+		SixDof::clamp(::rl::math::VectorRef q) const
 		{
 			for (::std::size_t i = 0; i < 3; ++i)
 			{
-				if (q(i) > this->max(i))
-				{
-					q(i) = this->max(i);
-				}
-				else if (q(i) < this->min(i))
-				{
-					q(i) = this->min(i);
-				}
+				q(i) = ::rl::math::clamp(q(i), this->min(i), this->max(i));
 			}
 			
 			::Eigen::Map< ::rl::math::Quaternion>(q.tail<4>().data()).normalize();
@@ -105,15 +98,7 @@ namespace rl
 			for (::std::size_t i = 0; i < 3; ++i)
 			{
 				q(i) = mean(i) + rand(i) * sigma(i);
-				
-				if (q(i) > this->max(i))
-				{
-					q(i) = this->max(i);
-				}
-				else if (q(i) < this->min(i))
-				{
-					q(i) = this->min(i);
-				}
+				q(i) = ::rl::math::clamp(q(i), this->min(i), this->max(i));
 			}
 			
 			q.tail<4>() = ::rl::math::Quaternion::Random(rand.tail<3>(), ::Eigen::Map< const ::rl::math::Quaternion>(mean.tail<4>().data()), sigma.tail<3>()).coeffs();
@@ -174,14 +159,7 @@ namespace rl
 			
 			for (::std::size_t i = 0; i < 3; ++i)
 			{
-				if (q2(i) > this->max(i))
-				{
-					q2(i) = this->max(i);
-				}
-				else if (q2(i) < this->min(i))
-				{
-					q2(i) = this->min(i);
-				}
+				q2(i) = ::rl::math::clamp(q2(i), this->min(i), this->max(i));
 			}
 			
 			::Eigen::Map<const ::rl::math::Quaternion> quaternion1(q1.tail<4>().data());

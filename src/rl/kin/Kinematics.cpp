@@ -89,7 +89,7 @@ namespace rl
 		}
 		
 		void
-		Kinematics::clip(::rl::math::Vector& q) const
+		Kinematics::clamp(::rl::math::Vector& q) const
 		{
 			for (::std::size_t i = 0; i < this->getDof(); ++i)
 			{
@@ -107,13 +107,9 @@ namespace rl
 						q(i) += range;
 					}
 				}
-				else if (q(i) > this->joints[i]->max)
+				else
 				{
-					q(i) = this->joints[i]->max;
-				}
-				else if (q(i) < this->joints[i]->min)
-				{
-					q(i) = this->joints[i]->min;
+					q(i) = ::rl::math::clamp(q(i), this->joints[i]->min, this->joints[i]->max);
 				}
 			}
 		}
@@ -511,7 +507,7 @@ namespace rl
 				q(i) = mean(i) + rand(i) * sigma(i);
 			}
 			
-			this->clip(q);
+			this->clamp(q);
 			
 			return q;
 		}
@@ -890,7 +886,7 @@ namespace rl
 				q2(i) = q1(i) + qdot(i);
 			}
 			
-			this->clip(q2);
+			this->clamp(q2);
 		}
 		
 		::rl::math::Transform&
