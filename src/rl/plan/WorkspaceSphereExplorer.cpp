@@ -171,7 +171,7 @@ namespace rl
 						::boost::uniform_on_sphere< ::rl::math::Real>::result_type sample = this->rand();
 						
 						sphere.center = ::std::make_shared< ::rl::math::Vector3>(
-							top.radius * ::rl::math::Vector3(sample[0], sample[1], sample[2]) + *top.center // TODO
+							top.radius * ::Eigen::Map< ::rl::math::Vector3>(sample.data()) + *top.center
 						);
 						
 						if ((*this->start - *sphere.center).norm() <= this->range)
