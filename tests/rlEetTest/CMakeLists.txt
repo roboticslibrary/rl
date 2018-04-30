@@ -71,7 +71,7 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR PQP_FOUND OR SOLID3_FOUND)
 			solid
 			${rl_SOURCE_DIR}/examples/rlsg/box-6d-300505_maze.xml
 			${rl_SOURCE_DIR}/examples/rlkin/box-6d-300505.xml
-			281 280
+			292 291
 			2 1 1 0 0 0
 			9 11 1 0 0 -90
 		)
