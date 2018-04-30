@@ -24,6 +24,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include <rl/math/algorithm.h>
 #include <rl/math/Rotation.h>
 
 #include "SixDof.h"

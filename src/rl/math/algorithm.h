@@ -24,21 +24,60 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef RL_MATH_REAL_H
-#define RL_MATH_REAL_H
+#ifndef RL_MATH_ALGORITHM_H
+#define RL_MATH_ALGORITHM_H
 
-/**
- * Robotics Library.
- */
+#include <cassert>
+#include <cmath>
+#include <functional>
+
 namespace rl
 {
-	/**
-	 * Common mathematical functions.
-	 */
 	namespace math
 	{
-		typedef double Real;
+		template<typename T>
+		inline T cbrt(const T& arg)
+		{
+			if (arg < 0)
+			{
+				return -::std::pow(-arg, static_cast<T>(1.0 / 3.0));
+			}
+			else
+			{
+				return ::std::pow(arg, static_cast<T>(1.0 / 3.0));
+			}
+		}
+		
+		template<typename T, typename Compare>
+		inline const T& clamp(const T& v, const T& lo, const T& hi, Compare comp)
+		{
+			assert(!comp(hi, lo));
+			return comp(v, lo) ? lo : comp(hi, v) ? hi : v;
+		}
+		
+		template<typename T>
+		inline const T& clamp(const T& v, const T& lo, const T& hi)
+		{
+			return clamp(v, lo, hi, ::std::less<T>());
+		}
+		
+		template<typename T>
+		inline T sign(const T& arg)
+		{
+			if (arg > 0)
+			{
+				return 1;
+			}
+			else if (arg < 0)
+			{
+				return -1;
+			}
+			else
+			{
+				return 0;
+			}
+		}
 	}
 }
 
-#endif // RL_MATH_REAL_H
+#endif // RL_MATH_ALGORITHM_H

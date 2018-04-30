@@ -3,6 +3,7 @@ find_package(Eigen3 REQUIRED)
 
 set(
 	BASE_HDRS
+	algorithm.h
 	Array.h
 	Circular.h
 	CircularVector2.h

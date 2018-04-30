@@ -27,6 +27,8 @@
 #ifndef RL_MATH_LOWPASS_H
 #define RL_MATH_LOWPASS_H
 
+#include <cmath>
+
 #include "Real.h"
 
 namespace rl

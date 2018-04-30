@@ -24,6 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include <rl/math/algorithm.h>
+
 #include "Frame.h"
 #include "Joint.h"
 

@@ -25,6 +25,7 @@
 //
 
 #include <algorithm>
+#include <rl/math/algorithm.h>
 #include <rl/math/Rotation.h>
 #include <rl/math/Unit.h>
 #include <rl/xml/Attribute.h>
