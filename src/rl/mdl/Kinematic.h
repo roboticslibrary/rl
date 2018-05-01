@@ -118,8 +118,8 @@ namespace rl
 			/**
 			 * Calculate Jacobian matrix inverse.
 			 * 
-			 * \f[ \matr{J}^{\dag}(\vec{q}) = \sum_{i = 1}^{r} \frac{ \sigma_{i} }{ \sigma_{i}^{2} + \lambda^{2} } \, \vec{v}_{i} \, \vec{u}_{i}^{\mathrm{T}} \f]
-			 * \f[ \matr{J}^{\dag}(\vec{q}) = \matr{J}^{\mathrm{T}}(\vec{q}) \, \bigl( \matr{J}(\vec{q}) \, \matr{J}^{\mathrm{T}}(\vec{q}) + \lambda^{2} \, \matr{1} \bigr)^{-1} \f]
+			 * \f[ \matr{J}^{\dagger}(\vec{q}) = \sum_{i = 1}^{r} \frac{ \sigma_{i} }{ \sigma_{i}^{2} + \lambda^{2} } \, \vec{v}_{i} \, \vec{u}_{i}^{\mathrm{T}} \f]
+			 * \f[ \matr{J}^{\dagger}(\vec{q}) = \matr{J}^{\mathrm{T}}(\vec{q}) \, \bigl( \matr{J}(\vec{q}) \, \matr{J}^{\mathrm{T}}(\vec{q}) + \lambda^{2} \, \matr{1} \bigr)^{-1} \f]
 			 * 
 			 * @param[in] lambda Damping factor \f$\lambda\f$
 			 * @param[in] doSvd Use singular value decomposition or damped least squares
@@ -133,11 +133,11 @@ namespace rl
 			/**
 			 * Calculate Jacobian matrix inverse.
 			 * 
-			 * \f[ \matr{J}^{\dag}(\vec{q}) = \sum_{i = 1}^{r} \frac{ \sigma_{i} }{ \sigma_{i}^{2} + \lambda^{2} } \, \vec{v}_{i} \, \vec{u}_{i}^{\mathrm{T}} \f]
-			 * \f[ \matr{J}^{\dag}(\vec{q}) = \matr{J}^{\mathrm{T}}(\vec{q}) \, \bigl( \matr{J}(\vec{q}) \, \matr{J}^{\mathrm{T}}(\vec{q}) + \lambda^{2} \, \matr{1} \bigr)^{-1} \f]
+			 * \f[ \matr{J}^{\dagger}(\vec{q}) = \sum_{i = 1}^{r} \frac{ \sigma_{i} }{ \sigma_{i}^{2} + \lambda^{2} } \, \vec{v}_{i} \, \vec{u}_{i}^{\mathrm{T}} \f]
+			 * \f[ \matr{J}^{\dagger}(\vec{q}) = \matr{J}^{\mathrm{T}}(\vec{q}) \, \bigl( \matr{J}(\vec{q}) \, \matr{J}^{\mathrm{T}}(\vec{q}) + \lambda^{2} \, \matr{1} \bigr)^{-1} \f]
 			 * 
 			 * @param[in] J Jacobian matrix \f$\matr{J}\f$
-			 * @param[in] invJ Jacobian matrix inverse \f$\matr{J}^{\dag}\f$
+			 * @param[in] invJ Jacobian matrix inverse \f$\matr{J}^{\dagger}\f$
 			 * @param[in] lambda Damping factor \f$\lambda\f$
 			 * @param[in] doSvd Use singular value decomposition or damped least squares
 			 * 
@@ -214,7 +214,7 @@ namespace rl
 			/**
 			 * Access calculated Jacobian matrix inverse.
 			 * 
-			 * @return Jacobian matrix inverse \f$\matr{J}^{\dag}(\vec{q})\f$
+			 * @return Jacobian matrix inverse \f$\matr{J}^{\dagger}(\vec{q})\f$
 			 * 
 			 * @pre setPosition()
 			 * @pre calculateJacobian()
@@ -242,7 +242,7 @@ namespace rl
 			/**
 			 * Jacobian matrix inverse.
 			 * 
-			 * \f[ \matr{J}^{\dag}(\vec{q}) \f]
+			 * \f[ \matr{J}^{\dagger}(\vec{q}) \f]
 			 * 
 			 * @pre calculateJacobianInverse()
 			 * 

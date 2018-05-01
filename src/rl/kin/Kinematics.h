@@ -220,7 +220,7 @@ namespace rl
 			/**
 			 * Calculate inverse velocity kinematics.
 			 * 
-			 * \f[ \dot{\vec{q}} = \matr{J}^{\dag} \dot{\vec{x}} \f]
+			 * \f[ \dot{\vec{q}} = \matr{J}^{\dagger} \dot{\vec{x}} \f]
 			 * 
 			 * @param[in] xdot \f$\dot{\vec{x}}\f$
 			 * @param[out] qdot \f$\dot{\vec{q}}\f$
@@ -304,8 +304,8 @@ namespace rl
 			/**
 			 * Update Jacobian-Inverse.
 			 * 
-			 * \f[ \matr{J}^{\dag}(\vec{q}) = \sum_{i = 1}^{r} \frac{ \sigma_{i} }{ \sigma_{i}^{2} + \lambda^{2} } \, \vec{v}_{i} \, \vec{u}_{i}^{\mathrm{T}} \f]
-			 * \f[ \matr{J}^{\dag}(\vec{q}) = \matr{J}^{\mathrm{T}}(\vec{q}) \, \bigl( \matr{J}(\vec{q}) \, \matr{J}^{\mathrm{T}}(\vec{q}) + \lambda^{2} \, \matr{1} \bigr)^{-1} \f]
+			 * \f[ \matr{J}^{\dagger}(\vec{q}) = \sum_{i = 1}^{r} \frac{ \sigma_{i} }{ \sigma_{i}^{2} + \lambda^{2} } \, \vec{v}_{i} \, \vec{u}_{i}^{\mathrm{T}} \f]
+			 * \f[ \matr{J}^{\dagger}(\vec{q}) = \matr{J}^{\mathrm{T}}(\vec{q}) \, \bigl( \matr{J}(\vec{q}) \, \matr{J}^{\mathrm{T}}(\vec{q}) + \lambda^{2} \, \matr{1} \bigr)^{-1} \f]
 			 * 
 			 * @param[in] lambda Damping factor \f$\lambda\f$
 			 * @param[in] doSvd Use singular value decomposition or damped least squares
