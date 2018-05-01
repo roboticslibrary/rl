@@ -35,16 +35,31 @@ template<typename OtherDerived>
 Matrix<Scalar, 2, 1>
 static CartesianFromPolar(const MatrixBase<OtherDerived>& polar)
 {
+	eigen_assert(2 == polar.size());
+	return CartesianFromPolar(polar(0), polar(1));
+}
+
+/**
+ * Convert polar coordinates into Cartesian coordinates.
+ * 
+ * http://mathworld.wolfram.com/PolarCoordinates.html
+ * 
+ * @param[in] r Radial distance from the origin
+ * @param[in] theta Counterclockwise angle from the x-axis
+ */
+Matrix<Scalar, 2, 1>
+static CartesianFromPolar(const Scalar& r, const Scalar& theta)
+{
 	using ::std::cos;
 	using ::std::sin;
 	
 	EIGEN_STATIC_ASSERT_VECTOR_SPECIFIC_SIZE(Derived, 2)
 	
-	eigen_assert(2 == polar.size());
+	eigen_assert(r >= Scalar(0));
 	
 	return Matrix<Scalar, 2, 1>(
-		polar.x() * cos(polar.y()),
-		polar.x() * sin(polar.y())
+		r * cos(theta),
+		r * sin(theta)
 	);
 }
 
@@ -52,19 +67,35 @@ template<typename OtherDerived>
 Matrix<Scalar, 3, 1>
 static CartesianFromSpherical(const MatrixBase<OtherDerived>& spherical)
 {
+	eigen_assert(3 == spherical.size());
+	return CartesianFromSpherical(spherical(0), spherical(1), spherical(2));
+}
+
+/**
+ * Convert spherical coordinates into Cartesian coordinates.
+ * 
+ * http://mathworld.wolfram.com/SphericalCoordinates.html
+ * 
+ * @param[in] r Radial distance from the origin
+ * @param[in] theta Azimuthal angle in the xy-plane from the x-axis
+ * @param[in] phi Polar angle (also known as the zenith angle and colatitude) from the positive z-axis
+ */
+Matrix<Scalar, 3, 1>
+static CartesianFromSpherical(const Scalar& r, const Scalar& theta, const Scalar& phi)
+{
 	using ::std::cos;
 	using ::std::sin;
 	
 	EIGEN_STATIC_ASSERT_VECTOR_SPECIFIC_SIZE(Derived, 3)
 	
-	eigen_assert(3 == spherical.size());
+	eigen_assert(r >= Scalar(0));
 	
-	Scalar sin_y = sin(spherical.y());
+	Scalar sin_phi = sin(phi);
 	
 	return Matrix<Scalar, 3, 1>(
-		spherical.x() * sin_y * cos(spherical.z()),
-		spherical.x() * sin_y * sin(spherical.z()),
-		spherical.x() * cos(spherical.y())
+		r * cos(theta) * sin_phi,
+		r * sin(theta) * sin_phi,
+		r * cos(phi)
 	);
 }
 
@@ -72,17 +103,27 @@ template<typename OtherDerived>
 Matrix<Scalar, 2, 1>
 static PolarFromCartesian(const MatrixBase<OtherDerived>& cartesian)
 {
+	eigen_assert(2 == cartesian.size());
+	return PolarFromCartesian(cartesian.x(), cartesian.y());
+}
+
+/**
+ * Convert Cartesian coordinates into polar coordinates.
+ * 
+ * http://mathworld.wolfram.com/PolarCoordinates.html
+ */
+Matrix<Scalar, 2, 1>
+static PolarFromCartesian(const Scalar& x, const Scalar& y)
+{
 	using ::std::atan2;
 	using ::std::pow;
 	using ::std::sqrt;
 	
 	EIGEN_STATIC_ASSERT_VECTOR_SPECIFIC_SIZE(Derived, 2)
 	
-	eigen_assert(2 == cartesian.size());
-	
 	return Matrix<Scalar, 2, 1>(
-		sqrt(pow(cartesian.x(), 2) + pow(cartesian.y(), 2)),
-		atan2(cartesian.y(), cartesian.x())
+		sqrt(pow(x, 2) + pow(y, 2)),
+		atan2(y, x)
 	);
 }
 
@@ -164,22 +205,33 @@ template<typename OtherDerived>
 Matrix<Scalar, 3, 1>
 static SphericalFromCartesian(const MatrixBase<OtherDerived>& cartesian)
 {
+	eigen_assert(3 == cartesian.size());
+	return SphericalFromCartesian(cartesian.x(), cartesian.y(), cartesian.z());
+}
+
+/**
+ * Convert Cartesian coordinates into spherical coordinates.
+ * 
+ * http://mathworld.wolfram.com/SphericalCoordinates.html
+ */
+template<typename OtherDerived>
+Matrix<Scalar, 3, 1>
+static SphericalFromCartesian(const Scalar& x, const Scalar& y, const Scalar& z)
+{
 	using ::std::atan2;
 	using ::std::pow;
 	using ::std::sqrt;
 	
 	EIGEN_STATIC_ASSERT_VECTOR_SPECIFIC_SIZE(Derived, 3)
 	
-	eigen_assert(3 == cartesian.size());
-	
-	Scalar x_2 = pow(cartesian.x(), 2);
-	Scalar y_2 = pow(cartesian.y(), 2);
-	Scalar z_2 = pow(cartesian.z(), 2);
+	Scalar x_2 = pow(x, 2);
+	Scalar y_2 = pow(y, 2);
+	Scalar z_2 = pow(z, 2);
 	
 	return Matrix<Scalar, 3, 1>(
 		sqrt(x_2 + y_2 + z_2),
-		atan2(sqrt(x_2 + y_2), cartesian.z()),
-		atan2(cartesian.y(), cartesian.x())
+		atan2(sqrt(x_2 + y_2), z),
+		atan2(y, x)
 	);
 }
 
