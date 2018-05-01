@@ -8,11 +8,13 @@ set(
 	Cylindrical.h
 	Dynamic.h
 	Element.h
+	EulerCauchyIntegrator.h
 	Exception.h
 	Factory.h
 	Fixed.h
 	Frame.h
 	Helical.h
+	Integrator.h
 	InverseKinematics.h
 	JacobianInverseKinematics.h
 	Joint.h
@@ -21,6 +23,7 @@ set(
 	Model.h
 	Prismatic.h
 	Revolute.h
+	RungeKuttaNystromIntegrator.h
 	SixDof.h
 	Spherical.h
 	Transform.h
@@ -36,11 +39,13 @@ set(
 	Cylindrical.cpp
 	Dynamic.cpp
 	Element.cpp
+	EulerCauchyIntegrator.cpp
 	Exception.cpp
 	Fixed.cpp
 	Factory.cpp
 	Frame.cpp
 	Helical.cpp
+	Integrator.cpp
 	InverseKinematics.cpp
 	JacobianInverseKinematics.cpp
 	Joint.cpp
@@ -49,6 +54,7 @@ set(
 	Model.cpp
 	Prismatic.cpp
 	Revolute.cpp
+	RungeKuttaNystromIntegrator.cpp
 	SixDof.cpp
 	Spherical.cpp
 	Transform.cpp

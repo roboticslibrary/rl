@@ -30,6 +30,7 @@
 #include <boost/lexical_cast.hpp>
 #include <rl/mdl/Dynamic.h>
 #include <rl/mdl/Model.h>
+#include <rl/mdl/RungeKuttaNystromIntegrator.h>
 #include <rl/mdl/XmlFactory.h>
 
 int
@@ -73,7 +74,8 @@ main(int argc, char** argv)
 		dynamic->forwardDynamics();
 		std::cout << "qdd = " << dynamic->getAcceleration().transpose() << std::endl;
 		
-		dynamic->rungeKuttaNystrom(1);
+		rl::mdl::RungeKuttaNystromIntegrator integrator(dynamic);
+		integrator.integrate(1);
 		std::cout << "q = " << dynamic->getPosition().transpose() << std::endl;
 		std::cout << "qd = " << dynamic->getVelocity().transpose() << std::endl;
 	}
