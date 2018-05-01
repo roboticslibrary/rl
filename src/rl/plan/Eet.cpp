@@ -443,18 +443,13 @@ namespace rl
 						
 						if (sigma < this->beta) // maintain orientation for small sigma
 						{
-							// Gauss sampling for orientation
+							// Gauss sampling for orientation similar to nearest vertex
 							
-							::rl::math::Real x = this->gauss() * sigma * 180.0f * ::rl::math::DEG2RAD / this->beta;
-							::rl::math::Real y = this->gauss() * sigma * 180.0f * ::rl::math::DEG2RAD / this->beta;
-							::rl::math::Real z = this->gauss() * sigma * 180.0f * ::rl::math::DEG2RAD / this->beta;
-							
-							// orientation similar to nearest vertex
-							
-							chosen.linear() = (*get(this->tree[0], nearest.second)->t).linear() *
-								::rl::math::AngleAxis(z, ::rl::math::Vector3::UnitZ()) *
-								::rl::math::AngleAxis(y, ::rl::math::Vector3::UnitY()) *
-								::rl::math::AngleAxis(x, ::rl::math::Vector3::UnitX());
+							chosen.linear() = ::rl::math::Quaternion::Random(
+								::rl::math::Vector3(this->gauss(), this->gauss(), this->gauss()),
+								::rl::math::Quaternion((*get(this->tree[0], nearest.second)->t).linear()),
+								::rl::math::Vector3::Constant(sigma / this->beta)
+							).toRotationMatrix();
 						}
 					}
 					
