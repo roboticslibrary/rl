@@ -31,20 +31,6 @@
 namespace Eigen { template<typename Derived> class QuaternionBase {
 #endif
 
-template<typename OtherDerived1, typename OtherDerived2>
-static Quaternion<Scalar> Random(const QuaternionBase<OtherDerived1>& mean, const MatrixBase<OtherDerived2>& sigma)
-{
-	return Random(
-		Vector3(
-			internal::random<Scalar>(0, 1),
-			internal::random<Scalar>(0, 1),
-			internal::random<Scalar>(0, 1)
-		),
-		mean,
-		sigma
-	);
-}
-
 /**
  * QuTEM (Quaternion Tangent Ellipsoid at the Mean) sampling algorithm.
  * 
@@ -55,20 +41,20 @@ static Quaternion<Scalar> Random(const QuaternionBase<OtherDerived1>& mean, cons
  * http://characters.media.mit.edu/Theses/johnson_phd.pdf
  */
 template<typename OtherDerived1, typename OtherDerived2, typename OtherDerived3>
-static Quaternion<Scalar> Random(const MatrixBase<OtherDerived1>& rand, const QuaternionBase<OtherDerived2>& mean, const MatrixBase<OtherDerived3>& sigma)
+static Quaternion<Scalar> Random(const MatrixBase<OtherDerived1>& gauss, const QuaternionBase<OtherDerived2>& mean, const MatrixBase<OtherDerived3>& sigma)
 {
-	eigen_assert(3 == rand.size());
+	eigen_assert(3 == gauss.size());
 	eigen_assert(3 == sigma.size());
-	eigen_assert(rand(0) >= Scalar(0));
-	eigen_assert(rand(0) <= Scalar(1));
-	eigen_assert(rand(1) >= Scalar(0));
-	eigen_assert(rand(1) <= Scalar(1));
-	eigen_assert(rand(2) >= Scalar(0));
-	eigen_assert(rand(2) <= Scalar(1));
+	eigen_assert(gauss(0) >= Scalar(0));
+	eigen_assert(gauss(0) <= Scalar(1));
+	eigen_assert(gauss(1) >= Scalar(0));
+	eigen_assert(gauss(1) <= Scalar(1));
+	eigen_assert(gauss(2) >= Scalar(0));
+	eigen_assert(gauss(2) <= Scalar(1));
 	
 	Quaternion<Scalar> tmp;
-	tmp.w() = rand.norm();
-	tmp.vec() = sigma.cwiseProduct(rand);
+	tmp.w() = gauss.norm();
+	tmp.vec() = sigma.cwiseProduct(gauss);
 	
 	return mean * tmp.exp();
 }
@@ -260,18 +246,11 @@ setRandom(const MatrixBase<OtherDerived>& rand)
 	return this->derived() = Random(rand);
 }
 
-template<typename OtherDerived1, typename OtherDerived2>
-Derived&
-setRandom(const QuaternionBase<OtherDerived1>& mean, const MatrixBase<OtherDerived2>& sigma)
-{
-	return this->derived() = Random(mean, sigma);
-}
-
 template<typename OtherDerived1, typename OtherDerived2, typename OtherDerived3>
 Derived&
-setRandom(const MatrixBase<OtherDerived1>& rand, const QuaternionBase<OtherDerived2>& mean, const MatrixBase<OtherDerived3>& sigma)
+setRandom(const MatrixBase<OtherDerived1>& gauss, const QuaternionBase<OtherDerived2>& mean, const MatrixBase<OtherDerived3>& sigma)
 {
-	return this->derived() = Random(rand, mean, sigma);
+	return this->derived() = Random(gauss, mean, sigma);
 }
 
 template<typename OtherDerived>
