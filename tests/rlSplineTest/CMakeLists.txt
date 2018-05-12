@@ -54,7 +54,7 @@ target_link_libraries(
 )
 
 add_test(
-	rlSplineTestConstructCubicAndLinearQuartic
+	rlSplineTest
 	${CMAKE_CURRENT_BINARY_DIR}/rlSplineTest
 )
 
@@ -84,7 +84,7 @@ target_link_libraries(
 )
 
 add_test(
-	rlSplineScaleTestLinearQuartic
+	rlSplineScaleTest
 	${CMAKE_CURRENT_BINARY_DIR}/rlSplineScaleTest
 )
 
