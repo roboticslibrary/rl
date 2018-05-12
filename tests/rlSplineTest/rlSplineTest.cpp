@@ -53,9 +53,23 @@ main(int argc, char** argv)
 		y.push_back(-2);
 		rl::math::Real yd0 = 0;
 		rl::math::Real yd1 = 0;
+		rl::math::Spline<rl::math::Real> s1 = rl::math::Spline<rl::math::Real>::CubicFirst(x, y, yd0, yd1);
+		rl::math::Spline<rl::math::Real> s2 = rl::math::Spline<rl::math::Real>::CubicNatural(x, y);
 		rl::math::Spline<rl::math::Real> s3 = rl::math::Spline<rl::math::Real>::LinearParabolic(x, y, 0.25);
 		rl::math::Spline<rl::math::Real> s4 = rl::math::Spline<rl::math::Real>::LinearQuartic(x, y, 0.25);
 		rl::math::Spline<rl::math::Real> s5 = rl::math::Spline<rl::math::Real>::LinearSextic(x, y, 0.25);
+		
+		if (!s1.isContinuous(1))
+		{
+			std::cerr <<  "CubicFirst should be 1-continuous." << std::endl;
+			return EXIT_FAILURE;
+		}
+		
+		if (!s2.isContinuous(1))
+		{
+			std::cerr <<  "CubicNatural should be 1-continuous." << std::endl;
+			return EXIT_FAILURE;
+		}
 		
 		if (!s3.isContinuous(1))
 		{
@@ -96,9 +110,23 @@ main(int argc, char** argv)
 		yd0 << 0, 2;
 		rl::math::ArrayX yd1(2);
 		yd1 << 0, 3;
+		rl::math::Spline<rl::math::ArrayX> s1 = rl::math::Spline<rl::math::ArrayX>::CubicFirst(x, y, yd0, yd1);
+		rl::math::Spline<rl::math::ArrayX> s2 = rl::math::Spline<rl::math::ArrayX>::CubicNatural(x, y);
 		rl::math::Spline<rl::math::ArrayX> s3 = rl::math::Spline<rl::math::ArrayX>::LinearParabolic(x, y, 0.25);
 		rl::math::Spline<rl::math::ArrayX> s4 = rl::math::Spline<rl::math::ArrayX>::LinearQuartic(x, y, 0.25);
 		rl::math::Spline<rl::math::ArrayX> s5 = rl::math::Spline<rl::math::ArrayX>::LinearSextic(x, y, 0.25);
+		
+		if (!s1.isContinuous(1))
+		{
+			std::cerr <<  "CubicFirst should be 1-continuous." << std::endl;
+			return EXIT_FAILURE;
+		}
+		
+		if (!s2.isContinuous(1))
+		{
+			std::cerr <<  "CubicNatural should be 1-continuous." << std::endl;
+			return EXIT_FAILURE;
+		}
 		
 		if (!s3.isContinuous(1))
 		{

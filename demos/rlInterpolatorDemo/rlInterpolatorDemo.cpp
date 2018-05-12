@@ -187,6 +187,10 @@ main(int argc, char** argv)
 		y.push_back(3);
 		y.push_back(3);
 		y.push_back(-2);
+		rl::math::Spline<rl::math::Real> f0 = rl::math::Spline<rl::math::Real>::CubicFirst(x, y, 0, 0);
+		eval(f0);
+		rl::math::Spline<rl::math::Real> f1 = rl::math::Spline<rl::math::Real>::CubicNatural(x, y);
+		eval(f1);
 		rl::math::Spline<rl::math::Real> f2 = rl::math::Spline<rl::math::Real>::LinearParabolic(x, y, 0.25f);
 		eval(f2);
 		rl::math::Spline<rl::math::Real> f3 = rl::math::Spline<rl::math::Real>::LinearQuartic(x, y, 0.25f);
@@ -210,6 +214,17 @@ main(int argc, char** argv)
 		y.push_back(rl::math::ArrayX::Constant(1, 3));
 		y.push_back(rl::math::ArrayX::Constant(1, 3));
 		y.push_back(rl::math::ArrayX::Constant(1, -2));
+		rl::math::Spline<rl::math::ArrayX> f0 = rl::math::Spline<rl::math::ArrayX>::CubicFirst(
+			x,
+			y,
+			rl::math::ArrayX::Constant(1, 0),
+			rl::math::ArrayX::Constant(1, 0)
+		);
+		eval(f0);
+		rl::math::Spline<rl::math::ArrayX> f1 = rl::math::Spline<rl::math::ArrayX>::CubicNatural(x, y);
+		eval(f1);
+		rl::math::Spline<rl::math::ArrayX> f2 = rl::math::Spline<rl::math::ArrayX>::LinearParabolic(x, y, 0.25f);
+		eval(f2);
 		rl::math::Spline<rl::math::ArrayX> f3 = rl::math::Spline<rl::math::ArrayX>::LinearQuartic(x, y, 0.25f);
 		eval(f3);
 		rl::math::Spline<rl::math::ArrayX> f4 = rl::math::Spline<rl::math::ArrayX>::LinearSextic(x, y, 0.25f);

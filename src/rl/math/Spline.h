@@ -73,6 +73,140 @@ namespace rl
 			}
 			
 			/**
+			 * Generates a cubic spline that interpolates the supporting points
+			 * y with start and end tangents yd0 and yd1.
+			 * 
+			 * http://banach.millersville.edu/~bob/math375/CubicSpline/main.pdf
+			 */
+			template<typename Container1, typename Container2>
+			static Spline CubicFirst(const Container1& x, const Container2& y, const T& yd0, const T& yd1)
+			{
+				assert(x.size() > 1);
+				assert(x.size() == y.size());
+				assert(TypeTraits<T>::size(y[0]) == TypeTraits<T>::size(yd0));
+				assert(TypeTraits<T>::size(y[0]) == TypeTraits<T>::size(yd1));
+				
+				::std::size_t n = y.size();
+				::std::size_t dim = TypeTraits<T>::size(y[0]);
+				
+				const Container2& a = y;
+				Container1 h(n - 1);
+				
+				for (::std::size_t i = 0; i < n - 1; ++i)
+				{
+					h[i] = x[i + 1] - x[i];
+				}
+				
+				Container1 mu(n - 1);
+				Container2 z(n);
+				
+				T alpha0 = 3 / h[0] * (a[1] - a[0]) - 3 * yd0;
+				Container1::value_type l0 = 2 * h[0];
+				mu[0] = 0.5;
+				z[0] = alpha0 / l0;
+				
+				for (::std::size_t i = 1; i < n - 1; ++i)
+				{
+					T alpha = 3 / h[i] * (a[i + 1] - a[i]) - 3 / h[i - 1] * (a[i] - a[i - 1]);
+					Container1::value_type l = 2 * (x[i + 1] - x[i - 1]) - h[i - 1] * mu[i - 1];
+					mu[i] = h[i] / l;
+					z[i] = (alpha - h[i - 1] * z[i - 1]) / l;
+				}
+				
+				T alpha1 = 3 * yd1 - 3 / h[n - 2] * (a[n - 1] - a[n - 2]);
+				Container1::value_type l1 = h[n - 2] * (2 - mu[n - 2]);
+				z[n - 1] = (alpha1 - h[n - 2] * z[n - 2]) / l1;
+				
+				Container2 c(n);
+				
+				c[n - 1] = z[n - 1];
+				
+				for (::std::size_t i = n - 1; i-- > 0;)
+				{
+					c[i] = z[i] - mu[i] * c[i + 1];
+				}
+				
+				Spline f;
+				
+				for (::std::size_t i = 0; i < n - 1; ++i)
+				{
+					Polynomial<T> fi(3);
+					fi.coefficient(0) = a[i];
+					fi.coefficient(1) = (a[i + 1] - a[i]) / h[i] - (h[i] * (c[i + 1] + 2 * c[i])) / 3;
+					fi.coefficient(2) = c[i];
+					fi.coefficient(3) = (c[i + 1] - c[i]) / (3 * h[i]);
+					fi.upper() = h[i];
+					f.push_back(fi);
+				}
+				
+				return f;
+			}
+			
+			/**
+			 * Generates a cubic spline that interpolates the supporting points
+			 * y, with a natural curvature of zero at the endpoints. 
+			 * 
+			 * http://banach.millersville.edu/~bob/math375/CubicSpline/main.pdf
+			 */
+			template<typename Container1, typename Container2>
+			static Spline CubicNatural(const Container1& x, const Container2& y)
+			{
+				assert(x.size() > 1);
+				assert(x.size() == y.size());
+				
+				::std::size_t n = y.size();
+				::std::size_t dim = TypeTraits<T>::size(y[0]);
+				
+				const Container2& a = y;
+				Container1 h(n - 1);
+				
+				for (::std::size_t i = 0; i < n - 1; ++i)
+				{
+					h[i] = x[i + 1] - x[i];
+				}
+				
+				Container1 mu(n - 1);
+				Container2 z(n);
+				
+				mu[0] = 0;
+				z[0] = TypeTraits<T>::Zero(dim);
+				
+				for (::std::size_t i = 1; i < n - 1; ++i)
+				{
+					T alpha = 3 / h[i] * (a[i + 1] - a[i]) - 3 / h[i - 1] * (a[i] - a[i - 1]);
+					Container1::value_type l = 2 * (x[i + 1] - x[i - 1]) - h[i - 1] * mu[i - 1];
+					mu[i] = h[i] / l;
+					z[i] = (alpha - h[i - 1] * z[i - 1]) / l;
+				}
+				
+				z[n - 1] = TypeTraits<T>::Zero(dim);
+				
+				Container2 c(n);
+				
+				c[n - 1] = TypeTraits<T>::Zero(dim);
+				
+				for (::std::size_t i = n - 1; i-- > 0;)
+				{
+					c[i] = z[i] - mu[i] * c[i + 1];
+				}
+				
+				Spline f;
+				
+				for (::std::size_t i = 0; i < n - 1; ++i)
+				{
+					Polynomial<T> fi(3);
+					fi.coefficient(0) = a[i];
+					fi.coefficient(1) = (a[i + 1] - a[i]) / h[i] - (h[i] * (c[i + 1] + 2 * c[i])) / 3;
+					fi.coefficient(2) = c[i];
+					fi.coefficient(3) = (c[i + 1] - c[i]) / (3 * h[i]);
+					fi.upper() = h[i];
+					f.push_back(fi);
+				}
+				
+				return f;
+			}
+			
+			/**
 			 * Generates a piecewise spline with parabolic segments around the
 			 * given supporting points y and linear segments in between.
 			 * 
@@ -551,7 +685,7 @@ namespace rl
 			 * A trapezoidal acceleration trajectory has up to seven segments of 
 			 * constant jerk. Its velocity curve is double-S shaped.
 			 * 
-			 * see L. Biagiotti, C. Melchiorri (2008) "Trajectory Planning for Automatic
+			 * L. Biagiotti, C. Melchiorri (2008) "Trajectory Planning for Automatic
 			 * Machines and Robots", pp. 90ff.
 			 */
 			static Spline TrapeziodalAccelerationAtRest(const T& q0, const T& q1, const T& vmax, const T& amax, const T& jmax)
