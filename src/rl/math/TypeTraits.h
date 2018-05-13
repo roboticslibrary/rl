@@ -31,6 +31,8 @@
 #define EIGEN_QUATERNIONBASE_PLUGIN <rl/math/QuaternionBaseAddons.h>
 #define EIGEN_TRANSFORM_PLUGIN <rl/math/TransformAddons.h>
 
+#include <algorithm>
+#include <iterator>
 #include <limits>
 #include <Eigen/Core>
 
@@ -42,37 +44,166 @@ namespace rl
 		class TypeTraits
 		{
 		public:
+			typedef typename T::value_type value_type;
+			
 			static T Constant(const ::std::size_t& i, const T& value)
 			{
-				return value;
+				return T(i, value);
 			}
 			
 			static T Zero(const ::std::size_t& i)
 			{
-				return 0;
+				return T(i, 0);
 			}
 			
 			static T abs(const T& t)
 			{
-				return ::std::abs(t);
+				using ::std::abs;
+				using ::std::size;
+				using ::std::transform;
+				T res(size(t));
+				transform(t.begin(), t.end(), res.begin(), static_cast<value_type(*)(value_type)>(&abs));
+				return res;
 			}
 			
-			static bool equal(const T& lhs, const T& rhs, const T& epsilon = ::Eigen::NumTraits<T>::dummy_precision())
+			static bool equal(const T& lhs, const T& rhs, const value_type& epsilon = ::Eigen::NumTraits<value_type>::dummy_precision())
 			{
-				return ::std::abs(lhs - rhs) < epsilon;
+				using ::std::abs;
+				using ::std::begin;
+				using ::std::end;
+				using ::std::min;
+				
+				auto first1 = begin(lhs);
+				auto last1 = end(lhs);
+				auto first2 = begin(rhs);
+				
+				value_type norm = value_type();
+				value_type norm1 = value_type();
+				value_type norm2 = value_type();
+				
+				while (first1 != last1)
+				{
+					value_type tmp = abs(*first1 - *first2);
+					norm += tmp * tmp;
+					value_type tmp1 = abs(*first1);
+					norm1 += tmp1 * tmp1;
+					value_type tmp2 = abs(*first2);
+					norm2 += tmp2 * tmp2;
+					++first1;
+					++first2;
+				}
+				
+				return norm <= epsilon * epsilon * min(norm1, norm2);
 			}
 			
 			static T max_element(const T& t)
 			{
-				return t;
+				using ::std::max_element;
+				return max_element(t.begin(), t.end());
 			}
 			
 			static T min_element(const T& t)
 			{
-				return t;
+				using ::std::min_element;
+				return min_element(t.begin(), t.end());
 			}
 			
 			static ::std::size_t size(const T& t)
+			{
+				using ::std::size;
+				return size(t);
+			}
+			
+		protected:
+			
+		private:
+			
+		};
+		
+		template<>
+		class TypeTraits<float>
+		{
+		public:
+			typedef float value_type;
+			
+			static float Constant(const ::std::size_t& i, const float& value)
+			{
+				return value;
+			}
+			
+			static float Zero(const ::std::size_t& i)
+			{
+				return 0;
+			}
+			
+			static float abs(const float& t)
+			{
+				return ::std::abs(t);
+			}
+			
+			static bool equal(const float& lhs, const float& rhs, const float& epsilon = ::Eigen::NumTraits<float>::dummy_precision())
+			{
+				return ::Eigen::internal::isApprox(lhs, rhs, epsilon);
+			}
+			
+			static float max_element(const float& t)
+			{
+				return t;
+			}
+			
+			static float min_element(const float& t)
+			{
+				return t;
+			}
+			
+			static ::std::size_t size(const float& t)
+			{
+				return 1;
+			}
+			
+		protected:
+			
+		private:
+			
+		};
+		
+		template<>
+		class TypeTraits<double>
+		{
+		public:
+			typedef double value_type;
+			
+			static double Constant(const ::std::size_t& i, const double& value)
+			{
+				return value;
+			}
+			
+			static double Zero(const ::std::size_t& i)
+			{
+				return 0;
+			}
+			
+			static double abs(const double& t)
+			{
+				return ::std::abs(t);
+			}
+			
+			static bool equal(const double& lhs, const double& rhs, const double& epsilon = ::Eigen::NumTraits<double>::dummy_precision())
+			{
+				return ::Eigen::internal::isApprox(lhs, rhs, epsilon);
+			}
+			
+			static double max_element(const double& t)
+			{
+				return t;
+			}
+			
+			static double min_element(const double& t)
+			{
+				return t;
+			}
+			
+			static ::std::size_t size(const double& t)
 			{
 				return 1;
 			}
@@ -87,6 +218,8 @@ namespace rl
 		class TypeTraits< ::Eigen::Array<Scalar, Rows, Cols, Options, MaxRows, MaxCols>>
 		{
 		public:
+			typedef Scalar value_type;
+			
 			static ::Eigen::Array<Scalar, Rows, Cols, Options, MaxRows, MaxCols> Constant(const ::std::size_t& i, const Scalar& value)
 			{
 				return ::Eigen::Array<Scalar, Rows, Cols, Options, MaxRows, MaxCols>::Constant(i, value);
@@ -132,6 +265,8 @@ namespace rl
 		class TypeTraits< ::Eigen::Matrix<Scalar, Rows, Cols, Options, MaxRows, MaxCols>>
 		{
 		public:
+			typedef Scalar value_type;
+			
 			static ::Eigen::Matrix<Scalar, Rows, Cols, Options, MaxRows, MaxCols> Constant(const ::std::size_t& i, const Scalar& value)
 			{
 				return ::Eigen::Matrix<Scalar, Rows, Cols, Options, MaxRows, MaxCols>::Constant(i, value);
