@@ -117,9 +117,7 @@ namespace rl
 				typename Container1::value_type l1 = h[n - 2] * (2 - mu[n - 2]);
 				z[n - 1] = (alpha1 - h[n - 2] * z[n - 2]) / l1;
 				
-				Container2 c(n);
-				
-				c[n - 1] = z[n - 1];
+				Container2& c = z;
 				
 				for (::std::size_t i = n - 1; i-- > 0;)
 				{
@@ -181,9 +179,7 @@ namespace rl
 				
 				z[n - 1] = TypeTraits<T>::Zero(dim);
 				
-				Container2 c(n);
-				
-				c[n - 1] = TypeTraits<T>::Zero(dim);
+				Container2& c = z;
 				
 				for (::std::size_t i = n - 1; i-- > 0;)
 				{
