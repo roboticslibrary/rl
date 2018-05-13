@@ -101,20 +101,20 @@ namespace rl
 				Container2 z(n);
 				
 				T alpha0 = 3 / h[0] * (a[1] - a[0]) - 3 * yd0;
-				typename Container1::value_type l0 = 2 * h[0];
+				typename TypeTraits<Container1>::value_type l0 = 2 * h[0];
 				mu[0] = 0.5;
 				z[0] = alpha0 / l0;
 				
 				for (::std::size_t i = 1; i < n - 1; ++i)
 				{
 					T alpha = 3 / h[i] * (a[i + 1] - a[i]) - 3 / h[i - 1] * (a[i] - a[i - 1]);
-					typename Container1::value_type l = 2 * (x[i + 1] - x[i - 1]) - h[i - 1] * mu[i - 1];
+					typename TypeTraits<Container1>::value_type l = 2 * (x[i + 1] - x[i - 1]) - h[i - 1] * mu[i - 1];
 					mu[i] = h[i] / l;
 					z[i] = (alpha - h[i - 1] * z[i - 1]) / l;
 				}
 				
 				T alpha1 = 3 * yd1 - 3 / h[n - 2] * (a[n - 1] - a[n - 2]);
-				typename Container1::value_type l1 = h[n - 2] * (2 - mu[n - 2]);
+				typename TypeTraits<Container1>::value_type l1 = h[n - 2] * (2 - mu[n - 2]);
 				z[n - 1] = (alpha1 - h[n - 2] * z[n - 2]) / l1;
 				
 				Container2& c = z;
@@ -172,7 +172,7 @@ namespace rl
 				for (::std::size_t i = 1; i < n - 1; ++i)
 				{
 					T alpha = 3 / h[i] * (a[i + 1] - a[i]) - 3 / h[i - 1] * (a[i] - a[i - 1]);
-					typename Container1::value_type l = 2 * (x[i + 1] - x[i - 1]) - h[i - 1] * mu[i - 1];
+					typename TypeTraits<Container1>::value_type l = 2 * (x[i + 1] - x[i - 1]) - h[i - 1] * mu[i - 1];
 					mu[i] = h[i] / l;
 					z[i] = (alpha - h[i - 1] * z[i - 1]) / l;
 				}
