@@ -38,13 +38,10 @@ namespace rl
 	namespace math
 	{
 		/**
-		 * A piecewise Function of Polynomial functions.
+		 * A piecewise polynomial function.
 		 * 
-		 * A Spline is a function that consists of a list of polynomials, which
-		 * may have different degrees. It is indefinitely often differentiable,
-		 * and can be scaled algebraically. As all children of Function, its is
-		 * mapping Real -> T, but a Spline is only defined in the interval
-		 * [lower() upper()].
+		 * A Spline is a function consisting of a list of polynomials, which
+		 * may have different degrees.
 		 * 
 		 * @see Polynomial
 		 */
@@ -73,10 +70,41 @@ namespace rl
 			}
 			
 			/**
-			 * Generates a cubic spline that interpolates the supporting points
-			 * y with start and end tangents yd0 and yd1.
+			 * Generates a cubic spline that interpolates a set of data points
+			 * with known first derivatives at the endpoints.
+			 * 
+			 * A cubic spline interpolant \f$S\f$ for a function \f$f\f$ with a
+			 * set of nodes \f$x_0 < x_1 < \cdots < x_n\f$ is a piecewise cubic polynomial
+			 * \f$S_i\f$ on \f$[x_i, x_{i + 1}]\f$ for \f$i = 0, \ldots, n - 1\f$
+			 * and \f$x_i \leq x \leq x_{i + 1}\f$ with
+			 * \f{align*}{
+			 * S_i(x) &= a_i + b_i (x - x_i) + c_i (x - x_i)^2 + d_i (x - x_i)^3 \, , \\
+			 * S_i'(x) &= b_i + 2 c_i (x - x_i) + 3 d_i (x - x_i)^2 \, , \\
+			 * S_i''(x) &= 2 c_i + 6 d_i (x - x_i) \, .
+			 * \f}
+			 * 
+			 * The spline matches the nodes and is continuous in the first and second
+			 * derivatives as defined by the properties
+			 * \f{align*}{
+			 * S(x_i) &= f(x_i) \, , \\
+			 * S_i(x_{i + 1}) &= S_{i + 1}(x_{i + 1}) \, , \\
+			 * S'_i(x_{i + 1}) &= S'_{i + 1}(x_{i + 1}) \, , \\
+			 * S''_i(x_{i + 1}) &= S''_{i + 1}(x_{i + 1}) \, .
+			 * \f}
+			 * 
+			 * In this variant, the boundary conditions are defined by the first
+			 * derivatives
+			 * \f{align*}{
+			 * S'(x_0) = f'(x_0) \, , \\
+			 * S'(x_n) = f'(x_n) \, .
+			 * \f}
 			 * 
 			 * http://banach.millersville.edu/~bob/math375/CubicSpline/main.pdf
+			 * 
+			 * @param[in] x \f$x_0, \ldots, x_n\f$
+			 * @param[in] y \f$f(x_0), \ldots, f_(x_n)\f$
+			 * @param[in] yd0 \f$f'(x_0)\f$
+			 * @param[in] yd1 \f$f'(x_n)\f$
 			 */
 			template<typename Container1, typename Container2>
 			static Spline CubicFirst(const Container1& x, const Container2& y, const T& yd0, const T& yd1)
@@ -141,10 +169,38 @@ namespace rl
 			}
 			
 			/**
-			 * Generates a cubic spline that interpolates the supporting points
-			 * y, with a natural curvature of zero at the endpoints. 
+			 * Generates a cubic spline that interpolates a set of data points
+			 * with second derivatives at the endpoints set to zero.
+			 * 
+			 * A cubic spline interpolant \f$S\f$ for a function \f$f\f$ with a
+			 * set of nodes \f$x_0 < x_1 < \cdots < x_n\f$ is a piecewise cubic polynomial
+			 * \f$S_i\f$ on \f$[x_i, x_{i + 1}]\f$ for \f$i = 0, \ldots, n - 1\f$
+			 * and \f$x_i \leq x \leq x_{i + 1}\f$ with
+			 * \f{align*}{
+			 * S_i(x) &= a_i + b_i (x - x_i) + c_i (x - x_i)^2 + d_i (x - x_i)^3 \, , \\
+			 * S_i'(x) &= b_i + 2 c_i (x - x_i) + 3 d_i (x - x_i)^2 \, , \\
+			 * S_i''(x) &= 2 c_i + 6 d_i (x - x_i) \, .
+			 * \f}
+			 * 
+			 * The spline matches the nodes and is continuous in the first and second
+			 * derivatives as defined by the properties
+			 * \f{align*}{
+			 * S(x_i) &= f(x_i) \, , \\
+			 * S_i(x_{i + 1}) &= S_{i + 1}(x_{i + 1}) \, , \\
+			 * S'_i(x_{i + 1}) &= S'_{i + 1}(x_{i + 1}) \, , \\
+			 * S''_i(x_{i + 1}) &= S''_{i + 1}(x_{i + 1}) \, .
+			 * \f}
+			 * 
+			 * In this variant, the boundary conditions are defined by the second
+			 * derivatives
+			 * \f{align*}{
+			 * S''(x_0) = S''(x_n) = 0 \, .
+			 * \f}
 			 * 
 			 * http://banach.millersville.edu/~bob/math375/CubicSpline/main.pdf
+			 * 
+			 * @param[in] x \f$x_0, \ldots, x_n\f$
+			 * @param[in] y \f$f(x_0), \ldots, f_(x_n)\f$
 			 */
 			template<typename Container1, typename Container2>
 			static Spline CubicNatural(const Container1& x, const Container2& y)

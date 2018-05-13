@@ -51,10 +51,9 @@ namespace rl
 	namespace math
 	{
 		/**
-		 * A vector-valued polynomial function from Real -> T.
+		 * A polynomial function.
 		 * 
-		 * A Polynomial is indefinitely often differentiable and can be evaluated
-		 * efficiently.
+		 * \f[ f(x) = c_0 + c_1 x + c_2 x^2 + \ldots + c_{n - 1} x^{n - 1} + c_n x^n \f]
 		 */
 		template<typename T>
 		class Polynomial : public Function<T>
