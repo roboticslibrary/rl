@@ -32,8 +32,7 @@ namespace rl
 			::rl::math::Vector dq(this->kinematic->getDofPosition());
 			::rl::math::Vector dx(6 * this->kinematic->getOperationalDof());
 			
-			::rl::math::Vector lb = this->kinematic->getMinimum();
-			::rl::math::Vector ub = this->kinematic->getMaximum();
+			::rl::math::Vector rand(this->kinematic->getDof());
 			
 			do
 			{
@@ -87,11 +86,12 @@ namespace rl
 					}
 				}
 				
-				for (::std::size_t i = 0; i < this->kinematic->getDofPosition(); ++i)
+				for (::std::size_t i = 0; i < this->kinematic->getDof(); ++i)
 				{
-					q(i) = lb(i) + this->randDistribution(this->randEngine) * (ub(i) - lb(i));
+					rand(i) = this->randDistribution(this->randEngine);
 				}
 				
+				q = this->kinematic->generatePositionUniform(rand);
 				this->kinematic->setPosition(q);
 				
 				remaining = ::std::chrono::duration<double>(this->duration - (::std::chrono::steady_clock::now() - start)).count();
