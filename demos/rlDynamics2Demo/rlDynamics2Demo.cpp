@@ -49,15 +49,19 @@ main(int argc, char** argv)
 		
 		rl::mdl::Dynamic* dynamic = dynamic_cast<rl::mdl::Dynamic*>(model.get());
 		
-		rl::math::Vector q(dynamic->getDof());
+		rl::math::Vector q(dynamic->getDofPosition());
 		rl::math::Vector qd(dynamic->getDof());
 		rl::math::Vector qdd(dynamic->getDof());
 		
-		for (std::size_t i = 0; i < dynamic->getDof(); ++i)
+		for (std::size_t i = 0; i < dynamic->getDofPosition(); ++i)
 		{
 			q(i) = boost::lexical_cast<rl::math::Real>(argv[i + 2]);
-			qd(i) = boost::lexical_cast<rl::math::Real>(argv[i + 2 + dynamic->getDof()]);
-			qdd(i) = boost::lexical_cast<rl::math::Real>(argv[i + 2 + 2 * dynamic->getDof()]);
+		}
+		
+		for (std::size_t i = 0; i < dynamic->getDof(); ++i)
+		{
+			qd(i) = boost::lexical_cast<rl::math::Real>(argv[i + 2 + dynamic->getDofPosition()]);
+			qdd(i) = boost::lexical_cast<rl::math::Real>(argv[i + 2 + dynamic->getDofPosition() + dynamic->getDof()]);
 		}
 		
 		rl::math::Vector g(3);
