@@ -29,6 +29,7 @@ namespace rl
 			double remaining = ::std::chrono::duration<double>(this->duration).count();
 			
 			::rl::math::Vector q = this->kinematic->getPosition();
+			::rl::math::Vector q2(this->kinematic->getDofPosition());
 			::rl::math::Vector dq(this->kinematic->getDofPosition());
 			::rl::math::Vector dx(6 * this->kinematic->getOperationalDof());
 			
@@ -36,9 +37,9 @@ namespace rl
 			
 			do
 			{
-				::rl::math::Real norm = 1;
+				::rl::math::Real delta = 1;
 				
-				for (::std::size_t i = 0; i < this->iterations && norm > this->epsilon; ++i)
+				for (::std::size_t i = 0; i < this->iterations && delta > this->epsilon; ++i)
 				{
 					this->kinematic->forwardPosition();
 					dx.setZero();
@@ -62,16 +63,15 @@ namespace rl
 						dq = this->kinematic->getJacobianInverse() * dx;
 					}
 					
-					norm = dq.norm();
+					this->kinematic->step(q, dq, q2);
+					delta = this->kinematic->distance(q, q2);
 					
-					if (norm > this->delta)
+					if (delta > this->delta)
 					{
-						dq *= this->delta / norm;
-						norm = dq.norm();
+						this->kinematic->interpolate(q, q2, this->delta, q2);
 					}
 					
-					q += dq;
-					
+					q = q2;
 					this->kinematic->setPosition(q);
 				}
 				
