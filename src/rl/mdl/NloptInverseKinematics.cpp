@@ -114,10 +114,15 @@ namespace rl
 				::nlopt_destroy
 			);
 			
+			::rl::math::Vector lb = this->kinematic->getMinimum();
+			::rl::math::Vector ub = this->kinematic->getMaximum();
+			
 			::std::vector<double> tolerance(this->kinematic->getDofPosition(), this->tolerance);
 			
 			check(::nlopt_set_xtol_abs(opt.get(), tolerance.data()));
 			check(::nlopt_set_min_objective(opt.get(), &NloptInverseKinematics::f, this));
+			check(::nlopt_set_lower_bounds(opt.get(), lb.data()));
+			check(::nlopt_set_upper_bounds(opt.get(), ub.data()));
 			
 			::rl::math::Vector rand(this->kinematic->getDof());
 			::rl::math::Vector q = this->kinematic->getPosition();
