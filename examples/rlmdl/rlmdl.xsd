@@ -145,7 +145,8 @@
 				<xs:element name="cylindrical" type="cylindricalType" minOccurs="0" maxOccurs="unbounded"/>
 				<xs:element name="fixed" type="fixedType" minOccurs="0" maxOccurs="unbounded"/>
 				<xs:element name="frame" type="frameType" minOccurs="0" maxOccurs="unbounded"/>
-				<xs:element name="gamma" type="gammaType" minOccurs="0"/>
+				<xs:element name="gammaPosition" type="gammaType" minOccurs="0"/>
+				<xs:element name="gammaVelocity" type="gammaType" minOccurs="0"/>
 				<xs:element name="helical" type="helicalType" minOccurs="0" maxOccurs="unbounded"/>
 				<xs:element name="home" type="homeType" minOccurs="0"/>
 				<xs:element name="prismatic" type="prismaticType" minOccurs="0" maxOccurs="unbounded"/>
