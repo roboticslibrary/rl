@@ -57,7 +57,10 @@ namespace rl
 			this->qddUnits(3) = ::rl::math::UNIT_RADIAN_PER_SECOND_SQUARED;
 			this->qddUnits(4) = ::rl::math::UNIT_RADIAN_PER_SECOND_SQUARED;
 			this->qddUnits(5) = ::rl::math::UNIT_RADIAN_PER_SECOND_SQUARED;
-			this->S.setIdentity();
+			this->S.topLeftCorner<3, 3>().setZero();
+			this->S.topRightCorner<3, 3>().setIdentity();
+			this->S.bottomLeftCorner<3, 3>().setIdentity();
+			this->S.bottomRightCorner<3, 3>().setZero();
 			this->speedUnits(0) = ::rl::math::UNIT_METER_PER_SECOND;
 			this->speedUnits(1) = ::rl::math::UNIT_METER_PER_SECOND;
 			this->speedUnits(2) = ::rl::math::UNIT_METER_PER_SECOND;
