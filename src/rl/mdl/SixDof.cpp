@@ -167,15 +167,14 @@ namespace rl
 		void
 		SixDof::step(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& qdot, ::rl::math::VectorRef q2) const
 		{
-			q2.head<3>() = q1.head<3>() + qdot.head<3>();
+			::Eigen::Map<const ::rl::math::Quaternion> quaternion1(q1.tail<4>().data());
+			q2.head<3>() = q1.head<3>() + quaternion1._transformVector(::Eigen::Map<const ::rl::math::Vector3>(qdot.head<3>().data()));
+			q2.tail<4>() = (quaternion1 * ::rl::math::AngleAxis(qdot.tail<3>().norm(), qdot.tail<3>().normalized())).coeffs();
 			
 			for (::std::size_t i = 0; i < 3; ++i)
 			{
 				q2(i) = ::rl::math::clamp(q2(i), this->min(i), this->max(i));
 			}
-			
-			::Eigen::Map<const ::rl::math::Quaternion> quaternion1(q1.tail<4>().data());
-			q2.tail<4>() = (quaternion1 * quaternion1.firstDerivative(qdot.tail<3>())).coeffs();
 		}
 		
 		::rl::math::Real
