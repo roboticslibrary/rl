@@ -130,17 +130,17 @@ namespace rl
 		}
 		
 		void
-		Metric::step(const ::rl::math::Vector& q1, const ::rl::math::Vector& qdot, ::rl::math::Vector& q2) const
+		Metric::step(const ::rl::math::Vector& q1, const ::rl::math::Vector& dq, ::rl::math::Vector& q2) const
 		{
 			assert(q1.size() == this->getDofPosition());
-			assert(qdot.size() == this->getDof());
+			assert(dq.size() == this->getDof());
 			assert(q2.size() == this->getDofPosition());
 			
 			for (::std::size_t i = 0, j = 0, k = 0; i < this->joints.size(); j += this->joints[i]->getDofPosition(), k += this->joints[i]->getDof(), ++i)
 			{
 				this->joints[i]->step(
 					q1.segment(j, this->joints[i]->getDofPosition()),
-					qdot.segment(k, this->joints[i]->getDof()),
+					dq.segment(k, this->joints[i]->getDof()),
 					q2.segment(j, this->joints[i]->getDofPosition())
 				);
 			}

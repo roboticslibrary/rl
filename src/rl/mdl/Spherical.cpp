@@ -125,10 +125,10 @@ namespace rl
 		}
 		
 		void
-		Spherical::step(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& qdot, ::rl::math::VectorRef q2) const
+		Spherical::step(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& dq, ::rl::math::VectorRef q2) const
 		{
 			::Eigen::Map<const ::rl::math::Quaternion> quaternion1(q1.data());
-			q2 = (quaternion1 * ::rl::math::AngleAxis(qdot.norm(), qdot.normalized())).coeffs();
+			q2 = (quaternion1 * ::rl::math::AngleAxis(dq.norm(), dq.normalized())).coeffs();
 		}
 		
 		::rl::math::Real

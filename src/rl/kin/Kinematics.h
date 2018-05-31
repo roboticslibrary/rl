@@ -263,7 +263,7 @@ namespace rl
 			 */
 			void setPosition(const ::rl::math::Vector& q);
 			
-			virtual void step(const ::rl::math::Vector& q1, const ::rl::math::Vector& qdot, ::rl::math::Vector& q2) const;
+			virtual void step(const ::rl::math::Vector& q1, const ::rl::math::Vector& dq, ::rl::math::Vector& q2) const;
 			
 			::rl::math::Transform& tool(const ::std::size_t& i = 0);
 			

@@ -107,7 +107,7 @@ namespace rl
 			
 			virtual void setPosition(const ::rl::math::Vector& q);
 			
-			virtual void step(const ::rl::math::Vector& q1, const ::rl::math::Vector& qdot, ::rl::math::Vector& q2) const;
+			virtual void step(const ::rl::math::Vector& q1, const ::rl::math::Vector& dq, ::rl::math::Vector& q2) const;
 			
 			virtual ::rl::math::Real transformedDistance(const ::rl::math::Real& d) const;
 			

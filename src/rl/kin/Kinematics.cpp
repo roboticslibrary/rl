@@ -876,15 +876,15 @@ namespace rl
 		}
 		
 		void
-		Kinematics::step(const ::rl::math::Vector& q1, const ::rl::math::Vector& qdot, ::rl::math::Vector& q2) const
+		Kinematics::step(const ::rl::math::Vector& q1, const ::rl::math::Vector& dq, ::rl::math::Vector& q2) const
 		{
 			assert(q1.size() == this->getDof());
-			assert(qdot.size() == this->getDof());
+			assert(dq.size() == this->getDof());
 			assert(q2.size() == this->getDof());
 			
 			for (::std::size_t i = 0; i < this->getDof(); ++i)
 			{
-				q2(i) = q1(i) + qdot(i);
+				q2(i) = q1(i) + dq(i);
 			}
 			
 			this->clamp(q2);

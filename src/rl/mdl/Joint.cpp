@@ -328,9 +328,9 @@ namespace rl
 		}
 		
 		void
-		Joint::step(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& qdot, ::rl::math::VectorRef q2) const
+		Joint::step(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& dq, ::rl::math::VectorRef q2) const
 		{
-			q2 = q1 + qdot;
+			q2 = q1 + dq;
 			this->clamp(q2);
 		}
 		

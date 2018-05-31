@@ -54,7 +54,7 @@ namespace rl
 			
 			void normalize(::rl::math::Vector& q) const;
 			
-			void step(const ::rl::math::Vector& q1, const ::rl::math::Vector& qdot, ::rl::math::Vector& q2) const;
+			void step(const ::rl::math::Vector& q1, const ::rl::math::Vector& dq, ::rl::math::Vector& q2) const;
 			
 			::rl::math::Real transformedDistance(const ::rl::math::Real& d) const;
 			

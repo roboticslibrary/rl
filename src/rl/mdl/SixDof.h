@@ -56,7 +56,7 @@ namespace rl
 			
 			void setPosition(const ::rl::math::ConstVectorRef& q);
 			
-			void step(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& qdot, ::rl::math::VectorRef q2) const;
+			void step(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& dq, ::rl::math::VectorRef q2) const;
 			
 			::rl::math::Real transformedDistance(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& q2) const;
 			

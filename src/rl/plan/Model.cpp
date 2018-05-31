@@ -434,15 +434,15 @@ namespace rl
 		}
 		
 		void
-		Model::step(const ::rl::math::Vector& q1, const ::rl::math::Vector& qdot, ::rl::math::Vector& q2) const
+		Model::step(const ::rl::math::Vector& q1, const ::rl::math::Vector& dq, ::rl::math::Vector& q2) const
 		{
 			if (nullptr != this->kin)
 			{
-				this->kin->step(q1, qdot, q2);
+				this->kin->step(q1, dq, q2);
 			}
 			else
 			{
-				this->mdl->step(q1, qdot, q2);
+				this->mdl->step(q1, dq, q2);
 			}
 		}
 		

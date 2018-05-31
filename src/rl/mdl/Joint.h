@@ -105,7 +105,7 @@ namespace rl
 			
 			void setVelocity(const ::rl::math::ConstVectorRef& qd);
 			
-			virtual void step(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& qdot, ::rl::math::VectorRef q2) const;
+			virtual void step(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& dq, ::rl::math::VectorRef q2) const;
 			
 			virtual ::rl::math::Real transformedDistance(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& q2) const;
 			
