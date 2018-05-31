@@ -283,7 +283,7 @@ namespace rl
 		void
 		Kinematic::update()
 		{
-			Model::update();
+			Metric::update();
 			
 			this->invJ.resize(this->getDof(), 6 * this->getOperationalDof());
 			this->J.resize(6 * this->getOperationalDof(), this->getDof());

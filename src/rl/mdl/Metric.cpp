@@ -273,5 +273,13 @@ namespace rl
 				return this->transformedDistance(delta);
 			}
 		}
+		
+		void
+		Metric::update()
+		{
+			Model::update();
+			
+			this->normalize(this->home);
+		}
 	}
 }

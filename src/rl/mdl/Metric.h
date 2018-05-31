@@ -70,6 +70,8 @@ namespace rl
 			
 			::rl::math::Real transformedDistance(const ::rl::math::Real& q1, const ::rl::math::Real& q2, const ::std::size_t& i) const;
 			
+			virtual void update();
+			
 		protected:
 			
 		private:
