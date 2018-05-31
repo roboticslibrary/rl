@@ -145,7 +145,16 @@ namespace rl
 		void
 		SixDof::normalize(::rl::math::VectorRef q) const
 		{
-			::Eigen::Map< ::rl::math::Quaternion>(q.tail<4>().data()).normalize();
+			::Eigen::Map< ::rl::math::Quaternion> quaternion(q.tail<4>().data());
+			
+			if (quaternion.squaredNorm() > 0)
+			{
+				quaternion.normalize();
+			}
+			else
+			{
+				quaternion.setIdentity();
+			}
 		}
 		
 		void
