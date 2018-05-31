@@ -101,8 +101,7 @@ namespace rl
 		{
 			for (::std::size_t i = 0; i < 3; ++i)
 			{
-				q(i) = mean(i) + rand(i) * sigma(i);
-				q(i) = ::rl::math::clamp(q(i), this->min(i), this->max(i));
+				q(i) = ::rl::math::clamp(mean(i) + rand(i) * sigma(i), this->min(i), this->max(i));
 			}
 			
 			q.tail<4>() = ::rl::math::Quaternion::Random(rand.tail<3>(), ::Eigen::Map< const ::rl::math::Quaternion>(mean.tail<4>().data()), sigma.tail<3>()).coeffs();
