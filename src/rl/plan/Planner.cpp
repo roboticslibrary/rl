@@ -51,11 +51,21 @@ namespace rl
 		{
 			if (!this->model->isValid(*this->start))
 			{
+				if (nullptr != this->viewer)
+				{
+					this->viewer->showMessage("Invalid start configuration.");
+				}
+				
 				return false;
 			}
 			
 			if (!this->model->isValid(*this->goal))
 			{
+				if (nullptr != this->viewer)
+				{
+					this->viewer->showMessage("Invalid goal configuration.");
+				}
+				
 				return false;
 			}
 			
@@ -64,6 +74,11 @@ namespace rl
 			
 			if (this->model->isColliding())
 			{
+				if (nullptr != this->viewer)
+				{
+					this->viewer->showMessage("Colliding start configuration in body " + ::std::to_string(this->model->getCollidingBody()) + ".");
+				}
+				
 				return false;
 			}
 			
@@ -72,6 +87,11 @@ namespace rl
 			
 			if (this->model->isColliding())
 			{
+				if (nullptr != this->viewer)
+				{
+					this->viewer->showMessage("Colliding goal configuration in body " + ::std::to_string(this->model->getCollidingBody()) + ".");
+				}
+				
 				return false;
 			}
 			

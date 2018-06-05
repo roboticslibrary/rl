@@ -190,7 +190,6 @@ Thread::run()
 	
 	if (!MainWindow::instance()->planner->verify())
 	{
-		emit statusChanged("Invalid start or goal configuration.");
 		return;
 	}
 	
