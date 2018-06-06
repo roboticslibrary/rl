@@ -123,13 +123,13 @@ namespace rl
 			
 			::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1> getPositionUnits() const;
 			
-			::rl::math::Vector getTorque() const;
-			
-			::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1> getTorqueUnits() const;
-			
 			::rl::math::Vector getSpeed() const;
 			
 			::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1> getSpeedUnits() const;
+			
+			::rl::math::Vector getTorque() const;
+			
+			::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1> getTorqueUnits() const;
 			
 			::rl::math::Vector getVelocity() const;
 			

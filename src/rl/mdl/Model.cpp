@@ -367,32 +367,6 @@ namespace rl
 		}
 		
 		::rl::math::Vector
-		Model::getTorque() const
-		{
-			::rl::math::Vector tau(this->getDof());
-			
-			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDof(), ++i)
-			{
-				tau.segment(j, this->joints[i]->getDof()) = this->joints[i]->getTorque();
-			}
-			
-			return tau;
-		}
-		
-		::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1>
-		Model::getTorqueUnits() const
-		{
-			::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1> units(this->getDof());
-			
-			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDof(), ++i)
-			{
-				units.segment(j, this->joints[i]->getDof()) = this->joints[i]->getTorqueUnits();
-			}
-			
-			return units;
-		}
-		
-		::rl::math::Vector
 		Model::getSpeed() const
 		{
 			::rl::math::Vector speed(this->getDof());
@@ -413,6 +387,32 @@ namespace rl
 			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDof(), ++i)
 			{
 				units.segment(j, this->joints[i]->getDof()) = this->joints[i]->getSpeedUnits();
+			}
+			
+			return units;
+		}
+		
+		::rl::math::Vector
+		Model::getTorque() const
+		{
+			::rl::math::Vector tau(this->getDof());
+			
+			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDof(), ++i)
+			{
+				tau.segment(j, this->joints[i]->getDof()) = this->joints[i]->getTorque();
+			}
+			
+			return tau;
+		}
+		
+		::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1>
+		Model::getTorqueUnits() const
+		{
+			::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1> units(this->getDof());
+			
+			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDof(), ++i)
+			{
+				units.segment(j, this->joints[i]->getDof()) = this->joints[i]->getTorqueUnits();
 			}
 			
 			return units;
