@@ -196,7 +196,7 @@ ConfigurationModel::setData(const QModelIndex& index, const QVariant& value, int
 			
 			for (std::size_t i = 0; i < MainWindow::instance()->geometryModels[this->id]->getNumBodies(); ++i)
 			{
-				MainWindow::instance()->geometryModels[this->id]->getBody(i)->setFrame(kinematic->getFrame(i));
+				MainWindow::instance()->geometryModels[this->id]->getBody(i)->setFrame(kinematic->getBodyFrame(i));
 			}
 			
 			emit dataChanged(index, index);
@@ -223,7 +223,7 @@ ConfigurationModel::setData(const rl::math::Vector& q)
 		
 		for (std::size_t i = 0; i < MainWindow::instance()->geometryModels[this->id]->getNumBodies(); ++i)
 		{
-			MainWindow::instance()->geometryModels[this->id]->getBody(i)->setFrame(kinematic->getFrame(i));
+			MainWindow::instance()->geometryModels[this->id]->getBody(i)->setFrame(kinematic->getBodyFrame(i));
 		}
 		
 		emit dataChanged(this->createIndex(0, 0), this->createIndex(this->rowCount(), this->columnCount()));

@@ -280,7 +280,7 @@ OperationalModel::setData(const QModelIndex& index, const QVariant& value, int r
 				
 				for (std::size_t i = 0; i < MainWindow::instance()->geometryModels[this->id]->getNumBodies(); ++i)
 				{
-					MainWindow::instance()->geometryModels[this->id]->getBody(i)->setFrame(kinematic->getFrame(i));
+					MainWindow::instance()->geometryModels[this->id]->getBody(i)->setFrame(kinematic->getBodyFrame(i));
 				}
 				
 				emit dataChanged(this->createIndex(0, 0), this->createIndex(this->rowCount(), this->columnCount()));

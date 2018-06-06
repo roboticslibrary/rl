@@ -208,7 +208,7 @@ namespace rl
 			}
 			else
 			{
-				return this->mdl->getFrame(i);
+				return this->mdl->getBodyFrame(i);
 			}
 		}
 		
@@ -512,7 +512,7 @@ namespace rl
 				{
 					for (::std::size_t i = 0; i < this->model->getNumBodies(); ++i)
 					{
-						this->model->getBody(i)->setFrame(this->mdl->getFrame(i));
+						this->model->getBody(i)->setFrame(this->mdl->getBodyFrame(i));
 					}
 				}
 			}

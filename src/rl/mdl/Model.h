@@ -51,6 +51,7 @@ namespace rl
 		class Body;
 		class Compound;
 		class Joint;
+		class World;
 		
 		class Model
 		{
@@ -81,11 +82,15 @@ namespace rl
 			
 			Body* getBody(const ::std::size_t& i) const;
 			
+			const ::rl::math::Transform& getBodyFrame(const ::std::size_t& i) const;
+			
 			::std::size_t getDof() const;
 			
 			::std::size_t getDofPosition() const;
 			
-			const ::rl::math::Transform& getFrame(const ::std::size_t& i) const;
+			Frame* getFrame(const ::std::size_t& i) const;
+			
+			::std::size_t getFrames() const;
 			
 			const ::rl::math::Matrix& getGammaPosition() const;
 			
@@ -123,6 +128,10 @@ namespace rl
 			
 			::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1> getPositionUnits() const;
 			
+			Transform* getTransform(const ::std::size_t& i) const;
+			
+			::std::size_t getTransforms() const;
+			
 			::rl::math::Vector getSpeed() const;
 			
 			::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1> getSpeedUnits() const;
@@ -134,6 +143,8 @@ namespace rl
 			::rl::math::Vector getVelocity() const;
 			
 			::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1> getVelocityUnits() const;
+			
+			World* getWorld() const;
 			
 			bool isColliding(const ::std::size_t& i) const;
 			

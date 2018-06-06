@@ -186,6 +186,14 @@ namespace rl
 			return this->bodies[i];
 		}
 		
+		const ::rl::math::Transform&
+		Model::getBodyFrame(const ::std::size_t& i) const
+		{
+			assert(i < this->getBodies());
+			
+			return this->bodies[i]->x.transform();
+		}
+		
 		::std::size_t
 		Model::getDof() const
 		{
@@ -212,12 +220,18 @@ namespace rl
 			return dof;
 		}
 		
-		const ::rl::math::Transform&
+		Frame*
 		Model::getFrame(const ::std::size_t& i) const
 		{
-			assert(i < this->getBodies());
+			assert(i < this->frames.size());
 			
-			return this->bodies[i]->x.transform();
+			return this->frames[i];
+		}
+		
+		::std::size_t
+		Model::getFrames() const
+		{
+			return this->frames.size();
 		}
 		
 		const ::rl::math::Matrix&
@@ -418,6 +432,20 @@ namespace rl
 			return units;
 		}
 		
+		Transform*
+		Model::getTransform(const ::std::size_t& i) const
+		{
+			assert(i < this->transforms.size());
+			
+			return this->transforms[i];
+		}
+		
+		::std::size_t
+		Model::getTransforms() const
+		{
+			return this->transforms.size();
+		}
+		
 		::rl::math::Vector
 		Model::getVelocity() const
 		{
@@ -442,6 +470,12 @@ namespace rl
 			}
 			
 			return units;
+		}
+		
+		World*
+		Model::getWorld() const
+		{
+			return dynamic_cast<World*>(this->tree[this->root].get());
 		}
 		
 		bool

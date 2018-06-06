@@ -151,7 +151,7 @@ main(int argc, char** argv)
 		assert(scenes[i]->getModel(0)->getNumBodies() == kinematics->getBodies());
 		for (std::size_t b = 0; b < kinematics->getBodies(); ++b)
 		{
-			scenes[i]->getModel(0)->getBody(b)->setFrame(kinematics->getFrame(b));
+			scenes[i]->getModel(0)->getBody(b)->setFrame(kinematics->getBodyFrame(b));
 		}
 	}
 	
@@ -185,7 +185,7 @@ main(int argc, char** argv)
 		{
 			for (std::size_t b = 0; b < kinematics->getBodies(); ++b)
 			{
-				scenes[i]->getModel(0)->getBody(b)->setFrame(kinematics->getFrame(b));
+				scenes[i]->getModel(0)->getBody(b)->setFrame(kinematics->getBodyFrame(b));
 			}
 			results[i] = collides(scenes[i], kinematics);
 		}

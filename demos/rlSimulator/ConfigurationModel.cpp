@@ -126,7 +126,7 @@ ConfigurationModel::setData(const QModelIndex& index, const QVariant& value, int
 				
 				for (std::size_t i = 0; i < MainWindow::instance()->geometryModels->getNumBodies(); ++i)
 				{
-					MainWindow::instance()->geometryModels->getBody(i)->setFrame(kinematic->getFrame(i));
+					MainWindow::instance()->geometryModels->getBody(i)->setFrame(kinematic->getBodyFrame(i));
 				}
 			}
 			else if (dynamic_cast<VelocityModel*>(this))
@@ -192,7 +192,7 @@ ConfigurationModel::setData(const rl::math::Vector& values)
 			
 			for (std::size_t i = 0; i < MainWindow::instance()->geometryModels->getNumBodies(); ++i)
 			{
-				MainWindow::instance()->geometryModels->getBody(i)->setFrame(kinematic->getFrame(i));
+				MainWindow::instance()->geometryModels->getBody(i)->setFrame(kinematic->getBodyFrame(i));
 			}
 		}
 		else if (dynamic_cast<VelocityModel*>(this))
