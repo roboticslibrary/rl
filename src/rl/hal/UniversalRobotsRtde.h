@@ -151,7 +151,7 @@ namespace rl
 				SAFETY_STATUS_STOPPED_DUE_TO_SAFETY = 1024
 			};
 			
-			UniversalRobotsRtde(const ::std::string& address);
+			UniversalRobotsRtde(const ::std::string& address, const ::std::chrono::nanoseconds& updateRate = ::std::chrono::milliseconds(8));
 			
 			virtual ~UniversalRobotsRtde();
 			

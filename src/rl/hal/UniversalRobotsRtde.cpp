@@ -35,9 +35,9 @@ namespace rl
 {
 	namespace hal
 	{
-		UniversalRobotsRtde::UniversalRobotsRtde(const ::std::string& address) :
+		UniversalRobotsRtde::UniversalRobotsRtde(const ::std::string& address, const ::std::chrono::nanoseconds& updateRate) :
 			AxisController(6),
-			CyclicDevice(::std::chrono::milliseconds(8)),
+			CyclicDevice(updateRate),
 			AnalogInputReader(),
 			AnalogOutputReader(),
 			AnalogOutputWriter(),
@@ -1182,9 +1182,9 @@ namespace rl
 			program << '\t' << '\t' << "qd[5] = read_input_float_register(11)" << '\n';
 			program << '\t' << '\t' << "qdd = read_input_float_register(12)" << '\n';
 #if 1
-			program << '\t' << '\t' << "servoj(q, 0, 0, 0.008, 0.03, 2000)" << '\n';
+			program << '\t' << '\t' << "servoj(q, 0, 0, " << ::std::chrono::duration_cast< ::std::chrono::duration<rl::math::Real>>(this->getUpdateRate()).count() << ", 0.03, 2000)" << '\n';
 #else
-			program << '\t' << '\t' << "speedj(qd, qdd, 0.008)" << '\n';
+			program << '\t' << '\t' << "speedj(qd, qdd, " << ::std::chrono::duration_cast< ::std::chrono::duration<rl::math::Real>>(this->getUpdateRate()).count() << ")" << '\n';
 #endif
 			program << '\t' << "end" << '\n';
 			program << "end" << '\n';
