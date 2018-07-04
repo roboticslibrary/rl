@@ -252,7 +252,14 @@ namespace rl
 						kinematics->tree[v].reset(f);
 					}
 					
-					id2vertex[path.eval("string(@id)").getValue< ::std::string>()] = v;
+					::std::string id = path.eval("string(@id)").getValue< ::std::string>();
+					
+					if (id2vertex.find(id) != id2vertex.end())
+					{
+						throw Exception("Frame with ID " + id + " not unique in file " + filename);
+					}
+					
+					id2vertex[id] = v;
 				}
 				
 				for (int j = 0; j < frames.size(); ++j)
@@ -261,7 +268,14 @@ namespace rl
 					
 					if ("link" == frames[j].getName())
 					{
-						Vertex v1 = id2vertex[path.eval("string(@id)").getValue< ::std::string>()];
+						::std::string v1Id = path.eval("string(@id)").getValue< ::std::string>();
+						
+						if (id2vertex.find(v1Id) == id2vertex.end())
+						{
+							throw Exception("Link with ID " + v1Id + " not found in file " + filename);
+						}
+						
+						Vertex v1 = id2vertex[v1Id];
 						Link* l1 = dynamic_cast<Link*>(kinematics->tree[v1].get());
 						
 						::rl::xml::NodeSet ignores = path.eval("ignore").getValue< ::rl::xml::NodeSet>();
@@ -270,7 +284,14 @@ namespace rl
 						{
 							if (!ignores[k].getProperty("idref").empty())
 							{
-								Vertex v2 = id2vertex[ignores[k].getProperty("idref")];
+								::std::string v2IdRef = ignores[k].getProperty("idref");
+								
+								if (id2vertex.find(v2IdRef) == id2vertex.end())
+								{
+									throw Exception("Link with IDREF " + v2IdRef + " in Link with ID " + v1Id + " not found in file " + filename);
+								}
+								
+								Vertex v2 = id2vertex[v2IdRef];
 								Link* l2 = dynamic_cast<Link*>(kinematics->tree[v2].get());
 								
 								l1->selfcollision.insert(l2);
@@ -292,8 +313,25 @@ namespace rl
 				{
 					::rl::xml::Path path(document, transforms[j]);
 					
-					Vertex a = id2vertex[path.eval("string(frame/a/@idref)").getValue< ::std::string>()];
-					Vertex b = id2vertex[path.eval("string(frame/b/@idref)").getValue< ::std::string>()];
+					::std::string name = path.eval("string(@id)").getValue< ::std::string>();
+					
+					::std::string aIdRef = path.eval("string(frame/a/@idref)").getValue< ::std::string>();
+					
+					if (id2vertex.find(aIdRef) == id2vertex.end())
+					{
+						throw Exception("Frame A with IDREF " + aIdRef + " in Transform with ID " + name + " not found in file " + filename);
+					}
+					
+					Vertex a = id2vertex[aIdRef];
+					
+					::std::string bIdRef = path.eval("string(frame/b/@idref)").getValue< ::std::string>();
+					
+					if (id2vertex.find(bIdRef) == id2vertex.end())
+					{
+						throw Exception("Frame B with IDREF " + bIdRef + " in Transform with ID " + name + " not found in file " + filename);
+					}
+					
+					Vertex b = id2vertex[bIdRef];
 					
 					Edge e = ::boost::add_edge(a, b, kinematics->tree).first;
 					
@@ -301,7 +339,7 @@ namespace rl
 					{
 						Prismatic* p = new Prismatic();
 						
-						p->name = path.eval("string(@id)").getValue< ::std::string>();
+						p->name = name;
 						
 						p->a = path.eval("number(dh/a)").getValue< ::rl::math::Real>(0);
 						p->alpha = path.eval("number(dh/alpha)").getValue< ::rl::math::Real>(0);
@@ -322,7 +360,7 @@ namespace rl
 					{
 						Revolute* r = new Revolute();
 						
-						r->name = path.eval("string(@id)").getValue< ::std::string>();
+						r->name = name;
 						
 						r->a = path.eval("number(dh/a)").getValue< ::rl::math::Real>(0);
 						r->alpha = path.eval("number(dh/alpha)").getValue< ::rl::math::Real>(0);
@@ -347,7 +385,7 @@ namespace rl
 					{
 						Transform* t = new Transform();
 						
-						t->name = path.eval("string(@id)").getValue< ::std::string>();
+						t->name = name;
 						
 						t->transform.setIdentity();
 						
@@ -379,6 +417,26 @@ namespace rl
 				{
 					delete kinematics;
 					kinematics = nullptr;
+					
+					if (kinematics->joints.size() != 6)
+					{
+						throw Exception("Puma kinematics with incorrect number of joints");
+					}
+					
+					if (kinematics->links.size() != 7)
+					{
+						throw Exception("Puma kinematics with incorrect number of links");
+					}
+					
+					if (kinematics->transforms.size() != 8)
+					{
+						throw Exception("Puma kinematics with incorrect number of transforms");
+					}
+					
+					if (kinematics->frames.size() != 9)
+					{
+						throw Exception("Puma kinematics with incorrect number of frames");
+					}
 				}
 			}
 			else if (dynamic_cast<Rhino*>(kinematics))
@@ -387,6 +445,26 @@ namespace rl
 				{
 					delete kinematics;
 					kinematics = nullptr;
+					
+					if (kinematics->joints.size() != 5)
+					{
+						throw Exception("Rhino kinematics with incorrect number of joints");
+					}
+					
+					if (kinematics->links.size() != 6)
+					{
+						throw Exception("Rhino kinematics with incorrect number of links");
+					}
+					
+					if (kinematics->transforms.size() != 7)
+					{
+						throw Exception("Rhino kinematics with incorrect number of transforms");
+					}
+					
+					if (kinematics->frames.size() != 8)
+					{
+						throw Exception("Rhino kinematics with incorrect number of frames");
+					}
 				}
 			}
 			
