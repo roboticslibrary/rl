@@ -198,14 +198,14 @@ namespace rl
 					
 					if ("body" == frames[j].getName())
 					{
-						::std::string b1IdRef = path.eval("string(@id)").getValue< ::std::string>();
+						::std::string b1Id = path.eval("string(@id)").getValue< ::std::string>();
 						
-						if (id2frame.find(b1IdRef) == id2frame.end())
+						if (id2frame.find(b1Id) == id2frame.end())
 						{
-							throw Exception("Body with IDREF " + b1IdRef + " not found in file " + filename);
+							throw Exception("Body with ID " + b1Id + " not found in file " + filename);
 						}
 						
-						Body* b1 = dynamic_cast<Body*>(id2frame[b1IdRef]);
+						Body* b1 = dynamic_cast<Body*>(id2frame[b1Id]);
 						
 						::rl::xml::NodeSet ignores = path.eval("ignore").getValue< ::rl::xml::NodeSet>();
 						
@@ -217,7 +217,7 @@ namespace rl
 								
 								if (id2frame.find(b2IdRef) == id2frame.end())
 								{
-									throw Exception("Body with IDREF " + b2IdRef + " in Body with ID " + b1IdRef + " not found in file " + filename);
+									throw Exception("Body with IDREF " + b2IdRef + " in Body with ID " + b1Id + " not found in file " + filename);
 								}
 								
 								Body* b2 = dynamic_cast<Body*>(id2frame[b2IdRef]);
