@@ -52,7 +52,6 @@ namespace rl
 				dispatcher(&configuration),
 				world(&dispatcher, &broadphase, &configuration)
 			{
-				this->isScalingSupported = false;
 			}
 			
 			Scene::~Scene()
@@ -210,6 +209,12 @@ namespace rl
 					}
 				}
 				
+				return false;
+			}
+			
+			bool
+			Scene::isScalingSupported() const
+			{
 				return false;
 			}
 			

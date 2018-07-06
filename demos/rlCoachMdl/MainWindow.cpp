@@ -32,6 +32,7 @@
 #include <Inventor/actions/SoWriteAction.h>
 #include <Inventor/Qt/SoQt.h>
 #include <rl/mdl/XmlFactory.h>
+#include <rl/sg/XmlFactory.h>
 
 #include "ConfigurationDelegate.h"
 #include "ConfigurationModel.h"
@@ -74,15 +75,16 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	SoGradientBackground::initClass();
 	
 	this->scene = std::make_shared<rl::sg::so::Scene>();
-	this->scene->load(QApplication::arguments()[1].toStdString());
+	rl::sg::XmlFactory geometryFactory;
+	geometryFactory.load(QApplication::arguments()[1].toStdString(), this->scene.get());
 	
-	rl::mdl::XmlFactory factory;
+	rl::mdl::XmlFactory kinematicFactory;
 	
 	for (int i = 2; i < QApplication::arguments().size(); ++i)
 	{
 		this->geometryModels.push_back(this->scene->getModel(i - 2));
 		std::shared_ptr<rl::mdl::Model> kinematicModel;
-		kinematicModel.reset(factory.create(QApplication::arguments()[i].toStdString()));
+		kinematicModel.reset(kinematicFactory.create(QApplication::arguments()[i].toStdString()));
 		this->kinematicModels.push_back(kinematicModel);
 	}
 	

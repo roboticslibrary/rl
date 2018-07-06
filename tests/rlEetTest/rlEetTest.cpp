@@ -36,6 +36,7 @@
 #include <rl/plan/UniformSampler.h>
 #include <rl/plan/WorkspaceSphereExplorer.h>
 #include <rl/sg/Model.h>
+#include <rl/sg/XmlFactory.h>
 
 #ifdef RL_SG_BULLET
 #include <rl/sg/bullet/Scene.h>
@@ -88,7 +89,8 @@ main(int argc, char** argv)
 		}
 #endif // RL_SG_SOLID
 		
-		scene->load(argv[2]);
+		rl::sg::XmlFactory factory;
+		factory.load(argv[2], scene.get());
 		
 		std::shared_ptr<rl::kin::Kinematics> kinematics(rl::kin::Kinematics::create(argv[3]));
 		

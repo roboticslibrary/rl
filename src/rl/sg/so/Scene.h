@@ -27,6 +27,8 @@
 #ifndef RL_SG_SO_SCENE_H
 #define RL_SG_SO_SCENE_H
 
+#include <Inventor/VRMLnodes/SoVRMLGroup.h>
+
 #include "../Scene.h"
 
 namespace rl

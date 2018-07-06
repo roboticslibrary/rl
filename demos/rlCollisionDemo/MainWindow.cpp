@@ -42,6 +42,7 @@
 #include <rl/sg/Model.h>
 #include <rl/sg/Shape.h>
 #include <rl/sg/SimpleScene.h>
+#include <rl/sg/XmlFactory.h>
 
 #ifdef RL_SG_BULLET
 #include <rl/sg/bullet/Scene.h>
@@ -198,8 +199,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	
 	this->setWindowTitle(filename + " - " + this->engine.toUpper() + " - rlCollisionDemo");
 	
-	this->collisionScene->load(this->filename.toStdString());
-	this->viewScene->load(this->filename.toStdString());
+	rl::sg::XmlFactory factory;
+	factory.load(this->filename.toStdString(), this->collisionScene.get());
+	factory.load(this->filename.toStdString(), this->viewScene.get());
 	
 	this->viewer->viewAll();
 	

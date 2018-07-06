@@ -35,6 +35,8 @@
 #include <rl/sg/Body.h>
 #include <rl/sg/Model.h>
 #include <rl/sg/SimpleScene.h>
+#include <rl/sg/XmlFactory.h>
+
 #ifdef RL_SG_BULLET
 #include <rl/sg/bullet/Scene.h>
 #endif // RL_SG_BULLET
@@ -103,8 +105,8 @@ main(int argc, char** argv)
 		return EXIT_FAILURE;
 	}
 	
-	rl::mdl::XmlFactory factory;
-	std::shared_ptr<rl::mdl::Model> model(factory.create(argv[2]));
+	rl::mdl::XmlFactory modelFactory;
+	std::shared_ptr<rl::mdl::Model> model(modelFactory.create(argv[2]));
 	rl::mdl::Kinematic* kinematics = dynamic_cast<rl::mdl::Kinematic*>(model.get());
 	
 	std::size_t dof = kinematics->getDof();
@@ -144,10 +146,12 @@ main(int argc, char** argv)
 	sceneNames.push_back("solid");
 #endif // RL_SG_SOLID
 	
+	rl::sg::XmlFactory sceneFactory;
+	
 	for (std::size_t i = 0; i < scenes.size(); ++i)
 	{
 		std::cout << "Loading " << sceneNames[i] << " scene" << std::endl;
-		scenes[i]->load(argv[1]);
+		sceneFactory.load(argv[1], scenes[i]);
 		assert(scenes[i]->getModel(0)->getNumBodies() == kinematics->getBodies());
 		for (std::size_t b = 0; b < kinematics->getBodies(); ++b)
 		{

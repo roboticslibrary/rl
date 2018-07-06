@@ -48,7 +48,6 @@ namespace rl
 				::rl::sg::SimpleScene(),
 				manager()
 			{
-				this->isScalingSupported = false;
 				this->manager.setup();
 			}
 			
@@ -316,6 +315,12 @@ namespace rl
 				CollisionData collisionData(bodyForObj);
 				this->manager.collide(&collisionData, Scene::defaultCollisionFunction);
 				return collisionData.result.numContacts() > 0;
+			}
+			
+			bool
+			Scene::isScalingSupported() const
+			{
+				return false;
 			}
 			
 			void

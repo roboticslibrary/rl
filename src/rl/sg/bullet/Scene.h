@@ -70,6 +70,8 @@ namespace rl
 				
 				bool isColliding();
 				
+				bool isScalingSupported() const;
+				
 				::rl::sg::Shape* raycast(const ::rl::math::Vector3& source, const ::rl::math::Vector3& target, ::rl::math::Real& distance);
 				
 				bool raycast(::rl::sg::Shape* shape, const ::rl::math::Vector3& source, const ::rl::math::Vector3& target, ::rl::math::Real& distance);

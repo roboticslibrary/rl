@@ -29,6 +29,8 @@
 #include <rl/sg/Body.h>
 #include <rl/sg/Model.h>
 #include <rl/sg/SimpleScene.h>
+#include <rl/sg/XmlFactory.h>
+
 #ifdef RL_SG_BULLET
 #include <rl/sg/bullet/Scene.h>
 #endif // RL_SG_BULLET
@@ -80,10 +82,12 @@ main(int argc, char** argv)
 	sceneNames.push_back("solid");
 #endif // RL_SG_SOLID
 	
+	rl::sg::XmlFactory factory;
+	
 	for (std::size_t i = 0; i < scenes.size(); ++i)
 	{
 		std::cout << "Loading " << sceneNames[i] << " scene" << std::endl;
-		scenes[i]->load(argv[1]);
+		factory.load(argv[1], scenes[i]);
 	}
 	
 	std::cout << "Loading done." << std::endl;

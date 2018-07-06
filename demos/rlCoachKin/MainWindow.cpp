@@ -30,6 +30,7 @@
 #include <QHeaderView>
 #include <Inventor/actions/SoWriteAction.h>
 #include <Inventor/Qt/SoQt.h>
+#include <rl/sg/XmlFactory.h>
 
 #include "ConfigurationDelegate.h"
 #include "ConfigurationModel.h"
@@ -70,7 +71,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	QGLFormat::setDefaultFormat(format);
 	
 	this->scene = std::make_shared<rl::sg::so::Scene>();
-	this->scene->load(QApplication::arguments()[1].toStdString());
+	rl::sg::XmlFactory geometryFactory;
+	geometryFactory.load(QApplication::arguments()[1].toStdString(), this->scene.get());
 	
 	for (int i = 2; i < QApplication::arguments().size(); ++i)
 	{

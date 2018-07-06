@@ -61,6 +61,8 @@ namespace rl
 				
 				::rl::math::Real distance(::rl::sg::Shape* shape, const ::rl::math::Vector3& point, ::rl::math::Vector3& point1, ::rl::math::Vector3& point2);
 				
+				bool isScalingSupported() const;
+				
 			protected:
 				
 			private:

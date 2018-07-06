@@ -77,6 +77,8 @@ namespace rl
 				
 				bool isColliding();
 				
+				bool isScalingSupported() const;
+				
 				void remove(::rl::sg::Model* model);
 				
 				void removeCollisionObject(::fcl::CollisionObject* collisionObject);

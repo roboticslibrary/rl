@@ -44,6 +44,7 @@
 #include <rl/mdl/Dynamic.h>
 #include <rl/mdl/XmlFactory.h>
 #include <rl/sg/Body.h>
+#include <rl/sg/XmlFactory.h>
 
 #include "ConfigurationDelegate.h"
 #include "ConfigurationModel.h"
@@ -112,12 +113,13 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	SoGradientBackground::initClass();
 	
 	this->scene = std::make_shared<rl::sg::so::Scene>();
-	this->scene->load(QApplication::arguments()[1].toStdString());
+	rl::sg::XmlFactory geometryFactory;
+	geometryFactory.load(QApplication::arguments()[1].toStdString(), this->scene.get());
 	
-	rl::mdl::XmlFactory factory;
+	rl::mdl::XmlFactory kinematicFactory;
 	
 	this->geometryModels = this->scene->getModel(0);
-	this->kinematicModels.reset(factory.create(QApplication::arguments()[2].toStdString()));
+	this->kinematicModels.reset(kinematicFactory.create(QApplication::arguments()[2].toStdString()));
 	this->simulationResetQ = rl::math::Vector::Zero(kinematicModels->getDof());
 	this->simulationResetQd = rl::math::Vector::Zero(kinematicModels->getDof());
 	this->simulationResetQdd = rl::math::Vector::Zero(kinematicModels->getDof());

@@ -32,6 +32,7 @@
 #include <Inventor/SoDB.h>
 #include <Inventor/Qt/SoQt.h>
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
+#include <rl/sg/XmlFactory.h>
 #include <rl/sg/so/Scene.h>
 
 int
@@ -55,11 +56,12 @@ main(int argc, char** argv)
 			filename = argv[1];
 		}
 		
+		rl::sg::XmlFactory factory;
 		rl::sg::so::Scene scene;
 		
 		if (!filename.isEmpty())
 		{
-			scene.load(filename.toStdString());
+			factory.load(filename.toStdString(), &scene);
 		}
 		
 		SoQtExaminerViewer viewer(widget, nullptr, true, SoQtFullViewer::BUILD_POPUP);

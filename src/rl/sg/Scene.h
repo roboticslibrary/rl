@@ -29,8 +29,6 @@
 
 #include <string>
 #include <vector>
-#include <Inventor/actions/SoCallbackAction.h>
-#include <Inventor/VRMLnodes/SoVRMLGroup.h>
 
 namespace rl
 {
@@ -64,20 +62,16 @@ namespace rl
 			
 			::std::size_t getNumModels() const;
 			
-			void load(const ::std::string& filename, const bool& doBoundingBoxPoints = false, const bool& doPoints = false);
+			virtual bool isScalingSupported() const;
 			
 			virtual void remove(Model* model);
 			
 			virtual void setName(const ::std::string& name);
 			
 		protected:
-			bool isScalingSupported;
-			
 			::std::vector<Model*> models;
 			
 		private:
-			static void triangleCallback(void* userData, ::SoCallbackAction* action, const ::SoPrimitiveVertex* v1, const ::SoPrimitiveVertex* v2, const ::SoPrimitiveVertex* v3);
-			
 			::std::string name;
 		};
 	}

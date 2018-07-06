@@ -24,81 +24,18 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <algorithm>
-
-#include "Scene.h"
+#include "Factory.h"
 
 namespace rl
 {
 	namespace sg
 	{
-		Scene::Scene() :
-			models(),
-			name()
+		Factory::Factory()
 		{
 		}
 		
-		Scene::~Scene()
+		Factory::~Factory()
 		{
-		}
-		
-		void
-		Scene::add(Model* model)
-		{
-			this->models.push_back(model);
-		}
-		
-		Scene::Iterator
-		Scene::begin()
-		{
-			return this->models.begin();
-		}
-		
-		Scene::Iterator
-		Scene::end()
-		{
-			return this->models.end();
-		}
-		
-		Model*
-		Scene::getModel(const ::std::size_t& i) const
-		{
-			return this->models[i];
-		}
-		
-		::std::string
-		Scene::getName() const
-		{
-			return this->name;
-		}
-		
-		::std::size_t
-		Scene::getNumModels() const
-		{
-			return this->models.size();
-		}
-		
-		bool
-		Scene::isScalingSupported() const
-		{
-			return true;
-		}
-		
-		void
-		Scene::remove(Model* model)
-		{
-			Iterator found = ::std::find(this->models.begin(), this->models.end(), model);
-			
-			if (found != this->models.end())
-			{
-				this->models.erase(found);
-			}
-		}
-		
-		void
-		Scene::setName(const ::std::string& name)
-		{
-			this->name = name;
 		}
 	}
 }

@@ -12,11 +12,13 @@ set(
 	DepthScene.h
 	DistanceScene.h
 	Exception.h
+	Factory.h
 	Model.h
 	RaycastScene.h
 	Scene.h
 	Shape.h
 	SimpleScene.h
+	XmlFactory.h
 )
 list(APPEND HDRS ${BASE_HDRS})
 
@@ -26,11 +28,13 @@ set(
 	DepthScene.cpp
 	DistanceScene.cpp
 	Exception.cpp
+	Factory.cpp
 	Model.cpp
 	RaycastScene.cpp
 	Scene.cpp
 	Shape.cpp
 	SimpleScene.cpp
+	XmlFactory.cpp
 )
 list(APPEND SRCS ${BASE_SRCS})
 

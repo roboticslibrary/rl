@@ -36,6 +36,7 @@
 #include <rl/plan/SimpleModel.h>
 #include <rl/plan/SimpleOptimizer.h>
 #include <rl/plan/UniformSampler.h>
+#include <rl/sg/XmlFactory.h>
 #include <rl/sg/solid/Model.h>
 #include <rl/sg/solid/Scene.h>
 
@@ -50,8 +51,9 @@ main(int argc, char** argv)
 	
 	try
 	{
+		rl::sg::XmlFactory factory;
 		rl::sg::solid::Scene scene;
-		scene.load(argv[1]);
+		factory.load(argv[1], &scene);
 		
 		std::shared_ptr<rl::kin::Kinematics> kinematics(rl::kin::Kinematics::create(argv[2]));
 		

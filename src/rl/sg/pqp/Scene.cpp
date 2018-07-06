@@ -39,7 +39,6 @@ namespace rl
 				::rl::sg::DistanceScene(),
 				::rl::sg::SimpleScene()
 			{
-				this->isScalingSupported = false;
 			}
 			
 			Scene::~Scene()
@@ -158,6 +157,12 @@ namespace rl
 				point2(2) = result.P2()[2] + translation[2];
 				
 				return result.Distance();
+			}
+			
+			bool
+			Scene::isScalingSupported() const
+			{
+				return false;
 			}
 		}
 	}

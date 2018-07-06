@@ -73,6 +73,7 @@
 #include <rl/plan/UniformSampler.h>
 #include <rl/plan/WorkspaceSphereExplorer.h>
 #include <rl/sg/Body.h>
+#include <rl/sg/XmlFactory.h>
 #include <rl/xml/Attribute.h>
 #include <rl/xml/Document.h>
 #include <rl/xml/DomParser.h>
@@ -936,8 +937,11 @@ MainWindow::load(const QString& filename)
 	}
 #endif // RL_SG_SOLID
 	
+	rl::mdl::XmlFactory modelFactory;
+	rl::sg::XmlFactory sceneFactory;
+	
 	rl::xml::NodeSet modelScene = path.eval("(/rl/plan|/rlplan)//model/scene").getValue<rl::xml::NodeSet>();
-	this->scene->load(modelScene[0].getUri(modelScene[0].getProperty("href")));
+	sceneFactory.load(modelScene[0].getUri(modelScene[0].getProperty("href")), this->scene.get());
 	this->sceneModel = this->scene->getModel(
 		path.eval("number((/rl/plan|/rlplan)//model/model)").getValue<std::size_t>()
 	);
@@ -945,8 +949,7 @@ MainWindow::load(const QString& filename)
 	if ("mdl" == path.eval("string((/rl/plan|/rlplan)//model/kinematics/@type)").getValue<std::string>())
 	{
 		rl::xml::NodeSet mdl = path.eval("(/rl/plan|/rlplan)//model/kinematics").getValue<rl::xml::NodeSet>();
-		rl::mdl::XmlFactory factory;
-		this->mdl.reset(dynamic_cast<rl::mdl::Dynamic*>(factory.create(
+		this->mdl.reset(dynamic_cast<rl::mdl::Dynamic*>(modelFactory.create(
 			mdl[0].getUri(mdl[0].getProperty("href"))
 		)));
 		
@@ -1029,7 +1032,7 @@ MainWindow::load(const QString& filename)
 	this->scene2 = std::make_shared<rl::sg::so::Scene>();
 	
 	rl::xml::NodeSet viewerScene = path.eval("(/rl/plan|/rlplan)//viewer/model/scene").getValue<rl::xml::NodeSet>();
-	this->scene2->load(viewerScene[0].getUri(viewerScene[0].getProperty("href")));
+	sceneFactory.load(viewerScene[0].getUri(viewerScene[0].getProperty("href")), this->scene2.get());
 	this->sceneModel2 = static_cast<rl::sg::so::Model*>(this->scene2->getModel(
 		path.eval("number((/rl/plan|/rlplan)//viewer/model/model)").getValue<std::size_t>()
 	));
@@ -1037,8 +1040,7 @@ MainWindow::load(const QString& filename)
 	if ("mdl" == path.eval("string((/rl/plan|/rlplan)//viewer/model/kinematics/@type)").getValue<std::string>())
 	{
 		rl::xml::NodeSet mdl2 = path.eval("(/rl/plan|/rlplan)//viewer/model/kinematics").getValue<rl::xml::NodeSet>();
-		rl::mdl::XmlFactory factory;
-		this->mdl2.reset(dynamic_cast<rl::mdl::Dynamic*>(factory.create(
+		this->mdl2.reset(dynamic_cast<rl::mdl::Dynamic*>(modelFactory.create(
 			mdl2[0].getUri(mdl2[0].getProperty("href"))
 		)));
 		
