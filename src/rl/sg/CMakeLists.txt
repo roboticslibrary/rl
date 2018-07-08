@@ -18,6 +18,7 @@ set(
 	Scene.h
 	Shape.h
 	SimpleScene.h
+	UrdfFactory.h
 	XmlFactory.h
 )
 list(APPEND HDRS ${BASE_HDRS})
@@ -34,6 +35,7 @@ set(
 	Scene.cpp
 	Shape.cpp
 	SimpleScene.cpp
+	UrdfFactory.cpp
 	XmlFactory.cpp
 )
 list(APPEND SRCS ${BASE_SRCS})

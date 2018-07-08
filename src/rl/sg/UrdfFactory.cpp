@@ -1,0 +1,251 @@
+//
+// Copyright (c) 2009, Markus Rickert
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+// * Redistributions of source code must retain the above copyright notice,
+//   this list of conditions and the following disclaimer.
+// * Redistributions in binary form must reproduce the above copyright notice,
+//   this list of conditions and the following disclaimer in the documentation
+//   and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
+//
+
+#include <iostream> // TODO
+#include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string.hpp> 
+#include <Inventor/VRMLnodes/SoVRMLAppearance.h>
+#include <Inventor/VRMLnodes/SoVRMLBox.h>
+#include <Inventor/VRMLnodes/SoVRMLCylinder.h>
+#include <Inventor/VRMLnodes/SoVRMLGeometry.h>
+#include <Inventor/VRMLnodes/SoVRMLMaterial.h>
+#include <Inventor/VRMLnodes/SoVRMLSphere.h>
+#include <rl/math/Quaternion.h>
+#include <rl/math/Rotation.h>
+#include <rl/math/Unit.h>
+#include <rl/xml/Attribute.h>
+#include <rl/xml/Document.h>
+#include <rl/xml/DomParser.h>
+#include <rl/xml/Node.h>
+#include <rl/xml/Object.h>
+#include <rl/xml/Path.h>
+
+#include "Body.h"
+#include "Exception.h"
+#include "Model.h"
+#include "Scene.h"
+#include "Shape.h"
+#include "SimpleScene.h"
+#include "UrdfFactory.h"
+
+namespace rl
+{
+	namespace sg
+	{
+		UrdfFactory::UrdfFactory()
+		{
+		}
+		
+		UrdfFactory::~UrdfFactory()
+		{
+		}
+		
+		void
+		UrdfFactory::load(const ::std::string& filename, Scene* scene)
+		{
+			::rl::xml::DomParser parser;
+			
+			::rl::xml::Document document = parser.readFile(filename, "", XML_PARSE_NOENT);
+			document.substitute(XML_PARSE_NOENT);
+			
+			::rl::xml::Path path(document);
+			
+			::rl::xml::NodeSet robots = path.eval("/robot").getValue< ::rl::xml::NodeSet>();
+			
+			if (robots.empty())
+			{
+				throw Exception("URDF is missing robot node");
+			}
+			
+			for (int i = 0; i < robots.size(); ++i)
+			{
+				::rl::xml::Path path(document, robots[i]);
+				
+				Model* model = scene->create();
+				
+				// name
+				
+				model->setName(path.eval("string(@name)").getValue< ::std::string>());
+::std::cout << model->getName() << ::std::endl;
+				
+				// links
+				
+				::rl::xml::NodeSet links = path.eval("link").getValue< ::rl::xml::NodeSet>();
+				
+				for (int j = 0; j < links.size(); ++j)
+				{
+::std::cout << "link: " << j << ::std::endl;
+					::rl::xml::Path path(document, links[j]);
+					
+					Body* body = model->create();
+					
+					body->setName(path.eval("string(@name)").getValue< ::std::string>());
+::std::cout << "\tname: " << body->getName() << ::std::endl;
+					
+					if (SimpleScene* simple = dynamic_cast<SimpleScene*>(scene))
+					{
+						if (path.eval("count(collision) > 0").getValue<bool>())
+						{
+							path.setNode(path.eval("collision").getValue< ::rl::xml::NodeSet>()[0]);
+						}
+						else if (path.eval("count(visual) > 0").getValue<bool>())
+						{
+							path.setNode(path.eval("visual").getValue< ::rl::xml::NodeSet>()[0]);
+						}
+						else
+						{
+							continue;
+						}
+					}
+					else
+					{
+						if (path.eval("count(visual) > 0").getValue<bool>())
+						{
+							path.setNode(path.eval("visual").getValue< ::rl::xml::NodeSet>()[0]);
+						}
+						else if (path.eval("count(collision) > 0").getValue<bool>())
+						{
+							path.setNode(path.eval("collision").getValue< ::rl::xml::NodeSet>()[0]);
+						}
+						else
+						{
+							continue;
+						}
+					}
+					
+					SoVRMLShape* vrmlShape = new SoVRMLShape();
+					
+					SoVRMLAppearance* vrmlAppearance = new SoVRMLAppearance();
+					vrmlShape->appearance = vrmlAppearance;
+					
+					SoVRMLMaterial* vrmlMaterial = new SoVRMLMaterial();
+					vrmlAppearance->material = vrmlMaterial;
+					
+					::rl::xml::NodeSet shapes = path.eval("geometry/box|geometry/cylinder|geometry/sphere").getValue< ::rl::xml::NodeSet>();
+					
+					for (int k = 0; k < shapes.size(); ++k)
+					{
+						if ("box" == shapes[k].getName())
+						{
+							SoVRMLBox* box = new SoVRMLBox();
+							
+							if (!shapes[k].getProperty("size").empty())
+							{
+								::std::vector< ::std::string> size;
+								::std::string tmp = shapes[k].getProperty("size");
+								::boost::split(size, tmp, ::boost::algorithm::is_space(), ::boost::algorithm::token_compress_on);
+								
+								box->size.setValue(
+									::boost::lexical_cast< ::rl::math::Real>(size[0]),
+									::boost::lexical_cast< ::rl::math::Real>(size[1]),
+									::boost::lexical_cast< ::rl::math::Real>(size[2])
+								);
+							}
+							
+							vrmlShape->geometry = box;
+::std::cout << "\tbox: " << box->size.getValue()[0] << ", " << box->size.getValue()[1] << ", " << box->size.getValue()[2] << ::std::endl;
+						}
+						else if ("cylinder" == shapes[k].getName())
+						{
+							SoVRMLCylinder* cylinder = new SoVRMLCylinder();
+							
+							if (!shapes[k].getProperty("length").empty())
+							{
+								cylinder->height.setValue(
+									::boost::lexical_cast< ::rl::math::Real>(shapes[k].getProperty("length"))
+								);
+							}
+							
+							if (!shapes[k].getProperty("radius").empty())
+							{
+								cylinder->radius.setValue(
+									::boost::lexical_cast< ::rl::math::Real>(shapes[k].getProperty("radius"))
+								);
+							}
+							
+							vrmlShape->geometry = cylinder;
+::std::cout << "\tcylinder: " << cylinder->height.getValue() << ", " << cylinder->radius.getValue() << ::std::endl;
+						}
+						else if ("sphere" == shapes[k].getName())
+						{
+							SoVRMLSphere* sphere = new SoVRMLSphere();
+							
+							if (!shapes[k].getProperty("radius").empty())
+							{
+								sphere->radius.setValue(
+									::boost::lexical_cast< ::rl::math::Real>(shapes[k].getProperty("radius"))
+								);
+							}
+							
+							vrmlShape->geometry = sphere;
+::std::cout << "\tsphere: " << sphere->radius.getValue() << ::std::endl;
+						}
+					}
+					
+					Shape* shape = body->create(vrmlShape);
+					
+					::rl::math::Transform origin = ::rl::math::Transform::Identity();
+					
+					if (path.eval("count(origin/@rpy) > 0").getValue<bool>())
+					{
+						::std::vector< ::std::string> rpy;
+						::std::string tmp = path.eval("string(origin/@rpy)").getValue< ::std::string>();
+						::boost::split(rpy, tmp, ::boost::algorithm::is_space(), ::boost::algorithm::token_compress_on);
+						
+						origin.linear() = ::rl::math::AngleAxis(
+							::boost::lexical_cast< ::rl::math::Real>(rpy[2]),
+							 ::rl::math::Vector3::UnitZ()
+						) * ::rl::math::AngleAxis(
+							::boost::lexical_cast< ::rl::math::Real>(rpy[1]),
+							::rl::math::Vector3::UnitY()
+						) * ::rl::math::AngleAxis(
+							::boost::lexical_cast< ::rl::math::Real>(rpy[0]),
+							::rl::math::Vector3::UnitX()
+						).toRotationMatrix();
+					}
+					
+					if (vrmlShape->geometry.getValue()->isOfType(SoVRMLCylinder::getClassTypeId()))
+					{
+						origin *= ::rl::math::AngleAxis(90.0f * ::rl::math::DEG2RAD, ::rl::math::Vector3::UnitX());
+					}
+					
+					if (path.eval("count(origin/@xyz) > 0").getValue<bool>())
+					{
+						::std::vector< ::std::string> xyz;
+						::std::string tmp = path.eval("string(origin/@xyz)").getValue< ::std::string>();
+						::boost::split(xyz, tmp, ::boost::algorithm::is_space(), ::boost::algorithm::token_compress_on);
+						
+						origin.translation().x() = ::boost::lexical_cast< ::rl::math::Real>(xyz[0]);
+						origin.translation().y() = ::boost::lexical_cast< ::rl::math::Real>(xyz[1]);
+						origin.translation().z() = ::boost::lexical_cast< ::rl::math::Real>(xyz[2]);
+					}
+					
+					shape->setTransform(origin);
+				}
+			}
+		}
+	}
+}

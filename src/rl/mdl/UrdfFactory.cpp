@@ -101,7 +101,7 @@ namespace rl
 ::std::cout << "link: " << j << ::std::endl;
 				::rl::xml::Path path(document, links[j]);
 				
-				if (path.eval("count(inertial) > 0").getValue<bool>())
+				if (path.eval("count(collision|inertial|visual) > 0").getValue<bool>())
 				{
 					Body* b = new Body();
 					
