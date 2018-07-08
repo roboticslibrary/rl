@@ -25,7 +25,7 @@
 //
 
 #include <iostream> // TODO
-#include <queue>
+#include <unordered_map>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp> 
 #include <rl/math/Quaternion.h>
@@ -94,7 +94,7 @@ namespace rl
 			
 			::rl::xml::NodeSet links = path.eval("link").getValue< ::rl::xml::NodeSet>();
 			
-			::std::map< ::std::string, Frame*> name2frame;
+			::std::unordered_map< ::std::string, Frame*> name2frame;
 			
 			for (int j = 0; j < links.size(); ++j)
 			{
@@ -165,7 +165,7 @@ namespace rl
 			
 			// joints
 			
-			::std::map< ::std::string, ::std::string> child2parent;
+			::std::unordered_map< ::std::string, ::std::string> child2parent;
 			
 			::rl::xml::NodeSet joints = path.eval("joint").getValue< ::rl::xml::NodeSet>();
 			
@@ -329,7 +329,7 @@ namespace rl
 			
 			Frame* root = nullptr;
 			
-			for (::std::map< ::std::string, Frame*>::const_iterator frame = name2frame.begin(); frame != name2frame.end(); ++frame)
+			for (::std::unordered_map< ::std::string, Frame*>::const_iterator frame = name2frame.begin(); frame != name2frame.end(); ++frame)
 			{
 				if (child2parent.end() == child2parent.find(frame->first))
 				{
