@@ -31,7 +31,9 @@
 #include <QStatusBar>
 #include <Inventor/actions/SoWriteAction.h>
 #include <Inventor/Qt/SoQt.h>
+#include <rl/mdl/UrdfFactory.h>
 #include <rl/mdl/XmlFactory.h>
+#include <rl/sg/UrdfFactory.h>
 #include <rl/sg/XmlFactory.h>
 
 #include "ConfigurationDelegate.h"
@@ -74,17 +76,38 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	SoDB::init();
 	SoGradientBackground::initClass();
 	
-	this->scene = std::make_shared<rl::sg::so::Scene>();
-	rl::sg::XmlFactory geometryFactory;
-	geometryFactory.load(QApplication::arguments()[1].toStdString(), this->scene.get());
+	std::shared_ptr<rl::sg::Factory> geometryFactory;
+	std::string geometryFilename = QApplication::arguments()[1].toStdString();
 	
-	rl::mdl::XmlFactory kinematicFactory;
+	if ("urdf" == geometryFilename.substr(geometryFilename.length() - 4, 4))
+	{
+		geometryFactory = std::make_shared<rl::sg::UrdfFactory>();
+	}
+	else
+	{
+		geometryFactory = std::make_shared<rl::sg::XmlFactory>();
+	}
+	
+	this->scene = std::make_shared<rl::sg::so::Scene>();
+	geometryFactory->load(geometryFilename, this->scene.get());
 	
 	for (int i = 2; i < QApplication::arguments().size(); ++i)
 	{
+		std::shared_ptr<rl::mdl::Factory> kinematicFactory;
+		std::string kinematicFilename = QApplication::arguments()[i].toStdString();
+		
+		if ("urdf" == kinematicFilename.substr(kinematicFilename.length() - 4, 4))
+		{
+			kinematicFactory = std::make_shared<rl::mdl::UrdfFactory>();
+		}
+		else
+		{
+			kinematicFactory = std::make_shared<rl::mdl::XmlFactory>();
+		}
+		
 		this->geometryModels.push_back(this->scene->getModel(i - 2));
 		std::shared_ptr<rl::mdl::Model> kinematicModel;
-		kinematicModel.reset(kinematicFactory.create(QApplication::arguments()[i].toStdString()));
+		kinematicModel.reset(kinematicFactory->create(kinematicFilename));
 		this->kinematicModels.push_back(kinematicModel);
 	}
 	
