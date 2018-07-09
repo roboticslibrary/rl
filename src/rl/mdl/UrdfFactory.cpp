@@ -101,66 +101,52 @@ namespace rl
 ::std::cout << "link: " << j << ::std::endl;
 				::rl::xml::Path path(document, links[j]);
 				
-				if (path.eval("count(collision|inertial|visual) > 0").getValue<bool>())
+				Body* b = new Body();
+				
+				model->add(b);
+				
+				if (path.eval("count(inertial/origin/@xyz) > 0").getValue<bool>())
 				{
-					Body* b = new Body();
+					::std::vector< ::std::string> xyz;
+					::std::string tmp = path.eval("string(inertial/origin/@xyz)").getValue< ::std::string>();
+					::boost::split(xyz, tmp, ::boost::algorithm::is_space(), ::boost::algorithm::token_compress_on);
 					
-					model->add(b);
-					
-					if (path.eval("count(inertial/origin/@xyz) > 0").getValue<bool>())
-					{
-						::std::vector< ::std::string> xyz;
-						::std::string tmp = path.eval("string(inertial/origin/@xyz)").getValue< ::std::string>();
-						::boost::split(xyz, tmp, ::boost::algorithm::is_space(), ::boost::algorithm::token_compress_on);
-						
-						b->setCenterOfMass(
-							::boost::lexical_cast< ::rl::math::Real>(xyz[0]),
-							::boost::lexical_cast< ::rl::math::Real>(xyz[1]),
-							::boost::lexical_cast< ::rl::math::Real>(xyz[2])
-						);
-					}
-					else
-					{
-						b->setCenterOfMass(0, 0, 0);
-					}
-::std::cout << "\tcog: " << b->cm.transpose() << ::std::endl;
-					
-					if (path.eval("count(inertial/origin/@abc) > 0").getValue<bool>())
-					{
-						throw Exception("URDF link/inertial/origin/@abc not supported");
-					}
-					
-					b->setInertia(
-						path.eval("number(inertial/inertia/@ixx)").getValue< ::rl::math::Real>(1),
-						path.eval("number(inertial/inertia/@iyy)").getValue< ::rl::math::Real>(1),
-						path.eval("number(inertial/inertia/@izz)").getValue< ::rl::math::Real>(1),
-						path.eval("number(inertial/inertia/@iyz)").getValue< ::rl::math::Real>(0),
-						path.eval("number(inertial/inertia/@ixz)").getValue< ::rl::math::Real>(0),
-						path.eval("number(inertial/inertia/@ixy)").getValue< ::rl::math::Real>(0)
+					b->setCenterOfMass(
+						::boost::lexical_cast< ::rl::math::Real>(xyz[0]),
+						::boost::lexical_cast< ::rl::math::Real>(xyz[1]),
+						::boost::lexical_cast< ::rl::math::Real>(xyz[2])
 					);
-::std::cout << "\tinertia: " << b->ic.voigt6().transpose() << ::std::endl;
-					
-					b->setMass(
-						path.eval("number(inertial/mass/@value)").getValue< ::rl::math::Real>(1)
-					);
-::std::cout << "\tmass: " << b->m << ::std::endl;
-					
-					b->setName(path.eval("string(@name)").getValue< ::std::string>());
-::std::cout << "\tname: " << b->getName() << ::std::endl;
-					
-					name2frame[path.eval("string(@name)").getValue< ::std::string>()] = b;
 				}
 				else
 				{
-					Frame* f = new Frame();
-					
-					model->add(f);
-					
-					f->setName(path.eval("string(@name)").getValue< ::std::string>());
-::std::cout << "\tname: " << f->getName() << ::std::endl;
-					
-					name2frame[path.eval("string(@name)").getValue< ::std::string>()] = f;
+					b->setCenterOfMass(0, 0, 0);
 				}
+::std::cout << "\tcog: " << b->cm.transpose() << ::std::endl;
+				
+				if (path.eval("count(inertial/origin/@abc) > 0").getValue<bool>())
+				{
+					throw Exception("URDF link/inertial/origin/@abc not supported");
+				}
+				
+				b->setInertia(
+					path.eval("number(inertial/inertia/@ixx)").getValue< ::rl::math::Real>(1),
+					path.eval("number(inertial/inertia/@iyy)").getValue< ::rl::math::Real>(1),
+					path.eval("number(inertial/inertia/@izz)").getValue< ::rl::math::Real>(1),
+					path.eval("number(inertial/inertia/@iyz)").getValue< ::rl::math::Real>(0),
+					path.eval("number(inertial/inertia/@ixz)").getValue< ::rl::math::Real>(0),
+					path.eval("number(inertial/inertia/@ixy)").getValue< ::rl::math::Real>(0)
+				);
+::std::cout << "\tinertia: " << b->ic.voigt6().transpose() << ::std::endl;
+				
+				b->setMass(
+					path.eval("number(inertial/mass/@value)").getValue< ::rl::math::Real>(1)
+				);
+::std::cout << "\tmass: " << b->m << ::std::endl;
+				
+				b->setName(path.eval("string(@name)").getValue< ::std::string>());
+::std::cout << "\tname: " << b->getName() << ::std::endl;
+				
+				name2frame[path.eval("string(@name)").getValue< ::std::string>()] = b;
 			}
 			
 			// joints
