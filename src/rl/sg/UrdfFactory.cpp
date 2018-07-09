@@ -116,6 +116,7 @@ namespace rl
 ::std::cout << "\trgba: " << rgba[0] << " " << rgba[1] << " " << rgba[2] << " " << rgba[3] << ::std::endl;
 						
 						::SoVRMLMaterial* vrmlMaterial = new ::SoVRMLMaterial();
+						vrmlMaterial->ref();
 						
 						vrmlMaterial->diffuseColor.setValue(
 							::boost::lexical_cast< ::rl::math::Real>(rgba[0]),
@@ -365,6 +366,11 @@ namespace rl
 					}
 					
 					vrmlShape->unref();
+				}
+				
+				for (::std::unordered_map< ::std::string, ::SoVRMLMaterial*>::iterator j = name2material.begin(); j != name2material.end(); ++j)
+				{
+					j->second->unref();
 				}
 			}
 		}
