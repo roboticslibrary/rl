@@ -24,7 +24,9 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <iostream> // TODO
+#include <deque>
+#include <iostream> // TODO remove
+#include <map>
 #include <unordered_map>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
@@ -132,18 +134,68 @@ namespace rl
 					}
 				}
 				
+				// joints
+				
+				::std::unordered_map< ::std::string, ::std::string> child2parent;
+				::std::unordered_map< ::std::string, ::rl::xml::Node> name2link;
+				::std::multimap< ::std::string, ::std::string> parent2child;
+				
+				::rl::xml::NodeSet joints = path.eval("joint").getValue< ::rl::xml::NodeSet>();
+				
+				for (int j = 0; j < joints.size(); ++j)
+				{
+::std::cout << "joint: " << j << ::std::endl;
+					::rl::xml::Path path(document, joints[j]);
+					
+					::std::string child = path.eval("string(child/@link)").getValue< ::std::string>();
+					::std::string parent = path.eval("string(parent/@link)").getValue< ::std::string>();
+					
+					child2parent[child] = parent;
+					parent2child.insert(::std::pair< ::std::string, ::std::string>(parent, child));
+::std::cout << "\tconnect: " << parent << " -> " << child << ::std::endl;
+				}
+				
 				// links
 				
 				::rl::xml::NodeSet links = path.eval("link").getValue< ::rl::xml::NodeSet>();
 				
+				::std::string root;
+				
 				for (int j = 0; j < links.size(); ++j)
 				{
-::std::cout << "link: " << j << ::std::endl;
 					::rl::xml::Path path(document, links[j]);
+					
+					::std::string name = path.eval("string(@name)").getValue< ::std::string>();
+					
+					name2link[name] = links[j];
+					
+					if (child2parent.end() == child2parent.find(name))
+					{
+						if (root.empty())
+						{
+							root = name;
+::std::cout << "root: " << name << ::std::endl;
+						}
+						else
+						{
+							throw Exception("URDF has more than one root node");
+						}
+					}
+				}
+				
+				::std::deque< ::std::string> dfs;
+				dfs.push_front(root);
+				
+				while (!dfs.empty())
+				{
+					::std::string name = dfs.front();
+::std::cout << "link: " << name << ::std::endl;
+					
+					::rl::xml::Path path(document, name2link[name]);
 					
 					Body* body = model->create();
 					
-					body->setName(path.eval("string(@name)").getValue< ::std::string>());
+					body->setName(name);
 ::std::cout << "\tname: " << body->getName() << ::std::endl;
 					
 					if (SimpleScene* simple = dynamic_cast<SimpleScene*>(scene))
@@ -156,10 +208,6 @@ namespace rl
 						{
 							path.setNode(path.eval("visual").getValue< ::rl::xml::NodeSet>()[0]);
 						}
-						else
-						{
-							continue;
-						}
 					}
 					else
 					{
@@ -170,10 +218,6 @@ namespace rl
 						else if (path.eval("count(collision) > 0").getValue<bool>())
 						{
 							path.setNode(path.eval("collision").getValue< ::rl::xml::NodeSet>()[0]);
-						}
-						else
-						{
-							continue;
 						}
 					}
 					
@@ -366,6 +410,25 @@ namespace rl
 					}
 					
 					vrmlShape->unref();
+					
+					// depth first search
+					
+					dfs.pop_front();
+					
+					::std::pair<
+						::std::multimap< ::std::string, ::std::string>::const_iterator,
+						::std::multimap< ::std::string, ::std::string>::const_iterator
+					> range = parent2child.equal_range(name);
+					
+					// reverse order
+					
+					::std::multimap< ::std::string, ::std::string>::const_iterator first = --range.second;
+					::std::multimap< ::std::string, ::std::string>::const_iterator second = --range.first;
+					
+					for (::std::multimap< ::std::string, ::std::string>::const_iterator k = first; k != second; --k)
+					{
+						dfs.push_front(k->second);
+					}
 				}
 				
 				for (::std::unordered_map< ::std::string, ::SoVRMLMaterial*>::iterator j = name2material.begin(); j != name2material.end(); ++j)
