@@ -45,6 +45,11 @@ namespace rl
 		class Node
 		{
 		public:
+			explicit Node() :
+				node(nullptr)
+			{
+			}
+			
 			explicit Node(::xmlNodePtr node) :
 				node(node)
 			{
