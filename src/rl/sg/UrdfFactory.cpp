@@ -27,11 +27,16 @@
 #include <iostream> // TODO
 #include <unordered_map>
 #include <boost/lexical_cast.hpp>
-#include <boost/algorithm/string.hpp> 
+#include <boost/algorithm/string.hpp>
+#include <Inventor/actions/SoSearchAction.h>
+#include <Inventor/actions/SoToVRML2Action.h>
+#include <Inventor/annex/ForeignFiles/SoSTLFileKit.h>
+#include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/VRMLnodes/SoVRMLAppearance.h>
 #include <Inventor/VRMLnodes/SoVRMLBox.h>
 #include <Inventor/VRMLnodes/SoVRMLCylinder.h>
 #include <Inventor/VRMLnodes/SoVRMLGeometry.h>
+#include <Inventor/VRMLnodes/SoVRMLIndexedFaceSet.h>
 #include <Inventor/VRMLnodes/SoVRMLMaterial.h>
 #include <Inventor/VRMLnodes/SoVRMLSphere.h>
 #include <rl/math/Quaternion.h>
@@ -96,7 +101,7 @@ namespace rl
 				
 				::rl::xml::NodeSet materials = path.eval("material").getValue< ::rl::xml::NodeSet>();
 				
-				::std::unordered_map< ::std::string, SoVRMLMaterial*> name2material;
+				::std::unordered_map< ::std::string, ::SoVRMLMaterial*> name2material;
 				
 				for (int j = 0; j < materials.size(); ++j)
 				{
@@ -110,7 +115,7 @@ namespace rl
 						::boost::split(rgba, tmp, ::boost::algorithm::is_space(), ::boost::algorithm::token_compress_on);
 ::std::cout << "\trgba: " << rgba[0] << " " << rgba[1] << " " << rgba[2] << " " << rgba[3] << ::std::endl;
 						
-						SoVRMLMaterial* vrmlMaterial = new SoVRMLMaterial();
+						::SoVRMLMaterial* vrmlMaterial = new ::SoVRMLMaterial();
 						
 						vrmlMaterial->diffuseColor.setValue(
 							::boost::lexical_cast< ::rl::math::Real>(rgba[0]),
@@ -171,9 +176,10 @@ namespace rl
 						}
 					}
 					
-					SoVRMLShape* vrmlShape = new SoVRMLShape();
+					::SoVRMLShape* vrmlShape = new ::SoVRMLShape();
+					vrmlShape->ref();
 					
-					SoVRMLAppearance* vrmlAppearance = new SoVRMLAppearance();
+					::SoVRMLAppearance* vrmlAppearance = new ::SoVRMLAppearance();
 					vrmlShape->appearance = vrmlAppearance;
 					
 					if (path.eval("count(material/color/@rgba) > 0").getValue<bool>())
@@ -183,7 +189,7 @@ namespace rl
 						::boost::split(rgba, tmp, ::boost::algorithm::is_space(), ::boost::algorithm::token_compress_on);
 ::std::cout << "\tmaterial rgba: " << rgba[0] << " " << rgba[1] << " " << rgba[2] << " " << rgba[3] << ::std::endl;
 						
-						SoVRMLMaterial* vrmlMaterial = new SoVRMLMaterial();
+						::SoVRMLMaterial* vrmlMaterial = new ::SoVRMLMaterial();
 						
 						vrmlMaterial->diffuseColor.setValue(
 							::boost::lexical_cast< ::rl::math::Real>(rgba[0]),
@@ -203,17 +209,17 @@ namespace rl
 					}
 					else
 					{
-						SoVRMLMaterial* vrmlMaterial = new SoVRMLMaterial();
+						::SoVRMLMaterial* vrmlMaterial = new ::SoVRMLMaterial();
 						vrmlAppearance->material = vrmlMaterial;
 					}
 					
-					::rl::xml::NodeSet shapes = path.eval("geometry/box|geometry/cylinder|geometry/sphere").getValue< ::rl::xml::NodeSet>();
+					::rl::xml::NodeSet shapes = path.eval("geometry/box|geometry/cylinder|geometry/mesh|geometry/sphere").getValue< ::rl::xml::NodeSet>();
 					
 					for (int k = 0; k < shapes.size(); ++k)
 					{
 						if ("box" == shapes[k].getName())
 						{
-							SoVRMLBox* box = new SoVRMLBox();
+							::SoVRMLBox* box = new ::SoVRMLBox();
 							
 							if (!shapes[k].getProperty("size").empty())
 							{
@@ -233,7 +239,7 @@ namespace rl
 						}
 						else if ("cylinder" == shapes[k].getName())
 						{
-							SoVRMLCylinder* cylinder = new SoVRMLCylinder();
+							::SoVRMLCylinder* cylinder = new ::SoVRMLCylinder();
 							
 							if (!shapes[k].getProperty("length").empty())
 							{
@@ -252,9 +258,53 @@ namespace rl
 							vrmlShape->geometry = cylinder;
 ::std::cout << "\tcylinder: " << cylinder->height.getValue() << " " << cylinder->radius.getValue() << ::std::endl;
 						}
+						else if ("mesh" == shapes[k].getName())
+						{
+							if (!shapes[k].getProperty("filename").empty())
+							{
+								::std::string filename = shapes[k].getLocalPath(shapes[k].getProperty("filename"));
+::std::cout << "\tmesh: " << filename << ::std::endl;
+								
+								if (!boost::iequals("stl", filename.substr(filename.length() - 3, 3)))
+								{
+									throw Exception("Only STL meshes currently supported");
+								}
+								
+								::SoSTLFileKit* stlFileKit = new ::SoSTLFileKit();
+								stlFileKit->ref();
+								stlFileKit->readFile(filename.c_str());
+								::SoSeparator* stl = stlFileKit->convert();
+								stl->ref();
+								stlFileKit->unref();
+								
+								::SoToVRML2Action toVrml2Action;
+								toVrml2Action.apply(stl);
+								::SoVRMLGroup* vrml2 = toVrml2Action.getVRML2SceneGraph();
+								vrml2->ref();
+								stl->unref();
+								
+								::SoSearchAction searchAction;
+								searchAction.setInterest(::SoSearchAction::ALL);
+								searchAction.setType(::SoVRMLShape::getClassTypeId());
+								searchAction.apply(vrml2);
+								
+								for (int l = 0; l < searchAction.getPaths().getLength(); ++l)
+								{
+									vrmlShape->geometry = static_cast< ::SoVRMLShape*>(static_cast< ::SoFullPath*>(searchAction.getPaths()[l])->getTail())->geometry;
+									
+									if (vrmlShape->geometry.getValue()->isOfType(::SoVRMLIndexedFaceSet::getClassTypeId()))
+									{
+										SoVRMLIndexedFaceSet* vrmlIndexedFaceSet = static_cast<SoVRMLIndexedFaceSet*>(vrmlShape->geometry.getValue());
+										vrmlIndexedFaceSet->convex.setValue(false);
+									}
+								}
+								
+								vrml2->unref();
+							}
+						}
 						else if ("sphere" == shapes[k].getName())
 						{
-							SoVRMLSphere* sphere = new SoVRMLSphere();
+							::SoVRMLSphere* sphere = new ::SoVRMLSphere();
 							
 							if (!shapes[k].getProperty("radius").empty())
 							{
@@ -268,48 +318,53 @@ namespace rl
 						}
 					}
 					
-					Shape* shape = body->create(vrmlShape);
-					
-					::rl::math::Transform origin = ::rl::math::Transform::Identity();
-					
-					if (path.eval("count(origin/@rpy) > 0").getValue<bool>())
+					if (nullptr != vrmlShape->geometry.getValue())
 					{
-						::std::vector< ::std::string> rpy;
-						::std::string tmp = path.eval("string(origin/@rpy)").getValue< ::std::string>();
-						::boost::split(rpy, tmp, ::boost::algorithm::is_space(), ::boost::algorithm::token_compress_on);
+						Shape* shape = body->create(vrmlShape);
+						
+						::rl::math::Transform origin = ::rl::math::Transform::Identity();
+						
+						if (path.eval("count(origin/@rpy) > 0").getValue<bool>())
+						{
+							::std::vector< ::std::string> rpy;
+							::std::string tmp = path.eval("string(origin/@rpy)").getValue< ::std::string>();
+							::boost::split(rpy, tmp, ::boost::algorithm::is_space(), ::boost::algorithm::token_compress_on);
 ::std::cout << "\trpy: " << rpy[0] << " " << rpy[1] << " " << rpy[2] << ::std::endl;
+							
+							origin.linear() = ::rl::math::AngleAxis(
+								::boost::lexical_cast< ::rl::math::Real>(rpy[2]),
+								 ::rl::math::Vector3::UnitZ()
+							) * ::rl::math::AngleAxis(
+								::boost::lexical_cast< ::rl::math::Real>(rpy[1]),
+								::rl::math::Vector3::UnitY()
+							) * ::rl::math::AngleAxis(
+								::boost::lexical_cast< ::rl::math::Real>(rpy[0]),
+								::rl::math::Vector3::UnitX()
+							).toRotationMatrix();
+						}
 						
-						origin.linear() = ::rl::math::AngleAxis(
-							::boost::lexical_cast< ::rl::math::Real>(rpy[2]),
-							 ::rl::math::Vector3::UnitZ()
-						) * ::rl::math::AngleAxis(
-							::boost::lexical_cast< ::rl::math::Real>(rpy[1]),
-							::rl::math::Vector3::UnitY()
-						) * ::rl::math::AngleAxis(
-							::boost::lexical_cast< ::rl::math::Real>(rpy[0]),
-							::rl::math::Vector3::UnitX()
-						).toRotationMatrix();
-					}
-					
-					if (vrmlShape->geometry.getValue()->isOfType(SoVRMLCylinder::getClassTypeId()))
-					{
-						origin *= ::rl::math::AngleAxis(90.0f * ::rl::math::DEG2RAD, ::rl::math::Vector3::UnitX());
-					}
-					
-					if (path.eval("count(origin/@xyz) > 0").getValue<bool>())
-					{
-						::std::vector< ::std::string> xyz;
-						::std::string tmp = path.eval("string(origin/@xyz)").getValue< ::std::string>();
-						::boost::split(xyz, tmp, ::boost::algorithm::is_space(), ::boost::algorithm::token_compress_on);
+						if (vrmlShape->geometry.getValue()->isOfType(::SoVRMLCylinder::getClassTypeId()))
+						{
+							origin *= ::rl::math::AngleAxis(90.0f * ::rl::math::DEG2RAD, ::rl::math::Vector3::UnitX());
+						}
+						
+						if (path.eval("count(origin/@xyz) > 0").getValue<bool>())
+						{
+							::std::vector< ::std::string> xyz;
+							::std::string tmp = path.eval("string(origin/@xyz)").getValue< ::std::string>();
+							::boost::split(xyz, tmp, ::boost::algorithm::is_space(), ::boost::algorithm::token_compress_on);
 ::std::cout << "\txyz: " << xyz[0] << " " << xyz[1] << " " << xyz[2] << ::std::endl;
-						
-						origin.translation().x() = ::boost::lexical_cast< ::rl::math::Real>(xyz[0]);
-						origin.translation().y() = ::boost::lexical_cast< ::rl::math::Real>(xyz[1]);
-						origin.translation().z() = ::boost::lexical_cast< ::rl::math::Real>(xyz[2]);
-					}
+							
+							origin.translation().x() = ::boost::lexical_cast< ::rl::math::Real>(xyz[0]);
+							origin.translation().y() = ::boost::lexical_cast< ::rl::math::Real>(xyz[1]);
+							origin.translation().z() = ::boost::lexical_cast< ::rl::math::Real>(xyz[2]);
+						}
 ::std::cout << "\torigin:" << ::std::endl << origin.matrix() << ::std::endl;
+						
+						shape->setTransform(origin);
+					}
 					
-					shape->setTransform(origin);
+					vrmlShape->unref();
 				}
 			}
 		}
