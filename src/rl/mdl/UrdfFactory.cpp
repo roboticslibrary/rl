@@ -282,7 +282,7 @@ namespace rl
 					p->setName(path.eval("string(@name)").getValue< ::std::string>());
 ::std::cout << "\tname: " << p->getName() << ::std::endl;
 				}
-				else if ("revolute" == type)
+				else if ("revolute" == type || "continuous" == type)
 				{
 					Revolute* r = new Revolute();
 					
