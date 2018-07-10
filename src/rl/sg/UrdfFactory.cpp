@@ -85,7 +85,7 @@ namespace rl
 			
 			if (robots.empty())
 			{
-				throw Exception("URDF is missing robot node");
+				throw Exception("rl::sg::UrdfFactory::load() - URDF is missing robot node");
 			}
 			
 			for (int i = 0; i < robots.size(); ++i)
@@ -178,7 +178,7 @@ namespace rl
 						}
 						else
 						{
-							throw Exception("URDF has more than one root node");
+							throw Exception("rl::sg::UrdfFactory::load() - URDF has more than one root node");
 						}
 					}
 				}
@@ -312,12 +312,17 @@ namespace rl
 								
 								if (!boost::iequals("stl", filename.substr(filename.length() - 3, 3)))
 								{
-									throw Exception("Only STL meshes currently supported");
+									throw Exception("rl::sg::UrdfFactory::load() - Only STL meshes currently supported");
 								}
 								
 								::SoSTLFileKit* stlFileKit = new ::SoSTLFileKit();
 								stlFileKit->ref();
-								stlFileKit->readFile(filename.c_str());
+								
+								if (!stlFileKit->readFile(filename.c_str()))
+								{
+									throw Exception("rl::sg::UrdfFactory::load() - Failed to open file '" + filename + "'");
+								}
+								
 								::SoSeparator* stl = stlFileKit->convert();
 								stl->ref();
 								stlFileKit->unref();

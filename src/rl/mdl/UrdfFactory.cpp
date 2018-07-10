@@ -80,7 +80,7 @@ namespace rl
 			
 			if (robots.empty())
 			{
-				throw Exception("URDF is missing robot node");
+				throw Exception("rl::mdl::UrdfFactory::load() - URDF is missing robot node");
 			}
 			
 			path.setNode(robots[0]);
@@ -125,7 +125,7 @@ namespace rl
 				
 				if (path.eval("count(inertial/origin/@abc) > 0").getValue<bool>())
 				{
-					throw Exception("URDF link/inertial/origin/@abc not supported");
+					throw Exception("rl::mdl::UrdfFactory::load() - URDF link/inertial/origin/@abc not supported");
 				}
 				
 				b->setInertia(
@@ -169,7 +169,7 @@ namespace rl
 				
 				if (nullptr == parent || nullptr == child)
 				{
-					throw Exception("URDF joint has missing parent or child link");
+					throw Exception("rl::mdl::UrdfFactory::load() - URDF joint has missing parent or child link");
 				}
 				
 				// frame
@@ -225,11 +225,11 @@ namespace rl
 				}
 				else if ("floating" == type)
 				{
-					throw Exception("URDF floating joint not supported");
+					throw Exception("rl::mdl::UrdfFactory::load() - URDF floating joint not supported");
 				}
 				else if ("planar" == type)
 				{
-					throw Exception("URDF planar joint not supported");
+					throw Exception("rl::mdl::UrdfFactory::load() - URDF planar joint not supported");
 				}
 				else if ("prismatic" == type)
 				{
@@ -328,14 +328,14 @@ namespace rl
 					}
 					else
 					{
-						throw Exception("URDF has more than one root node");
+						throw Exception("rl::mdl::UrdfFactory::load() - URDF has more than one root node");
 					}
 				}
 			}
 			
 			if (nullptr == root)
 			{
-				throw Exception("URDF has no root node");
+				throw Exception("rl::mdl::UrdfFactory::load() - URDF has no root node");
 			}
 			
 			model->update();

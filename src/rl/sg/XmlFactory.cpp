@@ -81,14 +81,14 @@ namespace rl
 				
 				if (!input.openFile(scenes[i].getLocalPath(scenes[i].getProperty("href")).c_str() ,true))
 				{
-					throw Exception("::rl::sg::XmlFactory::load() - failed to open file");
+					throw Exception("rl::sg::XmlFactory::load() - Failed to open file");
 				}
 				
 				::SoVRMLGroup* root = SoDB::readAllVRML(&input);
 				
 				if (nullptr == root)
 				{
-					throw Exception("::rl::sg::XmlFactory::load() - failed to read file");
+					throw Exception("rl::sg::XmlFactory::load() - Failed to read file");
 				}
 				
 				::SbViewportRegion viewportRegion;
@@ -156,7 +156,7 @@ namespace rl
 							{
 								if (::std::abs(bodyScaleFactor[l] - 1.0f) > 1.0e-6f)
 								{
-									throw Exception("::rl::sg::XmlFactory::load() - bodyScaleFactor not supported");
+									throw Exception("rl::sg::XmlFactory::load() - bodyScaleFactor not supported");
 								}
 							}
 						}
@@ -220,7 +220,7 @@ namespace rl
 								{
 									if (::std::abs(shapeScaleFactor[m] - 1.0f) > 1.0e-6f)
 									{
-										throw Exception("::rl::sg::XmlFactory::load() - shapeScaleFactor not supported");
+										throw Exception("rl::sg::XmlFactory::load() - shapeScaleFactor not supported");
 									}
 								}
 							}
