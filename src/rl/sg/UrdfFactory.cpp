@@ -280,7 +280,7 @@ namespace rl
 							}
 							
 							vrmlShape->geometry = box;
-::std::cout << "\tbox: " << box->size.getValue()[0] << " " << box->size.getValue()[1] << " " << box->size.getValue()[2] << ::std::endl;
+::std::cout << "\tbox size: " << box->size.getValue()[0] << " " << box->size.getValue()[1] << " " << box->size.getValue()[2] << ::std::endl;
 						}
 						else if ("cylinder" == shapes[k].getName())
 						{
@@ -301,14 +301,15 @@ namespace rl
 							}
 							
 							vrmlShape->geometry = cylinder;
-::std::cout << "\tcylinder: " << cylinder->height.getValue() << " " << cylinder->radius.getValue() << ::std::endl;
+::std::cout << "\tcylinder height: " << cylinder->height.getValue() << ::std::endl;
+::std::cout << "\tcylinder radius: " << cylinder->radius.getValue() << ::std::endl;
 						}
 						else if ("mesh" == shapes[k].getName())
 						{
 							if (!shapes[k].getProperty("filename").empty())
 							{
 								::std::string filename = shapes[k].getLocalPath(shapes[k].getProperty("filename"));
-::std::cout << "\tmesh: " << filename << ::std::endl;
+::std::cout << "\tmesh filename: " << filename << ::std::endl;
 								
 								if (!boost::iequals("stl", filename.substr(filename.length() - 3, 3)))
 								{
@@ -364,7 +365,7 @@ namespace rl
 							}
 							
 							vrmlShape->geometry = sphere;
-::std::cout << "\tsphere: " << sphere->radius.getValue() << ::std::endl;
+::std::cout << "\tsphere radius: " << sphere->radius.getValue() << ::std::endl;
 						}
 					}
 					
@@ -379,7 +380,7 @@ namespace rl
 							::std::vector< ::std::string> rpy;
 							::std::string tmp = path.eval("string(origin/@rpy)").getValue< ::std::string>();
 							::boost::split(rpy, tmp, ::boost::algorithm::is_space(), ::boost::algorithm::token_compress_on);
-::std::cout << "\trpy: " << rpy[0] << " " << rpy[1] << " " << rpy[2] << ::std::endl;
+::std::cout << "\torigin rpy: " << rpy[0] << " " << rpy[1] << " " << rpy[2] << ::std::endl;
 							
 							origin.linear() = ::rl::math::AngleAxis(
 								::boost::lexical_cast< ::rl::math::Real>(rpy[2]),
@@ -403,13 +404,12 @@ namespace rl
 							::std::vector< ::std::string> xyz;
 							::std::string tmp = path.eval("string(origin/@xyz)").getValue< ::std::string>();
 							::boost::split(xyz, tmp, ::boost::algorithm::is_space(), ::boost::algorithm::token_compress_on);
-::std::cout << "\txyz: " << xyz[0] << " " << xyz[1] << " " << xyz[2] << ::std::endl;
+::std::cout << "\torigin xyz: " << xyz[0] << " " << xyz[1] << " " << xyz[2] << ::std::endl;
 							
 							origin.translation().x() = ::boost::lexical_cast< ::rl::math::Real>(xyz[0]);
 							origin.translation().y() = ::boost::lexical_cast< ::rl::math::Real>(xyz[1]);
 							origin.translation().z() = ::boost::lexical_cast< ::rl::math::Real>(xyz[2]);
 						}
-::std::cout << "\torigin:" << ::std::endl << origin.matrix() << ::std::endl;
 						
 						shape->setTransform(origin);
 					}
