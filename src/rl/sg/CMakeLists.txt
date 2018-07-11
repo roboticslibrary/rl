@@ -199,15 +199,20 @@ if(Coin_FOUND)
 	set(CMAKE_REQUIRED_DEFINITIONS ${Coin_DEFINITIONS})
 	set(CMAKE_REQUIRED_INCLUDES ${Coin_INCLUDE_DIRS})
 	set(CMAKE_REQUIRED_LIBRARIES ${Coin_LIBRARIES})
-	check_cxx_source_compiles("
-		#include <ForeignFiles/SoSTLFileKit.h>
-		int main() { SoSTLFileKit* stlFileKit = new SoSTLFileKit(); stlFileKit->convert(); return 0; }
-	" HAVE_SOSTLFILEKIT_CONVERT)
 	check_include_file_cxx(ForeignFiles/SoSTLFileKit.h HAVE_SOSTLFILEKIT_H)
+	if(HAVE_SOSTLFILEKIT_H)
+		target_compile_definitions(sg PRIVATE -DHAVE_SOSTLFILEKIT_H)
+		check_cxx_source_compiles("
+			#include <ForeignFiles/SoSTLFileKit.h>
+			int main() { SoSTLFileKit* stlFileKit = new SoSTLFileKit(); stlFileKit->convert(); return 0; }
+		" HAVE_SOSTLFILEKIT_CONVERT)
+		if(HAVE_SOSTLFILEKIT_CONVERT)
+			target_compile_definitions(sg PRIVATE -DHAVE_SOSTLFILEKIT_CONVERT)
+		endif()
+	endif()
 	unset(CMAKE_REQUIRED_DEFINITIONS)
 	unset(CMAKE_REQUIRED_INCLUDES)
 	unset(CMAKE_REQUIRED_LIBRARIES)
-	target_compile_definitions(sg PRIVATE -DHAVE_SOSTLFILEKIT_H -DHAVE_SOSTLFILEKIT_CONVERT)
 	target_compile_definitions(sg PUBLIC ${Coin_DEFINITIONS})
 	target_include_directories(sg PUBLIC ${Coin_INCLUDE_DIRS})
 	target_link_libraries(sg ${Coin_LIBRARIES})
