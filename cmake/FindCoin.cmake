@@ -49,7 +49,7 @@ file(
 )
 
 find_path(
-	Coin_INCLUDE_DIRS
+	Coin_INCLUDE_DIR
 	NAMES
 	Inventor/So.h
 	HINTS
@@ -58,7 +58,27 @@ find_path(
 	${Coin_INCLUDE_PATHS}
 )
 
-mark_as_advanced(Coin_INCLUDE_DIRS)
+mark_as_advanced(Coin_INCLUDE_DIR)
+
+set(Coin_INCLUDE_DIRS ${Coin_INCLUDE_DIR})
+
+find_path(
+	Coin_FOREIGN_FILES_INCLUDE_DIR
+	NAMES
+	ForeignFiles/SoForeignFileKit.h
+	HINTS
+	${Coin_INCLUDE_HINTS}
+	PATHS
+	${Coin_INCLUDE_PATHS}
+	PATH_SUFFIXES
+	Inventor/annex
+)
+
+mark_as_advanced(Coin_FOREIGN_FILES_INCLUDE_DIR)
+
+if(Coin_FOREIGN_FILES_INCLUDE_DIR)
+	list(APPEND Coin_INCLUDE_DIRS ${Coin_FOREIGN_FILES_INCLUDE_DIR})
+endif()
 
 foreach(PATH ${CMAKE_PREFIX_PATH})
 	file(

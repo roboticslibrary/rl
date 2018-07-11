@@ -32,7 +32,9 @@
 #include <boost/algorithm/string.hpp>
 #include <Inventor/actions/SoSearchAction.h>
 #include <Inventor/actions/SoToVRML2Action.h>
+#ifdef HAVE_SOSTLFILEKIT_H
 #include <Inventor/annex/ForeignFiles/SoSTLFileKit.h>
+#endif
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/VRMLnodes/SoVRMLAppearance.h>
 #include <Inventor/VRMLnodes/SoVRMLBox.h>
@@ -311,10 +313,14 @@ namespace rl
 								::std::string filename = shapes[k].getLocalPath(shapes[k].getProperty("filename"));
 ::std::cout << "\tmesh filename: " << filename << ::std::endl;
 								
-								if (!boost::iequals("stl", filename.substr(filename.length() - 3, 3)))
+#ifdef HAVE_SOSTLFILEKIT_H
+								if (!boost::iends_with(filename, "stl"))
 								{
 									throw Exception("rl::sg::UrdfFactory::load() - Only STL meshes currently supported");
 								}
+#else
+								throw Exception("rl::sg::UrdfFactory::load() - Mesh support currently not installed");
+#endif
 								
 								::SoSTLFileKit* stlFileKit = new ::SoSTLFileKit();
 								stlFileKit->ref();
