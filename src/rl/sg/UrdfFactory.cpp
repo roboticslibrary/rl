@@ -313,7 +313,7 @@ namespace rl
 								::std::string filename = shapes[k].getLocalPath(shapes[k].getProperty("filename"));
 ::std::cout << "\tmesh filename: " << filename << ::std::endl;
 								
-#ifdef HAVE_SOSTLFILEKIT_H
+#if defined(HAVE_SOSTLFILEKIT_H) && defined(HAVE_SOSTLFILEKIT_CONVERT)
 								if (!boost::iends_with(filename, "stl"))
 								{
 									throw Exception("rl::sg::UrdfFactory::load() - Only STL meshes currently supported");
