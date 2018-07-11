@@ -318,9 +318,6 @@ namespace rl
 								{
 									throw Exception("rl::sg::UrdfFactory::load() - Only STL meshes currently supported");
 								}
-#else
-								throw Exception("rl::sg::UrdfFactory::load() - Mesh support currently not installed");
-#endif
 								
 								::SoSTLFileKit* stlFileKit = new ::SoSTLFileKit();
 								stlFileKit->ref();
@@ -357,6 +354,9 @@ namespace rl
 								}
 								
 								vrml2->unref();
+#else
+								throw Exception("rl::sg::UrdfFactory::load() - Mesh support currently not available");
+#endif
 							}
 						}
 						else if ("sphere" == shapes[k].getName())
