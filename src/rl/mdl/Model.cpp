@@ -478,6 +478,19 @@ namespace rl
 			return dynamic_cast<World*>(this->tree[this->root].get());
 		}
 		
+		::Eigen::Matrix<bool, ::Eigen::Dynamic, 1>
+		Model::getWraparounds() const
+		{
+			::Eigen::Matrix<bool, ::Eigen::Dynamic, 1> wraparounds(this->getDof());
+			
+			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDof(), ++i)
+			{
+				wraparounds.segment(j, this->joints[i]->getDof()) = this->joints[i]->wraparound;
+			}
+			
+			return wraparounds;
+		}
+		
 		bool
 		Model::isColliding(const ::std::size_t& i) const
 		{

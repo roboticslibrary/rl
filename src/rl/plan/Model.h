@@ -89,6 +89,8 @@ namespace rl
 			
 			virtual ::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1> getPositionUnits() const;
 			
+			virtual ::Eigen::Matrix<bool, ::Eigen::Dynamic, 1> getWraparounds() const;
+			
 			virtual void inverseForce(const ::rl::math::Vector& f, ::rl::math::Vector& tau) const;
 			
 			virtual ::rl::math::Real inverseOfTransformedDistance(const ::rl::math::Real& d) const;

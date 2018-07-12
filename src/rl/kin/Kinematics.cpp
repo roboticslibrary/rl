@@ -663,6 +663,15 @@ namespace rl
 		}
 		
 		void
+		Kinematics::getWraparounds(::Eigen::Matrix<bool, ::Eigen::Dynamic, 1>& wraparounds) const
+		{
+			for (::std::size_t i = 0; i < this->joints.size(); ++i)
+			{
+				wraparounds(i) = this->joints[i]->wraparound;
+			}
+		}
+		
+		void
 		Kinematics::interpolate(const ::rl::math::Vector& q1, const ::rl::math::Vector& q2, const ::rl::math::Real& alpha, ::rl::math::Vector& q) const
 		{
 			assert(q1.size() == this->getDof());

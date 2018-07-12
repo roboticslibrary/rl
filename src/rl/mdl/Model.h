@@ -146,6 +146,8 @@ namespace rl
 			
 			World* getWorld() const;
 			
+			::Eigen::Matrix<bool, ::Eigen::Dynamic, 1> getWraparounds() const;
+			
 			bool isColliding(const ::std::size_t& i) const;
 			
 			void replace(Compound* compound, Transform* transform);

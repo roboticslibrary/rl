@@ -51,6 +51,7 @@ ConfigurationDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem&
 	rl::math::Vector maximum = MainWindow::instance()->kinematicModels[this->id]->getMaximum();
 	rl::math::Vector minimum = MainWindow::instance()->kinematicModels[this->id]->getMinimum();
 	Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> qUnits = MainWindow::instance()->kinematicModels[this->id]->getPositionUnits();
+	Eigen::Matrix<bool, Eigen::Dynamic, 1> wraparounds = MainWindow::instance()->kinematicModels[this->id]->getWraparounds();
 	
 	if (rl::math::UNIT_RADIAN == qUnits(index.row()))
 	{
@@ -66,6 +67,8 @@ ConfigurationDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem&
 		editor->setMaximum(maximum(index.row()));
 		editor->setSingleStep(0.01f);
 	}
+	
+	editor->setWrapping(wraparounds(index.row()));
 	
 	QObject::connect(editor, SIGNAL(valueChanged(double)), this, SLOT(valueChanged(double)));
 	

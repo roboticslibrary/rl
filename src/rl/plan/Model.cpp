@@ -322,6 +322,21 @@ namespace rl
 			}
 		}
 		
+		::Eigen::Matrix<bool, ::Eigen::Dynamic, 1>
+		Model::getWraparounds() const
+		{
+			if (nullptr != this->kin)
+			{
+				::Eigen::Matrix<bool, ::Eigen::Dynamic, 1> wraparounds(this->getDofPosition());;
+				this->kin->getWraparounds(wraparounds);
+				return wraparounds;
+			}
+			else
+			{
+				return this->mdl->getWraparounds();
+			}
+		}
+		
 		void
 		Model::inverseForce(const ::rl::math::Vector& f, ::rl::math::Vector& tau) const
 		{
