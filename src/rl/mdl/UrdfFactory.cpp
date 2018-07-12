@@ -275,14 +275,24 @@ namespace rl
 					model->add(fixed, parent, frame);
 					model->add(r, frame, child);
 					
-					r->max(0) = path.eval("number(limit/@upper)").getValue< ::rl::math::Real>(::std::numeric_limits< ::rl::math::Real>::max());
+					if ("continuous" == path.eval("string(@type)").getValue< ::std::string>())
+					{
+						r->max(0) = 180.0f * ::rl::math::DEG2RAD;
+						r->min(0) = -180.0f * ::rl::math::DEG2RAD;
+						r->wraparound(0) = true;
+					}
+					else
+					{
+						r->max(0) = path.eval("number(limit/@upper)").getValue< ::rl::math::Real>(::std::numeric_limits< ::rl::math::Real>::max());
+						r->min(0) = path.eval("number(limit/@lower)").getValue< ::rl::math::Real>(-::std::numeric_limits< ::rl::math::Real>::max());
+						r->wraparound(0) = false;
+					}
 ::std::cout << "\tmax: " << r->max(0) * ::rl::math::RAD2DEG << ::std::endl;
-					r->min(0) = path.eval("number(limit/@lower)").getValue< ::rl::math::Real>(-::std::numeric_limits< ::rl::math::Real>::max());
 ::std::cout << "\tmin: " << r->min(0) * ::rl::math::RAD2DEG << ::std::endl;
+					
 					r->offset(0) = 0;
 					r->speed(0) = path.eval("number(limit/@velocity)").getValue< ::rl::math::Real>(0);
 ::std::cout << "\tspeed: " << r->speed(0) * ::rl::math::RAD2DEG << ::std::endl;
-					r->wraparound(0) = "continuous" == path.eval("string(@type)").getValue< ::std::string>() ? true : false;
 					
 					if (path.eval("count(axis/@xyz) > 0").getValue<bool>())
 					{
