@@ -50,6 +50,7 @@
 #include "Model.h"
 #include "Prismatic.h"
 #include "Revolute.h"
+#include "SixDof.h"
 #include "Spherical.h"
 #include "UrdfFactory.h"
 #include "World.h"
@@ -225,7 +226,13 @@ namespace rl
 				}
 				else if ("floating" == type)
 				{
-					throw Exception("rl::mdl::UrdfFactory::load() - URDF floating joint not supported");
+					SixDof* s = new SixDof();
+					
+					model->add(fixed, parent, frame);
+					model->add(s, frame, child);
+					
+					s->setName(path.eval("string(@name)").getValue< ::std::string>());
+::std::cout << "\tname: " << s->getName() << ::std::endl;
 				}
 				else if ("planar" == type)
 				{
