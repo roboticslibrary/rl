@@ -24,6 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include <QApplication>
+#include <QClipboard>
 #include <QCoreApplication>
 #include <QDateTime>
 #include <QDragEnterEvent>
@@ -189,6 +191,21 @@ MainWindow::~MainWindow()
 }
 
 void
+MainWindow::copyCameraValues()
+{
+	QApplication::clipboard()->setText(
+		"position " + QString(this->viewer->getCamera()->position.getValue().toString().getString()) + "\n" +
+		"orientation " + QString(this->viewer->getCamera()->orientation.getValue().toString().getString()) + "\n" +
+		"focalDistance " + QString::number(this->viewer->getCamera()->focalDistance.getValue()) + "\n" +
+		(
+			SoPerspectiveCamera::getClassTypeId() == this->viewer->getCameraType() ?
+			"heightAngle " + QString::number(static_cast<SoPerspectiveCamera*>(this->viewer->getCamera())->heightAngle.getValue()) :
+			"height " + QString::number(static_cast<SoOrthographicCamera*>(this->viewer->getCamera())->height.getValue())
+		) + "\n"
+	);
+}
+
+void
 MainWindow::dragEnterEvent(QDragEnterEvent* event)
 {
 	event->acceptProposedAction();
@@ -314,6 +331,12 @@ MainWindow::init()
 	viewTopFrontRightAction->setData(VIEW_TOP_FRONT_RIGHT);
 	viewActionGroup->addAction(viewTopFrontRightAction);
 	this->viewMenu->addAction(viewTopFrontRightAction);
+	
+	this->viewMenu->addSeparator();
+	
+	QAction* copyCameraValuesAction = new QAction("Copy Camera Values", this);
+	QObject::connect(copyCameraValuesAction, SIGNAL(triggered()), this, SLOT(copyCameraValues()));
+	this->viewMenu->addAction(copyCameraValuesAction);
 	
 	this->displayMenu = this->menuBar()->addMenu("Display");
 	

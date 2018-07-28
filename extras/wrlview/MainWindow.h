@@ -146,6 +146,8 @@ private:
 private slots:
 	void open();
 	
+	void copyCameraValues();
+	
 	void reload();
 	
 	void replyFinished(QNetworkReply* reply);
