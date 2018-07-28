@@ -60,7 +60,7 @@ if(Coin_FOUND AND OPENGL_FOUND AND QT_FOUND AND SoQt_FOUND)
 	set_target_properties(
 		wrlview
 		PROPERTIES
-		VERSION 0.1.11
+		VERSION 0.1.12
 	)
 	
 	install(
