@@ -315,7 +315,7 @@ namespace rl
 				{
 					T yd = (y[n - 1] - y[n - 2]) / (x[n - 1] - x[n - 2]);
 					T yBeforeParabolic = y[n - 1] - yd * (parabolicInterval / 2);
-
+					
 					Polynomial<T> parabolic = Polynomial<T>::Quadratic(yBeforeParabolic, TypeTraits<T>::Zero(dim), yd, parabolicInterval);
 					f.push_back(parabolic);
 				}
