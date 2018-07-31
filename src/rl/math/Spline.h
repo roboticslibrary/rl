@@ -323,6 +323,88 @@ namespace rl
 				return f;
 			}
 			
+			template<typename Container1, typename Container2>
+			static Spline LinearParabolicPercentage(const Container1& x, const Container2& y, const Real& parabolicPercent)
+			{
+				assert(x.size() > 1);
+				assert(x.size() == y.size());
+				
+				::std::size_t n = y.size();
+				::std::size_t dim = TypeTraits<T>::size(y[0]);
+				
+				Spline f;
+				
+				{
+					Real parabolicInterval = (x[1] - x[0]) * parabolicPercent;
+					T yd = (y[1] - y[0]) / (x[1] - x[0]);
+					T yBeforeLinear = y[0] + yd * (parabolicInterval / 2);
+					Real linearInterval = (x[1] - x[0]) - parabolicInterval;
+					assert(linearInterval > 0);
+					T yAfterLinear = y[0] + yd * (parabolicInterval / 2 + linearInterval);
+					
+					Polynomial<T> parabolic = Polynomial<T>::Quadratic(y[0], yBeforeLinear, TypeTraits<T>::Zero(dim), parabolicInterval);
+					f.push_back(parabolic);
+					Polynomial<T> linear = Polynomial<T>::Linear(yBeforeLinear, yAfterLinear, linearInterval);
+					f.push_back(linear);
+				}
+				
+				for (::std::size_t i = 1; i < n - 2; ++i)
+				{
+					Real parabolicIntervalPrev = (x[i] - x[i - 1]) * parabolicPercent;
+					Real parabolicIntervalNext = (x[i + 1] - x[i]) * parabolicPercent;
+					Real parabolicIntervalNextNext = (x[i + 2] - x[i + 1]) * parabolicPercent;
+					parabolicIntervalPrev = std::min(parabolicIntervalPrev, parabolicIntervalNext);
+					parabolicIntervalNext = std::min(parabolicIntervalNext, parabolicIntervalNextNext);
+					Real deltaXPrev = x[i] - x[i - 1];
+					Real deltaXNext = x[i + 1] - x[i];
+					Real deltaXNextNext = x[i + 2] - x[i + 1];
+					Real linearInterval = deltaXNext - (parabolicIntervalPrev/2) - (parabolicIntervalNext/2);
+					assert(deltaXPrev > parabolicIntervalPrev && deltaXNext > parabolicIntervalNext);
+					T ydPrev = (y[i] - y[i - 1]) / deltaXPrev;
+					T ydNext = (y[i + 1] - y[i]) / deltaXNext;
+					T yBeforeParabolic = y[i] + (-parabolicIntervalPrev / 2 * ydPrev);
+					T yBeforeLinear = y[i] + (parabolicIntervalPrev / 2 * ydNext);
+					T yAfterLinear = y[i] + ((parabolicIntervalPrev / 2 + linearInterval) * ydNext);
+					
+					Polynomial<T> parabolic = Polynomial<T>::Quadratic(yBeforeParabolic, yBeforeLinear, ydPrev, parabolicIntervalPrev);
+					f.push_back(parabolic);
+					Polynomial<T> linear = Polynomial<T>::Linear(yBeforeLinear, yAfterLinear, linearInterval);
+					f.push_back(linear);
+				}
+				
+				if (n > 2)
+				{
+					{
+						Real parabolicIntervalPrev = (x[n - 2] - x[n - 3]) * parabolicPercent;
+						Real parabolicIntervalNext = (x[n - 1] - x[n - 2]) * parabolicPercent;
+						parabolicIntervalPrev = std::min(parabolicIntervalPrev, parabolicIntervalNext);
+						Real deltaXPrev = x[n - 2] - x[n - 3];
+						Real deltaXNext = x[n - 1] - x[n - 2];
+						Real linearInterval = deltaXNext - (parabolicIntervalPrev/2) - (parabolicIntervalNext/2);
+						assert(deltaXPrev > parabolicIntervalPrev && deltaXNext > parabolicIntervalNext);
+						T ydPrev = (y[n - 2] - y[n - 3]) / deltaXPrev;
+						T ydNext = (y[n - 1] - y[n - 2]) / deltaXNext;
+						T yBeforeParabolic = y[n - 2] + (-parabolicIntervalPrev / 2 * ydPrev);
+						T yBeforeLinear = y[n - 2] + (parabolicIntervalPrev / 2 * ydNext);
+						T yAfterLinear = y[n - 2] + ((parabolicIntervalPrev / 2 + linearInterval) * ydNext);
+						
+						Polynomial<T> parabolic = Polynomial<T>::Quadratic(yBeforeParabolic, yBeforeLinear, ydPrev, parabolicIntervalPrev);
+						f.push_back(parabolic);
+						Polynomial<T> linear = Polynomial<T>::Linear(yBeforeLinear, yAfterLinear, linearInterval);
+						f.push_back(linear);
+					}
+					
+					Real parabolicInterval = (x[n - 1] - x[n - 2]) * parabolicPercent;
+					T yd = (y[n - 1] - y[n - 2]) / (x[n - 1] - x[n - 2]);
+					T yBeforeParabolic = y[n - 1] - (yd * (parabolicInterval)/2);
+					
+					Polynomial<T> parabolic = Polynomial<T>::Quadratic(yBeforeParabolic, y[n - 1], yd, parabolicInterval);
+					f.push_back(parabolic);
+				}
+				
+				return f;
+			}
+			
 			/**
 			 * Generates a piecewise spline with quartic polynomial segments around
 			 * the given supporting points y and linear segments in between.
@@ -388,6 +470,88 @@ namespace rl
 				return f;
 			}
 			
+			template<typename Container1, typename Container2>
+			static Spline LinearQuarticPercentage(const Container1& x, const Container2& y, const Real& quarticPercent)
+			{
+				assert(x.size() > 1);
+				assert(x.size() == y.size());
+				
+				::std::size_t n = y.size();
+				::std::size_t dim = TypeTraits<T>::size(y[0]);
+				
+				Spline f;
+				
+				{
+					Real quarticInterval = (x[1] - x[0]) * quarticPercent;
+					T yd = (y[1] - y[0]) / (x[1] - x[0]);
+					T yBeforeLinear = y[0] + yd * (quarticInterval / 2);
+					Real linearInterval = (x[1] - x[0]) - quarticInterval;
+					assert(linearInterval > 0);
+					T yAfterLinear = y[0] + yd * (quarticInterval / 2 + linearInterval);
+					
+					Polynomial<T> quartic = Polynomial<T>::QuarticFirstSecond(y[0], yBeforeLinear, TypeTraits<T>::Zero(dim), yd, TypeTraits<T>::Zero(dim), quarticInterval);
+					f.push_back(quartic);
+					Polynomial<T> linear = Polynomial<T>::Linear(yBeforeLinear, yAfterLinear, linearInterval);
+					f.push_back(linear);
+				}
+				
+				for (::std::size_t i = 1; i < n - 2; ++i)
+				{
+					Real quarticIntervalPrev = (x[i] - x[i - 1]) * quarticPercent;
+					Real quarticIntervalNext = (x[i + 1] - x[i]) * quarticPercent;
+					Real quarticIntervalNextNext = (x[i + 2] - x[i + 1]) * quarticPercent;
+					quarticIntervalPrev = std::min(quarticIntervalPrev, quarticIntervalNext);
+					quarticIntervalNext = std::min(quarticIntervalNext, quarticIntervalNextNext);
+					Real deltaXPrev = x[i] - x[i - 1];
+					Real deltaXNext = x[i + 1] - x[i];
+					Real deltaXNextNext = x[i + 2] - x[i + 1];
+					Real linearInterval = deltaXNext - (quarticIntervalPrev/2) - (quarticIntervalNext/2);
+					assert(deltaXPrev > quarticIntervalPrev && deltaXNext > quarticIntervalNext);
+					T ydPrev = (y[i] - y[i - 1]) / deltaXPrev;
+					T ydNext = (y[i + 1] - y[i]) / deltaXNext;
+					T yBeforeQuartic = y[i] + (-quarticIntervalPrev / 2 * ydPrev);
+					T yBeforeLinear = y[i] + (quarticIntervalPrev / 2 * ydNext);
+					T yAfterLinear = y[i] + ((quarticIntervalPrev / 2 + linearInterval) * ydNext);
+					
+					Polynomial<T> quartic = Polynomial<T>::QuarticFirstSecond(yBeforeQuartic, yBeforeLinear, ydPrev, ydNext, TypeTraits<T>::Zero(dim), quarticIntervalPrev);
+					f.push_back(quartic);
+					Polynomial<T> linear = Polynomial<T>::Linear(yBeforeLinear, yAfterLinear, linearInterval);
+					f.push_back(linear);
+				}
+				
+				if (n > 2)
+				{
+					{
+						Real quarticIntervalPrev = (x[n - 2] - x[n - 3]) * quarticPercent;
+						Real quarticIntervalNext = (x[n - 1] - x[n - 2]) * quarticPercent;
+						quarticIntervalPrev = std::min(quarticIntervalPrev, quarticIntervalNext);
+						Real deltaXPrev = x[n - 2] - x[n - 3];
+						Real deltaXNext = x[n - 1] - x[n - 2];
+						Real linearInterval = deltaXNext - (quarticIntervalPrev/2) - (quarticIntervalNext/2);
+						assert(deltaXPrev > quarticIntervalPrev && deltaXNext > quarticIntervalNext);
+						T ydPrev = (y[n - 2] - y[n - 3]) / deltaXPrev;
+						T ydNext = (y[n - 1] - y[n - 2]) / deltaXNext;
+						T yBeforeQuartic = y[n - 2] + (-quarticIntervalPrev / 2 * ydPrev);
+						T yBeforeLinear = y[n - 2] + (quarticIntervalPrev / 2 * ydNext);
+						T yAfterLinear = y[n - 2] + ((quarticIntervalPrev / 2 + linearInterval) * ydNext);
+						
+						Polynomial<T> quartic = Polynomial<T>::QuarticFirstSecond(yBeforeQuartic, yBeforeLinear, ydPrev, ydNext, TypeTraits<T>::Zero(dim), quarticIntervalPrev);
+						f.push_back(quartic);
+						Polynomial<T> linear = Polynomial<T>::Linear(yBeforeLinear, yAfterLinear, linearInterval);
+						f.push_back(linear);
+					}
+					
+					Real quarticInterval = (x[n - 1] - x[n - 2]) * quarticPercent;
+					T yd = (y[n - 1] - y[n - 2]) / (x[n - 1] - x[n - 2]);
+					T yBeforeQuartic = y[n - 1] - (yd * (quarticInterval)/2);
+					
+					Polynomial<T> quartic = Polynomial<T>::QuarticFirstSecond(yBeforeQuartic, y[n - 1], yd, TypeTraits<T>::Zero(dim), TypeTraits<T>::Zero(dim), quarticInterval);
+					f.push_back(quartic);
+				}
+				
+				return f;
+			}
+			
 			/**
 			 * Generates a piecewise spline with sextic polynomial segments around
 			 * the given supporting points y and linear segments in between.
@@ -445,6 +609,88 @@ namespace rl
 				{
 					T yd = (y[n - 1] - y[n - 2]) / (x[n - 1] - x[n - 2]);
 					T yBeforeSextic = y[n - 1] - yd * (sexticInterval / 2);
+					
+					Polynomial<T> sextic = Polynomial<T>::SexticFirstSecondThird(yBeforeSextic, y[n - 1], yd, TypeTraits<T>::Zero(dim), TypeTraits<T>::Zero(dim), TypeTraits<T>::Zero(dim), TypeTraits<T>::Zero(dim), sexticInterval);
+					f.push_back(sextic);
+				}
+				
+				return f;
+			}
+			
+			template<typename Container1, typename Container2>
+			static Spline LinearSexticPercentage(const Container1& x, const Container2& y, const Real& sexticPercent)
+			{
+				assert(x.size() > 1);
+				assert(x.size() == y.size());
+				
+				::std::size_t n = y.size();
+				::std::size_t dim = TypeTraits<T>::size(y[0]);
+				
+				Spline f;
+				
+				{
+					Real sexticInterval = (x[1] - x[0]) * sexticPercent;
+					T yd = (y[1] - y[0]) / (x[1] - x[0]);
+					T yBeforeLinear = y[0] + yd * (sexticInterval / 2);
+					Real linearInterval = (x[1] - x[0]) - sexticInterval;
+					assert(linearInterval > 0);
+					T yAfterLinear = y[0] + yd * (sexticInterval / 2 + linearInterval);
+					
+					Polynomial<T> sextic = Polynomial<T>::SexticFirstSecondThird(y[0], yBeforeLinear, TypeTraits<T>::Zero(dim), yd, TypeTraits<T>::Zero(dim), TypeTraits<T>::Zero(dim), TypeTraits<T>::Zero(dim), sexticInterval);
+					f.push_back(sextic);
+					Polynomial<T> linear = Polynomial<T>::Linear(yBeforeLinear, yAfterLinear, linearInterval);
+					f.push_back(linear);
+				}
+				
+				for (::std::size_t i = 1; i < n - 2; ++i)
+				{
+					Real sexticIntervalPrev = (x[i] - x[i - 1]) * sexticPercent;
+					Real sexticIntervalNext = (x[i + 1] - x[i]) * sexticPercent;
+					Real sexticIntervalNextNext = (x[i + 2] - x[i + 1]) * sexticPercent;
+					sexticIntervalPrev = std::min(sexticIntervalPrev, sexticIntervalNext);
+					sexticIntervalNext = std::min(sexticIntervalNext, sexticIntervalNextNext);
+					Real deltaXPrev = x[i] - x[i - 1];
+					Real deltaXNext = x[i + 1] - x[i];
+					Real deltaXNextNext = x[i + 2] - x[i + 1];
+					Real linearInterval = deltaXNext - (sexticIntervalPrev/2) - (sexticIntervalNext/2);
+					assert(deltaXPrev > sexticIntervalPrev && deltaXNext > sexticIntervalNext);
+					T ydPrev = (y[i] - y[i - 1]) / deltaXPrev;
+					T ydNext = (y[i + 1] - y[i]) / deltaXNext;
+					T yBeforeSextic = y[i] + (-sexticIntervalPrev / 2 * ydPrev);
+					T yBeforeLinear = y[i] + (sexticIntervalPrev / 2 * ydNext);
+					T yAfterLinear = y[i] + ((sexticIntervalPrev / 2 + linearInterval) * ydNext);
+					
+					Polynomial<T> sextic = Polynomial<T>::SexticFirstSecondThird(yBeforeSextic, yBeforeLinear, ydPrev, ydNext, TypeTraits<T>::Zero(dim), TypeTraits<T>::Zero(dim), TypeTraits<T>::Zero(dim), sexticIntervalPrev);
+					f.push_back(sextic);
+					Polynomial<T> linear = Polynomial<T>::Linear(yBeforeLinear, yAfterLinear, linearInterval);
+					f.push_back(linear);
+				}
+				
+				if (n > 2)
+				{
+					{
+						Real sexticIntervalPrev = (x[n - 2] - x[n - 3]) * sexticPercent;
+						Real sexticIntervalNext = (x[n - 1] - x[n - 2]) * sexticPercent;
+						sexticIntervalPrev = std::min(sexticIntervalPrev, sexticIntervalNext);
+						Real deltaXPrev = x[n - 2] - x[n - 3];
+						Real deltaXNext = x[n - 1] - x[n - 2];
+						Real linearInterval = deltaXNext - (sexticIntervalPrev/2) - (sexticIntervalNext/2);
+						assert(deltaXPrev > sexticIntervalPrev && deltaXNext > sexticIntervalNext);
+						T ydPrev = (y[n - 2] - y[n - 3]) / deltaXPrev;
+						T ydNext = (y[n - 1] - y[n - 2]) / deltaXNext;
+						T yBeforeSextic = y[n - 2] + (-sexticIntervalPrev / 2 * ydPrev);
+						T yBeforeLinear = y[n - 2] + (sexticIntervalPrev / 2 * ydNext);
+						T yAfterLinear = y[n - 2] + ((sexticIntervalPrev / 2 + linearInterval) * ydNext);
+						
+						Polynomial<T> sextic = Polynomial<T>::SexticFirstSecondThird(yBeforeSextic, yBeforeLinear, ydPrev, ydNext, TypeTraits<T>::Zero(dim), TypeTraits<T>::Zero(dim), TypeTraits<T>::Zero(dim), sexticIntervalPrev);
+						f.push_back(sextic);
+						Polynomial<T> linear = Polynomial<T>::Linear(yBeforeLinear, yAfterLinear, linearInterval);
+						f.push_back(linear);
+					}
+					
+					Real sexticInterval = (x[n - 1] - x[n - 2]) * sexticPercent;
+					T yd = (y[n - 1] - y[n - 2]) / (x[n - 1] - x[n - 2]);
+					T yBeforeSextic = y[n - 1] - (yd * (sexticInterval)/2);
 					
 					Polynomial<T> sextic = Polynomial<T>::SexticFirstSecondThird(yBeforeSextic, y[n - 1], yd, TypeTraits<T>::Zero(dim), TypeTraits<T>::Zero(dim), TypeTraits<T>::Zero(dim), TypeTraits<T>::Zero(dim), sexticInterval);
 					f.push_back(sextic);
