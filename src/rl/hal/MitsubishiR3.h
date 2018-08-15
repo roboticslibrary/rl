@@ -143,8 +143,6 @@ namespace rl
 				bool isStopSignalOff;
 				/** Program select enable. */
 				bool isProgramSelectEnable;
-				/** (reserve). */
-				bool isReserve;
 				/** Pseudo input. */
 				bool isPseudoInput;
 			};
@@ -160,7 +158,7 @@ namespace rl
 			struct RunState
 			{
 				/** Program name loaded into task slot. */
-				char programName[256];
+				::std::string programName;
 				/** Execution line number. */
 				int lineNo;
 				/** A present override value is read. */
@@ -178,7 +176,7 @@ namespace rl
 				/** Mech info. */
 				MechInfo mechInfo;
 				/** Program name of slot table. */
-				char taskPrgName[256];
+				::std::string taskPrgName;
 				/** Operation mode of slot table (REP / CYC). */
 				bool isTaskModeCycle;
 				/** Stating conditions of slot table. */
@@ -235,7 +233,7 @@ namespace rl
 			 * 
 			 * @param[out] state Install state
 			 */
-			void doCalib(CalibState& state);
+			CalibState doCalib();
 			
 			/**
 			 * Operation enable or disable.
@@ -422,6 +420,8 @@ namespace rl
 		protected:
 			
 		private:
+			::std::string recv();
+			
 			void send(const ::std::string& command);
 			
 			Socket socket;
