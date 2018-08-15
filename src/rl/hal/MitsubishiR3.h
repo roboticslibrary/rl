@@ -422,6 +422,8 @@ namespace rl
 		protected:
 			
 		private:
+			void send(const ::std::string& command);
+			
 			Socket socket;
 		};
 	}

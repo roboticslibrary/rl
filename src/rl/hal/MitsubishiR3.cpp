@@ -24,6 +24,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include <array>
 #include <cassert>
 #include <cstdio>
 #include <cstring>
@@ -32,9 +33,6 @@
 #include "MitsubishiR3.h"
 
 #ifdef WIN32
-#ifndef snprintf
-#define snprintf _snprintf_s
-#endif // snprintf
 #ifndef strncpy_s
 #define strncpy strncpy_s
 #endif // strncpy_s
@@ -67,10 +65,10 @@ namespace rl
 		void
 		MitsubishiR3::doCalib(CalibState& state)
 		{
-			char buf[256] = "1;1;CALIB";
+			this->send("1;1;CALIB");
 			
-			this->socket.send(buf, ::std::strlen(buf));
-			this->socket.recv(buf, 256);
+			::std::array<char, 256> buf;
+			this->socket.recv(buf.data(), buf.size());
 			
 			if ('Q' == buf[0] && 'o' == buf[1] && 'K' == buf[2])
 			{
@@ -106,7 +104,7 @@ namespace rl
 			}
 			else if ('Q' == buf[0] && 'e' == buf[1] && 'R' == buf[2])
 			{
-				char* errorNo = buf + 3;
+				char* errorNo = buf.data() + 3;
 				throw Exception(::atoi(errorNo), ::std::string(this->doErrormes(::atoi(errorNo)) + " (" + errorNo + ")"));
 			}
 		}
@@ -114,17 +112,14 @@ namespace rl
 		void
 		MitsubishiR3::doCntl(const bool& doOn)
 		{
-			char buf[256];
+			this->send("1;1;CNTL" + ::std::string(doOn ? "ON" : "OFF"));
 			
-			::snprintf(buf, 255, "1;1;CNTL%s", (doOn ? "ON" : "OFF"));
-			buf[255] = '\0';
-			
-			this->socket.send(buf, ::std::strlen(buf));
-			this->socket.recv(buf, 256);
+			::std::array<char, 256> buf;
+			this->socket.recv(buf.data(), buf.size());
 			
 			if ('Q' == buf[0] && 'e' == buf[1] && 'R' == buf[2])
 			{
-				char* errorNo = buf + 3;
+				char* errorNo = buf.data() + 3;
 				throw Exception(::atoi(errorNo), ::std::string(this->doErrormes(::atoi(errorNo)) + " (" + errorNo + ")"));
 			}
 		}
@@ -132,17 +127,14 @@ namespace rl
 		void
 		MitsubishiR3::doDatinst(const ::std::string& j1, const ::std::string& j2, const ::std::string& j3, const ::std::string& j4, const ::std::string& j5, const ::std::string& j6, const ::std::string& checksum)
 		{
-			char buf[256];
+			this->send("1;1;DATINST" + j1 + ";" + j2 + ";" + j3 + ";" + j4 + ";" + j5 + ";" + j6 + ";" + checksum);
 			
-			::snprintf(buf, 255, "1;1;DATINST%s;%s;%s;%s;%s;%s;%s", j1.c_str(), j2.c_str(), j3.c_str(), j4.c_str(), j5.c_str(), j6.c_str(), checksum.c_str());
-			buf[255] = '\0';
-			
-			this->socket.send(buf, ::std::strlen(buf));
-			this->socket.recv(buf, 256);
+			::std::array<char, 256> buf;
+			this->socket.recv(buf.data(), buf.size());
 			
 			if ('Q' == buf[0] && 'e' == buf[1] && 'R' == buf[2])
 			{
-				char* errorNo = buf + 3;
+				char* errorNo = buf.data() + 3;
 				throw Exception(::atoi(errorNo), ::std::string(this->doErrormes(::atoi(errorNo)) + " (" + errorNo + ")"));
 			}
 		}
@@ -150,17 +142,14 @@ namespace rl
 		void
 		MitsubishiR3::doDatinst(const ::std::string& j1, const ::std::string& j2, const ::std::string& j3, const ::std::string& j4, const ::std::string& j5, const ::std::string& j6, const ::std::string& j7, const ::std::string& j8, const ::std::string& checksum)
 		{
-			char buf[256];
+			this->send("1;1;DATINST" + j1 + ";" + j2 + ";" + j3 + ";" + j4 + ";" + j5 + ";" + j6 + ";" + j7 + ";" + j8 + ";" + checksum);
 			
-			::snprintf(buf, 255, "1;1;DATINST%s;%s;%s;%s;%s;%s;%s;%s;%s", j1.c_str(), j2.c_str(), j3.c_str(), j4.c_str(), j5.c_str(), j6.c_str(), j7.c_str(), j8.c_str(), checksum.c_str());
-			buf[255] = '\0';
-			
-			this->socket.send(buf, ::std::strlen(buf));
-			this->socket.recv(buf, 256);
+			::std::array<char, 256> buf;
+			this->socket.recv(buf.data(), buf.size());
 			
 			if ('Q' == buf[0] && 'e' == buf[1] && 'R' == buf[2])
 			{
-				char* errorNo = buf + 3;
+				char* errorNo = buf.data() + 3;
 				throw Exception(::atoi(errorNo), ::std::string(this->doErrormes(::atoi(errorNo)) + " (" + errorNo + ")"));
 			}
 		}
@@ -170,14 +159,14 @@ namespace rl
 		{
 			StopState state;
 			
-			char buf[256] = "1;1;DSTATE";
+			this->send("1;1;DSTATE");
 			
-			this->socket.send(buf, ::std::strlen(buf));
-			this->socket.recv(buf, 256);
+			::std::array<char, 256> buf;
+			this->socket.recv(buf.data(), buf.size());
 			
 			if ('Q' == buf[0] && 'o' == buf[1] && 'K' == buf[2])
 			{
-				char* elem = buf + 2;
+				char* elem = buf.data() + 2;
 				char* semicolon = nullptr;
 				int i = 0;
 				
@@ -188,7 +177,7 @@ namespace rl
 					
 					if (nullptr != semicolon)
 					{
-						buf[semicolon - buf] = '\0';
+						buf[semicolon - buf.data()] = '\0';
 					}
 					
 					switch (i)
@@ -262,7 +251,7 @@ namespace rl
 			}
 			else if ('Q' == buf[0] && 'e' == buf[1] && 'R' == buf[2])
 			{
-				char* errorNo = buf + 3;
+				char* errorNo = buf.data() + 3;
 				throw Exception(::atoi(errorNo), ::std::string(this->doErrormes(::atoi(errorNo)) + " (" + errorNo + ")"));
 			}
 			
@@ -272,14 +261,14 @@ namespace rl
 		void
 		MitsubishiR3::doEclr()
 		{
-			char buf[256] = "1;9;ECLR";
+			this->send("1;9;ECLR");
 			
-			this->socket.send(buf, ::std::strlen(buf));
-			this->socket.recv(buf, 256);
+			::std::array<char, 256> buf;
+			this->socket.recv(buf.data(), buf.size());
 			
 			if ('Q' == buf[0] && 'e' == buf[1] && 'R' == buf[2])
 			{
-				char* errorNo = buf + 3;
+				char* errorNo = buf.data() + 3;
 				throw Exception(::atoi(errorNo), ::std::string(this->doErrormes(::atoi(errorNo)) + " (" + errorNo + ")"));
 			}
 		}
@@ -289,8 +278,8 @@ namespace rl
 		{
 			// max. 256 - 9 (::std::strlen("1;9;EMDAT")) - 1 = 246 chars
 			
+			::std::array<char, 256> buf;
 			::std::size_t begin = 0;
-			char buf[256];
 			::std::size_t end = 0;
 			::std::string lines;
 			
@@ -313,10 +302,8 @@ namespace rl
 					lines = lines.substr(0, end);
 				}
 				
-				lines = "1;9;EMDAT" + lines;
-				
-				this->socket.send(lines.c_str(), lines.length());
-				this->socket.recv(buf, 256);
+				this->send("1;9;EMDAT" + lines);
+				this->socket.recv(buf.data(), buf.size());
 				
 				if ('Q' == buf[0] && 'e' == buf[1] && 'R' == buf[2])
 				{
@@ -324,7 +311,7 @@ namespace rl
 					char* errorLine = nullptr;
 					char* charPos = nullptr;
 					
-					char* elem = buf + 2;
+					char* elem = buf.data() + 2;
 					char* semicolon = nullptr;
 					int i = 0;
 					
@@ -335,7 +322,7 @@ namespace rl
 						
 						if (nullptr != semicolon)
 						{
-							buf[semicolon - buf] = '\0';
+							buf[semicolon - buf.data()] = '\0';
 						}
 						
 						switch (i)
@@ -370,37 +357,31 @@ namespace rl
 		::std::string
 		MitsubishiR3::doErrormes(const int& errorNo)
 		{
-			char buf[256];
+			this->send("1;1;ERRORMES" + ::std::to_string(errorNo));
 			
-			::snprintf(buf, 255, "1;1;ERRORMES%i", errorNo);
-			buf[255] = '\0';
-			
-			this->socket.send(buf, ::std::strlen(buf));
-			this->socket.recv(buf, 256);
+			::std::array<char, 256> buf;
+			this->socket.recv(buf.data(), buf.size());
 			
 			if ('Q' == buf[0] && 'e' == buf[1] && 'R' == buf[2])
 			{
-				char* errorNo = buf + 3;
+				char* errorNo = buf.data() + 3;
 				throw Exception(::atoi(errorNo), ::std::string(this->doErrormes(::atoi(errorNo)) + " (" + errorNo + ")"));
 			}
 			
-			return buf + 3;
+			return buf.data() + 3;
 		}
 		
 		void
 		MitsubishiR3::doExec(const ::std::string& instruction)
 		{
-			char buf[256];
+			this->send("1;9;EXEC" + instruction);
 			
-			::snprintf(buf, 255, "1;9;EXEC%s", instruction.c_str());
-			buf[255] = '\0';
-			
-			this->socket.send(buf, ::std::strlen(buf));
-			this->socket.recv(buf, 256);
+			::std::array<char, 256> buf;
+			this->socket.recv(buf.data(), buf.size());
 			
 			if ('Q' == buf[0] && 'e' == buf[1] && 'R' == buf[2])
 			{
-				char* errorNo = buf + 3;
+				char* errorNo = buf.data() + 3;
 				throw Exception(::atoi(errorNo), ::std::string(this->doErrormes(::atoi(errorNo)) + " (" + errorNo + ")"));
 			}
 		}
@@ -410,17 +391,14 @@ namespace rl
 		{
 			assert(0 < handNo && handNo < 9);
 			
-			char buf[256];
+			this->send("1;1;HND" + ::std::string(doOpen ? "ON" : "OFF") + ::std::to_string(handNo));
 			
-			::snprintf(buf, 255, "1;1;HND%s%i", (doOpen ? "ON" : "OFF"), handNo);
-			buf[255] = '\0';
-			
-			this->socket.send(buf, ::std::strlen(buf));
-			this->socket.recv(buf, 256);
+			::std::array<char, 256> buf;
+			this->socket.recv(buf.data(), buf.size());
 			
 			if ('Q' == buf[0] && 'e' == buf[1] && 'R' == buf[2])
 			{
-				char* errorNo = buf + 3;
+				char* errorNo = buf.data() + 3;
 				throw Exception(::atoi(errorNo), ::std::string(this->doErrormes(::atoi(errorNo)) + " (" + errorNo + ")"));
 			}
 		}
@@ -430,14 +408,14 @@ namespace rl
 		{
 			::std::array<Hand, 8> state;
 			
-			char buf[256] = "1;1;HNDSTS";
+			this->send("1;1;HNDSTS");
 			
-			this->socket.send(buf, ::std::strlen(buf));
-			this->socket.recv(buf, 256);
+			::std::array<char, 256> buf;
+			this->socket.recv(buf.data(), buf.size());
 			
 			if ('Q' == buf[0] && 'o' == buf[1] && 'K' == buf[2])
 			{
-				char* elem = buf + 2;
+				char* elem = buf.data() + 2;
 				char* semicolon = nullptr;
 				int i = 0;
 				int j = 0;
@@ -449,7 +427,7 @@ namespace rl
 					
 					if (nullptr != semicolon)
 					{
-						buf[semicolon - buf] = '\0';
+						buf[semicolon - buf.data()] = '\0';
 					}
 					
 					switch (j)
@@ -506,7 +484,7 @@ namespace rl
 			}
 			else if ('Q' == buf[0] && 'e' == buf[1] && 'R' == buf[2])
 			{
-				char* errorNo = buf + 3;
+				char* errorNo = buf.data() + 3;
 				throw Exception(::atoi(errorNo), ::std::string(this->doErrormes(::atoi(errorNo)) + " (" + errorNo + ")"));
 			}
 			
@@ -516,17 +494,14 @@ namespace rl
 		void
 		MitsubishiR3::doInEquals(const ::std::size_t& inNo, const ::std::string& inVal)
 		{
-			char buf[256];
+			this->send("1;1;IN=" + ::std::to_string(inNo) + ";" + inVal);
 			
-			::snprintf(buf, 255, "1;1;IN=%zi;%s", inNo, inVal.c_str());
-			buf[255] = '\0';
-			
-			this->socket.send(buf, ::std::strlen(buf));
-			this->socket.recv(buf, 256);
+			::std::array<char, 256> buf;
+			this->socket.recv(buf.data(), buf.size());
 			
 			if ('Q' == buf[0] && 'e' == buf[1] && 'R' == buf[2])
 			{
-				char* errorNo = buf + 3;
+				char* errorNo = buf.data() + 3;
 				throw Exception(::atoi(errorNo), ::std::string(this->doErrormes(::atoi(errorNo)) + " (" + errorNo + ")"));
 			}
 		}
@@ -534,17 +509,14 @@ namespace rl
 		void
 		MitsubishiR3::doLoad(const ::std::string& programName)
 		{
-			char buf[256];
+			this->send("1;1;LOAD=" + programName);
 			
-			::snprintf(buf, 255, "1;1;LOAD=%s", programName.c_str());
-			buf[255] = '\0';
-			
-			this->socket.send(buf, ::std::strlen(buf));
-			this->socket.recv(buf, 256);
+			::std::array<char, 256> buf;
+			this->socket.recv(buf.data(), buf.size());
 			
 			if ('Q' == buf[0] && 'e' == buf[1] && 'R' == buf[2])
 			{
-				char* errorNo = buf + 3;
+				char* errorNo = buf.data() + 3;
 				throw Exception(::atoi(errorNo), ::std::string(this->doErrormes(::atoi(errorNo)) + " (" + errorNo + ")"));
 			}
 		}
@@ -552,14 +524,14 @@ namespace rl
 		void
 		MitsubishiR3::doNew()
 		{
-			char buf[256] = "1;1;NEW";
+			this->send("1;1;NEW");
 			
-			this->socket.send(buf, ::std::strlen(buf));
-			this->socket.recv(buf, 256);
+			::std::array<char, 256> buf;
+			this->socket.recv(buf.data(), buf.size());
 			
 			if ('Q' == buf[0] && 'e' == buf[1] && 'R' == buf[2])
 			{
-				char* errorNo = buf + 3;
+				char* errorNo = buf.data() + 3;
 				throw Exception(::atoi(errorNo), ::std::string(this->doErrormes(::atoi(errorNo)) + " (" + errorNo + ")"));
 			}
 		}
@@ -567,17 +539,14 @@ namespace rl
 		void
 		MitsubishiR3::doOutEquals(const ::std::size_t& outNo, const ::std::string& outVal)
 		{
-			char buf[256];
+			this->send("1;1;OUT=" + ::std::to_string(outNo) + ";" + outVal);
 			
-			::snprintf(buf, 255, "1;1;OUT=%zi;%s", outNo, outVal.c_str());
-			buf[255] = '\0';
-			
-			this->socket.send(buf, ::std::strlen(buf));
-			this->socket.recv(buf, 256);
+			::std::array<char, 256> buf;
+			this->socket.recv(buf.data(), buf.size());
 			
 			if ('Q' == buf[0] && 'e' == buf[1] && 'R' == buf[2])
 			{
-				char* errorNo = buf + 3;
+				char* errorNo = buf.data() + 3;
 				throw Exception(::atoi(errorNo), ::std::string(this->doErrormes(::atoi(errorNo)) + " (" + errorNo + ")"));
 			}
 		}
@@ -585,14 +554,14 @@ namespace rl
 		void
 		MitsubishiR3::doRstalrm()
 		{
-			char buf[256] = "1;1;RSTALRM";
+			this->send("1;1;RSTALRM");
 			
-			this->socket.send(buf, ::std::strlen(buf));
-			this->socket.recv(buf, 256);
+			::std::array<char, 256> buf;
+			this->socket.recv(buf.data(), buf.size());
 			
 			if ('Q' == buf[0] && 'e' == buf[1] && 'R' == buf[2])
 			{
-				char* errorNo = buf + 3;
+				char* errorNo = buf.data() + 3;
 				throw Exception(::atoi(errorNo), ::std::string(this->doErrormes(::atoi(errorNo)) + " (" + errorNo + ")"));
 			}
 		}
@@ -600,14 +569,14 @@ namespace rl
 		void
 		MitsubishiR3::doRstpwr()
 		{
-			char buf[256] = "1;1;RSTPWR";
+			this->send("1;1;RSTPWR");
 			
-			this->socket.send(buf, ::std::strlen(buf));
-			this->socket.recv(buf, 256);
+			::std::array<char, 256> buf;
+			this->socket.recv(buf.data(), buf.size());
 			
 			if ('Q' == buf[0] && 'e' == buf[1] && 'R' == buf[2])
 			{
-				char* errorNo = buf + 3;
+				char* errorNo = buf.data() + 3;
 				throw Exception(::atoi(errorNo), ::std::string(this->doErrormes(::atoi(errorNo)) + " (" + errorNo + ")"));
 			}
 		}
@@ -615,17 +584,14 @@ namespace rl
 		void
 		MitsubishiR3::doRun(const ::std::string& programName, const bool& doModeCycle)
 		{
-			char buf[256];
+			this->send("1;1;RUN" + programName + ";" + ::std::string(doModeCycle ? "1" : "0"));
 			
-			::snprintf(buf, 255, "1;1;RUN%s;%i", programName.c_str(), (doModeCycle ? 1 : 0));
-			buf[255] = '\0';
-			
-			this->socket.send(buf, ::std::strlen(buf));
-			this->socket.recv(buf, 256);
+			::std::array<char, 256> buf;
+			this->socket.recv(buf.data(), buf.size());
 			
 			if ('Q' == buf[0] && 'e' == buf[1] && 'R' == buf[2])
 			{
-				char* errorNo = buf + 3;
+				char* errorNo = buf.data() + 3;
 				throw Exception(::atoi(errorNo), ::std::string(this->doErrormes(::atoi(errorNo)) + " (" + errorNo + ")"));
 			}
 		}
@@ -633,14 +599,14 @@ namespace rl
 		void
 		MitsubishiR3::doSave()
 		{
-			char buf[256] = "1;1;SAVE";
+			this->send("1;1;SAVE");
 			
-			this->socket.send(buf, ::std::strlen(buf));
-			this->socket.recv(buf, 256);
+			::std::array<char, 256> buf;
+			this->socket.recv(buf.data(), buf.size());
 			
 			if ('Q' == buf[0] && 'e' == buf[1] && 'R' == buf[2])
 			{
-				char* errorNo = buf + 3;
+				char* errorNo = buf.data() + 3;
 				throw Exception(::atoi(errorNo), ::std::string(this->doErrormes(::atoi(errorNo)) + " (" + errorNo + ")"));
 			}
 		}
@@ -648,14 +614,14 @@ namespace rl
 		void
 		MitsubishiR3::doSlotinit()
 		{
-			char buf[256] = "1;1;SLOTINIT";
+			this->send("1;1;SLOTINIT");
 			
-			this->socket.send(buf, ::std::strlen(buf));
-			this->socket.recv(buf, 256);
+			::std::array<char, 256> buf;
+			this->socket.recv(buf.data(), buf.size());
 			
 			if ('Q' == buf[0] && 'e' == buf[1] && 'R' == buf[2])
 			{
-				char* errorNo = buf + 3;
+				char* errorNo = buf.data() + 3;
 				throw Exception(::atoi(errorNo), ::std::string(this->doErrormes(::atoi(errorNo)) + " (" + errorNo + ")"));
 			}
 		}
@@ -663,17 +629,14 @@ namespace rl
 		void
 		MitsubishiR3::doSrv(const bool& doOn)
 		{
-			char buf[256];
+			this->send("1;1;SRV" + ::std::string(doOn ? "ON" : "OFF"));
 			
-			::snprintf(buf, 255, "1;1;SRV%s", (doOn ? "ON" : "OFF"));
-			buf[255] = '\0';
-			
-			this->socket.send(buf, ::std::strlen(buf));
-			this->socket.recv(buf, 256);
+			::std::array<char, 256> buf;
+			this->socket.recv(buf.data(), buf.size());
 			
 			if ('Q' == buf[0] && 'e' == buf[1] && 'R' == buf[2])
 			{
-				char* errorNo = buf + 3;
+				char* errorNo = buf.data() + 3;
 				throw Exception(::atoi(errorNo), ::std::string(this->doErrormes(::atoi(errorNo)) + " (" + errorNo + ")"));
 			}
 		}
@@ -683,14 +646,14 @@ namespace rl
 		{
 			RunState state;
 			
-			char buf[256] = "1;1;STATE";
+			this->send("1;1;STATE");
 			
-			this->socket.send(buf, ::std::strlen(buf));
-			this->socket.recv(buf, 256);
+			::std::array<char, 256> buf;
+			this->socket.recv(buf.data(), buf.size());
 			
 			if ('Q' == buf[0] && 'o' == buf[1] && 'K' == buf[2])
 			{
-				char* elem = buf + 2;
+				char* elem = buf.data() + 2;
 				char* semicolon = nullptr;
 				int i = 0;
 				
@@ -701,7 +664,7 @@ namespace rl
 					
 					if (nullptr != semicolon)
 					{
-						buf[semicolon - buf] = '\0';
+						buf[semicolon - buf.data()] = '\0';
 					}
 					
 					switch (i)
@@ -846,7 +809,7 @@ namespace rl
 			}
 			else if ('Q' == buf[0] && 'e' == buf[1] && 'R' == buf[2])
 			{
-				char* errorNo = buf + 3;
+				char* errorNo = buf.data() + 3;
 				throw Exception(::atoi(errorNo), ::std::string(this->doErrormes(::atoi(errorNo)) + " (" + errorNo + ")"));
 			}
 			
@@ -856,14 +819,14 @@ namespace rl
 		void
 		MitsubishiR3::doStop()
 		{
-			char buf[256] = "1;1;STOP";
+			this->send("1;1;STOP");
 			
-			this->socket.send(buf, ::std::strlen(buf));
-			this->socket.recv(buf, 256);
+			::std::array<char, 256> buf;
+			this->socket.recv(buf.data(), buf.size());
 			
 			if ('Q' == buf[0] && 'e' == buf[1] && 'R' == buf[2])
 			{
-				char* errorNo = buf + 3;
+				char* errorNo = buf.data() + 3;
 				throw Exception(::atoi(errorNo), ::std::string(this->doErrormes(::atoi(errorNo)) + " (" + errorNo + ")"));
 			}
 		}
@@ -873,14 +836,14 @@ namespace rl
 		{
 			StopSignalState state;
 			
-			char buf[256] = "1;1;STPSIG";
+			this->send("1;1;STPSIG");
 			
-			this->socket.send(buf, ::std::strlen(buf));
-			this->socket.recv(buf, 256);
+			::std::array<char, 256> buf;
+			this->socket.recv(buf.data(), buf.size());
 			
 			if ('Q' == buf[0] && 'o' == buf[1] && 'K' == buf[2])
 			{
-				char* elem = buf + 2;
+				char* elem = buf.data() + 2;
 				char* semicolon = nullptr;
 				int i = 0;
 				
@@ -891,7 +854,7 @@ namespace rl
 					
 					if (nullptr != semicolon)
 					{
-						buf[semicolon - buf] = '\0';
+						buf[semicolon - buf.data()] = '\0';
 					}
 					
 					switch (i)
@@ -932,7 +895,7 @@ namespace rl
 			}
 			else if ('Q' == buf[0] && 'e' == buf[1] && 'R' == buf[2])
 			{
-				char* errorNo = buf + 3;
+				char* errorNo = buf.data() + 3;
 				throw Exception(::atoi(errorNo), ::std::string(this->doErrormes(::atoi(errorNo)) + " (" + errorNo + ")"));
 			}
 			
@@ -955,6 +918,12 @@ namespace rl
 			this->socket.open();
 			this->socket.connect();
 			this->setConnected(true);
+		}
+		
+		void
+		MitsubishiR3::send(const ::std::string& command)
+		{
+			this->socket.send(command.c_str(), command.size());
 		}
 		
 		void
