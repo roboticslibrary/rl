@@ -31,7 +31,7 @@ if(QT_FOUND AND SoQt_FOUND)
 		${SoQt_DEFINITIONS}
 	)
 	
-	include_directories(
+	target_include_directories(
 		rlViewDemo
 		PUBLIC
 		${SoQt_INCLUDE_DIRS}
