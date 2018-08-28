@@ -58,6 +58,7 @@ set(
 	MitsubishiH7.h
 	MitsubishiR3.h
 	RangeSensor.h
+	RobotiqModelC.h
 	SchmersalLss300.h
 	SchunkFpsF5.h
 	Serial.h
@@ -120,6 +121,7 @@ set(
 	MitsubishiH7.cpp
 	MitsubishiR3.cpp
 	RangeSensor.cpp
+	RobotiqModelC.cpp
 	SchmersalLss300.cpp
 	SchunkFpsF5.cpp
 	Serial.cpp

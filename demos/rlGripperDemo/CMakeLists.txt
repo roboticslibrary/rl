@@ -29,3 +29,13 @@ target_link_libraries(
 if(MSVC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 19.00.23918)
 	target_link_libraries(rlGripperDemo ${Boost_LIBRARIES})
 endif()
+
+add_executable(
+	rlRobotiqModelCDemo
+	rlRobotiqModelCDemo.cpp
+)
+
+target_link_libraries(
+	rlRobotiqModelCDemo
+	hal
+)
