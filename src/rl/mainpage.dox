@@ -29,7 +29,7 @@ For first time users, please have a look at our <a href="http://www.roboticslibr
     - Abstract devices rl::hal::JointPositionSensor, rl::hal::JointPositionActuator, rl::hal::Camera, rl::hal::RangeSensor
     - Cross-platform socket implementation rl::hal::Socket, cross-platform serial communication rl::hal::Serial
     - Robot drivers rl::hal::Coach, rl::hal::MitsubishiH7, rl::hal::UniversalRobotsRtde
-    - Gripper driver rl::hal::WeissWsg50
+    - Gripper drivers rl::hal::RobotiqModelC, rl::hal::WeissWsg50
     - Laser scanner and range sensor drivers rl::hal::LeuzeRs4, rl::hal::SchmersalLss300, rl::hal::SickLms200, rl::hal::SickS300, rl::hal::SchunkFpsF5
     - Camera driver rl::hal::Dc1394Camera
     - Force-torque sensor driver rl::hal::Ati, rl::hal::Jr3, rl::hal::WeissKms40
