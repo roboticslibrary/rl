@@ -47,23 +47,6 @@ namespace rl
 			Model* clone() const;
 			
 			/**
-			 * Resolved motion rate control.
-			 * 
-			 * @pre setPosition()
-			 * @post getPosition()
-			 * 
-			 * @see calculateJacobian()
-			 * @see calculateJacobianInverse()
-			 */
-			bool calculateInversePosition(
-				const ::rl::math::Transform& x,
-				const ::std::size_t& leaf = 0,
-				const ::rl::math::Real& delta = ::std::numeric_limits< ::rl::math::Real>::infinity(),
-				const ::rl::math::Real& epsilon = 1.0e-3f,
-				const ::std::size_t& iterations = 1000
-			);
-			
-			/**
 			 * Calculate Jacobian matrix.
 			 * 
 			 * @param[in] inWorldFrame Calculate in world or tool frame

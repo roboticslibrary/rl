@@ -32,6 +32,12 @@
 #include <rl/mdl/Kinematic.h>
 #include <rl/mdl/XmlFactory.h>
 
+#ifdef RL_MDL_NLOPT
+#include <rl/mdl/NloptInverseKinematics.h>
+#else
+#include <rl/mdl/JacobianInverseKinematics.h>
+#endif
+
 int
 main(int argc, char** argv)
 {
@@ -62,6 +68,13 @@ main(int argc, char** argv)
 		
 		nTests = 100;
 		
+#ifdef RL_MDL_NLOPT
+		rl::mdl::NloptInverseKinematics ik(kinematics);
+#else
+		rl::mdl::JacobianInverseKinematics ik(kinematics);
+		ik.delta = 0.5f;
+#endif
+		
 		for (n = 0, wrongs = 0, wrongT = 0, ngotinverse = 0; n < nTests && wrongT < 100 && wrongs < 100; ++n)
 		{
 			for (std::size_t i = 0; i < 6; ++i)
@@ -78,7 +91,10 @@ main(int argc, char** argv)
 			kinematics->setPosition(qzero);
 			kinematics->forwardPosition();
 			
-			if (!kinematics->calculateInversePosition(t, 0, 0.5))
+			ik.goals.clear();
+			ik.goals.push_back(std::make_pair(t, 0));
+			
+			if (!ik.solve())
 			{
 				continue;
 			}

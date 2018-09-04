@@ -28,6 +28,12 @@
 #include <rl/mdl/Kinematic.h>
 #include <rl/sg/Body.h>
 
+#ifdef RL_MDL_NLOPT
+#include <rl/mdl/NloptInverseKinematics.h>
+#else
+#include <rl/mdl/JacobianInverseKinematics.h>
+#endif
+
 #include "ConfigurationModel.h"
 #include "OperationalModel.h"
 #include "MainWindow.h"
@@ -229,7 +235,15 @@ OperationalModel::setData(const QModelIndex& index, const QVariant& value, int r
 			
 			rl::math::Vector q = kinematic->getPosition();
 			
-			if (kinematic->calculateInversePosition(x, index.row(), 1.0f))
+#ifdef RL_MDL_NLOPT
+			rl::mdl::NloptInverseKinematics ik(kinematic);
+#else
+			rl::mdl::JacobianInverseKinematics ik(kinematic);
+			ik.delta = 1.0f;
+#endif
+			ik.goals.push_back(std::make_pair(x, index.row()));
+		
+			if (ik.solve())
 			{
 				kinematic->forwardPosition();
 				

@@ -53,51 +53,6 @@ namespace rl
 		{
 		}
 		
-		bool
-		Kinematic::calculateInversePosition(const ::rl::math::Transform& x, const ::std::size_t& leaf, const ::rl::math::Real& delta, const ::rl::math::Real& epsilon, const ::std::size_t& iterations)
-		{
-			::rl::math::Vector q = this->getPosition();
-			::rl::math::Vector dq(this->getDofPosition());
-			::rl::math::Vector dx(6 * this->getOperationalDof());
-			dx.setZero();
-			
-			::rl::math::Real norm = 1;
-			
-			for (::std::size_t i = 0; i < iterations && norm > epsilon; ++i)
-			{
-				this->forwardPosition();
-				
-				::rl::math::VectorBlock dxi = dx.segment(6 * leaf, 6);
-				dxi = this->getOperationalPosition(leaf).toDelta(x);
-				
-				this->calculateJacobian();
-				this->calculateJacobianInverse();
-				dq = this->invJ * dx;
-				
-				norm = dq.norm();
-				
-				if (norm > delta)
-				{
-					dq *= delta / norm;
-					norm = dq.norm();
-				}
-				
-				q += dq;
-				
-				this->setPosition(q);
-			}
-			
-			if (norm > epsilon)
-			{
-				return false;
-			}
-			
-			this->normalize(q);
-			this->setPosition(q);
-			
-			return this->isValid(q);
-		}
-		
 		void
 		Kinematic::calculateJacobian(const bool& inWorldFrame)
 		{
