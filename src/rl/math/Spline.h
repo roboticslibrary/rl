@@ -1214,8 +1214,34 @@ namespace rl
 						}
 					}
 				}
-			
+				
 				return maximum;
+			}
+			
+			::std::pair<T, T> getMinimumMaximum() const
+			{
+				T minimum = (*this)(this->x0);
+				T maximum = (*this)(this->x0);
+				
+				for (::std::size_t i = 0; i < this->size(); ++i)
+				{
+					::std::pair<T, T> minmaxOfPolynomial = this->polynomials[i].getMinimumMaximum();
+					
+					for (::std::ptrdiff_t row = 0; row < maximum.size(); ++row)
+					{
+						if (minmaxOfPolynomial.first[row] < minimum[row])
+						{
+							minimum[row] = minmaxOfPolynomial.first[row];
+						}
+						
+						if (minmaxOfPolynomial.second[row] > maximum[row])
+						{
+							maximum[row] = minmaxOfPolynomial.second[row];
+						}
+					}
+				}
+				
+				return ::std::pair<T, T>(minimum, maximum);
 			}
 			
 			/**

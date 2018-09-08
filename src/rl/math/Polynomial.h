@@ -266,6 +266,50 @@ namespace rl
 				return maximum;
 			}
 			
+			::std::pair<T, T> getMinimumMaximum() const
+			{
+				Polynomial derivative = this->derivative();
+				
+				T minimum = (*this)(this->x0);
+				T maximum = (*this)(this->x0);
+				T y1 = (*this)(this->x1);
+				
+				for (::std::ptrdiff_t row = 0; row < TypeTraits<T>::size(minimum); ++row)
+				{
+					minimum[row] = ::std::min(minimum[row], y1[row]);
+					maximum[row] = ::std::max(maximum[row], y1[row]);
+					
+					::std::vector<Real> coefficients(derivative.degree() + 1);
+					
+					for (::std::size_t i = 0; i < derivative.degree() + 1; ++i)
+					{
+						coefficients[i] = derivative.coefficient(i)[row];
+					}
+					
+					::std::vector<Real> extrema = this->realRoots(coefficients);
+					
+					for (::std::vector<Real>::const_iterator x = extrema.begin(); x < extrema.end(); ++x)
+					{
+						if (this->x0 < *x && *x < this->x1)
+						{
+							Real y = (*this)(*x)[row];
+							
+							if (y < minimum[row])
+							{
+								minimum[row] = y;
+							}
+							
+							if (y > maximum[row])
+							{
+								maximum[row] = y;
+							}
+						}
+					}
+				}
+				
+				return ::std::pair<T, T>(minimum, maximum);
+			}
+			
 			Polynomial integral() const
 			{
 				Polynomial f(this->degree() + 1);
