@@ -40,6 +40,7 @@ namespace rl
 	namespace sg
 	{
 		Body::Body(Model* model) :
+			Base(),
 			center(::rl::math::Vector3::Zero()),
 			max(::rl::math::Vector3::Zero()),
 			min(::rl::math::Vector3::Zero()),

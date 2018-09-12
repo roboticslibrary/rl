@@ -31,13 +31,15 @@
 #include <Inventor/VRMLnodes/SoVRMLShape.h>
 #include <rl/math/Transform.h>
 
+#include "Base.h"
+
 namespace rl
 {
 	namespace sg
 	{
 		class Body;
 		
-		class Shape
+		class Shape : public Base
 		{
 		public:
 			Shape(::SoVRMLShape* shape, Body* body);

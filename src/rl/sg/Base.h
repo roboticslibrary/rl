@@ -24,59 +24,25 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef RL_SG_SCENE_H
-#define RL_SG_SCENE_H
-
-#include <string>
-#include <vector>
-
-#include "Base.h"
+#ifndef RL_SG_BASE_H
+#define RL_SG_BASE_H
 
 namespace rl
 {
-	/**
-	 * Scene graph abstraction.
-	 */
 	namespace sg
 	{
-		class Model;
-		
-		class Scene : public Base
+		class Base
 		{
 		public:
-			typedef ::std::vector<Model*>::iterator Iterator;
-			
-			Scene();
-			
-			virtual ~Scene();
-			
-			virtual void add(Model* model);
-			
-			Iterator begin();
-			
-			virtual Model* create() = 0;
-			
-			Iterator end();
-			
-			Model* getModel(const ::std::size_t& i) const;
-			
-			virtual ::std::string getName() const;
-			
-			::std::size_t getNumModels() const;
-			
-			virtual bool isScalingSupported() const;
-			
-			virtual void remove(Model* model);
-			
-			virtual void setName(const ::std::string& name);
+			virtual ~Base();
 			
 		protected:
-			::std::vector<Model*> models;
+			Base();
 			
 		private:
-			::std::string name;
+			
 		};
 	}
 }
 
-#endif // RL_SG_SCENE_H
+#endif // RL_SG_BASE_H

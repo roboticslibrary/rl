@@ -32,6 +32,8 @@
 #include <Inventor/VRMLnodes/SoVRMLGroup.h>
 #include <rl/math/Transform.h>
 
+#include "Base.h"
+
 namespace rl
 {
 	namespace sg
@@ -39,7 +41,7 @@ namespace rl
 		class Body;
 		class Scene;
 		
-		class Model
+		class Model : public Base
 		{
 		public:
 			typedef ::std::vector<Body*>::iterator Iterator;

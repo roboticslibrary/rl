@@ -38,6 +38,7 @@ namespace rl
 	namespace sg
 	{
 		Model::Model(Scene* scene) :
+			Base(),
 			bodies(),
 			scene(scene),
 			name()

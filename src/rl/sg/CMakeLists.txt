@@ -11,6 +11,7 @@ find_package(SOLID3)
 
 set(
 	BASE_HDRS
+	Base.h
 	Body.h
 	DepthScene.h
 	DistanceScene.h
@@ -28,6 +29,7 @@ list(APPEND HDRS ${BASE_HDRS})
 
 set(
 	BASE_SRCS
+	Base.cpp
 	Body.cpp
 	DepthScene.cpp
 	DistanceScene.cpp

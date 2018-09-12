@@ -33,6 +33,7 @@ namespace rl
 	namespace sg
 	{
 		Scene::Scene() :
+			Base(),
 			models(),
 			name()
 		{

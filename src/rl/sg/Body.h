@@ -34,6 +34,8 @@
 #include <rl/math/Transform.h>
 #include <rl/math/Vector.h>
 
+#include "Base.h"
+
 namespace rl
 {
 	namespace sg
@@ -41,7 +43,7 @@ namespace rl
 		class Model;
 		class Shape;
 		
-		class Body
+		class Body : public Base
 		{
 		public:
 			typedef ::std::vector<Shape*>::iterator Iterator;
