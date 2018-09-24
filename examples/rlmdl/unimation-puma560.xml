@@ -249,7 +249,6 @@
 				<y>0</y>
 				<z>0</z>
 			</translation>
-
 		</fixed>
 		<revolute id="joint3">
 			<frame>
