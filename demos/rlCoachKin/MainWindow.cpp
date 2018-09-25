@@ -154,6 +154,14 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	this->addDockWidget(Qt::LeftDockWidgetArea, this->configurationDockWidget);
 	this->addDockWidget(Qt::BottomDockWidgetArea, this->operationalDockWidget);
 	
+#if QT_VERSION >= 0x050600
+	QList<QDockWidget*> resizeDocksWidgets;
+	resizeDocksWidgets.append(this->operationalDockWidget);
+	QList<int> resizeDocksSizes;
+	resizeDocksSizes.append(0);
+	this->resizeDocks(resizeDocksWidgets, resizeDocksSizes, Qt::Vertical);
+#endif // QT_VERSION
+	
 	this->gradientBackground = new SoGradientBackground();
 	this->gradientBackground->ref();
 	this->gradientBackground->color0.setValue(0.8f, 0.8f, 0.8f);
