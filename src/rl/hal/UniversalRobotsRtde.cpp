@@ -396,7 +396,7 @@ namespace rl
 		{
 			::rl::math::Vector i(this->getDof());
 			
-			for (::std::ptrdiff_t j = 0; j < 6; ++j)
+			for (::std::ptrdiff_t j = 0; j < i.size(); ++j)
 			{
 				i(j) = this->output.actualCurrent[j];
 			}
@@ -416,7 +416,7 @@ namespace rl
 		{
 			::rl::math::Vector q(this->getDof());
 			
-			for (::std::ptrdiff_t i = 0; i < 6; ++i)
+			for (::std::ptrdiff_t i = 0; i < q.size(); ++i)
 			{
 				q(i) = this->output.actualQ[i];
 			}
@@ -429,7 +429,7 @@ namespace rl
 		{
 			::rl::math::Vector temperature(this->getDof());
 			
-			for (::std::ptrdiff_t i = 0; i < 6; ++i)
+			for (::std::ptrdiff_t i = 0; i < temperature.size(); ++i)
 			{
 				temperature(i) = this->output.jointTemperatures[i];
 			}
@@ -442,7 +442,7 @@ namespace rl
 		{
 			::rl::math::Vector qd(this->getDof());
 			
-			for (::std::ptrdiff_t i = 0; i < 6; ++i)
+			for (::std::ptrdiff_t i = 0; i < qd.size(); ++i)
 			{
 				qd(i) = this->output.actualQd[i];
 			}
@@ -743,6 +743,16 @@ namespace rl
 					this->unserialize(ptr, this->output.outputBitRegisters1);
 					this->unserialize(ptr, this->output.outputIntRegister);
 					this->unserialize(ptr, this->output.outputDoubleRegister);
+					
+					this->input.inputDoubleRegister.resize(this->getDof() + this->getDof() + 1);
+					
+					for (::std::size_t i = 0; i < this->getDof(); ++i)
+					{
+						this->input.inputDoubleRegister[i] = this->output.actualQ[i];
+						this->input.inputDoubleRegister[this->getDof() + i] = this->output.actualQd[i];
+					}
+					
+					this->input.inputDoubleRegister[this->getDof() + this->getDof()] = 0;
 					break;
 				case COMMAND_GET_URCONTROL_VERSION:
 					this->unserialize(ptr, this->version.major);
@@ -1166,16 +1176,23 @@ namespace rl
 			
 			::std::stringstream program;
 			program << "def robotics_library():" << '\n';
-			program << '\t' << "rtde_set_watchdog(\"input_double_register_0\", 1, \"pause\")" << '\n';
-			program << '\t' << "while (read_input_integer_register(0)):" << '\n';
-			program << '\t' << '\t' << "q = get_actual_joint_positions()" << '\n';
+			program << '\t' << "write_output_integer_register(0, 1)" << '\n';
+			program << '\t' << "sync()" << '\n';
+			program << '\t' << "write_output_integer_register(0, 0)" << '\n';
+			program << '\t' << "sync()" << '\n';
+			program << '\t' << "q = get_actual_joint_positions()" << '\n';
+			program << '\t' << "qd = get_actual_joint_speeds()" << '\n';
+//			program << '\t' << "rtde_set_watchdog(\"input_double_register_0\", 1, \"pause\")" << '\n';
+			program << '\t' << "while (1 == read_input_integer_register(0)):" << '\n';
+#if 1
 			program << '\t' << '\t' << "q[0] = read_input_float_register(0)" << '\n';
 			program << '\t' << '\t' << "q[1] = read_input_float_register(1)" << '\n';
 			program << '\t' << '\t' << "q[2] = read_input_float_register(2)" << '\n';
 			program << '\t' << '\t' << "q[3] = read_input_float_register(3)" << '\n';
 			program << '\t' << '\t' << "q[4] = read_input_float_register(4)" << '\n';
 			program << '\t' << '\t' << "q[5] = read_input_float_register(5)" << '\n';
-			program << '\t' << '\t' << "qd = [ 0, 0, 0, 0, 0, 0]" << '\n';
+			program << '\t' << '\t' << "servoj(q, 0, 0, " << ::std::chrono::duration_cast<::std::chrono::duration<rl::math::Real>>(this->getUpdateRate()).count() << ", 0.03, 2000)" << '\n';
+#else
 			program << '\t' << '\t' << "qd[0] = read_input_float_register(6)" << '\n';
 			program << '\t' << '\t' << "qd[1] = read_input_float_register(7)" << '\n';
 			program << '\t' << '\t' << "qd[2] = read_input_float_register(8)" << '\n';
@@ -1183,14 +1200,21 @@ namespace rl
 			program << '\t' << '\t' << "qd[4] = read_input_float_register(10)" << '\n';
 			program << '\t' << '\t' << "qd[5] = read_input_float_register(11)" << '\n';
 			program << '\t' << '\t' << "qdd = read_input_float_register(12)" << '\n';
-#if 1
-			program << '\t' << '\t' << "servoj(q, 0, 0, " << ::std::chrono::duration_cast<::std::chrono::duration<rl::math::Real>>(this->getUpdateRate()).count() << ", 0.03, 2000)" << '\n';
-#else
 			program << '\t' << '\t' << "speedj(qd, qdd, " << ::std::chrono::duration_cast<::std::chrono::duration<rl::math::Real>>(this->getUpdateRate()).count() << ")" << '\n';
 #endif
 			program << '\t' << "end" << '\n';
+			program << '\t' << "write_output_integer_register(0, 1)" << '\n';
+			program << '\t' << "sync()" << '\n';
+			program << '\t' << "write_output_integer_register(0, 0)" << '\n';
+			program << '\t' << "sync()" << '\n';
 			program << "end" << '\n';
 			this->socket2.send(program.str().c_str(), program.str().size());
+			
+			do
+			{
+				this->recv();
+			}
+			while (1 != this->output.outputIntRegister[0]);
 			
 			this->setRunning(true);
 		}
@@ -1218,8 +1242,6 @@ namespace rl
 				this->sendBitRegisters();
 			}
 			
-			this->recv();
-			
 			this->input.configurableDigitalOutput.reset();
 			this->input.configurableDigitalOutputMask.reset();
 			this->input.inputBitRegisters0.reset();
@@ -1231,6 +1253,8 @@ namespace rl
 			this->input.standardAnalogOutputMask.reset();
 			this->input.standardDigitalOutput.reset();
 			this->input.standardDigitalOutputMask.reset();
+			
+			this->recv();
 		}
 		
 		void
@@ -1239,6 +1263,12 @@ namespace rl
 			this->input.inputIntRegister.push_back(0);
 			this->sendIntegerRegister();
 			this->input.inputIntRegister.clear();
+			
+			do
+			{
+				this->recv();
+			}
+			while (1 != this->output.outputIntRegister[0]);
 			
 			this->send(COMMAND_CONTROL_PACKAGE_PAUSE);
 			this->recv();
