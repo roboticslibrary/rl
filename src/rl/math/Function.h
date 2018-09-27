@@ -44,9 +44,9 @@ namespace rl
 		class Function
 		{
 		public:
-			Function() :
-				x0(0),
-				x1(1)
+			Function(const Real& x0 = 0, const Real& x1 = 1) :
+				x0(x0),
+				x1(x1)
 			{
 			}
 			

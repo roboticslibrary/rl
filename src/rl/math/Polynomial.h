@@ -59,8 +59,14 @@ namespace rl
 		class Polynomial : public Function<T>
 		{
 		public:
+			Polynomial() :
+				Function<T>(0, 0),
+				c()
+			{
+			}
+			
 			Polynomial(const ::std::size_t& degree) :
-				Function<T>(),
+				Function<T>(0, 0),
 				c(degree + 1)
 			{
 			}

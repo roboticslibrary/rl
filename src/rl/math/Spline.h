@@ -58,11 +58,9 @@ namespace rl
 			typedef typename ::std::vector<Polynomial<T>>::reverse_iterator ReverseIterator;
 			
 			Spline() :
-				Function<T>(),
+				Function<T>(0, 0),
 				polynomials()
 			{
-				this->x0 = 0;
-				this->x1 = 0;
 			}
 			
 			virtual ~Spline()
