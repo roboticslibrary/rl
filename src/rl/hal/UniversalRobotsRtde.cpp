@@ -1182,7 +1182,7 @@ namespace rl
 			program << '\t' << "sync()" << '\n';
 			program << '\t' << "q = get_actual_joint_positions()" << '\n';
 			program << '\t' << "qd = get_actual_joint_speeds()" << '\n';
-//			program << '\t' << "rtde_set_watchdog(\"input_double_register_0\", 1, \"pause\")" << '\n';
+			program << '\t' << "rtde_set_watchdog(\"input_double_register_0\", 1, \"pause\")" << '\n';
 			program << '\t' << "while (1 == read_input_integer_register(0)):" << '\n';
 #if 1
 			program << '\t' << '\t' << "q[0] = read_input_float_register(0)" << '\n';
