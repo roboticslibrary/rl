@@ -94,8 +94,10 @@ TableView::keyPressEvent(QKeyEvent* event)
 			}
 		}
 	}
-	
-	QTableView::keyPressEvent(event);
+	else
+	{
+		QTableView::keyPressEvent(event);
+	}
 }
 
 QSize
