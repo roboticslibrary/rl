@@ -80,7 +80,7 @@ public slots:
 	void rotationMatrixToggled(bool on);
 	
 protected:
-	MainWindow(QWidget* parent = nullptr, Qt::WindowFlags f = 0);
+	MainWindow(QWidget* parent = nullptr, Qt::WindowFlags f = Qt::Window | Qt::MSWindowsFixedSizeDialogHint);
 	
 private:
 	void fromAngleAxis();

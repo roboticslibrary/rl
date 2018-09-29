@@ -224,6 +224,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	inputRotationMatrixTableView->precision = &this->inputPrecision;
 	inputRotationMatrixTableView->setItemDelegate(inputDelegate);
 	inputRotationMatrixTableView->setModel(inputRotationMatrixModel);
+	inputRotationMatrixTableView->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	inputRotationMatrixTableView->verticalHeader()->setMinimumWidth(20);
 	
 	QVBoxLayout* inputRotationMatrixLayout = new QVBoxLayout(inputRotationMatrixGroupBox);
@@ -255,6 +256,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	outputRotationMatrixTableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	outputRotationMatrixTableView->setItemDelegate(outputDelegate);
 	outputRotationMatrixTableView->setModel(outputRotationMatrixModel);
+	outputRotationMatrixTableView->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	outputRotationMatrixTableView->verticalHeader()->setMinimumWidth(20);
 	
 	QVBoxLayout* outputRotationMatrixLayout = new QVBoxLayout(outputRotationMatrixGroupBox);
@@ -273,6 +275,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	inputAngleAxisTableView->precision = &this->inputPrecision;
 	inputAngleAxisTableView->setItemDelegate(inputDelegate);
 	inputAngleAxisTableView->setModel(inputAngleAxisModel);
+	inputAngleAxisTableView->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	inputAngleAxisTableView->verticalHeader()->setMinimumWidth(20);
 	
 	QVBoxLayout* inputAngleAxisLayout = new QVBoxLayout(inputAngleAxisGroupBox);
@@ -305,6 +308,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	outputAngleAxisTableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	outputAngleAxisTableView->setItemDelegate(outputDelegate);
 	outputAngleAxisTableView->setModel(outputAngleAxisModel);
+	outputAngleAxisTableView->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	outputAngleAxisTableView->verticalHeader()->setMinimumWidth(20);
 	
 	QVBoxLayout* outputAngleAxisLayout = new QVBoxLayout(outputAngleAxisGroupBox);
@@ -322,6 +326,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	inputQuaternionTableView->precision = &this->inputPrecision;
 	inputQuaternionTableView->setItemDelegate(inputDelegate);
 	inputQuaternionTableView->setModel(inputQuaternionModel);
+	inputQuaternionTableView->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	inputQuaternionTableView->verticalHeader()->setMinimumWidth(20);
 	
 	QVBoxLayout* inputQuaternionLayout = new QVBoxLayout(inputQuaternionGroupBox);
@@ -353,6 +358,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	outputQuaternionTableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	outputQuaternionTableView->setItemDelegate(outputDelegate);
 	outputQuaternionTableView->setModel(outputQuaternionModel);
+	outputQuaternionTableView->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	outputQuaternionTableView->verticalHeader()->setMinimumWidth(20);
 	
 	QVBoxLayout* outputQuaternionLayout = new QVBoxLayout(outputQuaternionGroupBox);
@@ -372,6 +378,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	inputEulerAnglesTableView->precision = &this->inputPrecision;
 	inputEulerAnglesTableView->setItemDelegate(inputDelegate);
 	inputEulerAnglesTableView->setModel(inputEulerAnglesModel);
+	inputEulerAnglesTableView->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	inputEulerAnglesTableView->verticalHeader()->setMinimumWidth(20);
 	
 	QVBoxLayout* inputEulerAnglesLayout = new QVBoxLayout(inputEulerAnglesGroupBox);
@@ -405,6 +412,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	outputEulerAnglesTableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	outputEulerAnglesTableView->setItemDelegate(outputDelegate);
 	outputEulerAnglesTableView->setModel(outputEulerAnglesModel);
+	outputEulerAnglesTableView->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	outputEulerAnglesTableView->verticalHeader()->setMinimumWidth(20);
 	
 	QVBoxLayout* outputEulerAnglesLayout = new QVBoxLayout(outputEulerAnglesGroupBox);
@@ -413,6 +421,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	inputAngleAxisGroupBox->setChecked(false);
 	inputQuaternionGroupBox->setChecked(false);
 	inputEulerAnglesGroupBox->setChecked(false);
+	
+	this->layout()->setSizeConstraint(QLayout::SetFixedSize);
 }
 
 MainWindow::~MainWindow()
