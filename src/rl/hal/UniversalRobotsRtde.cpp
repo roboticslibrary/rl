@@ -753,6 +753,36 @@ namespace rl
 					}
 					
 					this->input.inputDoubleRegister[this->getDof() + this->getDof()] = 0;
+					
+					switch (this->getSafetyMode())
+					{
+					case SAFETY_MODE_NORMAL:
+						break;
+					case SAFETY_MODE_REDUCED:
+						break;
+					case SAFETY_MODE_PROTECTIVE_STOP:
+						throw DeviceException("Protective stop");
+						break;
+					case SAFETY_MODE_RECOVERY:
+						break;
+					case SAFETY_MODE_SAFEGUARD_STOP:
+						throw DeviceException("Safeguard stop");
+						break;
+					case SAFETY_MODE_SYSTEM_EMERGENCY_STOP:
+						throw DeviceException("System emergency stop");
+						break;
+					case SAFETY_MODE_ROBOT_EMERGENCY_STOP:
+						throw DeviceException("Robot emergency stop");
+						break;
+					case SAFETY_MODE_VIOLATION:
+						throw DeviceException("Mode violation");
+						break;
+					case SAFETY_MODE_FAULT:
+						throw DeviceException("Fault");
+						break;
+					default:
+						break;
+					}
 					break;
 				case COMMAND_GET_URCONTROL_VERSION:
 					this->unserialize(ptr, this->version.major);
