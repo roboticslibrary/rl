@@ -1206,10 +1206,6 @@ namespace rl
 			
 			::std::stringstream program;
 			program << "def robotics_library():" << '\n';
-			program << '\t' << "write_output_integer_register(0, 1)" << '\n';
-			program << '\t' << "sync()" << '\n';
-			program << '\t' << "write_output_integer_register(0, 0)" << '\n';
-			program << '\t' << "sync()" << '\n';
 			program << '\t' << "q = get_actual_joint_positions()" << '\n';
 			program << '\t' << "qd = get_actual_joint_speeds()" << '\n';
 			program << '\t' << "rtde_set_watchdog(\"input_double_register_0\", 1, \"pause\")" << '\n';
@@ -1233,10 +1229,6 @@ namespace rl
 			program << '\t' << '\t' << "speedj(qd, qdd, " << ::std::chrono::duration_cast<::std::chrono::duration<rl::math::Real>>(this->getUpdateRate()).count() << ")" << '\n';
 #endif
 			program << '\t' << "end" << '\n';
-			program << '\t' << "write_output_integer_register(0, 1)" << '\n';
-			program << '\t' << "sync()" << '\n';
-			program << '\t' << "write_output_integer_register(0, 0)" << '\n';
-			program << '\t' << "sync()" << '\n';
 			program << "end" << '\n';
 			this->socket2.send(program.str().c_str(), program.str().size());
 			
@@ -1244,7 +1236,7 @@ namespace rl
 			{
 				this->recv();
 			}
-			while (1 != this->output.outputIntRegister[0]);
+			while (ROBOT_MODE_RUNNING != this->getRobotMode() || RUNTIME_STATE_PLAYING != this->getRuntimeState());
 			
 			this->setRunning(true);
 		}
@@ -1298,7 +1290,7 @@ namespace rl
 			{
 				this->recv();
 			}
-			while (1 != this->output.outputIntRegister[0]);
+			while (RUNTIME_STATE_STOPPED != this->getRuntimeState());
 			
 			this->send(COMMAND_CONTROL_PACKAGE_PAUSE);
 			this->recv();
