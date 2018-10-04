@@ -349,9 +349,21 @@ namespace rl
 				
 				double standardAnalogOutput1;
 				
+				double targetCurrent[6];
+				
+				double targetMoment[6];
+				
+				double targetQ[6];
+				
+				double targetQd[6];
+				
+				double targetQdd[6];
+				
 				double targetTcpPose[6];
 				
 				double targetTcpSpeed[6];
+				
+				double timestamp;
 				
 				double toolAnalogInput0;
 				

@@ -398,7 +398,7 @@ namespace rl
 			
 			for (::std::ptrdiff_t j = 0; j < i.size(); ++j)
 			{
-				i(j) = this->output.actualCurrent[j];
+				i(j) = this->output.targetCurrent[j];
 			}
 			
 			return i;
@@ -418,7 +418,7 @@ namespace rl
 			
 			for (::std::ptrdiff_t i = 0; i < q.size(); ++i)
 			{
-				q(i) = this->output.actualQ[i];
+				q(i) = this->output.targetQ[i];
 			}
 			
 			return q;
@@ -444,7 +444,7 @@ namespace rl
 			
 			for (::std::ptrdiff_t i = 0; i < qd.size(); ++i)
 			{
-				qd(i) = this->output.actualQd[i];
+				qd(i) = this->output.targetQd[i];
 			}
 			
 			return qd;
@@ -498,6 +498,12 @@ namespace rl
 			this->recv();
 			
 			static const ::std::string outputsArray[] = {
+				"timestamp",
+				"target_q",
+				"target_qd",
+				"target_qdd",
+				"target_current",
+				"target_moment",
 				"actual_q",
 				"actual_qd",
 				"actual_current",
@@ -711,6 +717,12 @@ namespace rl
 					
 					break;
 				case COMMAND_DATA_PACKAGE:
+					this->unserialize(ptr, this->output.timestamp);
+					this->unserialize(ptr, this->output.targetQ);
+					this->unserialize(ptr, this->output.targetQd);
+					this->unserialize(ptr, this->output.targetQdd);
+					this->unserialize(ptr, this->output.targetCurrent);
+					this->unserialize(ptr, this->output.targetMoment);
 					this->unserialize(ptr, this->output.actualQ);
 					this->unserialize(ptr, this->output.actualQd);
 					this->unserialize(ptr, this->output.actualCurrent);
@@ -748,8 +760,8 @@ namespace rl
 					
 					for (::std::size_t i = 0; i < this->getDof(); ++i)
 					{
-						this->input.inputDoubleRegister[i] = this->output.actualQ[i];
-						this->input.inputDoubleRegister[this->getDof() + i] = this->output.actualQd[i];
+						this->input.inputDoubleRegister[i] = this->output.targetQ[i];
+						this->input.inputDoubleRegister[this->getDof() + i] = this->output.targetQd[i];
 					}
 					
 					this->input.inputDoubleRegister[this->getDof() + this->getDof()] = 0;
