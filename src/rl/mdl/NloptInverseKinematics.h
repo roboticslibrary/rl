@@ -34,8 +34,6 @@ namespace rl
 		protected:
 			
 		private:
-			static void check(const nlopt_result& ret);
-			
 			::rl::math::Real error(const ::rl::math::Vector& q);
 			
 			static ::rl::math::Real f(unsigned n, const double* x, double* grad, void* data);

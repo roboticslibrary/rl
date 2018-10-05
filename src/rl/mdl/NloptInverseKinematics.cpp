@@ -23,25 +23,6 @@ namespace rl
 		{
 		}
 		
-		void
-		NloptInverseKinematics::check(const nlopt_result& ret)
-		{
-			switch (ret)
-			{
-			case ::NLOPT_FAILURE:
-				throw ::std::runtime_error("nlopt failure");
-				break;
-			case ::NLOPT_INVALID_ARGS:
-				throw ::std::invalid_argument("nlopt invalid argument");
-				break;
-			case ::NLOPT_OUT_OF_MEMORY:
-				throw ::std::bad_alloc();
-				break;
-			default:
-				break;
-			}
-		}
-		
 		::rl::math::Real
 		NloptInverseKinematics::error(const ::rl::math::Vector& q)
 		{
@@ -119,10 +100,25 @@ namespace rl
 			
 			::std::vector<double> tolerance(this->kinematic->getDofPosition(), this->tolerance);
 			
-			check(::nlopt_set_xtol_abs(opt.get(), tolerance.data()));
-			check(::nlopt_set_min_objective(opt.get(), &NloptInverseKinematics::f, this));
-			check(::nlopt_set_lower_bounds(opt.get(), lb.data()));
-			check(::nlopt_set_upper_bounds(opt.get(), ub.data()));
+			if (::nlopt_set_xtol_abs(opt.get(), tolerance.data()) < 0)
+			{
+				return false;
+			}
+			
+			if (::nlopt_set_min_objective(opt.get(), &NloptInverseKinematics::f, this) < 0)
+			{
+				return false;
+			}
+			
+			if (::nlopt_set_lower_bounds(opt.get(), lb.data()) < 0)
+			{
+				return false;
+			}
+			
+			if (::nlopt_set_upper_bounds(opt.get(), ub.data()) < 0)
+			{
+				return false;
+			}
 			
 			::rl::math::Vector rand(this->kinematic->getDof());
 			::rl::math::Vector q = this->kinematic->getPosition();
@@ -130,8 +126,15 @@ namespace rl
 			
 			do
 			{
-				check(::nlopt_set_maxtime(opt.get(), remaining));
-				check(::nlopt_optimize(opt.get(), q.data(), &optF));
+				if (::nlopt_set_maxtime(opt.get(), remaining) < 0)
+				{
+					return false;
+				}
+				
+				if (::nlopt_optimize(opt.get(), q.data(), &optF) < 0)
+				{
+					return false;
+				}
 				
 				if (this->error(q) < ::std::numeric_limits< ::rl::math::Real>::epsilon())
 				{
