@@ -131,7 +131,7 @@ namespace rl
 					return false;
 				}
 				
-				if (::nlopt_optimize(opt.get(), q.data(), &optF) < 0)
+				if (::nlopt_optimize(opt.get(), q.data(), &optF) < -1)
 				{
 					return false;
 				}
