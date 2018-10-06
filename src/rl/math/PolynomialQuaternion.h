@@ -44,12 +44,17 @@ namespace rl
 		class Polynomial<Quaternion> : public Function<Quaternion>
 		{
 		public:
-			Polynomial<Quaternion>(const ::std::size_t& degree) :
-				Function<Quaternion>(),
+			Polynomial<Quaternion>() :
+				Function<Quaternion>(0, 0),
 				y0(),
-				c(degree + 1),
-				x0(0),
-				x1(1)
+				c()
+			{
+			}
+			
+			Polynomial<Quaternion>(const ::std::size_t& degree) :
+				Function<Quaternion>(0, 0),
+				y0(),
+				c(degree + 1)
 			{
 			}
 			
@@ -127,21 +132,6 @@ namespace rl
 				return this->c.size() - 1;
 			}
 			
-			Real duration() const
-			{
-				return this->upper() - this->lower();
-			}
-			
-			Real& lower()
-			{
-				return this->x0;
-			}
-			
-			const Real& lower() const
-			{
-				return this->x0;
-			}
-			
 			Quaternion operator()(const Real& x, const ::std::size_t& derivative = 0) const
 			{
 				assert(derivative <= 2 && "Polynomial<Quaternion>: higher derivatives not implemented");
@@ -213,24 +203,10 @@ namespace rl
 				return Quaternion();
 			}
 			
-			Real& upper()
-			{
-				return this->x1;
-			}
-			
-			const Real& upper() const
-			{
-				return this->x1;
-			}
-			
 			Quaternion y0;
 			
 		protected:
 			::std::vector<Vector3> c;
-			
-			Real x0;
-			
-			Real x1;
 			
 		private:
 			Polynomial<Quaternion> derivative() const

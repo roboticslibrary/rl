@@ -50,13 +50,9 @@ namespace rl
 			typedef ::std::vector<Polynomial<Quaternion>>::reverse_iterator ReverseIterator;
 			
 			Spline<Quaternion>() :
-				Function<Quaternion>(),
-				polynomials(),
-				x0(0),
-				x1(0)
+				Function<Quaternion>(0, 0),
+				polynomials()
 			{
-				this->x0 = 0;
-				this->x1 = 0;
 			}
 			
 			virtual ~Spline<Quaternion>()
@@ -204,11 +200,6 @@ namespace rl
 				return new Spline<Quaternion>(*this);
 			}
 			
-			Real duration() const
-			{
-				return this->upper() - this->lower();
-			}
-			
 			bool empty()
 			{
 				return this->polynomials.empty();
@@ -232,16 +223,6 @@ namespace rl
 			const Polynomial<Quaternion>& front() const
 			{
 				return this->polynomials.front();
-			}
-			
-			Real& lower()
-			{
-				return this->x0;
-			}
-			
-			const Real& lower() const
-			{
-				return this->x0;
 			}
 			
 			Quaternion operator()(const Real& x, const ::std::size_t& derivative = 0) const
@@ -321,22 +302,8 @@ namespace rl
 				return this->polynomials.rend();
 			}
 			
-			Real& upper()
-			{
-				return this->x1;
-			}
-			
-			const Real& upper() const
-			{
-				return this->x1;
-			}
-			
 		protected:
 			::std::vector<Polynomial<Quaternion>> polynomials;
-			
-			Real x0;
-			
-			Real x1;
 			
 		private:
 			static Vector3 B(const Vector3& e, const Real& dtheta, const Vector3& x)
