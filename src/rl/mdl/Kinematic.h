@@ -44,8 +44,6 @@ namespace rl
 			
 			virtual ~Kinematic();
 			
-			Model* clone() const;
-			
 			/**
 			 * Calculate Jacobian matrix.
 			 * 

@@ -68,8 +68,6 @@ namespace rl
 			
 			bool areColliding(const ::std::size_t& i, const ::std::size_t& j) const;
 			
-			Model* clone() const;
-			
 			::rl::math::Vector generatePositionGaussian(const ::rl::math::Vector& rand, const ::rl::math::Vector& mean, const ::rl::math::Vector& sigma) const;
 			
 			::rl::math::Vector generatePositionUniform(const ::rl::math::Vector& rand) const;

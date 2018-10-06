@@ -171,12 +171,6 @@ namespace rl
 			return ::std::sqrt((J * J.transpose()).determinant());
 		}
 		
-		Model*
-		Kinematic::clone() const
-		{
-			return new Kinematic(*this);
-		}
-		
 		void
 		Kinematic::forwardAcceleration()
 		{

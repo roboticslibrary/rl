@@ -48,12 +48,6 @@ namespace rl
 		{
 		}
 		
-		Kinematics*
-		Puma::clone() const
-		{
-			return new Puma(*this);
-		}
-		
 		Puma::Arm
 		Puma::getArm() const
 		{

@@ -179,12 +179,6 @@ namespace rl
 			invMx = J * invM * J.transpose(); // TODO
 		}
 		
-		Model*
-		Dynamic::clone() const
-		{
-			return new Dynamic(*this);
-		}
-		
 		void
 		Dynamic::forwardDynamics()
 		{

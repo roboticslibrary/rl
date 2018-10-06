@@ -146,8 +146,6 @@ namespace rl
 			 */
 			void calculateOperationalMassMatrixInverse(const ::rl::math::Matrix& J, const ::rl::math::Matrix& invM, ::rl::math::Matrix& invMx) const;
 			
-			Model* clone() const;
-			
 			/**
 			 * Forward dynamics via articulated-body algorithm.
 			 * 

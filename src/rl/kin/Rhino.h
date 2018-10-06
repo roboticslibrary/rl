@@ -55,8 +55,6 @@ namespace rl
 			
 			virtual ~Rhino();
 			
-			virtual Kinematics* clone() const;
-			
 			Arm getArm() const;
 			
 			Elbow getElbow() const;

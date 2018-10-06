@@ -51,12 +51,6 @@ namespace rl
 			}
 		}
 		
-		Model*
-		Metric::clone() const
-		{
-			return new Metric(*this);
-		}
-		
 		::rl::math::Real
 		Metric::distance(const ::rl::math::Vector& q1, const ::rl::math::Vector& q2) const
 		{

@@ -106,12 +106,6 @@ namespace rl
 			}
 		}
 		
-		Model*
-		Model::clone() const
-		{
-			return new Model(*this);
-		}
-		
 		::rl::math::Vector
 		Model::generatePositionGaussian(const ::rl::math::Vector& rand, const ::rl::math::Vector& mean, const ::rl::math::Vector& sigma) const
 		{

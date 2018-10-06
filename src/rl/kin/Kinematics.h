@@ -69,8 +69,6 @@ namespace rl
 			 */
 			virtual void clamp(::rl::math::Vector& q) const;
 			
-			virtual Kinematics* clone() const;
-			
 			static Kinematics* create(const ::std::string& filename);
 			
 			/**

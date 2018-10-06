@@ -116,12 +116,6 @@ namespace rl
 		}
 		
 		Kinematics*
-		Kinematics::clone() const
-		{
-			return new Kinematics(*this);
-		}
-		
-		Kinematics*
 		Kinematics::create(const ::std::string& filename)
 		{
 			Kinematics* kinematics = nullptr;

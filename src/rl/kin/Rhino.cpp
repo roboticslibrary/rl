@@ -47,12 +47,6 @@ namespace rl
 		{
 		}
 		
-		Kinematics*
-		Rhino::clone() const
-		{
-			return new Rhino(*this);
-		}
-		
 		Rhino::Arm
 		Rhino::getArm() const
 		{
