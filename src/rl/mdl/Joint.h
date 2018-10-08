@@ -61,6 +61,8 @@ namespace rl
 			
 			virtual void generatePositionUniform(const ::rl::math::ConstVectorRef& rand, ::rl::math::VectorRef q) const;
 			
+			virtual void generatePositionUniform(const ::rl::math::ConstVectorRef& rand, const ::rl::math::ConstVectorRef& min, const ::rl::math::ConstVectorRef& max, ::rl::math::VectorRef q) const;
+			
 			const ::rl::math::Vector& getAcceleration() const;
 			
 			const ::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1>& getAccelerationUnits() const;

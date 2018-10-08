@@ -184,6 +184,15 @@ namespace rl
 			}
 		}
 		
+		void
+		Joint::generatePositionUniform(const ::rl::math::ConstVectorRef& rand, const ::rl::math::ConstVectorRef& min, const ::rl::math::ConstVectorRef& max, ::rl::math::VectorRef q) const
+		{
+			for (::std::size_t i = 0; i < q.size(); ++i)
+			{
+				q(i) = min(i) + rand(i) * (max(i) - min(i));
+			}
+		}
+		
 		const ::rl::math::Vector&
 		Joint::getAcceleration() const
 		{

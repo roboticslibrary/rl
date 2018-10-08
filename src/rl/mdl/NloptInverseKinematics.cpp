@@ -43,6 +43,8 @@ namespace rl
 			randDistribution(0, 1),
 			randEngine(::std::random_device()())
 		{
+			this->lb = this->kinematic->getMinimum();
+			this->ub = this->kinematic->getMaximum();
 		}
 		
 		NloptInverseKinematics::~NloptInverseKinematics()
@@ -110,6 +112,18 @@ namespace rl
 			return result;
 		}
 		
+		void
+		NloptInverseKinematics::setLowerBound(const ::rl::math::Vector& lb)
+		{
+			this->lb = lb;
+		}
+		
+		void
+		NloptInverseKinematics::setUpperBound(const ::rl::math::Vector& ub)
+		{
+			this->ub = ub;
+		}
+		
 		bool
 		NloptInverseKinematics::solve()
 		{
@@ -120,9 +134,6 @@ namespace rl
 				::nlopt_create(::NLOPT_LD_SLSQP, this->kinematic->getDofPosition()),
 				::nlopt_destroy
 			);
-			
-			::rl::math::Vector lb = this->kinematic->getMinimum();
-			::rl::math::Vector ub = this->kinematic->getMaximum();
 			
 			::std::vector<double> tolerance(this->kinematic->getDofPosition(), this->tolerance);
 			
@@ -136,12 +147,12 @@ namespace rl
 				return false;
 			}
 			
-			if (::nlopt_set_lower_bounds(opt.get(), lb.data()) < 0)
+			if (::nlopt_set_lower_bounds(opt.get(), this->lb.data()) < 0)
 			{
 				return false;
 			}
 			
-			if (::nlopt_set_upper_bounds(opt.get(), ub.data()) < 0)
+			if (::nlopt_set_upper_bounds(opt.get(), this->ub.data()) < 0)
 			{
 				return false;
 			}
@@ -172,7 +183,7 @@ namespace rl
 					rand(i) = this->randDistribution(this->randEngine);
 				}
 				
-				q = this->kinematic->generatePositionUniform(rand);
+				q = this->kinematic->generatePositionUniform(rand, this->lb, this->ub);
 				
 				remaining = ::std::chrono::duration<double>(this->duration - (::std::chrono::steady_clock::now() - start)).count();
 			}

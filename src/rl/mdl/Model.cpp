@@ -141,6 +141,24 @@ namespace rl
 		}
 		
 		::rl::math::Vector
+		Model::generatePositionUniform(const ::rl::math::Vector& rand, const ::rl::math::Vector& min, const ::rl::math::Vector& max) const
+		{
+			::rl::math::Vector q(this->getDofPosition());
+			
+			for (::std::size_t i = 0, j = 0, k = 0; i < this->joints.size(); k += this->joints[i]->getDof(), j += this->joints[i]->getDofPosition(), ++i)
+			{
+				this->joints[i]->generatePositionUniform(
+					rand.segment(k, this->joints[i]->getDof()),
+					min.segment(k, this->joints[i]->getDof()),
+					max.segment(k, this->joints[i]->getDof()),
+					q.segment(j, this->joints[i]->getDofPosition())
+				);
+			}
+			
+			return q;
+		}
+		
+		::rl::math::Vector
 		Model::getAcceleration() const
 		{
 			::rl::math::Vector qdd(this->getDof());

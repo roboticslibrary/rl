@@ -119,6 +119,17 @@ namespace rl
 		}
 		
 		void
+		SixDof::generatePositionUniform(const ::rl::math::ConstVectorRef& rand, const ::rl::math::ConstVectorRef& min, const ::rl::math::ConstVectorRef& max, ::rl::math::VectorRef q) const
+		{
+			for (::std::size_t i = 0; i < 3; ++i)
+			{
+				q(i) = min(i) + rand(i) * (max(i) - min(i));
+			}
+			
+			q.tail<4>() = ::rl::math::Quaternion::Random(rand.tail<3>()).coeffs();
+		}
+		
+		void
 		SixDof::interpolate(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& q2, const ::rl::math::Real& alpha, ::rl::math::VectorRef q) const
 		{
 			q.head<3>() = (1.0f - alpha) * q1.head<3>() + alpha * q2.head<3>();

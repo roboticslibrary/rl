@@ -89,6 +89,12 @@ namespace rl
 		}
 		
 		void
+		Spherical::generatePositionUniform(const ::rl::math::ConstVectorRef& rand, const ::rl::math::ConstVectorRef& min, const ::rl::math::ConstVectorRef& max, ::rl::math::VectorRef q) const
+		{
+			q = ::rl::math::Quaternion::Random(rand).coeffs();
+		}
+		
+		void
 		Spherical::interpolate(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& q2, const ::rl::math::Real& alpha, ::rl::math::VectorRef q) const
 		{
 			::Eigen::Map<const ::rl::math::Quaternion> quaternion1(q1.data());

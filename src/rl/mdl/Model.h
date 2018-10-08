@@ -72,6 +72,8 @@ namespace rl
 			
 			::rl::math::Vector generatePositionUniform(const ::rl::math::Vector& rand) const;
 			
+			::rl::math::Vector generatePositionUniform(const ::rl::math::Vector& rand, const ::rl::math::Vector& min, const ::rl::math::Vector& max) const;
+			
 			::rl::math::Vector getAcceleration() const;
 			
 			::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1> getAccelerationUnits() const;

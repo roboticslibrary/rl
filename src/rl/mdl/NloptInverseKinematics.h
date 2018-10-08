@@ -45,6 +45,10 @@ namespace rl
 			
 			virtual ~NloptInverseKinematics();
 			
+			void setLowerBound(const ::rl::math::Vector& lb);
+			
+			void setUpperBound(const ::rl::math::Vector& ub);
+			
 			bool solve();
 			
 			::rl::math::Real delta;
@@ -66,7 +70,11 @@ namespace rl
 			
 			::std::uniform_real_distribution< ::rl::math::Real> randDistribution;
 			
+			::rl::math::Vector lb;
+			
 			::std::mt19937 randEngine;
+			
+			::rl::math::Vector ub;
 		};
 	}
 }
