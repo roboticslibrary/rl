@@ -39,7 +39,7 @@ namespace rl
 			Gripper(),
 			in(),
 			out(),
-		    serial(
+			serial(
 				filename,
 				Serial::BAUDRATE_115200BPS,
 				Serial::DATABITS_8BITS,
