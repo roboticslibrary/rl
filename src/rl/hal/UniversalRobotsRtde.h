@@ -211,7 +211,7 @@ namespace rl
 			
 			::rl::math::Vector getJointCurrent() const;
 			
-			::std::int32_t getJointMode(const ::std::size_t& i) const;
+			JointMode getJointMode(const ::std::size_t& i) const;
 			
 			::rl::math::Vector getJointPosition() const;
 			

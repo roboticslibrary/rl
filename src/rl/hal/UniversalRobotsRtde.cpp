@@ -404,11 +404,11 @@ namespace rl
 			return i;
 		}
 		
-		::std::int32_t
+		UniversalRobotsRtde::JointMode
 		UniversalRobotsRtde::getJointMode(const ::std::size_t& i) const
 		{
 			assert(i < 6);
-			return this->output.jointMode[i];
+			return static_cast<JointMode>(this->output.jointMode[i]);
 		}
 		
 		::rl::math::Vector
