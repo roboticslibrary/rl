@@ -179,6 +179,12 @@ namespace rl
 			return i;
 		}
 		
+		UniversalRobotsRealtime::JointMode
+		UniversalRobotsRealtime::getJointMode(const ::std::size_t& i) const
+		{
+			return static_cast<JointMode>(static_cast<int>(this->in.jointModes[i]));
+		}
+		
 		::rl::math::Vector
 		UniversalRobotsRealtime::getJointPosition() const
 		{
@@ -203,6 +209,24 @@ namespace rl
 			}
 			
 			return qd;
+		}
+		
+		UniversalRobotsRealtime::ProgramState
+		UniversalRobotsRealtime::getProgramState() const
+		{
+			return static_cast<ProgramState>(static_cast<int>(this->in.programState));
+		}
+		
+		UniversalRobotsRealtime::RobotMode
+		UniversalRobotsRealtime::getRobotMode() const
+		{
+			return static_cast<RobotMode>(static_cast<int>(this->in.robotMode));
+		}
+		
+		UniversalRobotsRealtime::SafetyMode
+		UniversalRobotsRealtime::getSafetyMode() const
+		{
+			return static_cast<SafetyMode>(static_cast<int>(this->in.safetyMode));
 		}
 		
 		void

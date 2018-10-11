@@ -60,6 +60,59 @@ namespace rl
 			public JointVelocitySensor
 		{
 		public:
+			enum JointMode
+			{
+				JOINT_MODE_SHUTTING_DOWN = 236,
+				JOINT_MODE_PART_D_CALIBRATION = 237,
+				JOINT_MODE_BACKDRIVE = 238,
+				JOINT_MODE_POWER_OFF = 239,
+				JOINT_MODE_NOT_RESPONDING = 245,
+				JOINT_MODE_MOTOR_INITIALISATION = 246,
+				JOINT_MODE_BOOTING = 247,
+				JOINT_MODE_PART_D_CALIBRATION_ERROR = 248,
+				JOINT_MODE_BOOTLOADER = 249,
+				JOINT_MODE_CALIBRATION = 250,
+				JOINT_MODE_FAULT = 252,
+				JOINT_MODE_RUNNING = 253,
+				JOINT_MODE_IDLE_MODE = 255
+			};
+			
+			enum ProgramState
+			{
+				PROGRAM_STATE_STOPPING = 0,
+				PROGRAM_STATE_STOPPED = 1,
+				PROGRAM_STATE_PLAYING = 2,
+				PROGRAM_STATE_PAUSING = 3,
+				PROGRAM_STATE_PAUSED = 4,
+				PROGRAM_STATE_RESUMING = 5
+			};
+			
+			enum RobotMode
+			{
+				ROBOT_MODE_DISCONNECTED = 0,
+				ROBOT_MODE_CONFIRM_SAFETY = 1,
+				ROBOT_MODE_BOOTING = 2,
+				ROBOT_MODE_POWER_OFF = 3,
+				ROBOT_MODE_POWER_ON = 4,
+				ROBOT_MODE_IDLE = 5,
+				ROBOT_MODE_BACKDRIVE = 6,
+				ROBOT_MODE_RUNNING = 7,
+				ROBOT_MODE_UPDATING_FIRMWARE = 8
+			};
+			
+			enum SafetyMode
+			{
+				SAFETY_MODE_NORMAL = 1,
+				SAFETY_MODE_REDUCED = 2,
+				SAFETY_MODE_PROTECTIVE_STOP = 3,
+				SAFETY_MODE_RECOVERY = 4,
+				SAFETY_MODE_SAFEGUARD_STOP = 5,
+				SAFETY_MODE_SYSTEM_EMERGENCY_STOP = 6,
+				SAFETY_MODE_ROBOT_EMERGENCY_STOP = 7,
+				SAFETY_MODE_VIOLATION = 8,
+				SAFETY_MODE_FAULT = 9
+			};
+			
 			UniversalRobotsRealtime(const ::std::string& address);
 			
 			virtual ~UniversalRobotsRealtime();
@@ -88,9 +141,17 @@ namespace rl
 			
 			::rl::math::Vector getJointCurrent() const;
 			
+			JointMode getJointMode(const ::std::size_t& i) const;
+			
 			::rl::math::Vector getJointPosition() const;
 			
 			::rl::math::Vector getJointVelocity() const;
+			
+			ProgramState getProgramState() const;
+			
+			RobotMode getRobotMode() const;
+			
+			SafetyMode getSafetyMode() const;
 			
 			void open();
 			
