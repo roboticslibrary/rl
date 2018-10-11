@@ -229,53 +229,6 @@ namespace rl
 			this->socket.setOption(::rl::hal::Socket::OPTION_QUICKACK, 1);
 #endif // __APPLE__ || __QNX__ || WIN32
 			this->in.unserialize(buffer.data());
-			
-#if 0
-			std::cout << "messageSize: " << this->in.messageSize << std::endl;
-			std::cout << "time: " << this->in.time << std::endl;
-			std::cout << "qTarget[0]: " << this->in.qTarget[0] * rl::math::RAD2DEG << std::endl;
-			std::cout << "qTarget[1]: " << this->in.qTarget[1] * rl::math::RAD2DEG << std::endl;
-			std::cout << "qTarget[2]: " << this->in.qTarget[2] * rl::math::RAD2DEG << std::endl;
-			std::cout << "qTarget[3]: " << this->in.qTarget[3] * rl::math::RAD2DEG << std::endl;
-			std::cout << "qTarget[4]: " << this->in.qTarget[4] * rl::math::RAD2DEG << std::endl;
-			std::cout << "qTarget[5]: " << this->in.qTarget[5] * rl::math::RAD2DEG << std::endl;
-			std::cout << "qdTarget[0]: " << this->in.qdTarget[0] * rl::math::RAD2DEG << std::endl;
-			std::cout << "qdTarget[1]: " << this->in.qdTarget[1] * rl::math::RAD2DEG << std::endl;
-			std::cout << "qdTarget[2]: " << this->in.qdTarget[2] * rl::math::RAD2DEG << std::endl;
-			std::cout << "qdTarget[3]: " << this->in.qdTarget[3] * rl::math::RAD2DEG << std::endl;
-			std::cout << "qdTarget[4]: " << this->in.qdTarget[4] * rl::math::RAD2DEG << std::endl;
-			std::cout << "qdTarget[5]: " << this->in.qdTarget[5] * rl::math::RAD2DEG << std::endl;
-			std::cout << "qddTarget[0]: " << this->in.qddTarget[0] * rl::math::RAD2DEG << std::endl;
-			std::cout << "qddTarget[1]: " << this->in.qddTarget[1] * rl::math::RAD2DEG << std::endl;
-			std::cout << "qddTarget[2]: " << this->in.qddTarget[2] * rl::math::RAD2DEG << std::endl;
-			std::cout << "qddTarget[3]: " << this->in.qddTarget[3] * rl::math::RAD2DEG << std::endl;
-			std::cout << "qddTarget[4]: " << this->in.qddTarget[4] * rl::math::RAD2DEG << std::endl;
-			std::cout << "qddTarget[5]: " << this->in.qddTarget[5] * rl::math::RAD2DEG << std::endl;
-			std::cout << "iTarget[0]: " << this->in.iTarget[0] << std::endl;
-			std::cout << "iTarget[1]: " << this->in.iTarget[1] << std::endl;
-			std::cout << "iTarget[2]: " << this->in.iTarget[2] << std::endl;
-			std::cout << "iTarget[3]: " << this->in.iTarget[3] << std::endl;
-			std::cout << "iTarget[4]: " << this->in.iTarget[4] << std::endl;
-			std::cout << "iTarget[5]: " << this->in.iTarget[5] << std::endl;
-			std::cout << "mTarget[0]: " << this->in.mTarget[0] << std::endl;
-			std::cout << "mTarget[1]: " << this->in.mTarget[1] << std::endl;
-			std::cout << "mTarget[2]: " << this->in.mTarget[2] << std::endl;
-			std::cout << "mTarget[3]: " << this->in.mTarget[3] << std::endl;
-			std::cout << "mTarget[4]: " << this->in.mTarget[4] << std::endl;
-			std::cout << "mTarget[5]: " << this->in.mTarget[5] << std::endl;
-			std::cout << "qActual[0]: " << this->in.qActual[0] * rl::math::RAD2DEG << std::endl;
-			std::cout << "qActual[1]: " << this->in.qActual[1] * rl::math::RAD2DEG << std::endl;
-			std::cout << "qActual[2]: " << this->in.qActual[2] * rl::math::RAD2DEG << std::endl;
-			std::cout << "qActual[3]: " << this->in.qActual[3] * rl::math::RAD2DEG << std::endl;
-			std::cout << "qActual[4]: " << this->in.qActual[4] * rl::math::RAD2DEG << std::endl;
-			std::cout << "qActual[5]: " << this->in.qActual[5] * rl::math::RAD2DEG << std::endl;
-			std::cout << "qdActual[0]: " << this->in.qdActual[0] * rl::math::RAD2DEG << std::endl;
-			std::cout << "qdActual[1]: " << this->in.qdActual[1] * rl::math::RAD2DEG << std::endl;
-			std::cout << "qdActual[2]: " << this->in.qdActual[2] * rl::math::RAD2DEG << std::endl;
-			std::cout << "qdActual[3]: " << this->in.qdActual[3] * rl::math::RAD2DEG << std::endl;
-			std::cout << "qdActual[4]: " << this->in.qdActual[4] * rl::math::RAD2DEG << std::endl;
-			std::cout << "qdActual[5]: " << this->in.qdActual[5] * rl::math::RAD2DEG << std::endl;
-#endif
 		}
 		
 		void
