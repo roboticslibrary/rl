@@ -152,17 +152,17 @@ main(int argc, char** argv)
 		explorerSetup.startConfiguration = &start;
 		explorerSetup.startFrame = -1;
 		
-		planner.alpha = 0.01f;
+		planner.alpha = static_cast<rl::math::Real>(0.01);
 		planner.alternativeDistanceComputation = false;
 		planner.beta = 0;
-		planner.delta = 1.0f * rl::math::DEG2RAD;
-		planner.distanceWeight = 0.1f;
-		planner.epsilon = 1.0e-9f;
+		planner.delta = 1 * rl::math::DEG2RAD;
+		planner.distanceWeight = static_cast<rl::math::Real>(0.1);
+		planner.epsilon = static_cast<rl::math::Real>(1.0e-9);
 		planner.explorers.push_back(&explorer);
 		planner.explorersSetup.push_back(explorerSetup);
-		planner.gamma = 1.0f / 3.0f;
+		planner.gamma = static_cast<rl::math::Real>(1) / static_cast<rl::math::Real>(3);
 		planner.goal = &goal;
-		planner.goalEpsilon = 0.1f;
+		planner.goalEpsilon = static_cast<rl::math::Real>(0.1);
 		planner.goalEpsilonUseOrientation = false;
 		planner.max.x() = 30;
 		planner.max.y() = 30;

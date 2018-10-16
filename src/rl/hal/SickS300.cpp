@@ -124,7 +124,7 @@ namespace rl
 			
 			::rl::math::Vector distances(this->getDistancesCount());
 			
-			::rl::math::Real scale = 0.01f;
+			::rl::math::Real scale = static_cast< ::rl::math::Real>(0.01);
 			
 			for (::std::size_t i = 0; i < this->getDistancesCount(); ++i)
 			{
@@ -163,7 +163,7 @@ namespace rl
 			assert(this->isConnected());
 			assert(i < this->getDistancesCount());
 			
-			return 10.0f;
+			return 10;
 		}
 		
 		::rl::math::Real
@@ -172,7 +172,7 @@ namespace rl
 			assert(this->isConnected());
 			assert(i < this->getDistancesCount());
 			
-			return 0.0f;
+			return 0;
 		}
 		
 		::rl::math::Real
@@ -180,7 +180,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			return std::abs(this->getStopAngle() - this->getStartAngle()) / (this->getDistancesCount() - 1.0f);
+			return ::std::abs(this->getStopAngle() - this->getStartAngle()) / (this->getDistancesCount() - 1);
 		}
 		
 		::std::size_t
@@ -197,7 +197,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			return -45.0f * ::rl::math::DEG2RAD;
+			return -45 * ::rl::math::DEG2RAD;
 		}
 		
 		::rl::math::Real
@@ -205,7 +205,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			return 225.0f * ::rl::math::DEG2RAD;
+			return 225 * ::rl::math::DEG2RAD;
 		}
 		
 		::std::size_t

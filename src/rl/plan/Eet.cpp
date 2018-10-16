@@ -52,14 +52,14 @@ namespace rl
 	{
 		Eet::Eet() :
 			RrtCon(),
-			alpha(0.01f),
+			alpha(static_cast< ::rl::math::Real>(0.01)),
 			alternativeDistanceComputation(false),
 			beta(0),
-			distanceWeight(0.1f),
+			distanceWeight(static_cast< ::rl::math::Real>(0.1)),
 			explorers(),
 			explorersSetup(),
-			gamma(1.0f / 3.0f),
-			goalEpsilon(0.1f),
+			gamma(static_cast< ::rl::math::Real>(1) / static_cast< ::rl::math::Real>(3)),
+			goalEpsilon(static_cast< ::rl::math::Real>(0.1)),
 			goalEpsilonUseOrientation(false),
 			max(::rl::math::Vector3::Zero()),
 			min(::rl::math::Vector3::Zero()),
@@ -201,7 +201,7 @@ namespace rl
 			
 			this->model->step(*nearest->q, qdot, *expanded.q);
 			
-			if (this->model->getManipulabilityMeasure() < 1.0e-3f) // within singularity
+			if (this->model->getManipulabilityMeasure() < static_cast< ::rl::math::Real>(1.0e-3)) // within singularity
 			{
 				*expanded.q = this->sampler->generate(); // uniform sampling for singularities
 				::rl::math::Real tmp = this->model->distance(*nearest->q, *expanded.q);
@@ -412,11 +412,11 @@ namespace rl
 			
 			while ((::std::chrono::steady_clock::now() - this->time) < this->duration) // search until goal reached
 			{
-				if (sigma < 1.0f) // sample is within current sphere
+				if (sigma < 1) // sample is within current sphere
 				{
 					Neighbor nearest;
 					
-					if (path.end() == i + 1 && this->rand() < 0.5f) // within last sphere
+					if (path.end() == i + 1 && this->rand() < static_cast< ::rl::math::Real>(0.5)) // within last sphere
 					{
 						chosen = goal; // select goal position and orientation
 						nearest = this->nearest(this->tree[0], chosen); // nearest vertex in tree
@@ -479,8 +479,8 @@ namespace rl
 							}
 						}
 						
-						sigma *= 1.0f - this->alpha; // increase exploitation
-						sigma = ::std::max(static_cast< ::rl::math::Real>(0.1f), sigma);
+						sigma *= 1 - this->alpha; // increase exploitation
+						sigma = ::std::max(static_cast< ::rl::math::Real>(0.1), sigma);
 						
 						for (WorkspaceSphereVector::reverse_iterator k = ++path.rbegin(); k.base() != i; ++k) // search spheres backwards
 						{
@@ -494,7 +494,7 @@ namespace rl
 					}
 					else // expansion unsuccessful
 					{
-						sigma *= 1.0f + this->alpha; // decrease exploitation
+						sigma *= 1 + this->alpha; // decrease exploitation
 					}
 				}
 				else // perform backtracking to previous sphere

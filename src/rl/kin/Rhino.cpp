@@ -125,14 +125,14 @@ namespace rl
 			::rl::math::Real sinAlpha = -pz0 / Q;
 			::rl::math::Real cosAlpha = -r * arm / Q;
 			
-			::rl::math::Real cosBeta = (Q_2 + a2_2 - a3_2) / (2.0f * a2 * Q);
+			::rl::math::Real cosBeta = (Q_2 + a2_2 - a3_2) / (2 * a2 * Q);
 			
-			if (::std::abs(cosBeta) > 1.0f)
+			if (::std::abs(cosBeta) > 1)
 			{
 				return false;
 			}
 			
-			::rl::math::Real sinBeta = ::std::sqrt(1.0f - ::std::pow(cosBeta, 2));
+			::rl::math::Real sinBeta = ::std::sqrt(1 - ::std::pow(cosBeta, 2));
 			
 			::rl::math::Real s2 = sinAlpha * cosBeta + K * cosAlpha * sinBeta;
 			::rl::math::Real c2 = cosAlpha * cosBeta - K * sinAlpha * sinBeta;
@@ -141,7 +141,7 @@ namespace rl
 			::rl::math::Real theta2 = this->atan2(s2, c2) + static_cast< ::rl::math::Real>(M_PI_2);
 			
 			::rl::math::Real c3 = (a2_2 + a3_2 - Q_2) / (2 * a2 * a3);
-			::rl::math::Real s3 = K * ::std::sqrt(1.0f - ::std::pow(c3, 2));
+			::rl::math::Real s3 = K * ::std::sqrt(1 - ::std::pow(c3, 2));
 			
 			// elbow
 			::rl::math::Real theta3 = this->atan2(s3, c3) + static_cast< ::rl::math::Real>(M_PI);
@@ -175,11 +175,11 @@ namespace rl
 			
 			for (::std::size_t i = 0; i < this->getDof(); ++i)
 			{
-				q(i) = ::std::fmod(q(i), 2.0f * static_cast< ::rl::math::Real>(M_PI));
+				q(i) = ::std::fmod(q(i), 2 * static_cast< ::rl::math::Real>(M_PI));
 				
 				if (q(i) < this->joints[i]->min)
 				{
-					q(i) += 2.0f * static_cast< ::rl::math::Real>(M_PI);
+					q(i) += 2 * static_cast< ::rl::math::Real>(M_PI);
 					
 					if (q(i) < this->joints[i]->min || q(i) > this->joints[i]->max)
 					{
@@ -188,7 +188,7 @@ namespace rl
 				}
 				else if (q(i) > this->joints[i]->max)
 				{
-					q(i) -= 2.0f * static_cast< ::rl::math::Real>(M_PI);
+					q(i) -= 2 * static_cast< ::rl::math::Real>(M_PI);
 					
 					if (q(i) < this->joints[i]->min || q(i) > this->joints[i]->max)
 					{
@@ -217,11 +217,11 @@ namespace rl
 			::rl::math::Real tmp = s2 * a3 * c3 + c2 * a3 * s3 + a2 * s2;
 			::rl::math::Real tmp2 = a3 * s3;
 			
-			if (tmp < 0.0f)
+			if (tmp < 0)
 			{
 				arm = ARM_RIGHT;
 				
-				if (tmp2 < 0.0f)
+				if (tmp2 < 0)
 				{
 					elbow = ELBOW_ABOVE;
 				}
@@ -234,7 +234,7 @@ namespace rl
 			{
 				arm = ARM_LEFT;
 				
-				if (tmp2 < 0.0f)
+				if (tmp2 < 0)
 				{
 					elbow = ELBOW_BELOW;
 				}

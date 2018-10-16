@@ -1057,7 +1057,7 @@ namespace rl
 				{
 					// Useful positions and velocities to compute spline
 					vLin(i) = (q1(i) - q0(i)) / (tAccMax + tLinMax);
-					qBeforeLin(i) = (q1(i) + q0(i)) / 2.0f - (tLinMax / 2.0f) * vLin(i);
+					qBeforeLin(i) = (q1(i) + q0(i)) / 2 - (tLinMax / 2) * vLin(i);
 					aAcc(i) = vLin(i) / (tAccMax - tjFixed);
 					vAfterJerk(i) = aAcc(i) * tjFixed / 2;
 					xAfterJerk(i) = aAcc(i) * tjFixed * tjFixed / 6;

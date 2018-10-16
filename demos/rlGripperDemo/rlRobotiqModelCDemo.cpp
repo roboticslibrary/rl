@@ -49,9 +49,9 @@ main(int argc, char** argv)
 		}
 		while (!gripper.isRunning());
 		
-		gripper.setForcePercentage(0.1f);
-		gripper.setPositionPercentage(1.0f);
-		gripper.setSpeedPercentage(0.25f);
+		gripper.setForcePercentage(static_cast<rl::math::Real>(0.1));
+		gripper.setPositionPercentage(1);
+		gripper.setSpeedPercentage(static_cast<rl::math::Real>(0.25));
 		
 		do
 		{
@@ -66,9 +66,9 @@ main(int argc, char** argv)
 			std::cout << "position: " << gripper.getPositionPercentage() << " - current: " << gripper.getCurrent() << std::endl;
 		}
 		
-		gripper.setForcePercentage(0.1f);
-		gripper.setPositionPercentage(0.0f);
-		gripper.setSpeedPercentage(0.5f);
+		gripper.setForcePercentage(static_cast<rl::math::Real>(0.1));
+		gripper.setPositionPercentage(0);
+		gripper.setSpeedPercentage(static_cast<rl::math::Real>(0.5));
 		
 		do
 		{

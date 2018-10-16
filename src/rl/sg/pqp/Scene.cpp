@@ -117,7 +117,7 @@ namespace rl
 			{
 				Shape* shape1 = static_cast<Shape*>(shape);
 				
-				::rl::math::Real p[3] = {0.0f, 0.0f, 0.0f};
+				::rl::math::Real p[3] = {0, 0, 0};
 				
 				::PQP_Model model;
 				model.BeginModel(1);
@@ -125,9 +125,9 @@ namespace rl
 				model.EndModel();
 				
 				PQP_REAL rotation[3][3] = {
-					{1.0f, 0.0f, 0.0f},
-					{0.0f, 1.0f, 0.0f},
-					{0.0f, 0.0f, 1.0f}
+					{1, 0, 0},
+					{0, 1, 0},
+					{0, 0, 1}
 				};
 				
 				PQP_REAL translation[3] = {point(0), point(1), point(2)};

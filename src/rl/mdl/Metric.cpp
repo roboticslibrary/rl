@@ -75,8 +75,8 @@ namespace rl
 		{
 			assert(q1.size() == this->getDofPosition());
 			assert(q2.size() == this->getDofPosition());
-			assert(alpha >= 0.0f);
-			assert(alpha <= 1.0f);
+			assert(alpha >= 0);
+			assert(alpha <= 1);
 			assert(q.size() == this->getDofPosition());
 			
 			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDofPosition(), ++i)

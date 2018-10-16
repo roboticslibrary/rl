@@ -77,10 +77,10 @@ fromDelta(const Transform<Scalar, Dim, Mode, Options>& other, const Matrix<Scala
 		(*this)(2, 1) = other(2, 1) - delta(4) * other(0, 1) + delta(3) * other(1, 1);
 		(*this)(2, 2) = other(2, 2) - delta(4) * other(0, 2) + delta(3) * other(1, 2);
 		(*this)(2, 3) = other(2, 3) + delta(2);
-		(*this)(3, 0) = 0;
-		(*this)(3, 1) = 0;
-		(*this)(3, 2) = 0;
-		(*this)(3, 3) = 1;
+		(*this)(3, 0) = Scalar(0);
+		(*this)(3, 1) = Scalar(0);
+		(*this)(3, 2) = Scalar(0);
+		(*this)(3, 3) = Scalar(1);
 	}
 	else
 	{
@@ -130,9 +130,9 @@ getDelta() const
 	res(0) = (*this)(0, 3);
 	res(1) = (*this)(1, 3);
 	res(2) = (*this)(2, 3);
-	res(3) = ((*this)(2, 1) - (*this)(1, 2)) / 2.0f;
-	res(4) = ((*this)(0, 2) - (*this)(2, 0)) / 2.0f;
-	res(5) = ((*this)(1, 0) - (*this)(0, 1)) / 2.0f;
+	res(3) = ((*this)(2, 1) - (*this)(1, 2)) * Scalar(0.5);
+	res(4) = ((*this)(0, 2) - (*this)(2, 0)) * Scalar(0.5);
+	res(5) = ((*this)(1, 0) - (*this)(0, 1)) * Scalar(0.5);
 	
 	return res;
 }
@@ -142,22 +142,22 @@ inline
 void
 setDelta(const Matrix<Scalar, 6, 1>& delta)
 {
-	(*this)(0, 0) = 0;
+	(*this)(0, 0) = Scalar(0);
 	(*this)(0, 1) = -delta(5);
 	(*this)(0, 2) = delta(4);
 	(*this)(0, 3) = delta(0);
 	(*this)(1, 0) = delta(5);
-	(*this)(1, 1) = 0;
+	(*this)(1, 1) = Scalar(0);
 	(*this)(1, 2) = -delta(3);
 	(*this)(1, 3) = delta(1);
 	(*this)(2, 0) = -delta(4);
 	(*this)(2, 1) = delta(3);
-	(*this)(2, 2) = 0;
+	(*this)(2, 2) = Scalar(0);
 	(*this)(2, 3) = delta(2);
-	(*this)(3, 0) = 0;
-	(*this)(3, 1) = 0;
-	(*this)(3, 2) = 0;
-	(*this)(3, 3) = 1;
+	(*this)(3, 0) = Scalar(0);
+	(*this)(3, 1) = Scalar(0);
+	(*this)(3, 2) = Scalar(0);
+	(*this)(3, 3) = Scalar(1);
 }
 
 /**
@@ -182,9 +182,9 @@ toDelta(const Transform<Scalar, Dim, Mode, Options>& other, const bool& useAppro
 	
 	if (useApproximation)
 	{
-		res(3) = ((*this)(1, 0) * other(2, 0) - (*this)(2, 0) * other(1, 0) + (*this)(1, 1) * other(2, 1) - (*this)(2, 1) * other(1, 1) + (*this)(1, 2) * other(2, 2) - (*this)(2, 2) * other(1, 2)) / 2.0f;
-		res(4) = ((*this)(2, 0) * other(0, 0) - (*this)(0, 0) * other(2, 0) + (*this)(2, 1) * other(0, 1) - (*this)(0, 1) * other(2, 1) + (*this)(2, 2) * other(0, 2) - (*this)(0, 2) * other(2, 2)) / 2.0f;
-		res(5) = ((*this)(0, 0) * other(1, 0) - (*this)(1, 0) * other(0, 0) + (*this)(0, 1) * other(1, 1) - (*this)(1, 1) * other(0, 1) + (*this)(0, 2) * other(1, 2) - (*this)(1, 2) * other(0, 2)) / 2.0f;
+		res(3) = ((*this)(1, 0) * other(2, 0) - (*this)(2, 0) * other(1, 0) + (*this)(1, 1) * other(2, 1) - (*this)(2, 1) * other(1, 1) + (*this)(1, 2) * other(2, 2) - (*this)(2, 2) * other(1, 2)) * Scalar(0.5);
+		res(4) = ((*this)(2, 0) * other(0, 0) - (*this)(0, 0) * other(2, 0) + (*this)(2, 1) * other(0, 1) - (*this)(0, 1) * other(2, 1) + (*this)(2, 2) * other(0, 2) - (*this)(0, 2) * other(2, 2)) * Scalar(0.5);
+		res(5) = ((*this)(0, 0) * other(1, 0) - (*this)(1, 0) * other(0, 0) + (*this)(0, 1) * other(1, 1) - (*this)(1, 1) * other(0, 1) + (*this)(0, 2) * other(1, 2) - (*this)(1, 2) * other(0, 2)) * Scalar(0.5);
 	}
 	else
 	{

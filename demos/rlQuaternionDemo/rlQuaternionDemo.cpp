@@ -41,9 +41,9 @@ main(int argc, char** argv)
 {
 	{
 		rl::math::Matrix33 r1(
-			rl::math::AngleAxis(90.0f * rl::math::DEG2RAD, rl::math::Vector3::UnitZ()) *
-			rl::math::AngleAxis(0.0f * rl::math::DEG2RAD, rl::math::Vector3::UnitY()) *
-			rl::math::AngleAxis(0.0f * rl::math::DEG2RAD, rl::math::Vector3::UnitX())
+			rl::math::AngleAxis(90 * rl::math::DEG2RAD, rl::math::Vector3::UnitZ()) *
+			rl::math::AngleAxis(0 * rl::math::DEG2RAD, rl::math::Vector3::UnitY()) *
+			rl::math::AngleAxis(0 * rl::math::DEG2RAD, rl::math::Vector3::UnitX())
 		);
 		std::cout << "r1 = " << std::endl << r1 << std::endl;
 		
@@ -54,9 +54,9 @@ main(int argc, char** argv)
 		std::cout << "r1 = " << std::endl << r1 << std::endl;
 		
 		rl::math::Matrix33 r2(
-			rl::math::AngleAxis(-90.0f * rl::math::DEG2RAD, rl::math::Vector3::UnitZ()) *
-			rl::math::AngleAxis(0.0f * rl::math::DEG2RAD, rl::math::Vector3::UnitY()) *
-			rl::math::AngleAxis(0.0f * rl::math::DEG2RAD, rl::math::Vector3::UnitX())
+			rl::math::AngleAxis(-90 * rl::math::DEG2RAD, rl::math::Vector3::UnitZ()) *
+			rl::math::AngleAxis(0 * rl::math::DEG2RAD, rl::math::Vector3::UnitY()) *
+			rl::math::AngleAxis(0 * rl::math::DEG2RAD, rl::math::Vector3::UnitX())
 		);
 		std::cout << "r2 = " << std::endl << r2 << std::endl;
 		
@@ -82,9 +82,9 @@ main(int argc, char** argv)
 		std::cout << "(q1^2)^0.5 = " << q1.pow(2).pow(0.5).coeffs().transpose() << std::endl;
 		
 		rl::math::Vector3 omega(
-			45.0f * rl::math::DEG2RAD,
-			90.0f * rl::math::DEG2RAD,
-			135.0f * rl::math::DEG2RAD
+			45 * rl::math::DEG2RAD,
+			90 * rl::math::DEG2RAD,
+			135 * rl::math::DEG2RAD
 		);
 		std::cout << "omega = " << omega.transpose() * rl::math::RAD2DEG << std::endl;
 		
@@ -95,9 +95,9 @@ main(int argc, char** argv)
 		std::cout << "omega = " << omega.transpose() * rl::math::RAD2DEG << std::endl;
 		
 		rl::math::Vector3 omegad(
-			450.0f * rl::math::DEG2RAD,
-			900.0f * rl::math::DEG2RAD,
-			1350.0f * rl::math::DEG2RAD
+			450 * rl::math::DEG2RAD,
+			900 * rl::math::DEG2RAD,
+			1350 * rl::math::DEG2RAD
 		);
 		std::cout << "omegad = " << omegad.transpose() * rl::math::RAD2DEG << std::endl;
 		
@@ -110,24 +110,24 @@ main(int argc, char** argv)
 	
 	{
 		rl::math::Quaternion q0(
-			rl::math::AngleAxis(90.0f * rl::math::DEG2RAD, rl::math::Vector3::UnitZ()) *
-			rl::math::AngleAxis(0.0f * rl::math::DEG2RAD, rl::math::Vector3::UnitY()) *
-			rl::math::AngleAxis(0.0f * rl::math::DEG2RAD, rl::math::Vector3::UnitX())
+			rl::math::AngleAxis(90 * rl::math::DEG2RAD, rl::math::Vector3::UnitZ()) *
+			rl::math::AngleAxis(0 * rl::math::DEG2RAD, rl::math::Vector3::UnitY()) *
+			rl::math::AngleAxis(0 * rl::math::DEG2RAD, rl::math::Vector3::UnitX())
 		);
 		rl::math::Quaternion q1(
-			rl::math::AngleAxis(45.0f * rl::math::DEG2RAD, rl::math::Vector3::UnitZ()) *
-			rl::math::AngleAxis(60.0f * rl::math::DEG2RAD, rl::math::Vector3::UnitY()) *
-			rl::math::AngleAxis(45.0f * rl::math::DEG2RAD, rl::math::Vector3::UnitX())
+			rl::math::AngleAxis(45 * rl::math::DEG2RAD, rl::math::Vector3::UnitZ()) *
+			rl::math::AngleAxis(60 * rl::math::DEG2RAD, rl::math::Vector3::UnitY()) *
+			rl::math::AngleAxis(45 * rl::math::DEG2RAD, rl::math::Vector3::UnitX())
 		);
 		rl::math::Quaternion q2(
-			rl::math::AngleAxis(45.0f * rl::math::DEG2RAD, rl::math::Vector3::UnitZ()) *
-			rl::math::AngleAxis(10.0f * rl::math::DEG2RAD, rl::math::Vector3::UnitY()) *
-			rl::math::AngleAxis(30.0f * rl::math::DEG2RAD, rl::math::Vector3::UnitX())
+			rl::math::AngleAxis(45 * rl::math::DEG2RAD, rl::math::Vector3::UnitZ()) *
+			rl::math::AngleAxis(10 * rl::math::DEG2RAD, rl::math::Vector3::UnitY()) *
+			rl::math::AngleAxis(30 * rl::math::DEG2RAD, rl::math::Vector3::UnitX())
 		);
 		rl::math::Quaternion q3(
-			rl::math::AngleAxis(90.0f * rl::math::DEG2RAD, rl::math::Vector3::UnitZ()) *
-			rl::math::AngleAxis(10.0f * rl::math::DEG2RAD, rl::math::Vector3::UnitY()) *
-			rl::math::AngleAxis(0.0f * rl::math::DEG2RAD, rl::math::Vector3::UnitX())
+			rl::math::AngleAxis(90 * rl::math::DEG2RAD, rl::math::Vector3::UnitZ()) *
+			rl::math::AngleAxis(10 * rl::math::DEG2RAD, rl::math::Vector3::UnitY()) *
+			rl::math::AngleAxis(0 * rl::math::DEG2RAD, rl::math::Vector3::UnitX())
 		);
 		
 		rl::math::Vector3 p(1, 0, 0);
@@ -238,9 +238,9 @@ main(int argc, char** argv)
 	{
 		std::vector<rl::math::Quaternion> y;
 		y.push_back(rl::math::Quaternion(1, 0, 0, 0));
-		y.push_back(rl::math::Quaternion(0.5f * std::sqrt(2.0f), 0, -0.5f * std::sqrt(2.0f), 0));
-		y.push_back(rl::math::Quaternion(0.5, -0.5, -0.5, 0.5));
-		y.push_back(rl::math::Quaternion(0.5f * std::sqrt(2.0f), 0, 0, 0.5f * std::sqrt(2.0f)));
+		y.push_back(rl::math::Quaternion(static_cast<rl::math::Real>(0.5) * std::sqrt(static_cast<rl::math::Real>(2)), 0, -static_cast<rl::math::Real>(0.5) * std::sqrt(static_cast<rl::math::Real>(2)), 0));
+		y.push_back(rl::math::Quaternion(static_cast<rl::math::Real>(0.5), -static_cast<rl::math::Real>(0.5), -static_cast<rl::math::Real>(0.5), static_cast<rl::math::Real>(0.5)));
+		y.push_back(rl::math::Quaternion(static_cast<rl::math::Real>(0.5) * std::sqrt(static_cast<rl::math::Real>(2)), 0, 0, static_cast<rl::math::Real>(0.5) * std::sqrt(static_cast<rl::math::Real>(2))));
 		y.push_back(rl::math::Quaternion(1, 0, 0, 0));
 		
 		std::vector<rl::math::Real> x;

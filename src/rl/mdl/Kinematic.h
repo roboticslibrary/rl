@@ -109,7 +109,7 @@ namespace rl
 			 * @pre calculateJacobian()
 			 * @post getJacobianInverse()
 			 */
-			void calculateJacobianInverse(const ::rl::math::Real& lambda = 0.0f, const bool& doSvd = true);
+			void calculateJacobianInverse(const ::rl::math::Real& lambda = 0, const bool& doSvd = true);
 			
 			/**
 			 * Calculate Jacobian matrix inverse.
@@ -125,7 +125,7 @@ namespace rl
 			 * @pre setPosition()
 			 * @pre calculateJacobian()
 			 */
-			void calculateJacobianInverse(const ::rl::math::Matrix& J, ::rl::math::Matrix& invJ, const ::rl::math::Real& lambda = 0.0f, const bool& doSvd = true) const;
+			void calculateJacobianInverse(const ::rl::math::Matrix& J, ::rl::math::Matrix& invJ, const ::rl::math::Real& lambda = 0, const bool& doSvd = true) const;
 			
 			/**
 			 * Calculate manipulability measure.

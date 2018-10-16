@@ -249,11 +249,11 @@ namespace rl
 			// fit into min max angles
 			for (::std::size_t i = 0; i < this->getDof(); ++i)
 			{
-				q(i) = ::std::fmod(q(i), 2.0f * static_cast< ::rl::math::Real>(M_PI));
+				q(i) = ::std::fmod(q(i), 2 * static_cast< ::rl::math::Real>(M_PI));
 				
 				if (q(i) < this->joints[i]->min)
 				{
-					q(i) += 2.0f * static_cast< ::rl::math::Real>(M_PI);
+					q(i) += 2 * static_cast< ::rl::math::Real>(M_PI);
 					
 					if (q(i) < this->joints[i]->min || q(i) > this->joints[i]->max)
 					{
@@ -262,7 +262,7 @@ namespace rl
 				}
 				else if (q(i) > this->joints[i]->max)
 				{
-					q(i) -= 2.0f * static_cast< ::rl::math::Real>(M_PI);
+					q(i) -= 2 * static_cast< ::rl::math::Real>(M_PI);
 					
 					if (q(i) < this->joints[i]->min || q(i) > this->joints[i]->max)
 					{
@@ -277,7 +277,7 @@ namespace rl
 		bool
 		Puma::isSingular() const
 		{
-			return (::std::abs(this->jacobian.determinant()) > 1.0e-9f) ? false : true ;
+			return (::std::abs(this->jacobian.determinant()) > static_cast< ::rl::math::Real>(1.0e-9)) ? false : true ;
 		}
 		
 		void
@@ -292,11 +292,11 @@ namespace rl
 				myq(i) = q(i) + this->joints[i]->theta + this->joints[i]->offset;
 				myq(i) = ::std::fmod(
 					myq(i) + static_cast< ::rl::math::Real>(M_PI),
-					2.0f * static_cast< ::rl::math::Real>(M_PI)
+					2 * static_cast< ::rl::math::Real>(M_PI)
 				) - static_cast< ::rl::math::Real>(M_PI);
 			}
 			
-			if (myq(4) < 0.0f)
+			if (myq(4) < 0)
 			{
 				wrist = WRIST_FLIP;
 			}
@@ -321,11 +321,11 @@ namespace rl
 			// y_2 component of wrist location
 			::rl::math::Real tmp2 = a3 * s3 + d4 * c3;
 			
-			if (tmp < 0.0f)
+			if (tmp < 0)
 			{
 				arm = ARM_LEFT;
 				
-				if (tmp2 < 0.0f)
+				if (tmp2 < 0)
 				{
 					elbow = ELBOW_BELOW;
 				}
@@ -338,7 +338,7 @@ namespace rl
 			{
 				arm = ARM_RIGHT;
 				
-				if (tmp2 < 0.0f)
+				if (tmp2 < 0)
 				{
 					elbow = ELBOW_ABOVE;
 				}

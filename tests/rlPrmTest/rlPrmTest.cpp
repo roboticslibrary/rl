@@ -142,7 +142,7 @@ main(int argc, char** argv)
 		
 		sampler.model = &model;
 		
-		verifier.delta = 1.0f * rl::math::DEG2RAD;
+		verifier.delta = 1 * rl::math::DEG2RAD;
 		verifier.model = &model;
 		
 		rl::math::Vector start(kinematics->getDof());

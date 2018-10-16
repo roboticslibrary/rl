@@ -61,7 +61,7 @@ namespace rl
 			{
 				Sample sample(this->model->getDofPosition());
 				Sample bestSample(this->model->getDofPosition());
-				::rl::math::Real pBest = -1.0f;
+				::rl::math::Real pBest = -1;
 				
 				// From numSamples samples, get the one with the best probability for being free.
 				for (::std::size_t j = 0; j < this->numSamples; ++j)
@@ -81,7 +81,7 @@ namespace rl
 					}
 #else
 					// This works better in our examples. Here we define entropy by using samples where we are unsure, if they are colliding.
-					if (::std::fabs(pFree - 0.5f) < ::std::fabs(pBest - 0.5f))
+					if (::std::fabs(pFree - static_cast< ::rl::math::Real>(0.5)) < ::std::fabs(pBest - static_cast< ::rl::math::Real>(0.5)))
 					{   
 						pBest = pFree;
 						bestSample = sample;
@@ -116,7 +116,7 @@ namespace rl
 #else
 			// here we always pick a component containing the beginning or end vertex
 			// this prevents roadmap building in remote areas.
-			::std::size_t randIndex1 = static_cast< ::std::size_t>(::std::floor(this->rand() * 2.0f));
+			::std::size_t randIndex1 = static_cast< ::std::size_t>(::std::floor(this->rand() * 2));
 #endif
 			::std::size_t randIndex2 = static_cast< ::std::size_t>(::std::floor(this->rand() * this->getNumVertices()));
 			
@@ -140,12 +140,12 @@ namespace rl
 			while (boost::same_component(sample1, sample2, this->ds));
 			
 			// The point in the middle of the two samples.
-			::rl::math::Vector midPoint = 0.5f * (*this->graph[sample1].q + *this->graph[sample2].q);
+			::rl::math::Vector midPoint = static_cast< ::rl::math::Real>(0.5) * (*this->graph[sample1].q + *this->graph[sample2].q);
 			
 			// add variance drawn randomly from [-variance, variance] to the point
 			for (::std::ptrdiff_t i = 0; i < midPoint.size(); ++i)
 			{
-				q[i] = midPoint[i] + (2.0f * this->rand() - 1.0f) * this->variance;
+				q[i] = midPoint[i] + (2 * this->rand() - 1) * this->variance;
 			}
 			
 		}
@@ -179,7 +179,7 @@ namespace rl
 				queue.pop(); 
 			}
 			
-			return 1.0f - static_cast< ::rl::math::Real>(collisionCount) / static_cast< ::rl::math::Real>(count);
+			return 1 - static_cast< ::rl::math::Real>(collisionCount) / static_cast< ::rl::math::Real>(count);
 		}
 		
 		::std::string

@@ -80,10 +80,10 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	server(new Server(this)),
 	serverConnectionStatus(nullptr),
 	simulationDampingFactor(nullptr),
-	simulationDampingValue(0.001f),
+	simulationDampingValue(static_cast<rl::math::Real>(0.001)),
 	simulationDockWidget(new QDockWidget(this)),
 	simulationGravity(nullptr),
-	simulationGravityValue(9.81f),
+	simulationGravityValue(rl::math::GRAVITY),
 	simulationIsRunning(true),
 	simulationPause(nullptr),
 	simulationReset(nullptr),
@@ -96,7 +96,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	simulationStepsPerFrame(50),
 	simulationTime(nullptr),
 	simulationTimeElapsed(0),
-	simulationTimeStep(0.001f),
+	simulationTimeStep(static_cast<rl::math::Real>(0.001)),
 	timer(),
 	torqueDelegate(nullptr),
 	torqueDockWidget(new QDockWidget(this)),
@@ -269,7 +269,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	simulationSettingsLayout->addWidget(new QLabel("Gravity [m/s^2]", simulationSettings), 0, 0);
 	simulationSettingsLayout->addWidget(simulationGravity, 0, 1);
 	simulationGravity->setRange(0, 100);
-	simulationGravity->setSingleStep(0.1f);
+	simulationGravity->setSingleStep(0.1);
 	simulationGravity->setDecimals(2);
 	simulationGravity->setValue(simulationGravityValue);
 	QObject::connect(simulationGravity, SIGNAL(valueChanged(double)), this, SLOT(changeSimulationGravity(double)));
@@ -277,7 +277,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	simulationSettingsLayout->addWidget(new QLabel("Damping Factor", simulationSettings), 1, 0);
 	simulationSettingsLayout->addWidget(simulationDampingFactor, 1, 1);
 	simulationDampingFactor->setRange(0, 1.5);
-	simulationDampingFactor->setSingleStep(0.0001f);
+	simulationDampingFactor->setSingleStep(0.0001);
 	simulationDampingFactor->setDecimals(5);
 	simulationDampingFactor->setValue(simulationDampingValue);
 	simulationDampingFactor->setToolTip(QString("0.0 gives a frictionless system, 1.0 damps almost all motion; try 0.001--0.005 for typical viscous friction"));

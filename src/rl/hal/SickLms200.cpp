@@ -312,10 +312,10 @@ namespace rl
 			switch (this->data[6] & 192)
 			{
 			case 0:
-				scale = 0.01f;
+				scale = static_cast< ::rl::math::Real>(0.01);
 				break;
 			case 64:
-				scale = 0.001f;
+				scale = static_cast< ::rl::math::Real>(0.001);
 				break;
 			default:
 				throw DeviceException("unknown scale");
@@ -501,7 +501,7 @@ namespace rl
 				break;
 			}
 			
-			return 0.0f;
+			return 0;
 		}
 		
 		::rl::math::Real
@@ -510,7 +510,7 @@ namespace rl
 			assert(this->isConnected());
 			assert(i < this->getDistancesCount());
 			
-			return 0.0f;
+			return 0;
 		}
 		
 		SickLms200::Measuring
@@ -537,21 +537,21 @@ namespace rl
 			switch (this->variant)
 			{
 			case VARIANT_100_25:
-				return 0.25f * ::rl::math::DEG2RAD;
+				return static_cast< ::rl::math::Real>(0.25) * ::rl::math::DEG2RAD;
 				break;
 			case VARIANT_100_50:
 			case VARIANT_180_50:
-				return 0.5f * ::rl::math::DEG2RAD;
+				return static_cast< ::rl::math::Real>(0.5) * ::rl::math::DEG2RAD;
 				break;
 			case VARIANT_100_100:
 			case VARIANT_180_100:
-				return 1.0f * ::rl::math::DEG2RAD;
+				return 1 * ::rl::math::DEG2RAD;
 				break;
 			default:
 				break;
 			}
 			
-			return 0.0f;
+			return 0;
 		}
 		
 		::rl::math::Real
@@ -564,17 +564,17 @@ namespace rl
 			case VARIANT_100_25:
 			case VARIANT_100_50:
 			case VARIANT_100_100:
-				return 40.0f * ::rl::math::DEG2RAD;
+				return 40 * ::rl::math::DEG2RAD;
 				break;
 			case VARIANT_180_50:
 			case VARIANT_180_100:
-				return 0.0f;
+				return 0;
 				break;
 			default:
 				break;
 			}
 			
-			return 0.0f;
+			return 0;
 		}
 		
 		::rl::math::Real
@@ -587,17 +587,17 @@ namespace rl
 			case VARIANT_100_25:
 			case VARIANT_100_50:
 			case VARIANT_100_100:
-				return 140.0f * ::rl::math::DEG2RAD;
+				return 140 * ::rl::math::DEG2RAD;
 				break;
 			case VARIANT_180_50:
 			case VARIANT_180_100:
-				return 180.0f * ::rl::math::DEG2RAD;
+				return 180 * ::rl::math::DEG2RAD;
 				break;
 			default:
 				break;
 			}
 			
-			return 0.0f;
+			return 0;
 		}
 		
 		::std::string

@@ -35,7 +35,7 @@ namespace rl
 			InverseKinematics(kinematic),
 			delta(::std::numeric_limits< ::rl::math::Real>::infinity()),
 			duration(::std::chrono::milliseconds(100)),
-			epsilon(1.0e-3f),
+			epsilon(static_cast< ::rl::math::Real>(1.0e-3)),
 			iterations(1000),
 			svd(true),
 			transpose(false),

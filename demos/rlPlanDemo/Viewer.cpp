@@ -43,8 +43,8 @@
 
 Viewer::Viewer(QWidget* parent, Qt::WindowFlags f) :
 	QWidget(parent, f),
-	delta(1.0f),
-	deltaSwept(100.0f),
+	delta(1),
+	deltaSwept(100),
 	model(nullptr),
 	sceneGroup(new SoVRMLGroup()),
 	viewer(new SoQtExaminerViewer(this, nullptr, true, SoQtFullViewer::BUILD_POPUP)),

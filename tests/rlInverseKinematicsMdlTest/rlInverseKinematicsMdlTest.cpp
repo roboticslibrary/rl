@@ -72,7 +72,7 @@ main(int argc, char** argv)
 		rl::mdl::NloptInverseKinematics ik(kinematics);
 #else
 		rl::mdl::JacobianInverseKinematics ik(kinematics);
-		ik.delta = 0.5f;
+		ik.delta = static_cast<rl::math::Real>(0.5);
 #endif
 		
 		for (n = 0, wrongs = 0, wrongT = 0, ngotinverse = 0; n < nTests && wrongT < 100 && wrongs < 100; ++n)

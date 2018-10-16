@@ -35,7 +35,7 @@ namespace rl
 	{
 		RrtGoalBias::RrtGoalBias() :
 			Rrt(),
-			probability(0.05f),
+			probability(static_cast< ::rl::math::Real>(0.05)),
 			randDistribution(0, 1),
 			randEngine(::std::random_device()())
 		{

@@ -232,7 +232,7 @@ OperationalModel::setData(const QModelIndex& index, const QVariant& value, int r
 		MainWindow::instance()->kinematicModels[this->id]->getPosition(q);
 		rl::math::Vector qInv(MainWindow::instance()->kinematicModels[this->id]->getDof());
 		
-		if (MainWindow::instance()->kinematicModels[this->id]->inversePosition(transform, qInv, index.row(), 1.0f))
+		if (MainWindow::instance()->kinematicModels[this->id]->inversePosition(transform, qInv, index.row(), 1))
 		{
 			MainWindow::instance()->kinematicModels[this->id]->setPosition(qInv);
 			MainWindow::instance()->kinematicModels[this->id]->updateFrames();

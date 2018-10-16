@@ -55,9 +55,9 @@ main(int argc, char** argv)
 		std::cout << " ";
 		std::cout << x;
 		std::cout << " ";
-		std::cout << v * 100.0f;
+		std::cout << v * 100;
 		std::cout << " ";
-		std::cout << a * 1000.0f;
+		std::cout << a * 1000;
 		std::cout << std::endl;
 		interpolator.x0 = x;
 		interpolator.v0 = v;

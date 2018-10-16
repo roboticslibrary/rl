@@ -149,9 +149,9 @@ main(int argc, char** argv)
 			rl::math::ArrayX maxAcc = f.derivative().derivative().getAbsoluteMaximum();
 			rl::math::ArrayX maxJerk = f.derivative().derivative().derivative().getAbsoluteMaximum();
 			
-			if ((maxVel / vmax > 1.001f).any() ||
-				(maxAcc / amax > 1.001f).any() ||
-				(maxJerk / jmax > 1.001f).any())
+			if ((maxVel / vmax > static_cast<rl::math::Real>(1.001)).any() ||
+				(maxAcc / amax > static_cast<rl::math::Real>(1.001)).any() ||
+				(maxJerk / jmax > static_cast<rl::math::Real>(1.001)).any())
 			{
 				std::cerr << "rlTrapeziodalAccelerationTest must not exceed given bounds (by more than 1e-3)." << std::endl;
 				std::cout << "Time: " << f.duration() << std::endl;

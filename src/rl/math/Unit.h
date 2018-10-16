@@ -182,36 +182,36 @@ namespace rl
 			UNIT_NEWTON_METER
 		};
 		
-		static const Real DEG2RAD = static_cast<Real>(M_PI) / 180.0f;
+		static const Real DEG2RAD = static_cast<Real>(M_PI) / static_cast<Real>(180);
 		
-		static const Real GIGA2UNIT = 1.0e+9f;
+		static const Real GIGA2UNIT = static_cast<Real>(1.0e+9);
 		
 		/** [m &middot; s<sup>-2</sup>] */
-		static const Real GRAVITY = 9.80665f;
+		static const Real GRAVITY = static_cast<Real>(9.80665);
 		
-		static const Real KILO2UNIT = 1.0e+3f;
+		static const Real KILO2UNIT = static_cast<Real>(1.0e+3);
 		
-		static const Real MEGA2UNIT = 1.0e+6f;
+		static const Real MEGA2UNIT = static_cast<Real>(1.0e+6);
 		
-		static const Real MICRO2UNIT = 1.0e-6f;
+		static const Real MICRO2UNIT = static_cast<Real>(1.0e-6);
 		
-		static const Real MILLI2UNIT = 1.0e-3f;
+		static const Real MILLI2UNIT = static_cast<Real>(1.0e-3);
 		
-		static const Real NANO2UNIT = 1.0e-9f;
+		static const Real NANO2UNIT = static_cast<Real>(1.0e-9);
 		
-		static const Real RAD2DEG = 180.0f / static_cast<Real>(M_PI);
+		static const Real RAD2DEG = static_cast<Real>(180) / static_cast<Real>(M_PI);
 		
-		static const Real UNIT2GIGA = 1.0e-9f;
+		static const Real UNIT2GIGA = static_cast<Real>(1.0e-9);
 		
-		static const Real UNIT2KILO = 1.0e-3f;
+		static const Real UNIT2KILO = static_cast<Real>(1.0e-3);
 		
-		static const Real UNIT2MEGA = 1.0e-6f;
+		static const Real UNIT2MEGA = static_cast<Real>(1.0e-6);
 		
-		static const Real UNIT2MICRO = 1.0e+6f;
+		static const Real UNIT2MICRO = static_cast<Real>(1.0e+6);
 		
-		static const Real UNIT2MILLI = 1.0e+3f;
+		static const Real UNIT2MILLI = static_cast<Real>(1.0e+3);
 		
-		static const Real UNIT2NANO = 1.0e+9f;
+		static const Real UNIT2NANO = static_cast<Real>(1.0e+9);
 	}
 }
 

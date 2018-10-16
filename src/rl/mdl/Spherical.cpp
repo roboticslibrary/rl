@@ -105,7 +105,7 @@ namespace rl
 		bool
 		Spherical::isValid(const ::rl::math::ConstVectorRef& q) const
 		{
-			return ::Eigen::internal::isApprox(q.norm(), static_cast< ::rl::math::Real>(1), 1.0e-3f);
+			return ::Eigen::internal::isApprox(q.norm(), static_cast< ::rl::math::Real>(1), static_cast< ::rl::math::Real>(1.0e-3));
 		}
 		
 		void

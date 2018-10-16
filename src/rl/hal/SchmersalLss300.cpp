@@ -122,7 +122,7 @@ namespace rl
 			
 			::rl::math::Vector distances(this->getDistancesCount());
 			
-			::rl::math::Real scale = 0.01f;
+			::rl::math::Real scale = static_cast< ::rl::math::Real>(0.01);
 			::std::uint16_t count = Endian::hostWord(this->data[8], this->data[7]);
 			::std::uint8_t mask = 0x1F;
 			
@@ -153,7 +153,7 @@ namespace rl
 		{
 			assert(i < this->getDistancesCount());
 			
-			return 60.0f;
+			return 60;
 		}
 		
 		::rl::math::Real
@@ -161,7 +161,7 @@ namespace rl
 		{
 			assert(i < this->getDistancesCount());
 			
-			return 0.0f;
+			return 0;
 		}
 		
 		SchmersalLss300::Monitoring
@@ -177,7 +177,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			return 0.36f * ::rl::math::DEG2RAD;
+			return static_cast< ::rl::math::Real>(0.36) * ::rl::math::DEG2RAD;
 		}
 		
 		::rl::math::Real
@@ -185,7 +185,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			return 0.0f;
+			return 0;
 		}
 		
 		::rl::math::Real
@@ -193,7 +193,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			return 180.0f * ::rl::math::DEG2RAD;
+			return 180 * ::rl::math::DEG2RAD;
 		}
 		
 		::std::string

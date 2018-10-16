@@ -102,9 +102,9 @@ namespace rl
 					}
 				}
 				
-				rotation[3] = 0.0f;
-				rotation[7] = 0.0f;
-				rotation[11] = 0.0f;
+				rotation[3] = 0;
+				rotation[7] = 0;
+				rotation[11] = 0;
 				
 				::dBodySetRotation(this->body, rotation);
 			}

@@ -213,7 +213,7 @@ namespace rl
 				::rl::math::Vector& q,
 				const ::std::size_t& leaf = 0,
 				const ::rl::math::Real& delta = ::std::numeric_limits< ::rl::math::Real>::infinity(),
-				const ::rl::math::Real& epsilon = 1.0e-3f,
+				const ::rl::math::Real& epsilon = static_cast< ::rl::math::Real>(1.0e-3),
 				const ::std::size_t& iterations = 1000
 			);
 			
@@ -304,7 +304,7 @@ namespace rl
 			 * 
 			 * @pre updateJacobian()
 			 */
-			virtual void updateJacobianInverse(const ::rl::math::Real& lambda = 0.0f, const bool& doSvd = true);
+			virtual void updateJacobianInverse(const ::rl::math::Real& lambda = 0, const bool& doSvd = true);
 			
 			::rl::math::Transform& world();
 			

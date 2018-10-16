@@ -75,7 +75,7 @@ main(int argc, char** argv)
 			std::cout << i << " " << xdot.transpose() << std::endl;
 		}
 		
-		kinematics->updateJacobianInverse(1.0e-9f);
+		kinematics->updateJacobianInverse(static_cast<rl::math::Real>(1.0e-9));
 		
 		std::cout << "invJ=" << std::endl << kinematics->getJacobianInverse() << std::endl;
 		

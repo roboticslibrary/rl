@@ -75,11 +75,11 @@ namespace rl
 				{
 					if (q1(0) > q2(0))
 					{
-						q(0) = (1.0f - alpha) * q1(0) + alpha * (q2(0) + range);
+						q(0) = (1 - alpha) * q1(0) + alpha * (q2(0) + range);
 					}
 					else
 					{
-						q(0) = (1.0f - alpha) * (q1(0) + range) + alpha * q2(0);
+						q(0) = (1 - alpha) * (q1(0) + range) + alpha * q2(0);
 					}
 					
 					while (q(0) > this->max(0))
@@ -94,27 +94,27 @@ namespace rl
 				}
 				else
 				{
-					q(0) = (1.0f - alpha) * q1(0) + alpha * q2(0);
+					q(0) = (1 - alpha) * q1(0) + alpha * q2(0);
 				}
 			}
 			else
 			{
-				q(0) = (1.0f - alpha) * q1(0) + alpha * q2(0);
+				q(0) = (1 - alpha) * q1(0) + alpha * q2(0);
 			}
 		}
 		
 		void
 		Revolute::normalize(::rl::math::VectorRef q) const
 		{
-			q(0) = ::std::fmod(q(0), 2.0f * static_cast< ::rl::math::Real>(M_PI));
+			q(0) = ::std::fmod(q(0), 2 * static_cast< ::rl::math::Real>(M_PI));
 			
 			if (q(0) < this->min(0))
 			{
-				q(0) += 2.0f * static_cast< ::rl::math::Real>(M_PI);
+				q(0) += 2 * static_cast< ::rl::math::Real>(M_PI);
 			}
 			else if (q(0) > this->max(0))
 			{
-				q(0) -= 2.0f * static_cast< ::rl::math::Real>(M_PI);
+				q(0) -= 2 * static_cast< ::rl::math::Real>(M_PI);
 			}
 		}
 		

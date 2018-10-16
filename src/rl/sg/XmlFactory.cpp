@@ -154,7 +154,7 @@ namespace rl
 							
 							for (int l = 0; l < 3; ++l)
 							{
-								if (::std::abs(bodyScaleFactor[l] - 1.0f) > 1.0e-6f)
+								if (::std::abs(bodyScaleFactor[l] - 1) > static_cast< ::rl::math::Real>(1.0e-6))
 								{
 									throw Exception("rl::sg::XmlFactory::load() - bodyScaleFactor not supported");
 								}
@@ -218,7 +218,7 @@ namespace rl
 								
 								for (int m = 0; m < 3; ++m)
 								{
-									if (::std::abs(shapeScaleFactor[m] - 1.0f) > 1.0e-6f)
+									if (::std::abs(shapeScaleFactor[m] - 1) > static_cast< ::rl::math::Real>(1.0e-6))
 									{
 										throw Exception("rl::sg::XmlFactory::load() - shapeScaleFactor not supported");
 									}

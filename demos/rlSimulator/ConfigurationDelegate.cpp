@@ -86,13 +86,13 @@ PositionDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& opti
 	{
 		editor->setMinimum(minimum(index.row()) * rl::math::RAD2DEG);
 		editor->setMaximum(maximum(index.row()) * rl::math::RAD2DEG);
-		editor->setSingleStep(1.0f);
+		editor->setSingleStep(1.0);
 	}
 	else
 	{
 		editor->setMinimum(minimum(index.row()));
 		editor->setMaximum(maximum(index.row()));
-		editor->setSingleStep(0.1f);
+		editor->setSingleStep(0.1);
 	}
 	
 	QObject::connect(editor, SIGNAL(valueChanged(double)), this, SLOT(valueChanged(double)));
@@ -110,11 +110,11 @@ VelocityDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& opti
 	editor->setRange(-10000, 10000); //TODO?
 	if (rl::math::UNIT_RADIAN == qUnits(index.row()))
 	{
-		editor->setSingleStep(1.0f);
+		editor->setSingleStep(1.0);
 	}
 	else
 	{
-		editor->setSingleStep(0.1f);
+		editor->setSingleStep(0.1);
 	}
 	
 	QObject::connect(editor, SIGNAL(valueChanged(double)), this, SLOT(valueChanged(double)));
@@ -132,11 +132,11 @@ AccelerationDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& 
 	editor->setRange(-10000, 10000);
 	if (rl::math::UNIT_RADIAN == qUnits(index.row()))
 	{
-		editor->setSingleStep(10.0f);
+		editor->setSingleStep(10.0);
 	}
 	else
 	{
-		editor->setSingleStep(1.0f);
+		editor->setSingleStep(1.0);
 	}
 	
 	QObject::connect(editor, SIGNAL(valueChanged(double)), this, SLOT(valueChanged(double)));
@@ -150,7 +150,7 @@ TorqueDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& option
 	QDoubleSpinBox* editor = new QDoubleSpinBox(parent);
 		
 	editor->setRange(-1000, 1000);
-	editor->setSingleStep(1.0f);
+	editor->setSingleStep(1.0);
 	
 	QObject::connect(editor, SIGNAL(valueChanged(double)), this, SLOT(valueChanged(double)));
 	

@@ -40,7 +40,7 @@ namespace rl
 			goal(),
 			greedy(GREEDY_SPACE),
 			model(nullptr),
-			radius(0.0f),
+			radius(0),
 			range(::std::numeric_limits< ::rl::math::Real>::max()),
 			samples(10),
 			start(),
@@ -186,7 +186,7 @@ namespace rl
 										sphere.priority = (*this->goal - *sphere.center).norm() - sphere.radius + top.radiusSum;
 										break;
 									case GREEDY_SPACE:
-										sphere.priority = 1.0f / sphere.radius;
+										sphere.priority = 1 / sphere.radius;
 										break;
 									default:
 										break;

@@ -257,7 +257,7 @@ namespace rl
 				Real cosdtheta = ::std::cos(dtheta);
 				Real sindtheta = ::std::sin(dtheta);
 				
-				return e.dot(x) * e + 0.5f * (dtheta * sindtheta) / (1 - cosdtheta) * e.cross(x).cross(e) + 0.5f * dtheta * e.cross(x);
+				return e.dot(x) * e + static_cast<Real>(0.5) * (dtheta * sindtheta) / (1 - cosdtheta) * e.cross(x).cross(e) + static_cast<Real>(0.5) * dtheta * e.cross(x);
 			}
 		};
 	}

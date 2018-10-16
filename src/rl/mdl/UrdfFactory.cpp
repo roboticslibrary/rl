@@ -284,8 +284,8 @@ namespace rl
 					
 					if ("continuous" == path.eval("string(@type)").getValue< ::std::string>())
 					{
-						r->max(0) = 180.0f * ::rl::math::DEG2RAD;
-						r->min(0) = -180.0f * ::rl::math::DEG2RAD;
+						r->max(0) = 180 * ::rl::math::DEG2RAD;
+						r->min(0) = -180 * ::rl::math::DEG2RAD;
 						r->wraparound(0) = true;
 					}
 					else

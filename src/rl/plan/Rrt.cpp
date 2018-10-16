@@ -35,8 +35,8 @@ namespace rl
 	{
 		Rrt::Rrt(const ::std::size_t& trees) :
 			Planner(),
-			delta(1.0f),
-			epsilon(1.0e-3f),
+			delta(1),
+			epsilon(static_cast< ::rl::math::Real>(1.0e-3)),
 			sampler(nullptr),
 			begin(trees, nullptr),
 			end(trees, nullptr),

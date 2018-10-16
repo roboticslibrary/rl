@@ -670,8 +670,8 @@ namespace rl
 		{
 			assert(q1.size() == this->getDof());
 			assert(q2.size() == this->getDof());
-			assert(alpha >= 0.0f);
-			assert(alpha <= 1.0f);
+			assert(alpha >= 0);
+			assert(alpha <= 1);
 			assert(q.size() == this->getDof());
 			
 			for (::std::size_t i = 0; i < this->getDof(); ++i)
@@ -685,11 +685,11 @@ namespace rl
 					{
 						if (q1(i) > q2(i))
 						{
-							q(i) = (1.0f - alpha) * q1(i) + alpha * (q2(i) + range);
+							q(i) = (1 - alpha) * q1(i) + alpha * (q2(i) + range);
 						}
 						else
 						{
-							q(i) = (1.0f - alpha) * (q1(i) + range) + alpha * q2(i);
+							q(i) = (1 - alpha) * (q1(i) + range) + alpha * q2(i);
 						}
 						
 						while (q(i) > this->joints[i]->max)
@@ -704,12 +704,12 @@ namespace rl
 					}
 					else
 					{
-						q(i) = (1.0f - alpha) * q1(i) + alpha * q2(i);
+						q(i) = (1 - alpha) * q1(i) + alpha * q2(i);
 					}
 				}
 				else
 				{
-					q(i) = (1.0f - alpha) * q1(i) + alpha * q2(i);
+					q(i) = (1 - alpha) * q1(i) + alpha * q2(i);
 				}
 			}
 		}
@@ -772,11 +772,11 @@ namespace rl
 			
 			for (::std::size_t i = 0; i < this->getDof(); ++i)
 			{
-				q(i) = ::std::fmod(q(i), 2.0f * static_cast< ::rl::math::Real>(M_PI));
+				q(i) = ::std::fmod(q(i), 2 * static_cast< ::rl::math::Real>(M_PI));
 				
 				if (q(i) < this->joints[i]->min)
 				{
-					q(i) += 2.0f * static_cast< ::rl::math::Real>(M_PI);
+					q(i) += 2 * static_cast< ::rl::math::Real>(M_PI);
 					
 					if (q(i) < this->joints[i]->min || q(i) > this->joints[i]->max)
 					{
@@ -785,7 +785,7 @@ namespace rl
 				}
 				else if (q(i) > this->joints[i]->max)
 				{
-					q(i) -= 2.0f * static_cast< ::rl::math::Real>(M_PI);
+					q(i) -= 2 * static_cast< ::rl::math::Real>(M_PI);
 					
 					if (q(i) < this->joints[i]->min || q(i) > this->joints[i]->max)
 					{
@@ -1073,7 +1073,7 @@ namespace rl
 				::Eigen::JacobiSVD< ::rl::math::Matrix> svd(this->jacobian, ::Eigen::ComputeFullU | ::Eigen::ComputeFullV);
 				
 				::rl::math::Real wMin = svd.singularValues().minCoeff();
-				::rl::math::Real lambdaSqr = wMin < 1.0e-9f ? (1 - ::std::pow((wMin / 1.0e-9f), 2)) * ::std::pow(lambda, 2) : 0;
+				::rl::math::Real lambdaSqr = wMin < static_cast< ::rl::math::Real>(1.0e-9) ? (1 - ::std::pow((wMin / static_cast< ::rl::math::Real>(1.0e-9)), 2)) * ::std::pow(lambda, 2) : 0;
 				
 				for (::std::ptrdiff_t i = 0; i < svd.nonzeroSingularValues(); ++i)
 				{

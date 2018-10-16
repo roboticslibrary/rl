@@ -58,14 +58,14 @@ ConfigurationDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem&
 		editor->setDecimals(2);
 		editor->setMinimum(minimum(index.row()) * rl::math::RAD2DEG);
 		editor->setMaximum(maximum(index.row()) * rl::math::RAD2DEG);
-		editor->setSingleStep(1.0f);
+		editor->setSingleStep(1.0);
 	}
 	else
 	{
 		editor->setDecimals(4);
 		editor->setMinimum(minimum(index.row()));
 		editor->setMaximum(maximum(index.row()));
-		editor->setSingleStep(0.01f);
+		editor->setSingleStep(0.01);
 	}
 	
 	editor->setWrapping(wraparounds(index.row()));

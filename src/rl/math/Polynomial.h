@@ -132,7 +132,7 @@ namespace rl
 				f.c[1] = yd0;
 				f.c[2] = ydd0 / 2;
 				f.c[3] = -(::std::pow(x1, 2) * ydd0 + 3 * x1 * yd0 + x1 * yd1 + 4 * y0 - 4 * y1) / ::std::pow(x1, 3);
-				f.c[4] = 0.5f * (::std::pow(x1, 2) * ydd0 + 4 * x1 * yd0 + 2 * x1 * yd1 + 6 * y0 - 6 * y1) / ::std::pow(x1, 4);
+				f.c[4] = static_cast<Real>(0.5) * (::std::pow(x1, 2) * ydd0 + 4 * x1 * yd0 + 2 * x1 * yd1 + 6 * y0 - 6 * y1) / ::std::pow(x1, 4);
 				f.x1 = x1;
 				
 				return f;

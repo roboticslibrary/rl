@@ -121,7 +121,7 @@ namespace rl
 			
 			virtual void updateJacobian();
 			
-			virtual void updateJacobianInverse(const ::rl::math::Real& lambda = 0.0f, const bool& doSvd = true);
+			virtual void updateJacobianInverse(const ::rl::math::Real& lambda = 0, const bool& doSvd = true);
 			
 			::rl::kin::Kinematics* kin;
 			

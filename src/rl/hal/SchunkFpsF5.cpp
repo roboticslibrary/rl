@@ -120,7 +120,7 @@ namespace rl
 		SchunkFpsF5::getDistancesMaximum(const ::std::size_t& i) const
 		{
 			assert(i < this->getDistancesCount());
-			return 0.06f;
+			return static_cast< ::rl::math::Real>(0.06);
 		}
 		
 		::rl::math::Real
@@ -297,8 +297,8 @@ namespace rl
 				for (int i = 0; i < ::std::min(size, 31); ++i)
 				{
 					this->fulcrums.insert(::std::make_pair(
-						5.0f * (Endian::hostWord(~buf[9 + i * 4], ~buf[9 + i * 4 + 1]) - 0x0000) / (0xFFF0 - 0x0000),
-						Endian::hostWord(buf[11 + i * 4], buf[11 + i * 4 + 1]) / 1000.0f / 1000.0f
+						static_cast< ::rl::math::Real>(5) * (Endian::hostWord(~buf[9 + i * 4], ~buf[9 + i * 4 + 1]) - 0x0000) / (0xFFF0 - 0x0000),
+						Endian::hostWord(buf[11 + i * 4], buf[11 + i * 4 + 1]) / static_cast< ::rl::math::Real>(1000) / static_cast< ::rl::math::Real>(1000)
 					));
 				}
 				
@@ -315,8 +315,8 @@ namespace rl
 					for (int i = 0; i < ::std::min(size - 31, 31); ++i)
 					{
 						this->fulcrums.insert(::std::make_pair(
-							5.0f * (Endian::hostWord(~buf[5 + i * 4], ~buf[5 + i * 4 + 1]) - 0x0000) / (0xFFF0 - 0x0000),
-							Endian::hostWord(buf[7 + i * 4], buf[7 + i * 4 + 1]) / 1000.0f / 1000.0f
+							static_cast< ::rl::math::Real>(5) * (Endian::hostWord(~buf[5 + i * 4], ~buf[5 + i * 4 + 1]) - 0x0000) / (0xFFF0 - 0x0000),
+							Endian::hostWord(buf[7 + i * 4], buf[7 + i * 4 + 1]) / static_cast< ::rl::math::Real>(1000) / static_cast< ::rl::math::Real>(1000)
 						));
 					}
 				}
@@ -347,7 +347,7 @@ namespace rl
 			// 10000000
 			this->closed = (buf[5] & 128) ? true : false;
 			
-			this->value = 5.0f * (Endian::hostWord(~buf[31], ~buf[32]) - 0x0000) / (0xFFF0 - 0x0000);
+			this->value = static_cast< ::rl::math::Real>(5) * (Endian::hostWord(~buf[31], ~buf[32]) - 0x0000) / (0xFFF0 - 0x0000);
 			
 			::std::set< ::std::pair< ::rl::math::Real, ::rl::math::Real>>::iterator lower = this->fulcrums.upper_bound(::std::make_pair(this->value, ::std::numeric_limits< ::rl::math::Real>::max()));
 			
@@ -372,8 +372,8 @@ namespace rl
 				this->interpolated = ::std::numeric_limits< ::rl::math::Real>::quiet_NaN();
 			}
 			
-			this->voltage = 23.0f * (Endian::hostWord(buf[33], buf[34]) - 0x3D00) / (0xB700 - 0x3D00) + 12.0f;
-			this->temperature = 90.0f * (Endian::hostWord(buf[35], 0x0) - 0x0A00) / (0xC300 - 0x0A00) - 20.0f;
+			this->voltage = static_cast< ::rl::math::Real>(23) * (Endian::hostWord(buf[33], buf[34]) - 0x3D00) / (0xB700 - 0x3D00) + static_cast< ::rl::math::Real>(12);
+			this->temperature = static_cast< ::rl::math::Real>(90) * (Endian::hostWord(buf[35], 0x0) - 0x0A00) / (0xC300 - 0x0A00) - static_cast< ::rl::math::Real>(20);
 			
 			// 00000001
 			this->area = (buf[36] & 1) ? true : false;

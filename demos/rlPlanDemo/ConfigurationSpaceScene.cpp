@@ -38,8 +38,8 @@ ConfigurationSpaceScene::ConfigurationSpaceScene(QObject* parent) :
 	QGraphicsScene(parent),
 	axis0(0),
 	axis1(1),
-	delta0(1.0f),
-	delta1(1.0f),
+	delta0(1),
+	delta1(1),
 	model(nullptr),
 	edges(),
 	path(),
@@ -65,8 +65,8 @@ void
 ConfigurationSpaceScene::addCollision(const qreal& x, const qreal& y, const qreal& w, const qreal& h, const int& rgb)
 {
 	QGraphicsRectItem* rect = this->addRect(
-		x - w / 2.0f,
-		-y - h / 2.0f,
+		x - w * static_cast<qreal>(0.5),
+		-y - h * static_cast<qreal>(0.5),
 		w,
 		h,
 		QPen(Qt::NoPen),
@@ -104,7 +104,7 @@ ConfigurationSpaceScene::drawConfigurationEdge(const rl::math::Vector& u, const 
 		-u(this->axis1),
 		v(this->axis0),
 		-v(this->axis1),
-		free ? QPen(QBrush(QColor(0, 128, 0)), 0.0f) : QPen(QBrush(QColor(128, 0, 0)), 0.0f)
+		free ? QPen(QBrush(QColor(0, 128, 0)), 0) : QPen(QBrush(QColor(128, 0, 0)), 0)
 	);
 	
 	line->setParentItem(this->scene);
@@ -133,7 +133,7 @@ ConfigurationSpaceScene::drawConfigurationPath(const rl::plan::VectorList& path)
 			-(*i)(this->axis1),
 			(*j)(this->axis0),
 			-(*j)(this->axis1),
-			QPen(QBrush(QColor(0, 255, 0)), 0.0f)
+			QPen(QBrush(QColor(0, 255, 0)), 0)
 		);
 		
 		line->setParentItem(this->scene);

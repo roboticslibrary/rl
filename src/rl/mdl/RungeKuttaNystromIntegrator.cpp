@@ -89,7 +89,7 @@ namespace rl
 			// y_0 + dy_0 * dt + dt / 3 * (k_1 + k_2 + k_3)
 			y = y0 + dy0 * dt + dt / 3 * (k1 + k2 + k3);
 			// dy_0 + 1 / 3 * (k_1 + 2 * k_2 + 2 * k_3 + k_4)
-			dy = dy0 + 1.0f / 3.0f * (k1 + 2 * k2 + 2 * k3 + k4);
+			dy = dy0 + static_cast< ::rl::math::Real>(1) / static_cast< ::rl::math::Real>(3) * (k1 + 2 * k2 + 2 * k3 + k4);
 			
 			this->dynamic->setPosition(y);
 			this->dynamic->setVelocity(dy);

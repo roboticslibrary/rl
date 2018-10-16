@@ -107,7 +107,7 @@ namespace rl
 			
 		};
 		
-		static const Real FUNCTION_BOUNDARY = 1.0e-8f;
+		static const Real FUNCTION_BOUNDARY = static_cast<Real>(1.0e-8);
 	}
 }
 

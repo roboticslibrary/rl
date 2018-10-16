@@ -54,13 +54,13 @@ BodyDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& option, 
 	case 1:
 	case 2:
 		editor->setDecimals(4);
-		editor->setSingleStep(0.01f);
+		editor->setSingleStep(0.01);
 		break;
 	case 3:
 	case 4:
 	case 5:
 		editor->setDecimals(2);
-		editor->setSingleStep(1.0f);
+		editor->setSingleStep(1.0);
 		break;
 	default:
 		break;

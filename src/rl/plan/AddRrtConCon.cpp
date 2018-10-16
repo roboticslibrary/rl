@@ -34,9 +34,9 @@ namespace rl
 	{
 		AddRrtConCon::AddRrtConCon() :
 			RrtConCon(),
-			alpha(0.05f),
-			lower(2.0f),
-			radius(20.0f)
+			alpha(static_cast< ::rl::math::Real>(0.05)),
+			lower(2),
+			radius(20)
 		{
 		}
 		
@@ -109,7 +109,7 @@ namespace rl
 					{
 						if (get(*a, aNearest.second)->radius < ::std::numeric_limits< ::rl::math::Real>::max())
 						{
-							get(*a, aNearest.second)->radius *= (1.0f + this->alpha);
+							get(*a, aNearest.second)->radius *= (1 + this->alpha);
 						}
 						
 						Neighbor bNearest = this->nearest(*b, chosen);
@@ -129,7 +129,7 @@ namespace rl
 					{
 						if (get(*a, aNearest.second)->radius < ::std::numeric_limits< ::rl::math::Real>::max())
 						{
-							get(*a, aNearest.second)->radius *= (1.0f - this->alpha);
+							get(*a, aNearest.second)->radius *= (1 - this->alpha);
 							get(*a, aNearest.second)->radius = ::std::max(this->lower, get(*a, aNearest.second)->radius);
 						}
 						else

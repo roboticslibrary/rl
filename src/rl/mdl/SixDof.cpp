@@ -132,7 +132,7 @@ namespace rl
 		void
 		SixDof::interpolate(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& q2, const ::rl::math::Real& alpha, ::rl::math::VectorRef q) const
 		{
-			q.head<3>() = (1.0f - alpha) * q1.head<3>() + alpha * q2.head<3>();
+			q.head<3>() = (1 - alpha) * q1.head<3>() + alpha * q2.head<3>();
 			::Eigen::Map<const ::rl::math::Quaternion> quaternion1(q1.tail<4>().data());
 			::Eigen::Map<const ::rl::math::Quaternion> quaternion2(q2.tail<4>().data());
 			q.tail<4>() = quaternion1.slerp(alpha, quaternion2).coeffs();
@@ -149,7 +149,7 @@ namespace rl
 				}
 			}
 			
-			return ::Eigen::internal::isApprox(q.tail<4>().norm(), static_cast< ::rl::math::Real>(1), 1.0e-3f);
+			return ::Eigen::internal::isApprox(q.tail<4>().norm(), static_cast< ::rl::math::Real>(1), static_cast< ::rl::math::Real>(1.0e-3));
 		}
 		
 		void

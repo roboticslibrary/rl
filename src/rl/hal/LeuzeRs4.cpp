@@ -198,7 +198,7 @@ namespace rl
 		{
 			assert(i < this->getDistancesCount());
 			
-			return 4.0f;
+			return 4;
 		}
 		
 		::rl::math::Real
@@ -206,7 +206,7 @@ namespace rl
 		{
 			assert(i < this->getDistancesCount());
 			
-			return 0.0f;
+			return 0;
 		}
 		
 		::rl::math::Real
@@ -214,7 +214,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			return this->stepSize * 0.36f * ::rl::math::DEG2RAD;
+			return this->stepSize * static_cast< ::rl::math::Real>(0.36) * ::rl::math::DEG2RAD;
 		}
 		
 		::rl::math::Real
@@ -222,7 +222,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			return (-5 + this->startIndex * 0.36f) * ::rl::math::DEG2RAD;
+			return (-5 + this->startIndex * static_cast< ::rl::math::Real>(0.36)) * ::rl::math::DEG2RAD;
 		}
 		
 		::rl::math::Real
@@ -230,7 +230,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			return (185 - (528 - this->stopIndex) * 0.36f) * ::rl::math::DEG2RAD;
+			return (185 - (528 - this->stopIndex) * static_cast< ::rl::math::Real>(0.36)) * ::rl::math::DEG2RAD;
 		}
 		
 		void

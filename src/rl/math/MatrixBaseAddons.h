@@ -149,7 +149,7 @@ static RandomOnCircle(const Scalar& rand)
 	eigen_assert(rand >= Scalar(0));
 	eigen_assert(rand <= Scalar(1));
 	
-	Scalar theta = Scalar(2 * M_PI) * rand;
+	Scalar theta = Scalar(2) * Scalar(M_PI) * rand;
 	
 	return Matrix<Scalar, 2, 1>(
 		cos(theta),
@@ -190,9 +190,9 @@ static RandomOnSphere(const DenseBase<OtherDerived>& rand)
 	eigen_assert(rand(1) >= Scalar(0));
 	eigen_assert(rand(1) <= Scalar(1));
 	
-	Scalar theta = Scalar(2 * M_PI) * rand(0);
+	Scalar theta = Scalar(2) * Scalar(M_PI) * rand(0);
 	Scalar z = Scalar(2) * rand(1) - Scalar(1);
-	Scalar sqrt_1_z_2 = sqrt(1 - pow(z, 2));
+	Scalar sqrt_1_z_2 = sqrt(Scalar(1) - pow(z, 2));
 	
 	return Matrix<Scalar, 3, 1>(
 		sqrt_1_z_2 * cos(theta),

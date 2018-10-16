@@ -128,7 +128,7 @@ namespace rl
 							::boost::lexical_cast< ::rl::math::Real>(rgba[2])
 						);
 						vrmlMaterial->transparency.setValue(
-							1.0f - ::boost::lexical_cast< ::rl::math::Real>(rgba[3])
+							1 - ::boost::lexical_cast< ::rl::math::Real>(rgba[3])
 						);
 						
 						name2material[path.eval("string(@name)").getValue< ::std::string>()] = vrmlMaterial;
@@ -244,7 +244,7 @@ namespace rl
 							::boost::lexical_cast< ::rl::math::Real>(rgba[2])
 						);
 						vrmlMaterial->transparency.setValue(
-							1.0f - ::boost::lexical_cast< ::rl::math::Real>(rgba[3])
+							1 - ::boost::lexical_cast< ::rl::math::Real>(rgba[3])
 						);
 						
 						vrmlAppearance->material = vrmlMaterial;
@@ -402,7 +402,7 @@ namespace rl
 						
 						if (vrmlShape->geometry.getValue()->isOfType(::SoVRMLCylinder::getClassTypeId()))
 						{
-							origin *= ::rl::math::AngleAxis(90.0f * ::rl::math::DEG2RAD, ::rl::math::Vector3::UnitX());
+							origin *= ::rl::math::AngleAxis(90 * ::rl::math::DEG2RAD, ::rl::math::Vector3::UnitX());
 						}
 						
 						if (path.eval("count(origin/@xyz) > 0").getValue<bool>())

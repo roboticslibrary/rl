@@ -64,7 +64,7 @@ namespace rl
 				::rl::math::Vector& q,
 				const ::std::size_t& leaf = 0,
 				const ::rl::math::Real& delta = ::std::numeric_limits< ::rl::math::Real>::infinity(),
-				const ::rl::math::Real& epsilon = 1.0e-3f,
+				const ::rl::math::Real& epsilon = static_cast< ::rl::math::Real>(1.0e-3),
 				const ::std::size_t& iterations = 1000
 			);
 			
@@ -80,19 +80,19 @@ namespace rl
 			template<typename T> T atan2(const T& y, const T& x) const
 			{
 				T a = ::std::atan2(y, x);
-				return (::std::abs(a) <= 1.0e-6f) ? 0.0f : a;
+				return (::std::abs(a) <= static_cast< ::rl::math::Real>(1.0e-6)) ? 0 : a;
 			}
 			
 			template<typename T> T cos(const T& x) const
 			{
 				T c = ::std::cos(x);
-				return (::std::abs(c) <= 1.0e-6f) ? 0.0f : c;
+				return (::std::abs(c) <= static_cast< ::rl::math::Real>(1.0e-6)) ? 0 : c;
 			}
 			
 			template<typename T> T sin(const T& x) const
 			{
 				T s = ::std::sin(x);
-				return (::std::abs(s) <= 1.0e-6f) ? 0.0f : s;
+				return (::std::abs(s) <= static_cast< ::rl::math::Real>(1.0e-6)) ? 0 : s;
 			}
 			
 			Arm arm;

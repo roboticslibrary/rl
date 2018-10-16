@@ -94,8 +94,8 @@ main(int argc, char** argv)
 		exit(EXIT_FAILURE);
 	}
 	
-	rl::math::Vector6 v5 = v1 * 1.23f;
-	rl::math::ForceVector fv5 = fv1 * 1.23f;
+	rl::math::Vector6 v5 = v1 * static_cast<rl::math::Real>(1.23);
+	rl::math::ForceVector fv5 = fv1 * static_cast<rl::math::Real>(1.23);
 	
 	if (!fv5.matrix().isApprox(v5))
 	{
@@ -105,8 +105,8 @@ main(int argc, char** argv)
 		exit(EXIT_FAILURE);
 	}
 	
-	rl::math::Vector6 v6 = v1 / 1.23f;
-	rl::math::ForceVector fv6 = fv1 / 1.23f;
+	rl::math::Vector6 v6 = v1 / static_cast<rl::math::Real>(1.23);
+	rl::math::ForceVector fv6 = fv1 / static_cast<rl::math::Real>(1.23);
 	
 	if (!fv6.matrix().isApprox(v6))
 	{

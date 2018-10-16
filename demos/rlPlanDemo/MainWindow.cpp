@@ -1184,7 +1184,7 @@ MainWindow::load(const QString& filename)
 	{
 		this->sampler = std::make_shared<rl::plan::BridgeSampler>();
 		rl::plan::BridgeSampler* bridgeSampler = static_cast<rl::plan::BridgeSampler*>(this->sampler.get());
-		bridgeSampler->ratio = path.eval("number((/rl/plan|/rlplan)//bridgeSampler/ratio)").getValue<rl::math::Real>(5.0f / 6.0f);
+		bridgeSampler->ratio = path.eval("number((/rl/plan|/rlplan)//bridgeSampler/ratio)").getValue<rl::math::Real>(static_cast<rl::math::Real>(5) / static_cast<rl::math::Real>(6));
 		
 		if (path.eval("count((/rl/plan|/rlplan)//bridgeSampler/seed) > 0").getValue<bool>())
 		{
@@ -1277,7 +1277,7 @@ MainWindow::load(const QString& filename)
 			advancedOptimizer->length *= rl::math::DEG2RAD;
 		}
 		
-		advancedOptimizer->ratio = path.eval("number((/rl/plan|/rlplan)//advancedOptimizer/ratio)").getValue<rl::math::Real>(0.1f);
+		advancedOptimizer->ratio = path.eval("number((/rl/plan|/rlplan)//advancedOptimizer/ratio)").getValue<rl::math::Real>(static_cast<rl::math::Real>(0.1));
 	}
 	
 	if (nullptr != this->optimizer)
@@ -1296,7 +1296,7 @@ MainWindow::load(const QString& filename)
 		{
 			this->planner = std::make_shared<rl::plan::AddRrtConCon>();
 			rl::plan::AddRrtConCon* addRrtConCon = static_cast<rl::plan::AddRrtConCon*>(this->planner.get());
-			addRrtConCon->alpha = path.eval("number(alpha)").getValue<rl::math::Real>(0.05f);
+			addRrtConCon->alpha = path.eval("number(alpha)").getValue<rl::math::Real>(static_cast<rl::math::Real>(0.05));
 			addRrtConCon->delta = path.eval("number(delta)").getValue<rl::math::Real>(1);
 			
 			if ("deg" == path.eval("string(delta/@unit)").getValue<std::string>())
@@ -1304,7 +1304,7 @@ MainWindow::load(const QString& filename)
 				addRrtConCon->delta *= rl::math::DEG2RAD;
 			}
 			
-			addRrtConCon->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(1.0e-3f);
+			addRrtConCon->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1.0e-3));
 			
 			if ("deg" == path.eval("string(epsilon/@unit)").getValue<std::string>())
 			{
@@ -1331,7 +1331,7 @@ MainWindow::load(const QString& filename)
 		{
 			this->planner = std::make_shared<rl::plan::Eet>();
 			rl::plan::Eet* eet = static_cast<rl::plan::Eet*>(this->planner.get());
-			eet->alpha = path.eval("number(alpha)").getValue<rl::math::Real>(0.01f);
+			eet->alpha = path.eval("number(alpha)").getValue<rl::math::Real>(static_cast<rl::math::Real>(0.01));
 			eet->alternativeDistanceComputation = path.eval("count(alternativeDistanceComputation) > 0").getValue<bool>() ? true : false;
 			eet->beta = path.eval("number(beta)").getValue<rl::math::Real>(0);
 			eet->delta = path.eval("number(delta)").getValue<rl::math::Real>(1);
@@ -1341,16 +1341,16 @@ MainWindow::load(const QString& filename)
 				eet->delta *= rl::math::DEG2RAD;
 			}
 			
-			eet->distanceWeight = path.eval("number(distanceWeight)").getValue<rl::math::Real>(0.1f);
-			eet->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(1.0e-3f);
+			eet->distanceWeight = path.eval("number(distanceWeight)").getValue<rl::math::Real>(static_cast<rl::math::Real>(0.1));
+			eet->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1.0e-3));
 			
 			if ("deg" == path.eval("string(epsilon/@unit)").getValue<std::string>())
 			{
 				eet->epsilon *= rl::math::DEG2RAD;
 			}
 			
-			eet->gamma = path.eval("number(gamma)").getValue<rl::math::Real>(1.0f / 3.0f);
-			eet->goalEpsilon = path.eval("number(goalEpsilon)").getValue<rl::math::Real>(0.1f);
+			eet->gamma = path.eval("number(gamma)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1) / static_cast<rl::math::Real>(3));
+			eet->goalEpsilon = path.eval("number(goalEpsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(0.1));
 			
 			if (path.eval("translate(string(goalEpsilon/@orientation), 'TRUE', 'true') = 'true' or string(goalEpsilon/@orientation) = '1'").getValue<bool>())
 			{
@@ -1558,7 +1558,7 @@ MainWindow::load(const QString& filename)
 				rrt->delta *= rl::math::DEG2RAD;
 			}
 			
-			rrt->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(1.0e-3f);
+			rrt->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1.0e-3));
 			
 			if ("deg" == path.eval("string(epsilon/@unit)").getValue<std::string>())
 			{
@@ -1578,14 +1578,14 @@ MainWindow::load(const QString& filename)
 				rrtCon->delta *= rl::math::DEG2RAD;
 			}
 			
-			rrtCon->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(1.0e-3f);
+			rrtCon->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1.0e-3));
 			
 			if ("deg" == path.eval("string(epsilon/@unit)").getValue<std::string>())
 			{
 				rrtCon->epsilon *= rl::math::DEG2RAD;
 			}
 			
-			rrtCon->probability = path.eval("number(probability)").getValue<rl::math::Real>(0.05f);
+			rrtCon->probability = path.eval("number(probability)").getValue<rl::math::Real>(static_cast<rl::math::Real>(0.05));
 			rrtCon->sampler = this->sampler.get();
 			
 			if (path.eval("count(seed) > 0").getValue<bool>())
@@ -1610,7 +1610,7 @@ MainWindow::load(const QString& filename)
 				rrtConCon->delta *= rl::math::DEG2RAD;
 			}
 			
-			rrtConCon->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(1.0e-3f);
+			rrtConCon->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1.0e-3));
 			
 			if ("deg" == path.eval("string(epsilon/@unit)").getValue<std::string>())
 			{
@@ -1630,7 +1630,7 @@ MainWindow::load(const QString& filename)
 				rrtDual->delta *= rl::math::DEG2RAD;
 			}
 			
-			rrtDual->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(1.0e-3f);
+			rrtDual->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1.0e-3));
 			
 			if ("deg" == path.eval("string(epsilon/@unit)").getValue<std::string>())
 			{
@@ -1650,7 +1650,7 @@ MainWindow::load(const QString& filename)
 				rrtExtCon->delta *= rl::math::DEG2RAD;
 			}
 			
-			rrtExtCon->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(1.0e-3f);
+			rrtExtCon->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1.0e-3));
 			
 			if ("deg" == path.eval("string(epsilon/@unit)").getValue<std::string>())
 			{
@@ -1670,7 +1670,7 @@ MainWindow::load(const QString& filename)
 				rrtExtExt->delta *= rl::math::DEG2RAD;
 			}
 			
-			rrtExtExt->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(1.0e-3f);
+			rrtExtExt->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1.0e-3));
 			
 			if ("deg" == path.eval("string(epsilon/@unit)").getValue<std::string>())
 			{
@@ -1690,14 +1690,14 @@ MainWindow::load(const QString& filename)
 				rrtGoalBias->delta *= rl::math::DEG2RAD;
 			}
 			
-			rrtGoalBias->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(1.0e-3f);
+			rrtGoalBias->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1.0e-3));
 			
 			if ("deg" == path.eval("string(epsilon/@unit)").getValue<std::string>())
 			{
 				rrtGoalBias->epsilon *= rl::math::DEG2RAD;
 			}
 			
-			rrtGoalBias->probability = path.eval("number(probability)").getValue<rl::math::Real>(0.05f);
+			rrtGoalBias->probability = path.eval("number(probability)").getValue<rl::math::Real>(static_cast<rl::math::Real>(0.05));
 			rrtGoalBias->sampler = this->sampler.get();
 			
 			if (path.eval("count(seed) > 0").getValue<bool>())
@@ -1917,7 +1917,7 @@ MainWindow::load(const QString& filename)
 	}
 	
 	this->viewer->viewer->getCamera()->scaleHeight(
-		path.eval("number((/rl/plan|/rlplan)//viewer/camera/scale)").getValue<rl::math::Real>(1.0f)
+		path.eval("number((/rl/plan|/rlplan)//viewer/camera/scale)").getValue<rl::math::Real>(1)
 	);
 	
 	this->viewer->drawConfiguration(*this->start);

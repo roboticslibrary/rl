@@ -40,11 +40,11 @@ namespace rl
 		{
 			if (arg < 0)
 			{
-				return -::std::pow(-arg, static_cast<T>(1.0 / 3.0));
+				return -::std::pow(-arg, static_cast<T>(1) / static_cast<T>(3));
 			}
 			else
 			{
-				return ::std::pow(arg, static_cast<T>(1.0 / 3.0));
+				return ::std::pow(arg, static_cast<T>(1) / static_cast<T>(3));
 			}
 		}
 		

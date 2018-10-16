@@ -34,8 +34,8 @@ ConfigurationSpaceThread::ConfigurationSpaceThread(QObject* parent) :
 	QThread(parent),
 	axis0(0),
 	axis1(1),
-	delta0(1.0f),
-	delta1(1.0f),
+	delta0(1),
+	delta1(1),
 	model(nullptr),
 	running(false)
 {

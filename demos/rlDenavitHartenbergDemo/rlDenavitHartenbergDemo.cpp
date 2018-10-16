@@ -34,10 +34,10 @@
 int
 main(int argc, char** argv)
 {
-	rl::math::Real a = 31.0f;
-	rl::math::Real alpha = 271.0f * rl::math::DEG2RAD;
-	rl::math::Real d = 101.0f;
-	rl::math::Real theta = 181.0f * rl::math::DEG2RAD;
+	rl::math::Real a = 31;
+	rl::math::Real alpha = 271 * rl::math::DEG2RAD;
+	rl::math::Real d = 101;
+	rl::math::Real theta = 181 * rl::math::DEG2RAD;
 	
 	rl::math::Transform t_d(rl::math::Translation(0, 0, d));
 	

@@ -31,7 +31,7 @@ namespace rl
 	namespace plan
 	{
 		Verifier::Verifier() :
-			delta(1.0f),
+			delta(1),
 			model(nullptr)
 		{
 		}

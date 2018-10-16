@@ -94,9 +94,9 @@ namespace rl
 				::rl::math::AngleAxis(this->in.dat1.pos.w.a, ::rl::math::Vector3::UnitX())
 			).matrix();
 			
-			x.translation().x() = this->in.dat1.pos.w.x / 1000.0f;
-			x.translation().y() = this->in.dat1.pos.w.y / 1000.0f;
-			x.translation().z() = this->in.dat1.pos.w.z / 1000.0f;
+			x.translation().x() = this->in.dat1.pos.w.x / 1000;
+			x.translation().y() = this->in.dat1.pos.w.y / 1000;
+			x.translation().z() = this->in.dat1.pos.w.z / 1000;
 			
 			return x;
 		}
@@ -249,9 +249,9 @@ namespace rl
 			this->out.dat.pos.w.b = static_cast<float>(abc(1));
 			this->out.dat.pos.w.c = static_cast<float>(abc(2));
 			
-			this->out.dat.pos.w.x = static_cast<float>(x.translation().x() * 1000.0f);
-			this->out.dat.pos.w.y = static_cast<float>(x.translation().y() * 1000.0f);
-			this->out.dat.pos.w.z = static_cast<float>(x.translation().z() * 1000.0f);
+			this->out.dat.pos.w.x = static_cast<float>(x.translation().x() * 1000);
+			this->out.dat.pos.w.y = static_cast<float>(x.translation().y() * 1000);
+			this->out.dat.pos.w.z = static_cast<float>(x.translation().z() * 1000);
 			
 			this->out.command = MXT_COMMAND_MOVE;
 			this->out.sendType = MXT_TYPE_POSE;
@@ -276,14 +276,14 @@ namespace rl
 		{
 			assert(q.size() >= this->getDof());
 			
-			this->out.dat.jnt.j1 = 0.0f;
-			this->out.dat.jnt.j2 = 0.0f;
-			this->out.dat.jnt.j3 = 0.0f;
-			this->out.dat.jnt.j4 = 0.0f;
-			this->out.dat.jnt.j5 = 0.0f;
-			this->out.dat.jnt.j6 = 0.0f;
-			this->out.dat.jnt.j7 = 0.0f;
-			this->out.dat.jnt.j8 = 0.0f;
+			this->out.dat.jnt.j1 = 0;
+			this->out.dat.jnt.j2 = 0;
+			this->out.dat.jnt.j3 = 0;
+			this->out.dat.jnt.j4 = 0;
+			this->out.dat.jnt.j5 = 0;
+			this->out.dat.jnt.j6 = 0;
+			this->out.dat.jnt.j7 = 0;
+			this->out.dat.jnt.j8 = 0;
 			
 			switch (this->getDof())
 			{

@@ -191,17 +191,17 @@ main(int argc, char** argv)
 		eval(f0);
 		rl::math::Spline<rl::math::Real> f1 = rl::math::Spline<rl::math::Real>::CubicNatural(x, y);
 		eval(f1);
-		rl::math::Spline<rl::math::Real> f2 = rl::math::Spline<rl::math::Real>::LinearParabolic(x, y, 0.25f);
+		rl::math::Spline<rl::math::Real> f2 = rl::math::Spline<rl::math::Real>::LinearParabolic(x, y, static_cast<rl::math::Real>(0.25));
 		eval(f2);
-		rl::math::Spline<rl::math::Real> f2b = rl::math::Spline<rl::math::Real>::LinearParabolicPercentage(x, y, 0.25f);
+		rl::math::Spline<rl::math::Real> f2b = rl::math::Spline<rl::math::Real>::LinearParabolicPercentage(x, y, static_cast<rl::math::Real>(0.25));
 		eval(f2b);
-		rl::math::Spline<rl::math::Real> f3 = rl::math::Spline<rl::math::Real>::LinearQuartic(x, y, 0.25f);
+		rl::math::Spline<rl::math::Real> f3 = rl::math::Spline<rl::math::Real>::LinearQuartic(x, y, static_cast<rl::math::Real>(0.25));
 		eval(f3);
-		rl::math::Spline<rl::math::Real> f3b = rl::math::Spline<rl::math::Real>::LinearQuarticPercentage(x, y, 0.25f);
+		rl::math::Spline<rl::math::Real> f3b = rl::math::Spline<rl::math::Real>::LinearQuarticPercentage(x, y, static_cast<rl::math::Real>(0.25));
 		eval(f3b);
-		rl::math::Spline<rl::math::Real> f4 = rl::math::Spline<rl::math::Real>::LinearSextic(x, y, 0.25f);
+		rl::math::Spline<rl::math::Real> f4 = rl::math::Spline<rl::math::Real>::LinearSextic(x, y, static_cast<rl::math::Real>(0.25));
 		eval(f4);
-		rl::math::Spline<rl::math::Real> f4b = rl::math::Spline<rl::math::Real>::LinearSexticPercentage(x, y, 0.25f);
+		rl::math::Spline<rl::math::Real> f4b = rl::math::Spline<rl::math::Real>::LinearSexticPercentage(x, y, static_cast<rl::math::Real>(0.25));
 		eval(f4b);
 	}
 	
@@ -229,11 +229,11 @@ main(int argc, char** argv)
 		eval(f0);
 		rl::math::Spline<rl::math::ArrayX> f1 = rl::math::Spline<rl::math::ArrayX>::CubicNatural(x, y);
 		eval(f1);
-		rl::math::Spline<rl::math::ArrayX> f2 = rl::math::Spline<rl::math::ArrayX>::LinearParabolic(x, y, 0.25f);
+		rl::math::Spline<rl::math::ArrayX> f2 = rl::math::Spline<rl::math::ArrayX>::LinearParabolic(x, y, static_cast<rl::math::Real>(0.25));
 		eval(f2);
-		rl::math::Spline<rl::math::ArrayX> f3 = rl::math::Spline<rl::math::ArrayX>::LinearQuartic(x, y, 0.25f);
+		rl::math::Spline<rl::math::ArrayX> f3 = rl::math::Spline<rl::math::ArrayX>::LinearQuartic(x, y, static_cast<rl::math::Real>(0.25));
 		eval(f3);
-		rl::math::Spline<rl::math::ArrayX> f4 = rl::math::Spline<rl::math::ArrayX>::LinearSextic(x, y, 0.25f);
+		rl::math::Spline<rl::math::ArrayX> f4 = rl::math::Spline<rl::math::ArrayX>::LinearSextic(x, y, static_cast<rl::math::Real>(0.25));
 		eval(f4);
 	}
 	

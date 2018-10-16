@@ -35,11 +35,11 @@ namespace rl
 	{
 		NloptInverseKinematics::NloptInverseKinematics(Kinematic* kinematic) :
 			InverseKinematics(kinematic),
-			delta(1.0e-8f),
+			delta(static_cast< ::rl::math::Real>(1.0e-8)),
 			duration(::std::chrono::milliseconds(100)),
-			epsilonRotation(1.0e-6f),
-			epsilonTranslation(1.0e-6f),
-			tolerance(1.0e-8f),
+			epsilonRotation(static_cast< ::rl::math::Real>(1.0e-6)),
+			epsilonTranslation(static_cast< ::rl::math::Real>(1.0e-6)),
+			tolerance(static_cast< ::rl::math::Real>(1.0e-8)),
 			randDistribution(0, 1),
 			randEngine(::std::random_device()())
 		{

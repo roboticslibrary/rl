@@ -140,7 +140,7 @@ namespace rl
 						dOmega += (omega[i] - omegaprev[i]).norm();
 					}
 				}
-				while (dOmega > 1.0e-6f);
+				while (dOmega > static_cast<Real>(1.0e-6));
 				
 				omega[0] = yd0;
 				omega[n - 1] = yd1;
@@ -329,7 +329,7 @@ namespace rl
 				Real cosdtheta = ::std::cos(dtheta);
 				Real sindtheta = ::std::sin(dtheta);
 				
-				return e.dot(x) * e + 0.5f * (dtheta * sindtheta) / (1 - cosdtheta) * e.cross(x).cross(e) + 0.5f * dtheta * e.cross(x);
+				return e.dot(x) * e + static_cast<Real>(0.5) * (dtheta * sindtheta) / (1 - cosdtheta) * e.cross(x).cross(e) + static_cast<Real>(0.5) * dtheta * e.cross(x);
 			}
 			
 			static Vector3 R(const Vector3& e, const Real& dtheta, const Vector3& omega)
@@ -342,7 +342,7 @@ namespace rl
 				Real cosdtheta = ::std::cos(dtheta);
 				Real sindtheta = ::std::sin(dtheta);
 				
-				Real r0 = 0.5f * (dtheta - sindtheta) / (1 - cosdtheta);
+				Real r0 = static_cast<Real>(0.5) * (dtheta - sindtheta) / (1 - cosdtheta);
 				Real r1 = (dtheta * sindtheta - 2 * (1 - cosdtheta)) / (dtheta * (1 - cosdtheta));
 				
 				return r0 * (omega.dot(omega) - ::std::pow(e.dot(omega), 2)) * e + r1 * e.dot(omega) * e.cross(omega).cross(e);

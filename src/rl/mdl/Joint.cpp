@@ -280,7 +280,7 @@ namespace rl
 		void
 		Joint::interpolate(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& q2, const ::rl::math::Real& alpha, ::rl::math::VectorRef q) const
 		{
-			q = (1.0f - alpha) * q1 + alpha * q2;
+			q = (1 - alpha) * q1 + alpha * q2;
 		}
 		
 		void
