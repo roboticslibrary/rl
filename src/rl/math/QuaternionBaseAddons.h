@@ -105,6 +105,12 @@ operator+(const QuaternionBase<OtherDerived>& other) const
 	return Quaternion<Scalar>(this->derived().coeffs() + other.coeffs());
 }
 
+Quaternion<Scalar>
+operator-() const
+{
+	return Quaternion<Scalar>(-this->derived().coeffs());
+}
+
 template<typename OtherDerived>
 Quaternion<Scalar>
 operator-(const QuaternionBase<OtherDerived>& other) const
@@ -198,7 +204,7 @@ template<typename OtherDerived>
 Quaternion<Scalar>
 slerpFirstDerivative(const Scalar& t, const QuaternionBase<OtherDerived>& other) const
 {
-	Quaternion<Scalar> tmp = this->derived().conjugate() * other;
+	Quaternion<Scalar> tmp = this->derived().dot(other) < Scalar(0) ? this->derived().conjugate() * -other : this->derived().conjugate() * other;
 	return this->derived() * tmp.pow(t) * tmp.log();
 }
 
