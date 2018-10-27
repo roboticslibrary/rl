@@ -111,9 +111,8 @@ fromDenavitHartenbergPaul(const Scalar& d, const Scalar& theta, const Scalar& a,
 	(*this)(3, 3) = Scalar(1);
 }
 
-template<typename Scalar>
 inline
-void
+Matrix<Scalar, 6, 1>
 getDelta() const
 {
 	Matrix<Scalar, 6, 1> res;
