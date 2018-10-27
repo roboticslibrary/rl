@@ -28,6 +28,7 @@
 #include <iostream>
 #include <rl/math/Unit.h>
 
+#include "DeviceException.h"
 #include "UniversalRobotsRealtime.h"
 
 namespace rl
@@ -222,7 +223,7 @@ namespace rl
 		void
 		UniversalRobotsRealtime::step()
 		{
-			::std::array< ::std::uint8_t, 1060> buffer;
+			::std::array< ::std::uint8_t, 1108> buffer;
 			this->socket.recv(buffer.data(), buffer.size());
 #if !defined(__APPLE__) && !defined(__QNX__) && !defined(WIN32)
 			this->socket.setOption(::rl::hal::Socket::OPTION_QUICKACK, 1);
@@ -288,9 +289,9 @@ namespace rl
 		{
 			this->unserialize(ptr, this->messageSize);
 			
-			if (756 != this->messageSize && 764 != this->messageSize && 812 != this->messageSize && 1044 != this->messageSize && 1060 != this->messageSize)
+			if (756 != this->messageSize && 764 != this->messageSize && 812 != this->messageSize && 1044 != this->messageSize && 1060 != this->messageSize && 1108 != this->messageSize)
 			{
-				return;
+				throw DeviceException("UniversalRobotsRealtime::Message::unserialize() - Incorrect message size");
 			}
 			
 			this->unserialize(ptr, this->time);
@@ -319,7 +320,7 @@ namespace rl
 				this->unserialize(ptr, this->toolVectorActual);
 				this->unserialize(ptr, this->tcpSpeedActual);
 			}
-			else if (1044 == this->messageSize || 1060 == this->messageSize)
+			else if (1044 == this->messageSize || 1060 == this->messageSize || 1108 == this->messageSize)
 			{
 				this->unserialize(ptr, this->iControl);
 				this->unserialize(ptr, this->toolVectorActual);
@@ -334,17 +335,17 @@ namespace rl
 			this->unserialize(ptr, this->controllerTimer);
 			this->unserialize(ptr, this->testValue);
 			
-			if (764 == this->messageSize || 812 == this->messageSize || 1044 == this->messageSize || 1060 == this->messageSize)
+			if (764 == this->messageSize || 812 == this->messageSize || 1044 == this->messageSize || 1060 == this->messageSize || 1108 == this->messageSize)
 			{
 				this->unserialize(ptr, this->robotMode);
 			}
 			
-			if (812 == this->messageSize || 1044 == this->messageSize || 1060 == this->messageSize)
+			if (812 == this->messageSize || 1044 == this->messageSize || 1060 == this->messageSize || 1108 == this->messageSize)
 			{
 				this->unserialize(ptr, this->jointModes);
 			}
 			
-			if (1044 == this->messageSize || 1060 == this->messageSize)
+			if (1044 == this->messageSize || 1060 == this->messageSize || 1108 == this->messageSize)
 			{
 				this->unserialize(ptr, this->safetyMode);
 				ptr += 6 * sizeof(double);
@@ -360,10 +361,16 @@ namespace rl
 				this->unserialize(ptr, this->vActual);
 			}
 			
-			if (1060 == this->messageSize)
+			if (1060 == this->messageSize || 1108 == this->messageSize)
 			{
 				this->unserialize(ptr, this->digitalOutputs);
 				this->unserialize(ptr, this->programState);
+			}
+			
+			if (1108 == this->messageSize)
+			{
+				this->unserialize(ptr, this->elbowPosition);
+				this->unserialize(ptr, this->elbowVelocity);
 			}
 		}
 		

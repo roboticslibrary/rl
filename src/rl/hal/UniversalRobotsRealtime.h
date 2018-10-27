@@ -46,7 +46,7 @@ namespace rl
 	namespace hal
 	{
 		/**
-		 * Universal Robots realtime interface (pre-3.0, 3.0, 3.1, 3.2).
+		 * Universal Robots realtime interface (pre-3.0, 3.0, 3.1, 3.2, 3.3, 3.4, 3.5).
 		 */
 		class UniversalRobotsRealtime :
 			public CartesianForceSensor,
@@ -187,6 +187,10 @@ namespace rl
 				::std::int64_t digitalOutputs;
 				
 				double programState;
+				
+				double elbowPosition[3];
+				
+				double elbowVelocity[3];
 			};
 			
 			Message in;
