@@ -72,7 +72,7 @@ namespace rl
 				Shape* shape1 = static_cast<Shape*>(first);
 				Shape* shape2 = static_cast<Shape*>(second);
 				
-				if (shape1->encounters.count(shape2) > 0 || shape2->encounters.count(shape1) > 0)
+				if (shape1->encounters.find(shape2) != shape1->encounters.end() || shape2->encounters.find(shape1) != shape2->encounters.end())
 				{
 					DT_Vector3 point;
 					
