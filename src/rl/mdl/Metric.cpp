@@ -69,13 +69,13 @@ namespace rl
 			
 			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDofPosition(), ++i)
 			{
-				d += this->joints[i]->distance(
+				d += this->joints[i]->transformedDistance(
 					q1.segment(j, this->joints[i]->getDofPosition()),
 					q2.segment(j, this->joints[i]->getDofPosition())
 				);
 			}
 			
-			return d;
+			return this->inverseOfTransformedDistance(d);
 		}
 		
 		void
