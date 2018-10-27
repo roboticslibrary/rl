@@ -101,7 +101,16 @@ namespace rl
 		void
 		Spherical::normalize(::rl::math::Vector& q) const
 		{
-			::Eigen::Map< ::rl::math::Quaternion>(q.data()).normalize();
+			::Eigen::Map< ::rl::math::Quaternion> quaternion(q.data());
+			
+			if (quaternion.squaredNorm() > 0)
+			{
+				quaternion.normalize();
+			}
+			else
+			{
+				quaternion.setIdentity();
+			}
 		}
 		
 		void
