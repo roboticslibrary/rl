@@ -31,10 +31,10 @@
 namespace Eigen { template<typename _Scalar, int _Dim, int _Mode, int _Options> class Transform {
 #endif
 
-template<typename Scalar, int Dim, int Mode, int Options>
+template<typename OtherScalar1, int OtherDim, int OtherMode, int OtherOptions, typename OtherScalar2>
 inline
 Scalar
-distance(const Transform<Scalar, Dim, Mode, Options>& other, const Scalar& weight = 1) const
+distance(const Transform<OtherScalar1, OtherDim, OtherMode, OtherOptions>& other, const OtherScalar2& weight = 1) const
 {
 	using ::std::pow;
 	using ::std::sqrt;
@@ -58,10 +58,10 @@ distance(const Transform<Scalar, Dim, Mode, Options>& other, const Scalar& weigh
  * rotations larger than 90 degrees, this approximation would be
  * completely wrong.
  */
-template<typename Scalar, int Dim, int Mode, int Options>
+template<typename OtherScalar1, int OtherDim, int OtherMode, int OtherOptions, typename OtherScalar2>
 inline
 void
-fromDelta(const Transform<Scalar, Dim, Mode, Options>& other, const Matrix<Scalar, 6, 1>& delta, const bool& useApproximation = false)
+fromDelta(const Transform<OtherScalar1, OtherDim, OtherMode, OtherOptions>& other, const Matrix<OtherScalar2, 6, 1>& delta, const bool& useApproximation = false)
 {
 	if (useApproximation)
 	{
@@ -91,9 +91,10 @@ fromDelta(const Transform<Scalar, Dim, Mode, Options>& other, const Matrix<Scala
 	}
 }
 
+template<typename OtherScalar>
 inline
 void
-fromDenavitHartenbergPaul(const Scalar& d, const Scalar& theta, const Scalar& a, const Scalar& alpha)
+fromDenavitHartenbergPaul(const OtherScalar& d, const OtherScalar& theta, const OtherScalar& a, const OtherScalar& alpha)
 {
 	using ::std::cos;
 	using ::std::sin;
@@ -137,10 +138,10 @@ getDelta() const
 	return res;
 }
 
-template<typename Scalar>
+template<typename OtherScalar>
 inline
 void
-setDelta(const Matrix<Scalar, 6, 1>& delta)
+setDelta(const Matrix<OtherScalar, 6, 1>& delta)
 {
 	(*this)(0, 0) = Scalar(0);
 	(*this)(0, 1) = -delta(5);
@@ -169,10 +170,10 @@ setDelta(const Matrix<Scalar, 6, 1>& delta)
  * vector will be accurate up to 1e-9.) For rotations larger than 90
  * degrees, this approximation would be completely wrong.
  */
-template<typename Scalar, int Dim, int Mode, int Options>
+template<typename OtherScalar, int OtherDim, int OtherMode, int OtherOptions>
 inline
 Matrix<Scalar, 6, 1>
-toDelta(const Transform<Scalar, Dim, Mode, Options>& other, const bool& useApproximation = false) const
+toDelta(const Transform<OtherScalar, OtherDim, OtherMode, OtherOptions>& other, const bool& useApproximation = false) const
 {
 	Matrix<Scalar, 6, 1> res;
 	
@@ -195,9 +196,10 @@ toDelta(const Transform<Scalar, Dim, Mode, Options>& other, const bool& useAppro
 	return res;
 }
 
+template<typename OtherScalar>
 inline
 void
-toDenavitHartenbergPaul(Scalar& d, Scalar& theta, Scalar& a, Scalar& alpha) const
+toDenavitHartenbergPaul(OtherScalar& d, OtherScalar& theta, OtherScalar& a, OtherScalar& alpha) const
 {
 	using ::std::abs;
 	using ::std::atan2;
