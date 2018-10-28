@@ -27,6 +27,8 @@
 #ifndef RL_MATH_ROTATION_H
 #define RL_MATH_ROTATION_H
 
+#include <Eigen/Geometry>
+
 #include "Matrix.h"
 
 namespace rl
