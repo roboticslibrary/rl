@@ -137,7 +137,7 @@ namespace rl
 				sample2 = ::boost::vertex(randIndex2, this->graph);
 				// The two vertices have to be from two unconnected components.
 			}
-			while (boost::same_component(sample1, sample2, this->ds));
+			while (::boost::same_component(sample1, sample2, this->ds));
 			
 			// The point in the middle of the two samples.
 			::rl::math::Vector midPoint = static_cast< ::rl::math::Real>(0.5) * (*this->graph[sample1].q + *this->graph[sample2].q);
