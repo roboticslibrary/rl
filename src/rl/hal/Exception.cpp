@@ -57,7 +57,7 @@ namespace rl
 		{
 #ifdef WIN32
 			::LPTSTR buffer = nullptr;
-			::FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, nullptr, errnum, 0, buffer, 0, nullptr);
+			::FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, nullptr, errnum, 0, reinterpret_cast<LPTSTR>(&buffer), 0, nullptr);
 			::std::string message = nullptr != buffer ? buffer : ::boost::lexical_cast< ::std::string>(errnum);
 			::LocalFree(buffer);
 			return message;
