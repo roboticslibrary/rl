@@ -26,6 +26,7 @@
 
 #include <chrono>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
+#include <boost/graph/incremental_components.hpp>
 
 #include "PrmUtilityGuided.h"
 #include "Sampler.h"
@@ -135,7 +136,7 @@ namespace rl
 				sample2 = ::boost::vertex(randIndex2, this->graph);
 				// The two vertices have to be from two unconnected components.
 			}
-			while (this->ds.find_set(sample1) == this->ds.find_set(sample2));
+			while (boost::same_component(sample1, sample2, this->ds));
 			
 			// The point in the middle of the two samples.
 			::rl::math::Vector midPoint = 0.5f * (*this->graph[sample1].q + *this->graph[sample2].q);

@@ -25,6 +25,7 @@
 //
 
 #include <boost/graph/dijkstra_shortest_paths.hpp>
+#include <boost/graph/incremental_components.hpp>
 
 #include "BridgeSampler.h"
 #include "GaussianSampler.h"
@@ -173,7 +174,7 @@ namespace rl
 					
 					if (d < this->radius)
 					{
-						if (this->ds.find_set(u) != this->ds.find_set(v))
+						if (!::boost::same_component(u, v, this->ds))
 						{
 							if (!this->verifier->isColliding(*this->graph[u].q, *this->graph[v].q, d))
 							{
@@ -213,12 +214,12 @@ namespace rl
 			this->end = this->addVertex(::std::make_shared< ::rl::math::Vector>(*this->goal));
 			this->insert(this->end);
 			
-			while ((::std::chrono::steady_clock::now() - this->time) < this->duration && this->ds.find_set(this->begin) != this->ds.find_set(this->end))
+			while ((::std::chrono::steady_clock::now() - this->time) < this->duration && !::boost::same_component(this->begin, this->end, this->ds))
 			{
 				this->construct(1);
 			}
 			
-			if (this->ds.find_set(this->begin) != this->ds.find_set(this->end))
+			if (!::boost::same_component(this->begin, this->end, this->ds))
 			{
 				return false;
 			}
