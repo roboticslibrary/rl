@@ -166,6 +166,8 @@ namespace rl
 		void
 		Coach::stop()
 		{
+			this->out.clear();
+			this->out.str("");
 			this->setRunning(false);
 		}
 	}
