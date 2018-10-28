@@ -663,8 +663,6 @@ namespace rl
 					}
 				}
 				
-				::std::size_t size = node.data.size();
-				
 				node.data.clear();
 				node.data.shrink_to_fit();
 
