@@ -667,10 +667,14 @@ namespace rl
 				
 				node.data.clear();
 				node.data.shrink_to_fit();
-				
+
+#ifdef _OPENMP
 #pragma omp parallel for if (size > 2 * this->nodeDataMax)
-#if defined(_OPENMP) && _OPENMP < 200805
+#if _OPENMP < 200805
 				for (::std::ptrdiff_t i = 0; i < node.children.size(); ++i)
+#else
+				for (::std::size_t i = 0; i < node.children.size(); ++i)
+#endif
 #else
 				for (::std::size_t i = 0; i < node.children.size(); ++i)
 #endif

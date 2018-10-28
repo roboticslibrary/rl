@@ -251,9 +251,13 @@ namespace rl
 				
 				::std::vector<Distance> distances(this->container.size());
 				
+#ifdef _OPENMP
 #pragma omp parallel for
-#if defined(_OPENMP) && _OPENMP < 200805
+#if _OPENMP < 200805
 				for (::std::ptrdiff_t i = 0; i < this->container.size(); ++i)
+#else
+				for (::std::size_t i = 0; i < this->container.size(); ++i)
+#endif
 #else
 				for (::std::size_t i = 0; i < this->container.size(); ++i)
 #endif
