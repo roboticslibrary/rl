@@ -27,6 +27,10 @@
 #ifndef RL_MATH_ROTATION_H
 #define RL_MATH_ROTATION_H
 
+#define EIGEN_MATRIXBASE_PLUGIN <rl/math/MatrixBaseAddons.h>
+#define EIGEN_QUATERNIONBASE_PLUGIN <rl/math/QuaternionBaseAddons.h>
+#define EIGEN_TRANSFORM_PLUGIN <rl/math/TransformAddons.h>
+
 #include <Eigen/Geometry>
 
 #include "Matrix.h"
