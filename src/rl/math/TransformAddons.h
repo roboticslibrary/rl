@@ -205,7 +205,7 @@ toDenavitHartenbergPaul(Scalar& d, Scalar& theta, Scalar& a, Scalar& alpha) cons
 	}
 	else
 	{
-		a = (*this)(1, 3) / (*this)(1, 0) + (*this)(0, 3) / (*this)(0, 0);
+		a = ((*this)(1, 3) / (*this)(1, 0) + (*this)(0, 3) / (*this)(0, 0)) * Scalar(0.5);
 	}
 	
 	alpha = ::std::atan2((*this)(2, 1), (*this)(2, 2));
