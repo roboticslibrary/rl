@@ -194,8 +194,15 @@ void
 MainWindow::copyCameraValues()
 {
 	QApplication::clipboard()->setText(
-		"position " + QString(this->viewer->getCamera()->position.getValue().toString().getString()) + "\n" +
-		"orientation " + QString(this->viewer->getCamera()->orientation.getValue().toString().getString()) + "\n" +
+		"position " +
+			QString::number(this->viewer->getCamera()->position.getValue()[0]) + " " +
+			QString::number(this->viewer->getCamera()->position.getValue()[1]) + " " +
+			QString::number(this->viewer->getCamera()->position.getValue()[2]) + "\n" +
+		"orientation " +
+			QString::number(this->viewer->getCamera()->orientation.getValue().getValue()[0]) + " " +
+			QString::number(this->viewer->getCamera()->orientation.getValue().getValue()[1]) + " " +
+			QString::number(this->viewer->getCamera()->orientation.getValue().getValue()[2]) + " " +
+			QString::number(this->viewer->getCamera()->orientation.getValue().getValue()[3]) + "\n" +
 		"focalDistance " + QString::number(this->viewer->getCamera()->focalDistance.getValue()) + "\n" +
 		(
 			SoPerspectiveCamera::getClassTypeId() == this->viewer->getCameraType() ?
