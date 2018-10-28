@@ -27,6 +27,10 @@
 #ifndef RL_MATH_TRANSFORMADDONS_H
 #define RL_MATH_TRANSFORMADDONS_H
 
+#ifdef DOXYGEN_SHOULD_PARSE_THIS
+namespace Eigen { template<typename _Scalar, int _Dim, int _Mode, int _Options> class Transform {
+#endif
+
 template<typename Scalar, int Dim, int Mode, int Options>
 inline
 Scalar
@@ -210,5 +214,9 @@ toDenavitHartenbergPaul(Scalar& d, Scalar& theta, Scalar& a, Scalar& alpha) cons
 	
 	alpha = ::std::atan2((*this)(2, 1), (*this)(2, 2));
 }
+
+#ifdef DOXYGEN_SHOULD_PARSE_THIS
+} }
+#endif
 
 #endif // RL_MATH_TRANSFORMADDONS_H

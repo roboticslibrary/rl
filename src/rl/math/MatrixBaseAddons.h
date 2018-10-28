@@ -27,6 +27,10 @@
 #ifndef RL_MATH_MATRIXBASEADDONS_H
 #define RL_MATH_MATRIXBASEADDONS_H
 
+#ifdef DOXYGEN_SHOULD_PARSE_THIS
+namespace Eigen { template<typename Derived> class MatrixBase {
+#endif
+
 Matrix<Scalar, 3, 1>
 cross3() const
 {
@@ -85,5 +89,9 @@ voigt33() const
 	res(2, 2) = this->derived()(2);
 	return res;
 }
+
+#ifdef DOXYGEN_SHOULD_PARSE_THIS
+} }
+#endif
 
 #endif // RL_MATH_MATRIXBASEADDONS_H

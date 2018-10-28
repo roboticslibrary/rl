@@ -27,6 +27,10 @@
 #ifndef RL_MATH_QUATERNIONBASEADDONS_H
 #define RL_MATH_QUATERNIONBASEADDONS_H
 
+#ifdef DOXYGEN_SHOULD_PARSE_THIS
+namespace Eigen { template<typename Derived> class QuaternionBase {
+#endif
+
 template<typename OtherDerived>
 Vector3
 angularVelocity(const QuaternionBase<OtherDerived>& qd) const
@@ -235,5 +239,9 @@ squadFirstDerivative(const Scalar& t, const QuaternionBase<OtherDerived1>& a, co
 	Scalar tmp = Scalar(2) * t * (Scalar(1) - t);
 	return u * (w.pow(tmp) * (Scalar(2) - Scalar(4) * t) * w.log() + w.pow(tmp - Scalar(1)) * tmp * wd) + ud * w.pow(tmp);
 }
+
+#ifdef DOXYGEN_SHOULD_PARSE_THIS
+} }
+#endif
 
 #endif // RL_MATH_QUATERNIONBASEADDONS_H
