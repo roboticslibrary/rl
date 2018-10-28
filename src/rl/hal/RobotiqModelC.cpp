@@ -333,7 +333,7 @@ namespace rl
 		{
 		}
 		
-		RobotiqModelC::Exception::~Exception()
+		RobotiqModelC::Exception::~Exception() throw()
 		{
 		}
 		
