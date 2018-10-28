@@ -166,7 +166,7 @@ namespace rl
 #ifdef WIN32
 				const int& flags = GENERIC_READ | GENERIC_WRITE
 #else // WIN32
-				const int& flags = O_RDWR | O_NONBLOCK | O_NOCTTY
+				const int& flags = O_RDWR | O_NOCTTY
 #endif // WIN32
 			);
 			
