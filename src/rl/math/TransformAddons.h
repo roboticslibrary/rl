@@ -91,10 +91,10 @@ fromDelta(const Transform<OtherScalar1, OtherDim, OtherMode, OtherOptions>& othe
 	}
 }
 
-template<typename OtherScalar>
+template<typename OtherScalar1, typename OtherScalar2, typename OtherScalar3, typename OtherScalar4>
 inline
 void
-fromDenavitHartenbergPaul(const OtherScalar& d, const OtherScalar& theta, const OtherScalar& a, const OtherScalar& alpha)
+fromDenavitHartenbergPaul(const OtherScalar1& d, const OtherScalar2& theta, const OtherScalar3& a, const OtherScalar4& alpha)
 {
 	using ::std::cos;
 	using ::std::sin;
@@ -196,10 +196,10 @@ toDelta(const Transform<OtherScalar, OtherDim, OtherMode, OtherOptions>& other, 
 	return res;
 }
 
-template<typename OtherScalar>
+template<typename OtherScalar1, typename OtherScalar2, typename OtherScalar3, typename OtherScalar4>
 inline
 void
-toDenavitHartenbergPaul(OtherScalar& d, OtherScalar& theta, OtherScalar& a, OtherScalar& alpha) const
+toDenavitHartenbergPaul(OtherScalar1& d, OtherScalar2& theta, OtherScalar3& a, OtherScalar4& alpha) const
 {
 	using ::std::abs;
 	using ::std::atan2;
