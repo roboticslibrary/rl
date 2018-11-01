@@ -28,6 +28,11 @@ else()
 	set(PATCH_EXECUTABLE patch)
 endif()
 
+add_subdirectory(coin3d/boost-header-libs-full)
+add_subdirectory(coin3d/cpack.d)
+add_subdirectory(coin3d/soanydata)
+add_subdirectory(coin3d/sogui)
+
 add_subdirectory(atidaq)
 add_subdirectory(boost)
 add_subdirectory(bullet)
@@ -36,15 +41,15 @@ add_subdirectory(libiconv)
 add_subdirectory(nlopt)
 add_subdirectory(ode)
 add_subdirectory(pqp)
-add_subdirectory(simage)
+add_subdirectory(coin3d/simage)
 add_subdirectory(solid)
 add_subdirectory(zlib)
 
 add_subdirectory(libxml2)
-add_subdirectory(coin)
+add_subdirectory(coin3d/coin)
 
 add_subdirectory(libxslt)
-add_subdirectory(soqt)
+add_subdirectory(coin3d/soqt)
 
 set(
 	CPACK_INSTALL_CMAKE_PROJECTS
