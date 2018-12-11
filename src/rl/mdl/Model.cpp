@@ -134,9 +134,9 @@ namespace rl
 		{
 			::rl::math::Vector q(this->getDofPosition());
 			
-			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDofPosition(), ++i)
+			for (::std::size_t i = 0, j = 0, k=0; i < this->joints.size(); j += this->joints[i]->getDofPosition(), k += this->joints[i]->getDof(), ++i)
 			{
-				q.segment(j, this->joints[i]->getDofPosition()) = this->joints[i]->generatePositionUniform(rand.segment(j, this->joints[i]->getDofPosition()));
+				q.segment(j, this->joints[i]->getDofPosition()) = this->joints[i]->generatePositionUniform(rand.segment(k, this->joints[i]->getDof()));
 			}
 			
 			return q;
