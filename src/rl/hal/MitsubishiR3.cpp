@@ -27,7 +27,7 @@
 #include <array>
 #include <bitset>
 #include <cassert>
-#include <boost/algorithm/string.hpp> 
+#include <boost/algorithm/string.hpp>
 
 #include "MitsubishiR3.h"
 
