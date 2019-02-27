@@ -69,7 +69,7 @@ namespace rl
 				i = ::boost::source(*::boost::in_edges(i, this->tree[1]).first, this->tree[1]);
 			}
 			
-			path.push_back(*this->tree[1][i]->q);
+			path.push_back(*get(this->tree[1], i)->q);
 			
 			return path;
 		}
