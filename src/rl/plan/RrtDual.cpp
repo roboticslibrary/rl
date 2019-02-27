@@ -53,7 +53,7 @@ namespace rl
 			
 			Vertex i = this->end[0];
 			
-			while (i != this->begin[0])
+			while (::boost::in_degree(i, this->tree[0]) > 0)
 			{
 				path.push_front(*get(this->tree[0], i)->q);
 				i = ::boost::source(*::boost::in_edges(i, this->tree[0]).first, this->tree[0]);
@@ -63,7 +63,7 @@ namespace rl
 			
 			i = ::boost::source(*::boost::in_edges(this->end[1], this->tree[1]).first, this->tree[1]);
 			
-			while (i != this->begin[1])
+			while (::boost::in_degree(i, this->tree[1]) > 0)
 			{
 				path.push_back(*get(this->tree[1], i)->q);
 				i = ::boost::source(*::boost::in_edges(i, this->tree[1]).first, this->tree[1]);
