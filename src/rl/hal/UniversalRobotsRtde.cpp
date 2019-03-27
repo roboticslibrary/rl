@@ -511,6 +511,7 @@ namespace rl
 				"robot_mode",
 				"joint_mode",
 				"safety_mode",
+				"speed_scaling",
 				"actual_digital_output_bits",
 				"runtime_state",
 				"robot_status_bits",
@@ -723,6 +724,7 @@ namespace rl
 					this->unserialize(ptr, this->output.robotMode);
 					this->unserialize(ptr, this->output.jointMode);
 					this->unserialize(ptr, this->output.safetyMode);
+					this->unserialize(ptr, this->output.speedScaling);
 					this->unserialize(ptr, this->output.actualDigitalOutputBits);
 					this->unserialize(ptr, this->output.runtimeState);
 					this->unserialize(ptr, this->output.robotStatusBits);

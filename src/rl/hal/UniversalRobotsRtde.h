@@ -339,6 +339,8 @@ namespace rl
 				
 				::std::uint32_t safetyStatusBits;
 				
+				double speedScaling;
+				
 				double standardAnalogInput0;
 				
 				double standardAnalogInput1;
