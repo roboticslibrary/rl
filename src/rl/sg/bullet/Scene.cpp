@@ -129,8 +129,8 @@ namespace rl
 				::btVoronoiSimplexSolver simplexSolver;
 				::btGjkEpaPenetrationDepthSolver penetrationDepthSolver;
 				::btGjkPairDetector pairDetector(
-					dynamic_cast< ::btConvexShape*>(shape1->shape),
-					dynamic_cast< ::btConvexShape*>(shape2->shape),
+					static_cast< ::btConvexShape*>(shape1->shape),
+					static_cast< ::btConvexShape*>(shape2->shape),
 					&simplexSolver,
 					&penetrationDepthSolver
 				);
@@ -163,8 +163,8 @@ namespace rl
 				
 				::btGjkEpaPenetrationDepthSolver epa;
 				::btGjkPairDetector convexConvex(
-					dynamic_cast< ::btConvexShape*>(static_cast<Shape*>(shape)->shape),
-					dynamic_cast< ::btConvexShape*>(&sphere),
+					static_cast< ::btConvexShape*>(static_cast<Shape*>(shape)->shape),
+					static_cast< ::btConvexShape*>(&sphere),
 					&sGjkSimplexSolver,
 					&epa
 				);
