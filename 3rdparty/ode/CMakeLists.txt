@@ -6,9 +6,11 @@ include(ExternalProject)
 
 ExternalProject_Add(
 	ode
-	URL https://bitbucket.org/roboticslibrary/ode/get/patch-cmake-0.15.x.tar.bz2
-	#URL ${CMAKE_CURRENT_SOURCE_DIR}/ode-0.15.2.tar.bz2
-	#URL_MD5 c235fbbbc2c2381b8b3259a8328f7826
+	#HG_REPOSITORY https://bitbucket.org/odedevs/ode
+	#HG_TAG 0.16
+	URL https://bitbucket.org/odedevs/ode/downloads/ode-0.16.tar.gz
+	#URL ${CMAKE_CURRENT_SOURCE_DIR}/ode-0.16.tar.gz
+	URL_MD5 5da260bdc3f7de1636ce85e72807bffb
 	CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_CFG_INTDIR=${CMAKE_CFG_INTDIR} -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH} -DCMAKE_TRY_COMPILE_CONFIGURATION=${CMAKE_TRY_COMPILE_CONFIGURATION} -DODE_WITH_DEMOS=OFF -DODE_WITH_TESTS=OFF
 	INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
 )
