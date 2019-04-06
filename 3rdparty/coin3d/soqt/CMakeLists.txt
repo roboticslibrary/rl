@@ -4,7 +4,7 @@ list(INSERT CMAKE_PREFIX_PATH 0 ${CMAKE_INSTALL_PREFIX})
 
 ExternalProject_Add(
 	soqt
-	DEPENDS cpack.d soanydata sogui coin
+	DEPENDS coin cpack.d soanydata sogui
 	#HG_REPOSITORY https://bitbucket.org/Coin3D/soqt
 	#HG_TAG default
 	URL https://bitbucket.org/Coin3D/soqt/get/default.tar.bz2

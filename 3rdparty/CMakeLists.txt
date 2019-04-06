@@ -28,7 +28,6 @@ else()
 	set(PATCH_EXECUTABLE patch)
 endif()
 
-add_subdirectory(coin3d/boost-header-libs-full)
 add_subdirectory(coin3d/cpack.d)
 add_subdirectory(coin3d/soanydata)
 add_subdirectory(coin3d/sogui)
