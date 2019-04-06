@@ -22,7 +22,7 @@ Build-Depends: debhelper (>= 7.0.50~),
  libxslt1-dev (>= 1.1.26)
 Standards-Version: 3.9.1
 Section: libs
-Homepage: http://www.roboticslibrary.org/
+Homepage: https://www.roboticslibrary.org/
 
 Package: librl
 Section: libs

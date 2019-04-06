@@ -1,7 +1,7 @@
 Format: http://dep.debian.net/deps/dep5
 Upstream-Name: Robotics Library
 Upstream-Contact: Robotics Library Team <roblib-developers@lists.sourceforge.net>
-Source: http://www.roboticslibrary.org/
+Source: https://www.roboticslibrary.org/
 
 Files: *
 Copyright: Copyright 2009 Robotics Library Team <roblib-developers@lists.sourceforge.net>

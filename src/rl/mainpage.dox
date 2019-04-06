@@ -3,7 +3,7 @@ namespace rl
 /** 
 \mainpage Robotics Library
 
-For first time users, please have a look at our <a href="http://www.roboticslibrary.org/">website</a>. Also, please refer to the website for <a href="http://www.roboticslibrary.org/tutorials">tutorials</a>, a <a href="http://www.roboticslibrary.org/api">high-level API description</a> and answers on <a href="http://www.roboticslibrary.org/faq">frequently asked questions</a> (FAQ).
+For first time users, please have a look at our <a href="https://www.roboticslibrary.org/">website</a>. Also, please refer to the website for <a href="https://www.roboticslibrary.org/tutorials">tutorials</a>, a <a href="https://www.roboticslibrary.org/api">high-level API description</a> and answers on <a href="https://www.roboticslibrary.org/faq">frequently asked questions</a> (FAQ).
 
 \section api API Overview
 
