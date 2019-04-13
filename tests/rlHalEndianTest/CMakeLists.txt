@@ -9,6 +9,6 @@ target_link_libraries(
 )
 
 add_test(
-	rlHalEndianTest
-	${CMAKE_CURRENT_BINARY_DIR}/rlHalEndianTest
+	NAME rlHalEndianTest
+	COMMAND rlHalEndianTest
 )

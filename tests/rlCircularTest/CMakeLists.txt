@@ -9,6 +9,6 @@ target_link_libraries(
 )
 
 add_test(
-	rlCircularTest1
-	${CMAKE_CURRENT_BINARY_DIR}/rlCircularTest
+	NAME rlCircularTest
+	COMMAND rlCircularTest
 )

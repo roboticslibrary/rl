@@ -27,8 +27,8 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR PQP_FOUND OR SOLID3_FOUND)
 	
 	if(BULLET_FOUND)
 		add_test(
-			rlEetTestBulletBox6d300505Maze
-			${CMAKE_CURRENT_BINARY_DIR}/rlEetTest
+			NAME rlEetTestBulletBox6d300505Maze
+			COMMAND rlEetTest
 			bullet
 			${rl_SOURCE_DIR}/examples/rlsg/box-6d-300505_maze.xml
 			${rl_SOURCE_DIR}/examples/rlkin/box-6d-300505.xml
@@ -40,8 +40,8 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR PQP_FOUND OR SOLID3_FOUND)
 	
 	if(CCD_FOUND AND FCL_FOUND)
 		add_test(
-			rlEetTestFclBox6d300505Maze
-			${CMAKE_CURRENT_BINARY_DIR}/rlEetTest
+			NAME rlEetTestFclBox6d300505Maze
+			COMMAND rlEetTest
 			fcl
 			${rl_SOURCE_DIR}/examples/rlsg/box-6d-300505_maze.xml
 			${rl_SOURCE_DIR}/examples/rlkin/box-6d-300505.xml
@@ -53,8 +53,8 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR PQP_FOUND OR SOLID3_FOUND)
 	
 	if(PQP_FOUND)
 		add_test(
-			rlEetTestPqpBox6d300505Maze
-			${CMAKE_CURRENT_BINARY_DIR}/rlEetTest
+			NAME rlEetTestPqpBox6d300505Maze
+			COMMAND rlEetTest
 			pqp
 			${rl_SOURCE_DIR}/examples/rlsg/box-6d-300505_maze.xml
 			${rl_SOURCE_DIR}/examples/rlkin/box-6d-300505.xml
@@ -66,8 +66,8 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR PQP_FOUND OR SOLID3_FOUND)
 	
 	if(SOLID3_FOUND)
 		add_test(
-			rlEetTestSolidBox6d300505Maze
-			${CMAKE_CURRENT_BINARY_DIR}/rlEetTest
+			NAME rlEetTestSolidBox6d300505Maze
+			COMMAND rlEetTest
 			solid
 			${rl_SOURCE_DIR}/examples/rlsg/box-6d-300505_maze.xml
 			${rl_SOURCE_DIR}/examples/rlkin/box-6d-300505.xml

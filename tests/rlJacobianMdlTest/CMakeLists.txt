@@ -9,13 +9,13 @@ target_link_libraries(
 )
 
 add_test(
-	rlJacobianMdlTestMitsubishiRv6sl
-	${CMAKE_CURRENT_BINARY_DIR}/rlJacobianMdlTest
+	NAME rlJacobianMdlTestMitsubishiRv6sl
+	COMMAND rlJacobianMdlTest
 	${rl_SOURCE_DIR}/examples/rlmdl/mitsubishi-rv6sl.xml
 )
 
 add_test(
-	rlJacobianMdlTestComauSmart5Nj422027
-	${CMAKE_CURRENT_BINARY_DIR}/rlJacobianMdlTest
+	NAME rlJacobianMdlTestComauSmart5Nj422027
+	COMMAND rlJacobianMdlTest
 	${rl_SOURCE_DIR}/examples/rlmdl/comau-smart5-nj4-220-27.xml
 )

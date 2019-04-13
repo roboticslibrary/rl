@@ -29,6 +29,6 @@ target_link_libraries(
 )
 
 add_test(
-	rlNearestNeighborsTest
-	${CMAKE_CURRENT_BINARY_DIR}/rlNearestNeighborsTest
+	NAME rlNearestNeighborsTest
+	COMMAND rlNearestNeighborsTest
 )

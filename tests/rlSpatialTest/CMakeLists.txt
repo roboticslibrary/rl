@@ -13,5 +13,5 @@ set(
 foreach(TEST ${TESTS})
 	add_executable(${TEST} ${TEST}.cpp)
 	target_link_libraries(${TEST} math)
-	add_test(${TEST} ${CMAKE_CURRENT_BINARY_DIR}/${TEST})
+	add_test(NAME ${TEST} COMMAND ${TEST})
 endforeach()

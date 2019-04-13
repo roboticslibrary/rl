@@ -26,8 +26,8 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE_FOUND OR PQP_FOUND OR SOLID3
 	)
 	
 	add_test(
-		rlCollisionTestPuma560Boxes
-		${CMAKE_CURRENT_BINARY_DIR}/rlCollisionTest
+		NAME rlCollisionTestPuma560Boxes
+		COMMAND rlCollisionTest
 		${rl_SOURCE_DIR}/examples/rlsg/unimation-puma560_boxes.convex.xml
 		${rl_SOURCE_DIR}/examples/rlmdl/unimation-puma560.xml
 		0 0 0 0 0 0
@@ -44,8 +44,8 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE_FOUND OR PQP_FOUND OR SOLID3
 	)
 	
 	add_test(
-		rlSceneCollisionTestTwoTori1
-		${CMAKE_CURRENT_BINARY_DIR}/rlSceneCollisionTest
+		NAME rlSceneCollisionTestTwoTori1
+		COMMAND rlSceneCollisionTest
 		${CMAKE_CURRENT_SOURCE_DIR}/twotori.xml
 	)
 endif()

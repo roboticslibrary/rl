@@ -9,13 +9,13 @@ target_link_libraries(
 )
 
 add_test(
-	rlJacobianKinTestMitsubishiRv6sl
-	${CMAKE_CURRENT_BINARY_DIR}/rlJacobianKinTest
+	NAME rlJacobianKinTestMitsubishiRv6sl
+	COMMAND rlJacobianKinTest
 	${rl_SOURCE_DIR}/examples/rlkin/mitsubishi-rv6sl.xml
 )
 
 add_test(
-	rlJacobianKinTestStaeubliTx60l
-	${CMAKE_CURRENT_BINARY_DIR}/rlJacobianKinTest
+	NAME rlJacobianKinTestStaeubliTx60l
+	COMMAND rlJacobianKinTest
 	${rl_SOURCE_DIR}/examples/rlkin/staeubli-tx60l.xml
 )

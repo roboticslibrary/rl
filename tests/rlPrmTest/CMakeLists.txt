@@ -28,8 +28,8 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE_FOUND OR PQP_FOUND OR SOLID3
 	
 	if(BULLET_FOUND)
 		add_test(
-			rlPrmTestBulletUnimationPuma560Boxes1
-			${CMAKE_CURRENT_BINARY_DIR}/rlPrmTest
+			NAME rlPrmTestBulletUnimationPuma560Boxes1
+			COMMAND rlPrmTest
 			bullet
 			${rl_SOURCE_DIR}/examples/rlsg/unimation-puma560_boxes.convex.xml
 			${rl_SOURCE_DIR}/examples/rlkin/unimation-puma560.xml
@@ -40,8 +40,8 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE_FOUND OR PQP_FOUND OR SOLID3
 		)
 		
 		add_test(
-			rlPrmTestBulletUnimationPuma560Boxes2
-			${CMAKE_CURRENT_BINARY_DIR}/rlPrmTest
+			NAME rlPrmTestBulletUnimationPuma560Boxes2
+			COMMAND rlPrmTest
 			bullet
 			${rl_SOURCE_DIR}/examples/rlsg/unimation-puma560_boxes.convex.xml
 			${rl_SOURCE_DIR}/examples/rlkin/unimation-puma560.xml
@@ -54,8 +54,8 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE_FOUND OR PQP_FOUND OR SOLID3
 	
 	if(CCD_FOUND AND FCL_FOUND)
 		add_test(
-			rlPrmTestFclUnimationPuma560Boxes1
-			${CMAKE_CURRENT_BINARY_DIR}/rlPrmTest
+			NAME rlPrmTestFclUnimationPuma560Boxes1
+			COMMAND rlPrmTest
 			fcl
 			${rl_SOURCE_DIR}/examples/rlsg/unimation-puma560_boxes.convex.xml
 			${rl_SOURCE_DIR}/examples/rlkin/unimation-puma560.xml
@@ -66,8 +66,8 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE_FOUND OR PQP_FOUND OR SOLID3
 		)
 		
 		add_test(
-			rlPrmTestFclUnimationPuma560Boxes2
-			${CMAKE_CURRENT_BINARY_DIR}/rlPrmTest
+			NAME rlPrmTestFclUnimationPuma560Boxes2
+			COMMAND rlPrmTest
 			fcl
 			${rl_SOURCE_DIR}/examples/rlsg/unimation-puma560_boxes.convex.xml
 			${rl_SOURCE_DIR}/examples/rlkin/unimation-puma560.xml
@@ -80,8 +80,8 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE_FOUND OR PQP_FOUND OR SOLID3
 	
 	if(ODE_FOUND)
 		add_test(
-			rlPrmTestOdeUnimationPuma560Boxes1
-			${CMAKE_CURRENT_BINARY_DIR}/rlPrmTest
+			NAME rlPrmTestOdeUnimationPuma560Boxes1
+			COMMAND rlPrmTest
 			ode
 			${rl_SOURCE_DIR}/examples/rlsg/unimation-puma560_boxes.convex.xml
 			${rl_SOURCE_DIR}/examples/rlkin/unimation-puma560.xml
@@ -92,8 +92,8 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE_FOUND OR PQP_FOUND OR SOLID3
 		)
 		
 		add_test(
-			rlPrmTestOdeUnimationPuma560Boxes2
-			${CMAKE_CURRENT_BINARY_DIR}/rlPrmTest
+			NAME rlPrmTestOdeUnimationPuma560Boxes2
+			COMMAND rlPrmTest
 			ode
 			${rl_SOURCE_DIR}/examples/rlsg/unimation-puma560_boxes.convex.xml
 			${rl_SOURCE_DIR}/examples/rlkin/unimation-puma560.xml
@@ -106,8 +106,8 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE_FOUND OR PQP_FOUND OR SOLID3
 	
 	if(PQP_FOUND)
 		add_test(
-			rlPrmTestPqpUnimationPuma560Boxes1
-			${CMAKE_CURRENT_BINARY_DIR}/rlPrmTest
+			NAME rlPrmTestPqpUnimationPuma560Boxes1
+			COMMAND rlPrmTest
 			pqp
 			${rl_SOURCE_DIR}/examples/rlsg/unimation-puma560_boxes.convex.xml
 			${rl_SOURCE_DIR}/examples/rlkin/unimation-puma560.xml
@@ -118,8 +118,8 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE_FOUND OR PQP_FOUND OR SOLID3
 		)
 		
 		add_test(
-			rlPrmTestPqpUnimationPuma560Boxes2
-			${CMAKE_CURRENT_BINARY_DIR}/rlPrmTest
+			NAME rlPrmTestPqpUnimationPuma560Boxes2
+			COMMAND rlPrmTest
 			pqp
 			${rl_SOURCE_DIR}/examples/rlsg/unimation-puma560_boxes.convex.xml
 			${rl_SOURCE_DIR}/examples/rlkin/unimation-puma560.xml
@@ -132,8 +132,8 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE_FOUND OR PQP_FOUND OR SOLID3
 	
 	if(SOLID3_FOUND)
 		add_test(
-			rlPrmTestSolidUnimationPuma560Boxes1
-			${CMAKE_CURRENT_BINARY_DIR}/rlPrmTest
+			NAME rlPrmTestSolidUnimationPuma560Boxes1
+			COMMAND rlPrmTest
 			solid
 			${rl_SOURCE_DIR}/examples/rlsg/unimation-puma560_boxes.convex.xml
 			${rl_SOURCE_DIR}/examples/rlkin/unimation-puma560.xml
@@ -144,8 +144,8 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE_FOUND OR PQP_FOUND OR SOLID3
 		)
 		
 		add_test(
-			rlPrmTestSolidUnimationPuma560Boxes2
-			${CMAKE_CURRENT_BINARY_DIR}/rlPrmTest
+			NAME rlPrmTestSolidUnimationPuma560Boxes2
+			COMMAND rlPrmTest
 			solid
 			${rl_SOURCE_DIR}/examples/rlsg/unimation-puma560_boxes.convex.xml
 			${rl_SOURCE_DIR}/examples/rlkin/unimation-puma560.xml

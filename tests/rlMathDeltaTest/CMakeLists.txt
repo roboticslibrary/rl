@@ -9,6 +9,6 @@ target_link_libraries(
 )
 
 add_test(
-	rlMathDeltaTest1
-	${CMAKE_CURRENT_BINARY_DIR}/rlMathDeltaTest
+	NAME rlMathDeltaTest
+	COMMAND rlMathDeltaTest
 )
