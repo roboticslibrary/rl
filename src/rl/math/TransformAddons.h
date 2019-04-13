@@ -31,10 +31,10 @@
 namespace Eigen { template<typename _Scalar, int _Dim, int _Mode, int _Options> class Transform {
 #endif
 
-template<typename OtherScalar1, int OtherDim, int OtherMode, int OtherOptions, typename OtherScalar2>
+template<typename OtherScalar, int OtherDim, int OtherMode, int OtherOptions>
 inline
 Scalar
-distance(const Transform<OtherScalar1, OtherDim, OtherMode, OtherOptions>& other, const OtherScalar2& weight = 1) const
+distance(const Transform<OtherScalar, OtherDim, OtherMode, OtherOptions>& other, const Scalar& weight = 1) const
 {
 	using ::std::pow;
 	using ::std::sqrt;
