@@ -33,7 +33,7 @@ namespace rl
 {
 	namespace mdl
 	{
-		class Prismatic : public Joint
+		class RL_MDL_EXPORT Prismatic : public Joint
 		{
 		public:
 			Prismatic();

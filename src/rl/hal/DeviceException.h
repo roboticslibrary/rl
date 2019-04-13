@@ -33,7 +33,7 @@ namespace rl
 {
 	namespace hal
 	{
-		class DeviceException : public Exception
+		class RL_HAL_EXPORT DeviceException : public Exception
 		{
 		public:
 			DeviceException(const ::std::string& what_arg);

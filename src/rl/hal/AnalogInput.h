@@ -35,7 +35,7 @@ namespace rl
 {
 	namespace hal
 	{
-		class AnalogInput : public virtual Device
+		class RL_HAL_EXPORT AnalogInput : public virtual Device
 		{
 		public:
 			AnalogInput();

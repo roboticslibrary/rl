@@ -30,6 +30,7 @@
 #include <chrono>
 #include <string>
 #include <rl/math/Vector.h>
+#include <rl/plan/export.h>
 
 #include "VectorList.h"
 
@@ -43,7 +44,7 @@ namespace rl
 		class SimpleModel;
 		class Viewer;
 		
-		class Planner
+		class RL_PLAN_EXPORT Planner
 		{
 		public:
 			Planner();

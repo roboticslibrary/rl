@@ -35,7 +35,7 @@ namespace rl
 {
 	namespace hal
 	{
-		class JointPositionActuator : public virtual AxisController
+		class RL_HAL_EXPORT JointPositionActuator : public virtual AxisController
 		{
 		public:
 			JointPositionActuator(const ::std::size_t& dof);

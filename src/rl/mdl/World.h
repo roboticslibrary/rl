@@ -33,7 +33,7 @@ namespace rl
 {
 	namespace mdl
 	{
-		class World : public Frame
+		class RL_MDL_EXPORT World : public Frame
 		{
 		public:
 			World();

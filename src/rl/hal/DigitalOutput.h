@@ -33,7 +33,7 @@ namespace rl
 {
 	namespace hal
 	{
-		class DigitalOutput : public virtual Device
+		class RL_HAL_EXPORT DigitalOutput : public virtual Device
 		{
 		public:
 			DigitalOutput();

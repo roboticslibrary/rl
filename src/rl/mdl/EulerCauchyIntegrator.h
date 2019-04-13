@@ -50,7 +50,7 @@ namespace rl
 		 * 
 		 * @see Dynamic::forwardDynamics()
 		 */
-		class EulerCauchyIntegrator : public Integrator
+		class RL_MDL_EXPORT EulerCauchyIntegrator : public Integrator
 		{
 		public:
 			EulerCauchyIntegrator(Dynamic* dynamic);

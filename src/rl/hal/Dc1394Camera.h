@@ -47,7 +47,7 @@ namespace rl
 		/**
 		 * IEEE 1394 based cameras. 
 		 */
-		class Dc1394Camera : public Camera, public CyclicDevice
+		class RL_HAL_EXPORT Dc1394Camera : public Camera, public CyclicDevice
 		{
 			public:
 				enum ColorCoding

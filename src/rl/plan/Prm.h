@@ -61,7 +61,7 @@ namespace rl
 		 * 
 		 * http://dx.doi.org/10.1109/70.508439
 		 */
-		class Prm : public Planner
+		class RL_PLAN_EXPORT Prm : public Planner
 		{
 		public:
 			Prm();

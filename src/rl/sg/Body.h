@@ -43,7 +43,7 @@ namespace rl
 		class Model;
 		class Shape;
 		
-		class Body : public Base
+		class RL_SG_EXPORT Body : public Base
 		{
 		public:
 			typedef ::std::vector<Shape*>::iterator Iterator;

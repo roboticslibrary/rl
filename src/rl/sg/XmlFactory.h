@@ -35,7 +35,7 @@ namespace rl
 {
 	namespace sg
 	{
-		class XmlFactory : public Factory
+		class RL_SG_EXPORT XmlFactory : public Factory
 		{
 		public:
 			XmlFactory();

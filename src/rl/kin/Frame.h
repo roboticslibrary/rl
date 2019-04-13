@@ -35,7 +35,7 @@ namespace rl
 {
 	namespace kin
 	{
-		class Frame : public Element
+		class RL_KIN_EXPORT Frame : public Element
 		{
 		public:
 			EIGEN_MAKE_ALIGNED_OPERATOR_NEW

@@ -38,7 +38,7 @@ namespace rl
 		/**
 		 * Uniform random sampling strategy.
 		 */
-		class UniformSampler : public Sampler
+		class RL_PLAN_EXPORT UniformSampler : public Sampler
 		{
 		public:
 			UniformSampler();

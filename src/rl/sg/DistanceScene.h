@@ -40,7 +40,7 @@ namespace rl
 		class Scene;
 		class Shape;
 		
-		class DistanceScene : public virtual Scene
+		class RL_SG_EXPORT DistanceScene : public virtual Scene
 		{
 		public:
 			DistanceScene();

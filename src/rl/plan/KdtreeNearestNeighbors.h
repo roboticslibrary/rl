@@ -37,7 +37,7 @@ namespace rl
 	{
 		class Model;
 		
-		class KdtreeNearestNeighbors : public NearestNeighbors
+		class RL_PLAN_EXPORT KdtreeNearestNeighbors : public NearestNeighbors
 		{
 		public:
 			KdtreeNearestNeighbors(Model* model);

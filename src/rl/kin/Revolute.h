@@ -33,7 +33,7 @@ namespace rl
 {
 	namespace kin
 	{
-		class Revolute : public Joint
+		class RL_KIN_EXPORT Revolute : public Joint
 		{
 		public:
 			Revolute();

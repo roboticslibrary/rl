@@ -36,7 +36,7 @@ namespace rl
 {
 	namespace kin
 	{
-		class Link : public Frame
+		class RL_KIN_EXPORT Link : public Frame
 		{
 		public:
 			Link();

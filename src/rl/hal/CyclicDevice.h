@@ -35,7 +35,7 @@ namespace rl
 {
 	namespace hal
 	{
-		class CyclicDevice : public virtual Device
+		class RL_HAL_EXPORT CyclicDevice : public virtual Device
 		{
 		public:
 			CyclicDevice(const ::std::chrono::nanoseconds& updateRate);

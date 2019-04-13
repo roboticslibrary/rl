@@ -33,7 +33,7 @@ namespace rl
 {
 	namespace mdl
 	{
-		class Helical : public Joint
+		class RL_MDL_EXPORT Helical : public Joint
 		{
 		public:
 			Helical();

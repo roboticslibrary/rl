@@ -35,7 +35,7 @@ namespace rl
 {
 	namespace hal
 	{
-		class DigitalInputReader : public virtual DigitalInput
+		class RL_HAL_EXPORT DigitalInputReader : public virtual DigitalInput
 		{
 		public:
 			DigitalInputReader();

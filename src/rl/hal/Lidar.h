@@ -33,7 +33,7 @@ namespace rl
 {
 	namespace hal
 	{
-		class Lidar : public virtual RangeSensor
+		class RL_HAL_EXPORT Lidar : public virtual RangeSensor
 		{
 		public:
 			Lidar();

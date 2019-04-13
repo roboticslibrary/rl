@@ -54,7 +54,7 @@ namespace rl
 		 * 
 		 * @see Dynamic::forwardDynamics()
 		 */
-		class RungeKuttaNystromIntegrator : public Integrator
+		class RL_MDL_EXPORT RungeKuttaNystromIntegrator : public Integrator
 		{
 		public:
 			RungeKuttaNystromIntegrator(Dynamic* dynamic);

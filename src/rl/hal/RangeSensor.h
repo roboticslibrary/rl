@@ -35,7 +35,7 @@ namespace rl
 {
 	namespace hal
 	{
-		class RangeSensor : public virtual Device
+		class RL_HAL_EXPORT RangeSensor : public virtual Device
 		{
 		public:
 			RangeSensor();

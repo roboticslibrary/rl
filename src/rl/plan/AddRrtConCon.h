@@ -43,7 +43,7 @@ namespace rl
 		 * 
 		 * http://dx.doi.org/10.1109/IROS.2005.1545607
 		 */
-		class AddRrtConCon : public RrtConCon
+		class RL_PLAN_EXPORT AddRrtConCon : public RrtConCon
 		{
 		public:
 			AddRrtConCon();

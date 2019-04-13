@@ -33,7 +33,7 @@ namespace rl
 {
 	namespace sg
 	{
-		class UrdfFactory : public Factory
+		class RL_SG_EXPORT UrdfFactory : public Factory
 		{
 		public:
 			UrdfFactory();

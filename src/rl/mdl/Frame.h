@@ -38,7 +38,7 @@ namespace rl
 {
 	namespace mdl
 	{
-		class Frame : public Element
+		class RL_MDL_EXPORT Frame : public Element
 		{
 		public:
 			EIGEN_MAKE_ALIGNED_OPERATOR_NEW

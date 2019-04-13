@@ -36,7 +36,7 @@ namespace rl
 		/**
 		 * TRR base and RT wrist.
 		 */
-		class Rhino : public Kinematics
+		class RL_KIN_EXPORT Rhino : public Kinematics
 		{
 		public:
 			enum Arm

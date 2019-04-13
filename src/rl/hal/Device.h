@@ -29,6 +29,7 @@
 
 #include <string>
 #include <vector>
+#include <rl/hal/export.h>
 
 namespace rl
 {
@@ -37,7 +38,7 @@ namespace rl
 	 */
 	namespace hal
 	{
-		class Device
+		class RL_HAL_EXPORT Device
 		{
 		public:
 			Device();

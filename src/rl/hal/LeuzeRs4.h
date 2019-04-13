@@ -42,7 +42,7 @@ namespace rl
 		/**
 		 * Leuze RS4 safety laser scanner.
 		 */
-		class LeuzeRs4 : public CyclicDevice, public Lidar
+		class RL_HAL_EXPORT LeuzeRs4 : public CyclicDevice, public Lidar
 		{
 		public:
 			enum BaudRate

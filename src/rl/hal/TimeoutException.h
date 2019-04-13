@@ -33,7 +33,7 @@ namespace rl
 {
 	namespace hal
 	{
-		class TimeoutException : public ComException
+		class RL_HAL_EXPORT TimeoutException : public ComException
 		{
 		public:
 			TimeoutException();

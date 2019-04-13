@@ -38,7 +38,7 @@ namespace rl
 	{
 		namespace bullet
 		{
-			class Shape : public ::rl::sg::Shape
+			class RL_SG_EXPORT Shape : public ::rl::sg::Shape
 			{
 			public:
 				Shape(::SoVRMLShape* shape, Body* body);

@@ -33,7 +33,7 @@ namespace rl
 {
 	namespace mdl
 	{
-		class Revolute : public Joint
+		class RL_MDL_EXPORT Revolute : public Joint
 		{
 		public:
 			Revolute();

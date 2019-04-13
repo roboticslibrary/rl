@@ -48,7 +48,7 @@ namespace rl
 		/**
 		 * Universal Robots realtime interface (pre-3.0, 3.0, 3.1, 3.2, 3.3, 3.4, 3.5).
 		 */
-		class UniversalRobotsRealtime :
+		class RL_HAL_EXPORT UniversalRobotsRealtime :
 			public CartesianForceSensor,
 			public CartesianPositionSensor,
 			public CartesianVelocitySensor,

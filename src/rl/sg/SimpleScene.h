@@ -37,7 +37,7 @@ namespace rl
 		class Model;
 		class Shape;
 		
-		class SimpleScene : public virtual Scene
+		class RL_SG_EXPORT SimpleScene : public virtual Scene
 		{
 		public:
 			SimpleScene();

@@ -39,7 +39,7 @@ namespace rl
 {
 	namespace hal
 	{
-		class RobotiqModelC : public CyclicDevice, public Gripper
+		class RL_HAL_EXPORT RobotiqModelC : public CyclicDevice, public Gripper
 		{
 		public:
 			enum ActionStatus

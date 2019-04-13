@@ -33,7 +33,7 @@ namespace rl
 {
 	namespace plan
 	{
-		class RecursiveVerifier : public Verifier
+		class RL_PLAN_EXPORT RecursiveVerifier : public Verifier
 		{
 		public:
 			RecursiveVerifier();

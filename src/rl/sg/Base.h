@@ -27,11 +27,13 @@
 #ifndef RL_SG_BASE_H
 #define RL_SG_BASE_H
 
+#include <rl/sg/export.h>
+
 namespace rl
 {
 	namespace sg
 	{
-		class Base
+		class RL_SG_EXPORT Base
 		{
 		public:
 			virtual ~Base();

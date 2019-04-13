@@ -40,7 +40,7 @@ namespace rl
 		 */
 		namespace so
 		{
-			class Scene : public ::rl::sg::Scene
+			class RL_SG_EXPORT Scene : public ::rl::sg::Scene
 			{
 			public:
 				Scene();

@@ -28,6 +28,7 @@
 #define RL_MDL_INTEGRATOR_H
 
 #include <rl/math/Real.h>
+#include <rl/mdl/export.h>
 
 namespace rl
 {
@@ -35,7 +36,7 @@ namespace rl
 	{
 		class Dynamic;
 		
-		class Integrator
+		class RL_MDL_EXPORT Integrator
 		{
 		public:
 			Integrator(Dynamic* dynamic);

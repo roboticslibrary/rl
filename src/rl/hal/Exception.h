@@ -29,6 +29,7 @@
 
 #include <stdexcept>
 #include <string>
+#include <rl/hal/export.h>
 
 namespace rl
 {

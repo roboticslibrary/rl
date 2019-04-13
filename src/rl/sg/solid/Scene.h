@@ -48,7 +48,7 @@ namespace rl
 		{
 			class Shape;
 			
-			class Scene : public ::rl::sg::DepthScene, public ::rl::sg::DistanceScene, public ::rl::sg::RaycastScene, public ::rl::sg::SimpleScene
+			class RL_SG_EXPORT Scene : public ::rl::sg::DepthScene, public ::rl::sg::DistanceScene, public ::rl::sg::RaycastScene, public ::rl::sg::SimpleScene
 			{
 			public:
 				Scene();

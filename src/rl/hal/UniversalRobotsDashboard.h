@@ -40,7 +40,7 @@ namespace rl
 		/**
 		 * Universal Robots dashboard server.
 		 */
-		class UniversalRobotsDashboard : public Com
+		class RL_HAL_EXPORT UniversalRobotsDashboard : public Com
 		{
 		public:
 			enum ProgramState

@@ -47,7 +47,7 @@ namespace rl
 		 * 
 		 * http://www.roboticsproceedings.org/rss01/p15.pdf
 		 */
-		class PrmUtilityGuided : public Prm
+		class RL_PLAN_EXPORT PrmUtilityGuided : public Prm
 		{
 		public:
 			PrmUtilityGuided();

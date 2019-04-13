@@ -35,7 +35,7 @@ namespace rl
 {
 	namespace hal
 	{
-		class JointVelocitySensor : public virtual AxisController
+		class RL_HAL_EXPORT JointVelocitySensor : public virtual AxisController
 		{
 		public:
 			JointVelocitySensor(const ::std::size_t& dof);

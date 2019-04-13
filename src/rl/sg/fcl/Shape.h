@@ -39,7 +39,7 @@ namespace rl
 	{
 		namespace fcl
 		{
-			class Shape : public ::rl::sg::Shape
+			class RL_SG_EXPORT Shape : public ::rl::sg::Shape
 			{
 			public:
 				Shape(SoVRMLShape* shape, ::rl::sg::Body* body);

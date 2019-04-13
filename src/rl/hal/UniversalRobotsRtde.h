@@ -56,7 +56,7 @@ namespace rl
 		/**
 		 * Universal Robots RTDE interface (3.3).
 		 */
-		class UniversalRobotsRtde :
+		class RL_HAL_EXPORT UniversalRobotsRtde :
 			public CyclicDevice,
 			public AnalogInputReader,
 			public AnalogOutputReader,

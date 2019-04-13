@@ -28,12 +28,13 @@
 #define RL_SG_EXCEPTION_H
 
 #include <stdexcept>
+#include <rl/sg/export.h>
 
 namespace rl
 {
 	namespace sg
 	{
-		class Exception : public ::std::runtime_error
+		class RL_SG_EXPORT Exception : public ::std::runtime_error
 		{
 		public:
 			Exception(const ::std::string& what_arg);

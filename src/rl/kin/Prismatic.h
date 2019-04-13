@@ -33,7 +33,7 @@ namespace rl
 {
 	namespace kin
 	{
-		class Prismatic : public Joint
+		class RL_KIN_EXPORT Prismatic : public Joint
 		{
 		public:
 			Prismatic();

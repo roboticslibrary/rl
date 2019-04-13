@@ -28,12 +28,13 @@
 #define RL_MDL_EXCEPTION_H
 
 #include <stdexcept>
+#include <rl/mdl/export.h>
 
 namespace rl
 {
 	namespace mdl
 	{
-		class Exception : public ::std::runtime_error
+		class RL_MDL_EXPORT Exception : public ::std::runtime_error
 		{
 		public:
 			Exception(const ::std::string& what_arg);

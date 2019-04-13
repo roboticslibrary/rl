@@ -50,7 +50,7 @@ namespace rl
 		 * Otherwise, the gripper will not grasp if object width is different
 		 * from the given value.
 		 */
-		class WeissWsg50 : public CyclicDevice, public Gripper
+		class RL_HAL_EXPORT WeissWsg50 : public CyclicDevice, public Gripper
 		{
 		public:
 			enum GraspingState

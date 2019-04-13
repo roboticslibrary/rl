@@ -38,7 +38,7 @@ namespace rl
 		class Frame;
 		class Transform;
 		
-		class Compound
+		class RL_MDL_EXPORT Compound
 		{
 		public:
 			Compound(Model* model);

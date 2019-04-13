@@ -31,6 +31,7 @@
 #include <rl/math/Transform.h>
 #include <rl/math/Vector.h>
 #include <rl/mdl/Dynamic.h>
+#include <rl/plan/export.h>
 #include <rl/sg/Model.h>
 #include <rl/sg/Scene.h>
 
@@ -38,7 +39,7 @@ namespace rl
 {
 	namespace plan
 	{
-		class Model
+		class RL_PLAN_EXPORT Model
 		{
 		public:
 			Model();

@@ -36,7 +36,7 @@ namespace rl
 {
 	namespace hal
 	{
-		class Gnuplot : public CyclicDevice, public JointPositionActuator
+		class RL_HAL_EXPORT Gnuplot : public CyclicDevice, public JointPositionActuator
 		{
 		public:
 			Gnuplot(

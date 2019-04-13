@@ -37,7 +37,7 @@ namespace rl
 		{
 			class Scene;
 			
-			class Model : public ::rl::sg::Model
+			class RL_SG_EXPORT Model : public ::rl::sg::Model
 			{
 			public:
 				Model(Scene* scene);

@@ -12,6 +12,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include(CheckCXXCompilerFlag)
 include(CMakeDependentOption)
 include(CMakePackageConfigHelpers)
+include(GenerateExportHeader)
 include(GNUInstallDirs)
 
 if(NOT CMAKE_VERSION VERSION_LESS 3.1)
@@ -27,6 +28,16 @@ else()
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 	endif()
 endif()
+
+if(NOT CMAKE_VERSION VERSION_LESS 2.8.12)
+	set(CMAKE_C_VISIBILITY_PRESET hidden)
+	set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+	set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
+endif()
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 if(WIN32)
 	add_definitions(
@@ -57,11 +68,8 @@ cmake_dependent_option(BUILD_RL_SG "Build scene graph abstraction component" ON 
 
 cmake_dependent_option(BUILD_RL_PLAN "Build path planning component" ON "BUILD_RL_KIN;BUILD_RL_MATH;BUILD_RL_MDL;BUILD_RL_SG;BUILD_RL_UTIL;BUILD_RL_XML" OFF)
 
-if(WIN32 AND CMAKE_VERSION VERSION_LESS 3.4)
-	set(BUILD_SHARED_LIBS OFF)
-elseif(WIN32 AND NOT CMAKE_VERSION VERSION_LESS 3.4)
+if(WIN32)
 	option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
-	set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ${BUILD_SHARED_LIBS})
 else()
 	option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 endif()

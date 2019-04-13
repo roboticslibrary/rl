@@ -51,7 +51,7 @@ namespace rl
 		 * 
 		 * http://msl.cs.uiuc.edu/~lavalle/papers/Lav98c.pdf
 		 */
-		class Rrt : public Planner
+		class RL_PLAN_EXPORT Rrt : public Planner
 		{
 		public:
 			Rrt(const ::std::size_t& trees = 1);

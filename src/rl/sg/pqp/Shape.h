@@ -41,7 +41,7 @@ namespace rl
 	{
 		namespace pqp
 		{
-			class Shape : public ::rl::sg::Shape
+			class RL_SG_EXPORT Shape : public ::rl::sg::Shape
 			{
 			public:
 				EIGEN_MAKE_ALIGNED_OPERATOR_NEW

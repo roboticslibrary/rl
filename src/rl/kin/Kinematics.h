@@ -33,6 +33,7 @@
 #include <string>
 #include <vector>
 #include <boost/graph/adjacency_list.hpp>
+#include <rl/kin/export.h>
 #include <rl/math/Transform.h>
 #include <rl/math/Unit.h>
 #include <rl/math/Vector.h>
@@ -50,7 +51,7 @@ namespace rl
 		class Joint;
 		class Transform;
 		
-		class Kinematics
+		class RL_KIN_EXPORT Kinematics
 		{
 		public:
 			EIGEN_MAKE_ALIGNED_OPERATOR_NEW

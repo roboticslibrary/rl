@@ -28,6 +28,7 @@
 #define RL_PLAN_VERIFIER_H
 
 #include <rl/math/Vector.h>
+#include <rl/plan/export.h>
 
 namespace rl
 {
@@ -35,7 +36,7 @@ namespace rl
 	{
 		class SimpleModel;
 		
-		class Verifier
+		class RL_PLAN_EXPORT Verifier
 		{
 		public:
 			Verifier();

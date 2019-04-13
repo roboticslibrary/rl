@@ -37,7 +37,7 @@ namespace rl
 {
 	namespace plan
 	{
-		class DistanceModel : public SimpleModel
+		class RL_PLAN_EXPORT DistanceModel : public SimpleModel
 		{
 		public:
 			DistanceModel();

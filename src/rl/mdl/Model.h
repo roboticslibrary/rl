@@ -54,7 +54,7 @@ namespace rl
 		class Joint;
 		class World;
 		
-		class Model
+		class RL_MDL_EXPORT Model
 		{
 		public:
 			Model();

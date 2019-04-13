@@ -44,7 +44,7 @@ namespace rl
 {
 	namespace hal
 	{
-		class Serial : public Com
+		class RL_HAL_EXPORT Serial : public Com
 		{
 		public:
 			enum BaudRate

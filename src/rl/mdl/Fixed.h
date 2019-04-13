@@ -33,7 +33,7 @@ namespace rl
 {
 	namespace mdl
 	{
-		class Fixed : public Transform
+		class RL_MDL_EXPORT Fixed : public Transform
 		{
 		public:
 			Fixed();

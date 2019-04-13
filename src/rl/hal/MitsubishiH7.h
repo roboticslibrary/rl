@@ -46,7 +46,7 @@ namespace rl
 		/**
 		 * Mitsubishi Electric MELFA Ethernet interface (software version H7 or later).
 		 */
-		class MitsubishiH7 :
+		class RL_HAL_EXPORT MitsubishiH7 :
 			public CartesianPositionActuator,
 			public CartesianPositionSensor,
 			public CyclicDevice,

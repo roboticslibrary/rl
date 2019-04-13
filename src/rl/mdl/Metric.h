@@ -33,7 +33,7 @@ namespace rl
 {
 	namespace mdl
 	{
-		class Metric : public Model
+		class RL_MDL_EXPORT Metric : public Model
 		{
 		public:
 			Metric();

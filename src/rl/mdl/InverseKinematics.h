@@ -29,6 +29,7 @@
 
 #include <vector>
 #include <rl/math/Transform.h>
+#include <rl/mdl/export.h>
 
 namespace rl
 {
@@ -36,7 +37,7 @@ namespace rl
 	{
 		class Kinematic;
 		
-		class InverseKinematics
+		class RL_MDL_EXPORT InverseKinematics
 		{
 		public:
 			typedef ::std::pair< ::rl::math::Transform, ::std::size_t> Goal;

@@ -35,7 +35,7 @@ namespace rl
 {
 	namespace hal
 	{
-		class ForceSensor : public virtual Device
+		class RL_HAL_EXPORT ForceSensor : public virtual Device
 		{
 		public:
 			ForceSensor();

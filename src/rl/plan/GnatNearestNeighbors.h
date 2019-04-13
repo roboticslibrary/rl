@@ -37,7 +37,7 @@ namespace rl
 	{
 		class Model;
 		
-		class GnatNearestNeighbors : public NearestNeighbors
+		class RL_PLAN_EXPORT GnatNearestNeighbors : public NearestNeighbors
 		{
 		public:
 			GnatNearestNeighbors(Model* model);

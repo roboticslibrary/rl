@@ -37,7 +37,7 @@ namespace rl
 	{
 		class Shape;
 		
-		class RaycastScene : public virtual Scene
+		class RL_SG_EXPORT RaycastScene : public virtual Scene
 		{
 		public:
 			RaycastScene();

@@ -35,7 +35,7 @@ namespace rl
 {
 	namespace hal
 	{
-		class Fieldbus : public Com
+		class RL_HAL_EXPORT Fieldbus : public Com
 		{
 		public:
 			Fieldbus();

@@ -27,11 +27,13 @@
 #ifndef RL_HAL_COM_H
 #define RL_HAL_COM_H
 
+#include <rl/hal/export.h>
+
 namespace rl
 {
 	namespace hal
 	{
-		class Com
+		class RL_HAL_EXPORT Com
 		{
 		public:
 			Com();

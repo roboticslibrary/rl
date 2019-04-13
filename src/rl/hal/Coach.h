@@ -42,7 +42,7 @@ namespace rl
 {
 	namespace hal
 	{
-		class Coach : public CyclicDevice, public JointPositionActuator, public JointPositionSensor, public JointTorqueActuator, public JointVelocityActuator
+		class RL_HAL_EXPORT Coach : public CyclicDevice, public JointPositionActuator, public JointPositionSensor, public JointTorqueActuator, public JointVelocityActuator
 		{
 		public:
 			Coach(

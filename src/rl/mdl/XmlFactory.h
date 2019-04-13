@@ -33,7 +33,7 @@ namespace rl
 {
 	namespace mdl
 	{
-		class XmlFactory : public Factory
+		class RL_MDL_EXPORT XmlFactory : public Factory
 		{
 		public:
 			XmlFactory();

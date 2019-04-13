@@ -35,7 +35,7 @@ namespace rl
 {
 	namespace plan
 	{
-		class RrtGoalBias : public Rrt
+		class RL_PLAN_EXPORT RrtGoalBias : public Rrt
 		{
 		public:
 			RrtGoalBias();

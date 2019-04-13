@@ -27,6 +27,8 @@
 #ifndef RL_PLAN_OPTIMIZER_H
 #define RL_PLAN_OPTIMIZER_H
 
+#include <rl/plan/export.h>
+
 #include "VectorList.h"
 
 namespace rl
@@ -37,7 +39,7 @@ namespace rl
 		class Verifier;
 		class Viewer;
 		
-		class Optimizer
+		class RL_PLAN_EXPORT Optimizer
 		{
 		public:
 			Optimizer();

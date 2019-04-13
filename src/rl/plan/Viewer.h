@@ -29,6 +29,7 @@
 
 #include <rl/math/Transform.h>
 #include <rl/math/Vector.h>
+#include <rl/plan/export.h>
 
 #include "VectorList.h"
 
@@ -36,7 +37,7 @@ namespace rl
 {
 	namespace plan
 	{
-		class Viewer
+		class RL_PLAN_EXPORT Viewer
 		{
 		public:
 			Viewer();

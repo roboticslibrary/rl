@@ -28,12 +28,13 @@
 #define RL_KIN_ELEMENT_H
 
 #include <string>
+#include <rl/kin/export.h>
 
 namespace rl
 {
 	namespace kin
 	{
-		class Element
+		class RL_KIN_EXPORT Element
 		{
 		public:
 			Element();

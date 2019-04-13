@@ -28,12 +28,13 @@
 #define RL_PLAN_EXCEPTION_H
 
 #include <stdexcept>
+#include <rl/plan/export.h>
 
 namespace rl
 {
 	namespace plan
 	{
-		class Exception : public ::std::runtime_error
+		class RL_PLAN_EXPORT Exception : public ::std::runtime_error
 		{
 		public:
 			Exception(const ::std::string& what_arg);

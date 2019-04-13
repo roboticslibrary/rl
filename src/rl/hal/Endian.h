@@ -28,12 +28,13 @@
 #define RL_HAL_ENDIAN_H
 
 #include <cstdint>
+#include <rl/hal/export.h>
 
 namespace rl
 {
 	namespace hal
 	{
-		class Endian
+		class RL_HAL_EXPORT Endian
 		{
 		public:
 			static ::std::uint32_t bigDoubleWord(const ::std::uint16_t& highWord, const ::std::uint16_t& lowWord);

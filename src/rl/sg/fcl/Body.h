@@ -40,7 +40,7 @@ namespace rl
 		{
 			class Model;
 			
-			class Body : public ::rl::sg::Body
+			class RL_SG_EXPORT Body : public ::rl::sg::Body
 			{
 			public:
 				Body(Model* model);

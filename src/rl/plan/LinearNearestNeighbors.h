@@ -37,7 +37,7 @@ namespace rl
 	{
 		class Model;
 		
-		class LinearNearestNeighbors : public NearestNeighbors
+		class RL_PLAN_EXPORT LinearNearestNeighbors : public NearestNeighbors
 		{
 		public:
 			LinearNearestNeighbors(Model* model);

@@ -28,6 +28,7 @@
 #define RL_MDL_FACTORY_H
 
 #include <string>
+#include <rl/mdl/export.h>
 
 namespace rl
 {
@@ -35,7 +36,7 @@ namespace rl
 	{
 		class Model;
 		
-		class Factory
+		class RL_MDL_EXPORT Factory
 		{
 		public:
 			Factory();

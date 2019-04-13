@@ -45,7 +45,7 @@ namespace rl
 		 * 
 		 * https://www.math.ucsd.edu/~sbuss/ResearchWeb/ikmethods/iksurvey.pdf
 		 */
-		class JacobianInverseKinematics : public IterativeInverseKinematics
+		class RL_MDL_EXPORT JacobianInverseKinematics : public IterativeInverseKinematics
 		{
 		public:
 			enum Method

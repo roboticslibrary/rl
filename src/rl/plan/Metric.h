@@ -29,6 +29,7 @@
 
 #include <rl/math/Real.h>
 #include <rl/math/Vector.h>
+#include <rl/plan/export.h>
 
 namespace rl
 {
@@ -36,7 +37,7 @@ namespace rl
 	{
 		class Model;
 		
-		class Metric
+		class RL_PLAN_EXPORT Metric
 		{
 		public:
 			typedef ::rl::math::Real Distance;

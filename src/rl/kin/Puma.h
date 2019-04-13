@@ -36,7 +36,7 @@ namespace rl
 		/**
 		 * TRR base and TRT wrist.
 		 */
-		class Puma : public Kinematics
+		class RL_KIN_EXPORT Puma : public Kinematics
 		{
 		public:
 			enum Arm

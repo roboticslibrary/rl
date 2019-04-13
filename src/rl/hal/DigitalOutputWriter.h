@@ -35,7 +35,7 @@ namespace rl
 {
 	namespace hal
 	{
-		class DigitalOutputWriter : public virtual DigitalOutput
+		class RL_HAL_EXPORT DigitalOutputWriter : public virtual DigitalOutput
 		{
 		public:
 			DigitalOutputWriter();

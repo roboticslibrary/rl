@@ -35,7 +35,7 @@ namespace rl
 {
 	namespace hal
 	{
-		class CartesianPositionSensor : public virtual AxisController
+		class RL_HAL_EXPORT CartesianPositionSensor : public virtual AxisController
 		{
 		public:
 			CartesianPositionSensor(const ::std::size_t& dof);

@@ -47,7 +47,7 @@ namespace rl
 		 * See "KMS Command Set Reference Manual":
 		 * <www.weiss-robotics.de/en/download.html?cid=70&fid=37&id=164>
 		 */
-		class WeissKms40 : public CyclicDevice, public SixAxisForceTorqueSensor
+		class RL_HAL_EXPORT WeissKms40 : public CyclicDevice, public SixAxisForceTorqueSensor
 		{
 		public:
 			enum SystemState

@@ -53,7 +53,7 @@ namespace rl
 		 * 
 		 * http://dx.doi.org/10.1109/ROBOT.2001.932817
 		 */
-		class WorkspaceSphereExplorer
+		class RL_PLAN_EXPORT WorkspaceSphereExplorer
 		{
 		public:
 			enum Greedy

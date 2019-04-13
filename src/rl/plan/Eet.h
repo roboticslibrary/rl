@@ -49,7 +49,7 @@ namespace rl
 		 * 
 		 * http://dx.doi.org/10.1109/TRO.2014.2340191
 		 */
-		class Eet : public RrtCon
+		class RL_PLAN_EXPORT Eet : public RrtCon
 		{
 		public:
 			struct ExplorerSetup

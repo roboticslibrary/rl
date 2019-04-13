@@ -39,7 +39,7 @@ namespace rl
 	{
 		class Frame;
 		
-		class Transform : public Element
+		class RL_MDL_EXPORT Transform : public Element
 		{
 		public:
 			EIGEN_MAKE_ALIGNED_OPERATOR_NEW

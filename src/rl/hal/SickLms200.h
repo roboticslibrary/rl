@@ -42,7 +42,7 @@ namespace rl
 		/**
 		 * Sick LMS 200 laser measurement system.
 		 */
-		class SickLms200 : public CyclicDevice, public Lidar
+		class RL_HAL_EXPORT SickLms200 : public CyclicDevice, public Lidar
 		{
 		public:
 			enum BaudRate

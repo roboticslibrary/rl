@@ -28,12 +28,13 @@
 #define RL_KIN_EXCEPTION_H
 
 #include <stdexcept>
+#include <rl/kin/export.h>
 
 namespace rl
 {
 	namespace kin
 	{
-		class Exception : public ::std::runtime_error
+		class RL_KIN_EXPORT Exception : public ::std::runtime_error
 		{
 		public:
 			Exception(const ::std::string& what_arg);

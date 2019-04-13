@@ -33,7 +33,7 @@ namespace rl
 {
 	namespace mdl
 	{
-		class AnalyticalInverseKinematics : public InverseKinematics
+		class RL_MDL_EXPORT AnalyticalInverseKinematics : public InverseKinematics
 		{
 		public:
 			AnalyticalInverseKinematics(Kinematic* kinematic);

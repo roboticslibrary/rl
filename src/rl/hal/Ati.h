@@ -41,7 +41,7 @@ namespace rl
 		/**
 		 * ATI Industrial Automation force-torque sensor.
 		 */
-		class Ati : public CyclicDevice, public SixAxisForceTorqueSensor
+		class RL_HAL_EXPORT Ati : public CyclicDevice, public SixAxisForceTorqueSensor
 		{
 		public:
 			Ati(

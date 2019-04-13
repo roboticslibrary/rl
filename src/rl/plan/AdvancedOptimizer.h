@@ -33,7 +33,7 @@ namespace rl
 {
 	namespace plan
 	{
-		class AdvancedOptimizer : public SimpleOptimizer
+		class RL_PLAN_EXPORT AdvancedOptimizer : public SimpleOptimizer
 		{
 		public:
 			AdvancedOptimizer();

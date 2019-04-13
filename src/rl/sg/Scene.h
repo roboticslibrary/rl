@@ -41,7 +41,7 @@ namespace rl
 	{
 		class Model;
 		
-		class Scene : public Base
+		class RL_SG_EXPORT Scene : public Base
 		{
 		public:
 			typedef ::std::vector<Model*>::iterator Iterator;

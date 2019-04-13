@@ -39,7 +39,7 @@ namespace rl
 {
 	namespace hal
 	{
-		class HilscherCifx : public Fieldbus
+		class RL_HAL_EXPORT HilscherCifx : public Fieldbus
 		{
 		public:
 			class Exception : public ComException

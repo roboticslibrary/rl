@@ -33,7 +33,7 @@ namespace rl
 {
 	namespace mdl
 	{
-		class SixDof : public Joint
+		class RL_MDL_EXPORT SixDof : public Joint
 		{
 		public:
 			SixDof();

@@ -35,7 +35,7 @@ namespace rl
 {
 	namespace hal
 	{
-		class CartesianForceSensor : public virtual AxisController
+		class RL_HAL_EXPORT CartesianForceSensor : public virtual AxisController
 		{
 		public:
 			CartesianForceSensor(const ::std::size_t& dof);

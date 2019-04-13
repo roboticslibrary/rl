@@ -36,7 +36,7 @@ namespace rl
 {
 	namespace kin
 	{
-		class Joint : public Transform
+		class RL_KIN_EXPORT Joint : public Transform
 		{
 		public:
 			Joint();

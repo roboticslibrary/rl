@@ -29,12 +29,13 @@
 
 #include <rl/math/Real.h>
 #include <rl/math/Transform.h>
+#include <rl/plan/export.h>
 
 namespace rl
 {
 	namespace plan
 	{
-		class WorkspaceMetric
+		class RL_PLAN_EXPORT WorkspaceMetric
 		{
 		public:
 			typedef ::rl::math::Real Distance;

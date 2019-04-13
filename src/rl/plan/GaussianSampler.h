@@ -43,7 +43,7 @@ namespace rl
 		 * 
 		 * http://dx.doi.org/10.1109/ROBOT.1999.772447
 		 */
-		class GaussianSampler : public UniformSampler
+		class RL_PLAN_EXPORT GaussianSampler : public UniformSampler
 		{
 		public:
 			GaussianSampler();

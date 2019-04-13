@@ -30,13 +30,15 @@
 #include <string>
 #include <rl/math/Real.h>
 
+#include <rl/mdl/export.h>
+
 namespace rl
 {
 	namespace mdl
 	{
 		class Compound;
 		
-		class Element
+		class RL_MDL_EXPORT Element
 		{
 		public:
 			Element();

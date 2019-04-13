@@ -43,7 +43,7 @@ namespace rl
 		 * 
 		 * http://dx.doi.org/10.1109/ROBOT.2003.1242285
 		 */
-		class BridgeSampler : public GaussianSampler
+		class RL_PLAN_EXPORT BridgeSampler : public GaussianSampler
 		{
 		public:
 			BridgeSampler();

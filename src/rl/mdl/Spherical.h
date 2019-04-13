@@ -33,7 +33,7 @@ namespace rl
 {
 	namespace mdl
 	{
-		class Spherical : public Joint
+		class RL_MDL_EXPORT Spherical : public Joint
 		{
 		public:
 			Spherical();

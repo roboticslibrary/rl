@@ -33,7 +33,7 @@ namespace rl
 {
 	namespace mdl
 	{
-		class Cylindrical : public Joint
+		class RL_MDL_EXPORT Cylindrical : public Joint
 		{
 		public:
 			Cylindrical();

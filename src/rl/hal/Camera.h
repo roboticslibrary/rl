@@ -33,7 +33,7 @@ namespace rl
 {
 	namespace hal
 	{
-		class Camera : public virtual Device
+		class RL_HAL_EXPORT Camera : public virtual Device
 		{
 		public:
 			Camera();

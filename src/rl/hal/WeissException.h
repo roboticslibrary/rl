@@ -33,7 +33,7 @@ namespace rl
 {
 	namespace hal
 	{
-		class WeissException : public DeviceException
+		class RL_HAL_EXPORT WeissException : public DeviceException
 		{
 		public:
 			enum Code

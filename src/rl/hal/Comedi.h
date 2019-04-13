@@ -36,7 +36,7 @@ namespace rl
 {
 	namespace hal
 	{
-		class Comedi : public Com
+		class RL_HAL_EXPORT Comedi : public Com
 		{
 		public:
 			Comedi(const ::std::string& filename = "/dev/comedi0");

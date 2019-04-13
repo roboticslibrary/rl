@@ -38,7 +38,7 @@ namespace rl
 		class Body;
 		class Shape;
 		
-		class DepthScene : public virtual Scene
+		class RL_SG_EXPORT DepthScene : public virtual Scene
 		{
 		public:
 			DepthScene();

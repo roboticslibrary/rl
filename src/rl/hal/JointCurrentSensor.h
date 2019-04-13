@@ -35,7 +35,7 @@ namespace rl
 {
 	namespace hal
 	{
-		class JointCurrentSensor : public virtual AxisController
+		class RL_HAL_EXPORT JointCurrentSensor : public virtual AxisController
 		{
 		public:
 			JointCurrentSensor(const ::std::size_t& dof);

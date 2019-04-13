@@ -41,7 +41,7 @@ namespace rl
 		/**
 		 * Schunk FPS-F5 flexible position sensor.
 		 */
-		class SchunkFpsF5 : public CyclicDevice, public RangeSensor
+		class RL_HAL_EXPORT SchunkFpsF5 : public CyclicDevice, public RangeSensor
 		{
 		public:
 			SchunkFpsF5(const ::std::string& device = "/dev/ttyS0");

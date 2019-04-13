@@ -44,10 +44,10 @@ namespace rl
 {
 	namespace hal
 	{
-		class Socket : public Com
+		class RL_HAL_EXPORT Socket : public Com
 		{
 		public:
-			class Address
+			class RL_HAL_EXPORT Address
 			{
 			public:
 				Address();

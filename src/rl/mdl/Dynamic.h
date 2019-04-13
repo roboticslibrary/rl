@@ -33,7 +33,7 @@ namespace rl
 {
 	namespace mdl
 	{
-		class Dynamic : public Kinematic
+		class RL_MDL_EXPORT Dynamic : public Kinematic
 		{
 		public:
 			Dynamic();

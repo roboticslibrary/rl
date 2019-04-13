@@ -43,7 +43,7 @@ namespace rl
 		 * 
 		 * http://dx.doi.org/10.1109/ROBOT.2000.844730
 		 */
-		class RrtCon : public RrtGoalBias
+		class RL_PLAN_EXPORT RrtCon : public RrtGoalBias
 		{
 		public:
 			RrtCon();

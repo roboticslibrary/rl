@@ -36,7 +36,7 @@ namespace rl
 {
 	namespace hal
 	{
-		class AxisController : public virtual Device
+		class RL_HAL_EXPORT AxisController : public virtual Device
 		{
 		public:
 			AxisController(const ::std::size_t& dof);

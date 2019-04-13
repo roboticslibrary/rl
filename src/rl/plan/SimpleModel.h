@@ -33,7 +33,7 @@ namespace rl
 {
 	namespace plan
 	{
-		class SimpleModel : public Model
+		class RL_PLAN_EXPORT SimpleModel : public Model
 		{
 		public:
 			SimpleModel();

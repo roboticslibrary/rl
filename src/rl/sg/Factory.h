@@ -28,6 +28,7 @@
 #define RL_SG_FACTORY_H
 
 #include <string>
+#include <rl/sg/export.h>
 
 namespace rl
 {
@@ -35,7 +36,7 @@ namespace rl
 	{
 		class Scene;
 		
-		class Factory
+		class RL_SG_EXPORT Factory
 		{
 		public:
 			Factory();

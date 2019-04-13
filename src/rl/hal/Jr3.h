@@ -40,7 +40,7 @@ namespace rl
 		/**
 		 * JR3 force-torque sensor.
 		 */
-		class Jr3 : public CyclicDevice, public SixAxisForceTorqueSensor
+		class RL_HAL_EXPORT Jr3 : public CyclicDevice, public SixAxisForceTorqueSensor
 		{
 		public:
 			Jr3(const ::std::string& filename = "/dev/comedi0", const ::std::chrono::nanoseconds& updateRate = ::std::chrono::milliseconds(1));

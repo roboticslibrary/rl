@@ -42,7 +42,7 @@ namespace rl
 		/**
 		 * Sick S300 safety laser scanner.
 		 */
-		class SickS300 : public CyclicDevice, public Lidar
+		class RL_HAL_EXPORT SickS300 : public CyclicDevice, public Lidar
 		{
 		public:
 			SickS300(

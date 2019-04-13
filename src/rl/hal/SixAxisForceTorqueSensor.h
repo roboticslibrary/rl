@@ -36,7 +36,7 @@ namespace rl
 {
 	namespace hal
 	{
-		class SixAxisForceTorqueSensor : public virtual ForceSensor, public virtual TorqueSensor
+		class RL_HAL_EXPORT SixAxisForceTorqueSensor : public virtual ForceSensor, public virtual TorqueSensor
 		{
 		public:
 			SixAxisForceTorqueSensor();

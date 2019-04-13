@@ -33,7 +33,7 @@ namespace rl
 {
 	namespace hal
 	{
-		class Gripper : public virtual Device
+		class RL_HAL_EXPORT Gripper : public virtual Device
 		{
 		public:
 			Gripper();

@@ -33,7 +33,7 @@ namespace rl
 {
 	namespace plan
 	{
-		class SequentialVerifier : public Verifier
+		class RL_PLAN_EXPORT SequentialVerifier : public Verifier
 		{
 		public:
 			SequentialVerifier();

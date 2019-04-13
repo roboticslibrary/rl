@@ -39,7 +39,7 @@ namespace rl
 	{
 		class Body;
 		
-		class Shape : public Base
+		class RL_SG_EXPORT Shape : public Base
 		{
 		public:
 			Shape(::SoVRMLShape* shape, Body* body);

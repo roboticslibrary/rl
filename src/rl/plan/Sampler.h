@@ -28,6 +28,7 @@
 #define RL_PLAN_SAMPLER_H
 
 #include <rl/math/Vector.h>
+#include <rl/plan/export.h>
 
 namespace rl
 {
@@ -35,7 +36,7 @@ namespace rl
 	{
 		class SimpleModel;
 		
-		class Sampler
+		class RL_PLAN_EXPORT Sampler
 		{
 		public:
 			Sampler();

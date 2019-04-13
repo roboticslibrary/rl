@@ -35,7 +35,7 @@ namespace rl
 {
 	namespace mdl
 	{
-		class Kinematic : public Metric
+		class RL_MDL_EXPORT Kinematic : public Metric
 		{
 		public:
 			EIGEN_MAKE_ALIGNED_OPERATOR_NEW

@@ -42,7 +42,7 @@ namespace rl
 		/**
 		 * Schmersal LSS 300 safety laser scanner.
 		 */
-		class SchmersalLss300 : public CyclicDevice, public Lidar
+		class RL_HAL_EXPORT SchmersalLss300 : public CyclicDevice, public Lidar
 		{
 		public:
 			enum BaudRate

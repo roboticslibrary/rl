@@ -35,7 +35,7 @@ namespace rl
 {
 	namespace hal
 	{
-		class TorqueSensor : public virtual Device
+		class RL_HAL_EXPORT TorqueSensor : public virtual Device
 		{
 		public:
 			TorqueSensor();

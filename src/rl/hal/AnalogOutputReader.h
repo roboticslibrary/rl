@@ -36,7 +36,7 @@ namespace rl
 {
 	namespace hal
 	{
-		class AnalogOutputReader : public virtual AnalogOutput
+		class RL_HAL_EXPORT AnalogOutputReader : public virtual AnalogOutput
 		{
 		public:
 			AnalogOutputReader();

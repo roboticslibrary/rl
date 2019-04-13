@@ -33,7 +33,7 @@ namespace rl
 {
 	namespace hal
 	{
-		class ComException : public Exception
+		class RL_HAL_EXPORT ComException : public Exception
 		{
 		public:
 			ComException(const ::std::string& what_arg);

@@ -38,7 +38,7 @@ namespace rl
 	{
 		class Planner;
 		
-		class NearestNeighbors
+		class RL_PLAN_EXPORT NearestNeighbors
 		{
 		public:
 			typedef Metric::Distance Distance;

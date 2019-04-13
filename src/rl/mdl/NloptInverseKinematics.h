@@ -38,7 +38,7 @@ namespace rl
 {
 	namespace mdl
 	{
-		class NloptInverseKinematics : public IterativeInverseKinematics
+		class RL_MDL_EXPORT NloptInverseKinematics : public IterativeInverseKinematics
 		{
 		public:
 			NloptInverseKinematics(Kinematic* kinematic);

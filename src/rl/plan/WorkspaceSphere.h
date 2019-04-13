@@ -29,6 +29,7 @@
 
 #include <vector>
 #include <boost/graph/adjacency_list.hpp>
+#include <rl/plan/export.h>
 
 #include "Vector3Ptr.h"
 
@@ -36,7 +37,7 @@ namespace rl
 {
 	namespace plan
 	{
-		struct WorkspaceSphere
+		struct RL_PLAN_EXPORT WorkspaceSphere
 		{
 			typedef ::boost::adjacency_list_traits<
 				::boost::listS,

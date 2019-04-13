@@ -35,7 +35,7 @@ namespace rl
 {
 	namespace mdl
 	{
-		class Body : public Frame
+		class RL_MDL_EXPORT Body : public Frame
 		{
 		public:
 			Body();

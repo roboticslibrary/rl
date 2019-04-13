@@ -33,7 +33,7 @@ namespace rl
 {
 	namespace plan
 	{
-		class RrtExtExt : public RrtDual
+		class RL_PLAN_EXPORT RrtExtExt : public RrtDual
 		{
 		public:
 			RrtExtExt();

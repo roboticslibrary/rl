@@ -42,7 +42,7 @@ namespace rl
 		/**
 		 * Mitsubishi Electric R3 protocol.
 		 */
-		class MitsubishiR3 : public Com
+		class RL_HAL_EXPORT MitsubishiR3 : public Com
 		{
 		public:
 			enum HandSts

@@ -36,7 +36,7 @@ namespace rl
 {
 	namespace mdl
 	{
-		class Joint : public Transform
+		class RL_MDL_EXPORT Joint : public Transform
 		{
 		public:
 			Joint(const ::std::size_t& dofPosition, const ::std::size_t& dofVelocity);
