@@ -43,12 +43,10 @@ namespace rl
 			
 			virtual ~Exception() throw();
 			
-			static ::std::string strerror(const int& errnum);
-			
 		protected:
 			
 		private:
-			
+			static ::std::string strerror(const int& errnum);
 		};
 	}
 }
