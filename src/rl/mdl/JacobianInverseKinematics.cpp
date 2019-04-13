@@ -24,21 +24,19 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include "Kinematic.h"
 #include "JacobianInverseKinematics.h"
+#include "Kinematic.h"
 
 namespace rl
 {
 	namespace mdl
 	{
 		JacobianInverseKinematics::JacobianInverseKinematics(Kinematic* kinematic) :
-			InverseKinematics(kinematic),
+			IterativeInverseKinematics(kinematic),
 			delta(::std::numeric_limits< ::rl::math::Real>::infinity()),
-			duration(::std::chrono::milliseconds(100)),
 			epsilon(static_cast< ::rl::math::Real>(1.0e-3)),
 			iterations(1000),
-			svd(true),
-			transpose(false),
+			method(METHOD_SVD),
 			randDistribution(0, 1),
 			randEngine(::std::random_device()())
 		{
@@ -46,6 +44,54 @@ namespace rl
 		
 		JacobianInverseKinematics::~JacobianInverseKinematics()
 		{
+		}
+		
+		const math::Real&
+		JacobianInverseKinematics::getDelta() const
+		{
+			return this->delta;
+		}
+		
+		const ::rl::math::Real&
+		JacobianInverseKinematics::getEpsilon() const
+		{
+			return this->epsilon;
+		}
+		
+		const ::std::size_t&
+		JacobianInverseKinematics::getIterations() const
+		{
+			return this->iterations;
+		}
+		
+		const JacobianInverseKinematics::Method&
+		JacobianInverseKinematics::getMethod() const
+		{
+			return this->method;
+		}
+		
+		void
+		JacobianInverseKinematics::setDelta(const::rl::math::Real& delta)
+		{
+			this->delta = delta;
+		}
+		
+		void
+		JacobianInverseKinematics::setEpsilon(const::rl::math::Real& epsilon)
+		{
+			this->epsilon = epsilon;
+		}
+		
+		void
+		JacobianInverseKinematics::setIterations(const ::std::size_t& iterations)
+		{
+			this->iterations = iterations;
+		}
+		
+		void
+		JacobianInverseKinematics::setMethod(const Method& method)
+		{
+			this->method = method;
 		}
 		
 		bool
@@ -78,15 +124,25 @@ namespace rl
 					
 					this->kinematic->calculateJacobian();
 					
-					if (this->transpose)
+					switch (this->method)
 					{
-						::rl::math::Vector tmp = this->kinematic->getJacobian() * this->kinematic->getJacobian().transpose() * dx;
-						dq = dx.dot(tmp) / tmp.dot(tmp) * this->kinematic->getJacobian().transpose() * dx;
-					}
-					else
-					{
-						this->kinematic->calculateJacobianInverse(0, this->svd);
+					case METHOD_DLS:
+						this->kinematic->calculateJacobianInverse(0, false);
 						dq = this->kinematic->getJacobianInverse() * dx;
+						break;
+					case METHOD_SVD:
+						this->kinematic->calculateJacobianInverse(0, true);
+						dq = this->kinematic->getJacobianInverse() * dx;
+						break;
+					case METHOD_TRANSPOSE:
+						{
+							::rl::math::Vector tmp = this->kinematic->getJacobian() * this->kinematic->getJacobian().transpose() * dx;
+							::rl::math::Real alpha = dx.dot(tmp) / tmp.dot(tmp);
+							dq = alpha * this->kinematic->getJacobian().transpose() * dx;
+						}
+						break;
+					default:
+						break;
 					}
 					
 					this->kinematic->step(q, dq, q2);

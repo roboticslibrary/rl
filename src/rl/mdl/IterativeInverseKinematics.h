@@ -24,75 +24,35 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef RL_MDL_JACOBIANINVERSEKINEMATICS_H
-#define RL_MDL_JACOBIANINVERSEKINEMATICS_H
+#ifndef RL_MDL_ITERATIVEINVERSEKINEMATICS_H
+#define RL_MDL_ITERATIVEINVERSEKINEMATICS_H
 
 #include <chrono>
-#include <random>
-#include <utility>
 
-#include "IterativeInverseKinematics.h"
+#include "InverseKinematics.h"
 
 namespace rl
 {
 	namespace mdl
 	{
-		/**
-		 * Iterative inverse kinematics using Jacobian with random restarts.
-		 * 
-		 * Samuel R. Buss, Introduction to Inverse Kinematics with Jacobian
-		 * Transpose, Pseudoinverse and Damped Least Squares Methods, 2009.
-		 * 
-		 * https://www.math.ucsd.edu/~sbuss/ResearchWeb/ikmethods/iksurvey.pdf
-		 */
-		class JacobianInverseKinematics : public IterativeInverseKinematics
+		class IterativeInverseKinematics : public InverseKinematics
 		{
 		public:
-			enum Method
-			{
-				METHOD_DLS,
-				METHOD_SVD,
-				METHOD_TRANSPOSE
-			};
+			IterativeInverseKinematics(Kinematic* kinematic);
 			
-			JacobianInverseKinematics(Kinematic* kinematic);
+			virtual ~IterativeInverseKinematics();
 			
-			virtual ~JacobianInverseKinematics();
+			const ::std::chrono::nanoseconds& getDuration() const;
 			
-			const ::rl::math::Real& getDelta() const;
-			
-			const ::rl::math::Real& getEpsilon() const;
-			
-			const ::std::size_t& getIterations() const;
-			
-			const Method& getMethod() const;
-			
-			void setDelta(const::rl::math::Real& delta);
-			
-			void setEpsilon(const::rl::math::Real& epsilon);
-			
-			void setIterations(const ::std::size_t& iterations);
-			
-			void setMethod(const Method& method);
-			
-			bool solve();
+			void setDuration(const ::std::chrono::nanoseconds& duration);
 			
 		protected:
+			::std::chrono::nanoseconds duration;
 			
 		private:
-			::rl::math::Real delta;
 			
-			::rl::math::Real epsilon;
-			
-			::std::size_t iterations;
-			
-			Method method;
-			
-			::std::uniform_real_distribution< ::rl::math::Real> randDistribution;
-			
-			::std::mt19937 randEngine;
 		};
 	}
 }
 
-#endif // RL_MDL_JACOBIANINVERSEKINEMATICS_H
+#endif // RL_MDL_ITERATIVEINVERSEKINEMATICS_H

@@ -91,8 +91,8 @@ main(int argc, char** argv)
 			kinematics->setPosition(qzero);
 			kinematics->forwardPosition();
 			
-			ik.goals.clear();
-			ik.goals.push_back(std::make_pair(t, 0));
+			ik.clearGoals();
+			ik.addGoal(t, 0);
 			
 			if (!ik.solve())
 			{

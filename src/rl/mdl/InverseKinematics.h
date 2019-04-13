@@ -39,15 +39,25 @@ namespace rl
 		class InverseKinematics
 		{
 		public:
+			typedef ::std::pair< ::rl::math::Transform, ::std::size_t> Goal;
+			
 			InverseKinematics(Kinematic* kinematic);
 			
 			virtual ~InverseKinematics();
 			
+			void addGoal(const Goal& goal);
+			
+			void addGoal(const ::rl::math::Transform& x, const ::std::size_t& i);
+			
+			void clearGoals();
+			
+			const ::std::vector<Goal>& getGoals() const;
+			
 			virtual bool solve() = 0;
 			
-			::std::vector< ::std::pair< ::rl::math::Transform, ::std::size_t>> goals;
-			
 		protected:
+			::std::vector<Goal> goals;
+			
 			Kinematic* kinematic;
 			
 		private:

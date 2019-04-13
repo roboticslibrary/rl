@@ -246,25 +246,32 @@ OperationalModel::setData(const QModelIndex& index, const QVariant& value, int r
 			{
 				ik = std::make_shared<rl::mdl::JacobianInverseKinematics>(kinematic);
 				rl::mdl::JacobianInverseKinematics* jacobianIk = static_cast<rl::mdl::JacobianInverseKinematics*>(ik.get());
-				jacobianIk->duration = std::chrono::milliseconds(MainWindow::instance()->ikDurationSpinBox->cleanText().toUInt());
-				jacobianIk->svd = "SVD" == MainWindow::instance()->ikJacobianInverseComboBox->currentText() ? true : false;
-				jacobianIk->transpose = "Transpose" == MainWindow::instance()->ikJacobianComboBox->currentText() ? true : false;
+				jacobianIk->setDuration(std::chrono::milliseconds(MainWindow::instance()->ikDurationSpinBox->cleanText().toUInt()));
+				
+				if ("SVD" == MainWindow::instance()->ikJacobianInverseComboBox->currentText())
+				{
+					jacobianIk->setMethod(rl::mdl::JacobianInverseKinematics::METHOD_SVD);
+				}
+				else if ("Transpose" == MainWindow::instance()->ikJacobianComboBox->currentText())
+				{
+					jacobianIk->setMethod(rl::mdl::JacobianInverseKinematics::METHOD_TRANSPOSE);
+				}
 			}
 #ifdef RL_MDL_NLOPT
 			else if ("NloptInverseKinematics" == MainWindow::instance()->ikAlgorithmComboBox->currentText())
 			{
 				ik = std::make_shared<rl::mdl::NloptInverseKinematics>(kinematic);
 				rl::mdl::NloptInverseKinematics* nloptIk = static_cast<rl::mdl::NloptInverseKinematics*>(ik.get());
-				nloptIk->duration = std::chrono::milliseconds(MainWindow::instance()->ikDurationSpinBox->cleanText().toUInt());
+				nloptIk->setDuration(std::chrono::milliseconds(MainWindow::instance()->ikDurationSpinBox->cleanText().toUInt()));
 			}
 #endif
 			
 #if 0
-			ik->goals.push_back(::std::make_pair(transform, index.row()));
+			ik->addGoal(transform, index.row());
 #else
 			for (std::size_t i = 0; i < kinematic->getOperationalDof(); ++i)
 			{
-				ik->goals.push_back(::std::make_pair(i == index.row() ? transform : kinematic->getOperationalPosition(i), i));
+				ik->addGoal(i == index.row() ? transform : kinematic->getOperationalPosition(i), i);
 			}
 #endif
 			

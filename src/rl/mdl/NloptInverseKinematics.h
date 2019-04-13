@@ -32,34 +32,40 @@
 #include <random>
 #include <utility>
 
-#include "InverseKinematics.h"
+#include "IterativeInverseKinematics.h"
 
 namespace rl
 {
 	namespace mdl
 	{
-		class NloptInverseKinematics : public InverseKinematics
+		class NloptInverseKinematics : public IterativeInverseKinematics
 		{
 		public:
 			NloptInverseKinematics(Kinematic* kinematic);
 			
 			virtual ~NloptInverseKinematics();
 			
+			const ::rl::math::Real& getDelta() const;
+			
+			const ::rl::math::Real& getEpsilonRotation() const;
+			
+			const ::rl::math::Real& getEpsilonTranslation() const;
+			
+			const double& getTolerance() const;
+			
+			void setDelta(const::rl::math::Real& delta);
+			
+			void setEpsilonRotation(const::rl::math::Real& epsilonRotation);
+			
+			void setEpsilonTranslation(const::rl::math::Real& epsilonTranslation);
+			
 			void setLowerBound(const ::rl::math::Vector& lb);
+			
+			void setTolerance(const double& tolerance);
 			
 			void setUpperBound(const ::rl::math::Vector& ub);
 			
 			bool solve();
-			
-			::rl::math::Real delta;
-			
-			::std::chrono::nanoseconds duration;
-			
-			::rl::math::Real epsilonRotation;
-			
-			::rl::math::Real epsilonTranslation;
-			
-			double tolerance;
 			
 		protected:
 			
@@ -68,11 +74,19 @@ namespace rl
 			
 			static ::rl::math::Real f(unsigned n, const double* x, double* grad, void* data);
 			
-			::std::uniform_real_distribution< ::rl::math::Real> randDistribution;
+			::rl::math::Real delta;
+			
+			::rl::math::Real epsilonRotation;
+			
+			::rl::math::Real epsilonTranslation;
 			
 			::rl::math::Vector lb;
 			
+			::std::uniform_real_distribution< ::rl::math::Real> randDistribution;
+			
 			::std::mt19937 randEngine;
+			
+			double tolerance;
 			
 			::rl::math::Vector ub;
 		};

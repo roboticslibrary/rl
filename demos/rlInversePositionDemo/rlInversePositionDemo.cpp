@@ -97,9 +97,9 @@ main(int argc, char** argv)
 		rl::mdl::JacobianInverseKinematics ik(kinematic);
 		std::cout << "IK using rl::mdl::JacobianInverseKinematics";
 #endif
-		ik.duration = std::chrono::seconds(1);
-		std::cout << " with timeout of " << std::chrono::duration_cast<std::chrono::milliseconds>(ik.duration).count() << " ms" << std::endl;
-		ik.goals.push_back(::std::make_pair(kinematic->getOperationalPosition(0), 0));
+		ik.setDuration(std::chrono::seconds(1));
+		std::cout << " with timeout of " << std::chrono::duration_cast<std::chrono::milliseconds>(ik.getDuration()).count() << " ms" << std::endl;
+		ik.addGoal(kinematic->getOperationalPosition(0), 0);
 		
 		rl::math::Vector min = kinematic->getMinimum();
 		rl::math::Vector max = kinematic->getMaximum();

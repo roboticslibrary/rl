@@ -24,44 +24,26 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include "InverseKinematics.h"
+#include "AnalyticalInverseKinematics.h"
 
 namespace rl
 {
 	namespace mdl
 	{
-		InverseKinematics::InverseKinematics(Kinematic* kinematic) :
-			goals(),
-			kinematic(kinematic)
+		AnalyticalInverseKinematics::AnalyticalInverseKinematics(Kinematic* kinematic) :
+			InverseKinematics(kinematic),
+			solutions()
 		{
 		}
 		
-		InverseKinematics::~InverseKinematics()
+		AnalyticalInverseKinematics::~AnalyticalInverseKinematics()
 		{
 		}
 		
-		void
-		InverseKinematics::addGoal(const Goal& goal)
+		const ::std::vector< ::rl::math::Vector>&
+		AnalyticalInverseKinematics::getSolutions() const
 		{
-			this->goals.push_back(goal);
-		}
-		
-		void
-		InverseKinematics::addGoal(const ::rl::math::Transform& x, const ::std::size_t& i)
-		{
-			this->addGoal(::std::make_pair(x, i));
-		}
-		
-		void
-		InverseKinematics::clearGoals()
-		{
-			this->goals.clear();
-		}
-		
-		const ::std::vector<InverseKinematics::Goal>&
-		InverseKinematics::getGoals() const
-		{
-			return this->goals;
+			return this->solutions;
 		}
 	}
 }

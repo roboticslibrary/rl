@@ -3,6 +3,7 @@ find_package(NLopt)
 
 set(
 	HDRS
+	AnalyticalInverseKinematics.h
 	Body.h
 	Compound.h
 	Cylindrical.h
@@ -16,6 +17,7 @@ set(
 	Helical.h
 	Integrator.h
 	InverseKinematics.h
+	IterativeInverseKinematics.h
 	JacobianInverseKinematics.h
 	Joint.h
 	Kinematic.h
@@ -34,6 +36,7 @@ set(
 
 set(
 	SRCS
+	AnalyticalInverseKinematics.cpp
 	Body.cpp
 	Compound.cpp
 	Cylindrical.cpp
@@ -47,6 +50,7 @@ set(
 	Helical.cpp
 	Integrator.cpp
 	InverseKinematics.cpp
+	IterativeInverseKinematics.cpp
 	JacobianInverseKinematics.cpp
 	Joint.cpp
 	Kinematic.cpp

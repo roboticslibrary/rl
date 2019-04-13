@@ -24,75 +24,32 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef RL_MDL_JACOBIANINVERSEKINEMATICS_H
-#define RL_MDL_JACOBIANINVERSEKINEMATICS_H
-
-#include <chrono>
-#include <random>
-#include <utility>
-
 #include "IterativeInverseKinematics.h"
 
 namespace rl
 {
 	namespace mdl
 	{
-		/**
-		 * Iterative inverse kinematics using Jacobian with random restarts.
-		 * 
-		 * Samuel R. Buss, Introduction to Inverse Kinematics with Jacobian
-		 * Transpose, Pseudoinverse and Damped Least Squares Methods, 2009.
-		 * 
-		 * https://www.math.ucsd.edu/~sbuss/ResearchWeb/ikmethods/iksurvey.pdf
-		 */
-		class JacobianInverseKinematics : public IterativeInverseKinematics
+		IterativeInverseKinematics::IterativeInverseKinematics(Kinematic* kinematic) :
+			InverseKinematics(kinematic),
+			duration(::std::chrono::milliseconds(100))
 		{
-		public:
-			enum Method
-			{
-				METHOD_DLS,
-				METHOD_SVD,
-				METHOD_TRANSPOSE
-			};
-			
-			JacobianInverseKinematics(Kinematic* kinematic);
-			
-			virtual ~JacobianInverseKinematics();
-			
-			const ::rl::math::Real& getDelta() const;
-			
-			const ::rl::math::Real& getEpsilon() const;
-			
-			const ::std::size_t& getIterations() const;
-			
-			const Method& getMethod() const;
-			
-			void setDelta(const::rl::math::Real& delta);
-			
-			void setEpsilon(const::rl::math::Real& epsilon);
-			
-			void setIterations(const ::std::size_t& iterations);
-			
-			void setMethod(const Method& method);
-			
-			bool solve();
-			
-		protected:
-			
-		private:
-			::rl::math::Real delta;
-			
-			::rl::math::Real epsilon;
-			
-			::std::size_t iterations;
-			
-			Method method;
-			
-			::std::uniform_real_distribution< ::rl::math::Real> randDistribution;
-			
-			::std::mt19937 randEngine;
-		};
+		}
+		
+		IterativeInverseKinematics::~IterativeInverseKinematics()
+		{
+		}
+		
+		const ::std::chrono::nanoseconds&
+		IterativeInverseKinematics::getDuration() const
+		{
+			return this->duration;
+		}
+		
+		void
+		IterativeInverseKinematics::setDuration(const ::std::chrono::nanoseconds& duration)
+		{
+			this->duration = duration;
+		}
 	}
 }
-
-#endif // RL_MDL_JACOBIANINVERSEKINEMATICS_H

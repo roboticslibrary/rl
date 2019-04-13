@@ -34,14 +34,13 @@ namespace rl
 	namespace mdl
 	{
 		NloptInverseKinematics::NloptInverseKinematics(Kinematic* kinematic) :
-			InverseKinematics(kinematic),
+			IterativeInverseKinematics(kinematic),
 			delta(static_cast< ::rl::math::Real>(1.0e-8)),
-			duration(::std::chrono::milliseconds(100)),
 			epsilonRotation(static_cast< ::rl::math::Real>(1.0e-6)),
 			epsilonTranslation(static_cast< ::rl::math::Real>(1.0e-6)),
-			tolerance(static_cast< ::rl::math::Real>(1.0e-8)),
 			randDistribution(0, 1),
-			randEngine(::std::random_device()())
+			randEngine(::std::random_device()()),
+			tolerance(static_cast< ::rl::math::Real>(1.0e-8))
 		{
 			this->lb = this->kinematic->getMinimum();
 			this->ub = this->kinematic->getMaximum();
@@ -112,10 +111,56 @@ namespace rl
 			return result;
 		}
 		
+		const ::rl::math::Real&
+		NloptInverseKinematics::getEpsilonRotation() const
+		{
+			return this->epsilonRotation;
+		}
+		
+		const ::rl::math::Real&
+		NloptInverseKinematics::getEpsilonTranslation() const
+		{
+			return this->epsilonTranslation;
+		}
+		
+		const ::rl::math::Real&
+		NloptInverseKinematics::getDelta() const
+		{
+			return this->delta;
+		}
+		
+		const double&
+		NloptInverseKinematics::getTolerance() const
+		{
+			return this->tolerance;
+		}
+		
+		void
+		NloptInverseKinematics::setDelta(const::rl::math::Real& delta)
+		{
+			this->delta = delta;
+		}
+		
+		void NloptInverseKinematics::setEpsilonRotation(const::rl::math::Real& epsilonRotation)
+		{
+			this->epsilonRotation = epsilonRotation;
+		}
+		
+		void NloptInverseKinematics::setEpsilonTranslation(const::rl::math::Real& epsilonTranslation)
+		{
+			this->epsilonTranslation = epsilonTranslation;
+		}
+		
 		void
 		NloptInverseKinematics::setLowerBound(const ::rl::math::Vector& lb)
 		{
 			this->lb = lb;
+		}
+		
+		void
+		NloptInverseKinematics::setTolerance(const double& tolerance)
+		{
+			this->tolerance = tolerance;
 		}
 		
 		void
