@@ -54,6 +54,8 @@ file(
 	/opt/local/include
 	/usr/include/libxslt
 	/usr/include
+	${CMAKE_OSX_SYSROOT}/usr/include/libxslt
+	${CMAKE_OSX_SYSROOT}/usr/include
 )
 
 find_path(

@@ -54,6 +54,8 @@ file(
 	/opt/local/include
 	/usr/include/libxml2
 	/usr/include
+	${CMAKE_OSX_SYSROOT}/usr/include/libxml2
+	${CMAKE_OSX_SYSROOT}/usr/include
 )
 
 find_path(

@@ -46,6 +46,7 @@ file(
 	/usr/include
 	$ENV{ProgramW6432}/GnuWin32/include
 	$ENV{ProgramFiles}/GnuWin32/include
+	${CMAKE_OSX_SYSROOT}/usr/include
 )
 
 find_path(
