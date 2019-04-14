@@ -136,6 +136,16 @@ set_target_properties(
 	VERSION ${VERSION}
 )
 
+if(NOT CMAKE_VERSION VERSION_LESS 2.8.12)
+	set_target_properties(
+		plan
+		PROPERTIES
+		C_VISIBILITY_PRESET hidden
+		CXX_VISIBILITY_PRESET hidden
+		VISIBILITY_INLINES_HIDDEN ON
+	)
+endif()
+
 if(WIN32)
 	if(BUILD_SHARED_LIBS)
 		set_target_properties(
