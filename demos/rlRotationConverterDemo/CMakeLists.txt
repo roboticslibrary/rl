@@ -1,4 +1,4 @@
-if(USE_QT5)
+if(RL_USE_QT5)
 	find_package(Qt5 COMPONENTS Core Gui Widgets QUIET)
 endif()
 

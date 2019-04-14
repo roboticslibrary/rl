@@ -5,7 +5,7 @@ endif()
 find_package(OpenGL REQUIRED)
 find_package(SoQt)
 
-if(USE_QT5 AND SoQt5_FOUND)
+if(RL_USE_QT5 AND SoQt5_FOUND)
 	find_package(Qt5 COMPONENTS Core Gui Network OpenGL Widgets QUIET)
 endif()
 

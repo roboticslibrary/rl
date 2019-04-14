@@ -47,28 +47,27 @@ set(Boost_ADDITIONAL_VERSIONS "1.69.0" "1.69" "1.68.0" "1.68" "1.67.0" "1.67" "1
 
 include(Qt4AutomocMocOptionsBoost)
 
-option(BUILD_DEMOS "Build demos" ON)
-option(BUILD_DOCUMENTATION "Build documentation" OFF)
-option(BUILD_EXTRAS "Build extras" ON)
-option(BUILD_RL_MATH "Build mathematics component" ON)
-option(BUILD_RL_UTIL "Build utility component" ON)
-option(BUILD_RL_XML "Build XML abstraction layer component" ON)
-option(BUILD_TESTS "Build tests" ON)
-
-cmake_dependent_option(BUILD_RL_HAL "Build hardware abstraction layer component" ON "BUILD_RL_MATH;BUILD_RL_UTIL" OFF)
-cmake_dependent_option(BUILD_RL_KIN "Build Denavit-Hartenberg kinematics component" ON "BUILD_RL_MATH;BUILD_RL_XML" OFF)
-cmake_dependent_option(BUILD_RL_MDL "Build rigid body kinematics and dynamics component" ON "BUILD_RL_MATH;BUILD_RL_XML" OFF)
-cmake_dependent_option(BUILD_RL_SG "Build scene graph abstraction component" ON "BUILD_RL_MATH;BUILD_RL_UTIL;BUILD_RL_XML" OFF)
-
-cmake_dependent_option(BUILD_RL_PLAN "Build path planning component" ON "BUILD_RL_KIN;BUILD_RL_MATH;BUILD_RL_MDL;BUILD_RL_SG;BUILD_RL_UTIL;BUILD_RL_XML" OFF)
-
 if(WIN32)
 	option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 else()
 	option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 endif()
 
-option(USE_QT5 "Prefer Qt5 over Qt4 if available" ON)
+option(RL_BUILD_DEMOS "Build demos" ON)
+option(RL_BUILD_DOCUMENTATION "Build documentation" OFF)
+option(RL_BUILD_EXTRAS "Build extras" ON)
+option(RL_BUILD_MATH "Build mathematics component" ON)
+option(RL_BUILD_TESTS "Build tests" ON)
+option(RL_BUILD_UTIL "Build utility component" ON)
+option(RL_BUILD_XML "Build XML abstraction layer component" ON)
+option(RL_USE_QT5 "Prefer Qt5 over Qt4 if available" ON)
+
+cmake_dependent_option(RL_BUILD_HAL "Build hardware abstraction layer component" ON "RL_BUILD_MATH;RL_BUILD_UTIL" OFF)
+cmake_dependent_option(RL_BUILD_KIN "Build Denavit-Hartenberg kinematics component" ON "RL_BUILD_MATH;RL_BUILD_XML" OFF)
+cmake_dependent_option(RL_BUILD_MDL "Build rigid body kinematics and dynamics component" ON "RL_BUILD_MATH;RL_BUILD_XML" OFF)
+cmake_dependent_option(RL_BUILD_SG "Build scene graph abstraction component" ON "RL_BUILD_MATH;RL_BUILD_UTIL;RL_BUILD_XML" OFF)
+
+cmake_dependent_option(RL_BUILD_PLAN "Build path planning component" ON "RL_BUILD_KIN;RL_BUILD_MATH;RL_BUILD_MDL;RL_BUILD_SG;RL_BUILD_UTIL;RL_BUILD_XML" OFF)
 
 include_directories(BEFORE src/rl/std)
 
@@ -76,11 +75,11 @@ add_subdirectory(src/rl/std)
 add_subdirectory(src)
 add_subdirectory(examples)
 
-if(BUILD_DEMOS)
+if(RL_BUILD_DEMOS)
 	add_subdirectory(demos)
 endif()
 
-if(BUILD_TESTS)
+if(RL_BUILD_TESTS)
 	enable_testing()
 	add_subdirectory(tests)
 endif()
@@ -140,7 +139,7 @@ if(DEFINED TARGETS)
 	)
 endif()
 
-if(BUILD_EXTRAS)
+if(RL_BUILD_EXTRAS)
 	add_subdirectory(extras)
 endif()
 
