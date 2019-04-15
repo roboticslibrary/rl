@@ -111,9 +111,6 @@ main(int argc, char** argv)
 			{
 				fprintf(stderr, "Error couldn't parse a material (%s)\n", line);
 			}
-			else 
-			{
-			}
 		}
 		else
 		{

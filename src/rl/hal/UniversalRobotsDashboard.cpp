@@ -66,6 +66,7 @@ namespace rl
 			
 			if ("Added log message\n" == reply)
 			{
+				return;
 			}
 			else if ("No log message to add\n" == reply)
 			{
@@ -88,6 +89,7 @@ namespace rl
 			
 			if ("Brake releasing\n" == reply)
 			{
+				return;
 			}
 			else
 			{
@@ -106,6 +108,7 @@ namespace rl
 			
 			if ("closing popup\n" == reply)
 			{
+				return;
 			}
 			else
 			{
@@ -124,6 +127,7 @@ namespace rl
 			
 			if ("closing safety popup\n" == reply)
 			{
+				return;
 			}
 			else
 			{
@@ -188,6 +192,7 @@ namespace rl
 			
 			if ("Loading program" == reply.substr(0, 15))
 			{
+				return;
 			}
 			else if ("File not found" == reply.substr(0, 14))
 			{
@@ -214,6 +219,7 @@ namespace rl
 			
 			if ("Loading installation" == reply.substr(0, 20))
 			{
+				return;
 			}
 			else if ("File not found" == reply.substr(0, 14))
 			{
@@ -240,6 +246,7 @@ namespace rl
 			
 			if ("Pausing program\n" == reply)
 			{
+				return;
 			}
 			else if ("Failed to execute: pause\n" == reply)
 			{
@@ -262,6 +269,7 @@ namespace rl
 			
 			if ("Starting program\n" == reply)
 			{
+				return;
 			}
 			else if ("Failed to execute: play\n" == reply)
 			{
@@ -296,6 +304,7 @@ namespace rl
 			
 			if ("showing popup\n" == reply)
 			{
+				return;
 			}
 			else
 			{
@@ -314,6 +323,7 @@ namespace rl
 			
 			if ("Powering off\n" == reply)
 			{
+				return;
 			}
 			else
 			{
@@ -332,6 +342,7 @@ namespace rl
 			
 			if ("Powering on\n" == reply)
 			{
+				return;
 			}
 			else
 			{
@@ -502,6 +513,7 @@ namespace rl
 			
 			if ("Shutting down\n" == reply)
 			{
+				return;
 			}
 			else
 			{
@@ -520,6 +532,7 @@ namespace rl
 			
 			if ("Stopped\n" == reply)
 			{
+				return;
 			}
 			else if ("Failed to execute: stop\n" == reply)
 			{
@@ -542,6 +555,7 @@ namespace rl
 			
 			if ("Disconnected\n" == reply)
 			{
+				return;
 			}
 			else
 			{
@@ -560,6 +574,7 @@ namespace rl
 			
 			if ("Protective stop releasing\n" == reply)
 			{
+				return;
 			}
 			else
 			{
