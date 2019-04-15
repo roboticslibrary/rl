@@ -165,7 +165,7 @@ namespace rl
 			const ::std::uint8_t& number4 = this->get(ptr);
 			this->get(ptr);
 			
-			/*int number = */Endian::hostDoubleWord(Endian::hostWord(number1, number2), Endian::hostWord(number3, number4));
+			int number = Endian::hostDoubleWord(Endian::hostWord(number1, number2), Endian::hostWord(number3, number4));
 			
 			int step = this->get(ptr);
 			
