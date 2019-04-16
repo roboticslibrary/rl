@@ -27,10 +27,8 @@
 #include <iostream>
 #include <memory>
 #include <stdexcept>
-#include <random>
 #include <rl/kin/Kinematics.h>
 #include <rl/kin/Puma.h>
-#include <rl/math/Unit.h>
 
 int
 main(int argc, char** argv)
@@ -43,112 +41,92 @@ main(int argc, char** argv)
 	
 	try
 	{
-		std::mt19937 randomGenerator(0);
-		std::uniform_real_distribution<rl::math::Real> randomDistribution(-180 * rl::math::DEG2RAD, 180 * rl::math::DEG2RAD);
+		std::string filename = argv[1];
 		
-		std::shared_ptr<rl::kin::Kinematics> kinematics(rl::kin::Kinematics::create(argv[1]));
+		std::shared_ptr<rl::kin::Kinematics> kinematics(rl::kin::Kinematics::create(filename));
+		kinematics->seed(0);
 		
-		std::size_t nTests;
-		
-		rl::math::Vector q(6);
-		rl::math::Vector qinv(6);
-		rl::math::Vector qzero(6);
-		std::size_t n;
-		std::size_t wrongs;
-		std::size_t wrongT;
-		std::size_t ngotinverse;
-		
-		for (std::size_t ispuma = 0; ispuma < 2; ++ispuma)
+		for (std::size_t n = 0; n < 100; ++n)
 		{
-			nTests = 0 == ispuma ? 1000 : 100;
+			rl::math::Vector q1 = kinematics->generatePositionUniform();
+			kinematics->setPosition(q1);
+			kinematics->updateFrames();
+			rl::math::Transform t1 = kinematics->forwardPosition();
 			
-			for (n = 0, wrongs = 0, wrongT = 0, ngotinverse = 0; n < nTests && wrongT < 100 && wrongs < 100; ++n)
+			rl::math::Vector q2 = kinematics->generatePositionUniform();
+			kinematics->setPosition(q2);
+			
+			rl::math::Vector q3(kinematics->getDof());
+			
+			bool solved = kinematics->inversePosition(
+				t1,
+				q3,
+				0,
+				std::numeric_limits< ::rl::math::Real>::infinity(),
+				static_cast<rl::math::Real>(1.0e-3),
+				1000,
+				std::chrono::seconds(10)
+			);
+			
+			if (!solved)
 			{
-				for (std::size_t i = 0; i < 6; ++i)
-				{
-					q(i) = randomDistribution(randomGenerator);
-					qzero(i) = 0;
-				}
-				
-				kinematics->setPosition(q);
-				kinematics->updateFrames();
-				
-				rl::math::Transform t = kinematics->forwardPosition();
-				
-				// For iterative inverse, set starting point far away
-				kinematics->setPosition(qzero);
-				kinematics->updateFrames();
-				
-				if (0 == ispuma)
-				{
-					rl::kin::Puma::Arm arm;
-					rl::kin::Puma::Elbow elbow;
-					rl::kin::Puma::Wrist wrist;
-					dynamic_cast<rl::kin::Puma*>(kinematics.get())->parameters(q, arm, elbow, wrist);
-					dynamic_cast<rl::kin::Puma*>(kinematics.get())->setArm(arm);
-					dynamic_cast<rl::kin::Puma*>(kinematics.get())->setElbow(elbow);
-					dynamic_cast<rl::kin::Puma*>(kinematics.get())->setWrist(wrist);
-				}
-				
-				if (
-					0 == ispuma
-					? dynamic_cast< ::rl::kin::Puma*>(kinematics.get())->inversePosition(t, qinv)
-					: dynamic_cast< ::rl::kin::Kinematics*>(kinematics.get())->inversePosition(t, qinv, 0, 100)
-				)
-				{
-					kinematics->setPosition(qinv);
-					kinematics->updateFrames();
-					rl::math::Transform tinv = kinematics->forwardPosition();
-					
-					if ((t.matrix() - tinv.matrix()).norm() > 1e-6)
-					{
-						++wrongT;
-					}
-					
-					if ((q - qinv).norm() > 1e-4)
-					{
-						++wrongs;
-					}
-					
-					if (true) //wrongT < 3 && (t.matrix() - tinv.matrix()).norm() > 1e-6)
-					{
-						std::cout << "      q    = " << q.transpose() << std::endl;
-						std::cout << "      T    = " << t.matrix() << std::endl;
-						std::cout << "      qinv = " << qinv.transpose() << std::endl;
-						std::cout << "      Tinv = " << tinv.matrix() << std::endl;
-						std::cout << std::endl;
-					}
-					
-					++ngotinverse;
-				}
-			}
-			
-			std::cout << "Notice: "
-				<< (0 == ispuma ? "Puma direct " : "Iterative ") << "inverse kinematics "
-				<< "on file " << argv[1] << " "
-				<< "tested with " << n << " cases, "
-				<< ngotinverse << " returned a solution, "
-				<< "thereof " << wrongs << " in wrong configuration, and "
-				<< wrongT << " with completely wrong pose."
-				<< std::endl;
-			
-			if (wrongT > 0)
-			{
-				std::cerr << "Error: "
-					<< (0 == ispuma ? "Puma direct " : "Iterative ") 
-					<< "inverse kinematics " << "on file " << argv[1] 
-					<< " gave incorrect poses." << std::endl;
+				std::cerr << "rl::kin::Kinematics::inversePosition on file " << filename << " with no solution." << std::endl;
+				std::cerr << "t1 = " << std::endl << t1.matrix() << std::endl;
+				std::cerr << "q1 = " << q1.transpose() << std::endl;
+				std::cerr << "q2 = " << q2.transpose() << std::endl;
 				return EXIT_FAILURE;
 			}
 			
-			if (0 == ngotinverse)
+			kinematics->setPosition(q3);
+			kinematics->updateFrames();
+			rl::math::Transform t3 = kinematics->forwardPosition();
+			
+			if (!t3.isApprox(t1, static_cast<rl::math::Real>(1.03-6)))
 			{
-				std::cerr << "Error: "
-					<< (0 == ispuma ? "Puma direct " : "Iterative ") 
-					<< "inverse kinematics "<< "on file " << argv[1]
-					<< " gave no solutions."
-					<< std::endl;
+				std::cerr << "rl::kin::Kinematics::inversePosition on file " << filename << " with incorrect operational position." << std::endl;
+				std::cerr << "norm(t1 - t3) = " << (t1.matrix() - t3.matrix()).norm() << std::endl;
+				std::cerr << "t1 = " << std::endl << t1.matrix() << std::endl;
+				std::cerr << "t3 = " << std::endl << t3.matrix() << std::endl;
+				std::cerr << "q1 = " << q1.transpose() << std::endl;
+				std::cerr << "q2 = " << q2.transpose() << std::endl;
+				std::cerr << "q3 = " << q3.transpose() << std::endl;
 				return EXIT_FAILURE;
+			}
+			
+			if (rl::kin::Puma* puma = dynamic_cast<rl::kin::Puma*>(kinematics.get()))
+			{
+				rl::kin::Puma::Arm arm;
+				rl::kin::Puma::Elbow elbow;
+				rl::kin::Puma::Wrist wrist;
+				puma->parameters(q1, arm, elbow, wrist);
+				puma->setArm(arm);
+				puma->setElbow(elbow);
+				puma->setWrist(wrist);
+				
+				rl::math::Vector q4(puma->getDof());
+				
+				if (!puma->inversePosition(t1, q4, true))
+				{
+					std::cerr << "rl::kin::Puma::inversePosition on file " << filename << " with no solution." << std::endl;
+					std::cerr << "t1 = " << std::endl << t1.matrix() << std::endl;
+					std::cerr << "q1 = " << q1.transpose() << std::endl;
+					return EXIT_FAILURE;
+				}
+				
+				puma->setPosition(q4);
+				puma->updateFrames();
+				rl::math::Transform t4 = puma->forwardPosition();
+				
+				if (!t4.isApprox(t1, static_cast<rl::math::Real>(1.03-6)))
+				{
+					std::cerr << "rl::kin::Puma::inversePosition on file " << filename << " with incorrect operational position." << std::endl;
+					std::cerr << "norm(t1 - t4) = " << (t1.matrix() - t4.matrix()).norm() << std::endl;
+					std::cerr << "t1 = " << std::endl << t1.matrix() << std::endl;
+					std::cerr << "t4 = " << std::endl << t4.matrix() << std::endl;
+					std::cerr << "q1 = " << q1.transpose() << std::endl;
+					std::cerr << "q4 = " << q4.transpose() << std::endl;
+					return EXIT_FAILURE;
+				}
 			}
 		}
 	}
