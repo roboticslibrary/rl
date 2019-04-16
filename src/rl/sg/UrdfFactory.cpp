@@ -310,11 +310,11 @@ namespace rl
 						{
 							if (!shapes[k].getProperty("filename").empty())
 							{
-								::std::string filename = shapes[k].getLocalPath(shapes[k].getProperty("filename"));
-::std::cout << "\tmesh filename: " << filename << ::std::endl;
+								::std::string meshFilename = shapes[k].getLocalPath(shapes[k].getProperty("filename"));
+::std::cout << "\tmesh filename: " << meshFilename << ::std::endl;
 								
 #if defined(HAVE_SOSTLFILEKIT_H) && defined(HAVE_SOSTLFILEKIT_CONVERT)
-								if (!boost::iends_with(filename, "stl"))
+								if (!boost::iends_with(meshFilename, "stl"))
 								{
 									throw Exception("rl::sg::UrdfFactory::load() - Only STL meshes currently supported");
 								}
@@ -322,9 +322,9 @@ namespace rl
 								::SoSTLFileKit* stlFileKit = new ::SoSTLFileKit();
 								stlFileKit->ref();
 								
-								if (!stlFileKit->readFile(filename.c_str()))
+								if (!stlFileKit->readFile(meshFilename.c_str()))
 								{
-									throw Exception("rl::sg::UrdfFactory::load() - Failed to open file '" + filename + "'");
+									throw Exception("rl::sg::UrdfFactory::load() - Failed to open file '" + meshFilename + "'");
 								}
 								
 								::SoSeparator* stl = stlFileKit->convert();
