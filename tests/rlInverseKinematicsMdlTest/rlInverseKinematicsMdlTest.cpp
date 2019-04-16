@@ -27,15 +27,12 @@
 #include <iostream>
 #include <memory>
 #include <stdexcept>
-#include <random>
-#include <rl/math/Unit.h>
+#include <rl/mdl/JacobianInverseKinematics.h>
 #include <rl/mdl/Kinematic.h>
 #include <rl/mdl/XmlFactory.h>
 
 #ifdef RL_MDL_NLOPT
 #include <rl/mdl/NloptInverseKinematics.h>
-#else
-#include <rl/mdl/JacobianInverseKinematics.h>
 #endif
 
 int
@@ -49,107 +46,74 @@ main(int argc, char** argv)
 	
 	try
 	{
-		std::mt19937 randomGenerator(0);
-		std::uniform_real_distribution<rl::math::Real> randomDistribution(-180 * rl::math::DEG2RAD, 180 * rl::math::DEG2RAD);
+		std::string filename = argv[1];
 		
 		rl::mdl::XmlFactory factory;
-		std::shared_ptr<rl::mdl::Model> model(factory.create(argv[1]));
+		std::shared_ptr<rl::mdl::Model> model(factory.create(filename));
 		rl::mdl::Kinematic* kinematics = dynamic_cast<rl::mdl::Kinematic*>(model.get());
+		kinematics->seed(0);
 		
-		std::size_t nTests;
+		std::vector<std::pair<std::shared_ptr<rl::mdl::IterativeInverseKinematics>, std::string>> ik;
 		
-		rl::math::Vector q(6);
-		rl::math::Vector qinv(6);
-		rl::math::Vector qzero(6);
-		std::size_t n;
-		std::size_t wrongs;
-		std::size_t wrongT;
-		std::size_t ngotinverse;
+		std::shared_ptr<rl::mdl::JacobianInverseKinematics> jacobianSvd = std::make_shared<rl::mdl::JacobianInverseKinematics>(kinematics);
+		jacobianSvd->setMethod(rl::mdl::JacobianInverseKinematics::METHOD_SVD);
+		ik.push_back(std::make_pair(jacobianSvd, "rl::mdl::JacobianInverseKinematics::METHOD_SVD"));
 		
-		nTests = 100;
+		std::shared_ptr<rl::mdl::JacobianInverseKinematics> jacobianDls = std::make_shared<rl::mdl::JacobianInverseKinematics>(kinematics);
+		jacobianDls->setMethod(rl::mdl::JacobianInverseKinematics::METHOD_DLS);
+		ik.push_back(std::make_pair(jacobianDls, "rl::mdl::JacobianInverseKinematics::METHOD_DLS"));
+		
+		std::shared_ptr<rl::mdl::JacobianInverseKinematics> jacobianTranspose = std::make_shared<rl::mdl::JacobianInverseKinematics>(kinematics);
+		jacobianTranspose->setMethod(rl::mdl::JacobianInverseKinematics::METHOD_TRANSPOSE);
+		ik.push_back(std::make_pair(jacobianTranspose, "rl::mdl::JacobianInverseKinematics::METHOD_TRANSPOSE"));
 		
 #ifdef RL_MDL_NLOPT
-		rl::mdl::NloptInverseKinematics ik(kinematics);
-#else
-		rl::mdl::JacobianInverseKinematics ik(kinematics);
-		ik.delta = static_cast<rl::math::Real>(0.5);
+		std::shared_ptr<rl::mdl::NloptInverseKinematics> nlopt = std::make_shared<rl::mdl::NloptInverseKinematics>(kinematics);
+		ik.push_back(std::make_pair(nlopt, "rl::mdl::NloptInverseKinematics"));
 #endif
 		
-		for (n = 0, wrongs = 0, wrongT = 0, ngotinverse = 0; n < nTests && wrongT < 100 && wrongs < 100; ++n)
+		for (std::size_t i = 0; i < ik.size(); ++i)
 		{
-			for (std::size_t i = 0; i < 6; ++i)
+			ik[i].first->setDuration(std::chrono::seconds(10));
+			
+			for (std::size_t n = 0; n < 100; ++n)
 			{
-				q(i) = randomDistribution(randomGenerator);
-				qzero(i) = 0;
-			}
-			
-			kinematics->setPosition(q);
-			kinematics->forwardPosition();
-			rl::math::Transform t = kinematics->getOperationalPosition(0);
-			
-			// For iterative inverse, set starting point far away
-			kinematics->setPosition(qzero);
-			kinematics->forwardPosition();
-			
-			ik.clearGoals();
-			ik.addGoal(t, 0);
-			
-			if (!ik.solve())
-			{
-				continue;
-			}
-			
-			qinv = kinematics->getPosition();
-			kinematics->forwardPosition();
-			rl::math::Transform tinv = kinematics->getOperationalPosition(0);
-			
-			if ((t.matrix() - tinv.matrix()).norm() > 1e-5)
-			{
-				++wrongT;
-			}
-			
-			if ((q - qinv).norm() > 1e-4)
-			{
-				++wrongs;
-			}
-			
-			if (wrongT < 3 && (t.matrix() - tinv.matrix()).norm() > 1e-5)
-			{
-				std::cout << "      q    = " << q.transpose() << std::endl;
-				std::cout << "      T    = " << t.matrix() << std::endl;
-				std::cout << "      qinv = " << qinv.transpose() << std::endl;
-				std::cout << "      Tinv = " << tinv.matrix() << std::endl;
-				std::cout << std::endl;
-			}
-			
-			++ngotinverse;
-			
-			
-			if (wrongT > 0)
-			{
-				std::cerr << "Error: "
-					<< "Iterative inverse kinematics " << "on file " << argv[1] 
-					<< " gave incorrect poses." << std::endl;
-				return EXIT_FAILURE;
-			}
-			
-			if (0 == ngotinverse)
-			{
-				std::cerr << "Error: "
-					<< "Iterative inverse kinematics "<< "on file " << argv[1]
-					<< " gave no solutions."
-					<< std::endl;
-				return EXIT_FAILURE;
+				rl::math::Vector q1 = kinematics->generatePositionUniform();
+				kinematics->setPosition(q1);
+				kinematics->forwardPosition();
+				rl::math::Transform t1 = kinematics->getOperationalPosition(0);
+				
+				rl::math::Vector q2 = kinematics->generatePositionUniform();
+				kinematics->setPosition(q2);
+				ik[i].first->clearGoals();
+				ik[i].first->addGoal(t1, 0);
+				
+				if (!ik[i].first->solve())
+				{
+					std::cerr << ik[i].second << " on file " << filename << " with no solution." << std::endl;
+					std::cerr << "t1 = " << std::endl << t1.matrix() << std::endl;
+					std::cerr << "q1 = " << q1.transpose() << std::endl;
+					std::cerr << "q2 = " << q2.transpose() << std::endl;
+					return EXIT_FAILURE;
+				}
+				
+				rl::math::Vector q3 = kinematics->getPosition();
+				kinematics->forwardPosition();
+				rl::math::Transform t3 = kinematics->getOperationalPosition(0);
+				
+				if (!t3.isApprox(t1, static_cast<rl::math::Real>(1.03-6)))
+				{
+					std::cerr << ik[i].second << " on file " << filename << " with incorrect operational position." << std::endl;
+					std::cerr << "norm(t1 - t3) = " << (t1.matrix() - t3.matrix()).norm() << std::endl;
+					std::cerr << "t1 = " << std::endl << t1.matrix() << std::endl;
+					std::cerr << "t3 = " << std::endl << t3.matrix() << std::endl;
+					std::cerr << "q1 = " << q1.transpose() << std::endl;
+					std::cerr << "q2 = " << q2.transpose() << std::endl;
+					std::cerr << "q3 = " << q3.transpose() << std::endl;
+					return EXIT_FAILURE;
+				}
 			}
 		}
-		std::cout << "Notice: "
-			<< "Iterative inverse kinematics "
-			<< "on file " << argv[1] << " "
-			<< "tested with " << n << " cases, "
-			<< ngotinverse << " returned a solution, "
-			<< "thereof " << wrongs << " in wrong configuration, and "
-			<< wrongT << " with completely wrong pose."
-			<< std::endl;
 	}
 	catch (const std::exception& e)
 	{
