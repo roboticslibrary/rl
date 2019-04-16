@@ -9,6 +9,11 @@ find_package(cifX)
 find_package(Comedi)
 find_package(libdc1394)
 
+cmake_dependent_option(RL_BUILD_HAL_ATIDAQ "Build ATIDAQ support" ON "RL_BUILD_HAL;ATIDAQ_FOUND;Comedi_FOUND" OFF)
+cmake_dependent_option(RL_BUILD_HAL_CIFX "Build cifX support" ON "RL_BUILD_HAL;cifX_FOUND" OFF)
+cmake_dependent_option(RL_BUILD_HAL_COMEDI "Build Comedi support" ON "RL_BUILD_HAL;Comedi_FOUND" OFF)
+cmake_dependent_option(RL_BUILD_HAL_LIBDC1394 "Build libdc1394 support" ON "RL_BUILD_HAL;libdc1394_FOUND" OFF)
+
 include(TestBigEndian)
 
 test_big_endian(BIG_ENDIAN)
@@ -139,24 +144,24 @@ set(
 	WeissWsg50.cpp
 )
 
-if(ATIDAQ_FOUND AND Comedi_FOUND)
+if(RL_BUILD_HAL_ATIDAQ)
 	list(APPEND HDRS Ati.h)
 	list(APPEND SRCS Ati.cpp)
 endif()
 
-if(cifX_FOUND)
+if(RL_BUILD_HAL_CIFX)
 	list(APPEND HDRS HilscherCifx.h)
 	list(APPEND SRCS HilscherCifx.cpp)
 endif()
 
-if(Comedi_FOUND)
+if(RL_BUILD_HAL_COMEDI)
 	list(APPEND HDRS Comedi.h)
 	list(APPEND HDRS Jr3.h)
 	list(APPEND SRCS Comedi.cpp)
 	list(APPEND SRCS Jr3.cpp)
 endif()
 
-if(libdc1394_FOUND)
+if(RL_BUILD_HAL_LIBDC1394)
 	list(APPEND HDRS Dc1394Camera.h)
 	list(APPEND SRCS Dc1394Camera.cpp)
 endif()
@@ -213,22 +218,22 @@ target_include_directories(
 	${Boost_INCLUDE_DIR}
 )
 
-if(ATIDAQ_FOUND AND Comedi_FOUND)
+if(RL_BUILD_HAL_ATIDAQ)
 	target_include_directories(hal PUBLIC ${ATIDAQ_INCLUDE_DIRS})
 	target_link_libraries(hal ${ATIDAQ_LIBRARIES})
 endif()
 
-if(cifX_FOUND)
+if(RL_BUILD_HAL_CIFX)
 	target_include_directories(hal PUBLIC ${cifX_INCLUDE_DIRS})
 	target_link_libraries(hal ${cifX_LIBRARIES})
 endif()
 
-if(Comedi_FOUND)
+if(RL_BUILD_HAL_COMEDI)
 	target_include_directories(hal PUBLIC ${Comedi_INCLUDE_DIRS})
 	target_link_libraries(hal ${Comedi_LIBRARIES})
 endif()
 
-if(libdc1394_FOUND)
+if(RL_BUILD_HAL_LIBDC1394)
 	target_compile_definitions(hal PUBLIC ${libdc1394_DEFINITIONS})
 	target_include_directories(hal PUBLIC ${libdc1394_INCLUDE_DIRS})
 	target_link_libraries(hal ${libdc1394_LIBRARIES})

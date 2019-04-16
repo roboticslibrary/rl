@@ -2,6 +2,9 @@ find_package(RTAI)
 find_package(Threads REQUIRED)
 find_package(Xenomai)
 
+cmake_dependent_option(RL_BUILD_UTIL_RTAI "Build RTAI support" ON "RL_BUILD_UTIL;RTAI_FOUND" OFF)
+cmake_dependent_option(RL_BUILD_UTIL_XENOMAI "Build Xenomai support" ON "RL_BUILD_UTIL;Xenomai_FOUND" OFF)
+
 set(
 	BASE_HDRS
 	process.h
@@ -9,7 +12,7 @@ set(
 )
 list(APPEND HDRS ${BASE_HDRS})
 
-if(RTAI_FOUND)
+if(RL_BUILD_UTIL_RTAI)
 	set(
 		RTAI_HDRS
 		rtai/chrono.h
@@ -18,7 +21,7 @@ if(RTAI_FOUND)
 	list(APPEND HDRS ${RTAI_HDRS})
 endif()
 
-if(Xenomai_FOUND)
+if(RL_BUILD_UTIL_XENOMAI)
 	set(
 		XENOMAI_HDRS
 		xenomai/chrono.h
@@ -55,7 +58,7 @@ target_include_directories(
 
 install(FILES ${BASE_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/util COMPONENT development)
 
-if(RTAI_FOUND)
+if(RL_BUILD_UTIL_RTAI)
 	target_include_directories(util INTERFACE ${RTAI_INCLUDE_DIRS})
 	if(NOT CMAKE_VERSION VERSION_LESS 3.0)
 		target_link_libraries(util INTERFACE ${RTAI_LIBRARIES})
@@ -65,7 +68,7 @@ if(RTAI_FOUND)
 	install(FILES ${RTAI_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/util/rtai COMPONENT development)
 endif()
 
-if(Xenomai_FOUND)
+if(RL_BUILD_UTIL_XENOMAI)
 	target_compile_definitions(util INTERFACE ${Xenomai_DEFINITIONS})
 	target_include_directories(util INTERFACE ${Xenomai_INCLUDE_DIRS})
 	if(NOT CMAKE_VERSION VERSION_LESS 3.0)

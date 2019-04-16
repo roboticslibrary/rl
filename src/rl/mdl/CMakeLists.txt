@@ -1,6 +1,8 @@
 find_package(Boost REQUIRED)
 find_package(NLopt)
 
+cmake_dependent_option(RL_BUILD_MDL_NLOPT "Build NLopt support" ON "RL_BUILD_MDL;NLOPT_FOUND" OFF)
+
 set(
 	HDRS
 	AnalyticalInverseKinematics.h
@@ -67,7 +69,7 @@ set(
 	XmlFactory.cpp
 )
 
-if(NLOPT_FOUND)
+if(RL_BUILD_MDL_NLOPT)
 	list(APPEND HDRS NloptInverseKinematics.h)
 	list(APPEND SRCS NloptInverseKinematics.cpp)
 endif()
@@ -108,7 +110,7 @@ target_link_libraries(
 	xml
 )
 
-if(NLOPT_FOUND)
+if(RL_BUILD_MDL_NLOPT)
 	target_compile_definitions(mdl INTERFACE -DRL_MDL_NLOPT)
 	target_include_directories(mdl PUBLIC ${NLOPT_INCLUDE_DIRS})
 	target_link_libraries(mdl ${NLOPT_LIBRARY})

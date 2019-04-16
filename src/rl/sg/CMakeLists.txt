@@ -9,6 +9,12 @@ find_package(ODE)
 find_package(PQP)
 find_package(SOLID3)
 
+cmake_dependent_option(RL_BUILD_SG_BULLET "Build Bullet support" ON "RL_BUILD_SG;BULLET_FOUND" OFF)
+cmake_dependent_option(RL_BUILD_SG_FCL "Build FCL support" ON "RL_BUILD_SG;CCD_FOUND;FCL_FOUND" OFF)
+cmake_dependent_option(RL_BUILD_SG_ODE "Build ODE support" ON "RL_BUILD_SG;ODE_FOUND" OFF)
+cmake_dependent_option(RL_BUILD_SG_PQP "Build PQP support" ON "RL_BUILD_SG;PQP_FOUND" OFF)
+cmake_dependent_option(RL_BUILD_SG_SOLID "Build SOLID support" ON "RL_BUILD_SG;SOLID3_FOUND" OFF)
+
 set(
 	BASE_HDRS
 	Base.h
@@ -45,7 +51,7 @@ set(
 )
 list(APPEND SRCS ${BASE_SRCS})
 
-if(BULLET_FOUND)
+if(RL_BUILD_SG_BULLET)
 	set(
 		BULLET_HDRS
 		bullet/Body.h
@@ -83,7 +89,7 @@ if(Coin_FOUND)
 	list(APPEND SRCS ${COIN_SRCS})
 endif()
 
-if(CCD_FOUND AND FCL_FOUND)
+if(RL_BUILD_SG_FCL)
 	set(
 		FCL_HDRS
 		fcl/Body.h
@@ -102,7 +108,7 @@ if(CCD_FOUND AND FCL_FOUND)
 	list(APPEND SRCS ${FCL_SRCS})
 endif()
 
-if(ODE_FOUND)
+if(RL_BUILD_SG_ODE)
 	set(
 		ODE_HDRS
 		ode/Body.h
@@ -121,7 +127,7 @@ if(ODE_FOUND)
 	list(APPEND SRCS ${ODE_SRCS})
 endif()
 
-if(PQP_FOUND)
+if(RL_BUILD_SG_PQP)
 	set(
 		PQP_HDRS
 		pqp/Body.h
@@ -140,7 +146,7 @@ if(PQP_FOUND)
 	list(APPEND SRCS ${PQP_SRCS})
 endif()
 
-if(SOLID3_FOUND)
+if(RL_BUILD_SG_SOLID)
 	set(
 		SOLID_HDRS
 		solid/Body.h
@@ -186,14 +192,14 @@ target_include_directories(
 	$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}>
 )
 
-if(BULLET_FOUND)
+if(RL_BUILD_SG_BULLET)
 	target_compile_definitions(sg INTERFACE -DRL_SG_BULLET)
 	target_include_directories(sg PUBLIC ${BULLET_INCLUDE_DIRS})
 	target_link_libraries(sg ${BULLET_LIBRARIES})
 	install(FILES ${BULLET_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/sg/bullet COMPONENT development)
 endif()
 
-if(CCD_FOUND AND (FCL_FOUND OR ODE_FOUND))
+if(CCD_FOUND AND (RL_BUILD_SG_FCL OR RL_BUILD_SG_ODE))
 	target_include_directories(sg PUBLIC ${CCD_INCLUDE_DIRS})
 	target_link_libraries(sg ${CCD_LIBRARIES})
 endif()
@@ -222,7 +228,7 @@ if(Coin_FOUND)
 	install(FILES ${COIN_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/sg/so COMPONENT development)
 endif()
 
-if(FCL_FOUND AND CCD_FOUND)
+if(RL_BUILD_SG_FCL)
 	target_compile_definitions(sg INTERFACE -DRL_SG_FCL)
 	target_compile_definitions(sg PUBLIC ${FCL_DEFINITIONS})
 	target_include_directories(sg PUBLIC ${FCL_INCLUDE_DIRS})
@@ -230,7 +236,7 @@ if(FCL_FOUND AND CCD_FOUND)
 	install(FILES ${FCL_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/sg/fcl COMPONENT development)
 endif()
 
-if(ODE_FOUND)
+if(RL_BUILD_SG_ODE)
 	target_compile_definitions(sg INTERFACE -DRL_SG_ODE)
 	target_compile_definitions(sg PUBLIC ${ODE_DEFINITIONS})
 	target_include_directories(sg PUBLIC ${ODE_INCLUDE_DIRS})
@@ -238,14 +244,14 @@ if(ODE_FOUND)
 	install(FILES ${ODE_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/sg/ode COMPONENT development)
 endif()
 
-if(PQP_FOUND)
+if(RL_BUILD_SG_PQP)
 	target_compile_definitions(sg INTERFACE -DRL_SG_PQP)
 	target_include_directories(sg PUBLIC ${PQP_INCLUDE_DIRS})
 	target_link_libraries(sg ${PQP_LIBRARIES})
 	install(FILES ${PQP_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/sg/pqp COMPONENT development)
 endif()
 
-if(SOLID3_FOUND)
+if(RL_BUILD_SG_SOLID)
 	target_compile_definitions(sg INTERFACE -DRL_SG_SOLID)
 	target_include_directories(sg PUBLIC ${SOLID3_INCLUDE_DIRS})
 	target_link_libraries(sg ${SOLID3_LIBRARIES})
