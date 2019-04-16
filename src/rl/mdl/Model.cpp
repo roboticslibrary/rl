@@ -51,7 +51,9 @@ namespace rl
 			root(0),
 			tools(),
 			transforms(),
-			tree()
+			tree(),
+			randDistribution(0, 1),
+			randEngine(::std::random_device()())
 		{
 		}
 		
@@ -107,6 +109,19 @@ namespace rl
 		}
 		
 		::rl::math::Vector
+		Model::generatePositionGaussian(const ::rl::math::Vector& mean, const ::rl::math::Vector& sigma)
+		{
+			::rl::math::Vector rand(this->getDof());
+			
+			for (::std::size_t i = 0; i < this->getDof(); ++i)
+			{
+				rand(i) = this->rand();
+			}
+			
+			return this->generatePositionGaussian(rand, mean, sigma);
+		}
+		
+		::rl::math::Vector
 		Model::generatePositionGaussian(const ::rl::math::Vector& rand, const ::rl::math::Vector& mean, const ::rl::math::Vector& sigma) const
 		{
 			::rl::math::Vector q(this->getDofPosition());
@@ -125,6 +140,19 @@ namespace rl
 		}
 		
 		::rl::math::Vector
+		Model::generatePositionUniform()
+		{
+			::rl::math::Vector rand(this->getDof());
+			
+			for (::std::size_t i = 0; i < this->getDof(); ++i)
+			{
+				rand(i) = this->rand();
+			}
+			
+			return this->generatePositionUniform(rand);
+		}
+		
+		::rl::math::Vector
 		Model::generatePositionUniform(const ::rl::math::Vector& rand) const
 		{
 			::rl::math::Vector q(this->getDofPosition());
@@ -138,6 +166,19 @@ namespace rl
 			}
 			
 			return q;
+		}
+		
+		::rl::math::Vector
+		Model::generatePositionUniform(const ::rl::math::Vector& min, const ::rl::math::Vector& max)
+		{
+			::rl::math::Vector rand(this->getDof());
+			
+			for (::std::size_t i = 0; i < this->getDof(); ++i)
+			{
+				rand(i) = this->rand();
+			}
+			
+			return this->generatePositionUniform(rand, min, max);
 		}
 		
 		::rl::math::Vector
@@ -511,6 +552,12 @@ namespace rl
 			return this->bodies[i]->collision;
 		}
 		
+		::std::uniform_real_distribution< ::rl::math::Real>::result_type
+		Model::rand()
+		{
+			return this->randDistribution(this->randEngine);
+		}
+		
 		void
 		Model::replace(Compound* compound, Transform* transform)
 		{
@@ -549,6 +596,12 @@ namespace rl
 		Model::remove(Transform* transform)
 		{
 			::boost::remove_edge(transform->getEdgeDescriptor(), this->tree);
+		}
+		
+		void
+		Model::seed(const ::std::mt19937::result_type& value)
+		{
+			this->randEngine.seed(value);
 		}
 		
 		void

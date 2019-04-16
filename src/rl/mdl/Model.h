@@ -28,6 +28,7 @@
 #define RL_MDL_MODEL_H
 
 #include <memory>
+#include <random>
 #include <string>
 #include <vector>
 #include <boost/graph/adjacency_list.hpp>
@@ -68,9 +69,15 @@ namespace rl
 			
 			bool areColliding(const ::std::size_t& i, const ::std::size_t& j) const;
 			
+			::rl::math::Vector generatePositionGaussian(const ::rl::math::Vector& mean, const ::rl::math::Vector& sigma);
+			
 			::rl::math::Vector generatePositionGaussian(const ::rl::math::Vector& rand, const ::rl::math::Vector& mean, const ::rl::math::Vector& sigma) const;
 			
+			::rl::math::Vector generatePositionUniform();
+			
 			::rl::math::Vector generatePositionUniform(const ::rl::math::Vector& rand) const;
+			
+			::rl::math::Vector generatePositionUniform(const ::rl::math::Vector& min, const ::rl::math::Vector& max);
 			
 			::rl::math::Vector generatePositionUniform(const ::rl::math::Vector& rand, const ::rl::math::Vector& min, const ::rl::math::Vector& max) const;
 			
@@ -159,6 +166,8 @@ namespace rl
 			void remove(Frame* frame);
 			
 			void remove(Transform* transform);
+			
+			void seed(const ::std::mt19937::result_type& value);
 			
 			void setAcceleration(const ::rl::math::Vector& qdd);
 			
@@ -264,7 +273,11 @@ namespace rl
 			Tree tree;
 			
 		private:
+			::std::uniform_real_distribution< ::rl::math::Real>::result_type rand();
 			
+			::std::uniform_real_distribution< ::rl::math::Real> randDistribution;
+			
+			::std::mt19937 randEngine;
 		};
 	}
 }

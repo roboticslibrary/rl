@@ -65,7 +65,9 @@ namespace rl
 			root(),
 			tools(),
 			transforms(),
-			tree()
+			tree(),
+			randDistribution(0, 1),
+			randEngine(::std::random_device()())
 		{
 		}
 		
@@ -493,6 +495,19 @@ namespace rl
 		}
 		
 		::rl::math::Vector
+		Kinematics::generatePositionGaussian(const ::rl::math::Vector& mean, const ::rl::math::Vector& sigma)
+		{
+			::rl::math::Vector rand(this->getDof());
+			
+			for (::std::size_t i = 0; i < this->getDof(); ++i)
+			{
+				rand(i) = this->rand();
+			}
+			
+			return this->generatePositionGaussian(rand, mean, sigma);
+		}
+		
+		::rl::math::Vector
 		Kinematics::generatePositionGaussian(const ::rl::math::Vector& rand, const ::rl::math::Vector& mean, const ::rl::math::Vector& sigma) const
 		{
 			::rl::math::Vector q(this->getDof());
@@ -505,6 +520,19 @@ namespace rl
 			this->clamp(q);
 			
 			return q;
+		}
+		
+		::rl::math::Vector
+		Kinematics::generatePositionUniform()
+		{
+			::rl::math::Vector rand(this->getDof());
+			
+			for (::std::size_t i = 0; i < this->getDof(); ++i)
+			{
+				rand(i) = this->rand();
+			}
+			
+			return this->generatePositionUniform(rand);
 		}
 		
 		::rl::math::Vector
@@ -839,6 +867,18 @@ namespace rl
 			}
 			
 			return true;
+		}
+		
+		::std::uniform_real_distribution< ::rl::math::Real>::result_type
+		Kinematics::rand()
+		{
+			return this->randDistribution(this->randEngine);
+		}
+		
+		void
+		Kinematics::seed(const ::std::mt19937::result_type& value)
+		{
+			this->randEngine.seed(value);
 		}
 		
 		void

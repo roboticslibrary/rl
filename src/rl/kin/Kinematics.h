@@ -28,6 +28,7 @@
 #define RL_KIN_KINEMATICS_H
 
 #include <memory>
+#include <random>
 #include <string>
 #include <vector>
 #include <boost/graph/adjacency_list.hpp>
@@ -113,7 +114,11 @@ namespace rl
 			 */
 			virtual void forwardVelocity(const ::rl::math::Vector& qdot, ::rl::math::Vector& xdot) const;
 			
+			::rl::math::Vector generatePositionGaussian(const ::rl::math::Vector& mean, const ::rl::math::Vector& sigma);
+			
 			::rl::math::Vector generatePositionGaussian(const ::rl::math::Vector& rand, const ::rl::math::Vector& mean, const ::rl::math::Vector& sigma) const;
+			
+			::rl::math::Vector generatePositionUniform();
 			
 			::rl::math::Vector generatePositionUniform(const ::rl::math::Vector& rand) const;
 			
@@ -246,6 +251,8 @@ namespace rl
 			 */
 			virtual bool isValid(const ::rl::math::Vector& q) const;
 			
+			void seed(const ::std::mt19937::result_type& value);
+			
 			/**
 			 * Set if specified body should be tested for collisions with the environment.
 			 */
@@ -372,7 +379,11 @@ namespace rl
 			Tree tree;
 			
 		private:
+			::std::uniform_real_distribution< ::rl::math::Real>::result_type rand();
 			
+			::std::uniform_real_distribution< ::rl::math::Real> randDistribution;
+			
+			::std::mt19937 randEngine;
 		};
 	}
 }
