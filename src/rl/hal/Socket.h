@@ -72,6 +72,8 @@ namespace rl
 				
 				::std::string getNameInfo(const bool& asNumeric = false) const;
 				
+				Socket::Address& operator=(const Socket::Address& other);
+				
 				void setInfo(const ::std::string& string, const unsigned short int& port, const bool& asNumeric = false);
 				
 				void setInfo(const ::std::string& string, const ::std::string& port, const bool& asNumeric = false);
@@ -125,6 +127,8 @@ namespace rl
 			void listen(const int& backlog);
 			
 			void open();
+			
+			Socket& operator=(const Socket& other);
 			
 			::std::size_t recv(void* buf, const ::std::size_t& count);
 			

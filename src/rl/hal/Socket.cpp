@@ -356,6 +356,16 @@ namespace rl
 			this->setConnected(true);
 		}
 		
+		Socket&
+		Socket::operator=(const Socket& other)
+		{
+			this->address = other.address;
+			this->fd = other.fd;
+			this->protocol = other.protocol;
+			this->type = other.type;
+			return *this;
+		}
+		
 		::std::size_t
 		Socket::recv(void* buf, const ::std::size_t& count)
 		{
@@ -762,6 +772,13 @@ namespace rl
 			}
 			
 			return host;
+		}
+		
+		Socket::Address&
+		Socket::Address::operator=(const Socket::Address& other)
+		{
+			this->addr = other.addr;
+			return *this;
 		}
 		
 		void
