@@ -869,6 +869,24 @@ namespace rl
 			return true;
 		}
 		
+		void
+		Kinematics::normalize(::rl::math::Vector& q) const
+		{
+			for (::std::size_t i = 0; i < this->getDof(); ++i)
+			{
+				q(i) = ::std::fmod(q(i), 2 * static_cast< ::rl::math::Real>(M_PI));
+				
+				if (q(i) < this->joints[i]->min)
+				{
+					q(i) += 2 * static_cast< ::rl::math::Real>(M_PI);
+				}
+				else if (q(i) > this->joints[i]->max)
+				{
+					q(i) -= 2 * static_cast< ::rl::math::Real>(M_PI);
+				}
+			}
+		}
+		
 		::std::uniform_real_distribution< ::rl::math::Real>::result_type
 		Kinematics::rand()
 		{

@@ -251,6 +251,8 @@ namespace rl
 			 */
 			virtual bool isValid(const ::rl::math::Vector& q) const;
 			
+			void normalize(::rl::math::Vector& q) const;
+			
 			void seed(const ::std::mt19937::result_type& value);
 			
 			/**
