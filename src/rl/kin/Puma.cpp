@@ -67,7 +67,7 @@ namespace rl
 		}
 		
 		bool
-		Puma::inversePosition(const ::rl::math::Transform& x, ::rl::math::Vector& q, const ::std::size_t& leaf, const ::rl::math::Real& delta, const ::rl::math::Real& epsilon, const ::std::size_t& iterations)
+		Puma::inversePosition(const ::rl::math::Transform& x, ::rl::math::Vector& q, const bool& ignoreLimits)
 		{
 			assert(q.size() == this->getDof());
 			
@@ -247,28 +247,11 @@ namespace rl
 			q(5) = theta6 - this->joints[5]->theta - this->joints[5]->offset;
 			
 			// fit into min max angles
-			for (::std::size_t i = 0; i < this->getDof(); ++i)
+			this->normalize(q);
+			
+			if (!ignoreLimits && !this->isValid(q))
 			{
-				q(i) = ::std::fmod(q(i), 2 * static_cast< ::rl::math::Real>(M_PI));
-				
-				if (q(i) < this->joints[i]->min)
-				{
-					q(i) += 2 * static_cast< ::rl::math::Real>(M_PI);
-					
-					if (q(i) < this->joints[i]->min || q(i) > this->joints[i]->max)
-					{
-						return false;
-					}
-				}
-				else if (q(i) > this->joints[i]->max)
-				{
-					q(i) -= 2 * static_cast< ::rl::math::Real>(M_PI);
-					
-					if (q(i) < this->joints[i]->min || q(i) > this->joints[i]->max)
-					{
-						return false;
-					}
-				}
+				return false;
 			}
 			
 			return true;
