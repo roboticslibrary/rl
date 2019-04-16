@@ -27,6 +27,7 @@
 #ifndef RL_KIN_KINEMATICS_H
 #define RL_KIN_KINEMATICS_H
 
+#include <chrono>
 #include <memory>
 #include <random>
 #include <string>
@@ -219,7 +220,8 @@ namespace rl
 				const ::std::size_t& leaf = 0,
 				const ::rl::math::Real& delta = ::std::numeric_limits< ::rl::math::Real>::infinity(),
 				const ::rl::math::Real& epsilon = static_cast< ::rl::math::Real>(1.0e-3),
-				const ::std::size_t& iterations = 1000
+				const ::std::size_t& iterations = 1000,
+				const ::std::chrono::nanoseconds& duration = ::std::chrono::milliseconds(100)
 			);
 			
 			/**

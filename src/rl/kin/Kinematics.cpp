@@ -758,69 +758,64 @@ namespace rl
 		}
 		
 		bool
-		Kinematics::inversePosition(const ::rl::math::Transform& x, ::rl::math::Vector& q, const ::std::size_t& leaf, const ::rl::math::Real& delta, const ::rl::math::Real& epsilon, const ::std::size_t& iterations)
+		Kinematics::inversePosition(const ::rl::math::Transform& x, ::rl::math::Vector& q, const ::std::size_t& leaf, const ::rl::math::Real& delta, const ::rl::math::Real& epsilon, const ::std::size_t& iterations, const ::std::chrono::nanoseconds& duration)
 		{
 			assert(q.size() == this->getDof());
 			
+			::std::chrono::steady_clock::time_point start = ::std::chrono::steady_clock::now();
+			double remaining = ::std::chrono::duration<double>(duration).count();
+			
 			this->getPosition(q);
-			::rl::math::Vector dx(6 * this->getOperationalDof());
-			dx.setZero();
+			::rl::math::Vector q2(this->getDof());
 			::rl::math::Vector dq(this->getDof());
+			::rl::math::Vector dx(6 * this->getOperationalDof());
 			
-			::rl::math::Real norm = 1;
-			
-			for (::std::size_t i = 0; i < iterations && norm > epsilon; ++i)
+			do
 			{
-				this->updateFrames();
+				::rl::math::Real delta2 = 1;
 				
-				::rl::math::VectorBlock dxi = dx.segment(6 * leaf, 6);
-				dxi = this->forwardPosition(leaf).toDelta(x);
-				
-				this->updateJacobian();
-				this->updateJacobianInverse();
-				this->inverseVelocity(dx, dq);
-				
-				norm = dq.norm();
-				
-				if (norm > delta)
+				for (::std::size_t i = 0; i < iterations && delta2 > epsilon; ++i)
 				{
-					dq *= delta / norm;
-					norm = dq.norm();
+					this->updateFrames();
+					dx.setZero();
+					
+					::rl::math::VectorBlock dxi = dx.segment(6 * leaf, 6);
+					dxi = this->forwardPosition(leaf).toDelta(x);
+					
+					this->updateJacobian();
+					this->updateJacobianInverse();
+					this->inverseVelocity(dx, dq);
+					
+					this->step(q, dq, q2);
+					delta2 = this->distance(q, q2);
+					
+					if (delta2 > delta)
+					{
+						this->interpolate(q, q2, delta, q2);
+					}
+					
+					q = q2;
+					this->setPosition(q);
 				}
 				
-				q += dq;
 				
+				if (dx.squaredNorm() < epsilon)
+				{
+					this->normalize(q);
+					this->setPosition(q);
+					
+					if (this->isValid(q))
+					{
+						return true;
+					}
+				}
+				
+				q = this->generatePositionUniform();
 				this->setPosition(q);
-			}
-			
-			if (norm > epsilon)
-			{
-				return false;
-			}
-			
-			for (::std::size_t i = 0; i < this->getDof(); ++i)
-			{
-				q(i) = ::std::fmod(q(i), 2 * static_cast< ::rl::math::Real>(M_PI));
 				
-				if (q(i) < this->joints[i]->min)
-				{
-					q(i) += 2 * static_cast< ::rl::math::Real>(M_PI);
-					
-					if (q(i) < this->joints[i]->min || q(i) > this->joints[i]->max)
-					{
-						return false;
-					}
-				}
-				else if (q(i) > this->joints[i]->max)
-				{
-					q(i) -= 2 * static_cast< ::rl::math::Real>(M_PI);
-					
-					if (q(i) < this->joints[i]->min || q(i) > this->joints[i]->max)
-					{
-						return false;
-					}
-				}
+				remaining = ::std::chrono::duration<double>(duration - (::std::chrono::steady_clock::now() - start)).count();
 			}
+			while (remaining > 0);
 			
 			return true;
 		}
