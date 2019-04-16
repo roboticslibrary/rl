@@ -120,7 +120,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	
 	this->geometryModels = this->scene->getModel(0);
 	this->kinematicModels.reset(kinematicFactory.create(QApplication::arguments()[2].toStdString()));
-	this->simulationResetQ = rl::math::Vector::Zero(kinematicModels->getDof());
+	this->simulationResetQ = rl::math::Vector::Zero(kinematicModels->getDofPosition());
 	this->simulationResetQd = rl::math::Vector::Zero(kinematicModels->getDof());
 	this->simulationResetQdd = rl::math::Vector::Zero(kinematicModels->getDof());
 	
@@ -232,7 +232,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 		SLOT(operationalChanged(const QModelIndex&, const QModelIndex&))
 	);
 		
-	rl::math::Vector q(this->kinematicModels->getDof());
+	rl::math::Vector q(this->kinematicModels->getDofPosition());
 	q.setZero();
 	positionModel->setData(q); //TODO?
 	
@@ -441,7 +441,7 @@ MainWindow::timerEvent(QTimerEvent *event)
 	dynamic->setWorldGravity(g);
 	
 	std::chrono::steady_clock::time_point startTime = std::chrono::steady_clock::now();
-	rl::math::Vector q(dynamic->getDof());
+	rl::math::Vector q(dynamic->getDofPosition());
 	rl::math::Vector qd(dynamic->getDof());
 	rl::math::Vector qdd(dynamic->getDof());
 	rl::math::Vector torque(dynamic->getDof());
