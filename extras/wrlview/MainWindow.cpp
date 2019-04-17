@@ -227,6 +227,7 @@ MainWindow::dropEvent(QDropEvent* event)
 		{
 			QString filename = event->mimeData()->urls()[0].toLocalFile();
 			this->load(filename);
+			this->viewer->viewAll();
 			event->acceptProposedAction();
 		}
 	}
