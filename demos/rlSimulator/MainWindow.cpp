@@ -25,7 +25,6 @@
 //
 
 #include <chrono>
-#include <iostream>
 #include <QApplication>
 #include <QDateTime>
 #include <QGLWidget>
