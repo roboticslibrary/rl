@@ -54,7 +54,7 @@ if(RL_BUILD_MDL AND RL_BUILD_SG)
 	add_subdirectory(rlSimulator)
 endif()
 
-if(BUILD_RL_PLAN)
+if(RL_BUILD_PLAN)
 	add_subdirectory(rlPlanDemo)
 	add_subdirectory(rlPrmDemo)
 endif()
