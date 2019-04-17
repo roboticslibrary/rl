@@ -108,6 +108,7 @@ VelocityDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& opti
 	Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> qUnits = MainWindow::instance()->kinematicModels->getVelocityUnits();
 	
 	editor->setRange(-10000, 10000); //TODO?
+	
 	if (rl::math::UNIT_RADIAN == qUnits(index.row()))
 	{
 		editor->setSingleStep(1.0);
@@ -130,6 +131,7 @@ AccelerationDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& 
 	Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> qUnits = MainWindow::instance()->kinematicModels->getVelocityUnits();
 	
 	editor->setRange(-10000, 10000);
+	
 	if (rl::math::UNIT_RADIAN == qUnits(index.row()))
 	{
 		editor->setSingleStep(10.0);

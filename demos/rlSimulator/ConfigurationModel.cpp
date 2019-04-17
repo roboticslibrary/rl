@@ -404,9 +404,7 @@ TorqueModel::data(const QModelIndex& index, int role) const
 	{
 	case Qt::DisplayRole:
 	case Qt::EditRole:
-		{
-			return MainWindow::instance()->externalTorque(index.row());
-		}
+		return MainWindow::instance()->externalTorque(index.row());
 		break;
 	case Qt::TextAlignmentRole:
 		return Qt::AlignRight;

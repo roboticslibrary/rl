@@ -24,6 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include <QHostAddress>
+#include <QStatusBar>
 #include <QTextStream>
 #include <rl/math/Rotation.h>
 #include <rl/sg/Body.h>
@@ -38,22 +40,22 @@ Socket::Socket(QObject* parent) :
 {
 	QObject::connect(this, SIGNAL(disconnected()), this, SLOT(deleteLater()));
 	QObject::connect(this, SIGNAL(readyRead()), this, SLOT(readClient()));
-	MainWindow::instance()->setServerConnectionStatus("Connected");
 }
 
 Socket::~Socket()
 {
-	MainWindow::instance()->setServerConnectionStatus("Disconnected");
+	MainWindow::instance()->statusBar()->showMessage("Listening on port 11235");
 }
 
 void
 Socket::readClient()
 {
+	MainWindow::instance()->statusBar()->showMessage("Received data from " + this->peerAddress().toString() + ":" + QString::number(this->peerPort()), 1000);
+	
 	QTextStream textStream(this);
 	
 	while (this->canReadLine())
 	{
-		MainWindow::instance()->setServerConnectionStatus("Received command");
 		std::size_t cmd = 0;
 		textStream >> cmd;
 		

@@ -35,6 +35,7 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QSpacerItem>
+#include <QStatusBar>
 #include <QVBoxLayout>
 #include <QWidget>
 #include <QGridLayout>
@@ -78,7 +79,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	saveImageAction(new QAction(this)),
 	saveSceneAction(new QAction(this)),
 	server(new Server(this)),
-	serverConnectionStatus(nullptr),
 	simulationDampingFactor(nullptr),
 	simulationDampingValue(static_cast<rl::math::Real>(0.001)),
 	simulationDockWidget(new QDockWidget(this)),
@@ -120,9 +120,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	
 	this->geometryModels = this->scene->getModel(0);
 	this->kinematicModels.reset(kinematicFactory.create(QApplication::arguments()[2].toStdString()));
-	this->simulationResetQ = rl::math::Vector::Zero(kinematicModels->getDofPosition());
-	this->simulationResetQd = rl::math::Vector::Zero(kinematicModels->getDof());
-	this->simulationResetQdd = rl::math::Vector::Zero(kinematicModels->getDof());
+	this->simulationResetQ = rl::math::Vector::Zero(this->kinematicModels->getDofPosition());
+	this->simulationResetQd = rl::math::Vector::Zero(this->kinematicModels->getDof());
+	this->simulationResetQdd = rl::math::Vector::Zero(this->kinematicModels->getDof());
 	
 	this->positionDelegate = new PositionDelegate(this);
 	this->positionModel = new PositionModel(this);
@@ -134,8 +134,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 #endif // QT_VERSION
 	this->positionView->horizontalHeader()->hide();
 	this->positionView->setAlternatingRowColors(true);
-	this->positionView->setItemDelegate(positionDelegate);
-	this->positionView->setModel(positionModel);
+	this->positionView->setItemDelegate(this->positionDelegate);
+	this->positionView->setModel(this->positionModel);
 #if QT_VERSION >= 0x050000
 	this->positionView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 #else // QT_VERSION
@@ -152,8 +152,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 #endif // QT_VERSION
 	this->velocityView->horizontalHeader()->hide();
 	this->velocityView->setAlternatingRowColors(true);
-	this->velocityView->setItemDelegate(velocityDelegate);
-	this->velocityView->setModel(velocityModel);
+	this->velocityView->setItemDelegate(this->velocityDelegate);
+	this->velocityView->setModel(this->velocityModel);
 #if QT_VERSION >= 0x050000
 	this->velocityView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 #else // QT_VERSION
@@ -170,8 +170,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 #endif // QT_VERSION
 	this->accelerationView->horizontalHeader()->hide();
 	this->accelerationView->setAlternatingRowColors(true);
-	this->accelerationView->setItemDelegate(accelerationDelegate);
-	this->accelerationView->setModel(accelerationModel);
+	this->accelerationView->setItemDelegate(this->accelerationDelegate);
+	this->accelerationView->setModel(this->accelerationModel);
 #if QT_VERSION >= 0x050000
 	this->accelerationView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 #else // QT_VERSION
@@ -188,8 +188,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 #endif // QT_VERSION
 	this->torqueView->horizontalHeader()->hide();
 	this->torqueView->setAlternatingRowColors(true);
-	this->torqueView->setItemDelegate(torqueDelegate);
-	this->torqueView->setModel(torqueModel);
+	this->torqueView->setItemDelegate(this->torqueDelegate);
+	this->torqueView->setModel(this->torqueModel);
 #if QT_VERSION >= 0x050000
 	this->torqueView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 #else // QT_VERSION
@@ -219,7 +219,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	this->operationalViews = operationalView;
 		
 	QObject::connect(
-		positionModel,
+		this->positionModel,
 		SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
 		operationalModel,
 		SLOT(configurationChanged(const QModelIndex&, const QModelIndex&))
@@ -228,60 +228,61 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	QObject::connect(
 		operationalModel,
 		SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
-		positionModel,
+		this->positionModel,
 		SLOT(operationalChanged(const QModelIndex&, const QModelIndex&))
 	);
 		
 	rl::math::Vector q(this->kinematicModels->getDofPosition());
 	q.setZero();
-	positionModel->setData(q); //TODO?
+	this->positionModel->setData(q); //TODO?
 	
 	rl::math::Vector externalTorque = rl::math::Vector::Zero(this->kinematicModels->getDof());
 	this->externalTorque = externalTorque;
-	torqueModel->setData(externalTorque);
+	this->torqueModel->setData(externalTorque);
 	
-	QWidget* simulationDockWidgetContent = new QWidget(simulationDockWidget);
+	QWidget* simulationDockWidgetContent = new QWidget(this->simulationDockWidget);
 	QGroupBox* simulationGroup = new QGroupBox("Simulation", simulationDockWidgetContent);
 	QVBoxLayout* simulationVerticalLayout = new QVBoxLayout();
 	QHBoxLayout* simulationHorizontalLayout = new QHBoxLayout();
 	
-	this->addDockWidget(Qt::LeftDockWidgetArea, simulationDockWidget);
+	this->addDockWidget(Qt::LeftDockWidgetArea, this->simulationDockWidget);
 	this->simulationDockWidget->setWindowTitle("Control");
-	simulationDockWidget->setWidget(simulationDockWidgetContent);
+	this->simulationDockWidget->setWidget(simulationDockWidgetContent);
 	simulationDockWidgetContent->setLayout(simulationVerticalLayout);
 	simulationVerticalLayout->addWidget(simulationGroup);
 	simulationGroup->setLayout(simulationHorizontalLayout);
-	simulationStart = new QPushButton("&Start", simulationGroup);
-	simulationPause = new QPushButton("&Pause", simulationGroup);
-	simulationReset = new QPushButton("&Reset", simulationGroup);
-	QObject::connect(simulationStart, SIGNAL(clicked()), this, SLOT(clickSimulationStart()));
-	QObject::connect(simulationPause, SIGNAL(clicked()), this, SLOT(clickSimulationPause()));
-	QObject::connect(simulationReset, SIGNAL(clicked()), this, SLOT(clickSimulationReset()));
-	simulationHorizontalLayout->addWidget(simulationStart);
-	simulationHorizontalLayout->addWidget(simulationPause);
-	simulationHorizontalLayout->addWidget(simulationReset);
+	this->simulationStart = new QPushButton("&Start", simulationGroup);
+	this->simulationStart->setEnabled(false);
+	this->simulationPause = new QPushButton("&Pause", simulationGroup);
+	this->simulationReset = new QPushButton("&Reset", simulationGroup);
+	QObject::connect(this->simulationStart, SIGNAL(clicked()), this, SLOT(clickSimulationStart()));
+	QObject::connect(this->simulationPause, SIGNAL(clicked()), this, SLOT(clickSimulationPause()));
+	QObject::connect(this->simulationReset, SIGNAL(clicked()), this, SLOT(clickSimulationReset()));
+	simulationHorizontalLayout->addWidget(this->simulationStart);
+	simulationHorizontalLayout->addWidget(this->simulationPause);
+	simulationHorizontalLayout->addWidget(this->simulationReset);
 	
 	QGridLayout* simulationSettingsLayout = new QGridLayout();
 	QGroupBox* simulationSettings = new QGroupBox("Settings", simulationDockWidgetContent);
 	simulationVerticalLayout->addWidget(simulationSettings);
 	simulationSettings->setLayout(simulationSettingsLayout);
-	simulationGravity = new QDoubleSpinBox(simulationSettings);
+	this->simulationGravity = new QDoubleSpinBox(simulationSettings);
 	simulationSettingsLayout->addWidget(new QLabel("Gravity [m/s^2]", simulationSettings), 0, 0);
-	simulationSettingsLayout->addWidget(simulationGravity, 0, 1);
-	simulationGravity->setRange(0, 100);
-	simulationGravity->setSingleStep(0.1);
-	simulationGravity->setDecimals(2);
-	simulationGravity->setValue(simulationGravityValue);
-	QObject::connect(simulationGravity, SIGNAL(valueChanged(double)), this, SLOT(changeSimulationGravity(double)));
-	simulationDampingFactor = new QDoubleSpinBox(simulationSettings);
+	simulationSettingsLayout->addWidget(this->simulationGravity, 0, 1);
+	this->simulationGravity->setRange(0, 100);
+	this->simulationGravity->setSingleStep(0.1);
+	this->simulationGravity->setDecimals(2);
+	this->simulationGravity->setValue(this->simulationGravityValue);
+	QObject::connect(this->simulationGravity, SIGNAL(valueChanged(double)), this, SLOT(changeSimulationGravity(double)));
+	this->simulationDampingFactor = new QDoubleSpinBox(simulationSettings);
 	simulationSettingsLayout->addWidget(new QLabel("Damping Factor", simulationSettings), 1, 0);
-	simulationSettingsLayout->addWidget(simulationDampingFactor, 1, 1);
-	simulationDampingFactor->setRange(0, 1.5);
-	simulationDampingFactor->setSingleStep(0.0001);
-	simulationDampingFactor->setDecimals(5);
-	simulationDampingFactor->setValue(simulationDampingValue);
-	simulationDampingFactor->setToolTip(QString("0.0 gives a frictionless system, 1.0 damps almost all motion; try 0.001--0.005 for typical viscous friction"));
-	QObject::connect(simulationDampingFactor, SIGNAL(valueChanged(double)), this, SLOT(changeSimulationDampingFactor(double)));
+	simulationSettingsLayout->addWidget(this->simulationDampingFactor, 1, 1);
+	this->simulationDampingFactor->setRange(0, 1.5);
+	this->simulationDampingFactor->setSingleStep(0.0001);
+	this->simulationDampingFactor->setDecimals(5);
+	this->simulationDampingFactor->setValue(this->simulationDampingValue);
+	this->simulationDampingFactor->setToolTip(QString("0.0 gives a frictionless system, 1.0 damps almost all motion; try 0.001--0.005 for typical viscous friction"));
+	QObject::connect(this->simulationDampingFactor, SIGNAL(valueChanged(double)), this, SLOT(changeSimulationDampingFactor(double)));
 	
 	QGroupBox* simulationResults = new QGroupBox("Results", simulationDockWidgetContent);
 	QGridLayout* simulationResultsLayout = new QGridLayout();
@@ -291,45 +292,47 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	this->simulationResultsEnergy = new QLineEdit(simulationResults);
 	this->simulationResultsTime = new QLineEdit(simulationResults);
 	simulationResultsLayout->addWidget(new QLabel("Simulated Time [s]", simulationResults), 0, 0);
-	simulationResultsLayout->addWidget(simulationTime, 0, 1);
-	simulationTime->setReadOnly(true);
+	simulationResultsLayout->addWidget(this->simulationTime, 0, 1);
+	this->simulationTime->setReadOnly(true);
 	simulationResultsLayout->addWidget(new QLabel("Frame Computation Time [s]", simulationResults), 1, 0);
-	simulationResultsLayout->addWidget(simulationResultsTime, 1, 1);
-	simulationResultsTime->setToolTip(QString("should be under 0.05 s for good interactive results"));
-	simulationResultsTime->setReadOnly(true);
+	simulationResultsLayout->addWidget(this->simulationResultsTime, 1, 1);
+	this->simulationResultsTime->setToolTip(QString("should be under 0.05 s for good interactive results"));
+	this->simulationResultsTime->setReadOnly(true);
 	simulationResultsLayout->addWidget(new QLabel("Kinetic Energy [kJ]", simulationResults), 2, 0);
-	simulationResultsLayout->addWidget(simulationResultsEnergy, 2, 1);
-	simulationResultsEnergy->setReadOnly(true);
+	simulationResultsLayout->addWidget(this->simulationResultsEnergy, 2, 1);
+	this->simulationResultsEnergy->setReadOnly(true);
 	
-	QGroupBox* serverBox = new QGroupBox("rlCoach Server", simulationDockWidgetContent);
-	QGridLayout* serverBoxLayout = new QGridLayout();
-	serverBox->setLayout(serverBoxLayout);
-	simulationVerticalLayout->addWidget(serverBox);
-	this->serverConnectionStatus = new QLineEdit(serverBox);
-	serverBoxLayout->addWidget(new QLabel("Connection Status", serverBox), 0, 0);
-	serverBoxLayout->addWidget(serverConnectionStatus, 0, 1);
-	serverConnectionStatus->setReadOnly(true);
-	//simulationVerticalLayout->addItem(new QSpacerItem(20, 10, QSizePolicy::Minimum, QSizePolicy::Expanding));
-	
-	this->addDockWidget(Qt::RightDockWidgetArea, positionDockWidget);
+	this->addDockWidget(Qt::RightDockWidgetArea, this->positionDockWidget);
 	this->positionDockWidget->setWidget(this->positionView);
 	this->positionDockWidget->setWindowTitle("Position");
 	
-	this->addDockWidget(Qt::RightDockWidgetArea, velocityDockWidget);
+	this->addDockWidget(Qt::RightDockWidgetArea, this->velocityDockWidget);
 	this->velocityDockWidget->setWidget(this->velocityView);
 	this->velocityDockWidget->setWindowTitle("Velocity");
 	
-	this->addDockWidget(Qt::RightDockWidgetArea, accelerationDockWidget);
+	this->addDockWidget(Qt::RightDockWidgetArea, this->accelerationDockWidget);
 	this->accelerationDockWidget->setWidget(this->accelerationView);
 	this->accelerationDockWidget->setWindowTitle("Acceleration");
 	
-	this->addDockWidget(Qt::LeftDockWidgetArea, torqueDockWidget);
+	this->addDockWidget(Qt::LeftDockWidgetArea, this->torqueDockWidget);
 	this->torqueDockWidget->setWidget(this->torqueView);
-	this->torqueDockWidget->setWindowTitle("Motor Torque");
+	this->torqueDockWidget->setWindowTitle("Torque");
 	
-	this->addDockWidget(Qt::BottomDockWidgetArea, operationalDockWidget);
+	this->addDockWidget(Qt::BottomDockWidgetArea, this->operationalDockWidget);
 	this->operationalDockWidget->setWidget(this->operationalViews);
 	this->operationalDockWidget->setWindowTitle("Operational Position");
+	
+#if QT_VERSION >= 0x050600
+	QList<QDockWidget*> resizeDocksWidgets;
+	resizeDocksWidgets.append(this->operationalDockWidget);
+	resizeDocksWidgets.append(this->simulationDockWidget);
+	QList<int> resizeDocksSizes;
+	resizeDocksSizes.append(0);
+	resizeDocksSizes.append(0);
+	this->resizeDocks(resizeDocksWidgets, resizeDocksSizes, Qt::Vertical);
+#endif // QT_VERSION
+	
+	this->statusBar();
 	
 	this->gradientBackground = new SoGradientBackground();
 	this->gradientBackground->ref();
@@ -337,24 +340,22 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	this->gradientBackground->color1.setValue(1.0f, 1.0f, 1.0f);
 	this->scene->root->insertChild(this->gradientBackground, 0);
 	
-	QWidget* viewerContainer = new QWidget(this);
-	this->viewer = new SoQtExaminerViewer(viewerContainer, nullptr, true, SoQtFullViewer::BUILD_POPUP);
+	this->viewer = new SoQtExaminerViewer(this, nullptr, true, SoQtFullViewer::BUILD_POPUP);
 	this->viewer->setSceneGraph(this->scene->root);
 	this->viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_BLEND);
 	this->viewer->viewAll();
 	
-	this->setCentralWidget(viewerContainer);
-	//this->viewer->getWidget()->resize(400, 300);
-	this->resize(1000, 750);
+	this->resize(1024, 768);
+	this->setCentralWidget(this->viewer->getWidget());
 	this->setWindowIconText("rlSimulator");
 	this->setWindowTitle("rlSimulator");
 	
 	this->init();
 	
 	this->server->listen(QHostAddress::Any, 11235);
-	this->setServerConnectionStatus("Listening on port 11235");
+	this->statusBar()->showMessage("Listening on port 11235");
 	
-	this->timer.start(simulationTimeStep * simulationStepsPerFrame * 1000.f, this);
+	this->timer.start(this->simulationTimeStep * this->simulationStepsPerFrame * 1000, this);
 }
 
 MainWindow::~MainWindow()
@@ -379,12 +380,16 @@ void
 MainWindow::clickSimulationStart()
 {
 	this->simulationIsRunning = true;
+	this->simulationStart->setEnabled(false);
+	this->simulationPause->setEnabled(true);
 }
 
 void
 MainWindow::clickSimulationPause()
 {
 	this->simulationIsRunning = false;
+	this->simulationStart->setEnabled(true);
+	this->simulationPause->setEnabled(false);
 }
 
 void
@@ -395,10 +400,12 @@ MainWindow::clickSimulationReset()
 	this->simulationTime->setText(QString::number(this->simulationTimeElapsed));
 	this->simulationResultsTime->setText("");
 	this->simulationResultsEnergy->setText("");
-	kinematicModels->setPosition(simulationResetQ);
-	kinematicModels->setVelocity(simulationResetQd);
-	kinematicModels->setAcceleration(simulationResetQdd);
-	positionModel->setData(simulationResetQ);
+	this->kinematicModels->setPosition(this->simulationResetQ);
+	this->kinematicModels->setVelocity(this->simulationResetQd);
+	this->kinematicModels->setAcceleration(this->simulationResetQdd);
+	this->positionModel->setData(this->simulationResetQ);
+	this->simulationStart->setEnabled(true);
+	this->simulationPause->setEnabled(false);
 }
 
 MainWindow*
@@ -430,7 +437,7 @@ MainWindow::init()
 void
 MainWindow::timerEvent(QTimerEvent *event)
 {
-	if (!simulationIsRunning)
+	if (!this->simulationIsRunning)
 	{
 		return;
 	}
@@ -448,18 +455,18 @@ MainWindow::timerEvent(QTimerEvent *event)
 	rl::math::Matrix M(dynamic->getDof(), dynamic->getDof());
 	
 #if 1 
-	for (int i = 0; i < simulationStepsPerFrame; ++i)
+	for (int i = 0; i < this->simulationStepsPerFrame; ++i)
 	{
-		dynamic->setTorque(externalTorque);
+		dynamic->setTorque(this->externalTorque);
 		dynamic->forwardDynamics();
 #if 1
 		q = dynamic->getPosition();
 		qd = dynamic->getVelocity();
 		qdd = dynamic->getAcceleration();
-		qdd -= simulationDampingValue * qd / simulationTimeStep;
+		qdd -= this->simulationDampingValue * qd / this->simulationTimeStep;
 		// TODO: this is a very simple integration, slightly better than Euler, could be replaced by a *functional-style* Runge-Kutta
-		q += simulationTimeStep * (qd + qdd * simulationTimeStep / 2);
-		qd += simulationTimeStep * qdd;
+		q += this->simulationTimeStep * (qd + qdd * this->simulationTimeStep / 2);
+		qd += this->simulationTimeStep * qdd;
 		dynamic->setPosition(q);
 		dynamic->setVelocity(qd);
 		dynamic->setAcceleration(qdd);
@@ -517,10 +524,10 @@ MainWindow::timerEvent(QTimerEvent *event)
 	
 	dynamic->forwardPosition();
 	std::chrono::steady_clock::time_point stopTime = std::chrono::steady_clock::now();
-	this->simulationTimeElapsed += simulationStepsPerFrame * simulationTimeStep;
+	this->simulationTimeElapsed += this->simulationStepsPerFrame * this->simulationTimeStep;
 	this->simulationTime->setText(QString::number(this->simulationTimeElapsed));
 	this->simulationResultsTime->setText(QString::number(std::chrono::duration_cast<std::chrono::duration<double>>(stopTime - startTime).count()));
-	rl::math::Real energy = 0.5 * qd.transpose() * M * qd;
+	rl::math::Real energy = static_cast<rl::math::Real>(0.5) * qd.transpose() * M * qd;
 	this->simulationResultsEnergy->setText(QString::number(energy));
 	this->positionModel->setData(q);
 	this->velocityModel->setData(qd);
@@ -531,7 +538,7 @@ void
 MainWindow::saveImage()
 {
 	QImage image = static_cast<QGLWidget*>(this->viewer->getGLWidget())->grabFrameBuffer(true);
-	image.save("coach-" + QDateTime::currentDateTime().toString("yyyyMMdd-HHmmsszzz") + ".png", "PNG");
+	image.save("rlSimulator-" + QDateTime::currentDateTime().toString("yyyyMMdd-HHmmsszzz") + ".png", "PNG");
 }
 
 void
@@ -539,7 +546,7 @@ MainWindow::saveScene()
 {
 	SoOutput output;
 	
-	if (!output.openFile(QString("coach-" + QDateTime::currentDateTime().toString("yyyyMMdd-HHmmsszzz") + ".wrl").toStdString().c_str()))
+	if (!output.openFile(QString("rlSimulator-" + QDateTime::currentDateTime().toString("yyyyMMdd-HHmmsszzz") + ".wrl").toStdString().c_str()))
 	{
 		return;
 	}
@@ -550,10 +557,4 @@ MainWindow::saveScene()
 	writeAction.apply(this->scene->root);
 	
 	output.closeFile();
-}
-
-void 
-MainWindow::setServerConnectionStatus(QString str)
-{
-	this->serverConnectionStatus->setText(str);
 }

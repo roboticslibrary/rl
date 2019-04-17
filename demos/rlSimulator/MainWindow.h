@@ -30,13 +30,13 @@
 #include <memory>
 #include <QAction>
 #include <QDockWidget>
+#include <QDoubleSpinBox>
+#include <QLineEdit>
 #include <QMainWindow>
 #include <QPushButton>
 #include <QTableView>
 #include <QTabWidget>
 #include <QTimer>
-#include <QLineEdit>
-#include <QDoubleSpinBox>
 #include <vector>
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #include <rl/mdl/Model.h>
@@ -100,8 +100,6 @@ public slots:
 	
 	void saveScene();
 	
-	void setServerConnectionStatus(QString str);
-	
 protected:
 	MainWindow(QWidget* parent = nullptr, Qt::WindowFlags f = 0);
 
@@ -135,8 +133,6 @@ private:
 	QAction* saveSceneAction;
 	
 	Server* server;
-	
-	QLineEdit* serverConnectionStatus;
 	
 	QDoubleSpinBox* simulationDampingFactor;
 	

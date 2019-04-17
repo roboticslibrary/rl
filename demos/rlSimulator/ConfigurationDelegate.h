@@ -60,8 +60,8 @@ private:
 class PositionDelegate : public ConfigurationDelegate
 {
 public:
-	PositionDelegate(QObject* parent = nullptr)
-	: ConfigurationDelegate(parent)
+	PositionDelegate(QObject* parent = nullptr) :
+		ConfigurationDelegate(parent)
 	{
 		
 	}
@@ -72,13 +72,18 @@ public:
 	}
 	
 	QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const;
+	
+protected:
+	
+private:
+	
 };
 
 class VelocityDelegate : public ConfigurationDelegate
 {
 public:
-	VelocityDelegate(QObject* parent = nullptr)
-	: ConfigurationDelegate(parent)
+	VelocityDelegate(QObject* parent = nullptr) :
+		ConfigurationDelegate(parent)
 	{
 		
 	}
@@ -89,13 +94,18 @@ public:
 	}
 	
 	QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const;
+	
+protected:
+	
+private:
+	
 };
 
 class AccelerationDelegate : public ConfigurationDelegate
 {
 public:
-	AccelerationDelegate(QObject* parent = nullptr)
-	: ConfigurationDelegate(parent)
+	AccelerationDelegate(QObject* parent = nullptr) :
+		ConfigurationDelegate(parent)
 	{
 		
 	}
@@ -106,13 +116,18 @@ public:
 	}
 	
 	QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const;
+	
+protected:
+	
+private:
+	
 };
 
 class TorqueDelegate : public ConfigurationDelegate
 {
 public:
-	TorqueDelegate(QObject* parent = nullptr)
-	: ConfigurationDelegate(parent)
+	TorqueDelegate(QObject* parent = nullptr) :
+		ConfigurationDelegate(parent)
 	{
 		
 	}
@@ -123,6 +138,11 @@ public:
 	}
 	
 	QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const;
+	
+protected:
+	
+private:
+	
 };
 
 #endif // CONFIGURATIONDELEGATE_H

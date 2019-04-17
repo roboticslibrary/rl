@@ -65,8 +65,8 @@ private:
 class PositionModel : public ConfigurationModel
 {
 public:
-	PositionModel(QObject* parent = nullptr)
-	: ConfigurationModel(parent)
+	PositionModel(QObject* parent = nullptr) :
+		ConfigurationModel(parent)
 	{
 	}
 	
@@ -77,13 +77,18 @@ public:
 	int rowCount(const QModelIndex& parent = QModelIndex()) const;
 	
 	QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
+	
+protected:
+	
+private:
+	
 };
 
 class VelocityModel : public ConfigurationModel
 {
 public:
-	VelocityModel(QObject* parent = nullptr)
-	: ConfigurationModel(parent)
+	VelocityModel(QObject* parent = nullptr) :
+		ConfigurationModel(parent)
 	{
 	}
 	
@@ -94,13 +99,18 @@ public:
 	int rowCount(const QModelIndex& parent = QModelIndex()) const;
 	
 	QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
+	
+protected:
+	
+private:
+	
 };
 
 class AccelerationModel : public ConfigurationModel
 {
 public:
-	AccelerationModel(QObject* parent = nullptr)
-	: ConfigurationModel(parent)
+	AccelerationModel(QObject* parent = nullptr) :
+		ConfigurationModel(parent)
 	{
 	}
 	
@@ -111,13 +121,18 @@ public:
 	int rowCount(const QModelIndex& parent = QModelIndex()) const;
 	
 	QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
+	
+protected:
+	
+private:
+	
 };
 
 class TorqueModel : public ConfigurationModel
 {
 public:
-	TorqueModel(QObject* parent = nullptr)
-	: ConfigurationModel(parent)
+	TorqueModel(QObject* parent = nullptr) :
+		ConfigurationModel(parent)
 	{
 	}
 	
@@ -128,6 +143,11 @@ public:
 	int rowCount(const QModelIndex& parent = QModelIndex()) const;
 	
 	QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
+	
+protected:
+	
+private:
+	
 };
 
 #endif // CONFIGURATIONMODEL_H
