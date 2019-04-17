@@ -65,6 +65,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	origin1Switch(nullptr),
 	origin1000Switch(nullptr),
 	root(nullptr),
+	scene(nullptr),
 	viewer(nullptr),
 	widget(new QWidget(this))
 {
@@ -84,8 +85,12 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	
 	this->setAcceptDrops(true);
 	
+	this->root = new SoSeparator();
+	this->root->ref();
+	
 	this->viewer = new SoQtExaminerViewer(this->widget);
 	this->viewer->setDecoration(false);
+	this->viewer->setSceneGraph(this->root);
 	this->viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_BLEND);
 	
 	this->gradientBackground = new SoGradientBackground();
@@ -94,8 +99,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	
 	this->backgroundSwitch = new SoSwitch();
 	this->backgroundSwitch->whichChild = SO_SWITCH_ALL;
-	this->backgroundSwitch->ref();
 	this->backgroundSwitch->addChild(this->gradientBackground);
+	this->root->addChild(this->backgroundSwitch);
 	
 	SoCoordinate3* originCoordinate3 = new SoCoordinate3();
 	originCoordinate3->point.set1Value(0, SbVec3f(0, 0, 0));
@@ -133,8 +138,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	
 	this->origin1Switch = new SoSwitch();
 	this->origin1Switch->whichChild = SO_SWITCH_NONE;
-	this->origin1Switch->ref();
 	this->origin1Switch->addChild(origin1Separator);
+	this->root->addChild(this->origin1Switch);
 	
 	SoScale* origin1000Scale = new SoScale();
 	origin1000Scale->scaleFactor.setValue(1000, 1000, 1000);
@@ -148,8 +153,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	
 	this->origin1000Switch = new SoSwitch();
 	this->origin1000Switch->whichChild = SO_SWITCH_NONE;
-	this->origin1000Switch->ref();
 	this->origin1000Switch->addChild(origin1000Separator);
+	this->root->addChild(this->origin1000Switch);
 	
 	this->offscreenRenderer = new SoOffscreenRenderer(this->viewer->getViewportRegion());
 	
@@ -175,14 +180,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 
 MainWindow::~MainWindow()
 {
-	this->backgroundSwitch->unref();
-	this->origin1Switch->unref();
-	this->origin1000Switch->unref();
-	
-	if (nullptr != this->root)
-	{
-		this->root->unref();
-	}
+	this->root->unref();
 	
 	if (nullptr != this->offscreenRenderer)
 	{
@@ -548,30 +546,24 @@ MainWindow::load(const QString filename)
 		return;
 	}
 	
-	if (nullptr != this->root)
+	if (nullptr != this->scene)
 	{
-		this->root->unref();
-		this->root = nullptr;
-		this->viewer->setSceneGraph(nullptr);
+		this->root->removeChild(this->scene);
 		this->filename.clear();
 		this->setWindowTitle("wrlview");
 	}
 	
-	this->root = SoDB::readAll(&this->input);
+	this->scene = SoDB::readAll(&this->input);
 	
 	this->input.closeFile();
 	
-	if (nullptr == this->root)
+	if (nullptr == this->scene)
 	{
 		QMessageBox::critical(this, "Error", "Error reading file.");
 		return;
 	}
 	
-	this->root->ref();
-	this->root->insertChild(this->origin1Switch, 0);
-	this->root->insertChild(this->origin1000Switch, 0);
-	this->root->insertChild(this->backgroundSwitch, 0);
-	this->viewer->setSceneGraph(this->root);
+	this->root->addChild(this->scene);
 	this->filename = filename;
 	this->setWindowTitle(filename + " - wrlview");
 }

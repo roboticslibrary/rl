@@ -137,6 +137,8 @@ private:
 	
 	SoSeparator* root;
 	
+	SoSeparator* scene;
+	
 	SoQtExaminerViewer* viewer;
 	
 	QMenu* viewMenu;
