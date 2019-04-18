@@ -35,7 +35,7 @@ namespace rl
 {
 	namespace hal
 	{
-		class Exception : public ::std::runtime_error
+		class RL_HAL_EXPORT Exception : public ::std::runtime_error
 		{
 		public:
 			Exception(const ::std::string& what_arg);
