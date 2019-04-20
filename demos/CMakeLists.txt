@@ -57,6 +57,7 @@ endif()
 if(RL_BUILD_PLAN)
 	add_subdirectory(rlPlanDemo)
 	add_subdirectory(rlPrmDemo)
+	add_subdirectory(rlRrtDemo)
 endif()
 
 set(CPACK_NSIS_CREATE_ICONS_EXTRA ${CPACK_NSIS_CREATE_ICONS_EXTRA} PARENT_SCOPE)
