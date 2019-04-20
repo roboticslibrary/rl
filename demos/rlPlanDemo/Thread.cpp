@@ -174,7 +174,7 @@ Thread::run()
 	{
 		emit statusChanged("Showing start configuration.");
 		this->drawConfiguration(*MainWindow::instance()->planner->start);
-		usleep(static_cast<std::size_t>(2.0 * 1000.0 * 1000.0));
+		QThread::usleep(static_cast<std::size_t>(2.0 * 1000.0 * 1000.0));
 	}
 	
 	if (!this->running) return;
@@ -183,7 +183,7 @@ Thread::run()
 	{
 		emit statusChanged("Showing goal configuration.");
 		this->drawConfiguration(*MainWindow::instance()->planner->goal);
-		usleep(static_cast<std::size_t>(2.0 * 1000.0 * 1000.0));
+		QThread::usleep(static_cast<std::size_t>(2.0 * 1000.0 * 1000.0));
 	}
 	
 	if (!this->running) return;
@@ -355,7 +355,7 @@ Thread::run()
 		{
 			if (nullptr != MainWindow::instance()->planner->viewer)
 			{
-				usleep(static_cast<std::size_t>(2.0 * 1000.0 * 1000.0));
+				QThread::usleep(static_cast<std::size_t>(2.0 * 1000.0 * 1000.0));
 			}
 			
 			emit statusChanged("Planner " + QString(solved ? "succeeded" : "failed") + " in " + QString::number(plannerDuration) + " ms. Optimizing...");
@@ -394,7 +394,7 @@ Thread::run()
 			if (i != path.end() && j != path.end())
 			{
 				this->drawConfiguration(*i);
-				usleep(static_cast<std::size_t>(0.01 * 1000.0 * 1000.0));
+				QThread::usleep(static_cast<std::size_t>(0.01 * 1000.0 * 1000.0));
 			}
 			
 			rl::math::Real delta = MainWindow::instance()->viewer->delta;
@@ -411,7 +411,7 @@ Thread::run()
 					
 					MainWindow::instance()->model->interpolate(*i, *j, k / steps, inter);
 					this->drawConfiguration(inter);
-					usleep(static_cast<std::size_t>(0.01 * 1000.0 * 1000.0));
+					QThread::usleep(static_cast<std::size_t>(0.01 * 1000.0 * 1000.0));
 				}
 			}
 			
@@ -423,7 +423,7 @@ Thread::run()
 			if (ri != path.rend() && rj != path.rend())
 			{
 				this->drawConfiguration(*ri);
-				usleep(static_cast<std::size_t>(0.01 * 1000.0 * 1000.0));
+				QThread::usleep(static_cast<std::size_t>(0.01 * 1000.0 * 1000.0));
 			}
 			
 			for (; ri != path.rend() && rj != path.rend(); ++ri, ++rj)
@@ -438,7 +438,7 @@ Thread::run()
 					
 					MainWindow::instance()->model->interpolate(*ri, *rj, k / steps, inter);
 					this->drawConfiguration(inter);
-					usleep(static_cast<std::size_t>(0.01 * 1000.0 * 1000.0));
+					QThread::usleep(static_cast<std::size_t>(0.01 * 1000.0 * 1000.0));
 				}
 			}
 		}
