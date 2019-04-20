@@ -43,8 +43,7 @@ main(int argc, char** argv)
 	}
 	
 	rl::mdl::XmlFactory factory;
-	std::shared_ptr<rl::mdl::Model> model(factory.create(argv[1]));
-	rl::mdl::Kinematic* kinematics = dynamic_cast<rl::mdl::Kinematic*>(model.get());
+	std::shared_ptr<rl::mdl::Kinematic> kinematics = std::dynamic_pointer_cast<rl::mdl::Kinematic>(factory.create(argv[1]));
 	
 	std::size_t dof = kinematics->getDof();
 	std::srand(0); // get reproducible results

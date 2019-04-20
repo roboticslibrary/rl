@@ -39,11 +39,11 @@ namespace rl
 		{
 		}
 		
-		Model*
+		::std::shared_ptr<Model>
 		Factory::create(const ::std::string& filename)
 		{
-			Model* model = new Dynamic();
-			this->load(filename, model);
+			::std::shared_ptr<Model> model = ::std::make_shared<Dynamic>();
+			this->load(filename, model.get());
 			return model;
 		}
 	}

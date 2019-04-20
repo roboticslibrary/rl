@@ -72,7 +72,7 @@ namespace rl
 			 */
 			virtual void clamp(::rl::math::Vector& q) const;
 			
-			static Kinematics* create(const ::std::string& filename);
+			static ::std::shared_ptr<Kinematics> create(const ::std::string& filename);
 			
 			/**
 			 * Calculate distance measure between specified configuration.

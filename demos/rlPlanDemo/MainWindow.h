@@ -35,7 +35,7 @@
 #include <QTableView>
 #include <boost/optional.hpp>
 #include <rl/kin/Kinematics.h>
-#include <rl/mdl/Dynamic.h>
+#include <rl/mdl/Kinematic.h>
 #include <rl/plan/NearestNeighbors.h>
 #include <rl/plan/Optimizer.h>
 #include <rl/plan/Planner.h>
@@ -84,9 +84,9 @@ public:
 	
 	std::shared_ptr<rl::kin::Kinematics> kin2;
 	
-	std::shared_ptr<rl::mdl::Dynamic> mdl;
+	std::shared_ptr<rl::mdl::Kinematic> mdl;
 	
-	std::shared_ptr<rl::mdl::Dynamic> mdl2;
+	std::shared_ptr<rl::mdl::Kinematic> mdl2;
 	
 	std::shared_ptr<rl::plan::SimpleModel> model;
 	

@@ -117,10 +117,10 @@ namespace rl
 			}
 		}
 		
-		Kinematics*
+		::std::shared_ptr<Kinematics>
 		Kinematics::create(const ::std::string& filename)
 		{
-			Kinematics* kinematics = nullptr;
+			::std::shared_ptr<Kinematics> kinematics;
 			
 			::rl::xml::DomParser parser;
 			
@@ -149,15 +149,15 @@ namespace rl
 				
 				if ("puma" == instances[i].getName())
 				{
-					kinematics = new Puma();
+					kinematics = ::std::make_shared<Puma>();
 				}
 				else if ("rhino" == instances[i].getName())
 				{
-					kinematics = new Rhino();
+					kinematics = ::std::make_shared<Rhino>();
 				}
 				else if ("kinematics" == instances[i].getName())
 				{
-					kinematics = new Kinematics();
+					kinematics = ::std::make_shared<Kinematics>();
 				}
 				else
 				{
@@ -404,13 +404,10 @@ namespace rl
 			
 			kinematics->update();
 			
-			if (dynamic_cast<Puma*>(kinematics))
+			if (::std::dynamic_pointer_cast<Puma>(kinematics))
 			{
 				if (kinematics->joints.size() != 6 || kinematics->links.size() != 7 || kinematics->transforms.size() != 8 || kinematics->frames.size() != 9)
 				{
-					delete kinematics;
-					kinematics = nullptr;
-					
 					if (kinematics->joints.size() != 6)
 					{
 						throw Exception("Puma kinematics with incorrect number of joints");
@@ -432,13 +429,10 @@ namespace rl
 					}
 				}
 			}
-			else if (dynamic_cast<Rhino*>(kinematics))
+			else if (::std::dynamic_pointer_cast<Rhino>(kinematics))
 			{
 				if (kinematics->joints.size() != 5 || kinematics->links.size() != 6 || kinematics->transforms.size() != 7 || kinematics->frames.size() != 8)
 				{
-					delete kinematics;
-					kinematics = nullptr;
-					
 					if (kinematics->joints.size() != 5)
 					{
 						throw Exception("Rhino kinematics with incorrect number of joints");

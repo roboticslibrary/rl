@@ -30,7 +30,7 @@
 #include <rl/kin/Kinematics.h>
 #include <rl/math/Transform.h>
 #include <rl/math/Vector.h>
-#include <rl/mdl/Dynamic.h>
+#include <rl/mdl/Kinematic.h>
 #include <rl/plan/export.h>
 #include <rl/sg/Model.h>
 #include <rl/sg/Scene.h>
@@ -126,7 +126,7 @@ namespace rl
 			
 			::rl::kin::Kinematics* kin;
 			
-			::rl::mdl::Dynamic* mdl;
+			::rl::mdl::Kinematic* mdl;
 			
 			::rl::sg::Model* model;
 			

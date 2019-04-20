@@ -78,9 +78,9 @@ PositionDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& opti
 {
 	QDoubleSpinBox* editor = new QDoubleSpinBox(parent);
 	
-	rl::math::Vector maximum = MainWindow::instance()->kinematicModels->getMaximum();
-	rl::math::Vector minimum = MainWindow::instance()->kinematicModels->getMinimum();
-	Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> qUnits = MainWindow::instance()->kinematicModels->getPositionUnits();
+	rl::math::Vector maximum = MainWindow::instance()->dynamicModel->getMaximum();
+	rl::math::Vector minimum = MainWindow::instance()->dynamicModel->getMinimum();
+	Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> qUnits = MainWindow::instance()->dynamicModel->getPositionUnits();
 	
 	if (rl::math::UNIT_RADIAN == qUnits(index.row()))
 	{
@@ -105,7 +105,7 @@ VelocityDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& opti
 {
 	QDoubleSpinBox* editor = new QDoubleSpinBox(parent);
 	
-	Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> qUnits = MainWindow::instance()->kinematicModels->getVelocityUnits();
+	Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> qUnits = MainWindow::instance()->dynamicModel->getVelocityUnits();
 	
 	editor->setRange(-10000, 10000); //TODO?
 	
@@ -128,7 +128,7 @@ AccelerationDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& 
 {
 	QDoubleSpinBox* editor = new QDoubleSpinBox(parent);
 	
-	Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> qUnits = MainWindow::instance()->kinematicModels->getVelocityUnits();
+	Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> qUnits = MainWindow::instance()->dynamicModel->getVelocityUnits();
 	
 	editor->setRange(-10000, 10000);
 	

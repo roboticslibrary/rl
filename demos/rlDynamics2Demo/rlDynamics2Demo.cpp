@@ -30,7 +30,6 @@
 #include <boost/lexical_cast.hpp>
 #include <rl/math/Unit.h>
 #include <rl/mdl/Dynamic.h>
-#include <rl/mdl/Model.h>
 #include <rl/mdl/XmlFactory.h>
 
 int
@@ -45,9 +44,7 @@ main(int argc, char** argv)
 	try
 	{
 		rl::mdl::XmlFactory factory;
-		std::shared_ptr<rl::mdl::Model> model(factory.create(argv[1]));
-		
-		rl::mdl::Dynamic* dynamic = dynamic_cast<rl::mdl::Dynamic*>(model.get());
+		std::shared_ptr<rl::mdl::Dynamic> dynamic = std::dynamic_pointer_cast<rl::mdl::Dynamic>(factory.create(argv[1]));
 		
 		rl::math::Vector q(dynamic->getDofPosition());
 		rl::math::Vector qd(dynamic->getDof());

@@ -29,7 +29,6 @@
 #include <stdexcept>
 #include <boost/lexical_cast.hpp>
 #include <rl/mdl/Dynamic.h>
-#include <rl/mdl/Model.h>
 #include <rl/mdl/RungeKuttaNystromIntegrator.h>
 #include <rl/mdl/XmlFactory.h>
 
@@ -45,9 +44,7 @@ main(int argc, char** argv)
 	try
 	{
 		rl::mdl::XmlFactory factory;
-		std::shared_ptr<rl::mdl::Model> model(factory.create(argv[1]));
-		
-		rl::mdl::Dynamic* dynamic = dynamic_cast<rl::mdl::Dynamic*>(model.get());
+		std::shared_ptr<rl::mdl::Dynamic> dynamic = std::dynamic_pointer_cast<rl::mdl::Dynamic>(factory.create(argv[1]));
 		
 		rl::math::Vector q(dynamic->getDofPosition());
 		rl::math::Vector qd(dynamic->getDof());
@@ -74,7 +71,7 @@ main(int argc, char** argv)
 		dynamic->forwardDynamics();
 		std::cout << "qdd = " << dynamic->getAcceleration().transpose() << std::endl;
 		
-		rl::mdl::RungeKuttaNystromIntegrator integrator(dynamic);
+		rl::mdl::RungeKuttaNystromIntegrator integrator(dynamic.get());
 		integrator.integrate(1);
 		std::cout << "q = " << dynamic->getPosition().transpose() << std::endl;
 		std::cout << "qd = " << dynamic->getVelocity().transpose() << std::endl;

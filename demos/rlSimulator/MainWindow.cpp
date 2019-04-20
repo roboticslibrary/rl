@@ -57,9 +57,9 @@
 MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	QMainWindow(parent, f),
 	accelerationModel(nullptr),
+	dynamicModel(),
 	externalTorque(),
 	geometryModels(nullptr),
-	kinematicModels(),
 	operationalModel(nullptr),
 	positionModel(nullptr),
 	scene(),
@@ -118,10 +118,10 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	rl::mdl::XmlFactory kinematicFactory;
 	
 	this->geometryModels = this->scene->getModel(0);
-	this->kinematicModels.reset(kinematicFactory.create(QApplication::arguments()[2].toStdString()));
-	this->simulationResetQ = rl::math::Vector::Zero(this->kinematicModels->getDofPosition());
-	this->simulationResetQd = rl::math::Vector::Zero(this->kinematicModels->getDof());
-	this->simulationResetQdd = rl::math::Vector::Zero(this->kinematicModels->getDof());
+	this->dynamicModel = std::dynamic_pointer_cast<rl::mdl::Dynamic>(kinematicFactory.create(QApplication::arguments()[2].toStdString()));
+	this->simulationResetQ = rl::math::Vector::Zero(this->dynamicModel->getDofPosition());
+	this->simulationResetQd = rl::math::Vector::Zero(this->dynamicModel->getDof());
+	this->simulationResetQdd = rl::math::Vector::Zero(this->dynamicModel->getDof());
 	
 	this->positionDelegate = new PositionDelegate(this);
 	this->positionModel = new PositionModel(this);
@@ -231,11 +231,11 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 		SLOT(operationalChanged(const QModelIndex&, const QModelIndex&))
 	);
 		
-	rl::math::Vector q(this->kinematicModels->getDofPosition());
+	rl::math::Vector q(this->dynamicModel->getDofPosition());
 	q.setZero();
 	this->positionModel->setData(q); //TODO?
 	
-	rl::math::Vector externalTorque = rl::math::Vector::Zero(this->kinematicModels->getDof());
+	rl::math::Vector externalTorque = rl::math::Vector::Zero(this->dynamicModel->getDof());
 	this->externalTorque = externalTorque;
 	this->torqueModel->setData(externalTorque);
 	
@@ -399,9 +399,9 @@ MainWindow::clickSimulationReset()
 	this->simulationTime->setText(QString::number(this->simulationTimeElapsed));
 	this->simulationResultsTime->setText("");
 	this->simulationResultsEnergy->setText("");
-	this->kinematicModels->setPosition(this->simulationResetQ);
-	this->kinematicModels->setVelocity(this->simulationResetQd);
-	this->kinematicModels->setAcceleration(this->simulationResetQdd);
+	this->dynamicModel->setPosition(this->simulationResetQ);
+	this->dynamicModel->setVelocity(this->simulationResetQd);
+	this->dynamicModel->setAcceleration(this->simulationResetQdd);
 	this->positionModel->setData(this->simulationResetQ);
 	this->simulationStart->setEnabled(true);
 	this->simulationPause->setEnabled(false);
@@ -441,70 +441,68 @@ MainWindow::timerEvent(QTimerEvent *event)
 		return;
 	}
 	
-	rl::mdl::Dynamic* dynamic = dynamic_cast<rl::mdl::Dynamic*>(this->kinematicModels.get());
-	
 	rl::math::Vector3 g(0, 0, this->simulationGravityValue);
-	dynamic->setWorldGravity(g);
+	this->dynamicModel->setWorldGravity(g);
 	
 	std::chrono::steady_clock::time_point startTime = std::chrono::steady_clock::now();
-	rl::math::Vector q(dynamic->getDofPosition());
-	rl::math::Vector qd(dynamic->getDof());
-	rl::math::Vector qdd(dynamic->getDof());
-	rl::math::Vector torque(dynamic->getDof());
-	rl::math::Matrix M(dynamic->getDof(), dynamic->getDof());
+	rl::math::Vector q(this->dynamicModel->getDofPosition());
+	rl::math::Vector qd(this->dynamicModel->getDof());
+	rl::math::Vector qdd(this->dynamicModel->getDof());
+	rl::math::Vector torque(this->dynamicModel->getDof());
+	rl::math::Matrix M(this->dynamicModel->getDof(), this->dynamicModel->getDof());
 	
 #if 1 
 	for (int i = 0; i < this->simulationStepsPerFrame; ++i)
 	{
-		dynamic->setTorque(this->externalTorque);
-		dynamic->forwardDynamics();
+		this->dynamicModel->setTorque(this->externalTorque);
+		this->dynamicModel->forwardDynamics();
 #if 1
-		q = dynamic->getPosition();
-		qd = dynamic->getVelocity();
-		qdd = dynamic->getAcceleration();
+		q = this->dynamicModel->getPosition();
+		qd = this->dynamicModel->getVelocity();
+		qdd = this->dynamicModel->getAcceleration();
 		qdd -= this->simulationDampingValue * qd / this->simulationTimeStep;
 		// TODO: this is a very simple integration, slightly better than Euler, could be replaced by a *functional-style* Runge-Kutta
 		q += this->simulationTimeStep * (qd + qdd * this->simulationTimeStep / 2);
 		qd += this->simulationTimeStep * qdd;
-		dynamic->setPosition(q);
-		dynamic->setVelocity(qd);
-		dynamic->setAcceleration(qdd);
+		this->dynamicModel->setPosition(q);
+		this->dynamicModel->setVelocity(qd);
+		this->dynamicModel->setAcceleration(qdd);
 #else
-		dynamic->rungeKuttaNystrom(simulationTimeStep); // its side effects do not work with damping 
+		this->dynamicModel->rungeKuttaNystrom(simulationTimeStep); // its side effects do not work with damping 
 #endif
 	}
 	
-	q = dynamic->getPosition();
-	qd = dynamic->getVelocity();
-	qdd = dynamic->getAcceleration();
-	torque = dynamic->getTorque();
-	dynamic->calculateMassMatrix(M);
-	dynamic->setPosition(q);
-	dynamic->setVelocity(qd);
-	dynamic->setAcceleration(qdd);
-	dynamic->setTorque(torque);
+	q = this->dynamicModel->getPosition();
+	qd = this->dynamicModel->getVelocity();
+	qdd = this->dynamicModel->getAcceleration();
+	torque = this->dynamicModel->getTorque();
+	this->dynamicModel->calculateMassMatrix(M);
+	this->dynamicModel->setPosition(q);
+	this->dynamicModel->setVelocity(qd);
+	this->dynamicModel->setAcceleration(qdd);
+	this->dynamicModel->setTorque(torque);
 #else
 	for (int i = 0; i < simulationStepsPerFrame; ++i)
 	{
-		dynamic->getPosition(q);
-		dynamic->getVelocity(qd);
-		dynamic->getAcceleration(qdd);
-		dynamic->getTorque(torque);
+		this->dynamicModel->getPosition(q);
+		this->dynamicModel->getVelocity(qd);
+		this->dynamicModel->getAcceleration(qdd);
+		this->dynamicModel->getTorque(torque);
 		
 		// V
-		rl::math::Vector V(dynamic->getDof());
-		dynamic->setPosition(q);
-		dynamic->setVelocity(qd);
-		dynamic->calculateCentrifugalCoriolis(V);
+		rl::math::Vector V(this->dynamicModel->getDof());
+		this->dynamicModel->setPosition(q);
+		this->dynamicModel->setVelocity(qd);
+		this->dynamicModel->calculateCentrifugalCoriolis(V);
 		
 		// G
-		rl::math::Vector G(dynamic->getDof());
-		dynamic->setPosition(q);
-		dynamic->calculateGravity(G);
+		rl::math::Vector G(this->dynamicModel->getDof());
+		this->dynamicModel->setPosition(q);
+		this->dynamicModel->calculateGravity(G);
 		
 		// M^{-1}
-		rl::math::Matrix invM(dynamic->getDof(), dynamic->getDof());
-		dynamic->calculateMassMatrixInverse(invM);
+		rl::math::Matrix invM(this->dynamicModel->getDof(), this->dynamicModel->getDof());
+		this->dynamicModel->calculateMassMatrixInverse(invM);
 		
 		// M^{-1} * ( tau - V - G )
 		//qdd = invM * (torque - V - G);
@@ -513,15 +511,15 @@ MainWindow::timerEvent(QTimerEvent *event)
 		qdd -= simulationDampingValue * qd / simulationTimeStep;
 		
 		// simple Euler-Cauchy integration
-		dynamic->setAcceleration(qdd);
+		this->dynamicModel->setAcceleration(qdd);
 		q += simulationTimeStep * qd;
 		qd += simulationTimeStep * qdd;
-		dynamic->setPosition(q);
-		dynamic->setVelocity(qd);
+		this->dynamicModel->setPosition(q);
+		this->dynamicModel->setVelocity(qd);
 	}
 #endif
 	
-	dynamic->forwardPosition();
+	this->dynamicModel->forwardPosition();
 	std::chrono::steady_clock::time_point stopTime = std::chrono::steady_clock::now();
 	this->simulationTimeElapsed += this->simulationStepsPerFrame * this->simulationTimeStep;
 	this->simulationTime->setText(QString::number(this->simulationTimeElapsed));

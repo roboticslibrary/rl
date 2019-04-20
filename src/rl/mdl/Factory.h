@@ -27,6 +27,7 @@
 #ifndef RL_MDL_FACTORY_H
 #define RL_MDL_FACTORY_H
 
+#include <memory>
 #include <string>
 #include <rl/mdl/export.h>
 
@@ -43,7 +44,7 @@ namespace rl
 			
 			virtual ~Factory();
 			
-			virtual Model* create(const ::std::string& filename);
+			virtual ::std::shared_ptr<Model> create(const ::std::string& filename);
 			
 			virtual void load(const ::std::string& filename, Model* model) = 0;
 			

@@ -949,9 +949,9 @@ MainWindow::load(const QString& filename)
 	if ("mdl" == path.eval("string((/rl/plan|/rlplan)//model/kinematics/@type)").getValue<std::string>())
 	{
 		rl::xml::NodeSet mdl = path.eval("(/rl/plan|/rlplan)//model/kinematics").getValue<rl::xml::NodeSet>();
-		this->mdl.reset(dynamic_cast<rl::mdl::Dynamic*>(modelFactory.create(
+		this->mdl = std::dynamic_pointer_cast<rl::mdl::Kinematic>(modelFactory.create(
 			mdl[0].getUri(mdl[0].getProperty("href"))
-		)));
+		));
 		
 		if (path.eval("count((/rl/plan|/rlplan)//model/kinematics/world) > 0").getValue<bool>())
 		{
@@ -974,9 +974,9 @@ MainWindow::load(const QString& filename)
 	else
 	{
 		rl::xml::NodeSet kin = path.eval("(/rl/plan|/rlplan)//model/kinematics").getValue<rl::xml::NodeSet>();
-		this->kin.reset(rl::kin::Kinematics::create(
+		this->kin = rl::kin::Kinematics::create(
 			kin[0].getUri(kin[0].getProperty("href"))
-		));
+		);
 		
 		if (path.eval("count((/rl/plan|/rlplan)//model/kinematics/world) > 0").getValue<bool>())
 		{
@@ -1040,9 +1040,9 @@ MainWindow::load(const QString& filename)
 	if ("mdl" == path.eval("string((/rl/plan|/rlplan)//viewer/model/kinematics/@type)").getValue<std::string>())
 	{
 		rl::xml::NodeSet mdl2 = path.eval("(/rl/plan|/rlplan)//viewer/model/kinematics").getValue<rl::xml::NodeSet>();
-		this->mdl2.reset(dynamic_cast<rl::mdl::Dynamic*>(modelFactory.create(
+		this->mdl2 = std::dynamic_pointer_cast<rl::mdl::Kinematic>(modelFactory.create(
 			mdl2[0].getUri(mdl2[0].getProperty("href"))
-		)));
+		));
 		
 		if (path.eval("count((/rl/plan|/rlplan)//viewer/model/kinematics/world) > 0").getValue<bool>())
 		{
@@ -1065,9 +1065,9 @@ MainWindow::load(const QString& filename)
 	else
 	{
 		rl::xml::NodeSet kin2 = path.eval("(/rl/plan|/rlplan)//viewer/model/kinematics").getValue<rl::xml::NodeSet>();
-		this->kin2.reset(rl::kin::Kinematics::create(
+		this->kin2 = rl::kin::Kinematics::create(
 			kin2[0].getUri(kin2[0].getProperty("href"))
-		));
+		);
 		
 		if (path.eval("count((/rl/plan|/rlplan)//viewer/model/kinematics/world) > 0").getValue<bool>())
 		{

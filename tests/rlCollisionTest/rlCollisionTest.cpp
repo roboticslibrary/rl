@@ -106,8 +106,7 @@ main(int argc, char** argv)
 	}
 	
 	rl::mdl::XmlFactory modelFactory;
-	std::shared_ptr<rl::mdl::Model> model(modelFactory.create(argv[2]));
-	rl::mdl::Kinematic* kinematics = dynamic_cast<rl::mdl::Kinematic*>(model.get());
+	std::shared_ptr<rl::mdl::Kinematic> kinematics = std::dynamic_pointer_cast<rl::mdl::Kinematic>(modelFactory.create(argv[2]));
 	
 	std::size_t dof = kinematics->getDof();
 	rl::math::Vector q(kinematics->getDof());
@@ -164,7 +163,7 @@ main(int argc, char** argv)
 	for (std::size_t i = 0; i < scenes.size(); ++i)
 	{
 		std::cout << "Testing SimpleScene::isColliding() in " << sceneNames[i] << ": "; 
-		std::cout << (collides(scenes[i], kinematics) ? "true" : "false") << std::endl;
+		std::cout << (collides(scenes[i], kinematics.get()) ? "true" : "false") << std::endl;
 	}
 	
 	std::mt19937 randomGenerator(0);
@@ -191,7 +190,7 @@ main(int argc, char** argv)
 			{
 				scenes[i]->getModel(0)->getBody(b)->setFrame(kinematics->getBodyFrame(b));
 			}
-			results[i] = collides(scenes[i], kinematics);
+			results[i] = collides(scenes[i], kinematics.get());
 		}
 		
 		if ((results.array() == false).any() && (results.array() == true).any())

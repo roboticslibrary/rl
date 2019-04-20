@@ -63,7 +63,7 @@ OperationalModel::configurationChanged(const QModelIndex& topLeft, const QModelI
 QVariant
 OperationalModel::data(const QModelIndex& index, int role) const
 {
-	if (nullptr == MainWindow::instance()->kinematicModels)
+	if (nullptr == MainWindow::instance()->dynamicModel)
 	{
 		return QVariant();
 	}
@@ -78,8 +78,8 @@ OperationalModel::data(const QModelIndex& index, int role) const
 	case Qt::DisplayRole:
 	case Qt::EditRole:
 		{
-			const rl::math::Transform::ConstTranslationPart& position = MainWindow::instance()->kinematicModels->getOperationalPosition(index.row()).translation();
-			rl::math::Vector3 orientation = MainWindow::instance()->kinematicModels->getOperationalPosition(index.row()).rotation().eulerAngles(2, 1, 0).reverse();
+			const rl::math::Transform::ConstTranslationPart& position = MainWindow::instance()->dynamicModel->getOperationalPosition(index.row()).translation();
+			rl::math::Vector3 orientation = MainWindow::instance()->dynamicModel->getOperationalPosition(index.row()).rotation().eulerAngles(2, 1, 0).reverse();
 			
 			switch (index.column())
 			{
@@ -130,7 +130,7 @@ OperationalModel::flags(const QModelIndex &index) const
 QVariant
 OperationalModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-	if (nullptr == MainWindow::instance()->kinematicModels)
+	if (nullptr == MainWindow::instance()->dynamicModel)
 	{
 		return QVariant();
 	}
@@ -173,25 +173,25 @@ OperationalModel::headerData(int section, Qt::Orientation orientation, int role)
 int
 OperationalModel::rowCount(const QModelIndex& parent) const
 {
-	if (nullptr == MainWindow::instance()->kinematicModels)
+	if (nullptr == MainWindow::instance()->dynamicModel)
 	{
 		return 0;
 	}
 	
-	return MainWindow::instance()->kinematicModels->getOperationalDof();
+	return MainWindow::instance()->dynamicModel->getOperationalDof();
 }
 
 bool
 OperationalModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
-	if (nullptr == MainWindow::instance()->kinematicModels)
+	if (nullptr == MainWindow::instance()->dynamicModel)
 	{
 		return false;
 	}
 	
 	if (index.isValid() && Qt::EditRole == role)
 	{
-		if (rl::mdl::Kinematic* kinematic = dynamic_cast<rl::mdl::Kinematic*>(MainWindow::instance()->kinematicModels.get()))
+		if (rl::mdl::Kinematic* kinematic = dynamic_cast<rl::mdl::Kinematic*>(MainWindow::instance()->dynamicModel.get()))
 		{
 			rl::math::Transform x = kinematic->getOperationalPosition(index.row());
 			

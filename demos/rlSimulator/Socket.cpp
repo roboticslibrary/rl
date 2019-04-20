@@ -160,7 +160,7 @@ Socket::readClient()
 				
 				if (i < 1)
 				{
-					rl::math::Vector q(MainWindow::instance()->kinematicModels->getDof());
+					rl::math::Vector q(MainWindow::instance()->dynamicModel->getDof());
 					q.setZero();
 					
 					for (std::ptrdiff_t j = 0; j < q.size(); ++j)
@@ -179,7 +179,7 @@ Socket::readClient()
 				
 				if (i < 1)
 				{
-					rl::math::Vector torque(MainWindow::instance()->kinematicModels->getDof());
+					rl::math::Vector torque(MainWindow::instance()->dynamicModel->getDof());
 					torque.setZero();
 					
 					for (std::ptrdiff_t j = 0; j < torque.size(); ++j)

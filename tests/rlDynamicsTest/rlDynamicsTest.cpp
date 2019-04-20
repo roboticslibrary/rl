@@ -29,7 +29,6 @@
 #include <random>
 #include <stdexcept>
 #include <rl/mdl/Dynamic.h>
-#include <rl/mdl/Model.h>
 #include <rl/mdl/XmlFactory.h>
 
 int
@@ -46,13 +45,11 @@ main(int argc, char** argv)
 		srand(std::random_device()());
 		
 		rl::mdl::XmlFactory factory;
-		std::shared_ptr<rl::mdl::Model> model(factory.create(argv[1]));
+		std::shared_ptr<rl::mdl::Dynamic> dynamic = std::dynamic_pointer_cast<rl::mdl::Dynamic>(factory.create(argv[1]));
 		
-		rl::mdl::Dynamic* dynamic = dynamic_cast<rl::mdl::Dynamic*>(model.get());
-		
-		rl::math::Vector q0(model->getDofPosition());
-		rl::math::Vector qd0(model->getDof());
-		rl::math::Vector qdd0(model->getDof());
+		rl::math::Vector q0(dynamic->getDofPosition());
+		rl::math::Vector qd0(dynamic->getDof());
+		rl::math::Vector qdd0(dynamic->getDof());
 		
 		for (::std::size_t i = 0; i < atoi(argv[2]); ++i)
 		{

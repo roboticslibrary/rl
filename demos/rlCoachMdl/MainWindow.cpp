@@ -106,9 +106,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 		}
 		
 		this->geometryModels.push_back(this->scene->getModel(i - 2));
-		std::shared_ptr<rl::mdl::Model> kinematicModel;
-		kinematicModel.reset(kinematicFactory->create(kinematicFilename));
-		this->kinematicModels.push_back(kinematicModel);
+		this->kinematicModels.push_back(std::dynamic_pointer_cast<rl::mdl::Kinematic>(kinematicFactory->create(kinematicFilename)));
 	}
 	
 	for (std::size_t i = 0; i < this->kinematicModels.size(); ++i)

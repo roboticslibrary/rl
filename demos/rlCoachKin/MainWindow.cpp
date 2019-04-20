@@ -77,9 +77,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	for (int i = 2; i < QApplication::arguments().size(); ++i)
 	{
 		this->geometryModels.push_back(this->scene->getModel(i - 2));
-		std::shared_ptr<rl::kin::Kinematics> kinematicModel;
-		kinematicModel.reset(rl::kin::Kinematics::create(QApplication::arguments()[i].toStdString()));
-		this->kinematicModels.push_back(kinematicModel);
+		this->kinematicModels.push_back(rl::kin::Kinematics::create(QApplication::arguments()[i].toStdString()));
 	}
 	
 	for (std::size_t i = 0; i < this->kinematicModels.size(); ++i)

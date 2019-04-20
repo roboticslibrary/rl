@@ -32,8 +32,8 @@
 #include <stdexcept>
 #include <boost/lexical_cast.hpp>
 #include <rl/hal/Coach.h>
-#include <rl/mdl/JacobianInverseKinematics.h>
 #include <rl/mdl/Kinematic.h>
+#include <rl/mdl/JacobianInverseKinematics.h>
 #include <rl/mdl/UrdfFactory.h>
 #include <rl/mdl/XmlFactory.h>
 #include <rl/math/Unit.h>
@@ -61,20 +61,18 @@ main(int argc, char** argv)
 		);
 		
 		std::string filename(argv[1]);
-		std::shared_ptr<rl::mdl::Model> model;
+		std::shared_ptr<rl::mdl::Kinematic> kinematic;
 		
 		if ("urdf" == filename.substr(filename.length() - 4, 4))
 		{
 			rl::mdl::UrdfFactory factory;
-			model.reset(factory.create(filename));
+			kinematic = std::dynamic_pointer_cast<rl::mdl::Kinematic>(factory.create(filename));
 		}
 		else
 		{
 			rl::mdl::XmlFactory factory;
-			model.reset(factory.create(filename));
+			kinematic = std::dynamic_pointer_cast<rl::mdl::Kinematic>(factory.create(filename));
 		}
-		
-		rl::mdl::Kinematic* kinematic = dynamic_cast<rl::mdl::Kinematic*>(model.get());
 		
 		rl::math::Vector q(kinematic->getDof());
 		
@@ -91,10 +89,10 @@ main(int argc, char** argv)
 		std::cout << "x: " << position.x() << " m, y: " << position.y() << " m, z: " << position.z() << " m, a: " << orientation.x() * rl::math::RAD2DEG << " deg, b: " << orientation.y() * rl::math::RAD2DEG << " deg, c: " << orientation.z() * rl::math::RAD2DEG << " deg" << std::endl;
 		
 #ifdef RL_MDL_NLOPT
-		rl::mdl::NloptInverseKinematics ik(kinematic);
+		rl::mdl::NloptInverseKinematics ik(kinematic.get());
 		std::cout << "IK using rl::mdl::NloptInverseKinematics";
 #else
-		rl::mdl::JacobianInverseKinematics ik(kinematic);
+		rl::mdl::JacobianInverseKinematics ik(kinematic.get());
 		std::cout << "IK using rl::mdl::JacobianInverseKinematics";
 #endif
 		ik.setDuration(std::chrono::seconds(1));

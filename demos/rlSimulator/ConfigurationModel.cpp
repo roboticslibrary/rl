@@ -61,14 +61,14 @@ ConfigurationModel::flags(const QModelIndex &index) const
 QVariant
 ConfigurationModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-	if (nullptr == MainWindow::instance()->kinematicModels)
+	if (nullptr == MainWindow::instance()->dynamicModel)
 	{
 		return QVariant();
 	}
 	
 	if (Qt::DisplayRole == role && Qt::Vertical == orientation)
 	{
-		if (rl::mdl::Kinematic* kinematic = dynamic_cast<rl::mdl::Kinematic*>(MainWindow::instance()->kinematicModels.get()))
+		if (rl::mdl::Kinematic* kinematic = dynamic_cast<rl::mdl::Kinematic*>(MainWindow::instance()->dynamicModel.get()))
 		{
 			for (std::size_t i = 0, j = 0; i < kinematic->getJoints(); ++i)
 			{
@@ -98,14 +98,14 @@ ConfigurationModel::operationalChanged(const QModelIndex& topLeft, const QModelI
 bool
 ConfigurationModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
-	if (nullptr == MainWindow::instance()->kinematicModels)
+	if (nullptr == MainWindow::instance()->dynamicModel)
 	{
 		return false;
 	}
 	
 	if (index.isValid() && Qt::EditRole == role)
 	{
-		if (rl::mdl::Kinematic* kinematic = dynamic_cast<rl::mdl::Kinematic*>(MainWindow::instance()->kinematicModels.get()))
+		if (rl::mdl::Kinematic* kinematic = dynamic_cast<rl::mdl::Kinematic*>(MainWindow::instance()->dynamicModel.get()))
 		{
 			if (dynamic_cast<PositionModel*>(this))
 			{
@@ -178,12 +178,12 @@ ConfigurationModel::setData(const QModelIndex& index, const QVariant& value, int
 bool
 ConfigurationModel::setData(const rl::math::Vector& values)
 {
-	if (nullptr == MainWindow::instance()->kinematicModels)
+	if (nullptr == MainWindow::instance()->dynamicModel)
 	{
 		return false;
 	}
 	
-	if (rl::mdl::Kinematic* kinematic = dynamic_cast<rl::mdl::Kinematic*>(MainWindow::instance()->kinematicModels.get()))
+	if (rl::mdl::Kinematic* kinematic = dynamic_cast<rl::mdl::Kinematic*>(MainWindow::instance()->dynamicModel.get()))
 	{
 		if (dynamic_cast<PositionModel*>(this))
 		{
@@ -220,53 +220,53 @@ ConfigurationModel::setData(const rl::math::Vector& values)
 int
 PositionModel::rowCount(const QModelIndex& parent) const
 {
-	if (nullptr == MainWindow::instance()->kinematicModels)
+	if (nullptr == MainWindow::instance()->dynamicModel)
 	{
 		return 0;
 	}
 	
-	return MainWindow::instance()->kinematicModels->getDofPosition();
+	return MainWindow::instance()->dynamicModel->getDofPosition();
 }
 
 
 int
 VelocityModel::rowCount(const QModelIndex& parent) const
 {
-	if (nullptr == MainWindow::instance()->kinematicModels)
+	if (nullptr == MainWindow::instance()->dynamicModel)
 	{
 		return 0;
 	}
 	
-	return MainWindow::instance()->kinematicModels->getDof();
+	return MainWindow::instance()->dynamicModel->getDof();
 }
 
 
 int
 AccelerationModel::rowCount(const QModelIndex& parent) const
 {
-	if (nullptr == MainWindow::instance()->kinematicModels)
+	if (nullptr == MainWindow::instance()->dynamicModel)
 	{
 		return 0;
 	}
 	
-	return MainWindow::instance()->kinematicModels->getDof();
+	return MainWindow::instance()->dynamicModel->getDof();
 }
 
 int
 TorqueModel::rowCount(const QModelIndex& parent) const
 {
-	if (nullptr == MainWindow::instance()->kinematicModels)
+	if (nullptr == MainWindow::instance()->dynamicModel)
 	{
 		return 0;
 	}
 	
-	return MainWindow::instance()->kinematicModels->getDof();
+	return MainWindow::instance()->dynamicModel->getDof();
 }
 
 QVariant
 PositionModel::data(const QModelIndex& index, int role) const
 {
-	if (nullptr == MainWindow::instance()->kinematicModels)
+	if (nullptr == MainWindow::instance()->dynamicModel)
 	{
 		return QVariant();
 	}
@@ -281,8 +281,8 @@ PositionModel::data(const QModelIndex& index, int role) const
 	case Qt::DisplayRole:
 	case Qt::EditRole:
 		{
-			rl::math::Vector values = MainWindow::instance()->kinematicModels->getPosition();
-			Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> units = MainWindow::instance()->kinematicModels->getPositionUnits();
+			rl::math::Vector values = MainWindow::instance()->dynamicModel->getPosition();
+			Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> units = MainWindow::instance()->dynamicModel->getPositionUnits();
 						
 			if (rl::math::UNIT_RADIAN == units(index.row()))
 			{
@@ -307,7 +307,7 @@ PositionModel::data(const QModelIndex& index, int role) const
 QVariant
 VelocityModel::data(const QModelIndex& index, int role) const
 {
-	if (nullptr == MainWindow::instance()->kinematicModels)
+	if (nullptr == MainWindow::instance()->dynamicModel)
 	{
 		return QVariant();
 	}
@@ -322,8 +322,8 @@ VelocityModel::data(const QModelIndex& index, int role) const
 	case Qt::DisplayRole:
 	case Qt::EditRole:
 		{
-			rl::math::Vector values = MainWindow::instance()->kinematicModels->getVelocity();
-			Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> units = MainWindow::instance()->kinematicModels->getVelocityUnits();
+			rl::math::Vector values = MainWindow::instance()->dynamicModel->getVelocity();
+			Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> units = MainWindow::instance()->dynamicModel->getVelocityUnits();
 			
 			if (rl::math::UNIT_RADIAN == units(index.row()))
 			{
@@ -348,7 +348,7 @@ VelocityModel::data(const QModelIndex& index, int role) const
 QVariant
 AccelerationModel::data(const QModelIndex& index, int role) const
 {
-	if (nullptr == MainWindow::instance()->kinematicModels)
+	if (nullptr == MainWindow::instance()->dynamicModel)
 	{
 		return QVariant();
 	}
@@ -363,8 +363,8 @@ AccelerationModel::data(const QModelIndex& index, int role) const
 	case Qt::DisplayRole:
 	case Qt::EditRole:
 		{
-			rl::math::Vector values = MainWindow::instance()->kinematicModels->getAcceleration();
-			Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> units = MainWindow::instance()->kinematicModels->getAccelerationUnits();
+			rl::math::Vector values = MainWindow::instance()->dynamicModel->getAcceleration();
+			Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> units = MainWindow::instance()->dynamicModel->getAccelerationUnits();
 			
 			if (rl::math::UNIT_RADIAN == units(index.row()))
 			{
@@ -390,7 +390,7 @@ AccelerationModel::data(const QModelIndex& index, int role) const
 QVariant
 TorqueModel::data(const QModelIndex& index, int role) const
 {
-	if (nullptr == MainWindow::instance()->kinematicModels)
+	if (nullptr == MainWindow::instance()->dynamicModel)
 	{
 		return QVariant();
 	}

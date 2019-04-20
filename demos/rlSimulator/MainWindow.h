@@ -39,7 +39,7 @@
 #include <QTimer>
 #include <vector>
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
-#include <rl/mdl/Model.h>
+#include <rl/mdl/Dynamic.h>
 #include <rl/sg/Model.h>
 #include <rl/sg/so/Scene.h>
 
@@ -69,11 +69,11 @@ public:
 	
 	AccelerationModel* accelerationModel;
 	
+	std::shared_ptr<rl::mdl::Dynamic> dynamicModel;
+	
 	rl::math::Vector externalTorque;
 	
 	rl::sg::Model* geometryModels;
-	
-	std::shared_ptr<rl::mdl::Model> kinematicModels;
 	
 	OperationalModel* operationalModel;
 	

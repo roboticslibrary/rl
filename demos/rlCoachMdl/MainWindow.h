@@ -37,7 +37,7 @@
 #include <QTabWidget>
 #include <vector>
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
-#include <rl/mdl/Model.h>
+#include <rl/mdl/Kinematic.h>
 #include <rl/sg/Model.h>
 #include <rl/sg/so/Scene.h>
 
@@ -69,7 +69,7 @@ public:
 	
 	QComboBox* ikJacobianInverseComboBox;
 	
-	std::vector<std::shared_ptr<rl::mdl::Model>> kinematicModels;
+	std::vector<std::shared_ptr<rl::mdl::Kinematic>> kinematicModels;
 	
 	std::vector<OperationalModel*> operationalModels;
 	
