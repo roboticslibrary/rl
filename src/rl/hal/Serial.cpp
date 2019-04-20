@@ -186,10 +186,10 @@ namespace rl
 				throw ComException(::GetLastError());
 			}
 			
-			ctsOn = status & MS_CTS_ON ? true : false;
-			dsrOn = status & MS_DSR_ON ? true : false;
-			riOn = status & MS_RING_ON ? true : false;
-			dcdOn = status & MS_RLSD_ON ? true : false;
+			ctsOn = (status & MS_CTS_ON) ? true : false;
+			dsrOn = (status & MS_DSR_ON) ? true : false;
+			riOn = (status & MS_RING_ON) ? true : false;
+			dcdOn = (status & MS_RLSD_ON) ? true : false;
 #else // WIN32
 			int status = 0;
 			

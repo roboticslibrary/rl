@@ -82,7 +82,7 @@ namespace rl
 			{
 				for (::std::size_t j = 0, k = 1; j < 3; ++j, k *= 2)
 				{
-					p[i](j) = i & k ? this->max(j) : this->min(j);
+					p[i](j) = (i & k) ? this->max(j) : this->min(j);
 				}
 			}
 			

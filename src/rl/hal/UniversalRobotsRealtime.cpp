@@ -139,7 +139,7 @@ namespace rl
 		bool
 		UniversalRobotsRealtime::getDigitalInput(const ::std::size_t& i) const
 		{
-			return this->in.digitalInputBits & (1ULL << i) ? true : false;
+			return (this->in.digitalInputBits & (1ULL << i)) ? true : false;
 		}
 		
 		::std::size_t
@@ -157,7 +157,7 @@ namespace rl
 		bool
 		UniversalRobotsRealtime::getDigitalOutput(const ::std::size_t& i) const
 		{
-			return this->in.digitalOutputs & (1ULL << i) ? true : false;
+			return (this->in.digitalOutputs & (1ULL << i)) ? true : false;
 		}
 		
 		::std::size_t
