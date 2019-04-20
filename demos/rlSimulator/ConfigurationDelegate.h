@@ -46,8 +46,6 @@ public:
 	
 	void updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex& index) const;
 	
-	std::size_t id;
-	
 public slots:
 	void valueChanged(double d);
 	
