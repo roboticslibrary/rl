@@ -57,11 +57,8 @@ namespace rl
 				throw DeviceException("Could not load the desired calibration");
 			}
 			
-			for (::std::size_t i = 0; i < 6; ++i)
-			{
-				this->values[i] = ::std::numeric_limits< ::rl::math::Real>::quiet_NaN();
-				this->voltages[i] = ::std::numeric_limits< ::rl::math::Real>::quiet_NaN();
-			}
+			this->values.fill(::std::numeric_limits< ::rl::math::Real>::quiet_NaN());
+			this->voltages.fill(::std::numeric_limits< ::rl::math::Real>::quiet_NaN());
 		}
 		
 		Ati::~Ati()
@@ -75,7 +72,7 @@ namespace rl
 		void
 		Ati::bias()
 		{
-			Bias(this->cal, this->voltages);
+			Bias(this->cal, this->voltages.data());
 		}
 		
 		void
@@ -98,7 +95,7 @@ namespace rl
 		{
 			::rl::math::Vector forces(3);
 			
-			for (::std::size_t i = 0; i < 3; ++i)
+			for (::std::size_t i = 0; i < forces.size(); ++i)
 			{
 				forces(i) = this->values[i];
 			}
@@ -127,7 +124,7 @@ namespace rl
 		{
 			::rl::math::Vector forcesTorques(6);
 			
-			for (::std::size_t i = 0; i < 6; ++i)
+			for (::std::size_t i = 0; i < forcesTorques.size(); ++i)
 			{
 				forcesTorques(i) = this->values[i];
 			}
@@ -156,9 +153,9 @@ namespace rl
 		{
 			::rl::math::Vector torques(3);
 			
-			for (::std::size_t i = 3; i < 6; ++i)
+			for (::std::size_t i = 0; i < torques.size(); ++i)
 			{
-				torques(i) = this->values[i];
+				torques(i) = this->values[3 + i];
 			}
 			
 			return torques;
@@ -190,8 +187,9 @@ namespace rl
 		void
 		Ati::resetBias()
 		{
-			float voltages[6] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
-			Bias(this->cal, voltages);
+			std::array<float, 6> voltages;
+			voltages.fill(0.0f);
+			Bias(this->cal, voltages.data());
 		}
 		
 		void
@@ -202,12 +200,12 @@ namespace rl
 		void
 		Ati::step()
 		{
-			for (::std::size_t i = 0; i < 6; ++i)
+			for (::std::size_t i = 0; i < this->voltages.size(); ++i)
 			{
 				this->comedi.read(0, i, this->voltages[i]);
 			}
 			
-			ConvertToFT(this->cal, this->voltages, this->values);
+			ConvertToFT(this->cal, this->voltages.data(), this->values.data());
 		}
 		
 		void

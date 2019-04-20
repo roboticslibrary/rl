@@ -27,6 +27,7 @@
 #ifndef RL_HAL_ATI_H
 #define RL_HAL_ATI_H
 
+#include <array>
 #include <string>
 #include <atidaq/ftconfig.h>
 
@@ -100,9 +101,9 @@ namespace rl
 			/** The number of the calibration within the file (usually 1). */
 			unsigned short int index;
 			
-			float values[6];
+			std::array<float, 6> values;
 			
-			float voltages[6];
+			std::array<float, 6> voltages;
 		};
 	}
 }
