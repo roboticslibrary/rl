@@ -448,18 +448,15 @@ namespace rl
 			::std::string reply;
 			
 			::std::array<char, 256> buffer;
-			char* ptr;
-			::std::size_t sumbytes;
-			::std::size_t numbytes;
 			
 			do
 			{
-				ptr = buffer.data();
-				sumbytes = 0;
+				char* ptr = buffer.data();
+				::std::size_t sumbytes = 0;
 				
 				do
 				{
-					numbytes = this->socket.recv(ptr, 1);
+					::std::size_t numbytes = this->socket.recv(ptr, 1);
 					ptr += numbytes;
 					sumbytes += numbytes;
 				}
