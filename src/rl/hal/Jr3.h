@@ -27,6 +27,7 @@
 #ifndef RL_HAL_JR3_H
 #define RL_HAL_JR3_H
 
+#include <array>
 #include <string>
 
 #include "Comedi.h"
@@ -84,9 +85,9 @@ namespace rl
 		private:
 			Comedi comedi;
 			
-			float values[6];
+			std::array<float, 6> values;
 			
-			float zeroes[6];
+			std::array<float, 6> zeroes;
 		};
 	}
 }

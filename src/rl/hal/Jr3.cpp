@@ -41,11 +41,8 @@ namespace rl
 			values(),
 			zeroes()
 		{
-			for (::std::size_t i = 0; i < 6; ++i)
-			{
-				this->values[i] = ::std::numeric_limits< ::rl::math::Real>::quiet_NaN();
-				this->zeroes[i] = 0;
-			}
+			this->values.fill(::std::numeric_limits< ::rl::math::Real>::quiet_NaN());
+			this->zeroes.fill(0);
 		}
 		
 		Jr3::~Jr3()
@@ -55,10 +52,7 @@ namespace rl
 		void
 		Jr3::bias()
 		{
-			for (::std::size_t i = 0; i < 6; ++i)
-			{
-				this->zeroes[i] = this->values[i];
-			}
+			this->zeroes = this->values;
 		}
 		
 		void
@@ -73,7 +67,7 @@ namespace rl
 		{
 			::rl::math::Vector forces(3);
 			
-			for (::std::size_t i = 0; i < 3; ++i)
+			for (::std::size_t i = 0; i < forces.size(); ++i)
 			{
 				forces(i) = (this->values[i] - this->zeroes[i]) * 1000;
 			}
@@ -102,7 +96,7 @@ namespace rl
 		{
 			::rl::math::Vector forcesTorques(6);
 			
-			for (::std::size_t i = 0; i < 6; ++i)
+			for (::std::size_t i = 0; i < forcesTorques.size(); ++i)
 			{
 				forcesTorques(i) = (this->values[i] - this->zeroes[i]) * 1000;
 			}
@@ -131,9 +125,9 @@ namespace rl
 		{
 			::rl::math::Vector torques(3);
 			
-			for (::std::size_t i = 3; i < 6; ++i)
+			for (::std::size_t i = 0; i < torques.size(); ++i)
 			{
-				torques(i) = (this->values[i] - this->zeroes[i]) * 1000;
+				torques(i) = (this->values[3 + i] - this->zeroes[3 + i]) * 1000;
 			}
 			
 			return torques;
@@ -165,10 +159,7 @@ namespace rl
 		void
 		Jr3::resetBias()
 		{
-			for (::std::size_t i = 0; i < 6; ++i)
-			{
-				this->zeroes[i] = 0;
-			}
+			this->zeroes.fill(0);
 		}
 		
 		void
@@ -179,7 +170,7 @@ namespace rl
 		void
 		Jr3::step()
 		{
-			for (::std::size_t i = 0; i < 6; ++i)
+			for (::std::size_t i = 0; i < this->values.size(); ++i)
 			{
 				this->comedi.read(0, i, this->values[i]);
 			}
