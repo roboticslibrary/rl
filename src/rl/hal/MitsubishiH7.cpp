@@ -430,9 +430,9 @@ namespace rl
 			{
 				this->socket.select(true, false, this->filter * this->getUpdateRate() + 6 * this->getUpdateRate());
 			}
-			catch (const TimeoutException& e)
+			catch (const TimeoutException&)
 			{
-				throw e;
+				throw;
 			}
 			
 			this->socket.recv(&this->in, sizeof(Command));
