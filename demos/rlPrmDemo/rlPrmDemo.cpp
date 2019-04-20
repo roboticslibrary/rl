@@ -34,11 +34,19 @@
 #include <rl/plan/Prm.h>
 #include <rl/plan/RecursiveVerifier.h>
 #include <rl/plan/SimpleModel.h>
-#include <rl/plan/SimpleOptimizer.h>
 #include <rl/plan/UniformSampler.h>
 #include <rl/sg/XmlFactory.h>
+
+#if defined(RL_SG_SOLID)
 #include <rl/sg/solid/Model.h>
 #include <rl/sg/solid/Scene.h>
+#elif defined(RL_SG_BULLET)
+#include <rl/sg/bullet/Model.h>
+#include <rl/sg/bullet/Scene.h>
+#elif defined(RL_SG_ODE)
+#include <rl/sg/ode/Model.h>
+#include <rl/sg/ode/Scene.h>
+#endif
 
 int
 main(int argc, char** argv)
@@ -52,7 +60,13 @@ main(int argc, char** argv)
 	try
 	{
 		rl::sg::XmlFactory factory;
+#if defined(RL_SG_SOLID)
 		rl::sg::solid::Scene scene;
+#elif defined(RL_SG_BULLET)
+		rl::sg::bullet::Scene scene;
+#elif defined(RL_SG_ODE)
+		rl::sg::ode::Scene scene;
+#endif
 		factory.load(argv[1], &scene);
 		
 		std::shared_ptr<rl::kin::Kinematics> kinematics(rl::kin::Kinematics::create(argv[2]));
@@ -81,7 +95,7 @@ main(int argc, char** argv)
 		
 		for (std::size_t i = 0; i < kinematics->getDof(); ++i)
 		{
-			start(i) = boost::lexical_cast<rl::math::Real>(argv[i + 3]);
+			start(i) = boost::lexical_cast<rl::math::Real>(argv[i + 3]) * rl::math::DEG2RAD;
 		}
 		
 		planner.start = &start;
@@ -90,10 +104,13 @@ main(int argc, char** argv)
 		
 		for (std::size_t i = 0; i < kinematics->getDof(); ++i)
 		{
-			goal(i) = boost::lexical_cast<rl::math::Real>(argv[kinematics->getDof() + i + 3]);
+			goal(i) = boost::lexical_cast<rl::math::Real>(argv[kinematics->getDof() + i + 3]) * rl::math::DEG2RAD;
 		}
 		
 		planner.goal = &goal;
+		
+		std::cout << "start: " << start.transpose() * rl::math::RAD2DEG << std::endl;;
+		std::cout << "goal: " << goal.transpose() * rl::math::RAD2DEG << std::endl;;
 		
 		std::cout << "construct() ... " << std::endl;;
 		std::chrono::steady_clock::time_point startTime = std::chrono::steady_clock::now();

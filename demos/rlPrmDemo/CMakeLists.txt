@@ -1,8 +1,10 @@
 find_package(Boost REQUIRED)
 
+find_package(Bullet)
+find_package(ODE)
 find_package(SOLID3)
 
-if(SOLID3_FOUND)
+if(Bullet_FOUND OR ODE_FOUND OR SOLID3_FOUND)
 	add_executable(
 		rlPrmDemo
 		rlPrmDemo.cpp
