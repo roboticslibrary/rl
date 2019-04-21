@@ -25,9 +25,9 @@
 //
 
 #include <cassert>
-#include <cstdio>
 #include <iostream>
 #include <rl/math/Unit.h>
+#include <rl/util/io/Hex.h>
 
 #include "DeviceException.h"
 #include "Endian.h"
@@ -225,6 +225,8 @@ namespace rl
 		::std::size_t
 		SickS300::recv(::std::uint8_t* buf)
 		{
+			using namespace ::rl::util::io;
+			
 			::std::uint8_t* ptr;
 			::std::size_t sumbytes;
 			::std::size_t numbytes;
@@ -239,7 +241,7 @@ namespace rl
 					do
 					{
 						numbytes = serial.read(ptr, 1);
-printf("buf[0] %02x\n", buf[0]);
+::std::cout << "buf[0] " << hex(buf[0]) << ::std::endl;
 					}
 					while (0x00 != buf[0]); // 0x00
 					
@@ -247,7 +249,7 @@ printf("buf[0] %02x\n", buf[0]);
 					sumbytes += numbytes;
 					
 					numbytes = serial.read(ptr, 1);
-printf("buf[1] %02x\n", buf[1]);
+::std::cout << "buf[1] " << hex(buf[1]) << ::std::endl;
 				}
 				while (0x00 != buf[1]); // 0x00 0x00
 				
@@ -255,7 +257,7 @@ printf("buf[1] %02x\n", buf[1]);
 				sumbytes += numbytes;
 				
 				numbytes = serial.read(ptr, 1);
-printf("buf[2] %02x\n", buf[2]);
+::std::cout << "buf[2] " << hex(buf[2]) << ::std::endl;
 			}
 			while (0x00 != buf[2]); // 0x00 0x00 0x00
 			
@@ -263,7 +265,7 @@ printf("buf[2] %02x\n", buf[2]);
 			sumbytes += numbytes;
 			
 			numbytes = serial.read(ptr, 1);
-printf("buf[3] %02x\n", buf[3]);
+::std::cout << "buf[3] " << hex(buf[3]) << ::std::endl;
 			ptr += numbytes;
 			sumbytes += numbytes;
 			
@@ -316,7 +318,7 @@ printf("buf[3] %02x\n", buf[3]);
 			for (::std::size_t i = 0; i < 6; ++i)
 			{
 				numbytes = serial.read(ptr, 1);
-printf("buf[%zi] %02x\n", i + 4, buf[i + 4]);
+::std::cout << "buf[" << i + 4 << "] " << hex(buf[i + 4]) << ::std::endl;
 				ptr += numbytes;
 				sumbytes += numbytes;
 			}
@@ -328,8 +330,8 @@ std::cout << "length " << length << std::endl;
 			{
 				throw DeviceException("Data length mismatch");
 			}
-printf("coordinationFlag %02x\n", buf[8]);
-printf("deviceAddress %02x\n", buf[9]);
+::std::cout << "coordinationFlag  " << hex(buf[8]) << ::std::endl;
+::std::cout << "deviceAddress  " << hex(buf[9]) << ::std::endl;
 			
 			for (::std::size_t i = 0; i < 1094; ++i)
 			{
@@ -337,7 +339,7 @@ printf("deviceAddress %02x\n", buf[9]);
 				ptr += numbytes;
 				sumbytes += numbytes;
 			}
-printf("version %02x%02x\n", buf[11], buf[10]);
+::std::cout << "version  " << hex(buf[11]) << hex(buf[10]) << ::std::endl;
 			
 			if (0x01 != buf[11] || 0x02 != buf[10])
 			{
@@ -353,10 +355,10 @@ printf("version %02x%02x\n", buf[11], buf[10]);
 				Endian::hostWord(buf[17], buf[16]),
 				Endian::hostWord(buf[15], buf[14])
 			);
-std::cout << "scanNumber " << scanNumber << std::endl;
+::std::cout << "scanNumber " << scanNumber << std::endl;
 			
 			::std::uint16_t telegramNumber = Endian::hostWord(buf[19], buf[18]);
-std::cout << "telegramNumber " << telegramNumber << std::endl;
+::std::cout << "telegramNumber " << telegramNumber << std::endl;
 			
 			for (::std::size_t i = 0; i < 2; ++i)
 			{
@@ -376,7 +378,7 @@ std::cout << "telegramNumber " << telegramNumber << std::endl;
 			{
 				throw DeviceException("Checksum error");
 			}
-for (::std::size_t i = 0; i < sumbytes; ++i) { printf("%02x ", buf[i]); } printf("\n");
+for (::std::size_t i = 0; i < sumbytes; ++i) { ::std::cout << hex(buf[i]) << " "; } ::std::cout << ::std::endl;
 
 			return sumbytes;
 		}

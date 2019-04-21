@@ -33,7 +33,7 @@
 //#define DEBUG_TCP_DATA
 
 #ifdef DEBUG_TCP_DATA
-#include <cstdio>
+#include <rl/util/io/Hex.h>
 #endif
 
 #include "Endian.h"
@@ -675,6 +675,10 @@ namespace rl
 		::std::size_t
 		WeissWsg50::recv(::std::uint8_t* buf)
 		{
+#ifdef DEBUG_TCP_DATA
+			using namespace ::rl::util::io;
+#endif
+			
 			assert(this->isConnected());
 			
 			::std::uint8_t* ptr;
@@ -723,12 +727,11 @@ namespace rl
 			}
 			
 #ifdef DEBUG_TCP_DATA
-			printf("Debug: recv header buf:");
+			::std::cout << "Debug: recv header buf:";
 			for (::std::size_t i = 0; i < sumbytes; ++i)
 			{
-				printf(" %02X", buf[i]);
+				::std::cout << " " << hex(buf[i]);
 			}
-			fflush(stdout);
 #endif
 			
 			::std::uint16_t length = Endian::hostWord(buf[5], buf[4]);
@@ -762,10 +765,9 @@ namespace rl
 #ifdef DEBUG_TCP_DATA
 			for (::std::size_t i = 8; i < sumbytes; ++i)
 			{
-				printf(" %02X", buf[i]);
+				::std::cout << " " << hex(buf[i]);
 			}
-			printf("\n");
-			fflush(stdout);
+			::std::cout << ::std::endl;;
 #endif
 			
 			if (this->crc(buf, sumbytes - 2) != Endian::hostWord(buf[sumbytes - 1], buf[sumbytes - 2]))
@@ -833,6 +835,10 @@ namespace rl
 		void
 		WeissWsg50::send(::std::uint8_t* buf, const ::std::size_t& len)
 		{
+#ifdef DEBUG_TCP_DATA
+			using namespace ::rl::util::io;
+#endif
+			
 			assert(this->isConnected());
 			assert(len > 6);
 			
@@ -856,13 +862,12 @@ namespace rl
 			}
 			
 #ifdef DEBUG_TCP_DATA
-			printf("Debug: send buf:");
+			::std::cout << "Debug: send buf:";
 			for (::std::size_t i = 0; i < len; ++i)
 			{
-				printf(" %02X", buf[i]);
+				::std::cout << " " << hex(buf[i]);
 			}
-			printf("\n");
-			fflush(stdout);
+			::std::cout << ::std::endl;;
 #endif
 		}
 		

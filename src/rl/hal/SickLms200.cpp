@@ -25,9 +25,9 @@
 //
 
 #include <cassert>
-#include <cstdio>
 #include <iostream>
 #include <rl/math/Unit.h>
+#include <rl/util/io/Hex.h>
 
 #include "DeviceException.h"
 #include "Endian.h"
@@ -128,6 +128,8 @@ namespace rl
 		void
 		SickLms200::dumpConfiguration()
 		{
+			using namespace ::rl::util::io;
+			
 			assert(this->isConnected());
 			
 			::std::array< ::std::uint8_t, 812> buf;
@@ -142,9 +144,9 @@ namespace rl
 			
 			this->recv(buf.data(), 1 + 1 + 2 + 1 + 32 + 1 + 2, 0xF4);
 			
-			printf("A:  %i\n", Endian::hostWord(buf[6], buf[5]));
-			printf("B:  %02x %02x\n", buf[8], buf[7]);
-			printf("C:  %02x\n", buf[9]);
+			::std::cout << "A:  " << Endian::hostWord(buf[6], buf[5]) << ::std::endl;
+			::std::cout << "B:  H:" << hex(buf[8]) << " L:" << hex(buf[7]) << ::std::endl;
+			::std::cout << "C:  " << hex(buf[9]) << ::std::endl;
 			
 			if (buf[9] & 1)
 			{
@@ -161,38 +163,40 @@ namespace rl
 				::std::cout << "Availability level 2" << ::std::endl;
 			}
 			
-			printf("D:  %02x\n", buf[10]);
-			printf("E:  %02x\n", buf[11]);
-			printf("F:  %02x\n", buf[12]);
-			printf("G:  %02x\n", buf[13]);
-			printf("H:  %02x\n", buf[14]);
-			printf("I:  %02x\n", buf[15]);
-			printf("J:  %02x\n", buf[16]);
-			printf("K:  %02x\n", buf[17]);
-			printf("L:  %02x\n", buf[18]);
-			printf("M:  %02x\n", buf[19]);
-			printf("N:  %02x\n", buf[20]);
-			printf("O:  %02x\n", buf[21]);
-			printf("P:  %02x\n", buf[22]);
-			printf("Q:  %02x\n", buf[23]);
-			printf("R:  %02x\n", buf[24]);
-			printf("S:  %02x\n", buf[25]);
-			printf("T:  %02x\n", buf[26]);
-			printf("U:  %02x\n", buf[27]);
-			printf("V:  %02x\n", buf[28]);
-			printf("W:  %02x\n", buf[29]);
-			printf("X:  %02x\n", buf[30]);
-			printf("Y:  %02x\n", buf[31]);
-			printf("Z:  %02x\n", buf[32]);
-			printf("A1: %02x\n", buf[33]);
-			printf("A2: %02x\n", buf[34]);
-			printf("A3: %02x %02x\n", buf[36], buf[35]);
-			printf("A4: %02x %02x\n", buf[38], buf[37]);
+			::std::cout << "D:  " << hex(buf[10]) << ::std::endl;
+			::std::cout << "E:  " << hex(buf[11]) << ::std::endl;
+			::std::cout << "F:  " << hex(buf[12]) << ::std::endl;
+			::std::cout << "G:  " << hex(buf[13]) << ::std::endl;
+			::std::cout << "H:  " << hex(buf[14]) << ::std::endl;
+			::std::cout << "I:  " << hex(buf[15]) << ::std::endl;
+			::std::cout << "J:  " << hex(buf[16]) << ::std::endl;
+			::std::cout << "K:  " << hex(buf[17]) << ::std::endl;
+			::std::cout << "L:  " << hex(buf[18]) << ::std::endl;
+			::std::cout << "M:  " << hex(buf[19]) << ::std::endl;
+			::std::cout << "N:  " << hex(buf[20]) << ::std::endl;
+			::std::cout << "O:  " << hex(buf[21]) << ::std::endl;
+			::std::cout << "P:  " << hex(buf[22]) << ::std::endl;
+			::std::cout << "Q:  " << hex(buf[23]) << ::std::endl;
+			::std::cout << "R:  " << hex(buf[24]) << ::std::endl;
+			::std::cout << "S:  " << hex(buf[25]) << ::std::endl;
+			::std::cout << "T:  " << hex(buf[26]) << ::std::endl;
+			::std::cout << "U:  " << hex(buf[27]) << ::std::endl;
+			::std::cout << "V:  " << hex(buf[28]) << ::std::endl;
+			::std::cout << "W:  " << hex(buf[29]) << ::std::endl;
+			::std::cout << "X:  " << hex(buf[30]) << ::std::endl;
+			::std::cout << "Y:  " << hex(buf[31]) << ::std::endl;
+			::std::cout << "Z:  " << hex(buf[32]) << ::std::endl;
+			::std::cout << "A1: " << hex(buf[33]) << ::std::endl;
+			::std::cout << "A2: " << hex(buf[34]) << ::std::endl;
+			::std::cout << "A3: H:" << hex(buf[36]) << " L:" << hex(buf[35]) << ::std::endl;
+			::std::cout << "A4: " << Endian::hostWord(buf[38], buf[37]) << ::std::endl;
 		}
 		
 		void
 		SickLms200::dumpStatus()
 		{
+			using namespace ::rl::util::io;
+			
 			assert(this->isConnected());
 			
 			::std::array< ::std::uint8_t, 812> buf;
@@ -207,86 +211,82 @@ namespace rl
 			
 			this->recv(buf.data(), 1 + 1 + 2 + 1 + 152 + 1 + 2, 0xB1);
 			
-			printf("A:  %c %c %c %c %c %c %c\n", buf[5], buf[6], buf[7], buf[8], buf[9], buf[10], buf[11]);
-			printf("B:  %02x\n", buf[12]);
-			printf("C:  %02x\n", buf[13]);
-			printf("D:  reserved\n");
-			printf("?:  %c %c %c %c %c %c\n", buf[16], buf[17], buf[18], buf[19], buf[20], buf[21]);
-			printf("E:  %02x\n", buf[22]);
-			printf("F:  %i %i %i %i %i %i %i %i\n",
-				Endian::hostWord(buf[24], buf[23]),
-				Endian::hostWord(buf[26], buf[25]),
-				Endian::hostWord(buf[28], buf[27]),
-				Endian::hostWord(buf[30], buf[29]),
-				Endian::hostWord(buf[32], buf[31]),
-				Endian::hostWord(buf[34], buf[33]),
-				Endian::hostWord(buf[36], buf[35]),
-				Endian::hostWord(buf[38], buf[37])
-			);
-			printf("G:  %i %i %i %i\n",
-				Endian::hostWord(buf[40], buf[39]),
-				Endian::hostWord(buf[42], buf[41]),
-				Endian::hostWord(buf[44], buf[43]),
-				Endian::hostWord(buf[46], buf[45])
-			);
-			printf("H:  %i %i %i %i %i %i %i %i\n",
-				Endian::hostWord(buf[48], buf[47]),
-				Endian::hostWord(buf[50], buf[49]),
-				Endian::hostWord(buf[52], buf[51]),
-				Endian::hostWord(buf[54], buf[53]),
-				Endian::hostWord(buf[56], buf[55]),
-				Endian::hostWord(buf[58], buf[57]),
-				Endian::hostWord(buf[60], buf[59]),
-				Endian::hostWord(buf[62], buf[61])
-			);
-			printf("I:  %i %i %i %i\n",
-				Endian::hostWord(buf[64], buf[63]),
-				Endian::hostWord(buf[66], buf[65]),
-				Endian::hostWord(buf[68], buf[67]),
-				Endian::hostWord(buf[70], buf[69])
-			);
-			printf("J:  %i\n", Endian::hostWord(buf[72], buf[71]));
-			printf("K:  reserved\n");
-			printf("L:  %i\n", Endian::hostWord(buf[76], buf[75]));
-			printf("M:  reserved\n");
-			printf("N:  %i\n", Endian::hostWord(buf[80], buf[79]));
-			printf("O:  %i\n", Endian::hostWord(buf[82], buf[81]));
-			printf("P:  reserved\n");
-			printf("Q:  %i\n", Endian::hostWord(buf[86], buf[85]));
-			printf("R:  %i\n", Endian::hostWord(buf[88], buf[87]));
-			printf("S:  %i\n", Endian::hostWord(buf[90], buf[89]));
-			printf("T:  %i\n", Endian::hostWord(buf[92], buf[91]));
-			printf("U:  %i\n", Endian::hostWord(buf[94], buf[93]));
-			printf("V:  %i\n", Endian::hostWord(buf[96], buf[95]));
-			printf("W:  %i\n", Endian::hostWord(buf[98], buf[97]));
-			printf("X:  %i\n", Endian::hostWord(buf[100], buf[99]));
-			printf("Y:  %i\n", Endian::hostWord(buf[102], buf[101]));
-			printf("Z:  %i\n", Endian::hostWord(buf[104], buf[103]));
-			printf("A1: reserved\n");
-			printf("A2: %02x\n", buf[106]);
-			printf("A3: H:%02x L:%02x\n", buf[108], buf[107]);
-			printf("A4: H:%02x L:%02x\n", buf[110], buf[109]);
-			printf("A5: %i\n", Endian::hostWord(buf[112], buf[111]));
-			printf("A6: %i\n", Endian::hostWord(buf[114], buf[113]));
-			printf("A7: %02x\n", buf[115]);
-			printf("A8: %i\n", Endian::hostWord(buf[117], buf[116]));
-			printf("A9: %c\n", buf[118]);
-			printf("B1: reserved\n");
-			printf("B2: %04x\n", Endian::hostWord(buf[121], buf[120]));
-			printf("B3: %02x\n", buf[122]);
-			printf("B4: %02x\n", buf[123]);
-			printf("B5: %02x\n", buf[124]);
-			printf("B6: %02x\n", buf[125]);
-			printf("B7: %02x\n", buf[126]);
-			printf("B8: %02x\n", buf[127]);
-			printf("B9: %c %c %c %c %c %c %c\n", buf[128], buf[129], buf[130], buf[131], buf[132], buf[133], buf[134]);
-			printf("C1: %i\n", Endian::hostDoubleWord(Endian::hostWord(buf[138], buf[137]), Endian::hostWord(buf[136], buf[135])));
-			printf("C2: %i\n", Endian::hostDoubleWord(Endian::hostWord(buf[142], buf[141]), Endian::hostWord(buf[140], buf[139])));
-			printf("C3: %i\n", Endian::hostDoubleWord(Endian::hostWord(buf[146], buf[145]), Endian::hostWord(buf[144], buf[143])));
-			printf("C4: %i\n", Endian::hostDoubleWord(Endian::hostWord(buf[150], buf[149]), Endian::hostWord(buf[148], buf[147])));
-			printf("C5: %i\n", Endian::hostWord(buf[152], buf[151]));
-			printf("C6: %i\n", Endian::hostWord(buf[154], buf[153]));
-			printf("C7: %i\n", Endian::hostWord(buf[156], buf[155]));
+			::std::cout << "A:  " << buf[5] << " " << buf[6] << " " << buf[7] << " " << buf[8] << " " << buf[9] << " " << buf[10] << " " << buf[11] << ::std::endl;
+			::std::cout << "B:  " << hex(buf[12]) << ::std::endl;
+			::std::cout << "C:  " << hex(buf[13]) << ::std::endl;
+			::std::cout << "D:  reserved" << ::std::endl;
+			::std::cout << "?:  " << buf[16] << " " << buf[17] << " " << buf[18] << " " << buf[19] << " " << buf[20] << " " << buf[21] << ::std::endl;
+			::std::cout << "E:  " << hex(buf[22]) << ::std::endl;
+			::std::cout << "F:  " <<
+				Endian::hostWord(buf[24], buf[23]) << " " <<
+				Endian::hostWord(buf[26], buf[25]) << " " <<
+				Endian::hostWord(buf[28], buf[27]) << " " <<
+				Endian::hostWord(buf[30], buf[29]) << " " <<
+				Endian::hostWord(buf[32], buf[31]) << " " <<
+				Endian::hostWord(buf[34], buf[33]) << " " <<
+				Endian::hostWord(buf[36], buf[35]) << " " <<
+				Endian::hostWord(buf[38], buf[37]) << ::std::endl;
+			::std::cout << "G:  " <<
+				Endian::hostWord(buf[40], buf[39]) << " " <<
+				Endian::hostWord(buf[42], buf[41]) << " " <<
+				Endian::hostWord(buf[44], buf[43]) << " " <<
+				Endian::hostWord(buf[46], buf[45]) << ::std::endl;
+			::std::cout << "H:  " <<
+				Endian::hostWord(buf[48], buf[47]) << " " <<
+				Endian::hostWord(buf[50], buf[49]) << " " <<
+				Endian::hostWord(buf[52], buf[51]) << " " <<
+				Endian::hostWord(buf[54], buf[53]) << " " <<
+				Endian::hostWord(buf[56], buf[55]) << " " <<
+				Endian::hostWord(buf[58], buf[57]) << " " <<
+				Endian::hostWord(buf[60], buf[59]) << " " <<
+				Endian::hostWord(buf[62], buf[61]) << ::std::endl;
+			::std::cout << "I:  " <<
+				Endian::hostWord(buf[64], buf[63]) << " " <<
+				Endian::hostWord(buf[66], buf[65]) << " " <<
+				Endian::hostWord(buf[68], buf[67]) << " " <<
+				Endian::hostWord(buf[70], buf[69]) << ::std::endl;
+			::std::cout << "J:  " << Endian::hostWord(buf[72], buf[71]) << ::std::endl;
+			::std::cout << "K:  reserved" << ::std::endl;
+			::std::cout << "L:  " << Endian::hostWord(buf[76], buf[75]) << ::std::endl;
+			::std::cout << "M:  reserved" << ::std::endl;
+			::std::cout << "N:  " << Endian::hostWord(buf[80], buf[79]) << ::std::endl;
+			::std::cout << "O:  " << Endian::hostWord(buf[82], buf[81]) << ::std::endl;
+			::std::cout << "P:  reserved" << ::std::endl;
+			::std::cout << "Q:  " << Endian::hostWord(buf[86], buf[85]) << ::std::endl;
+			::std::cout << "R:  " << Endian::hostWord(buf[88], buf[87]) << ::std::endl;
+			::std::cout << "S:  " << Endian::hostWord(buf[90], buf[89]) << ::std::endl;
+			::std::cout << "T:  " << Endian::hostWord(buf[92], buf[91]) << ::std::endl;
+			::std::cout << "U:  " << Endian::hostWord(buf[94], buf[93]) << ::std::endl;
+			::std::cout << "V:  " << Endian::hostWord(buf[96], buf[95]) << ::std::endl;
+			::std::cout << "W:  " << Endian::hostWord(buf[98], buf[97]) << ::std::endl;
+			::std::cout << "X:  " << Endian::hostWord(buf[100], buf[99]) << ::std::endl;
+			::std::cout << "Y:  " << Endian::hostWord(buf[102], buf[101]) << ::std::endl;
+			::std::cout << "Z:  " << Endian::hostWord(buf[104], buf[103]) << ::std::endl;
+			::std::cout << "A1: reserved" << ::std::endl;
+			::std::cout << "A2: " << hex(buf[106]) << ::std::endl;
+			::std::cout << "A3: H:" << hex(buf[108]) << " L:" << hex(buf[107]) << ::std::endl;
+			::std::cout << "A4: H:" << hex(buf[110]) << " L:" << hex(buf[109]) << ::std::endl;
+			::std::cout << "A5: " << Endian::hostWord(buf[112], buf[111]) << ::std::endl;
+			::std::cout << "A6: " << Endian::hostWord(buf[114], buf[113]) << ::std::endl;
+			::std::cout << "A7: " << hex(buf[115]) << ::std::endl;
+			::std::cout << "A8: " << Endian::hostWord(buf[117], buf[116]) << ::std::endl;
+			::std::cout << "A9: " << buf[118] << ::std::endl;
+			::std::cout << "B1: reserved" << ::std::endl;
+			::std::cout << "B2: " << hex(Endian::hostWord(buf[121], buf[120])) << ::std::endl;
+			::std::cout << "B3: " << hex(buf[122]) << ::std::endl;
+			::std::cout << "B4: " << hex(buf[123]) << ::std::endl;
+			::std::cout << "B5: " << hex(buf[124]) << ::std::endl;
+			::std::cout << "B6: " << hex(buf[125]) << ::std::endl;
+			::std::cout << "B7: " << hex(buf[126]) << ::std::endl;
+			::std::cout << "B8: " << hex(buf[127]) << ::std::endl;
+			::std::cout << "B9: " << " " << buf[128] << " " << buf[129] << " " << buf[130] << " " << buf[131] << " " << buf[132] << " " << buf[133] << " " << buf[134] << ::std::endl;
+			::std::cout << "C1: " << Endian::hostDoubleWord(Endian::hostWord(buf[138], buf[137]), Endian::hostWord(buf[136], buf[135])) << ::std::endl;
+			::std::cout << "C2: " << Endian::hostDoubleWord(Endian::hostWord(buf[142], buf[141]), Endian::hostWord(buf[140], buf[139])) << ::std::endl;
+			::std::cout << "C3: " << Endian::hostDoubleWord(Endian::hostWord(buf[146], buf[145]), Endian::hostWord(buf[144], buf[143])) << ::std::endl;
+			::std::cout << "C4: " << Endian::hostDoubleWord(Endian::hostWord(buf[150], buf[149]), Endian::hostWord(buf[148], buf[147])) << ::std::endl;
+			::std::cout << "C5: " << Endian::hostWord(buf[152], buf[151]) << ::std::endl;
+			::std::cout << "C6: " << Endian::hostWord(buf[154], buf[153]) << ::std::endl;
+			::std::cout << "C7: " << Endian::hostWord(buf[156], buf[155]) << ::std::endl;
 		}
 		
 		SickLms200::BaudRate
