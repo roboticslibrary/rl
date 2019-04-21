@@ -669,9 +669,9 @@ namespace rl
 				}
 				
 #if defined(WIN32) || defined(__QNX__)
-				if (3 == i)
+				if (2 == i)
 #else // defined(WIN32) || defined(__QNX__)
-				if (4 == i)
+				if (3 == i)
 #endif // defined(WIN32) || defined(__QNX__)
 				{
 					throw DeviceException("could not sync baud rate.");
