@@ -1,5 +1,6 @@
 project(tris2wrl)
 
+find_package(Boost REQUIRED)
 find_package(Coin)
 
 if(Coin_FOUND)
@@ -17,6 +18,7 @@ if(Coin_FOUND)
 	target_include_directories(
 		tris2wrl
 		PUBLIC
+		${Boost_INCLUDE_DIR}
 		${Coin_INCLUDE_DIRS}
 	)
 	

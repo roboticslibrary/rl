@@ -1,9 +1,13 @@
+#include <fstream>
 #include <iostream>
+#include <string>
 #include <vector>
+#include <boost/algorithm/string.hpp>
 #include <Inventor/SoDB.h>
 #include <Inventor/SoOutput.h>
 #include <Inventor/actions/SoWriteAction.h>
 #include <Inventor/VRMLnodes/SoVRMLAppearance.h>
+#include <Inventor/VRMLnodes/SoVRMLColor.h>
 #include <Inventor/VRMLnodes/SoVRMLCoordinate.h>
 #include <Inventor/VRMLnodes/SoVRMLIndexedFaceSet.h>
 #include <Inventor/VRMLnodes/SoVRMLMaterial.h>
@@ -19,9 +23,21 @@ main(int argc, char** argv)
 		return EXIT_FAILURE;
 	}
 	
-	FILE* f = fopen(argv[1], "r");
-	
 	SoDB::init();
+	
+	std::fstream file;
+	file.open(argv[1]);
+	
+	std::string line;
+	std::vector<std::string> tokens;
+	
+	std::getline(file, line);
+	
+	if (!boost::starts_with(line, "#"))
+	{
+		file.close();
+		return EXIT_FAILURE;
+	}
 	
 	SoVRMLTransform* root = new SoVRMLTransform();
 	root->ref();
@@ -41,105 +57,112 @@ main(int argc, char** argv)
 	SoVRMLCoordinate* coordinate = new SoVRMLCoordinate();
 	indexedFaceSet->coord = coordinate;
 	
-	char line[256];
-	char ign;
+	SoVRMLColor* color = new SoVRMLColor();
+	indexedFaceSet->color = color;
 	
-	fscanf(f, "%[^\n]%c", line, &ign);
+	indexedFaceSet->colorPerVertex.setValue(false);
+	indexedFaceSet->solid.setValue(false);
 	
-	float pt[3];
-	unsigned int points = 0;
-	
-	while (EOF != fscanf(f, "%[^\n]%c", line, &ign))
-	{  
-		if ('#' != line[0])
-		{
-			// Not a comment
-			if (3 != sscanf(line, "%g %g %g", pt, pt + 1, pt + 2))
-			{
-				fprintf(stderr, "Error couldn't parse a point (%s)\n", line);
-			}
-			else
-			{
-				coordinate->point.set1Value(points, pt[0], pt[1], pt[2]);
-				++points;
-			}
-		}
-		else
-		{
-			break;
-		}
-	}
-	
-	int tri[3];
-	unsigned int triangles = 0;
-	
-	while (EOF != fscanf(f, "%[^\n]%c", line, &ign)) 
+	while (-1 != file.peek())
 	{
-		if ('#' != line[0])
+		std::getline(file, line);
+		
+		if (line.empty())
 		{
-			// Not a comment
-			if (3 != sscanf(line, "%d %d %d", tri, tri + 1, tri + 2))
-			{
-				fprintf(stderr, "Error couldn't parse a triangle (%s)\n", line);
-			}
-			else
-			{
-				indexedFaceSet->coordIndex.set1Value(triangles, tri[0]);
-				++triangles;
-				indexedFaceSet->coordIndex.set1Value(triangles, tri[1]);
-				++triangles;
-				indexedFaceSet->coordIndex.set1Value(triangles, tri[2]);
-				++triangles;
-				indexedFaceSet->coordIndex.set1Value(triangles, -1);
-				++triangles;
-			}
+			continue;
 		}
-		else
+		else if (boost::starts_with(line, "#"))
 		{
 			break;
 		}
+		
+		boost::trim(line);
+		boost::split(tokens, line, boost::is_space(), boost::token_compress_on);
+		
+		coordinate->point.set1Value(coordinate->point.getNum(), std::stof(tokens[0]), std::stof(tokens[1]), std::stof(tokens[2]));
 	}
 	
-	float nm[14];
-	
-	while (EOF != fscanf(f, "%[^\n]%c", line, &ign))
-	{  
-		if ('#' != line[0])
-		{
-			// Not a comment
-			if (14 != sscanf(line, "%f %f %f %g %g %g %g %g %g %g %g %g %g %g", &nm[0], &nm[1], &nm[2], &nm[3], &nm[4], &nm[5], &nm[6], &nm[7], &nm[8], &nm[9], &nm[10], &nm[11], &nm[12], &nm[13])) 
-			{
-				fprintf(stderr, "Error couldn't parse a material (%s)\n", line);
-			}
-		}
-		else
-		{
-			break;
-		}
-	}
-	
-	int index;
-	int i = 0;
-	char* pointer;
-	
-	while (EOF != fscanf(f, "%[^\n]%c", line, &ign)) 
+	while (-1 != file.peek())
 	{
-		if ('#' != line[0])
+		std::getline(file, line);
+		
+		if (line.empty())
 		{
-			// Not a comment
-			pointer = &line[0];
-			
-			while (1 == sscanf(pointer, "%d, ", &index))
-			{
-				i++;
-				pointer += 3;
-			}
+			continue;
 		}
-		else
+		else if (boost::starts_with(line, "#"))
 		{
 			break;
 		}
+		
+		boost::trim(line);
+		boost::split(tokens, line, boost::is_space(), boost::token_compress_on);
+		
+		for (std::size_t i = 0; i < tokens.size(); ++i)
+		{
+			indexedFaceSet->coordIndex.set1Value(indexedFaceSet->coordIndex.getNum(), std::stoi(tokens[i]));
+		}
+		
+		indexedFaceSet->coordIndex.set1Value(indexedFaceSet->coordIndex.getNum(), -1);
 	}
+	
+	while (-1 != file.peek())
+	{
+		std::getline(file, line);
+		
+		if (line.empty())
+		{
+			continue;
+		}
+		else if (boost::starts_with(line, "#"))
+		{
+			break;
+		}
+		
+		boost::trim(line);
+		boost::split(tokens, line, boost::is_space(), boost::token_compress_on);
+		
+		if (tokens.size() > 5)
+		{
+			color->color.set1Value(color->color.getNum(), std::stof(tokens[3]), std::stof(tokens[4]), std::stof(tokens[5]));
+		}
+	}
+	
+	while (-1 != file.peek())
+	{
+		std::getline(file, line);
+		
+		if (line.empty())
+		{
+			continue;
+		}
+		else if (boost::starts_with(line, "#"))
+		{
+			break;
+		}
+		
+		boost::trim_if(line, boost::is_any_of(", \t\n\v\f\r"));
+		boost::split(tokens, line, boost::is_any_of(", "), boost::token_compress_on);
+		
+		for (std::size_t i = 0; i < tokens.size(); ++i)
+		{
+			indexedFaceSet->colorIndex.set1Value(indexedFaceSet->colorIndex.getNum(), std::stoi(tokens[i]));
+		}
+	}
+	
+	std::cout << "coordinates: " << coordinate->point.getNum() << std::endl;
+	std::cout << "faces: " << indexedFaceSet->coordIndex.getNum() / 4 << std::endl;
+	std::cout << "materials: " << color->color.getNum() << std::endl;
+	std::cout << "material indices: " << indexedFaceSet->colorIndex.getNum() << std::endl;
+	
+	if (0 == indexedFaceSet->colorIndex.getNum())
+	{
+		color->ref();
+		indexedFaceSet->color.setValue(nullptr);
+		color->unref();
+	}
+	
+	file.close();
 	
 	SoOutput out;
 	out.openFile(argv[2]);
@@ -149,8 +172,6 @@ main(int argc, char** argv)
 	out.closeFile();
 	
 	root->unref();
-	
-	fclose(f);
 	
 	return EXIT_SUCCESS;
 }
