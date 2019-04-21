@@ -12,6 +12,13 @@ set(
 )
 list(APPEND HDRS ${BASE_HDRS})
 
+set(
+	IO_HDRS
+	io/BasicIosRestorer.h
+	io/Hex.h
+)
+list(APPEND HDRS ${IO_HDRS})
+
 if(RL_BUILD_UTIL_RTAI)
 	set(
 		RTAI_HDRS
@@ -57,6 +64,7 @@ target_include_directories(
 )
 
 install(FILES ${BASE_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/util COMPONENT development)
+install(FILES ${IO_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/util/io COMPONENT development)
 
 if(RL_BUILD_UTIL_RTAI)
 	target_include_directories(util INTERFACE ${RTAI_INCLUDE_DIRS})
