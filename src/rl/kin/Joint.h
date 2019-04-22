@@ -51,6 +51,8 @@ namespace rl
 			
 			virtual void jacobian(const ::rl::math::Transform& tcp, ::rl::math::MatrixBlock& j) = 0;
 			
+			virtual void normalize(::rl::math::Real& q);
+			
 			virtual void setPosition(const ::rl::math::Real& q);
 			
 			::rl::math::Real a;

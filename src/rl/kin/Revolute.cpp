@@ -77,6 +77,21 @@ namespace rl
 		}
 		
 		void
+		Revolute::normalize(::rl::math::Real& q)
+		{
+			q = ::std::fmod(q, 2 * static_cast< ::rl::math::Real>(M_PI));
+			
+			if (q < this->min)
+			{
+				q += 2 * static_cast< ::rl::math::Real>(M_PI);
+			}
+			else if (q > this->max)
+			{
+				q -= 2 * static_cast< ::rl::math::Real>(M_PI);
+			}
+		}
+		
+		void
 		Revolute::setPosition(const ::rl::math::Real& q)
 		{
 			this->transform.fromDenavitHartenbergPaul(

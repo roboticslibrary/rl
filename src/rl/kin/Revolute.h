@@ -49,6 +49,8 @@ namespace rl
 			 */
 			void jacobian(const ::rl::math::Transform& tcp, ::rl::math::MatrixBlock& j);
 			
+			void normalize(::rl::math::Real& q);
+			
 			void setPosition(const ::rl::math::Real& q);
 			
 		protected:

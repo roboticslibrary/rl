@@ -57,6 +57,11 @@ namespace rl
 		}
 		
 		void
+		Joint::normalize(::rl::math::Real& q)
+		{
+		}
+		
+		void
 		Joint::setPosition(const ::rl::math::Real& q)
 		{
 			this->q = q;
