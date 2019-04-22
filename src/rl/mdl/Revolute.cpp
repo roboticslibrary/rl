@@ -106,7 +106,7 @@ namespace rl
 		void
 		Revolute::normalize(::rl::math::VectorRef q) const
 		{
-			q(0) = ::std::fmod(q(0), 2 * static_cast< ::rl::math::Real>(M_PI));
+			q(0) = ::std::remainder(q(0), 2 * static_cast< ::rl::math::Real>(M_PI));
 			
 			if (q(0) < this->min(0))
 			{
