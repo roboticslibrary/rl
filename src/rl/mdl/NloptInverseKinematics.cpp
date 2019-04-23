@@ -180,9 +180,7 @@ namespace rl
 				::nlopt_destroy
 			);
 			
-			::std::vector<double> tolerance(this->kinematic->getDofPosition(), this->tolerance);
-			
-			if (::nlopt_set_xtol_abs(opt.get(), tolerance.data()) < 0)
+			if (::nlopt_set_xtol_abs1(opt.get(), this->tolerance) < 0)
 			{
 				return false;
 			}
