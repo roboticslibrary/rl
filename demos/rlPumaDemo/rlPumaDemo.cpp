@@ -75,16 +75,15 @@ main(int argc, char** argv)
 				<< ", Wrist: " << (wrist == rl::kin::Puma::WRIST_FLIP ? "FLIP" : "NONFLIP")
 				<< std::endl;
 			
-			std::cout << "q=" << std::endl << q.transpose() * rl::math::RAD2DEG << std::endl;
+			std::cout << "q: " << q.transpose() * rl::math::RAD2DEG << std::endl;
 			
 			puma->setPosition(q);
 			puma->updateFrames();
 			
-			const rl::math::Transform::ConstTranslationPart& position = puma->forwardPosition().translation();
-			
+			rl::math::Vector3 position = puma->forwardPosition().translation();
 			rl::math::Vector3 orientation = puma->forwardPosition().rotation().eulerAngles(2, 1, 0).reverse();
 			
-			std::cout << "x=" << std::endl << "x: " << position.x() << " m, y: " << position.y() << " m, z: " << position.z() << " m, a: " << orientation.x() * rl::math::RAD2DEG << " deg, b: " << orientation.y() * rl::math::RAD2DEG << " deg, c: " << orientation.z() * rl::math::RAD2DEG << " deg" << std::endl;
+			std::cout << "x: " << position.x() << " m, y: " << position.y() << " m, z: " << position.z() << " m, a: " << orientation.x() * rl::math::RAD2DEG << " deg, b: " << orientation.y() * rl::math::RAD2DEG << " deg, c: " << orientation.z() * rl::math::RAD2DEG << " deg" << std::endl;
 			
 			rl::math::Vector q2(puma->getDof());
 			q2.setConstant(1.0 * rl::math::DEG2RAD);
@@ -97,14 +96,15 @@ main(int argc, char** argv)
 				return EXIT_FAILURE;
 			}
 			
-			std::cout << "q=" << std::endl << q2.transpose() * rl::math::RAD2DEG << std::endl;
+			std::cout << "q: " << q2.transpose() * rl::math::RAD2DEG << std::endl;
 			
 			puma->setPosition(q2);
 			puma->updateFrames();
 			
+			position = puma->forwardPosition().translation();
 			orientation = puma->forwardPosition().rotation().eulerAngles(2, 1, 0).reverse();
 			
-			std::cout << "x=" << std::endl << "x: " << position.x() << " m, y: " << position.y() << " m, z: " << position.z() << " m, a: " << orientation.x() * rl::math::RAD2DEG << " deg, b: " << orientation.y() * rl::math::RAD2DEG << " deg, c: " << orientation.z() * rl::math::RAD2DEG << " deg" << std::endl;
+			std::cout << "x: " << position.x() << " m, y: " << position.y() << " m, z: " << position.z() << " m, a: " << orientation.x() * rl::math::RAD2DEG << " deg, b: " << orientation.y() * rl::math::RAD2DEG << " deg, c: " << orientation.z() * rl::math::RAD2DEG << " deg" << std::endl;
 		}
 		else
 		{
