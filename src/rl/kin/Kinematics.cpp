@@ -758,6 +758,7 @@ namespace rl
 			
 			::std::chrono::steady_clock::time_point start = ::std::chrono::steady_clock::now();
 			double remaining = ::std::chrono::duration<double>(duration).count();
+			::std::size_t iteration = 0;
 			
 			this->getPosition(q);
 			::rl::math::Vector q2(this->getDof());
@@ -766,9 +767,7 @@ namespace rl
 			
 			do
 			{
-				::rl::math::Real delta2 = 1;
-				
-				for (::std::size_t i = 0; i < iterations && delta2 > epsilon; ++i)
+				do
 				{
 					this->updateFrames();
 					dx.setZero();
@@ -776,42 +775,48 @@ namespace rl
 					::rl::math::VectorBlock dxi = dx.segment(6 * leaf, 6);
 					dxi = this->forwardPosition(leaf).toDelta(x);
 					
+					if (dx.squaredNorm() < ::std::pow(epsilon, 2))
+					{
+						this->normalize(q);
+						this->setPosition(q);
+						
+						if (this->isValid(q))
+						{
+							return true;
+						}
+					}
+					
 					this->updateJacobian();
 					this->updateJacobianInverse();
 					this->inverseVelocity(dx, dq);
 					
 					this->step(q, dq, q2);
-					delta2 = this->distance(q, q2);
 					
-					if (delta2 > delta)
+					if (this->transformedDistance(q, q2) > ::std::pow(delta, 2))
 					{
 						this->interpolate(q, q2, delta, q2);
 					}
 					
 					q = q2;
 					this->setPosition(q);
-				}
-				
-				
-				if (dx.squaredNorm() < epsilon)
-				{
-					this->normalize(q);
-					this->setPosition(q);
 					
-					if (this->isValid(q))
+					remaining = ::std::chrono::duration<double>(duration - (::std::chrono::steady_clock::now() - start)).count();
+					
+					if (0 == ++iteration % 100)
 					{
-						return true;
+						break;
 					}
 				}
+				while (remaining > 0 && iteration < iterations);
 				
 				q = this->generatePositionUniform();
 				this->setPosition(q);
 				
 				remaining = ::std::chrono::duration<double>(duration - (::std::chrono::steady_clock::now() - start)).count();
 			}
-			while (remaining > 0);
+			while (remaining > 0 && iteration < iterations);
 			
-			return true;
+			return false;
 		}
 		
 		void

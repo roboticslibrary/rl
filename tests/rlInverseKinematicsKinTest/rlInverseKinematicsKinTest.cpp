@@ -63,9 +63,9 @@ main(int argc, char** argv)
 				q3,
 				0,
 				std::numeric_limits< ::rl::math::Real>::infinity(),
-				static_cast<rl::math::Real>(1.0e-3),
-				1000,
-				std::chrono::seconds(10)
+				static_cast<rl::math::Real>(1.0e-6),
+				100000,
+				std::chrono::nanoseconds::max()
 			);
 			
 			if (!solved)
@@ -81,10 +81,11 @@ main(int argc, char** argv)
 			kinematics->updateFrames();
 			rl::math::Transform t3 = kinematics->forwardPosition();
 			
-			if (!t3.isApprox(t1, static_cast<rl::math::Real>(1.03-6)))
+			if (t3.toDelta(t1).squaredNorm() > std::pow(static_cast<rl::math::Real>(1.0e-6), 2))
 			{
 				std::cerr << "rl::kin::Kinematics::inversePosition on file " << filename << " with incorrect operational position." << std::endl;
-				std::cerr << "norm(t1 - t3) = " << (t1.matrix() - t3.matrix()).norm() << std::endl;
+				std::cerr << "t3.toDelta(t1).squaredNorm() = " << t3.toDelta(t1).squaredNorm() << std::endl;
+				std::cerr << "t3.toDelta(t1) = " << t3.toDelta(t1).transpose() << std::endl;
 				std::cerr << "t1 = " << std::endl << t1.matrix() << std::endl;
 				std::cerr << "t3 = " << std::endl << t3.matrix() << std::endl;
 				std::cerr << "q1 = " << q1.transpose() << std::endl;
@@ -117,10 +118,11 @@ main(int argc, char** argv)
 				puma->updateFrames();
 				rl::math::Transform t4 = puma->forwardPosition();
 				
-				if (!t4.isApprox(t1, static_cast<rl::math::Real>(1.03-6)))
+				if (t4.toDelta(t1).squaredNorm() > std::pow(static_cast<rl::math::Real>(1.0e-6), 2))
 				{
 					std::cerr << "rl::kin::Puma::inversePosition on file " << filename << " with incorrect operational position." << std::endl;
-					std::cerr << "norm(t1 - t4) = " << (t1.matrix() - t4.matrix()).norm() << std::endl;
+					std::cerr << "t4.toDelta(t1).squaredNorm() = " << t4.toDelta(t1).squaredNorm() << std::endl;
+					std::cerr << "t4.toDelta(t1) = " << t4.toDelta(t1).transpose() << std::endl;
 					std::cerr << "t1 = " << std::endl << t1.matrix() << std::endl;
 					std::cerr << "t4 = " << std::endl << t4.matrix() << std::endl;
 					std::cerr << "q1 = " << q1.transpose() << std::endl;
