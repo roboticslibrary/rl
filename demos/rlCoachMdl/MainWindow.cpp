@@ -51,7 +51,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	ikAlgorithmComboBox(new QComboBox(this)),
 	ikDurationSpinBox(new QSpinBox(this)),
 	ikJacobianComboBox(new QComboBox(this)),
-	ikJacobianInverseComboBox(new QComboBox(this)),
 	kinematicModels(),
 	operationalModels(),
 	scene(),
@@ -207,23 +206,19 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	this->ikDurationSpinBox->setToolTip("Max. IK Duration");
 	this->ikDurationSpinBox->setValue(500);
 	
-	this->ikJacobianComboBox->addItem("Inverse");
+	this->ikJacobianComboBox->addItem("DLS");
+	this->ikJacobianComboBox->addItem("SVD");
 	this->ikJacobianComboBox->addItem("Transpose");
 	this->ikJacobianComboBox->setToolTip("Jacobian Method");
+	this->ikJacobianComboBox->setCurrentIndex(this->ikJacobianComboBox->findText("SVD"));
 	
 	QObject::connect(this->ikJacobianComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(changeIkJacobian()));
 	
-	this->ikJacobianInverseComboBox->addItem("SVD");
-	this->ikJacobianInverseComboBox->addItem("DLS");
-	this->ikJacobianInverseComboBox->setToolTip("Jacobian Inverse Method");
-	
 	this->statusBar()->addPermanentWidget(this->ikAlgorithmComboBox);
 	this->statusBar()->addPermanentWidget(this->ikJacobianComboBox);
-	this->statusBar()->addPermanentWidget(this->ikJacobianInverseComboBox);
 	this->statusBar()->addPermanentWidget(this->ikDurationSpinBox);
 	
 	this->changeIkAlgorithm();
-	this->changeIkJacobian();
 	
 	this->gradientBackground = new SoGradientBackground();
 	this->gradientBackground->ref();
@@ -258,39 +253,12 @@ MainWindow::changeIkAlgorithm()
 	if ("JacobianInverseKinematics" == this->ikAlgorithmComboBox->currentText())
 	{
 		this->ikDurationSpinBox->setVisible(true);
-		
-		if ("Inverse" != this->ikJacobianComboBox->currentText())
-		{
-			this->ikJacobianInverseComboBox->setVisible(false);
-		}
-		else
-		{
-			this->ikJacobianInverseComboBox->setVisible(true);
-		}
-		
 		this->ikJacobianComboBox->setVisible(true);
 	}
 	else if ("NloptInverseKinematics" == this->ikAlgorithmComboBox->currentText())
 	{
 		this->ikDurationSpinBox->setVisible(true);
-		this->ikJacobianInverseComboBox->setVisible(false);
 		this->ikJacobianComboBox->setVisible(false);
-	}
-}
-
-void
-MainWindow::changeIkJacobian()
-{
-	if ("JacobianInverseKinematics" == this->ikAlgorithmComboBox->currentText())
-	{
-		if ("Inverse" != this->ikJacobianComboBox->currentText())
-		{
-			this->ikJacobianInverseComboBox->setVisible(false);
-		}
-		else
-		{
-			this->ikJacobianInverseComboBox->setVisible(true);
-		}
 	}
 }
 

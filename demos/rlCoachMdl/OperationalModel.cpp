@@ -248,7 +248,11 @@ OperationalModel::setData(const QModelIndex& index, const QVariant& value, int r
 				rl::mdl::JacobianInverseKinematics* jacobianIk = static_cast<rl::mdl::JacobianInverseKinematics*>(ik.get());
 				jacobianIk->setDuration(std::chrono::milliseconds(MainWindow::instance()->ikDurationSpinBox->cleanText().toUInt()));
 				
-				if ("SVD" == MainWindow::instance()->ikJacobianInverseComboBox->currentText())
+				if ("DLS" == MainWindow::instance()->ikJacobianComboBox->currentText())
+				{
+					jacobianIk->setMethod(rl::mdl::JacobianInverseKinematics::METHOD_DLS);
+				}
+				else if ("SVD" == MainWindow::instance()->ikJacobianComboBox->currentText())
 				{
 					jacobianIk->setMethod(rl::mdl::JacobianInverseKinematics::METHOD_SVD);
 				}

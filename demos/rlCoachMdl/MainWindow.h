@@ -67,8 +67,6 @@ public:
 	
 	QComboBox* ikJacobianComboBox;
 	
-	QComboBox* ikJacobianInverseComboBox;
-	
 	std::vector<std::shared_ptr<rl::mdl::Kinematic>> kinematicModels;
 	
 	std::vector<OperationalModel*> operationalModels;
@@ -77,8 +75,6 @@ public:
 	
 public slots:
 	void changeIkAlgorithm();
-	
-	void changeIkJacobian();
 	
 	void saveImageWithAlpha();
 	
