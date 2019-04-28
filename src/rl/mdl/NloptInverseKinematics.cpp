@@ -24,8 +24,6 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <memory>
-
 #include "Kinematic.h"
 #include "NloptInverseKinematics.h"
 
@@ -36,14 +34,20 @@ namespace rl
 		NloptInverseKinematics::NloptInverseKinematics(Kinematic* kinematic) :
 			IterativeInverseKinematics(kinematic),
 			delta(static_cast< ::rl::math::Real>(1.0e-8)),
-			epsilonRotation(static_cast< ::rl::math::Real>(1.0e-6)),
-			epsilonTranslation(static_cast< ::rl::math::Real>(1.0e-6)),
+			lb(this->kinematic->getMinimum()),
+			opt(::nlopt_create(::NLOPT_LD_SLSQP, kinematic->getDofPosition()), ::nlopt_destroy),
 			randDistribution(0, 1),
 			randEngine(::std::random_device()()),
-			tolerance(static_cast< ::rl::math::Real>(1.0e-8))
+			ub(this->kinematic->getMaximum())
 		{
-			this->lb = this->kinematic->getMinimum();
-			this->ub = this->kinematic->getMaximum();
+			Exception::check(::nlopt_set_ftol_abs(opt.get(), ::std::numeric_limits<double>::epsilon()));
+			Exception::check(::nlopt_set_ftol_rel(opt.get(), ::std::numeric_limits<double>::epsilon()));
+			Exception::check(::nlopt_set_lower_bounds(opt.get(), this->lb.data()));
+			Exception::check(::nlopt_set_min_objective(opt.get(), &NloptInverseKinematics::f, this));
+			Exception::check(::nlopt_set_stopval(opt.get(), ::std::pow(this->getEpsilon(), 2)));
+			Exception::check(::nlopt_set_upper_bounds(opt.get(), this->ub.data()));
+			Exception::check(::nlopt_set_xtol_abs1(opt.get(), ::std::numeric_limits<double>::epsilon()));
+			Exception::check(::nlopt_set_xtol_rel(opt.get(), ::std::numeric_limits<double>::epsilon()));
 		}
 		
 		NloptInverseKinematics::~NloptInverseKinematics()
@@ -62,39 +66,31 @@ namespace rl
 			{
 				::rl::math::VectorBlock dxi = dx.segment(6 * this->goals[i].second, 6);
 				dxi = this->kinematic->getOperationalPosition(this->goals[i].second).toDelta(this->goals[i].first);
-				
-				if (dxi.segment(0, 3).cwiseAbs().maxCoeff() < this->epsilonTranslation)
-				{
-					dxi.segment(0, 3).setZero();
-				}
-				
-				if (dxi.segment(3, 3).cwiseAbs().maxCoeff() < this->epsilonRotation)
-				{
-					dxi.segment(3, 3).setZero();
-				}
 			}
 			
 			return dx.squaredNorm();
 		}
 		
-		::rl::math::Real
+		double
 		NloptInverseKinematics::f(unsigned n, const double* x, double* grad, void* data)
 		{
 			NloptInverseKinematics* ik = static_cast<NloptInverseKinematics*>(data);
 			
-			::Eigen::Map< const ::rl::math::Vector> q(x, n, 1);
+			++ik->iteration;
+			
+			::Eigen::Map< const ::Eigen::VectorXd> q(x, n, 1);
 			
 			if (!q.allFinite())
 			{
-				return ::std::numeric_limits< ::rl::math::Real>::infinity();
+				return ::std::numeric_limits<double>::infinity();
 			}
 			
 			::rl::math::Real result = ik->error(q);
 			
-			::rl::math::Vector q2(q);
-			
 			if (nullptr != grad)
 			{
+				::Eigen::VectorXd q2(q);
+				
 				for (::std::ptrdiff_t i = 0; i < q.size(); ++i)
 				{
 					q2(i) = q(i) + ik->delta;
@@ -112,27 +108,53 @@ namespace rl
 		}
 		
 		const ::rl::math::Real&
-		NloptInverseKinematics::getEpsilonRotation() const
-		{
-			return this->epsilonRotation;
-		}
-		
-		const ::rl::math::Real&
-		NloptInverseKinematics::getEpsilonTranslation() const
-		{
-			return this->epsilonTranslation;
-		}
-		
-		const ::rl::math::Real&
 		NloptInverseKinematics::getDelta() const
 		{
 			return this->delta;
 		}
 		
-		const double&
-		NloptInverseKinematics::getTolerance() const
+		::rl::math::Real
+		NloptInverseKinematics::getFunctionToleranceAbsolute() const
 		{
-			return this->tolerance;
+			return ::nlopt_get_ftol_abs(this->opt.get());
+		}
+		
+		::rl::math::Real
+		NloptInverseKinematics::getFunctionToleranceRelative() const
+		{
+			return ::nlopt_get_ftol_rel(this->opt.get());
+		}
+		
+		const ::rl::math::Vector&
+		NloptInverseKinematics::getLowerBound() const
+		{
+			return this->lb;
+		}
+		
+		::rl::math::Vector
+		NloptInverseKinematics::getOptimizationToleranceAbsolute() const
+		{
+			::rl::math::Vector tol;
+			Exception::check(::nlopt_get_xtol_abs(this->opt.get(), tol.data()));
+			return tol;
+		}
+		
+		::rl::math::Real
+		NloptInverseKinematics::getOptimizationToleranceRelative() const
+		{
+			return ::nlopt_get_xtol_rel(this->opt.get());
+		}
+		
+		const ::rl::math::Vector&
+		NloptInverseKinematics::getUpperBound() const
+		{
+			return this->ub;
+		}
+		
+		void
+		NloptInverseKinematics::seed(const ::std::mt19937::result_type& value)
+		{
+			this->randEngine.seed(value);
 		}
 		
 		void
@@ -141,31 +163,54 @@ namespace rl
 			this->delta = delta;
 		}
 		
-		void NloptInverseKinematics::setEpsilonRotation(const::rl::math::Real& epsilonRotation)
+		void
+		NloptInverseKinematics::setEpsilon(const::rl::math::Real& epsilon)
 		{
-			this->epsilonRotation = epsilonRotation;
+			Exception::check(::nlopt_set_stopval(opt.get(), ::std::pow(epsilon, 2)));
+			IterativeInverseKinematics::setEpsilon(epsilon);
 		}
 		
-		void NloptInverseKinematics::setEpsilonTranslation(const::rl::math::Real& epsilonTranslation)
+		void
+		NloptInverseKinematics::setFunctionToleranceAbsolute(const ::rl::math::Real& functionToleranceAbsolute)
 		{
-			this->epsilonTranslation = epsilonTranslation;
+			Exception::check(::nlopt_set_ftol_abs(opt.get(), functionToleranceAbsolute));
+		}
+		
+		void
+		NloptInverseKinematics::setFunctionToleranceRelative(const ::rl::math::Real& functionToleranceRelative)
+		{
+			Exception::check(::nlopt_set_ftol_rel(opt.get(), functionToleranceRelative));
 		}
 		
 		void
 		NloptInverseKinematics::setLowerBound(const ::rl::math::Vector& lb)
 		{
+			Exception::check(::nlopt_set_lower_bounds(opt.get(), lb.data()));
 			this->lb = lb;
 		}
 		
 		void
-		NloptInverseKinematics::setTolerance(const double& tolerance)
+		NloptInverseKinematics::setOptimizationToleranceAbsolute(const ::rl::math::Real& optimizationToleranceAbsolute)
 		{
-			this->tolerance = tolerance;
+			Exception::check(::nlopt_set_xtol_abs1(opt.get(), optimizationToleranceAbsolute));
+		}
+		
+		void
+		NloptInverseKinematics::setOptimizationToleranceAbsolute(const ::rl::math::Vector& optimizationToleranceAbsolute)
+		{
+			Exception::check(::nlopt_set_xtol_abs(opt.get(), optimizationToleranceAbsolute.data()));
+		}
+		
+		void
+		NloptInverseKinematics::setOptimizationToleranceRelative(const ::rl::math::Real& optimizationToleranceRelative)
+		{
+			Exception::check(::nlopt_set_xtol_rel(opt.get(), optimizationToleranceRelative));
 		}
 		
 		void
 		NloptInverseKinematics::setUpperBound(const ::rl::math::Vector& ub)
 		{
+			Exception::check(::nlopt_set_upper_bounds(opt.get(), ub.data()));
 			this->ub = ub;
 		}
 		
@@ -173,32 +218,8 @@ namespace rl
 		NloptInverseKinematics::solve()
 		{
 			::std::chrono::steady_clock::time_point start = ::std::chrono::steady_clock::now();
-			double remaining = ::std::chrono::duration<double>(this->duration).count();
-			
-			::std::unique_ptr< ::nlopt_opt_s, decltype(&::nlopt_destroy)> opt(
-				::nlopt_create(::NLOPT_LD_SLSQP, this->kinematic->getDofPosition()),
-				::nlopt_destroy
-			);
-			
-			if (::nlopt_set_xtol_abs1(opt.get(), this->tolerance) < 0)
-			{
-				return false;
-			}
-			
-			if (::nlopt_set_min_objective(opt.get(), &NloptInverseKinematics::f, this) < 0)
-			{
-				return false;
-			}
-			
-			if (::nlopt_set_lower_bounds(opt.get(), this->lb.data()) < 0)
-			{
-				return false;
-			}
-			
-			if (::nlopt_set_upper_bounds(opt.get(), this->ub.data()) < 0)
-			{
-				return false;
-			}
+			double remaining = ::std::chrono::duration<double>(this->getDuration()).count();
+			this->iteration = 0;
 			
 			::rl::math::Vector rand(this->kinematic->getDof());
 			::rl::math::Vector q = this->kinematic->getPosition();
@@ -206,19 +227,25 @@ namespace rl
 			
 			do
 			{
+				if (::nlopt_set_maxeval(opt.get(), this->getIterations() - this->iteration) < 0)
+				{
+					return false;
+				}
+				
 				if (::nlopt_set_maxtime(opt.get(), remaining) < 0)
 				{
 					return false;
 				}
 				
-				if (::nlopt_optimize(opt.get(), q.data(), &optF) < -1)
-				{
-					return false;
-				}
+				::nlopt_result result = ::nlopt_optimize(opt.get(), q.data(), &optF);
 				
-				if (this->error(q) < ::std::numeric_limits< ::rl::math::Real>::epsilon())
+				if (::NLOPT_STOPVAL_REACHED == result)
 				{
 					return true;
+				}
+				else if (result < -1)
+				{
+					return false;
 				}
 				
 				for (::std::size_t i = 0; i < this->kinematic->getDof(); ++i)
@@ -228,11 +255,55 @@ namespace rl
 				
 				q = this->kinematic->generatePositionUniform(rand, this->lb, this->ub);
 				
-				remaining = ::std::chrono::duration<double>(this->duration - (::std::chrono::steady_clock::now() - start)).count();
+				remaining = ::std::chrono::duration<double>(this->getDuration() - (::std::chrono::steady_clock::now() - start)).count();
 			}
-			while (remaining > 0);
+			while (remaining > 0 && this->iteration < this->getIterations());
 			
 			return false;
+		}
+		
+		NloptInverseKinematics::Exception::Exception(const ::nlopt_result& result) :
+			::rl::mdl::Exception(::std::string()),
+			result(result)
+		{
+		}
+		
+		NloptInverseKinematics::Exception::~Exception() throw()
+		{
+		}
+		
+		void
+		NloptInverseKinematics::Exception::check(const ::nlopt_result& result)
+		{
+			if (result < 0)
+			{
+				throw Exception(result);
+			}
+		}
+		
+		::nlopt_result
+		NloptInverseKinematics::Exception::getResult() const
+		{
+			return this->result;
+		}
+		
+		const char*
+		NloptInverseKinematics::Exception::what() const throw()
+		{
+			switch (this->result)
+			{
+			case ::NLOPT_FAILURE:
+				return "Generic failure.";
+				break;
+			case ::NLOPT_INVALID_ARGS:
+				return "Invalid arguments.";
+				break;
+			case ::NLOPT_OUT_OF_MEMORY:
+				return "Out of memory.";
+				break;
+			default:
+				break;
+			}
 		}
 	}
 }

@@ -32,7 +32,9 @@ namespace rl
 	{
 		IterativeInverseKinematics::IterativeInverseKinematics(Kinematic* kinematic) :
 			InverseKinematics(kinematic),
-			duration(::std::chrono::milliseconds(100))
+			duration(::std::chrono::milliseconds(1000)),
+			epsilon(static_cast< ::rl::math::Real>(1.0e-6)),
+			iterations(10000)
 		{
 		}
 		
@@ -46,10 +48,34 @@ namespace rl
 			return this->duration;
 		}
 		
+		const ::rl::math::Real&
+		IterativeInverseKinematics::getEpsilon() const
+		{
+			return this->epsilon;
+		}
+		
+		const ::std::size_t&
+		IterativeInverseKinematics::getIterations() const
+		{
+			return this->iterations;
+		}
+		
 		void
 		IterativeInverseKinematics::setDuration(const ::std::chrono::nanoseconds& duration)
 		{
 			this->duration = duration;
+		}
+		
+		void
+		IterativeInverseKinematics::setEpsilon(const::rl::math::Real& epsilon)
+		{
+			this->epsilon = epsilon;
+		}
+		
+		void
+		IterativeInverseKinematics::setIterations(const ::std::size_t& iterations)
+		{
+			this->iterations = iterations;
 		}
 	}
 }

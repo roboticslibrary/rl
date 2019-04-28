@@ -65,6 +65,8 @@ public:
 	
 	QSpinBox* ikDurationSpinBox;
 	
+	QSpinBox* ikIterationsSpinBox;
+	
 	QComboBox* ikJacobianComboBox;
 	
 	std::vector<std::shared_ptr<rl::mdl::Kinematic>> kinematicModels;

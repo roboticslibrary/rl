@@ -28,10 +28,12 @@
 #define RL_MDL_NLOPTINVERSEKINEMATICS_H
 
 #include <chrono>
+#include <memory>
 #include <nlopt.h>
 #include <random>
 #include <utility>
 
+#include "Exception.h"
 #include "IterativeInverseKinematics.h"
 
 namespace rl
@@ -41,27 +43,60 @@ namespace rl
 		class RL_MDL_EXPORT NloptInverseKinematics : public IterativeInverseKinematics
 		{
 		public:
+			class Exception : public ::rl::mdl::Exception
+			{
+			public:
+				Exception(const ::nlopt_result& result);
+				
+				virtual ~Exception() throw();
+				
+				static void check(const ::nlopt_result& result);
+				
+				::nlopt_result getResult() const;
+				
+				virtual const char* what() const throw();
+				
+			protected:
+				
+			private:
+				::nlopt_result result;
+			};
+			
 			NloptInverseKinematics(Kinematic* kinematic);
 			
 			virtual ~NloptInverseKinematics();
 			
 			const ::rl::math::Real& getDelta() const;
 			
-			const ::rl::math::Real& getEpsilonRotation() const;
+			::rl::math::Real getFunctionToleranceAbsolute() const;
 			
-			const ::rl::math::Real& getEpsilonTranslation() const;
+			::rl::math::Real getFunctionToleranceRelative() const;
 			
-			const double& getTolerance() const;
+			const ::rl::math::Vector& getLowerBound() const;
+			
+			::rl::math::Vector getOptimizationToleranceAbsolute() const;
+			
+			::rl::math::Real getOptimizationToleranceRelative() const;
+			
+			const ::rl::math::Vector& getUpperBound() const;
+			
+			void seed(const ::std::mt19937::result_type& value);
 			
 			void setDelta(const::rl::math::Real& delta);
 			
-			void setEpsilonRotation(const::rl::math::Real& epsilonRotation);
+			void setEpsilon(const::rl::math::Real& epsilon);
 			
-			void setEpsilonTranslation(const::rl::math::Real& epsilonTranslation);
+			void setFunctionToleranceAbsolute(const ::rl::math::Real& functionToleranceAbsolute);
+			
+			void setFunctionToleranceRelative(const ::rl::math::Real& functionToleranceRelative);
 			
 			void setLowerBound(const ::rl::math::Vector& lb);
 			
-			void setTolerance(const double& tolerance);
+			void setOptimizationToleranceAbsolute(const ::rl::math::Real& optimizationToleranceAbsolute);
+			
+			void setOptimizationToleranceAbsolute(const ::rl::math::Vector& optimizationToleranceAbsolute);
+			
+			void setOptimizationToleranceRelative(const ::rl::math::Real& optimizationToleranceRelative);
 			
 			void setUpperBound(const ::rl::math::Vector& ub);
 			
@@ -72,21 +107,19 @@ namespace rl
 		private:
 			::rl::math::Real error(const ::rl::math::Vector& q);
 			
-			static ::rl::math::Real f(unsigned n, const double* x, double* grad, void* data);
+			static double f(unsigned n, const double* x, double* grad, void* data);
 			
 			::rl::math::Real delta;
 			
-			::rl::math::Real epsilonRotation;
-			
-			::rl::math::Real epsilonTranslation;
+			::std::size_t iteration;
 			
 			::rl::math::Vector lb;
+			
+			::std::unique_ptr< ::nlopt_opt_s, decltype(&::nlopt_destroy)> opt;
 			
 			::std::uniform_real_distribution< ::rl::math::Real> randDistribution;
 			
 			::std::mt19937 randEngine;
-			
-			double tolerance;
 			
 			::rl::math::Vector ub;
 		};

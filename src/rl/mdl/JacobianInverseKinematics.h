@@ -61,17 +61,11 @@ namespace rl
 			
 			const ::rl::math::Real& getDelta() const;
 			
-			const ::rl::math::Real& getEpsilon() const;
-			
-			const ::std::size_t& getIterations() const;
-			
 			const Method& getMethod() const;
 			
+			void seed(const ::std::mt19937::result_type& value);
+			
 			void setDelta(const::rl::math::Real& delta);
-			
-			void setEpsilon(const::rl::math::Real& epsilon);
-			
-			void setIterations(const ::std::size_t& iterations);
 			
 			void setMethod(const Method& method);
 			
@@ -81,10 +75,6 @@ namespace rl
 			
 		private:
 			::rl::math::Real delta;
-			
-			::rl::math::Real epsilon;
-			
-			::std::size_t iterations;
 			
 			Method method;
 			

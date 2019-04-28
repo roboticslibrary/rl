@@ -44,13 +44,24 @@ namespace rl
 			
 			const ::std::chrono::nanoseconds& getDuration() const;
 			
+			const ::rl::math::Real& getEpsilon() const;
+			
+			const ::std::size_t& getIterations() const;
+			
 			void setDuration(const ::std::chrono::nanoseconds& duration);
 			
+			virtual void setEpsilon(const::rl::math::Real& epsilon);
+			
+			void setIterations(const ::std::size_t& iterations);
+			
 		protected:
-			::std::chrono::nanoseconds duration;
 			
 		private:
+			::std::chrono::nanoseconds duration;
 			
+			::rl::math::Real epsilon;
+			
+			::std::size_t iterations;
 		};
 	}
 }

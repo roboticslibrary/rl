@@ -247,6 +247,7 @@ OperationalModel::setData(const QModelIndex& index, const QVariant& value, int r
 				ik = std::make_shared<rl::mdl::JacobianInverseKinematics>(kinematic);
 				rl::mdl::JacobianInverseKinematics* jacobianIk = static_cast<rl::mdl::JacobianInverseKinematics*>(ik.get());
 				jacobianIk->setDuration(std::chrono::milliseconds(MainWindow::instance()->ikDurationSpinBox->cleanText().toUInt()));
+				jacobianIk->setIterations(MainWindow::instance()->ikIterationsSpinBox->cleanText().toUInt());
 				
 				if ("DLS" == MainWindow::instance()->ikJacobianComboBox->currentText())
 				{
@@ -267,6 +268,7 @@ OperationalModel::setData(const QModelIndex& index, const QVariant& value, int r
 				ik = std::make_shared<rl::mdl::NloptInverseKinematics>(kinematic);
 				rl::mdl::NloptInverseKinematics* nloptIk = static_cast<rl::mdl::NloptInverseKinematics*>(ik.get());
 				nloptIk->setDuration(std::chrono::milliseconds(MainWindow::instance()->ikDurationSpinBox->cleanText().toUInt()));
+				nloptIk->setIterations(MainWindow::instance()->ikIterationsSpinBox->cleanText().toUInt());
 			}
 #endif
 			

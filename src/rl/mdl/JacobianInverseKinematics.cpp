@@ -34,8 +34,6 @@ namespace rl
 		JacobianInverseKinematics::JacobianInverseKinematics(Kinematic* kinematic) :
 			IterativeInverseKinematics(kinematic),
 			delta(::std::numeric_limits< ::rl::math::Real>::infinity()),
-			epsilon(static_cast< ::rl::math::Real>(1.0e-3)),
-			iterations(1000),
 			method(METHOD_SVD),
 			randDistribution(0, 1),
 			randEngine(::std::random_device()())
@@ -52,18 +50,6 @@ namespace rl
 			return this->delta;
 		}
 		
-		const ::rl::math::Real&
-		JacobianInverseKinematics::getEpsilon() const
-		{
-			return this->epsilon;
-		}
-		
-		const ::std::size_t&
-		JacobianInverseKinematics::getIterations() const
-		{
-			return this->iterations;
-		}
-		
 		const JacobianInverseKinematics::Method&
 		JacobianInverseKinematics::getMethod() const
 		{
@@ -71,21 +57,15 @@ namespace rl
 		}
 		
 		void
+		JacobianInverseKinematics::seed(const ::std::mt19937::result_type& value)
+		{
+			this->randEngine.seed(value);
+		}
+		
+		void
 		JacobianInverseKinematics::setDelta(const::rl::math::Real& delta)
 		{
 			this->delta = delta;
-		}
-		
-		void
-		JacobianInverseKinematics::setEpsilon(const::rl::math::Real& epsilon)
-		{
-			this->epsilon = epsilon;
-		}
-		
-		void
-		JacobianInverseKinematics::setIterations(const ::std::size_t& iterations)
-		{
-			this->iterations = iterations;
 		}
 		
 		void
@@ -98,7 +78,8 @@ namespace rl
 		JacobianInverseKinematics::solve()
 		{
 			::std::chrono::steady_clock::time_point start = ::std::chrono::steady_clock::now();
-			double remaining = ::std::chrono::duration<double>(this->duration).count();
+			double remaining = ::std::chrono::duration<double>(this->getDuration()).count();
+			::std::size_t iteration = 0;
 			
 			::rl::math::Vector q = this->kinematic->getPosition();
 			::rl::math::Vector q2(this->kinematic->getDofPosition());
@@ -109,9 +90,7 @@ namespace rl
 			
 			do
 			{
-				::rl::math::Real delta = 1;
-				
-				for (::std::size_t i = 0; i < this->iterations && delta > this->epsilon; ++i)
+				do
 				{
 					this->kinematic->forwardPosition();
 					dx.setZero();
@@ -120,6 +99,17 @@ namespace rl
 					{
 						::rl::math::VectorBlock dxi = dx.segment(6 * this->goals[i].second, 6);
 						dxi = this->kinematic->getOperationalPosition(this->goals[i].second).toDelta(this->goals[i].first);
+					}
+					
+					if (dx.squaredNorm() < ::std::pow(this->getEpsilon(), 2))
+					{
+						this->kinematic->normalize(q);
+						this->kinematic->setPosition(q);
+						
+						if (this->kinematic->isValid(q))
+						{
+							return true;
+						}
 					}
 					
 					this->kinematic->calculateJacobian();
@@ -146,27 +136,23 @@ namespace rl
 					}
 					
 					this->kinematic->step(q, dq, q2);
-					delta = this->kinematic->distance(q, q2);
 					
-					if (delta > this->delta)
+					if (this->kinematic->transformedDistance(q, q2) > ::std::pow(this->delta, 2))
 					{
 						this->kinematic->interpolate(q, q2, this->delta, q2);
 					}
 					
 					q = q2;
 					this->kinematic->setPosition(q);
-				}
-				
-				if (dx.squaredNorm() < this->epsilon)
-				{
-					this->kinematic->normalize(q);
-					this->kinematic->setPosition(q);
 					
-					if (this->kinematic->isValid(q))
+					remaining = ::std::chrono::duration<double>(this->getDuration() - (::std::chrono::steady_clock::now() - start)).count();
+					
+					if (0 == ++iteration % 100)
 					{
-						return true;
+						break;
 					}
 				}
+				while (remaining > 0 && iteration < this->getIterations());
 				
 				for (::std::size_t i = 0; i < this->kinematic->getDof(); ++i)
 				{
@@ -176,9 +162,9 @@ namespace rl
 				q = this->kinematic->generatePositionUniform(rand);
 				this->kinematic->setPosition(q);
 				
-				remaining = ::std::chrono::duration<double>(this->duration - (::std::chrono::steady_clock::now() - start)).count();
+				remaining = ::std::chrono::duration<double>(this->getDuration() - (::std::chrono::steady_clock::now() - start)).count();
 			}
-			while (remaining > 0);
+			while (remaining > 0 && iteration < this->getIterations());
 			
 			return false;
 		}

@@ -50,6 +50,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	geometryModels(),
 	ikAlgorithmComboBox(new QComboBox(this)),
 	ikDurationSpinBox(new QSpinBox(this)),
+	ikIterationsSpinBox(new QSpinBox(this)),
 	ikJacobianComboBox(new QComboBox(this)),
 	kinematicModels(),
 	operationalModels(),
@@ -206,6 +207,11 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	this->ikDurationSpinBox->setToolTip("Max. IK Duration");
 	this->ikDurationSpinBox->setValue(500);
 	
+	this->ikIterationsSpinBox->setMaximum(100000);
+	this->ikIterationsSpinBox->setMinimum(1);
+	this->ikIterationsSpinBox->setToolTip("Max. IK Iterations");
+	this->ikIterationsSpinBox->setValue(10000);
+	
 	this->ikJacobianComboBox->addItem("DLS");
 	this->ikJacobianComboBox->addItem("SVD");
 	this->ikJacobianComboBox->addItem("Transpose");
@@ -216,6 +222,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	
 	this->statusBar()->addPermanentWidget(this->ikAlgorithmComboBox);
 	this->statusBar()->addPermanentWidget(this->ikJacobianComboBox);
+	this->statusBar()->addPermanentWidget(this->ikIterationsSpinBox);
 	this->statusBar()->addPermanentWidget(this->ikDurationSpinBox);
 	
 	this->changeIkAlgorithm();
@@ -253,11 +260,13 @@ MainWindow::changeIkAlgorithm()
 	if ("JacobianInverseKinematics" == this->ikAlgorithmComboBox->currentText())
 	{
 		this->ikDurationSpinBox->setVisible(true);
+		this->ikIterationsSpinBox->setVisible(true);
 		this->ikJacobianComboBox->setVisible(true);
 	}
 	else if ("NloptInverseKinematics" == this->ikAlgorithmComboBox->currentText())
 	{
 		this->ikDurationSpinBox->setVisible(true);
+		this->ikIterationsSpinBox->setVisible(true);
 		this->ikJacobianComboBox->setVisible(false);
 	}
 }
