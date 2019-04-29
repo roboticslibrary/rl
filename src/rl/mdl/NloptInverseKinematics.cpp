@@ -108,7 +108,7 @@ namespace rl
 		::rl::math::Vector
 		NloptInverseKinematics::getOptimizationToleranceAbsolute() const
 		{
-			::rl::math::Vector tol;
+			::rl::math::Vector tol(this->kinematic->getDofPosition());
 			Exception::check(::nlopt_get_xtol_abs(this->opt.get(), tol.data()));
 			return tol;
 		}
