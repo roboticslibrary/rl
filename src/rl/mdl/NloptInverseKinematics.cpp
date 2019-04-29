@@ -301,7 +301,14 @@ namespace rl
 			case ::NLOPT_OUT_OF_MEMORY:
 				return "Out of memory.";
 				break;
+			case ::NLOPT_ROUNDOFF_LIMITED:
+				return "Halted because roundoff errors limited progress.";
+				break;
+			case ::NLOPT_FORCED_STOP:
+				return "Halted because of a forced termination.";
+				break;
 			default:
+				return "Unknown error.";
 				break;
 			}
 		}
