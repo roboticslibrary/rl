@@ -66,8 +66,6 @@ namespace rl
 			
 			virtual ~NloptInverseKinematics();
 			
-			const ::rl::math::Real& getDelta() const;
-			
 			::rl::math::Real getFunctionToleranceAbsolute() const;
 			
 			::rl::math::Real getFunctionToleranceRelative() const;
@@ -81,8 +79,6 @@ namespace rl
 			const ::rl::math::Vector& getUpperBound() const;
 			
 			void seed(const ::std::mt19937::result_type& value);
-			
-			void setDelta(const::rl::math::Real& delta);
 			
 			void setEpsilon(const::rl::math::Real& epsilon);
 			
@@ -105,11 +101,7 @@ namespace rl
 		protected:
 			
 		private:
-			::rl::math::Real error(const ::rl::math::Vector& q);
-			
-			static double f(unsigned n, const double* x, double* grad, void* data);
-			
-			::rl::math::Real delta;
+			static double f(unsigned int n, const double* x, double* grad, void* data);
 			
 			::std::size_t iteration;
 			

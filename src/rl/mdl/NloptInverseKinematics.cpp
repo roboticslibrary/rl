@@ -33,7 +33,6 @@ namespace rl
 	{
 		NloptInverseKinematics::NloptInverseKinematics(Kinematic* kinematic) :
 			IterativeInverseKinematics(kinematic),
-			delta(static_cast< ::rl::math::Real>(1.0e-8)),
 			lb(this->kinematic->getMinimum()),
 			opt(::nlopt_create(::NLOPT_LD_SLSQP, kinematic->getDofPosition()), ::nlopt_destroy),
 			randDistribution(0, 1),
@@ -54,63 +53,38 @@ namespace rl
 		{
 		}
 		
-		::rl::math::Real
-		NloptInverseKinematics::error(const ::rl::math::Vector& q)
-		{
-			this->kinematic->setPosition(q);
-			this->kinematic->forwardPosition();
-			
-			::rl::math::Vector dx = ::rl::math::Vector::Zero(6 * this->kinematic->getOperationalDof());
-			
-			for (::std::size_t i = 0; i < this->goals.size(); ++i)
-			{
-				::rl::math::VectorBlock dxi = dx.segment(6 * this->goals[i].second, 6);
-				dxi = this->kinematic->getOperationalPosition(this->goals[i].second).toDelta(this->goals[i].first);
-			}
-			
-			return dx.squaredNorm();
-		}
-		
 		double
-		NloptInverseKinematics::f(unsigned n, const double* x, double* grad, void* data)
+		NloptInverseKinematics::f(unsigned int n, const double* x, double* grad, void* data)
 		{
 			NloptInverseKinematics* ik = static_cast<NloptInverseKinematics*>(data);
-			
 			++ik->iteration;
 			
-			::Eigen::Map< const ::Eigen::VectorXd> q(x, n, 1);
+			::Eigen::Map<const ::Eigen::VectorXd> q(x, n, 1);
 			
 			if (!q.allFinite())
 			{
 				return ::std::numeric_limits<double>::infinity();
 			}
 			
-			::rl::math::Real result = ik->error(q);
+			ik->kinematic->setPosition(q);
+			ik->kinematic->forwardPosition();
+			
+			::rl::math::Vector dx = ::rl::math::Vector::Zero(6 * ik->kinematic->getOperationalDof());
+			
+			for (::std::size_t i = 0; i < ik->goals.size(); ++i)
+			{
+				::rl::math::VectorBlock dxi = dx.segment(6 * ik->goals[i].second, 6);
+				dxi = ik->kinematic->getOperationalPosition(ik->goals[i].second).toDelta(ik->goals[i].first);
+			}
 			
 			if (nullptr != grad)
 			{
-				::Eigen::VectorXd q2(q);
-				
-				for (::std::ptrdiff_t i = 0; i < q.size(); ++i)
-				{
-					q2(i) = q(i) + ik->delta;
-					::rl::math::Real dq1 = ik->error(q2);
-					
-					q2(i) = q(i) - ik->delta;
-					::rl::math::Real dq2 = ik->error(q2);
-					
-					q2(i) = q(i);
-					grad[i] = (dq1 - dq2) / (2 * ik->delta);
-				}
+				::Eigen::Map< ::Eigen::VectorXd> grad2(grad, n, 1);
+				ik->kinematic->calculateJacobian();
+				grad2 = -2 * ik->kinematic->getJacobian().transpose() * dx;
 			}
 			
-			return result;
-		}
-		
-		const ::rl::math::Real&
-		NloptInverseKinematics::getDelta() const
-		{
-			return this->delta;
+			return dx.squaredNorm();
 		}
 		
 		::rl::math::Real
@@ -155,12 +129,6 @@ namespace rl
 		NloptInverseKinematics::seed(const ::std::mt19937::result_type& value)
 		{
 			this->randEngine.seed(value);
-		}
-		
-		void
-		NloptInverseKinematics::setDelta(const::rl::math::Real& delta)
-		{
-			this->delta = delta;
 		}
 		
 		void
