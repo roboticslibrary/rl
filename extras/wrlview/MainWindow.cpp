@@ -33,6 +33,7 @@
 #include <QDragMoveEvent>
 #include <QDropEvent>
 #include <QFileDialog>
+#include <QFileInfo>
 #include <QGLWidget>
 #include <QMessageBox>
 #include <QMimeData>
@@ -539,6 +540,9 @@ MainWindow::load(const QString filename)
 		QMessageBox::critical(this, "Error", "File format not supported.");
 		return;
 	}
+	
+	QFileInfo fileInfo(filename);
+	QDir::setCurrent(fileInfo.path());
 	
 	if (!this->input.openFile(filename.toStdString().c_str(), true))
 	{
