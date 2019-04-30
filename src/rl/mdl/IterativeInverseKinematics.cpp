@@ -67,7 +67,7 @@ namespace rl
 		}
 		
 		void
-		IterativeInverseKinematics::setEpsilon(const::rl::math::Real& epsilon)
+		IterativeInverseKinematics::setEpsilon(const ::rl::math::Real& epsilon)
 		{
 			this->epsilon = epsilon;
 		}

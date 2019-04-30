@@ -80,7 +80,7 @@ namespace rl
 			
 			void seed(const ::std::mt19937::result_type& value);
 			
-			void setEpsilon(const::rl::math::Real& epsilon);
+			void setEpsilon(const ::rl::math::Real& epsilon);
 			
 			void setFunctionToleranceAbsolute(const ::rl::math::Real& functionToleranceAbsolute);
 			

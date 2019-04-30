@@ -50,7 +50,7 @@ namespace rl
 			
 			void setDuration(const ::std::chrono::nanoseconds& duration);
 			
-			virtual void setEpsilon(const::rl::math::Real& epsilon);
+			virtual void setEpsilon(const ::rl::math::Real& epsilon);
 			
 			void setIterations(const ::std::size_t& iterations);
 			

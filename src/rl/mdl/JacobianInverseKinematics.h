@@ -65,7 +65,7 @@ namespace rl
 			
 			void seed(const ::std::mt19937::result_type& value);
 			
-			void setDelta(const::rl::math::Real& delta);
+			void setDelta(const ::rl::math::Real& delta);
 			
 			void setMethod(const Method& method);
 			

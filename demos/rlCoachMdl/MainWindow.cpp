@@ -218,8 +218,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	this->ikJacobianComboBox->setToolTip("Jacobian Method");
 	this->ikJacobianComboBox->setCurrentIndex(this->ikJacobianComboBox->findText("SVD"));
 	
-	QObject::connect(this->ikJacobianComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(changeIkJacobian()));
-	
 	this->statusBar()->addPermanentWidget(this->ikAlgorithmComboBox);
 	this->statusBar()->addPermanentWidget(this->ikJacobianComboBox);
 	this->statusBar()->addPermanentWidget(this->ikIterationsSpinBox);

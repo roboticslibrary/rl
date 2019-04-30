@@ -132,7 +132,7 @@ namespace rl
 		}
 		
 		void
-		NloptInverseKinematics::setEpsilon(const::rl::math::Real& epsilon)
+		NloptInverseKinematics::setEpsilon(const ::rl::math::Real& epsilon)
 		{
 			Exception::check(::nlopt_set_stopval(opt.get(), ::std::pow(epsilon, 2)));
 			IterativeInverseKinematics::setEpsilon(epsilon);

@@ -63,7 +63,7 @@ namespace rl
 		}
 		
 		void
-		JacobianInverseKinematics::setDelta(const::rl::math::Real& delta)
+		JacobianInverseKinematics::setDelta(const ::rl::math::Real& delta)
 		{
 			this->delta = delta;
 		}
