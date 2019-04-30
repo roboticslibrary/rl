@@ -158,7 +158,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	QList<QDockWidget*> resizeDocksWidgets;
 	resizeDocksWidgets.append(this->operationalDockWidget);
 	QList<int> resizeDocksSizes;
-	resizeDocksSizes.append(0);
+	resizeDocksSizes.append(1);
 	this->resizeDocks(resizeDocksWidgets, resizeDocksSizes, Qt::Vertical);
 #endif // QT_VERSION
 	
