@@ -32,7 +32,7 @@ namespace rl
 	{
 		Frame::Frame() :
 			Element(),
-			frame()
+			frame(::rl::math::Transform::Identity())
 		{
 		}
 		

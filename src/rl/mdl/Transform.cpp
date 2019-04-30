@@ -35,10 +35,9 @@ namespace rl
 			Element(),
 			in(nullptr),
 			out(nullptr),
-			x(),
+			x(::rl::math::PlueckerTransform::Identity()),
 			descriptor()
 		{
-			this->x.setIdentity(); // TODO
 		}
 		
 		Transform::~Transform()
@@ -55,7 +54,7 @@ namespace rl
 		Transform::forwardDynamics1()
 		{
 			this->forwardVelocity();
-			this->out->c.setZero(); // TODO
+			this->out->c.setZero();
 		}
 		
 		void

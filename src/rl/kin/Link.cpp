@@ -33,9 +33,9 @@ namespace rl
 		Link::Link() :
 			Frame(),
 			collision(true),
-			cog(),
-			inertia(),
-			mass(0),
+			cog(::rl::math::Vector3::Zero()),
+			inertia(::rl::math::Matrix33::Identity()),
+			mass(1),
 			selfcollision()
 		{
 		}

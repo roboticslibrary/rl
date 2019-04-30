@@ -102,8 +102,7 @@ namespace rl
 		void
 		Kinematic::calculateJacobianDerivative(::rl::math::Vector& Jdqd, const bool& inWorldFrame)
 		{
-			::rl::math::Vector tmp(this->getDof());
-			tmp.setZero(); // TODO
+			::rl::math::Vector tmp = ::rl::math::Vector::Zero(this->getDof());
 			
 			this->setAcceleration(tmp);
 			this->forwardVelocity();
@@ -234,9 +233,9 @@ namespace rl
 		{
 			Metric::update();
 			
-			this->invJ.resize(this->getDof(), 6 * this->getOperationalDof());
-			this->J.resize(6 * this->getOperationalDof(), this->getDof());
-			this->Jdqd.resize(6 * this->getOperationalDof());
+			this->invJ = ::rl::math::Matrix::Identity(this->getDof(), 6 * this->getOperationalDof());
+			this->J = ::rl::math::Matrix::Identity(6 * this->getOperationalDof(), this->getDof());
+			this->Jdqd = ::rl::math::Vector::Zero(6 * this->getOperationalDof());
 		}
 	}
 }

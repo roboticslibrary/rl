@@ -34,16 +34,13 @@ namespace rl
 	{
 		Body::Body() :
 			Frame(),
-			cm(),
+			cm(::rl::math::Vector3::Zero()),
 			collision(true),
-			fX(),
-			ic(),
+			fX(::rl::math::ForceVector::Zero()),
+			ic(::rl::math::Matrix33::Identity()),
 			m(1),
 			selfcollision()
 		{
-			this->cm.setZero(); // TODO
-			this->fX.setZero(); // TODO
-			this->ic.setIdentity(); // TODO
 		}
 		
 		Body::~Body()
@@ -121,7 +118,7 @@ namespace rl
 			this->i.cog() = this->m * this->cm;
 			
 			// Ic - m * cx * cx
-			this->i.inertia() = this->ic - this->m * this->cm.cross33() * this->cm.cross33(); // TODO
+			this->i.inertia() = this->ic - this->m * this->cm.cross33() * this->cm.cross33();
 		}
 		
 		void

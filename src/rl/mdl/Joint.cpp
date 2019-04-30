@@ -34,44 +34,28 @@ namespace rl
 	namespace mdl
 	{
 		Joint::Joint(const ::std::size_t& dofPosition, const ::std::size_t& dofVelocity) :
-			a(),
-			c(),
-			D(dofVelocity, dofVelocity),
-			max(dofPosition),
-			min(dofPosition),
-			offset(dofPosition),
-			q(dofPosition),
+			a(::rl::math::MotionVector::Zero()),
+			c(::rl::math::MotionVector::Zero()),
+			D(::rl::math::Matrix::Zero(dofVelocity, dofVelocity)),
+			max(::rl::math::Vector::Constant(dofPosition, ::std::numeric_limits< ::rl::math::Real>::max())),
+			min(::rl::math::Vector::Constant(dofPosition, -::std::numeric_limits< ::rl::math::Real>::max())),
+			offset(::rl::math::Vector::Zero(dofPosition)),
+			q(::rl::math::Vector::Zero(dofPosition)),
 			qUnits(dofPosition),
-			qd(dofVelocity),
+			qd(::rl::math::Vector::Zero(dofVelocity)),
 			qdUnits(dofVelocity),
-			qdd(dofVelocity),
+			qdd(::rl::math::Vector::Zero(dofVelocity)),
 			qddUnits(dofVelocity),
-			S(6, dofVelocity),
-			speed(dofVelocity),
+			S(::rl::math::Matrix::Zero(6, dofVelocity)),
+			speed(::rl::math::Vector::Constant(dofVelocity, ::std::numeric_limits< ::rl::math::Real>::max())),
 			speedUnits(dofVelocity),
-			tau(dofVelocity),
+			tau(::rl::math::Vector::Zero(dofVelocity)),
 			tauUnits(dofVelocity),
-			u(dofVelocity),
-			U(6, dofVelocity),
-			v(),
-			wraparound(dofPosition)
+			u(::rl::math::Vector::Zero(dofVelocity)),
+			U(::rl::math::Matrix::Zero(6, dofVelocity)),
+			v(::rl::math::MotionVector::Zero()),
+			wraparound(::Eigen::Matrix<bool, ::Eigen::Dynamic, 1>::Constant(dofPosition, false))
 		{
-			this->a.setZero(); // TODO
-			this->c.setZero(); // TODO
-			this->D.setZero(); // TODO
-			this->max.setConstant(::std::numeric_limits< ::rl::math::Real>::max()); // TODO
-			this->min.setConstant(-::std::numeric_limits< ::rl::math::Real>::max()); // TODO
-			this->offset.setZero(); // TODO
-			this->q.setZero(); // TODO
-			this->qd.setZero(); // TODO
-			this->qdd.setZero(); // TODO
-			this->S.setZero(); // TODO
-			this->speed.setConstant(::std::numeric_limits< ::rl::math::Real>::max()); // TODO
-			this->tau.setZero(); // TODO
-			this->u.setZero(); // TODO
-			this->U.setZero(); // TODO
-			this->v.setZero(); // TODO
-			this->wraparound.setConstant(false); // TODO
 		}
 		
 		Joint::~Joint()

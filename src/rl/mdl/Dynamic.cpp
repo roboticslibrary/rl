@@ -68,8 +68,7 @@ namespace rl
 			::rl::math::Vector g(3);
 			this->getWorldGravity(g);
 			
-			::rl::math::Vector tmp(this->getDof());
-			tmp.setZero(); //TODO
+			::rl::math::Vector tmp = ::rl::math::Vector::Zero(this->getDof());
 			
 			this->setAcceleration(tmp);
 			this->setWorldGravity(0, 0, 0);
@@ -89,8 +88,7 @@ namespace rl
 		void
 		Dynamic::calculateGravity(::rl::math::Vector& G)
 		{
-			::rl::math::Vector tmp(this->getDof());
-			tmp.setZero(); //TODO
+			::rl::math::Vector tmp = ::rl::math::Vector::Zero(this->getDof());
 			
 			this->setVelocity(tmp);
 			this->setAcceleration(tmp);
@@ -111,8 +109,7 @@ namespace rl
 			::rl::math::Vector g(3);
 			this->getWorldGravity(g);
 			
-			::rl::math::Vector tmp(this->getDof());
-			tmp.setZero(); //TODO
+			::rl::math::Vector tmp = ::rl::math::Vector::Zero(this->getDof());
 			
 			this->setVelocity(tmp);
 			this->setWorldGravity(0, 0, 0);
@@ -145,8 +142,7 @@ namespace rl
 			::rl::math::Vector g(3);
 			this->getWorldGravity(g);
 			
-			::rl::math::Vector tmp(this->getDof());
-			tmp.setZero(); //TODO
+			::rl::math::Vector tmp = ::rl::math::Vector::Zero(this->getDof());
 			
 			this->setVelocity(tmp);
 			this->setWorldGravity(0, 0, 0);
@@ -176,7 +172,7 @@ namespace rl
 		void
 		Dynamic::calculateOperationalMassMatrixInverse(const ::rl::math::Matrix& J, const ::rl::math::Matrix& invM, ::rl::math::Matrix& invMx) const
 		{
-			invMx = J * invM * J.transpose(); // TODO
+			invMx = J * invM * J.transpose();
 		}
 		
 		void
@@ -280,11 +276,11 @@ namespace rl
 		{
 			Kinematic::update();
 			
-			this->M.resize(this->getDof(), this->getDof());
-			this->V.resize(this->getDof());
-			this->G.resize(this->getDof());
-			this->invM.resize(this->getDof(), this->getDof());
-			this->invMx.resize(6 * this->getOperationalDof(), 6 * this->getOperationalDof());
+			this->M = ::rl::math::Matrix::Identity(this->getDof(), this->getDof());
+			this->V = ::rl::math::Vector::Zero(this->getDof());
+			this->G = ::rl::math::Vector::Zero(this->getDof());
+			this->invM = ::rl::math::Matrix::Identity(this->getDof(), this->getDof());
+			this->invMx = ::rl::math::Matrix::Identity(6 * this->getOperationalDof(), 6 * this->getOperationalDof());
 		}
 	}
 }

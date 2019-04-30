@@ -42,7 +42,7 @@ namespace rl
 			speed(0),
 			theta(0),
 			wraparound(false),
-			q()
+			q(0)
 		{
 		}
 		

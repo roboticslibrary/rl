@@ -35,7 +35,7 @@ namespace rl
 			Element(),
 			in(nullptr),
 			out(nullptr),
-			transform()
+			transform(::rl::math::Transform::Identity())
 		{
 		}
 		

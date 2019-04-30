@@ -772,16 +772,11 @@ namespace rl
 				}
 			}
 			
-			this->gammaPosition.resize(this->getDofPosition(), this->getDofPosition());
-			this->gammaPosition.setIdentity();
-			this->gammaVelocity.resize(this->getDof(), this->getDof());
-			this->gammaVelocity.setIdentity();
-			this->home.resize(this->getDofPosition());
-			this->home.setZero();
-			this->invGammaPosition.resize(this->getDofPosition(), this->getDofPosition());
-			this->invGammaPosition.setIdentity();
-			this->invGammaVelocity.resize(this->getDof(), this->getDof());
-			this->invGammaVelocity.setIdentity();
+			this->gammaPosition = ::rl::math::Matrix::Identity(this->getDofPosition(), this->getDofPosition());
+			this->gammaVelocity = ::rl::math::Matrix::Identity(this->getDof(), this->getDof());
+			this->home = ::rl::math::Vector::Zero(this->getDofPosition());
+			this->invGammaPosition = ::rl::math::Matrix::Identity(this->getDofPosition(), this->getDofPosition());
+			this->invGammaVelocity = ::rl::math::Matrix::Identity(this->getDof(), this->getDof());
 		}
 		
 		::rl::math::Transform&

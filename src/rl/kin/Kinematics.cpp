@@ -1035,8 +1035,8 @@ namespace rl
 				}
 			}
 			
-			this->jacobian.resize(this->leaves.size() * 6, this->joints.size());
-			this->jacobianInverse.resize(this->joints.size(), this->leaves.size() * 6);
+			this->jacobian = ::rl::math::Matrix::Identity(this->leaves.size() * 6, this->joints.size());
+			this->jacobianInverse = ::rl::math::Matrix::Identity(this->joints.size(), this->leaves.size() * 6);
 		}
 		
 		void
@@ -1104,7 +1104,7 @@ namespace rl
 				{
 					if (this->joints[j]->leaves.count(this->leaves[i]) > 0)
 					{
-						::rl::math::MatrixBlock jacobian = this->jacobian.block(6 * i, j, 6, 1); // TODO
+						::rl::math::MatrixBlock jacobian = this->jacobian.block(6 * i, j, 6, 1);
 						this->joints[j]->jacobian(this->tree[this->leaves[i]]->frame, jacobian);
 					}
 				}

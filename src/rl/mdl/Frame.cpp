@@ -32,24 +32,16 @@ namespace rl
 	{
 		Frame::Frame() :
 			Element(),
-			a(),
-			c(),
-			f(),
-			i(),
-			iA(),
-			pA(),
-			v(),
-			x(),
+			a(::rl::math::MotionVector::Zero()),
+			c(::rl::math::MotionVector::Zero()),
+			f(::rl::math::ForceVector::Zero()),
+			i(::rl::math::RigidBodyInertia::Identity()),
+			iA(::rl::math::ArticulatedBodyInertia::Identity()),
+			pA(::rl::math::ForceVector::Zero()),
+			v(::rl::math::MotionVector::Zero()),
+			x(::rl::math::PlueckerTransform::Identity()),
 			descriptor()
 		{
-			this->a.setZero(); // TODO
-			this->c.setZero(); // TODO
-			this->f.setZero(); // TODO
-			this->i.setIdentity(); // TODO
-			this->iA.setIdentity(); // TODO
-			this->pA.setZero(); // TODO
-			this->v.setZero(); // TODO
-			this->x.setIdentity(); // TODO
 		}
 		
 		Frame::~Frame()
@@ -64,8 +56,8 @@ namespace rl
 		void
 		Frame::forwardDynamics1()
 		{
-			this->iA.setZero(); // TODO
-			this->pA.setZero(); // TODO
+			this->iA.setZero();
+			this->pA.setZero();
 		}
 		
 		void
@@ -97,7 +89,7 @@ namespace rl
 		void
 		Frame::inverseDynamics1()
 		{
-			this->f.setZero(); // TODO
+			this->f.setZero();
 		}
 		
 		void
