@@ -239,7 +239,7 @@ OperationalModel::setData(const QModelIndex& index, const QVariant& value, int r
 			rl::mdl::NloptInverseKinematics ik(kinematic);
 #else
 			rl::mdl::JacobianInverseKinematics ik(kinematic);
-			ik.delta = 1;
+			ik.setDelta(1);
 #endif
 			ik.addGoal(x, index.row());
 		
