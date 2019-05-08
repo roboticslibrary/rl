@@ -84,10 +84,10 @@ if(MSVC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 19.00.23918)
 	target_compile_definitions(
 		mdl
 		PUBLIC
-		-DBOOST_ALL_NO_LIB
-		-DBOOST_CHRONO_HEADER_ONLY
-		-DBOOST_ERROR_CODE_HEADER_ONLY
-		-DBOOST_SYSTEM_NO_DEPRECATED
+		BOOST_ALL_NO_LIB
+		BOOST_CHRONO_HEADER_ONLY
+		BOOST_ERROR_CODE_HEADER_ONLY
+		BOOST_SYSTEM_NO_DEPRECATED
 	)
 endif()
 
@@ -111,7 +111,7 @@ target_link_libraries(
 )
 
 if(RL_BUILD_MDL_NLOPT)
-	target_compile_definitions(mdl INTERFACE -DRL_MDL_NLOPT)
+	target_compile_definitions(mdl INTERFACE RL_MDL_NLOPT)
 	target_include_directories(mdl PUBLIC ${NLOPT_INCLUDE_DIRS})
 	target_link_libraries(mdl ${NLOPT_LIBRARY})
 endif()

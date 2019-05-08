@@ -175,24 +175,24 @@ add_library(
 target_compile_definitions(
 	hal
 	PUBLIC
-	-DBOOST_ALL_NO_LIB
+	BOOST_ALL_NO_LIB
 )
 
 if(MSVC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 19.00.23918)
 	target_compile_definitions(
 		hal
 		PUBLIC
-		-DBOOST_ALL_NO_LIB
-		-DBOOST_CHRONO_HEADER_ONLY
-		-DBOOST_ERROR_CODE_HEADER_ONLY
-		-DBOOST_SYSTEM_NO_DEPRECATED
+		BOOST_ALL_NO_LIB
+		BOOST_CHRONO_HEADER_ONLY
+		BOOST_ERROR_CODE_HEADER_ONLY
+		BOOST_SYSTEM_NO_DEPRECATED
 	)
 endif()
 
 if(BIG_ENDIAN)
-	target_compile_definitions(hal PRIVATE -DHAVE_BIG_ENDIAN)
+	target_compile_definitions(hal PRIVATE HAVE_BIG_ENDIAN)
 else()
-	target_compile_definitions(hal PRIVATE -DHAVE_LITTLE_ENDIAN)
+	target_compile_definitions(hal PRIVATE HAVE_LITTLE_ENDIAN)
 endif()
 
 if(NOT CMAKE_VERSION VERSION_LESS 3.8)

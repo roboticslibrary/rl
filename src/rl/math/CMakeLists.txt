@@ -67,7 +67,7 @@ else()
 endif()
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 4)
-	target_compile_definitions(math INTERFACE -DEIGEN_DONT_ALIGN_STATICALLY)
+	target_compile_definitions(math INTERFACE EIGEN_DONT_ALIGN_STATICALLY)
 endif()
 
 if(NOT CMAKE_VERSION VERSION_LESS 3.8)
