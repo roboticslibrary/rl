@@ -21,10 +21,6 @@ function(CHECK_RAW_SYMBOL_EXISTS SYMBOL FILES VARIABLE)
 	check_c_source_compiles("${SOURCE}" "${VARIABLE}")
 endfunction()
 
-set(CMAKE_IMPORT_LIBRARY_PREFIX "")
-set(CMAKE_SHARED_LIBRARY_PREFIX "")
-set(CMAKE_STATIC_LIBRARY_PREFIX "")
-
 set(VERSION_MAJOR 1)
 set(VERSION_MINOR 15)
 set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR})
@@ -546,13 +542,13 @@ configure_file(include/iconv.h.in include/iconv.h.inst @ONLY)
 configure_file(libcharset/include/libcharset.h.in include/libcharset.h @ONLY)
 
 add_library(
-	libcharset
+	Charset
 	libcharset/lib/localcharset.c
 	libcharset/lib/relocatable.c
 )
 
 target_compile_definitions(
-	libcharset
+	Charset
 	PRIVATE
 	-DBUILDING_LIBCHARSET
 	-DHAVE_CONFIG_H
@@ -565,46 +561,73 @@ target_compile_definitions(
 )
 
 if(BUILD_SHARED_LIBS)
-	target_compile_definitions(libcharset PRIVATE -D_DLL -DBUILDING_DLL)
+	target_compile_definitions(Charset PRIVATE -D_DLL -DBUILDING_DLL)
 endif()
 
 if(ENABLE_EXTRA)
-	target_compile_definitions(libcharset PRIVATE -DENABLE_EXTRA=1)
+	target_compile_definitions(Charset PRIVATE -DENABLE_EXTRA=1)
 else()
-	target_compile_definitions(libcharset PRIVATE -DENABLE_EXTRA=0)
+	target_compile_definitions(Charset PRIVATE -DENABLE_EXTRA=0)
 endif()
 
 if(ENABLE_NLS)
-	target_compile_definitions(libcharset PRIVATE -DENABLE_NLS=1)
+	target_compile_definitions(Charset PRIVATE -DENABLE_NLS=1)
 else()
-	target_compile_definitions(libcharset PRIVATE -DENABLE_NLS=0)
+	target_compile_definitions(Charset PRIVATE -DENABLE_NLS=0)
 endif()
 
 if(ENABLE_RELOCATABLE)
-	target_compile_definitions(libcharset PRIVATE -DENABLE_RELOCATABLE=1)
+	target_compile_definitions(Charset PRIVATE -DENABLE_RELOCATABLE=1)
 else()
-	target_compile_definitions(libcharset PRIVATE -DENABLE_RELOCATABLE=0)
+	target_compile_definitions(Charset PRIVATE -DENABLE_RELOCATABLE=0)
 endif()
 
 target_include_directories(
-	libcharset
+	Charset
 	PUBLIC
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
 	$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
-set_target_properties(libcharset PROPERTIES DEBUG_POSTFIX d VERSION ${VERSION})
+set_target_properties(
+	Charset
+	PROPERTIES
+	IMPORT_PREFIX lib
+	OUTPUT_NAME charset
+	POSITION_INDEPENDENT_CODE ON
+	PREFIX lib
+	VERSION ${VERSION}
+)
+
+if(WIN32)
+	if(BUILD_SHARED_LIBS)
+		set_target_properties(
+			Charset
+			PROPERTIES
+			DEBUG_POSTFIX d
+		)
+	else()
+		set_target_properties(
+			Charset
+			PROPERTIES
+			DEBUG_POSTFIX sd
+			MINSIZEREL_POSTFIX s
+			RELEASE_POSTFIX s
+			RELWITHDEBINFO_POSTFIX s
+		)
+	endif()
+endif()
 
 add_library(
-	libiconv
+	Iconv
 	lib/iconv.c
 	lib/relocatable.c
 	libcharset/lib/localcharset.c
 )
 
 target_compile_definitions(
-	libiconv
+	Iconv
 	PRIVATE
 	-DBUILDING_LIBICONV
 	-DHAVE_CONFIG_H
@@ -617,44 +640,71 @@ target_compile_definitions(
 )
 
 if(BUILD_SHARED_LIBS)
-	target_compile_definitions(libiconv PRIVATE -D_DLL -DBUILDING_DLL)
+	target_compile_definitions(Iconv PRIVATE -D_DLL -DBUILDING_DLL)
 endif()
 
 if(ENABLE_EXTRA)
-	target_compile_definitions(libiconv PRIVATE -DENABLE_EXTRA=1)
+	target_compile_definitions(Iconv PRIVATE -DENABLE_EXTRA=1)
 else()
-	target_compile_definitions(libiconv PRIVATE -DENABLE_EXTRA=0)
+	target_compile_definitions(Iconv PRIVATE -DENABLE_EXTRA=0)
 endif()
 
 if(ENABLE_NLS)
-	target_compile_definitions(libiconv PRIVATE -DENABLE_NLS=1)
+	target_compile_definitions(Iconv PRIVATE -DENABLE_NLS=1)
 else()
-	target_compile_definitions(libiconv PRIVATE -DENABLE_NLS=0)
+	target_compile_definitions(Iconv PRIVATE -DENABLE_NLS=0)
 endif()
 
 if(ENABLE_RELOCATABLE)
-	target_compile_definitions(libiconv PRIVATE -DENABLE_RELOCATABLE=1)
+	target_compile_definitions(Iconv PRIVATE -DENABLE_RELOCATABLE=1)
 else()
-	target_compile_definitions(libiconv PRIVATE -DENABLE_RELOCATABLE=0)
+	target_compile_definitions(Iconv PRIVATE -DENABLE_RELOCATABLE=0)
 endif()
 
 target_include_directories(
-	libiconv
+	Iconv
 	PUBLIC
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
 	$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
-target_link_libraries(libiconv libcharset)
+target_link_libraries(Iconv Charset)
 
-set_target_properties(libiconv PROPERTIES DEBUG_POSTFIX d VERSION ${VERSION})
+set_target_properties(
+	Iconv
+	PROPERTIES
+	IMPORT_PREFIX lib
+	OUTPUT_NAME iconv
+	POSITION_INDEPENDENT_CODE ON
+	PREFIX lib
+	VERSION ${VERSION}
+)
+
+if(WIN32)
+	if(BUILD_SHARED_LIBS)
+		set_target_properties(
+			Iconv
+			PROPERTIES
+			DEBUG_POSTFIX d
+		)
+	else()
+		set_target_properties(
+			Iconv
+			PROPERTIES
+			DEBUG_POSTFIX sd
+			MINSIZEREL_POSTFIX s
+			RELEASE_POSTFIX s
+			RELWITHDEBINFO_POSTFIX s
+		)
+	endif()
+endif()
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/include/iconv.h.inst DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} RENAME iconv.h COMPONENT development)
 
 install(
-	TARGETS	libcharset libiconv
-	EXPORT libiconv
+	TARGETS Charset Iconv
+	EXPORT Iconv
 	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT development
 	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT runtime NAMELINK_SKIP
 	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT runtime
@@ -662,15 +712,15 @@ install(
 
 if(BUILD_SHARED_LIBS)
 	install(
-		TARGETS	libcharset libiconv
-		EXPORT libiconv
+		TARGETS Charset Iconv
+		EXPORT Iconv
 		LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT development NAMELINK_ONLY
 	)
 endif()
 
-if(MSVC AND BUILD_SHARED_LIBS AND ${CMAKE_MAJOR_VERSION} GREATER 2 AND ${CMAKE_MINOR_VERSION} GREATER 0)
-	install(FILES $<TARGET_PDB_FILE:libcharset> DESTINATION ${CMAKE_INSTALL_BINDIR} CONFIGURATIONS Debug RelWithDebInfo COMPONENT debug)
-	install(FILES $<TARGET_PDB_FILE:libiconv> DESTINATION ${CMAKE_INSTALL_BINDIR} CONFIGURATIONS Debug RelWithDebInfo COMPONENT debug)
+if(MSVC AND BUILD_SHARED_LIBS AND NOT CMAKE_VERSION VERSION_LESS 3.1)
+	install(FILES $<TARGET_PDB_FILE:Charset> DESTINATION ${CMAKE_INSTALL_BINDIR} CONFIGURATIONS Debug RelWithDebInfo COMPONENT debug)
+	install(FILES $<TARGET_PDB_FILE:Iconv> DESTINATION ${CMAKE_INSTALL_BINDIR} CONFIGURATIONS Debug RelWithDebInfo COMPONENT debug)
 endif()
 
 #configure_file(srclib/stdbool.in.h include/stdbool.h @ONLY)
@@ -745,10 +795,10 @@ endif()
 #	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/srclib>
 #)
 #
-#target_link_libraries(iconv libiconv)
+#target_link_libraries(iconv Iconv)
 #
 #install(
-#	TARGETS	iconv
+#	TARGETS iconv
 #	COMPONENT programs
 #	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 #	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -770,32 +820,32 @@ install(FILES man/iconv_open_into.3.html DESTINATION ${CMAKE_INSTALL_DATADIR}/do
 install(FILES man/iconvctl.3.html DESTINATION ${CMAKE_INSTALL_DATADIR}/doc/libiconv COMPONENT documentation)
 
 configure_package_config_file(
-  libiconv-config.cmake.in libiconv-config.cmake
-  INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/libiconv-${VERSION}
+	iconv-config.cmake.in iconv-config.cmake
+	INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/iconv-${VERSION}
 )
 
 install(
-	FILES ${CMAKE_CURRENT_BINARY_DIR}/libiconv-config.cmake
-	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/libiconv-${VERSION}
+	FILES ${CMAKE_CURRENT_BINARY_DIR}/iconv-config.cmake
+	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/iconv-${VERSION}
 )
 
 write_basic_package_version_file(
-	${CMAKE_CURRENT_BINARY_DIR}/libiconv-config-version.cmake
+	${CMAKE_CURRENT_BINARY_DIR}/iconv-config-version.cmake
 	VERSION ${VERSION}
 	COMPATIBILITY ExactVersion
 )
 
 install(
-	FILES ${CMAKE_CURRENT_BINARY_DIR}/libiconv-config-version.cmake
-	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/libiconv-${VERSION}
+	FILES ${CMAKE_CURRENT_BINARY_DIR}/iconv-config-version.cmake
+	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/iconv-${VERSION}
 	COMPONENT development
 )
 
 install(
-	EXPORT libiconv
-	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/libiconv-${VERSION}
-	NAMESPACE libiconv::
-	FILE libiconv-export.cmake
+	EXPORT Iconv
+	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/iconv-${VERSION}
+	NAMESPACE Iconv::
+	FILE iconv-export.cmake
 	COMPONENT development
 )
 
