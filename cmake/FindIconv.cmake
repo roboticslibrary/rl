@@ -9,13 +9,13 @@ foreach(PATH ${CMAKE_PREFIX_PATH})
 		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
 		${PATH}/libiconv*/${CMAKE_INSTALL_INCLUDEDIR}
 	)
-	list(APPEND libiconv_INCLUDE_HINTS ${HINTS})
+	list(APPEND Iconv_INCLUDE_HINTS ${HINTS})
 endforeach()
 
 list(
 	APPEND
-	libiconv_INCLUDE_HINTS
-	$ENV{libiconv_DIR}/${CMAKE_INSTALL_INCLUDEDIR}
+	Iconv_INCLUDE_HINTS
+	$ENV{Iconv_DIR}/${CMAKE_INSTALL_INCLUDEDIR}
 )
 
 foreach(PATH $ENV{CMAKE_PREFIX_PATH})
@@ -25,7 +25,7 @@ foreach(PATH $ENV{CMAKE_PREFIX_PATH})
 		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
 		${PATH}/libiconv*/${CMAKE_INSTALL_INCLUDEDIR}
 	)
-	list(APPEND libiconv_INCLUDE_HINTS ${HINTS})
+	list(APPEND Iconv_INCLUDE_HINTS ${HINTS})
 endforeach()
 
 foreach(PATH $ENV{PATH})
@@ -34,12 +34,12 @@ foreach(PATH $ENV{PATH})
 		HINTS
 		${PATH}/../${CMAKE_INSTALL_INCLUDEDIR}
 	)
-	list(APPEND libiconv_INCLUDE_HINTS ${HINTS})
+	list(APPEND Iconv_INCLUDE_HINTS ${HINTS})
 endforeach()
 
 file(
 	GLOB
-	libiconv_INCLUDE_PATHS
+	Iconv_INCLUDE_PATHS
 	$ENV{HOME}/include
 	/usr/local/include
 	/opt/local/include
@@ -50,16 +50,16 @@ file(
 )
 
 find_path(
-	libiconv_INCLUDE_DIRS
+	Iconv_INCLUDE_DIRS
 	NAMES
 	iconv.h
 	HINTS
-	${libiconv_INCLUDE_HINTS}
+	${Iconv_INCLUDE_HINTS}
 	PATHS
-	${libiconv_INCLUDE_PATHS}
+	${Iconv_INCLUDE_PATHS}
 )
 
-mark_as_advanced(libiconv_INCLUDE_DIRS)
+mark_as_advanced(Iconv_INCLUDE_DIRS)
 
 foreach(PATH ${CMAKE_PREFIX_PATH})
 	file(
@@ -68,13 +68,13 @@ foreach(PATH ${CMAKE_PREFIX_PATH})
 		${PATH}/${CMAKE_INSTALL_LIBDIR}
 		${PATH}/libiconv*/${CMAKE_INSTALL_LIBDIR}
 	)
-	list(APPEND libiconv_LIBRARY_HINTS ${HINTS})
+	list(APPEND Iconv_LIBRARY_HINTS ${HINTS})
 endforeach()
 
 list(
 	APPEND
-	libiconv_LIBRARY_HINTS
-	$ENV{libiconv_DIR}/${CMAKE_INSTALL_LIBDIR}
+	Iconv_LIBRARY_HINTS
+	$ENV{Iconv_DIR}/${CMAKE_INSTALL_LIBDIR}
 )
 
 foreach(PATH $ENV{CMAKE_PREFIX_PATH})
@@ -84,7 +84,7 @@ foreach(PATH $ENV{CMAKE_PREFIX_PATH})
 		${PATH}/${CMAKE_INSTALL_LIBDIR}
 		${PATH}/libiconv*/${CMAKE_INSTALL_LIBDIR}
 	)
-	list(APPEND libiconv_LIBRARY_HINTS ${HINTS})
+	list(APPEND Iconv_LIBRARY_HINTS ${HINTS})
 endforeach()
 
 foreach(PATH $ENV{PATH})
@@ -93,12 +93,12 @@ foreach(PATH $ENV{PATH})
 		HINTS
 		${PATH}/../${CMAKE_INSTALL_LIBDIR}
 	)
-	list(APPEND libiconv_LIBRARY_HINTS ${HINTS})
+	list(APPEND Iconv_LIBRARY_HINTS ${HINTS})
 endforeach()
 
 file(
 	GLOB
-	libiconv_LIBRARY_PATHS
+	Iconv_LIBRARY_PATHS
 	$ENV{HOME}/lib
 	/usr/local/lib
 	/opt/local/lib
@@ -108,49 +108,49 @@ file(
 )
 
 find_library(
-	libiconv_LIBRARY_DEBUG
+	Iconv_LIBRARY_DEBUG
 	NAMES
 	iconvd libiconvd libiconvd_a
 	HINTS
-	${libiconv_LIBRARY_HINTS}
+	${Iconv_LIBRARY_HINTS}
 	PATHS
-	${libiconv_LIBRARY_PATHS}
+	${Iconv_LIBRARY_PATHS}
 )
 
 find_library(
-	libiconv_LIBRARY_RELEASE
+	Iconv_LIBRARY_RELEASE
 	NAMES
 	iconv libiconv liblibiconv_a
 	HINTS
-	${libiconv_LIBRARY_HINTS}
+	${Iconv_LIBRARY_HINTS}
 	PATHS
-	${libiconv_LIBRARY_PATHS}
+	${Iconv_LIBRARY_PATHS}
 )
 
-select_library_configurations(libiconv)
+select_library_configurations(Iconv)
 
 find_package_handle_standard_args(
-	libiconv
-	FOUND_VAR libiconv_FOUND
-	REQUIRED_VARS libiconv_INCLUDE_DIRS libiconv_LIBRARIES
+	Iconv
+	FOUND_VAR Iconv_FOUND
+	REQUIRED_VARS Iconv_INCLUDE_DIRS Iconv_LIBRARIES
 )
 
-if(libiconv_FOUND AND NOT TARGET libiconv::libiconv)
-	add_library(libiconv::libiconv UNKNOWN IMPORTED)
+if(Iconv_FOUND AND NOT TARGET Iconv::Iconv)
+	add_library(Iconv::Iconv UNKNOWN IMPORTED)
 	
-	if(libiconv_LIBRARY_RELEASE)
-		set_property(TARGET libiconv::libiconv APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
-		set_target_properties(libiconv::libiconv PROPERTIES IMPORTED_LOCATION_RELEASE "${libiconv_LIBRARY_RELEASE}")
+	if(Iconv_LIBRARY_RELEASE)
+		set_property(TARGET Iconv::Iconv APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+		set_target_properties(Iconv::Iconv PROPERTIES IMPORTED_LOCATION_RELEASE "${Iconv_LIBRARY_RELEASE}")
 	endif()
 	
-	if(libiconv_LIBRARY_DEBUG)
-		set_property(TARGET libiconv::libiconv APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
-		set_target_properties(libiconv::libiconv PROPERTIES IMPORTED_LOCATION_DEBUG "${libiconv_LIBRARY_DEBUG}")
+	if(Iconv_LIBRARY_DEBUG)
+		set_property(TARGET Iconv::Iconv APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
+		set_target_properties(Iconv::Iconv PROPERTIES IMPORTED_LOCATION_DEBUG "${Iconv_LIBRARY_DEBUG}")
 	endif()
 	
 	set_target_properties(
-		libiconv::libiconv PROPERTIES
-		INTERFACE_COMPILE_DEFINITIONS "${libiconv_DEFINITIONS}"
-		INTERFACE_INCLUDE_DIRECTORIES "${libiconv_INCLUDE_DIRS}"
+		Iconv::Iconv PROPERTIES
+		INTERFACE_COMPILE_DEFINITIONS "${Iconv_DEFINITIONS}"
+		INTERFACE_INCLUDE_DIRECTORIES "${Iconv_INCLUDE_DIRS}"
 	)
 endif()

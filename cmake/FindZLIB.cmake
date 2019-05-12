@@ -9,13 +9,13 @@ foreach(PATH ${CMAKE_PREFIX_PATH})
 		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
 		${PATH}/zlib*/${CMAKE_INSTALL_INCLUDEDIR}
 	)
-	list(APPEND zlib_INCLUDE_HINTS ${HINTS})
+	list(APPEND ZLIB_INCLUDE_HINTS ${HINTS})
 endforeach()
 
 list(
 	APPEND
-	zlib_INCLUDE_HINTS
-	$ENV{zlib_DIR}/${CMAKE_INSTALL_INCLUDEDIR}
+	ZLIB_INCLUDE_HINTS
+	$ENV{ZLIB_DIR}/${CMAKE_INSTALL_INCLUDEDIR}
 )
 
 foreach(PATH $ENV{CMAKE_PREFIX_PATH})
@@ -25,7 +25,7 @@ foreach(PATH $ENV{CMAKE_PREFIX_PATH})
 		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
 		${PATH}/zlib*/${CMAKE_INSTALL_INCLUDEDIR}
 	)
-	list(APPEND zlib_INCLUDE_HINTS ${HINTS})
+	list(APPEND ZLIB_INCLUDE_HINTS ${HINTS})
 endforeach()
 
 foreach(PATH $ENV{PATH})
@@ -34,12 +34,12 @@ foreach(PATH $ENV{PATH})
 		HINTS
 		${PATH}/../${CMAKE_INSTALL_INCLUDEDIR}
 	)
-	list(APPEND zlib_INCLUDE_HINTS ${HINTS})
+	list(APPEND ZLIB_INCLUDE_HINTS ${HINTS})
 endforeach()
 
 file(
 	GLOB
-	zlib_INCLUDE_PATHS
+	ZLIB_INCLUDE_PATHS
 	$ENV{HOME}/include
 	/usr/local/include
 	/opt/local/include
@@ -50,16 +50,16 @@ file(
 )
 
 find_path(
-	zlib_INCLUDE_DIRS
+	ZLIB_INCLUDE_DIRS
 	NAMES
 	zlib.h
 	HINTS
-	${zlib_INCLUDE_HINTS}
+	${ZLIB_INCLUDE_HINTS}
 	PATHS
-	${zlib_INCLUDE_PATHS}
+	${ZLIB_INCLUDE_PATHS}
 )
 
-mark_as_advanced(zlib_INCLUDE_DIRS)
+mark_as_advanced(ZLIB_INCLUDE_DIRS)
 
 foreach(PATH ${CMAKE_PREFIX_PATH})
 	file(
@@ -68,13 +68,13 @@ foreach(PATH ${CMAKE_PREFIX_PATH})
 		${PATH}/${CMAKE_INSTALL_LIBDIR}
 		${PATH}/zlib*/${CMAKE_INSTALL_LIBDIR}
 	)
-	list(APPEND zlib_LIBRARY_HINTS ${HINTS})
+	list(APPEND ZLIB_LIBRARY_HINTS ${HINTS})
 endforeach()
 
 list(
 	APPEND
-	zlib_LIBRARY_HINTS
-	$ENV{zlib_DIR}/${CMAKE_INSTALL_LIBDIR}
+	ZLIB_LIBRARY_HINTS
+	$ENV{ZLIB_DIR}/${CMAKE_INSTALL_LIBDIR}
 )
 
 foreach(PATH $ENV{CMAKE_PREFIX_PATH})
@@ -84,7 +84,7 @@ foreach(PATH $ENV{CMAKE_PREFIX_PATH})
 		${PATH}/${CMAKE_INSTALL_LIBDIR}
 		${PATH}/zlib*/${CMAKE_INSTALL_LIBDIR}
 	)
-	list(APPEND zlib_LIBRARY_HINTS ${HINTS})
+	list(APPEND ZLIB_LIBRARY_HINTS ${HINTS})
 endforeach()
 
 foreach(PATH $ENV{PATH})
@@ -93,12 +93,12 @@ foreach(PATH $ENV{PATH})
 		HINTS
 		${PATH}/../${CMAKE_INSTALL_LIBDIR}
 	)
-	list(APPEND zlib_LIBRARY_HINTS ${HINTS})
+	list(APPEND ZLIB_LIBRARY_HINTS ${HINTS})
 endforeach()
 
 file(
 	GLOB
-	zlib_LIBRARY_PATHS
+	ZLIB_LIBRARY_PATHS
 	$ENV{HOME}/lib
 	/usr/local/lib
 	/opt/local/lib
@@ -108,48 +108,48 @@ file(
 )
 
 find_library(
-	zlib_LIBRARY_DEBUG
+	ZLIB_LIBRARY_DEBUG
 	NAMES
 	zd zlibd zlib_ad zlibstaticd zlibwapid zdlld
 	HINTS
-	${zlib_LIBRARY_HINTS}
+	${ZLIB_LIBRARY_HINTS}
 	PATHS
-	${zlib_LIBRARY_PATHS}
+	${ZLIB_LIBRARY_PATHS}
 )
 
 find_library(
-	zlib_LIBRARY_RELEASE
+	ZLIB_LIBRARY_RELEASE
 	NAMES
 	z zlib zlib_a zlibstatic zlibwapi zdll
 	HINTS
-	${zlib_LIBRARY_HINTS}
+	${ZLIB_LIBRARY_HINTS}
 	PATHS
-	${zlib_LIBRARY_PATHS}
+	${ZLIB_LIBRARY_PATHS}
 )
 
-select_library_configurations(zlib)
+select_library_configurations(ZLIB)
 
 find_package_handle_standard_args(
-	zlib
-	FOUND_VAR zlib_FOUND
-	REQUIRED_VARS zlib_INCLUDE_DIRS zlib_LIBRARIES
+	ZLIB
+	FOUND_VAR ZLIB_FOUND
+	REQUIRED_VARS ZLIB_INCLUDE_DIRS ZLIB_LIBRARIES
 )
 
-if(zlib_FOUND AND NOT TARGET zlib::zlib)
-	add_library(zlib::zlib UNKNOWN IMPORTED)
+if(ZLIB_FOUND AND NOT TARGET ZLIB::ZLIB)
+	add_library(ZLIB::ZLIB UNKNOWN IMPORTED)
 	
-	if(zlib_LIBRARY_RELEASE)
-		set_property(TARGET zlib::zlib APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
-		set_target_properties(zlib::zlib PROPERTIES IMPORTED_LOCATION_RELEASE "${zlib_LIBRARY_RELEASE}")
+	if(ZLIB_LIBRARY_RELEASE)
+		set_property(TARGET ZLIB::ZLIB APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+		set_target_properties(ZLIB::ZLIB PROPERTIES IMPORTED_LOCATION_RELEASE "${ZLIB_LIBRARY_RELEASE}")
 	endif()
 	
-	if(zlib_LIBRARY_DEBUG)
-		set_property(TARGET zlib::zlib APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
-		set_target_properties(zlib::zlib PROPERTIES IMPORTED_LOCATION_DEBUG "${zlib_LIBRARY_DEBUG}")
+	if(ZLIB_LIBRARY_DEBUG)
+		set_property(TARGET ZLIB::ZLIB APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
+		set_target_properties(ZLIB::ZLIB PROPERTIES IMPORTED_LOCATION_DEBUG "${ZLIB_LIBRARY_DEBUG}")
 	endif()
 	
 	set_target_properties(
-		zlib::zlib PROPERTIES
-		INTERFACE_INCLUDE_DIRECTORIES "${zlib_INCLUDE_DIRS}"
+		ZLIB::ZLIB PROPERTIES
+		INTERFACE_INCLUDE_DIRECTORIES "${ZLIB_INCLUDE_DIRS}"
 	)
 endif()
