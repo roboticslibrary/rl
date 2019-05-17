@@ -63,6 +63,14 @@ if(Coin_FOUND AND OPENGL_FOUND AND QT_FOUND AND SoQt_FOUND)
 		VERSION 0.1.13
 	)
 	
+	if(WIN32)
+		set_target_properties(
+			wrlview
+			PROPERTIES
+			DEBUG_POSTFIX d
+		)
+	endif()
+	
 	install(
 		TARGETS
 		wrlview
