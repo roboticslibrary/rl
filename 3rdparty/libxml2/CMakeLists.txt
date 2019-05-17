@@ -4,7 +4,7 @@ list(INSERT CMAKE_PREFIX_PATH 0 ${CMAKE_INSTALL_PREFIX})
 
 ExternalProject_Add(
 	libxml2
-	DEPENDS libiconv zlib
+	DEPENDS libiconv xz zlib
 	#GIT_REPOSITORY git://git.gnome.org/libxml2
 	#GIT_TAG v2.9.5
 	URL https://github.com/roboticslibrary/libxml2/archive/patch.zip

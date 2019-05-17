@@ -42,6 +42,7 @@ add_subdirectory(ode)
 add_subdirectory(pqp)
 add_subdirectory(coin3d/simage)
 add_subdirectory(solid)
+add_subdirectory(xz)
 add_subdirectory(zlib)
 
 add_subdirectory(libxml2)
@@ -65,6 +66,7 @@ set(
 	"${CMAKE_CURRENT_BINARY_DIR}/simage/simage-prefix/src/simage-build;simage;ALL;/"
 	"${CMAKE_CURRENT_BINARY_DIR}/solid/solid-prefix/src/solid-build;solid;ALL;/"
 	"${CMAKE_CURRENT_BINARY_DIR}/soqt/soqt-prefix/src/soqt-build;soqt;ALL;/"
+	"${CMAKE_CURRENT_BINARY_DIR}/xz/xz-prefix/src/xz-build;xz;ALL;/"
 	"${CMAKE_CURRENT_BINARY_DIR}/zlib/zlib-prefix/src/zlib-build;zlib;ALL;/"
 )
 

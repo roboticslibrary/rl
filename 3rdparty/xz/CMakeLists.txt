@@ -1,0 +1,16 @@
+cmake_minimum_required(VERSION 2.8.11)
+
+project(xz)
+
+include(ExternalProject)
+
+ExternalProject_Add(
+	xz
+	#GIT_REPOSITORY https://git.tukaani.org/xz.git
+	#GIT_TAG v5.2.3
+	URL https://github.com/roboticslibrary/xz/archive/patch.zip
+	#URL ${CMAKE_CURRENT_SOURCE_DIR}/xz-5.2.3.tar.gz
+	#URL_MD5 ef68674fb47a8b8e741b34e429d86e9d
+	CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_CFG_INTDIR=${CMAKE_CFG_INTDIR} -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH} -DCMAKE_TRY_COMPILE_CONFIGURATION=${CMAKE_TRY_COMPILE_CONFIGURATION}
+	INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
+)
