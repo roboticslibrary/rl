@@ -26,6 +26,9 @@ set(VERSION_MINOR 15)
 set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR})
 
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+option(LIBICONV_ENABLE_EXTRA "Enable a few rarely used encodings" OFF)
+option(LIBICONV_ENABLE_NLS "Translate program messages to user's native language" OFF)
+option(LIBICONV_ENABLE_RELOCATABLE "Install a package that can be moved in the file system" ON)
 
 check_type_size("ptrdiff_t" BITSIZEOF_PTRDIFF_T)
 set(CMAKE_EXTRA_INCLUDE_FILES "signal.h")
@@ -41,9 +44,9 @@ check_symbol_exists(EILSEQ "errno.h" HAVE_EILSEQ)
 if(NOT HAVE_EILSEQ)
 	set(EILSEQ "ENOENT")
 endif()
-option(ENABLE_EXTRA "Enable a few rarely used encodings" OFF)
-option(ENABLE_NLS "Translate program messages to user's native language" OFF)
-option(ENABLE_RELOCATABLE "Install a package that can be moved in the file system" ON)
+set(ENABLE_EXTRA ${LIBICONV_ENABLE_EXTRA})
+set(ENABLE_NLS ${LIBICONV_ENABLE_NLS})
+set(ENABLE_RELOCATABLE ${LIBICONV_ENABLE_RELOCATABLE})
 check_c_source_runs("
 	#include <signal.h>
 	static void exception_handler(int sig) { exit (1); }
@@ -550,36 +553,36 @@ add_library(
 target_compile_definitions(
 	Charset
 	PRIVATE
-	-DBUILDING_LIBCHARSET
-	-DHAVE_CONFIG_H
-	-DIN_LIBRARY
-	-DINSTALLDIR="${CMAKE_INSTALL_LIBDIR}"
-	-DLIBDIR="${CMAKE_INSTALL_LIBDIR}"
-	-DNO_XMALLOC
-	-Drelocate=libcharset_relocate
-	-Dset_relocation_prefix=libcharset_set_relocation_prefix
+	BUILDING_LIBCHARSET
+	HAVE_CONFIG_H
+	IN_LIBRARY
+	INSTALLDIR="${CMAKE_INSTALL_LIBDIR}"
+	LIBDIR="${CMAKE_INSTALL_LIBDIR}"
+	NO_XMALLOC
+	relocate=libcharset_relocate
+	set_relocation_prefix=libcharset_set_relocation_prefix
 )
 
 if(BUILD_SHARED_LIBS)
-	target_compile_definitions(Charset PRIVATE -D_DLL -DBUILDING_DLL)
+	target_compile_definitions(Charset PRIVATE _DLL BUILDING_DLL)
 endif()
 
-if(ENABLE_EXTRA)
-	target_compile_definitions(Charset PRIVATE -DENABLE_EXTRA=1)
+if(LIBICONV_ENABLE_EXTRA)
+	target_compile_definitions(Charset PRIVATE ENABLE_EXTRA=1)
 else()
-	target_compile_definitions(Charset PRIVATE -DENABLE_EXTRA=0)
+	target_compile_definitions(Charset PRIVATE ENABLE_EXTRA=0)
 endif()
 
-if(ENABLE_NLS)
-	target_compile_definitions(Charset PRIVATE -DENABLE_NLS=1)
+if(LIBICONV_ENABLE_NLS)
+	target_compile_definitions(Charset PRIVATE ENABLE_NLS=1)
 else()
-	target_compile_definitions(Charset PRIVATE -DENABLE_NLS=0)
+	target_compile_definitions(Charset PRIVATE ENABLE_NLS=0)
 endif()
 
-if(ENABLE_RELOCATABLE)
-	target_compile_definitions(Charset PRIVATE -DENABLE_RELOCATABLE=1)
+if(LIBICONV_ENABLE_RELOCATABLE)
+	target_compile_definitions(Charset PRIVATE ENABLE_RELOCATABLE=1)
 else()
-	target_compile_definitions(Charset PRIVATE -DENABLE_RELOCATABLE=0)
+	target_compile_definitions(Charset PRIVATE ENABLE_RELOCATABLE=0)
 endif()
 
 target_include_directories(
@@ -629,36 +632,36 @@ add_library(
 target_compile_definitions(
 	Iconv
 	PRIVATE
-	-DBUILDING_LIBICONV
-	-DHAVE_CONFIG_H
-	-DIN_LIBRARY
-	-DINSTALLDIR="${CMAKE_INSTALL_LIBDIR}"
-	-DLIBDIR="${CMAKE_INSTALL_LIBDIR}"
-	-DNO_XMALLOC
-	-Drelocate=libiconv_relocate
-	-Dset_relocation_prefix=libiconv_set_relocation_prefix
+	BUILDING_LIBICONV
+	HAVE_CONFIG_H
+	IN_LIBRARY
+	INSTALLDIR="${CMAKE_INSTALL_LIBDIR}"
+	LIBDIR="${CMAKE_INSTALL_LIBDIR}"
+	NO_XMALLOC
+	relocate=libiconv_relocate
+	set_relocation_prefix=libiconv_set_relocation_prefix
 )
 
 if(BUILD_SHARED_LIBS)
-	target_compile_definitions(Iconv PRIVATE -D_DLL -DBUILDING_DLL)
+	target_compile_definitions(Iconv PRIVATE _DLL BUILDING_DLL)
 endif()
 
-if(ENABLE_EXTRA)
-	target_compile_definitions(Iconv PRIVATE -DENABLE_EXTRA=1)
+if(LIBICONV_ENABLE_EXTRA)
+	target_compile_definitions(Iconv PRIVATE ENABLE_EXTRA=1)
 else()
-	target_compile_definitions(Iconv PRIVATE -DENABLE_EXTRA=0)
+	target_compile_definitions(Iconv PRIVATE ENABLE_EXTRA=0)
 endif()
 
-if(ENABLE_NLS)
-	target_compile_definitions(Iconv PRIVATE -DENABLE_NLS=1)
+if(LIBICONV_ENABLE_NLS)
+	target_compile_definitions(Iconv PRIVATE ENABLE_NLS=1)
 else()
-	target_compile_definitions(Iconv PRIVATE -DENABLE_NLS=0)
+	target_compile_definitions(Iconv PRIVATE ENABLE_NLS=0)
 endif()
 
-if(ENABLE_RELOCATABLE)
-	target_compile_definitions(Iconv PRIVATE -DENABLE_RELOCATABLE=1)
+if(LIBICONV_ENABLE_RELOCATABLE)
+	target_compile_definitions(Iconv PRIVATE ENABLE_RELOCATABLE=1)
 else()
-	target_compile_definitions(Iconv PRIVATE -DENABLE_RELOCATABLE=0)
+	target_compile_definitions(Iconv PRIVATE ENABLE_RELOCATABLE=0)
 endif()
 
 target_include_directories(
@@ -760,31 +763,31 @@ endif()
 #target_compile_definitions(
 #	iconv
 #	PRIVATE
-#	-DEXEEXT="${CMAKE_EXECUTABLE_SUFFIX}"
-#	-DINSTALLDIR="${CMAKE_INSTALL_BINDIR}"
-#	-DINSTALLPREFIX="${CMAKE_INSTALL_PREFIX}"
-#	-DLIBPATHVAR=""
-#	-DLIBDIRS=""
-#	-DLOCALEDIR="${CMAKE_INSTALL_LOCALEDIR}"
-#	-DNO_XMALLOC
+#	EXEEXT="${CMAKE_EXECUTABLE_SUFFIX}"
+#	INSTALLDIR="${CMAKE_INSTALL_BINDIR}"
+#	INSTALLPREFIX="${CMAKE_INSTALL_PREFIX}"
+#	LIBPATHVAR=""
+#	LIBDIRS=""
+#	LOCALEDIR="${CMAKE_INSTALL_LOCALEDIR}"
+#	NO_XMALLOC
 #)
 #
-#if(ENABLE_EXTRA)
-#	target_compile_definitions(iconv PRIVATE -DENABLE_EXTRA=1)
+#if(LIBICONV_ENABLE_EXTRA)
+#	target_compile_definitions(iconv PRIVATE ENABLE_EXTRA=1)
 #else()
-#	target_compile_definitions(iconv PRIVATE -DENABLE_EXTRA=0)
+#	target_compile_definitions(iconv PRIVATE ENABLE_EXTRA=0)
 #endif()
 #
-#if(ENABLE_NLS)
-#	target_compile_definitions(iconv PRIVATE -DENABLE_NLS=1)
+#if(LIBICONV_ENABLE_NLS)
+#	target_compile_definitions(iconv PRIVATE ENABLE_NLS=1)
 #else()
-#	target_compile_definitions(iconv PRIVATE -DENABLE_NLS=0)
+#	target_compile_definitions(iconv PRIVATE ENABLE_NLS=0)
 #endif()
 #
-#if(ENABLE_RELOCATABLE)
-#	target_compile_definitions(iconv PRIVATE -DENABLE_RELOCATABLE=1)
+#if(LIBICONV_ENABLE_RELOCATABLE)
+#	target_compile_definitions(iconv PRIVATE ENABLE_RELOCATABLE=1)
 #else()
-#	target_compile_definitions(iconv PRIVATE -DENABLE_RELOCATABLE=0)
+#	target_compile_definitions(iconv PRIVATE ENABLE_RELOCATABLE=0)
 #endif()
 #
 #target_include_directories(
