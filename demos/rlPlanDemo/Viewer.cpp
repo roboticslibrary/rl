@@ -370,7 +370,7 @@ Viewer::Viewer(QWidget* parent, Qt::WindowFlags f) :
 	
 	this->verticesColliding->addChild(this->verticesCollidingShape);
 	
-	this->root->addChild(this->verticesColliding);
+	this->vertices->addChild(this->verticesColliding);
 	
 	// verticesFree
 	
