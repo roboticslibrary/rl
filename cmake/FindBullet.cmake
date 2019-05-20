@@ -6,9 +6,7 @@ foreach(PATH ${CMAKE_PREFIX_PATH})
 	file(
 		GLOB
 		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}/bullet
 		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/Bullet*/${CMAKE_INSTALL_INCLUDEDIR}/bullet
 		${PATH}/Bullet*/${CMAKE_INSTALL_INCLUDEDIR}
 	)
 	list(APPEND BULLET_INCLUDE_HINTS ${HINTS})
@@ -17,7 +15,6 @@ endforeach()
 list(
 	APPEND
 	BULLET_INCLUDE_HINTS
-	$ENV{Bullet_DIR}/${CMAKE_INSTALL_INCLUDEDIR}/bullet
 	$ENV{Bullet_DIR}/${CMAKE_INSTALL_INCLUDEDIR}
 )
 
@@ -25,9 +22,7 @@ foreach(PATH $ENV{CMAKE_PREFIX_PATH})
 	file(
 		GLOB
 		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}/bullet
 		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/Bullet*/${CMAKE_INSTALL_INCLUDEDIR}/bullet
 		${PATH}/Bullet*/${CMAKE_INSTALL_INCLUDEDIR}
 	)
 	list(APPEND BULLET_INCLUDE_HINTS ${HINTS})
@@ -37,7 +32,6 @@ foreach(PATH $ENV{PATH})
 	file(
 		GLOB
 		HINTS
-		${PATH}/../${CMAKE_INSTALL_INCLUDEDIR}/bullet
 		${PATH}/../${CMAKE_INSTALL_INCLUDEDIR}
 	)
 	list(APPEND BULLET_INCLUDE_HINTS ${HINTS})
@@ -46,11 +40,11 @@ endforeach()
 file(
 	GLOB
 	BULLET_INCLUDE_PATHS
-	$ENV{BULLET_ROOT_DIR}/include/bullet
-	$ENV{HOME}/include/bullet
-	/usr/local/include/bullet
-	/opt/local/include/bullet
-	/usr/include/bullet
+	$ENV{BULLET_ROOT_DIR}/include
+	$ENV{HOME}/include
+	/usr/local/include
+	/opt/local/include
+	/usr/include
 )
 
 find_path(
@@ -61,6 +55,8 @@ find_path(
 	${BULLET_INCLUDE_HINTS}
 	PATHS
 	${BULLET_INCLUDE_PATHS}
+	PATH_SUFFIXES
+	bullet
 )
 
 mark_as_advanced(BULLET_INCLUDE_DIRS)

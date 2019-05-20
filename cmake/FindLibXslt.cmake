@@ -6,9 +6,7 @@ foreach(PATH ${CMAKE_PREFIX_PATH})
 	file(
 		GLOB
 		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}/libxslt
 		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/libxslt*/${CMAKE_INSTALL_INCLUDEDIR}/libxslt
 		${PATH}/libxslt*/${CMAKE_INSTALL_INCLUDEDIR}
 	)
 	list(APPEND LIBXSLT_INCLUDE_HINTS ${HINTS})
@@ -17,7 +15,6 @@ endforeach()
 list(
 	APPEND
 	LIBXSLT_INCLUDE_HINTS
-	$ENV{LibXslt_DIR}/${CMAKE_INSTALL_INCLUDEDIR}/libxslt
 	$ENV{LibXslt_DIR}/${CMAKE_INSTALL_INCLUDEDIR}
 )
 
@@ -25,9 +22,7 @@ foreach(PATH $ENV{CMAKE_PREFIX_PATH})
 	file(
 		GLOB
 		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}/libxslt
 		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/libxslt*/${CMAKE_INSTALL_INCLUDEDIR}/libxslt
 		${PATH}/libxslt*/${CMAKE_INSTALL_INCLUDEDIR}
 	)
 	list(APPEND LIBXSLT_INCLUDE_HINTS ${HINTS})
@@ -37,7 +32,6 @@ foreach(PATH $ENV{PATH})
 	file(
 		GLOB
 		HINTS
-		${PATH}/../${CMAKE_INSTALL_INCLUDEDIR}/libxslt
 		${PATH}/../${CMAKE_INSTALL_INCLUDEDIR}
 	)
 	list(APPEND LIBXSLT_INCLUDE_HINTS ${HINTS})
@@ -46,15 +40,10 @@ endforeach()
 file(
 	GLOB
 	LIBXSLT_INCLUDE_PATHS
-	$ENV{HOME}/include/libxslt
 	$ENV{HOME}/include
-	/usr/local/include/libxslt
 	/usr/local/include
-	/opt/local/include/libxslt
 	/opt/local/include
-	/usr/include/libxslt
 	/usr/include
-	${CMAKE_OSX_SYSROOT}/usr/include/libxslt
 	${CMAKE_OSX_SYSROOT}/usr/include
 )
 
@@ -63,6 +52,8 @@ find_path(
 	NAMES
 	libxslt/xslt.h
 	HINTS
+	${LIBXSLT_INCLUDE_HINTS}
+	PATHS
 	${LIBXSLT_INCLUDE_PATHS}
 )
 
@@ -117,6 +108,8 @@ find_library(
 	NAMES
 	libxsltd xsltd
 	HINTS
+	${LIBXSLT_LIBRARY_HINTS}
+	PATHS
 	${LIBXSLT_LIBRARY_PATHS}
 )
 find_library(
@@ -124,6 +117,8 @@ find_library(
 	NAMES
 	libxslt xslt
 	HINTS
+	${LIBXSLT_LIBRARY_HINTS}
+	PATHS
 	${LIBXSLT_LIBRARY_PATHS}
 )
 

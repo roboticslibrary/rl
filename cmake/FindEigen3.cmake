@@ -6,9 +6,7 @@ foreach(PATH ${CMAKE_PREFIX_PATH})
 	file(
 		GLOB
 		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}/eigen3
 		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/Eigen*/${CMAKE_INSTALL_INCLUDEDIR}/eigen3
 		${PATH}/Eigen*/${CMAKE_INSTALL_INCLUDEDIR}
 	)
 	list(APPEND EIGEN3_INCLUDE_HINTS ${HINTS})
@@ -17,7 +15,6 @@ endforeach()
 list(
 	APPEND
 	EIGEN3_INCLUDE_HINTS
-	$ENV{Eigen3_DIR}/${CMAKE_INSTALL_INCLUDEDIR}/eigen3
 	$ENV{Eigen3_DIR}/${CMAKE_INSTALL_INCLUDEDIR}
 )
 
@@ -25,9 +22,7 @@ foreach(PATH $ENV{CMAKE_PREFIX_PATH})
 	file(
 		GLOB
 		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}/eigen3
 		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/Eigen*/${CMAKE_INSTALL_INCLUDEDIR}/eigen3
 		${PATH}/Eigen*/${CMAKE_INSTALL_INCLUDEDIR}
 	)
 	list(APPEND EIGEN3_INCLUDE_HINTS ${HINTS})
@@ -37,7 +32,6 @@ foreach(PATH $ENV{PATH})
 	file(
 		GLOB
 		HINTS
-		${PATH}/../${CMAKE_INSTALL_INCLUDEDIR}/eigen3
 		${PATH}/../${CMAKE_INSTALL_INCLUDEDIR}
 	)
 	list(APPEND EIGEN3_INCLUDE_HINTS ${HINTS})
@@ -46,21 +40,13 @@ endforeach()
 file(
 	GLOB
 	EIGEN3_INCLUDE_PATHS
-	$ENV{EIGEN3_ROOT}/include/eigen3
 	$ENV{EIGEN3_ROOT}/include
 	$ENV{EIGEN3_ROOT}
-	$ENV{EIGEN3_ROOT_DIR}/include/eigen3
 	$ENV{EIGEN3_ROOT_DIR}/include
 	$ENV{EIGEN3_ROOT_DIR}
 	$ENV{HOME}/include
-	/usr/local/include/eigen3
-	/usr/local/include/eigen*
 	/usr/local/include
-	/opt/local/include/eigen3
-	/opt/local/include/eigen*
 	/opt/local/include
-	/usr/include/eigen3
-	/usr/include/eigen*
 	/usr/include
 )
 
@@ -72,6 +58,8 @@ find_path(
 	${EIGEN3_INCLUDE_HINTS}
 	PATHS
 	${EIGEN3_INCLUDE_PATHS}
+	PATH_SUFFIXES
+	eigen3
 )
 
 mark_as_advanced(EIGEN3_INCLUDE_DIRS)

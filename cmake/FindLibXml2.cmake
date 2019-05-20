@@ -6,9 +6,7 @@ foreach(PATH ${CMAKE_PREFIX_PATH})
 	file(
 		GLOB
 		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}/libxml2
 		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/libxml2*/${CMAKE_INSTALL_INCLUDEDIR}/libxml2
 		${PATH}/libxml2*/${CMAKE_INSTALL_INCLUDEDIR}
 	)
 	list(APPEND LIBXML2_INCLUDE_HINTS ${HINTS})
@@ -17,7 +15,6 @@ endforeach()
 list(
 	APPEND
 	LIBXML2_INCLUDE_HINTS
-	$ENV{LibXml2_DIR}/${CMAKE_INSTALL_INCLUDEDIR}/libxml2
 	$ENV{LibXml2_DIR}/${CMAKE_INSTALL_INCLUDEDIR}
 )
 
@@ -25,9 +22,7 @@ foreach(PATH $ENV{CMAKE_PREFIX_PATH})
 	file(
 		GLOB
 		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}/libxml2
 		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/libxml2*/${CMAKE_INSTALL_INCLUDEDIR}/libxml2
 		${PATH}/libxml2*/${CMAKE_INSTALL_INCLUDEDIR}
 	)
 	list(APPEND LIBXML2_INCLUDE_HINTS ${HINTS})
@@ -37,7 +32,6 @@ foreach(PATH $ENV{PATH})
 	file(
 		GLOB
 		HINTS
-		${PATH}/../${CMAKE_INSTALL_INCLUDEDIR}/libxml2
 		${PATH}/../${CMAKE_INSTALL_INCLUDEDIR}
 	)
 	list(APPEND LIBXML2_INCLUDE_HINTS ${HINTS})
@@ -46,15 +40,10 @@ endforeach()
 file(
 	GLOB
 	LIBXML2_INCLUDE_PATHS
-	$ENV{HOME}/include/libxml2
 	$ENV{HOME}/include
-	/usr/local/include/libxml2
 	/usr/local/include
-	/opt/local/include/libxml2
 	/opt/local/include
-	/usr/include/libxml2
 	/usr/include
-	${CMAKE_OSX_SYSROOT}/usr/include/libxml2
 	${CMAKE_OSX_SYSROOT}/usr/include
 )
 
@@ -66,6 +55,8 @@ find_path(
 	${LIBXML2_INCLUDE_HINTS}
 	PATHS
 	${LIBXML2_INCLUDE_PATHS}
+	PATH_SUFFIXES
+	libxml2
 )
 
 mark_as_advanced(LIBXML2_INCLUDE_DIRS)

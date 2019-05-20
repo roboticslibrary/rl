@@ -6,9 +6,7 @@ foreach(PATH ${CMAKE_PREFIX_PATH})
 	file(
 		GLOB
 		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}/cifx
 		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/cifX*/${CMAKE_INSTALL_INCLUDEDIR}/cifx
 		${PATH}/cifX*/${CMAKE_INSTALL_INCLUDEDIR}
 	)
 	list(APPEND cifX_INCLUDE_HINTS ${HINTS})
@@ -17,7 +15,6 @@ endforeach()
 list(
 	APPEND
 	cifX_INCLUDE_HINTS
-	$ENV{cifX_DIR}/${CMAKE_INSTALL_INCLUDEDIR}/cifx
 	$ENV{cifX_DIR}/${CMAKE_INSTALL_INCLUDEDIR}
 )
 
@@ -25,9 +22,7 @@ foreach(PATH $ENV{CMAKE_PREFIX_PATH})
 	file(
 		GLOB
 		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}/cifx
 		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/cifX*/${CMAKE_INSTALL_INCLUDEDIR}/cifx
 		${PATH}/cifX*/${CMAKE_INSTALL_INCLUDEDIR}
 	)
 	list(APPEND cifX_INCLUDE_HINTS ${HINTS})
@@ -37,7 +32,6 @@ foreach(PATH $ENV{PATH})
 	file(
 		GLOB
 		HINTS
-		${PATH}/../${CMAKE_INSTALL_INCLUDEDIR}/cifx
 		${PATH}/../${CMAKE_INSTALL_INCLUDEDIR}
 	)
 	list(APPEND cifX_INCLUDE_HINTS ${HINTS})
@@ -50,12 +44,14 @@ find_path(
 	HINTS
 	${cifX_INCLUDE_HINTS}
 	PATHS
-	$ENV{HOME}/include/cifx
-	/usr/local/include/cifx
-	/opt/local/include/cifx
-	/usr/include/cifx
+	$ENV{HOME}/include
+	/usr/local/include
+	/opt/local/include
+	/usr/include
 	"$ENV{ProgramW6432}/cifX Device Driver/SDK/includes"
 	"$ENV{ProgramFiles}/cifX Device Driver/SDK/includes"
+	PATH_SUFFIXES
+	cifx
 )
 
 mark_as_advanced(cifX_INCLUDE_DIRS)
