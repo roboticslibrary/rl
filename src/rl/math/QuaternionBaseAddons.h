@@ -107,18 +107,18 @@ static Quaternion<Scalar> Random(const MatrixBase<OtherDerived>& rand)
 	);
 }
 
-template<typename OtherDerived>
-Vector3
-angularVelocity(const QuaternionBase<OtherDerived>& qd) const
-{
-	return ((qd * this->derived().conjugate()) * Scalar(2)).vec();
-}
-
 template<typename OtherDerived1, typename OtherDerived2>
 Vector3
 angularAcceleration(const QuaternionBase<OtherDerived1>& qd, const QuaternionBase<OtherDerived2>& qdd) const
 {
 	return ((qdd * this->derived().conjugate() + qd * qd.conjugate()) * Scalar(2)).vec();
+}
+
+template<typename OtherDerived>
+Vector3
+angularVelocity(const QuaternionBase<OtherDerived>& qd) const
+{
+	return ((qd * this->derived().conjugate()) * Scalar(2)).vec();
 }
 
 Quaternion<Scalar>
