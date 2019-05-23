@@ -89,6 +89,11 @@ namespace rl
 			
 			::rl::xml::NodeSet models = path.eval("(/rl/mdl|/rlmdl)/model").getValue< ::rl::xml::NodeSet>();
 			
+			if (models.empty())
+			{
+				throw Exception("rl::mdl::XmlFactory::load() - No models found in file " + filename);
+			}
+			
 			for (int i = 0; i < ::std::min(1, models.size()); ++i)
 			{
 				::rl::xml::Path path(document, models[i]);

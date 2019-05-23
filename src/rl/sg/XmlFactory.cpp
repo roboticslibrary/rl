@@ -75,6 +75,11 @@ namespace rl
 			
 			::rl::xml::NodeSet scenes = path.eval("(/rl/sg|/rlsg)/scene").getValue< ::rl::xml::NodeSet>();
 			
+			if (scenes.empty())
+			{
+				throw Exception("rl::sg::XmlFactory::load() - No scenes found in file " + filename);
+			}
+			
 			for (int i = 0; i < ::std::min(1, scenes.size()); ++i)
 			{
 				::SoInput input;

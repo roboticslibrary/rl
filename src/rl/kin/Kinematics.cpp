@@ -143,6 +143,11 @@ namespace rl
 			
 			::rl::xml::NodeSet instances = path.eval("(/rl/kin|/rlkin)/kinematics|(/rl/kin|/rlkin)/puma|(/rl/kin|/rlkin)/rhino").getValue< ::rl::xml::NodeSet>();
 			
+			if (instances.empty())
+			{
+				throw Exception("rl::kin::Kinematics::create() - No models found in file " + filename);
+			}
+			
 			for (int i = 0; i < ::std::min(1, instances.size()); ++i)
 			{
 				::rl::xml::Path path(document, instances[i]);
