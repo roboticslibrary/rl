@@ -66,7 +66,7 @@ namespace rl
 			
 			bool empty() const
 			{
-				return 0 == this->size();
+				return nullptr == this->nodeSet.get() || 0 == this->size();
 			}
 			
 			::xmlNodeSetPtr get() const
@@ -76,7 +76,7 @@ namespace rl
 			
 			int max_size() const
 			{
-				return this->nodeSet->nodeMax;
+				return nullptr != this->nodeSet.get() ? this->nodeSet->nodeMax : 0;
 			}
 			
 			::xmlNodeSet& operator*() const
@@ -91,7 +91,7 @@ namespace rl
 			
 			int size() const
 			{
-				return this->nodeSet->nodeNr;
+				return nullptr != this->nodeSet.get() ? this->nodeSet->nodeNr : 0;
 			}
 			
 		protected:
