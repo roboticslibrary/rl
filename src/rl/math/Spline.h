@@ -1003,7 +1003,7 @@ namespace rl
 					Real d = ::std::abs(q1(i) - q0(i));
 					Real tj;
 					Real ta;
-
+					
 					// assume vmax is reached
 					if (vmax(i) * jmax(i) >= amax(i) * amax(i))
 					{
