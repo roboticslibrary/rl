@@ -233,7 +233,7 @@ namespace rl
 				
 				Real x0 = this->lower();
 				::std::size_t i = 0;
-
+				
 				for (; x > x0 + this->polynomials[i].duration() && i < this->polynomials.size(); ++i)
 				{
 					x0 += this->polynomials[i].duration();
