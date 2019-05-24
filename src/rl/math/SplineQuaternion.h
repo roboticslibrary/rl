@@ -61,6 +61,9 @@ namespace rl
 			
 			static Spline<Quaternion> CubicFirst(const ::std::vector<Real>& x, const ::std::vector<Quaternion>& y, const Vector3& yd0, const Vector3& yd1)
 			{
+				using ::std::abs;
+				using ::std::atan2;
+				
 				assert(x.size() > 1);
 				assert(x.size() == y.size());
 				
@@ -75,16 +78,14 @@ namespace rl
 				for (::std::size_t i = 0; i < n - 1; ++i)
 				{
 					dx[i] = x[i + 1] - x[i];
-					dtheta[i] = y[i].angularDistance(y[i + 1]);
-					e[i] = (y[i].inverse() * y[i + 1]).vec();
+					Quaternion dy = y[i].conjugate() * y[i + 1];
+					Real norm = dy.vec().norm();
+					dtheta[i] = 2 * atan2(norm, abs(dy.w()));
+					e[i] = dy.vec();
 					
-					if (e[i].norm() <= ::std::numeric_limits<Real>::epsilon())
+					if (norm > 0)
 					{
-						e[i].setZero();
-					}
-					else
-					{
-						e[i].normalize();
+						e[i] /= norm;
 					}
 				}
 				
@@ -308,7 +309,7 @@ namespace rl
 		private:
 			static Vector3 B(const Vector3& e, const Real& dtheta, const Vector3& x)
 			{
-				if (dtheta <= ::std::numeric_limits<Real>::epsilon())
+				if (dtheta < ::std::numeric_limits<Real>::epsilon())
 				{
 					return x;
 				}
@@ -321,7 +322,7 @@ namespace rl
 			
 			static Vector3 invB(const Vector3& e, const Real& dtheta, const Vector3& x)
 			{
-				if (dtheta <= ::std::numeric_limits<Real>::epsilon())
+				if (dtheta < ::std::numeric_limits<Real>::epsilon())
 				{
 					return x;
 				}
@@ -334,7 +335,7 @@ namespace rl
 			
 			static Vector3 R(const Vector3& e, const Real& dtheta, const Vector3& omega)
 			{
-				if (dtheta <= ::std::numeric_limits<Real>::epsilon())
+				if (dtheta < ::std::numeric_limits<Real>::epsilon())
 				{
 					return Vector3::Zero();
 				}

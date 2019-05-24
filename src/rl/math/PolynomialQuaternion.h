@@ -64,16 +64,17 @@ namespace rl
 			
 			static Polynomial<Quaternion> CubicFirst(const Quaternion& y0, const Quaternion& y1, const Vector3& yd0, const Vector3& yd1, const Real& x1 = 1)
 			{
-				Real dtheta = y0.angularDistance(y1);
-				Vector3 e = (y0.inverse() * y1).vec();
+				using ::std::abs;
+				using ::std::atan2;
 				
-				if (e.norm() <= ::std::numeric_limits<Real>::epsilon())
+				Quaternion dy = y0.conjugate() * y1;
+				Real norm = dy.vec().norm();
+				Real dtheta = 2 * atan2(norm, abs(dy.w()));
+				Vector3 e = dy.vec();
+				
+				if (norm > 0)
 				{
-					e.setZero();
-				}
-				else
-				{
-					e.normalize();
+					e /= norm;
 				}
 				
 				Polynomial<Quaternion> f(3);
@@ -90,16 +91,17 @@ namespace rl
 			
 			static Polynomial<Quaternion> Linear(const Quaternion& y0, const Quaternion& y1, const Real& x1 = 1)
 			{
-				Real dtheta = y0.angularDistance(y1);
-				Vector3 e = (y0.inverse() * y1).vec();
+				using ::std::abs;
+				using ::std::atan2;
 				
-				if (e.norm() <= ::std::numeric_limits<Real>::epsilon())
+				Quaternion dy = y0.conjugate() * y1;
+				Real norm = dy.vec().norm();
+				Real dtheta = 2 * atan2(norm, abs(dy.w()));
+				Vector3 e = dy.vec();
+				
+				if (norm > 0)
 				{
-					e.setZero();
-				}
-				else
-				{
-					e.normalize();
+					e /= norm;
 				}
 				
 				Polynomial<Quaternion> f(1);
@@ -136,17 +138,12 @@ namespace rl
 			{
 				assert(derivative <= 2 && "Polynomial<Quaternion>: higher derivatives not implemented");
 				
-				Vector3 axis = this->eval(x);
-				Real theta = axis.norm();
-				Vector3 u;
+				Vector3 u = this->eval(x);
+				Real theta = u.norm();
 				
-				if (theta <= ::std::numeric_limits<Real>::epsilon())
+				if (theta > 0)
 				{
-					u.setZero();
-				}
-				else
-				{
-					u = axis.normalized();
+					u /= theta;
 				}
 				
 				Quaternion y = this->y0 * AngleAxis(theta, u);
@@ -162,7 +159,7 @@ namespace rl
 				Vector3 w = u.cross(axisd) / theta;
 				Vector3 omega;
 				
-				if (theta > ::std::numeric_limits<Real>::epsilon())
+				if (theta > 0)
 				{
 					omega = u * thetad + ::std::sin(theta) * w.cross(u) - (1 - ::std::cos(theta)) * w;
 				}
@@ -171,7 +168,8 @@ namespace rl
 					omega = axisd;
 				}
 				
-				Quaternion yd = y.firstDerivative(omega);
+				Vector3 yomega = y._transformVector(omega);
+				Quaternion yd = y.firstDerivative(yomega);
 				
 				if (1 == derivative)
 				{
@@ -184,7 +182,7 @@ namespace rl
 				Vector3 wd = (u.cross(axisdd) - 2 * thetad * w) / theta;
 				Vector3 omegad;
 				
-				if (theta > ::std::numeric_limits<Real>::epsilon())
+				if (theta > 0)
 				{
 					omegad = u * thetadd + ::std::sin(theta) * wd.cross(u) - (1 - ::std::cos(theta)) * wd + thetad * w.cross(u) + omega.cross(u * thetad - w);
 				}
@@ -193,7 +191,8 @@ namespace rl
 					omegad = axisdd;
 				}
 				
-				Quaternion ydd = y.secondDerivative(yd, omega, omegad);
+				Vector3 yomegad = y._transformVector(omegad);
+				Quaternion ydd = y.secondDerivative(yd, yomega, yomegad);
 				
 				if (2 == derivative)
 				{
@@ -249,7 +248,7 @@ namespace rl
 			
 			static Vector3 invB(const Vector3& e, const Real& dtheta, const Vector3& x)
 			{
-				if (dtheta <= ::std::numeric_limits<Real>::epsilon())
+				if (dtheta < ::std::numeric_limits<Real>::epsilon())
 				{
 					return x;
 				}
