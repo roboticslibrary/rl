@@ -261,6 +261,15 @@ slerpFirstDerivative(const Scalar& t, const QuaternionBase<OtherDerived>& other)
 	return this->derived() * tmp.pow(t) * tmp.log();
 }
 
+template<typename OtherDerived>
+Quaternion<Scalar>
+slerpSecondDerivative(const Scalar& t, const QuaternionBase<OtherDerived>& other) const
+{
+	Quaternion<Scalar> tmp = this->derived().conjugate() * other;
+	Quaternion<Scalar> tmp2 = tmp.log();
+	return this->derived() * tmp.pow(t) * tmp2 * tmp2;
+}
+
 template<typename OtherDerived1, typename OtherDerived2, typename OtherDerived3>
 Quaternion<Scalar>
 squad(const Scalar& t, const QuaternionBase<OtherDerived1>& a, const QuaternionBase<OtherDerived2>& b, const QuaternionBase<OtherDerived3>& other) const
