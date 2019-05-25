@@ -281,7 +281,7 @@ squadFirstDerivative(const Scalar& t, const QuaternionBase<OtherDerived1>& a, co
 {
 	Quaternion<Scalar> u = this->derived().slerp(t, other);
 	Quaternion<Scalar> v = a.slerp(t, b);
-	Quaternion<Scalar> w = u.inverse() * v;
+	Quaternion<Scalar> w = u.conjugate() * v;
 	Quaternion<Scalar> ud = u * (this->derived().conjugate() * other).log();
 	Quaternion<Scalar> vd = v * (a.conjugate() * b).log();
 	Quaternion<Scalar> wd = u.conjugate() * vd - u.pow(Scalar(-2)) * ud * v;
