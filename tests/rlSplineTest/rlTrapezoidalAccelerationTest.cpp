@@ -40,7 +40,7 @@ main(int argc, char** argv)
 			rl::math::Real vmax = (i % 2 == 0) ? 1 : 1000;
 			rl::math::Real amax = 10;
 			rl::math::Real jmax = (i / 2 == 0) ? 3 : 300;
-			rl::math::Spline<rl::math::Real> f = rl::math::Spline<rl::math::Real>::TrapeziodalAccelerationAtRest(q0, q1, vmax, amax, jmax);
+			rl::math::Spline<rl::math::Real> f = rl::math::Spline<rl::math::Real>::TrapezoidalAccelerationAtRest(q0, q1, vmax, amax, jmax);
 	
 #if 0
 			// plot for [i=2:5] "interpolation.dat" using 1:i with lines
@@ -110,7 +110,7 @@ main(int argc, char** argv)
 			
 			jmax << 100, 100, 100, 100;
 			
-			rl::math::Spline<rl::math::ArrayX> f = rl::math::Spline<rl::math::ArrayX>::TrapeziodalAccelerationAtRest(q0, q1, vmax, amax, jmax);
+			rl::math::Spline<rl::math::ArrayX> f = rl::math::Spline<rl::math::ArrayX>::TrapezoidalAccelerationAtRest(q0, q1, vmax, amax, jmax);
 			
 #if 0
 			// plot for [i=2:5] "interpolation.dat" using 1:i with lines

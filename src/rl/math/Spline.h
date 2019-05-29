@@ -984,9 +984,9 @@ namespace rl
 			 * L. Biagiotti, C. Melchiorri (2008) "Trajectory Planning for Automatic
 			 * Machines and Robots", pp. 90ff.
 			 */
-			static Spline TrapeziodalAccelerationAtRest(const T& q0, const T& q1, const T& vmax, const T& amax, const T& jmax)
+			static Spline TrapezoidalAccelerationAtRest(const T& q0, const T& q1, const T& vmax, const T& amax, const T& jmax)
 			{
-//				assert((vmax > 0).all() && (amax > 0).all() && (jmax > 0).all() && "TrapeziodalAccelerationAtRest: velocity, acceleration and jerk limits must be positive.");
+//				assert((vmax > 0).all() && (amax > 0).all() && (jmax > 0).all() && "TrapezoidalAccelerationAtRest: velocity, acceleration and jerk limits must be positive.");
 				
 				::std::size_t dim = TypeTraits<T>::size(q0);
 				

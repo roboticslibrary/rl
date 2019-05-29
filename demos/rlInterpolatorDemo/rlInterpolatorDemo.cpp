@@ -272,7 +272,7 @@ main(int argc, char** argv)
 	}
 	
 	{
-		rl::math::Spline<rl::math::Vector> f0 = rl::math::Spline<rl::math::Vector>::TrapeziodalAccelerationAtRest(
+		rl::math::Spline<rl::math::Vector> f0 = rl::math::Spline<rl::math::Vector>::TrapezoidalAccelerationAtRest(
 			rl::math::Vector::Constant(1, 0),
 			rl::math::Vector::Constant(1, 1),
 			rl::math::Vector::Constant(1, 1),
@@ -280,7 +280,7 @@ main(int argc, char** argv)
 			rl::math::Vector::Constant(1, 1)
 		);
 		eval(f0);
-		rl::math::Spline<rl::math::ArrayX> f1 = rl::math::Spline<rl::math::ArrayX>::TrapeziodalAccelerationAtRest(
+		rl::math::Spline<rl::math::ArrayX> f1 = rl::math::Spline<rl::math::ArrayX>::TrapezoidalAccelerationAtRest(
 			rl::math::ArrayX::Constant(1, 0),
 			rl::math::ArrayX::Constant(1, 1),
 			rl::math::ArrayX::Constant(1, 1),
