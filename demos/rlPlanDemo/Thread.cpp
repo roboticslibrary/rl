@@ -199,9 +199,9 @@ Thread::run()
 	bool solved = MainWindow::instance()->planner->solve();
 	std::chrono::steady_clock::time_point stop = std::chrono::steady_clock::now();
 	
-	double plannerDuration = std::chrono::duration_cast<std::chrono::duration<double>>(stop - start).count() * 1000;
+	double plannerDuration = std::chrono::duration_cast<std::chrono::duration<double>>(stop - start).count();
 	
-	emit statusChanged("Planner " + QString(solved ? "succeeded" : "failed") + " in " + QString::number(plannerDuration) + " ms.");
+	emit statusChanged("Planner " + QString(solved ? "succeeded" : "failed") + " in " + QString::number(plannerDuration * 1000) + " ms.");
 	
 	std::fstream benchmark;
 	benchmark.open("benchmark.csv", std::ios::app | std::ios::in | std::ios::out);
