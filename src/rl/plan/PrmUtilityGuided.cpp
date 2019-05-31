@@ -81,7 +81,7 @@ namespace rl
 					}
 #else
 					// This works better in our examples. Here we define entropy by using samples where we are unsure, if they are colliding.
-					if (::std::fabs(pFree - static_cast< ::rl::math::Real>(0.5)) < ::std::fabs(pBest - static_cast< ::rl::math::Real>(0.5)))
+					if (::std::abs(pFree - static_cast< ::rl::math::Real>(0.5)) < ::std::abs(pBest - static_cast< ::rl::math::Real>(0.5)))
 					{   
 						pBest = pFree;
 						bestSample = sample;
