@@ -69,10 +69,7 @@ namespace rl
 				return false;
 			}
 			
-			this->model->setPosition(*this->start);
-			this->model->updateFrames();
-			
-			if (this->model->isColliding())
+			if (this->model->isColliding(*this->start))
 			{
 				if (nullptr != this->viewer)
 				{
@@ -82,10 +79,7 @@ namespace rl
 				return false;
 			}
 			
-			this->model->setPosition(*this->goal);
-			this->model->updateFrames();
-			
-			if (this->model->isColliding())
+			if (this->model->isColliding(*this->goal))
 			{
 				if (nullptr != this->viewer)
 				{

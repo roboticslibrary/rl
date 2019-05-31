@@ -76,10 +76,7 @@ ConfigurationSpaceThread::run()
 			{
 				q(this->axis0) = minimum(this->axis0) + j * delta0;
 				
-				model->setPosition(q);
-				model->updateFrames();
-				
-				if (model->isColliding())
+				if (model->isColliding(q))
 				{
 					emit addCollision(
 						q(this->axis0),

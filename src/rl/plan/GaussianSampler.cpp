@@ -67,25 +67,16 @@ namespace rl
 				
 				::rl::math::Vector q2 = this->model->generatePositionGaussian(gauss, q, *this->sigma);
 				
-				this->model->setPosition(q);
-				this->model->updateFrames();
-				
-				if (!this->model->isColliding())
+				if (!this->model->isColliding(q))
 				{
-					this->model->setPosition(q2);
-					this->model->updateFrames();
-					
-					if (this->model->isColliding())
+					if (this->model->isColliding(q2))
 					{
 						return q;
 					}
 				}
 				else
 				{
-					this->model->setPosition(q2);
-					this->model->updateFrames();
-					
-					if (!this->model->isColliding())
+					if (!this->model->isColliding(q2))
 					{
 						return q2;
 					}

@@ -126,10 +126,7 @@ namespace rl
 //				this->viewer->drawConfiguration(*last);
 			}
 			
-			this->model->setPosition(*last);
-			this->model->updateFrames();
-			
-			if (this->model->isColliding())
+			if (this->model->isColliding(*last))
 			{
 				return nullptr;
 			}
@@ -153,10 +150,7 @@ namespace rl
 //					this->viewer->drawConfiguration(next);
 				}
 				
-				this->model->setPosition(next);
-				this->model->updateFrames();
-				
-				if (this->model->isColliding())
+				if (this->model->isColliding(next))
 				{
 					break;
 				}
@@ -179,10 +173,7 @@ namespace rl
 			
 			this->model->interpolate(*get(tree, nearest.second)->q, chosen, step / distance, *next);
 			
-			this->model->setPosition(*next);
-			this->model->updateFrames();
-			
-			if (!this->model->isColliding())
+			if (!this->model->isColliding(*next))
 			{
 				Vertex extended = this->addVertex(tree, next);
 				this->addEdge(nearest.second, extended, tree);

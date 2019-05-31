@@ -59,10 +59,7 @@ namespace rl
 					return true;
 				}
 				
-				this->model->setPosition(inter);
-				this->model->updateFrames();
-				
-				if (this->model->isColliding())
+				if (this->model->isColliding(inter))
 				{
 					return true;
 				}

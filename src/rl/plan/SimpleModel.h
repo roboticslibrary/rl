@@ -50,6 +50,8 @@ namespace rl
 			
 			virtual bool isColliding();
 			
+			virtual bool isColliding(const ::rl::math::Vector& q);
+			
 			virtual void reset();
 			
 		protected:

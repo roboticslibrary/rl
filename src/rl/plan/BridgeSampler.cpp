@@ -57,10 +57,7 @@ namespace rl
 				{
 					::rl::math::Vector q2 = this->generate();
 					
-					this->model->setPosition(q2);
-					this->model->updateFrames();
-					
-					if (this->model->isColliding())
+					if (this->model->isColliding(q2))
 					{
 						for (::std::size_t i = 0; i < this->model->getDof(); ++i)
 						{
@@ -69,14 +66,11 @@ namespace rl
 						
 						::rl::math::Vector q3 = this->model->generatePositionGaussian(gauss, q2, *this->sigma);
 						
-						if (this->model->isColliding())
+						if (this->model->isColliding(q3))
 						{
 							this->model->interpolate(q2, q3, static_cast< ::rl::math::Real>(0.5), q);
 							
-							this->model->setPosition(q);
-							this->model->updateFrames();
-							
-							if (!this->model->isColliding())
+							if (!this->model->isColliding(q))
 							{
 								return q;
 							}

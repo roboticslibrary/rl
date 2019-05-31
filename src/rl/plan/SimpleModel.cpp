@@ -106,6 +106,14 @@ namespace rl
 			return false;
 		}
 		
+		bool
+		SimpleModel::isColliding(const ::rl::math::Vector& q)
+		{
+			this->setPosition(q);
+			this->updateFrames();
+			return this->isColliding();
+		}
+		
 		void
 		SimpleModel::reset()
 		{

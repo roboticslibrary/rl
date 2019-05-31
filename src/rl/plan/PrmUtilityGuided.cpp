@@ -75,7 +75,7 @@ namespace rl
 #ifdef ORIGINAL_VERSION
 					// Used in the paper: take the samples with the least collision probability
 					if (pFree > pBest)
-					{   
+					{
 						pBest = pFree;
 						bestSample = sample;
 					}
@@ -90,10 +90,7 @@ namespace rl
 				}
 				
 				// now do collision check
-				this->model->setPosition(bestSample.q);
-				this->model->updateFrames();
-				
-				if (!this->model->isColliding())
+				if (!this->model->isColliding(bestSample.q))
 				{
 					// store the sample in the graph
 					bestSample.isColliding = false;

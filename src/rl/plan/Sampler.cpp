@@ -48,10 +48,8 @@ namespace rl
 			do
 			{
 				q = this->generate();
-				this->model->setPosition(q);
-				this->model->updateFrames();
 			}
-			while (this->model->isColliding());
+			while (this->model->isColliding(q));
 			
 			return q;
 		}

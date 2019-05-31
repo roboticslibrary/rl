@@ -218,10 +218,7 @@ namespace rl
 				this->viewer->drawConfiguration(*expanded.q);
 			}
 			
-			this->model->setPosition(*expanded.q);
-			this->model->updateFrames();
-			
-			if (this->model->isColliding())
+			if (this->model->isColliding(*expanded.q))
 			{
 				return -1;
 			}
