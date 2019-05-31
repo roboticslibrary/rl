@@ -1452,6 +1452,13 @@ MainWindow::load(const QString& filename)
 					explorerSetup.goalFrame = -1;
 				}
 				
+				explorer->boundingBox.max().x() = path.eval("number(boundingBox/max/x)").getValue<rl::math::Real>(std::numeric_limits<rl::math::Real>::max());
+				explorer->boundingBox.max().y() = path.eval("number(boundingBox/max/y)").getValue<rl::math::Real>(std::numeric_limits<rl::math::Real>::max());
+				explorer->boundingBox.max().z() = path.eval("number(boundingBox/max/z)").getValue<rl::math::Real>(std::numeric_limits<rl::math::Real>::max());
+				explorer->boundingBox.min().x() = path.eval("number(boundingBox/min/x)").getValue<rl::math::Real>(-std::numeric_limits<rl::math::Real>::max());
+				explorer->boundingBox.min().y() = path.eval("number(boundingBox/min/y)").getValue<rl::math::Real>(-std::numeric_limits<rl::math::Real>::max());
+				explorer->boundingBox.min().z() = path.eval("number(boundingBox/min/z)").getValue<rl::math::Real>(-std::numeric_limits<rl::math::Real>::max());
+				
 				if (path.eval("count(distance) > 0").getValue<bool>())
 				{
 					explorer->greedy = rl::plan::WorkspaceSphereExplorer::GREEDY_DISTANCE;

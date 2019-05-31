@@ -31,6 +31,7 @@
 #include <random>
 #include <set>
 #include <boost/graph/adjacency_list.hpp>
+#include <rl/math/AlignedBox.h>
 #include <rl/math/Vector.h>
 
 #include "WorkspaceSphere.h"
@@ -76,6 +77,8 @@ namespace rl
 			void reset();
 			
 			void seed(const ::std::mt19937::result_type& value);
+			
+			::rl::math::AlignedBox3 boundingBox;
 			
 			::rl::math::Vector3* goal;
 			

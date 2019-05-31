@@ -37,6 +37,10 @@ namespace rl
 	namespace plan
 	{
 		WorkspaceSphereExplorer::WorkspaceSphereExplorer() :
+			boundingBox(
+				::rl::math::Vector3::Constant(-std::numeric_limits< ::rl::math::Real>::max()),
+				::rl::math::Vector3::Constant(std::numeric_limits< ::rl::math::Real>::max())
+			),
 			goal(),
 			greedy(GREEDY_SPACE),
 			model(nullptr),
@@ -93,7 +97,10 @@ namespace rl
 		{
 			WorkspaceSphere start;
 			start.center = ::std::make_shared< ::rl::math::Vector3>(*this->start);
-			start.radius = this->model->distance(*start.center);
+			start.radius = ::std::min(
+				this->model->distance(*start.center),
+				this->boundingBox.interiorDistance(*start.center)
+			);
 			start.radiusSum = start.radius;
 			start.parent = nullptr;
 
@@ -168,11 +175,14 @@ namespace rl
 						);
 						sphere.parent = vertex;
 						
-						if ((*this->start - *sphere.center).norm() <= this->range)
+						if ((*this->start - *sphere.center).norm() <= this->range && this->boundingBox.contains(*sphere.center))
 						{
 							if (!this->isCovered(top.parent, *sphere.center))
 							{
-								sphere.radius = this->model->distance(*sphere.center);
+								sphere.radius = ::std::min(
+									this->model->distance(*sphere.center),
+									this->boundingBox.interiorDistance(*sphere.center)
+								);
 								sphere.radiusSum = sphere.radius + top.radiusSum;
 								
 								if (sphere.radius >= this->radius)

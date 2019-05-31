@@ -83,6 +83,30 @@
 					<xs:element name="explorer" minOccurs="1" maxOccurs="unbounded">
 						<xs:complexType>
 							<xs:sequence>
+								<xs:element name="boundingBox" minOccurs="0">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element name="max" minOccurs="0">
+												<xs:complexType>
+													<xs:sequence>
+														<xs:element name="x" type="xs:double" minOccurs="0"/>
+														<xs:element name="y" type="xs:double" minOccurs="0"/>
+														<xs:element name="z" type="xs:double" minOccurs="0"/>
+													</xs:sequence>
+												</xs:complexType>
+											</xs:element>
+											<xs:element name="min" minOccurs="0">
+												<xs:complexType>
+													<xs:sequence>
+														<xs:element name="x" type="xs:double" minOccurs="0"/>
+														<xs:element name="y" type="xs:double" minOccurs="0"/>
+														<xs:element name="z" type="xs:double" minOccurs="0"/>
+													</xs:sequence>
+												</xs:complexType>
+											</xs:element>
+										</xs:sequence>
+									</xs:complexType>
+								</xs:element>
 								<xs:element name="goal">
 									<xs:complexType>
 										<xs:choice>
