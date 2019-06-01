@@ -74,6 +74,7 @@ main(int argc, char** argv)
 	for (std::size_t degree = 5; degree < 15; ++degree)
 	{
 		rl::math::Polynomial<rl::math::ArrayX> p(degree);
+		p.upper() = 1;
 		
 		for (std::size_t n = 0; n < p.degree() + 1; ++n)
 		{
