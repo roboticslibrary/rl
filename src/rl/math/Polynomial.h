@@ -32,6 +32,7 @@
 #define EIGEN_TRANSFORM_PLUGIN <rl/math/TransformAddons.h>
 
 #include <cassert>
+#include <cmath>
 #include <stdexcept>
 #include <vector>
 
@@ -570,7 +571,7 @@ namespace rl
 					else if (::std::abs(p) <= ::std::numeric_limits<Real>::epsilon() && ::std::abs(q) > ::std::numeric_limits<Real>::epsilon())
 					{
 						::std::vector<Real> roots(1);
-						roots[0] = cbrt(-q) - back;
+						roots[0] = ::std::cbrt(-q) - back;
 						return roots;
 					}
 					else if (::std::abs(p) > ::std::numeric_limits<Real>::epsilon() && ::std::abs(q) <= ::std::numeric_limits<Real>::epsilon())
@@ -606,8 +607,8 @@ namespace rl
 						else
 						{
 							Real sqrtDet = ::std::sqrt(det);
-							Real u = cbrt(-q / 2 + sqrtDet);
-							Real v = cbrt(-q / 2 - sqrtDet);
+							Real u = ::std::cbrt(-q / 2 + sqrtDet);
+							Real v = ::std::cbrt(-q / 2 - sqrtDet);
 							::std::vector<Real> roots(1);
 							roots[0] = u + v - back;
 							return roots;

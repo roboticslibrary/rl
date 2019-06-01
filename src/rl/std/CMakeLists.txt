@@ -1,6 +1,7 @@
 set(
 	BASE_HDRS
 	chrono
+	cmath
 	condition_variable
 	future
 	iterator
