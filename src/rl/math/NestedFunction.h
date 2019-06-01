@@ -40,12 +40,10 @@ namespace rl
 		{
 		public:
 			NestedFunction(const Function<T2>& inner, const Function<T>& outer) :
-				Function<T>(),
+				Function<T>(inner.lower(), inner.upper()),
 				inner(inner),
 				outer(outer)
 			{
-				this->lower() = this->inner.lower();
-				this->upper() = this->inner.upper();
 			}
 			
 			virtual ~NestedFunction()
