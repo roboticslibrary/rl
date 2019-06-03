@@ -39,11 +39,23 @@ namespace rl
 {
 	namespace math
 	{
-		template<typename Scalar, int AmbientDim>
-		class AlignedBox : public ::Eigen::AlignedBox<Scalar, AmbientDim>
+		template<typename _Scalar, int _AmbientDim>
+		class AlignedBox : public ::Eigen::AlignedBox<_Scalar, _AmbientDim>
 		{
 		public:
-			using ::Eigen::AlignedBox<Scalar, AmbientDim>::AlignedBox;
+			typedef typename ::Eigen::AlignedBox<_Scalar, _AmbientDim>::Scalar Scalar;
+			
+			typedef typename ::Eigen::AlignedBox<_Scalar, _AmbientDim>::ScalarTraits ScalarTraits;
+			
+			typedef typename ::Eigen::AlignedBox<_Scalar, _AmbientDim>::Index Index;
+			
+			typedef typename ::Eigen::AlignedBox<_Scalar, _AmbientDim>::RealScalar RealScalar;
+			
+			typedef typename ::Eigen::AlignedBox<_Scalar, _AmbientDim>::NonInteger NonInteger;
+			
+			typedef typename ::Eigen::AlignedBox<_Scalar, _AmbientDim>::VectorType VectorType;
+			
+			using ::Eigen::AlignedBox<_Scalar, _AmbientDim>::AlignedBox;
 			
 			template<typename Derived>
 			inline NonInteger interiorDistance(const ::Eigen::MatrixBase<Derived>& p) const
@@ -55,8 +67,8 @@ namespace rl
 				
 				for (Index k = 0; k < this->dim(); ++k)
 				{
-					dist = min(dist, max(p[k] - m_min[k], Scalar(0)));
-					dist = min(dist, max(m_max[k] - p[k], Scalar(0)));
+					dist = min(dist, max(p[k] - this->m_min[k], Scalar(0)));
+					dist = min(dist, max(this->m_max[k] - p[k], Scalar(0)));
 				}
 				
 				return dist;
