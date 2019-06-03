@@ -55,7 +55,31 @@ namespace rl
 			
 			typedef typename ::Eigen::AlignedBox<_Scalar, _AmbientDim>::VectorType VectorType;
 			
-			using ::Eigen::AlignedBox<_Scalar, _AmbientDim>::AlignedBox;
+			inline AlignedBox() :
+				::Eigen::AlignedBox<_Scalar, _AmbientDim>::AlignedBox()
+			{
+			}
+			
+			inline explicit AlignedBox(Index dim) :
+				::Eigen::AlignedBox<_Scalar, _AmbientDim>::AlignedBox(dim)
+			{
+			}
+			
+			template<typename OtherVectorType1, typename OtherVectorType2>
+			inline AlignedBox(const OtherVectorType1& min, const OtherVectorType2& max) :
+				::Eigen::AlignedBox<_Scalar, _AmbientDim>::AlignedBox(min, max)
+			{
+			}
+			
+			template<typename Derived>
+			inline explicit AlignedBox(const ::Eigen::MatrixBase<Derived>& p) :
+				::Eigen::AlignedBox<_Scalar, _AmbientDim>::AlignedBox(p)
+			{
+			}
+			
+			~AlignedBox()
+			{
+			}
 			
 			template<typename Derived>
 			inline NonInteger interiorDistance(const ::Eigen::MatrixBase<Derived>& p) const
