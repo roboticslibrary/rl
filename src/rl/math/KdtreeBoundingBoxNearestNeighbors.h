@@ -512,7 +512,10 @@ namespace rl
 					return neighbors;
 				}
 				
-				neighbors.reserve(nullptr != k ? *k : this->values);
+				if (nullptr != k)
+				{
+					neighbors.reserve(::std::min(*k, this->size()));
+				}
 				
 				::std::size_t checks = 0;
 				
@@ -551,11 +554,6 @@ namespace rl
 				if (sorted)
 				{
 					::std::sort_heap(neighbors.begin(), neighbors.end(), NeighborCompare());
-				}
-				
-				if (nullptr == k)
-				{
-					neighbors.shrink_to_fit();
 				}
 				
 				return neighbors;

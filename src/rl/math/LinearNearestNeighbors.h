@@ -247,7 +247,16 @@ namespace rl
 			::std::vector<Neighbor> search(const Value& query, const ::std::size_t* k, const Distance* radius, const bool& sorted) const
 			{
 				::std::vector<Neighbor> neighbors;
-				neighbors.reserve(nullptr != k ? *k : this->size());
+				
+				if (this->empty())
+				{
+					return neighbors;
+				}
+				
+				if (nullptr != k)
+				{
+					neighbors.reserve(::std::min(*k, this->size()));
+				}
 				
 				::std::vector<Distance> distances(this->container.size());
 				
