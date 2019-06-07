@@ -667,6 +667,10 @@ namespace rl
 					}
 				}
 				
+#ifdef _OPENMP
+				::std::size_t size = node.data.size();
+#endif
+				
 				node.data.clear();
 				node.data.shrink_to_fit();
 
