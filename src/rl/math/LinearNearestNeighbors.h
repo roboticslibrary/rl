@@ -258,9 +258,17 @@ namespace rl
 					neighbors.reserve(::std::min(*k, this->size()));
 				}
 				
-				::std::vector<Distance> distances(this->container.size());
-				
 #ifdef _OPENMP
+				::std::vector< ::std::vector<Neighbor>> neighbors2(::omp_get_max_threads());
+				
+				if (nullptr != k)
+				{
+					for (::std::size_t i = 0; i < neighbors2.size(); ++i)
+					{
+						neighbors2[i].reserve(::std::min(*k, this->size()) / ::omp_get_max_threads());
+					}
+				}
+				
 #pragma omp parallel for
 #if _OPENMP < 200805
 				for (::std::ptrdiff_t i = 0; i < this->container.size(); ++i)
@@ -268,33 +276,59 @@ namespace rl
 				for (::std::size_t i = 0; i < this->container.size(); ++i)
 #endif
 #else
+				::std::vector<Neighbor>& neighbors3 = neighbors;
+				
 				for (::std::size_t i = 0; i < this->container.size(); ++i)
 #endif
 				{
-					distances[i] = this->metric(query, this->container[i]);
-				}
-				
-				for (::std::size_t i = 0; i < this->container.size(); ++i)
-				{
-					if (nullptr == k || neighbors.size() < *k || distances[i] < neighbors.front().first)
+#ifdef _OPENMP
+					::std::vector<Neighbor>& neighbors3 = neighbors2[::omp_get_thread_num()];
+#endif
+					
+					Distance distance = this->metric(query, this->container[i]);
+					
+					if (nullptr == k || neighbors3.size() < *k || distance < neighbors3.front().first)
 					{
-						if (nullptr == radius || distances[i] < *radius)
+						if (nullptr == radius || distance < *radius)
 						{
-							if (nullptr != k && *k == neighbors.size())
+							if (nullptr != k && *k == neighbors3.size())
 							{
-								::std::pop_heap(neighbors.begin(), neighbors.end(), NeighborCompare());
-								neighbors.pop_back();
+								::std::pop_heap(neighbors3.begin(), neighbors3.end(), NeighborCompare());
+								neighbors3.pop_back();
 							}
 							
 #if defined(_MSC_VER) && _MSC_VER < 1800
-							neighbors.push_back(::std::make_pair(distances[i], this->container[i]));
+							neighbors3.push_back(::std::make_pair(distance, this->container[i]));
 #else
-							neighbors.emplace_back(distances[i], this->container[i]);
+							neighbors3.emplace_back(distance, this->container[i]);
 #endif
-							::std::push_heap(neighbors.begin(), neighbors.end(), NeighborCompare());
+							::std::push_heap(neighbors3.begin(), neighbors3.end(), NeighborCompare());
 						}
 					}
 				}
+				
+#ifdef _OPENMP
+				for (::std::size_t i = 0; i < neighbors2.size(); ++i)
+				{
+					for (::std::size_t j = 0; j < neighbors2[i].size(); ++j)
+					{
+						if (nullptr == k || neighbors.size() < *k || neighbors2[i][j].first < neighbors.front().first)
+						{
+							if (nullptr == radius || neighbors2[i][j].first < *radius)
+							{
+								if (nullptr != k && *k == neighbors.size())
+								{
+									::std::pop_heap(neighbors.begin(), neighbors.end(), NeighborCompare());
+									neighbors.pop_back();
+								}
+								
+								neighbors.push_back(::std::move(neighbors2[i][j]));
+								::std::push_heap(neighbors.begin(), neighbors.end(), NeighborCompare());
+							}
+						}
+					}
+				}
+#endif
 				
 				if (sorted)
 				{
