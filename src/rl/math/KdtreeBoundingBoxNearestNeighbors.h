@@ -545,7 +545,7 @@ namespace rl
 				
 				while (!branches.empty() && (!this->checks || checks < this->checks))
 				{
-					Branch branch = branches.front();
+					Branch branch = ::std::move(branches.front());
 					::std::pop_heap(branches.begin(), branches.end(), BranchCompare());
 					branches.pop_back();
 					this->search(*branch.node, query, k, radius, branches, neighbors, checks, branch.dist, branch.sidedist);
