@@ -278,6 +278,13 @@ namespace rl
 				{
 				}
 				
+				Branch(Distance& dist, ::std::vector<Distance>&& sidedist, const Node* node) :
+					dist(dist),
+					node(node),
+					sidedist(::std::move(sidedist))
+				{
+				}
+				
 				Distance dist;
 				
 				const Node* node;
@@ -559,7 +566,7 @@ namespace rl
 				return neighbors;
 			}
 			
-			void search(const Node& node, const Value& query, const ::std::size_t* k, const Distance* radius, ::std::vector<Branch>& branches, ::std::vector<Neighbor>& neighbors, ::std::size_t& checks, const Distance& mindist, const ::std::vector<Distance>& sidedist) const
+			void search(const Node& node, const Value& query, const ::std::size_t* k, const Distance* radius, ::std::vector<Branch>& branches, ::std::vector<Neighbor>& neighbors, ::std::size_t& checks, const Distance& mindist, ::std::vector<Distance>& sidedist) const
 			{
 				using ::std::begin;
 				
@@ -611,19 +618,21 @@ namespace rl
 					
 					if (nullptr == k || neighbors.size() < *k || newdist <= neighbors.front().first)
 					{
-						::std::vector<Distance> newsidedist(sidedist);
-						newsidedist[node.index] = cutdist;
-						
 						if (!this->checks)
 						{
-							this->search(*node.children[worst], query, k, radius, branches, neighbors, checks, newdist, newsidedist);
+							Distance dist = sidedist[node.index];
+							sidedist[node.index] = cutdist;
+							this->search(*node.children[worst], query, k, radius, branches, neighbors, checks, newdist, sidedist);
+							sidedist[node.index] = dist;
 						}
 						else
 						{
+							::std::vector<Distance> newsidedist(sidedist);
+							newsidedist[node.index] = cutdist;
 #if defined(_MSC_VER) && _MSC_VER < 1800
-							branches.push_back(Branch(newdist, newsidedist, node.children[worst].get()));
+							branches.push_back(Branch(newdist, ::std::move(newsidedist), node.children[worst].get()));
 #else
-							branches.emplace_back(newdist, newsidedist, node.children[worst].get());
+							branches.emplace_back(newdist, ::std::move(newsidedist), node.children[worst].get());
 #endif
 							::std::push_heap(branches.begin(), branches.end(), BranchCompare());
 						}
