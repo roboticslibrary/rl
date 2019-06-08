@@ -18,7 +18,7 @@
 
 template<typename NearestNeighbors>
 std::vector<std::vector<typename NearestNeighbors::Neighbor>>
-test(const std::vector<rl::math::Vector>& points, const std::vector<rl::math::Vector>& queries, const bool& iterative)
+test(const std::vector<rl::math::Vector>& points, const std::vector<rl::math::Vector>& queries, const bool& iterative, const bool& squared)
 {
 	std::vector<std::vector<typename NearestNeighbors::Neighbor>> results;
 	
@@ -68,7 +68,8 @@ test(const std::vector<rl::math::Vector>& points, const std::vector<rl::math::Ve
 			
 			for (std::size_t j = 0; j < neighbors.size(); ++j)
 			{
-				std::cout << "found " << neighbors[j].second->transpose() << " dist " << neighbors[j].first << std::endl;
+				rl::math::Real distance = squared ? std::sqrt(neighbors[j].first) : neighbors[j].first;
+				std::cout << "found " << neighbors[j].second->transpose() << " dist " << distance << std::endl;
 				break;
 			}
 			
@@ -91,41 +92,35 @@ test(const std::vector<rl::math::Vector>& points, const std::vector<rl::math::Ve
 	typedef rl::math::metrics::L2Squared<const rl::math::Vector*> MetricSquared;
 	
 	std::cout << "** LinearNearestNeighbors<Metric> *********************************************" << std::endl;
-	std::vector<std::vector<rl::math::LinearNearestNeighbors<Metric>::Neighbor>> linear = test<rl::math::LinearNearestNeighbors<Metric>>(points, queries, iterative);
+	std::vector<std::vector<rl::math::LinearNearestNeighbors<Metric>::Neighbor>> linear = test<rl::math::LinearNearestNeighbors<Metric>>(points, queries, iterative, false);
 	
 	std::cout << "** LinearNearestNeighbors<MetricSquared> **************************************" << std::endl;
-	std::vector<std::vector<rl::math::LinearNearestNeighbors<MetricSquared>::Neighbor>> linear2 = test<rl::math::LinearNearestNeighbors<MetricSquared>>(points, queries, iterative);
+	std::vector<std::vector<rl::math::LinearNearestNeighbors<MetricSquared>::Neighbor>> linear2 = test<rl::math::LinearNearestNeighbors<MetricSquared>>(points, queries, iterative, true);
 	
 	std::cout << "** GnatNearestNeighbors<Metric> ***********************************************" << std::endl;
-	std::vector<std::vector<rl::math::GnatNearestNeighbors<Metric>::Neighbor>> gnat = test<rl::math::GnatNearestNeighbors<Metric>>(points, queries, iterative);
+	std::vector<std::vector<rl::math::GnatNearestNeighbors<Metric>::Neighbor>> gnat = test<rl::math::GnatNearestNeighbors<Metric>>(points, queries, iterative, false);
 	
 	std::cout << "** KdtreeBoundingBoxNearestNeighbors<MetricSquared> ***************************" << std::endl;
-	std::vector<std::vector<rl::math::KdtreeBoundingBoxNearestNeighbors<MetricSquared>::Neighbor>> kdtreeBoundingBox = test<rl::math::KdtreeBoundingBoxNearestNeighbors<MetricSquared>>(points, queries, iterative);
+	std::vector<std::vector<rl::math::KdtreeBoundingBoxNearestNeighbors<MetricSquared>::Neighbor>> kdtreeBoundingBox = test<rl::math::KdtreeBoundingBoxNearestNeighbors<MetricSquared>>(points, queries, iterative, true);
 	
 	std::cout << "** KdtreeNearestNeighbors<MetricSquared> **************************************" << std::endl;
-	std::vector<std::vector<rl::math::KdtreeNearestNeighbors<MetricSquared>::Neighbor>> kdtree = test<rl::math::KdtreeNearestNeighbors<MetricSquared>>(points, queries, iterative);
+	std::vector<std::vector<rl::math::KdtreeNearestNeighbors<MetricSquared>::Neighbor>> kdtree = test<rl::math::KdtreeNearestNeighbors<MetricSquared>>(points, queries, iterative, true);
 	
 	for (std::size_t i = 0; i < linear.size(); ++i)
 	{
 		for (std::size_t j = 0; j < linear[i].size(); ++j)
 		{
-			if (!linear[i][j].second->isApprox(*gnat[i][j].second))
-			{
-				std::cerr << "rlNearestNeighborsTest: LinearNearestNeighbors != GnatNearestNeighbors" << std::endl;
-				std::cerr << "[" << i << "][" << j << "] " << linear[i][j].first << " LinearNearestNeighbors: " << linear[i][j].second->transpose() << std::endl;
-				std::cerr << "[" << i << "][" << j << "] " << gnat[i][j].first << " GnatNearestNeighbors: " << gnat[i][j].second->transpose() << std::endl;
-				exit(EXIT_FAILURE);
-			}
-			
-			if (!linear[i][j].second->isApprox(*linear2[i][j].second))
+			if (!Eigen::internal::isApprox(linear[i][j].first, std::sqrt(linear2[i][j].first)) ||
+				!linear[i][j].second->isApprox(*linear2[i][j].second))
 			{
 				std::cerr << "rlNearestNeighborsTest: LinearNearestNeighbors<Metric> != LinearNearestNeighbors<MetricSquared>" << std::endl;
 				std::cerr << "[" << i << "][" << j << "] " << linear[i][j].first << " LinearNearestNeighbors<Metric>: " << linear[i][j].second->transpose() << std::endl;
-				std::cerr << "[" << i << "][" << j << "] " << linear2[i][j].first << " LinearNearestNeighbors<MetricSquared>: " << linear2[i][j].second->transpose() << std::endl;
+				std::cerr << "[" << i << "][" << j << "] " << std::sqrt(linear2[i][j].first) << " LinearNearestNeighbors<MetricSquared>: " << linear2[i][j].second->transpose() << std::endl;
 				exit(EXIT_FAILURE);
 			}
 			
-			if (!linear[i][j].second->isApprox(*gnat[i][j].second))
+			if (!Eigen::internal::isApprox(linear[i][j].first, gnat[i][j].first) ||
+				!linear[i][j].second->isApprox(*gnat[i][j].second))
 			{
 				std::cerr << "rlNearestNeighborsTest: LinearNearestNeighbors<Metric> != GnatNearestNeighbors<Metric>" << std::endl;
 				std::cerr << "[" << i << "][" << j << "] " << linear[i][j].first << " LinearNearestNeighbors<Metric>: " << linear[i][j].second->transpose() << std::endl;
@@ -133,19 +128,21 @@ test(const std::vector<rl::math::Vector>& points, const std::vector<rl::math::Ve
 				exit(EXIT_FAILURE);
 			}
 			
-			if (!linear[i][j].second->isApprox(*kdtreeBoundingBox[i][j].second))
+			if (!Eigen::internal::isApprox(linear[i][j].first, std::sqrt(kdtreeBoundingBox[i][j].first)) ||
+				!linear[i][j].second->isApprox(*kdtreeBoundingBox[i][j].second))
 			{
 				std::cerr << "rlNearestNeighborsTest: LinearNearestNeighbors<Metric> != KdtreeBoundingBoxNearestNeighbors<MetricSquared>" << std::endl;
 				std::cerr << "[" << i << "][" << j << "] " << linear[i][j].first << " LinearNearestNeighbors<Metric>: " << linear[i][j].second->transpose() << std::endl;
-				std::cerr << "[" << i << "][" << j << "] " << kdtreeBoundingBox[i][j].first << " KdtreeBoundingBoxNearestNeighbors<MetricSquared>: " << kdtreeBoundingBox[i][j].second->transpose() << std::endl;
+				std::cerr << "[" << i << "][" << j << "] " << std::sqrt(kdtreeBoundingBox[i][j].first) << " KdtreeBoundingBoxNearestNeighbors<MetricSquared>: " << kdtreeBoundingBox[i][j].second->transpose() << std::endl;
 				exit(EXIT_FAILURE);
 			}
 			
-			if (!linear[i][j].second->isApprox(*kdtree[i][j].second))
+			if (!Eigen::internal::isApprox(linear[i][j].first, std::sqrt(kdtree[i][j].first)) ||
+				!linear[i][j].second->isApprox(*kdtree[i][j].second))
 			{
 				std::cerr << "rlNearestNeighborsTest: LinearNearestNeighbors<Metric> != KdtreeNearestNeighbors<MetricSquared>" << std::endl;
 				std::cerr << "[" << i << "][" << j << "] " << linear[i][j].first << " LinearNearestNeighbors<Metric>: " << linear[i][j].second->transpose() << std::endl;
-				std::cerr << "[" << i << "][" << j << "] " << kdtree[i][j].first << " KdtreeNearestNeighbors<MetricSquared>: " << kdtree[i][j].second->transpose() << std::endl;
+				std::cerr << "[" << i << "][" << j << "] " << std::sqrt(kdtree[i][j].first) << " KdtreeNearestNeighbors<MetricSquared>: " << kdtree[i][j].second->transpose() << std::endl;
 				exit(EXIT_FAILURE);
 			}
 		}
