@@ -264,7 +264,7 @@ namespace rl
 			return true;
 		}
 		
-		Prm::AStarHeuristic::AStarHeuristic(Model* model, Graph& graph, Vertex& goal) :
+		Prm::AStarHeuristic::AStarHeuristic(const Model* model, const Graph& graph, const Vertex& goal) :
 			goal(goal),
 			graph(graph),
 			model(model)

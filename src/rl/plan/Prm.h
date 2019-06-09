@@ -152,18 +152,18 @@ namespace rl
 			class AStarHeuristic : public ::boost::astar_heuristic<Graph, ::rl::math::Real>
 			{
 			public:
-				AStarHeuristic(Model* model, Graph& graph, Vertex& goal);
+				AStarHeuristic(const Model* model, const Graph& graph, const Vertex& goal);
 				
 				::rl::math::Real operator()(Vertex u);
 				
 			protected:
 				
 			private:
-				Vertex& goal;
+				const Vertex& goal;
 				
-				Graph& graph;
+				const Graph& graph;
 				
-				Model* model;
+				const Model* model;
 			};
 			
 			typedef ::boost::graph_traits<Graph>::edge_descriptor Edge;
