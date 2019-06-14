@@ -274,7 +274,7 @@ namespace rl
 		::rl::math::Real
 		Prm::AStarHeuristic::operator()(Vertex u)
 		{
-			return this->model->transformedDistance(*this->graph[u].q, *this->graph[this->goal].q);
+			return this->model->distance(*this->graph[u].q, *this->graph[this->goal].q);
 		}
 	}
 }
