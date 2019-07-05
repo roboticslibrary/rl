@@ -161,6 +161,66 @@ namespace rl
 				return f;
 			}
 			
+			static Spline<Quaternion> TrapezoidalAccelerationAtRest(const Quaternion& y0, const Quaternion& y1, const Vector3& vmax, const Vector3& amax, const Vector3& jmax)
+			{
+				using ::std::abs;
+				using ::std::atan2;
+				
+				Spline<Quaternion> f;
+				
+				Quaternion dy = y0.conjugate() * y1;
+				Real norm = dy.vec().norm();
+				Real dtheta = 2 * atan2(norm, abs(dy.w()));
+				Vector3 e = dy.vec();
+				
+				if (norm > 0)
+				{
+					e /= norm;
+				}
+				
+				Vector3 q0 = Vector3::Zero();
+				Vector3 q1 = e * dtheta;
+				
+				Spline<Vector3> f2 = Spline<Vector3>::TrapezoidalAccelerationAtRest(q0, q1, vmax, amax, jmax);
+				
+				for (::std::size_t i = 0; i < f2.size(); ++i)
+				{
+					Polynomial<Quaternion> fi(f2[i].degree());
+					
+					::rl::math::Real dx = f2[i].upper() - f2[i].lower();
+					::rl::math::Real dx2 = dx * dx;
+					::rl::math::Real dx3 = dx2 * dx;
+					
+					switch (f2[i].degree())
+					{
+					case 1:
+						fi.coefficient(0) = -f2[i].coefficient(0);
+						fi.coefficient(1) = f2[i].coefficient(0) + dx * f2[i].coefficient(1);
+						break;
+					case 2:
+						fi.coefficient(0) = f2[i].coefficient(0);
+						fi.coefficient(1) = -2 * f2[i].coefficient(0) - dx * f2[i].coefficient(1);
+						fi.coefficient(2) = f2[i].coefficient(0) + dx * f2[i].coefficient(1) + dx2 * f2[i].coefficient(2);
+						break;
+					case 3:
+						fi.coefficient(0) = -f2[i].coefficient(0);
+						fi.coefficient(1) = 3 * f2[i].coefficient(0) + dx * f2[i].coefficient(1);
+						fi.coefficient(2) = -3 * f2[i].coefficient(0) - 2 * dx * f2[i].coefficient(1) - dx2 * f2[i].coefficient(2);
+						fi.coefficient(3) = f2[i].coefficient(0) + dx * f2[i].coefficient(1) + dx2 * f2[i].coefficient(2) + dx3 * f2[i].coefficient(3);
+						break;
+					default:
+						break;
+					}
+					
+					fi.lower() = f2[i].lower();
+					fi.upper() = f2[i].upper();
+					fi.y0 = y0;
+					f.push_back(fi);
+				}
+				
+				return f;
+			}
+			
 			Polynomial<Quaternion>& at(const ::std::size_t& i)
 			{
 				return this->polynomials.at(i);
