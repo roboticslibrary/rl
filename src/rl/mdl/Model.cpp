@@ -531,6 +531,12 @@ namespace rl
 			return dynamic_cast<World*>(this->tree[this->root].get());
 		}
 		
+		const ::rl::math::Vector3&
+		Model::getWorldGravity() const
+		{
+			return dynamic_cast<World*>(this->tree[this->root].get())->getGravity();
+		}
+		
 		::Eigen::Matrix<bool, ::Eigen::Dynamic, 1>
 		Model::getWraparounds() const
 		{
@@ -698,6 +704,12 @@ namespace rl
 			{
 				this->joints[i]->setVelocity(qd.segment(j, this->joints[i]->getDof()));
 			}
+		}
+		
+		void
+		Model::setWorldGravity(const ::rl::math::Vector3& gravity)
+		{
+			dynamic_cast<World*>(this->tree[this->root].get())->setGravity(gravity);
 		}
 		
 		::rl::math::Transform&

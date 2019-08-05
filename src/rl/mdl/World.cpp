@@ -31,7 +31,8 @@ namespace rl
 	namespace mdl
 	{
 		World::World() :
-			Frame()
+			Frame(),
+			gravity(::rl::math::Vector3::Zero())
 		{
 		}
 		
@@ -40,19 +41,36 @@ namespace rl
 		}
 		
 		void
-		World::getGravity(::rl::math::Real& x, ::rl::math::Real& y, ::rl::math::Real& z) const
+		World::forwardAcceleration()
 		{
-			x = this->a.linear().x();
-			y = this->a.linear().y();
-			z = this->a.linear().z();
+			this->a.linear().setZero();
 		}
 		
 		void
-		World::setGravity(const ::rl::math::Real& x, const ::rl::math::Real& y, const ::rl::math::Real& z)
+		World::forwardDynamics1()
 		{
-			this->a.linear().x() = x;
-			this->a.linear().y() = y;
-			this->a.linear().z() = z;
+			this->iA.setZero();
+			this->pA.setZero();
+			this->a.linear() = this->gravity;
+		}
+		
+		const ::rl::math::Vector3&
+		World::getGravity() const
+		{
+			return this->gravity;
+		}
+		
+		void
+		World::inverseDynamics1()
+		{
+			this->f.setZero();
+			this->a.linear() = this->gravity;
+		}
+		
+		void
+		World::setGravity(const ::rl::math::Vector3& gravity)
+		{
+			this->gravity = gravity;
 		}
 	}
 }

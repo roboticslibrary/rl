@@ -40,14 +40,20 @@ namespace rl
 			
 			virtual ~World();
 			
-			void getGravity(::rl::math::Real& x, ::rl::math::Real& y, ::rl::math::Real& z) const;
+			void forwardAcceleration();
 			
-			void setGravity(const ::rl::math::Real& x, const ::rl::math::Real& y, const ::rl::math::Real& z);
+			void forwardDynamics1();
+			
+			const ::rl::math::Vector3& getGravity() const;
+			
+			void inverseDynamics1();
+			
+			void setGravity(const ::rl::math::Vector3& gravity);
 			
 		protected:
 			
 		private:
-			
+			::rl::math::Vector3 gravity;
 		};
 	}
 }

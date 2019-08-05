@@ -328,7 +328,7 @@ namespace rl
 			
 			World* world = new World();
 			model->add(world);
-			world->setGravity(0, 0, 9.80665);
+			world->setGravity(::rl::math::Vector3(0, 0, 9.80665));
 			
 			Frame* root = nullptr;
 			

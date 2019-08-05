@@ -61,9 +61,6 @@ main(int argc, char** argv)
 			qdd(i) = boost::lexical_cast<rl::math::Real>(argv[i + 2 + dynamic->getDofPosition() + dynamic->getDof()]);
 		}
 		
-		rl::math::Vector g(3);
-		dynamic->getWorldGravity(g);
-		
 		std::cout << "===============================================================================" << std::endl;
 		
 		// forward position
@@ -114,7 +111,6 @@ main(int argc, char** argv)
 		dynamic->setPosition(q);
 		dynamic->setVelocity(qd);
 		dynamic->setAcceleration(qdd);
-		dynamic->setWorldGravity(g);
 		dynamic->forwardVelocity();
 		dynamic->forwardAcceleration();
 		std::cout << "xdd = " << dynamic->getOperationalAcceleration(0).linear().transpose() << " " << dynamic->getOperationalAcceleration(0).angular().transpose() << std::endl;
@@ -170,7 +166,6 @@ main(int argc, char** argv)
 		
 		rl::math::Vector G(dynamic->getDof());
 		dynamic->setPosition(q);
-		dynamic->setWorldGravity(g);
 		dynamic->calculateGravity(G);
 		std::cout << "G = " << G.transpose() << std::endl;
 		

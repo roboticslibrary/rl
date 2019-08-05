@@ -153,6 +153,8 @@ namespace rl
 			
 			World* getWorld() const;
 			
+			const ::rl::math::Vector3& getWorldGravity() const;
+			
 			::Eigen::Matrix<bool, ::Eigen::Dynamic, 1> getWraparounds() const;
 			
 			bool isColliding(const ::std::size_t& i) const;
@@ -188,6 +190,8 @@ namespace rl
 			void setTorque(const ::rl::math::Vector& tau);
 			
 			void setVelocity(const ::rl::math::Vector& qd);
+			
+			void setWorldGravity(const ::rl::math::Vector3& gravity);
 			
 			::rl::math::Transform& tool(const ::std::size_t& i = 0);
 			

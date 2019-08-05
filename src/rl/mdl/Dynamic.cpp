@@ -65,13 +65,12 @@ namespace rl
 		void
 		Dynamic::calculateCentrifugalCoriolis(::rl::math::Vector& V)
 		{
-			::rl::math::Vector g(3);
-			this->getWorldGravity(g);
+			::rl::math::Vector3 g = this->getWorldGravity();
 			
 			::rl::math::Vector tmp = ::rl::math::Vector::Zero(this->getDof());
 			
 			this->setAcceleration(tmp);
-			this->setWorldGravity(0, 0, 0);
+			this->setWorldGravity(::rl::math::Vector3::Zero());
 			
 			this->inverseDynamics();
 			V = this->getTorque();
@@ -106,13 +105,12 @@ namespace rl
 		void
 		Dynamic::calculateMassMatrix(::rl::math::Matrix& M)
 		{
-			::rl::math::Vector g(3);
-			this->getWorldGravity(g);
+			::rl::math::Vector3 g = this->getWorldGravity();
 			
 			::rl::math::Vector tmp = ::rl::math::Vector::Zero(this->getDof());
 			
 			this->setVelocity(tmp);
-			this->setWorldGravity(0, 0, 0);
+			this->setWorldGravity(::rl::math::Vector3::Zero());
 			
 			for (::std::size_t i = 0; i < this->getDof(); ++i)
 			{
@@ -139,13 +137,12 @@ namespace rl
 		void
 		Dynamic::calculateMassMatrixInverse(::rl::math::Matrix& invM)
 		{
-			::rl::math::Vector g(3);
-			this->getWorldGravity(g);
+			::rl::math::Vector3 g = this->getWorldGravity();
 			
 			::rl::math::Vector tmp = ::rl::math::Vector::Zero(this->getDof());
 			
 			this->setVelocity(tmp);
-			this->setWorldGravity(0, 0, 0);
+			this->setWorldGravity(::rl::math::Vector3::Zero());
 			
 			for (::std::size_t i = 0; i < this->getDof(); ++i)
 			{
@@ -225,18 +222,6 @@ namespace rl
 		}
 		
 		void
-		Dynamic::getWorldGravity(::rl::math::Real& x, ::rl::math::Real& y, ::rl::math::Real& z) const
-		{
-			dynamic_cast<World*>(this->tree[this->root].get())->getGravity(x, y, z);
-		}
-		
-		void
-		Dynamic::getWorldGravity(::rl::math::Vector& xyz) const
-		{
-			this->getWorldGravity(xyz(0), xyz(1), xyz(2));
-		}
-		
-		void
 		Dynamic::inverseDynamics()
 		{
 			for (::std::vector<Element*>::iterator i = this->elements.begin(); i != this->elements.end(); ++i)
@@ -257,18 +242,6 @@ namespace rl
 			{
 				(*i)->inverseForce();
 			}
-		}
-		
-		void
-		Dynamic::setWorldGravity(const ::rl::math::Real& x, const ::rl::math::Real& y, const ::rl::math::Real& z)
-		{
-			dynamic_cast<World*>(this->tree[this->root].get())->setGravity(x, y, z);
-		}
-		
-		void
-		Dynamic::setWorldGravity(const ::rl::math::Vector& xyz)
-		{
-			this->setWorldGravity(xyz(0), xyz(1), xyz(2));
 		}
 		
 		void

@@ -212,10 +212,6 @@ namespace rl
 			 */
 			const ::rl::math::Matrix& getOperationalMassMatrixInverse() const;
 			
-			void getWorldGravity(::rl::math::Real& x, ::rl::math::Real& y, ::rl::math::Real& z) const;
-			
-			void getWorldGravity(::rl::math::Vector& xyz) const;
-			
 			/**
 			 * Inverse dynamics via recursive Newton-Euler algorithm.
 			 * 
@@ -229,10 +225,6 @@ namespace rl
 			void inverseDynamics();
 			
 			void inverseForce();
-			
-			void setWorldGravity(const ::rl::math::Real& x, const ::rl::math::Real& y, const ::rl::math::Real& z);
-			
-			void setWorldGravity(const ::rl::math::Vector& xyz);
 			
 			virtual void update();
 			
