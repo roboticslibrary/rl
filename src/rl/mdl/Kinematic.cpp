@@ -112,7 +112,7 @@ namespace rl
 			{
 				if (inWorldFrame)
 				{
-					rl::math::Matrix33 wR = this->getOperationalVelocity(j).angular().cross33() * this->getOperationalPosition(j).linear();
+					::rl::math::Matrix33 wR = this->getOperationalVelocity(j).angular().cross33() * this->getOperationalPosition(j).linear();
 					Jdqd.segment(j * 6, 3) = this->getOperationalPosition(j).linear() * this->getOperationalAcceleration(j).linear() + wR * this->getOperationalVelocity(j).linear();
 					Jdqd.segment(j * 6 + 3, 3) = this->getOperationalPosition(j).linear() * this->getOperationalAcceleration(j).angular() + wR * this->getOperationalVelocity(j).angular();
 				}
