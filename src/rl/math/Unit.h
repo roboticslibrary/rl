@@ -36,150 +36,299 @@ namespace rl
 	namespace math
 	{
 		/**
-		 * <h3><a href="http://en.wikipedia.org/wiki/SI_base_unit">SI base units</a></h3>
-		 * 
-		 * <table>
-		 *   <tr>
-		 *     <td><strong>Name</strong></td>
-		 *     <td><strong>Symbol</strong></td>
-		 *     <td><strong>Measure</strong></td>
-		 *   </tr>
-		 *   <tr>
-		 *     <td><a href="http://en.wikipedia.org/wiki/Meter">meter</a></td>
-		 *     <td>m</td>
-		 *     <td><a href="http://en.wikipedia.org/wiki/Length">length</a></td>
-		 *   </tr>
-		 *   <tr>
-		 *     <td><a href="http://en.wikipedia.org/wiki/Kilogram">kilogram</a></td>
-		 *     <td>kg</td>
-		 *     <td><a href="http://en.wikipedia.org/wiki/Mass">mass</a></td>
-		 *   </tr>
-		 *   <tr>
-		 *     <td><a href="http://en.wikipedia.org/wiki/Second">second</a></td>
-		 *     <td>s</td>
-		 *     <td><a href="http://en.wikipedia.org/wiki/Time">time</a></td>
-		 *   </tr>
-		 *   <tr>
-		 *     <td><a href="http://en.wikipedia.org/wiki/Ampere">ampere</a></td>
-		 *     <td>A</td>
-		 *     <td><a href="http://en.wikipedia.org/wiki/Electric_current">electric current</a></td>
-		 *   </tr>
-		 *   <tr>
-		 *     <td><a href="http://en.wikipedia.org/wiki/Kelvin">kelvin</a></td>
-		 *     <td>K</td>
-		 *     <td><a href="http://en.wikipedia.org/wiki/Temperature">thermodynamic temperature</a></td>
-		 *   </tr>
-		 *   <tr>
-		 *     <td><a href="http://en.wikipedia.org/wiki/Mole_%28unit%29">mole</a></td>
-		 *     <td>mol</td>
-		 *     <td>quantity of <a href="http://en.wikipedia.org/wiki/Matter">matter</a> (mass/mass)</td>
-		 *   </tr>
-		 *   <tr>
-		 *     <td><a href="http://en.wikipedia.org/wiki/Candela">candela</a></td>
-		 *     <td>cd</td>
-		 *     <td><a href="http://en.wikipedia.org/wiki/Luminous_intensity">luminous intensity</a></td>
-		 *   </tr>
-		 * </table>
-		 * 
-		 * <h3><a href="http://en.wikipedia.org/wiki/SI_derived_unit">SI derived units</a></h3>
-		 * 
-		 * <table>
-		 *   <tr>
-		 *     <td><strong>Name</strong></td>
-		 *     <td><strong>Symbol</strong></td>
-		 *     <td><strong>Quantity</strong></td>
-		 *     <td><strong>Expression in terms of <a href="http://en.wikipedia.org/wiki/SI_base_unit">SI base units</a></strong></td>
-		 *   </tr>
-		 *   <tr>
-		 *     <td><a href="http://en.wikipedia.org/wiki/Radian">radian</a></td>
-		 *     <td>rad</td>
-		 *     <td><a href="http://en.wikipedia.org/wiki/Angle">Angle</a></td>
-		 *     <td></td>
-		 *   </tr>
-		 *   <tr>
-		 *     <td><a href="http://en.wikipedia.org/wiki/Hertz">hertz</a></td>
-		 *     <td>Hz</td>
-		 *     <td><a href="http://en.wikipedia.org/wiki/Frequency">frequency</a></td>
-		 *     <td>s<sup>-1</sup></td>
-		 *   </tr>
-		 *   <tr>
-		 *     <td><a href="http://en.wikipedia.org/wiki/Newton">newton</a></td>
-		 *     <td>N</td>
-		 *     <td><a href="http://en.wikipedia.org/wiki/Force">Force</a>, <a href="http://en.wikipedia.org/wiki/Weight">Weight</a></td>
-		 *     <td>m &middot; kg &middot; s<sup>-2</sup></td>
-		 *   </tr>
-		 *   <tr>
-		 *     <td><a href="http://en.wikipedia.org/wiki/Volt">volt</a></td>
-		 *     <td>V</td>
-		 *     <td><a href="http://en.wikipedia.org/wiki/Potential_difference">Electrical potential difference</a>, <a href="http://en.wikipedia.org/wiki/Electromotive_force">Electromotive force</a></td>
-		 *     <td>m<sup>2</sup> &middot; kg &middot; s<sup>-3</sup> &middot; A<sup>-1</sup></td>
-		 *   </tr>
-		 *   <tr>
-		 *     <td><a href="http://en.wikipedia.org/wiki/Celsius">degree Celsius</a></td>
-		 *     <td>@htmlonly &#176C @endhtmlonly</td>
-		 *     <td><a href="http://en.wikipedia.org/wiki/Thermodynamic_temperature">Thermodynamic temperature</a></td>
-		 *     <td>T<sub>&ordm;C</sub> = T<sub>K</sub> - 273.16</td>
-		 *   </tr>
-		 *   <tr>
-		 *     <td><a href="http://en.wikipedia.org/wiki/Meter_per_second">meter per second</a></td>
-		 *     <td>m &middot; s<sup>-1</sup></td>
-		 *     <td><a href="http://en.wikipedia.org/wiki/Speed">speed</a>, <a href="http://en.wikipedia.org/wiki/Velocity">velocity</a></td>
-		 *     <td>m &middot; s<sup>-1</sup></td>
-		 *   </tr>
-		 *   <tr>
-		 *     <td><a href="http://en.wikipedia.org/wiki/Meter_per_second_squared">meter per second squared</a></td>
-		 *     <td>m &middot; s<sup>-2</sup></td>
-		 *     <td><a href="http://en.wikipedia.org/wiki/Acceleration">acceleration</a></td>
-		 *     <td>m &middot; s<sup>-2</sup></td>
-		 *   </tr>
-		 *   <tr>
-		 *     <td>radian per second</td>
-		 *     <td>rad &middot; s<sup>-1</sup></td>
-		 *     <td><a href="http://en.wikipedia.org/wiki/Angular_velocity">angular velocity</a></td>
-		 *     <td>s<sup>-1</sup></td>
-		 *   </tr>
-		 *   <tr>
-		 *     <td>newton second</td>
-		 *     <td>N &middot; s</td>
-		 *     <td><a href="http://en.wikipedia.org/wiki/Momentum">momentum</a>, <a href="http://en.wikipedia.org/wiki/Impulse">impulse</a></td>
-		 *     <td>kg &middot; m &middot; s<sup>-1</sup></td>
-		 *   </tr>
-		 *   <tr>
-		 *     <td>newton meter second</td>
-		 *     <td>N &middot; m &middot; s</td>
-		 *     <td><a href="http://en.wikipedia.org/wiki/Angular_momentum">angular momentum</a></td>
-		 *     <td>kg &middot; m<sup>2</sup> &middot; s<sup>-1</sup></td>
-		 *   </tr>
-		 *   <tr>
-		 *     <td>newton meter</td>
-		 *     <td>N &middot; m</td>
-		 *     <td><a href="http://en.wikipedia.org/wiki/Torque">Torque, moment of force</a></td>
-		 *     <td>kg &middot; m<sup>2</sup> &middot; s<sup>-2</sup></td>
-		 *   </tr>
-		 * </table>
+		 * Values describing [base units](https://en.wikipedia.org/wiki/SI_base_unit) and
+		 * [derived units](https://en.wikipedia.org/wiki/SI_derived_unit) of the
+		 * [International System of Units](https://en.wikipedia.org/wiki/International_System_of_Units).
 		 */
 		enum Unit
 		{
+			/**
+			 * Value used for describing dimensionless quantities.
+			 */
 			UNIT_NONE,
-			UNIT_METER,
-			UNIT_KILOGRAM,
+			/**
+			 * The [second](https://en.wikipedia.org/wiki/Second) (symbol **s**) is the
+			 * [SI base unit](https://en.wikipedia.org/wiki/SI_base_unit)
+			 * of [time](https://en.wikipedia.org/wiki/Time).
+			 */
 			UNIT_SECOND,
+			/**
+			 * The [meter](https://en.wikipedia.org/wiki/Meter) (symbol **m**) is the
+			 * [SI base unit](https://en.wikipedia.org/wiki/SI_base_unit)
+			 * of [length](https://en.wikipedia.org/wiki/Length).
+			 */
+			UNIT_METER,
+			/**
+			 * The [kilogram](https://en.wikipedia.org/wiki/Kilogram) (symbol **kg**) is the
+			 * [SI base unit](https://en.wikipedia.org/wiki/SI_base_unit)
+			 * of [mass](https://en.wikipedia.org/wiki/Mass).
+			 */
+			UNIT_KILOGRAM,
+			/**
+			 * The [ampere](https://en.wikipedia.org/wiki/Ampere) (symbol **A**) is the
+			 * [SI base unit](https://en.wikipedia.org/wiki/SI_base_unit)
+			 * of [electric current](https://en.wikipedia.org/wiki/Electric_current).
+			 */
 			UNIT_AMPERE,
+			/**
+			 * The [kelvin](https://en.wikipedia.org/wiki/Kelvin) (symbol **K**) is the
+			 * [SI base unit](https://en.wikipedia.org/wiki/SI_base_unit)
+			 * of [thermodynamic temperature](https://en.wikipedia.org/wiki/Thermodynamic_temperature).
+			 */
 			UNIT_KELVIN,
+			/**
+			 * The [mole](https://en.wikipedia.org/wiki/Mole_%28unit%29) (symbol **mol**) is the
+			 * [SI base unit](https://en.wikipedia.org/wiki/SI_base_unit)
+			 * of [amount of substance](https://en.wikipedia.org/wiki/Amount_of_substance).
+			 */
 			UNIT_MOLE,
+			/**
+			 * The [candela](https://en.wikipedia.org/wiki/Candela) (symbol **cd**) is the
+			 * [SI base unit](https://en.wikipedia.org/wiki/SI_base_unit)
+			 * of [luminous intensity](https://en.wikipedia.org/wiki/Luminous_intensity).
+			 */
 			UNIT_CANDELA,
+			/**
+			 * The [radian](https://en.wikipedia.org/wiki/Radian) (symbol **rad**) is the
+			 * [SI derived unit](https://en.wikipedia.org/wiki/SI_derived_unit)
+			 * of [plane angle](https://en.wikipedia.org/wiki/Angle).
+			 */
 			UNIT_RADIAN,
+			/**
+			 * The [steradian](https://en.wikipedia.org/wiki/Radian) (symbol **sr**) is the
+			 * [SI derived unit](https://en.wikipedia.org/wiki/SI_derived_unit)
+			 * of [solid angle](https://en.wikipedia.org/wiki/Solid_angle).
+			 */
+			UNIT_STERADIAN,
+			/**
+			 * The [hertz](https://en.wikipedia.org/wiki/Hertz) (symbol **Hz**) is the
+			 * [SI derived unit](https://en.wikipedia.org/wiki/SI_derived_unit)
+			 * of [frequency](https://en.wikipedia.org/wiki/Frequency)
+			 * and is defined as s<sup>-1</sup>.
+			 */
 			UNIT_HERTZ,
+			/**
+			 * The [newton](https://en.wikipedia.org/wiki/Newton_(unit)) (symbol **N**) is the
+			 * [SI derived unit](https://en.wikipedia.org/wiki/SI_derived_unit)
+			 * of [force](https://en.wikipedia.org/wiki/Force)
+			 * and is defined as kg &middot; m &middot; s<sup>-2</sup>.
+			 */
 			UNIT_NEWTON,
+			/**
+			 * The [pascal](https://en.wikipedia.org/wiki/Pascal_(unit)) (symbol **Pa**) is the
+			 * [SI derived unit](https://en.wikipedia.org/wiki/SI_derived_unit)
+			 * of [pressure](https://en.wikipedia.org/wiki/Pressure)
+			 * and is defined as kg &middot; m<sup>-1</sup> &middot; s<sup>-2</sup>.
+			 */
+			UNIT_PASCAL,
+			/**
+			 * The [joule](https://en.wikipedia.org/wiki/Joule) (symbol **J**) is the
+			 * [SI derived unit](https://en.wikipedia.org/wiki/SI_derived_unit)
+			 * of [energy](https://en.wikipedia.org/wiki/Energy)
+			 * and is defined as kg &middot; m<sup>-2</sup> &middot; s<sup>-2</sup>.
+			 */
+			UNIT_JOULE,
+			/**
+			 * The [watt](https://en.wikipedia.org/wiki/Watt) (symbol **W**) is the
+			 * [SI derived unit](https://en.wikipedia.org/wiki/SI_derived_unit)
+			 * of [power](https://en.wikipedia.org/wiki/Power_(physics))
+			 * and is defined as kg &middot; m<sup>-2</sup> &middot; s<sup>-3</sup>.
+			 */
+			UNIT_WATT,
+			/**
+			 * The [coulomb](https://en.wikipedia.org/wiki/Coulomb) (symbol **C**) is the
+			 * [SI derived unit](https://en.wikipedia.org/wiki/SI_derived_unit)
+			 * of [electric charge](https://en.wikipedia.org/wiki/Electric_charge)
+			 * and is defined as s &middot; A.
+			 */
+			UNIT_COULOMB,
+			/**
+			 * The [volt](https://en.wikipedia.org/wiki/Volt) (symbol **V**) is the
+			 * [SI derived unit](https://en.wikipedia.org/wiki/SI_derived_unit)
+			 * of [electric potential](https://en.wikipedia.org/wiki/Electric_potential),
+			 * [electric potential difference](https://en.wikipedia.org/wiki/Electric_potential_difference), and
+			 * [electromotive force](https://en.wikipedia.org/wiki/Electromotive_force)
+			 * and is defined as kg &middot; m<sup>2</sup> &middot; s<sup>-3</sup> &middot; A<sup>-1</sup>.
+			 */
 			UNIT_VOLT,
+			/**
+			 * The [farad](https://en.wikipedia.org/wiki/Farad) (symbol **F**) is the
+			 * [SI derived unit](https://en.wikipedia.org/wiki/SI_derived_unit)
+			 * of [electrical capacitance](https://en.wikipedia.org/wiki/Capacitance)
+			 * and is defined as kg<sup>-1</sup> &middot; m<sup>-2</sup> &middot; s<sup>4</sup> &middot; A<sup>2</sup>.
+			 */
+			UNIT_FARAD,
+			/**
+			 * The [ohm](https://en.wikipedia.org/wiki/Ohm) (symbol **&Omega;**) is the
+			 * [SI derived unit](https://en.wikipedia.org/wiki/SI_derived_unit)
+			 * of [electrical resistance](https://en.wikipedia.org/wiki/Electrical_resistance)
+			 * and is defined as kg &middot; m<sup>2</sup> &middot; s<sup>-3</sup> &middot; A<sup>-2</sup>.
+			 */
+			UNIT_OHM,
+			/**
+			 * The [siemens](https://en.wikipedia.org/wiki/Siemens_(unit)) (symbol **S**) is the
+			 * [SI derived unit](https://en.wikipedia.org/wiki/SI_derived_unit)
+			 * of [electrical conductance](https://en.wikipedia.org/wiki/Electric_conductance)
+			 * and is defined as kg<sup>-1</sup> &middot; m<sup>-2</sup> &middot; s<sup>3</sup> &middot; A<sup>2</sup>.
+			 */
+			UNIT_SIEMENS,
+			/**
+			 * The [weber](https://en.wikipedia.org/wiki/Weber_(unit)) (symbol **Wb**) is the
+			 * [SI derived unit](https://en.wikipedia.org/wiki/SI_derived_unit)
+			 * of [magnetic flux](https://en.wikipedia.org/wiki/Magnetic_flux)
+			 * and is defined as kg &middot; m<sup>2</sup> &middot; s<sup>-2</sup> &middot; A<sup>-1</sup>.
+			 */
+			UNIT_WEBER,
+			/**
+			 * The [tesla](https://en.wikipedia.org/wiki/Tesla_(unit)) (symbol **T**) is the
+			 * [SI derived unit](https://en.wikipedia.org/wiki/SI_derived_unit)
+			 * of [magnetic flux density](https://en.wikipedia.org/wiki/Magnetic_flux_density)
+			 * and is defined as kg &middot; s<sup>-2</sup> &middot; A<sup>-1</sup>.
+			 */
+			UNIT_TESLA,
+			/**
+			 * The [henry](https://en.wikipedia.org/wiki/Henry_(unit)) (symbol **H**) is the
+			 * [SI derived unit](https://en.wikipedia.org/wiki/SI_derived_unit)
+			 * of [electrical inductance](https://en.wikipedia.org/wiki/Inductance)
+			 * and is defined as kg &middot; m<sup>2</sup> &middot; s<sup>-2</sup> &middot; A<sup>-2</sup>.
+			 */
+			UNIT_HENRY,
+			/**
+			 * The [degree Celsius](https://en.wikipedia.org/wiki/Degree_Celsius) (symbol **&ordm;C**) is the
+			 * [SI derived unit](https://en.wikipedia.org/wiki/SI_derived_unit)
+			 * referring to a temperature on the Celsius scale and is defined as temperature
+			 * relative to 273.15 K.
+			 */
 			UNIT_CELSIUS,
+			/**
+			 * The [lumen](https://en.wikipedia.org/wiki/Lumen_(unit)) (symbol **lm**) is the
+			 * [SI derived unit](https://en.wikipedia.org/wiki/SI_derived_unit)
+			 * of [luminous flux](https://en.wikipedia.org/wiki/Luminous_flux)
+			 * and is defined as cd &middot; sr.
+			 */
+			UNIT_LUMEN,
+			/**
+			 * The [lux](https://en.wikipedia.org/wiki/Lux) (symbol **lx**) is the
+			 * [SI derived unit](https://en.wikipedia.org/wiki/SI_derived_unit)
+			 * of [illuminance](https://en.wikipedia.org/wiki/Illuminance)
+			 * and is defined as m<sup>-2</sup> &middot; cd.
+			 */
+			UNIT_LUX,
+			/**
+			 * The [becquerel](https://en.wikipedia.org/wiki/Becquerel) (symbol **Bq**) is the
+			 * [SI derived unit](https://en.wikipedia.org/wiki/SI_derived_unit)
+			 * of [radioactivity](https://en.wikipedia.org/wiki/Radioactivity)
+			 * and is defined as s<sup>-1</sup>.
+			 */
+			UNIT_BECQUEREL,
+			/**
+			 * The [gray](https://en.wikipedia.org/wiki/Gray_(unit)) (symbol **Gy**) is the
+			 * [SI derived unit](https://en.wikipedia.org/wiki/SI_derived_unit)
+			 * of [absorbed dose](https://en.wikipedia.org/wiki/Absorbed_dose)
+			 * of [ionising radiation](https://en.wikipedia.org/wiki/Ionizing_radiation)
+			 * and is defined as m<sup>2</sup> &middot; s<sup>-2</sup>.
+			 */
+			UNIT_GRAY,
+			/**
+			 * The [sievert](https://en.wikipedia.org/wiki/Sievert) (symbol **Sv**) is the
+			 * [SI derived unit](https://en.wikipedia.org/wiki/SI_derived_unit)
+			 * of [equivalent dose](https://en.wikipedia.org/wiki/Equivalent_dose)
+			 * of [ionising radiation](https://en.wikipedia.org/wiki/Ionizing_radiation)
+			 * and is defined as m<sup>2</sup> &middot; s<sup>-2</sup>.
+			 */
+			UNIT_SIEVERT,
+			/**
+			 * The [katal](https://en.wikipedia.org/wiki/Katal) (symbol **kat**) is the
+			 * [SI derived unit](https://en.wikipedia.org/wiki/SI_derived_unit)
+			 * of [catalytic activity](https://en.wikipedia.org/wiki/Catalytic_activity)
+			 * and is defined as mol &middot; s<sup>-1</sup>.
+			 */
+			UNIT_KATAL,
+			/**
+			 * The [square meter](https://en.wikipedia.org/wiki/Square_metre) (symbol **m<sup>2</sup>**) is the
+			 * [SI derived unit](https://en.wikipedia.org/wiki/SI_derived_unit)
+			 * of [area](https://en.wikipedia.org/wiki/Area)
+			 * and is defined as m<sup>2</sup>.
+			 */
+			UNIT_SQUARE_METER,
+			/**
+			 * The [cubic meter](https://en.wikipedia.org/wiki/Cubic_metre) (symbol **m<sup>3</sup>**) is the
+			 * [SI derived unit](https://en.wikipedia.org/wiki/SI_derived_unit)
+			 * of [volume](https://en.wikipedia.org/wiki/Volume)
+			 * and is defined as m<sup>3</sup>.
+			 */
+			UNIT_CUBIC_METER,
+			/**
+			 * The [meter per second](https://en.wikipedia.org/wiki/Metre_per_second) (symbol **m &middot; s<sup>-1</sup>**) is the
+			 * [SI derived unit](https://en.wikipedia.org/wiki/SI_derived_unit)
+			 * of both [speed](https://en.wikipedia.org/wiki/Speed) and
+			 * [velocity](https://en.wikipedia.org/wiki/Velocity)
+			 * and is defined as m &middot; s<sup>-1</sup>.
+			 */
 			UNIT_METER_PER_SECOND,
+			/**
+			 * The [meter per second squared](https://en.wikipedia.org/wiki/Metre_per_second_squared) (symbol **m &middot; s<sup>-2</sup>**) is the
+			 * [SI derived unit](https://en.wikipedia.org/wiki/SI_derived_unit)
+			 * of [acceleration](https://en.wikipedia.org/wiki/Acceleration)
+			 * and is defined as m &middot; s<sup>-2</sup>.
+			 */
 			UNIT_METER_PER_SECOND_SQUARED,
+			/**
+			 * The kilogram per square meter (symbol **kg &middot; m<sup>-2</sup>**) is the
+			 * [SI derived unit](https://en.wikipedia.org/wiki/SI_derived_unit)
+			 * of [surface density](https://en.wikipedia.org/wiki/Surface_density)
+			 * and is defined as kg &middot; m<sup>-2</sup>.
+			 */
+			UNIT_KILOGRAM_PER_SQUARE_METER,
+			/**
+			 * The [kilogram per cubic meter](https://en.wikipedia.org/wiki/Kilogram_per_cubic_metre) (symbol **kg &middot; m<sup>-3</sup>**) is the
+			 * [SI derived unit](https://en.wikipedia.org/wiki/SI_derived_unit)
+			 * of [density](https://en.wikipedia.org/wiki/Density)
+			 * and is defined as kg &middot; m<sup>-3</sup>.
+			 */
+			UNIT_KILOGRAM_PER_CUBIC_METER,
+			/**
+			 * The [newton meter](https://en.wikipedia.org/wiki/Newton_metre) (symbol **N &middot; m**) is the
+			 * [SI derived unit](https://en.wikipedia.org/wiki/SI_derived_unit)
+			 * of [torque](https://en.wikipedia.org/wiki/Torque)
+			 * and is defined as kg &middot; m<sup>2</sup> &middot; s<sup>-2</sup>.
+			 */
+			UNIT_NEWTON_METER,
+			/**
+			 * The newton per meter (symbol **N &middot; m<sup>-1</sup>**) is the
+			 * [SI derived unit](https://en.wikipedia.org/wiki/SI_derived_unit)
+			 * of [surface tension](https://en.wikipedia.org/wiki/Surface_tension)
+			 * and is defined as kg &middot; s<sup>-2</sup>.
+			 */
+			UNIT_NEWTON_PER_METER,
+			/**
+			 * The [radian per second](https://en.wikipedia.org/wiki/Radian_per_second) (symbol **rad &middot; s<sup>-1</sup>**) is the
+			 * [SI derived unit](https://en.wikipedia.org/wiki/SI_derived_unit)
+			 * of [angular velocity](https://en.wikipedia.org/wiki/Angular_velocity)
+			 * and is defined as rad &middot; s<sup>-1</sup>.
+			 */
 			UNIT_RADIAN_PER_SECOND,
+			/**
+			 * The [radian per second squared](https://en.wikipedia.org/wiki/Radian_per_second_squared) (symbol **rad &middot; s<sup>-2</sup>**) is the
+			 * [SI derived unit](https://en.wikipedia.org/wiki/SI_derived_unit)
+			 * of [angular acceleration](https://en.wikipedia.org/wiki/Angular_acceleration)
+			 * and is defined as rad &middot; s<sup>-2</sup>.
+			 */
 			UNIT_RADIAN_PER_SECOND_SQUARED,
+			/**
+			 * The [newton second](https://en.wikipedia.org/wiki/Newton_second) (symbol **N &middot; s**) is the
+			 * [SI derived unit](https://en.wikipedia.org/wiki/SI_derived_unit)
+			 * of [impulse](https://en.wikipedia.org/wiki/Impulse_(physics))
+			 * and is defined as kg &middot; m &middot; s<sup>-1</sup>.
+			 */
 			UNIT_NEWTON_SECOND,
-			UNIT_NEWTON_METER_SECOND,
-			UNIT_NEWTON_METER
+			/**
+			 * The newton meter second (symbol **N &middot; m &middot; s**) is the
+			 * [SI derived unit](https://en.wikipedia.org/wiki/SI_derived_unit)
+			 * of [angular momentum](https://en.wikipedia.org/wiki/Angular_momentum)
+			 * and is defined as kg &middot; m<sup>2</sup> &middot; s<sup>-1</sup>.
+			 */
+			UNIT_NEWTON_METER_SECOND
 		};
 		
 		static const Real DEG2RAD = static_cast<Real>(M_PI) / static_cast<Real>(180);
