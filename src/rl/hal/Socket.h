@@ -70,6 +70,8 @@ namespace rl
 				
 				::std::vector<unsigned char> getHexadecimal();
 				
+				::std::size_t getLength() const;
+				
 				::std::string getNameInfo(const bool& asNumeric = false) const;
 				
 				Socket::Address& operator=(const Socket::Address& other);

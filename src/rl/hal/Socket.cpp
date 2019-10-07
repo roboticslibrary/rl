@@ -151,7 +151,7 @@ namespace rl
 		void
 		Socket::bind()
 		{
-			int err = ::bind(this->fd, reinterpret_cast<const ::sockaddr*>(&this->address.get()), sizeof(this->address.get()));
+			int err = ::bind(this->fd, reinterpret_cast<const ::sockaddr*>(&this->address.get()), this->address.getLength());
 			
 #ifdef WIN32
 			if (SOCKET_ERROR == err)
@@ -202,7 +202,7 @@ namespace rl
 		void
 		Socket::connect()
 		{
-			int err = ::connect(this->fd, reinterpret_cast<const ::sockaddr*>(&this->address.get()), sizeof(this->address.get()));
+			int err = ::connect(this->fd, reinterpret_cast<const ::sockaddr*>(&this->address.get()), this->address.getLength());
 			
 #ifdef WIN32
 			if (SOCKET_ERROR == err)
@@ -757,6 +757,23 @@ namespace rl
 			}
 			
 			return hexadecimal;
+		}
+		
+		::std::size_t
+		Socket::Address::getLength() const
+		{
+			switch (this->addr.ss_family)
+			{
+			case AF_INET:
+				return sizeof(::sockaddr_in);
+				break;
+			case AF_INET6:
+				return sizeof(::sockaddr_in6);
+				break;
+			default:
+				return 0;
+				break;
+			}
 		}
 		
 		::std::string
