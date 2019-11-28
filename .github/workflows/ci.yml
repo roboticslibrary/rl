@@ -1,0 +1,107 @@
+name: CI
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        name: [macos-latest, ubuntu-latest-clang, ubuntu-latest-gcc]
+        include:
+          - name: macos-latest
+            cmake_prefix_path: /usr/local/opt/qt/lib/cmake
+            developer_dir: /Applications/Xcode_11.2.1.app/Contents/Developer
+            os: macos-latest
+            path: /usr/local/opt/ccache/libexec
+          - name: ubuntu-latest-clang
+            cc: clang
+            cxx: clang++
+            os: ubuntu-latest
+            path: /usr/lib/ccache
+          - name: ubuntu-latest-gcc
+            cc: gcc
+            cxx: g++
+            os: ubuntu-latest
+            path: /usr/lib/ccache
+    env:
+      CC: ${{ matrix.cc }}
+      CMAKE_PREFIX_PATH: ${{ matrix.cmake_prefix_path }}
+      CXX: ${{ matrix.cxx }}
+      DEVELOPER_DIR: ${{ matrix.developer_dir }}
+    steps:
+      - uses: actions/checkout@v1
+      - if: matrix.os == 'macos-latest'
+        name: Set up Tap
+        run: |
+          brew tap roboticslibrary/rl
+      - if: matrix.os == 'ubuntu-latest'
+        name: Set up PPA
+        run: |
+          sudo apt-get install -y software-properties-common
+          sudo apt-add-repository -y -u ppa:roblib/ppa
+      - if: matrix.os == 'macos-latest'
+        name: Install dependencies for macOS
+        run: >
+          brew install
+          boost
+          bullet
+          ccache
+          cmake
+          coin
+          eigen
+          ninja
+          nlopt
+          ode
+          pqp
+          qt
+          solid
+          soqt
+      - if: matrix.os == 'ubuntu-latest'
+        name: Install dependencies for Ubuntu
+        run: >
+          sudo apt-get install -y
+          build-essential
+          ccache
+          clang
+          cmake
+          libboost-dev
+          libbullet-dev
+          libcomedi-dev
+          libdc1394-22-dev
+          libeigen3-dev
+          libnlopt-dev
+          libode-dev
+          libsimage-dev
+          libsolid3d-dev
+          libsoqt-dev
+          libxml2-dev
+          libxslt1-dev
+          ninja-build
+      - name: Cache compiler
+        uses: actions/cache@v1
+        with:
+          path: ~/.ccache
+          key: ${{ runner.os }}-${{ matrix.cc }}-ccache
+      - name: Create build directory
+        run: |
+          cmake -E make_directory ${{ runner.workspace }}/build
+      - name: Update PATH
+        run: echo ::add-path::${{ matrix.path }}
+      - name: Configure CMake
+        working-directory: ${{ runner.workspace }}/build
+        run: |
+          cmake -G Ninja -D CMAKE_BUILD_TYPE=RelWithDebInfo $GITHUB_WORKSPACE
+      - name: Build
+        working-directory: ${{ runner.workspace }}/build
+        run: |
+          cmake --build .
+      - name: Test
+        working-directory: ${{ runner.workspace }}/build
+        run: |
+          ctest --output-on-failure
