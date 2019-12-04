@@ -1,4 +1,5 @@
 include(CheckCSourceRuns)
+include(CheckSymbolExists)
 include(FindPackageHandleStandardArgs)
 include(GNUInstallDirs)
 include(SelectLibraryConfigurations)
@@ -126,19 +127,39 @@ find_library(
 
 select_library_configurations(ODE)
 
-set(CMAKE_REQUIRED_DEFINITIONS -DdDOUBLE)
-set(CMAKE_REQUIRED_INCLUDES ${ODE_INCLUDE_DIRS})
-set(CMAKE_REQUIRED_LIBRARIES ${ODE_LIBRARIES})
-
-check_c_source_runs("
-	#include <ode/ode.h>
-	int main() { return 1 == dCheckConfiguration(\"ODE_double_precision\") ? 0 : 1; }
-" ODE_DOUBLE_PRECISION)
-
-if(ODE_DOUBLE_PRECISION)
-	set(ODE_DEFINITIONS -DdDOUBLE)
-else()
-	set(ODE_DEFINITIONS -DdSINGLE)
+if(ODE_INCLUDE_DIRS AND ODE_LIBRARIES)
+	set(CMAKE_REQUIRED_INCLUDES ${ODE_INCLUDE_DIRS})
+	
+	check_symbol_exists(dDOUBLE "ode/precision.h" ODE_HAVE_DOUBLE)
+	
+	if(NOT ODE_HAVE_DOUBLE)
+		check_symbol_exists(dSINGLE "ode/precision.h" ODE_HAVE_SINGLE)
+	endif()
+	
+	if(NOT ODE_HAVE_DOUBLE AND NOT ODE_HAVE_SINGLE)
+		set(CMAKE_REQUIRED_DEFINITIONS -DdDOUBLE)
+		set(CMAKE_REQUIRED_LIBRARIES ${ODE_LIBRARIES})
+		
+		check_c_source_runs("
+			#include <ode/ode.h>
+			int main() { return 1 == dCheckConfiguration(\"ODE_double_precision\") ? 0 : 1; }
+		" ODE_DOUBLE_PRECISION)
+		
+		if(ODE_DOUBLE_PRECISION)
+			set(ODE_DEFINITIONS -DdDOUBLE)
+		else()
+			set(CMAKE_REQUIRED_DEFINITIONS -DdSINGLE)
+			
+			check_c_source_runs("
+				#include <ode/ode.h>
+				int main() { return 1 == dCheckConfiguration(\"ODE_single_precision\") ? 0 : 1; }
+			" ODE_SINGLE_PRECISION)
+			
+			if(ODE_SINGLE_PRECISION)
+				set(ODE_DEFINITIONS -DdSINGLE)
+			endif()
+		endif()
+	endif()
 endif()
 
 mark_as_advanced(ODE_DEFINITIONS) 
