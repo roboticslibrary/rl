@@ -6,11 +6,11 @@ include(ExternalProject)
 
 ExternalProject_Add(
 	eigen
-	#HG_REPOSITORY https://bitbucket.org/eigen/eigen/
-	#HG_TAG 3.3.7
-	URL https://bitbucket.org/eigen/eigen/get/3.3.7.tar.gz
-	#URL ${CMAKE_CURRENT_SOURCE_DIR}/eigen-eigen-323c052e1731.tar.gz
-	URL_MD5 f2a417d083fe8ca4b8ed2bc613d20f07
+	#GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
+	#GIT_TAG 3.3.7
+	URL https://gitlab.com/libeigen/eigen/-/archive/3.3.7/eigen-3.3.7.tar.gz
+	#URL ${CMAKE_CURRENT_SOURCE_DIR}/eigen-3.3.7.tar.gz
+	URL_MD5 9e30f67e8531477de4117506fe44669b
 	CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_CFG_INTDIR=${CMAKE_CFG_INTDIR} -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH} -DCMAKE_TRY_COMPILE_CONFIGURATION=${CMAKE_TRY_COMPILE_CONFIGURATION} -DBUILD_TESTING=OFF -DEIGEN_TEST_NOQT=ON
 	INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
 )
