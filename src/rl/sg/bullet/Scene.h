@@ -76,8 +76,6 @@ namespace rl
 				
 				bool raycast(::rl::sg::Shape* shape, const ::rl::math::Vector3& source, const ::rl::math::Vector3& target, ::rl::math::Real& distance);
 				
-				void setMargin(const ::rl::math::Real& margin);
-				
 				::btDbvtBroadphase broadphase;
 				
 				::btDefaultCollisionConfiguration configuration;
