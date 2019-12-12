@@ -25,7 +25,6 @@
 //
 
 #include <array>
-#include <iostream>
 #include <rl/math/Unit.h>
 
 #include "DeviceException.h"
@@ -229,6 +228,12 @@ namespace rl
 			return static_cast<SafetyMode>(static_cast<int>(this->in.safetyMode));
 		}
 		
+		UniversalRobotsRealtime::SafetyStatus
+		UniversalRobotsRealtime::getSafetyStatus() const
+		{
+			return static_cast<SafetyStatus>(static_cast<int>(this->in.safetyStatus));
+		}
+		
 		void
 		UniversalRobotsRealtime::open()
 		{
@@ -247,12 +252,35 @@ namespace rl
 		void
 		UniversalRobotsRealtime::step()
 		{
-			::std::array< ::std::uint8_t, 1108> buffer;
-			this->socket.recv(buffer.data(), buffer.size());
+			::std::array< ::std::uint8_t, 1116> buffer;
+			
+			this->socket.recv(buffer.data(), sizeof(this->in.messageSize));
 #if !defined(__APPLE__) && !defined(__QNX__) && !defined(WIN32)
 			this->socket.setOption(::rl::hal::Socket::OPTION_QUICKACK, 1);
 #endif // __APPLE__ || __QNX__ || WIN32
-			this->in.unserialize(buffer.data());
+			
+			::std::uint8_t* ptr = buffer.data();
+			this->in.unserialize(ptr, this->in.messageSize);
+			
+			switch (this->in.messageSize)
+			{
+			case 756:
+			case 764:
+			case 812:
+			case 1044:
+			case 1060:
+			case 1108:
+			case 1116:
+				this->socket.recv(ptr, this->in.messageSize - sizeof(this->in.messageSize));
+#if !defined(__APPLE__) && !defined(__QNX__) && !defined(WIN32)
+				this->socket.setOption(::rl::hal::Socket::OPTION_QUICKACK, 1);
+#endif // __APPLE__ || __QNX__ || WIN32
+				this->in.unserialize(ptr);
+				break;
+			default:
+				throw DeviceException("UniversalRobotsRealtime::step() - Incorrect message size " + ::std::to_string(this->in.messageSize));
+				break;
+			}
 		}
 		
 		void
@@ -264,13 +292,6 @@ namespace rl
 		void
 		UniversalRobotsRealtime::Message::unserialize(::std::uint8_t* ptr)
 		{
-			this->unserialize(ptr, this->messageSize);
-			
-			if (756 != this->messageSize && 764 != this->messageSize && 812 != this->messageSize && 1044 != this->messageSize && 1060 != this->messageSize && 1108 != this->messageSize)
-			{
-				throw DeviceException("UniversalRobotsRealtime::Message::unserialize() - Incorrect message size");
-			}
-			
 			this->unserialize(ptr, this->time);
 			this->unserialize(ptr, this->qTarget);
 			this->unserialize(ptr, this->qdTarget);
@@ -281,30 +302,36 @@ namespace rl
 			this->unserialize(ptr, this->qdActual);
 			this->unserialize(ptr, this->iActual);
 			
-			if (756 == this->messageSize)
+			switch (this->messageSize)
 			{
+			case 756:
 				ptr += 3 * sizeof(double);
 				ptr += 15 * sizeof(double);
 				this->unserialize(ptr, this->tcpForce);
 				this->unserialize(ptr, this->toolVectorActual);
 				this->unserialize(ptr, this->tcpSpeedActual);
-			}
-			else if (764 == this->messageSize || 812 == this->messageSize)
-			{
+				break;
+			case 764:
+			case 812:
 				this->unserialize(ptr, this->toolAccelerometerValues);
 				ptr += 15 * sizeof(double);
 				this->unserialize(ptr, this->tcpForce);
 				this->unserialize(ptr, this->toolVectorActual);
 				this->unserialize(ptr, this->tcpSpeedActual);
-			}
-			else if (1044 == this->messageSize || 1060 == this->messageSize || 1108 == this->messageSize)
-			{
+				break;
+			case 1044:
+			case 1060:
+			case 1108:
+			case 1116:
 				this->unserialize(ptr, this->iControl);
 				this->unserialize(ptr, this->toolVectorActual);
 				this->unserialize(ptr, this->tcpSpeedActual);
 				this->unserialize(ptr, this->tcpForce);
 				this->unserialize(ptr, this->toolVectorTarget);
 				this->unserialize(ptr, this->tcpSpeedTarget);
+				break;
+			default:
+				break;
 			}
 			
 			this->unserialize(ptr, this->digitalInputBits);
@@ -312,43 +339,60 @@ namespace rl
 			this->unserialize(ptr, this->controllerTimer);
 			this->unserialize(ptr, this->testValue);
 			
-			if (764 == this->messageSize || 812 == this->messageSize || 1044 == this->messageSize || 1060 == this->messageSize || 1108 == this->messageSize)
+			if (this->messageSize < 764)
 			{
-				this->unserialize(ptr, this->robotMode);
+				return;
 			}
 			
-			if (812 == this->messageSize || 1044 == this->messageSize || 1060 == this->messageSize || 1108 == this->messageSize)
+			this->unserialize(ptr, this->robotMode);
+			
+			if (this->messageSize < 812)
 			{
-				this->unserialize(ptr, this->jointModes);
+				return;
 			}
 			
-			if (1044 == this->messageSize || 1060 == this->messageSize || 1108 == this->messageSize)
+			this->unserialize(ptr, this->jointModes);
+			
+			if (this->messageSize < 1044)
 			{
-				this->unserialize(ptr, this->safetyMode);
-				ptr += 6 * sizeof(double);
-				this->unserialize(ptr, this->toolAccelerometerValues);
-				ptr += 6 * sizeof(double);
-				this->unserialize(ptr, this->speedScaling);
-				this->unserialize(ptr, this->linearMomentumNorm);
-				ptr += 1 * sizeof(double);
-				ptr += 1 * sizeof(double);
-				this->unserialize(ptr, this->vMain);
-				this->unserialize(ptr, this->vRobot);
-				this->unserialize(ptr, this->iRobot);
-				this->unserialize(ptr, this->vActual);
+				return;
 			}
 			
-			if (1060 == this->messageSize || 1108 == this->messageSize)
+			this->unserialize(ptr, this->safetyMode);
+			ptr += 6 * sizeof(double);
+			this->unserialize(ptr, this->toolAccelerometerValues);
+			ptr += 6 * sizeof(double);
+			this->unserialize(ptr, this->speedScaling);
+			this->unserialize(ptr, this->linearMomentumNorm);
+			ptr += 1 * sizeof(double);
+			ptr += 1 * sizeof(double);
+			this->unserialize(ptr, this->vMain);
+			this->unserialize(ptr, this->vRobot);
+			this->unserialize(ptr, this->iRobot);
+			this->unserialize(ptr, this->vActual);
+			
+			if (this->messageSize < 1060)
 			{
-				this->unserialize(ptr, this->digitalOutputs);
-				this->unserialize(ptr, this->programState);
+				return;
 			}
 			
-			if (1108 == this->messageSize)
+			this->unserialize(ptr, this->digitalOutputs);
+			this->unserialize(ptr, this->programState);
+			
+			if (this->messageSize < 1108)
 			{
-				this->unserialize(ptr, this->elbowPosition);
-				this->unserialize(ptr, this->elbowVelocity);
+				return;
 			}
+			
+			this->unserialize(ptr, this->elbowPosition);
+			this->unserialize(ptr, this->elbowVelocity);
+			
+			if (this->messageSize < 1116)
+			{
+				return;
+			}
+			
+			this->unserialize(ptr, this->safetyStatus);
 		}
 		
 		template<>

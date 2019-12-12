@@ -46,7 +46,10 @@ namespace rl
 	namespace hal
 	{
 		/**
-		 * Universal Robots realtime interface (pre-3.0, 3.0, 3.1, 3.2, 3.3, 3.4, 3.5).
+		 * Universal Robots realtime interface.
+		 * 
+		 * Supports versions 1.5, 1.6, 1.7, 1.8, 3.0, 3.1, 3.2, 3.3, 3.4, 3.5, 3.6,
+		 * 3.7, 3.8, 3.9, 3.10, 3.11, 3.12, 5.0, 5.1, 5.2, 5.3, 5.4, 5.5, 5.6.
 		 */
 		class RL_HAL_EXPORT UniversalRobotsRealtime :
 			public CartesianForceSensor,
@@ -62,6 +65,7 @@ namespace rl
 		public:
 			enum JointMode
 			{
+				JOINT_MODE_RESET = 235,
 				JOINT_MODE_SHUTTING_DOWN = 236,
 				JOINT_MODE_PART_D_CALIBRATION = 237,
 				JOINT_MODE_BACKDRIVE = 238,
@@ -72,9 +76,10 @@ namespace rl
 				JOINT_MODE_PART_D_CALIBRATION_ERROR = 248,
 				JOINT_MODE_BOOTLOADER = 249,
 				JOINT_MODE_CALIBRATION = 250,
+				JOINT_MODE_VIOLATION = 251,
 				JOINT_MODE_FAULT = 252,
 				JOINT_MODE_RUNNING = 253,
-				JOINT_MODE_IDLE_MODE = 255
+				JOINT_MODE_IDLE = 255
 			};
 			
 			enum ProgramState
@@ -89,6 +94,7 @@ namespace rl
 			
 			enum RobotMode
 			{
+				ROBOT_MODE_NO_CONTROLLER = -1,
 				ROBOT_MODE_DISCONNECTED = 0,
 				ROBOT_MODE_CONFIRM_SAFETY = 1,
 				ROBOT_MODE_BOOTING = 2,
@@ -110,7 +116,26 @@ namespace rl
 				SAFETY_MODE_SYSTEM_EMERGENCY_STOP = 6,
 				SAFETY_MODE_ROBOT_EMERGENCY_STOP = 7,
 				SAFETY_MODE_VIOLATION = 8,
-				SAFETY_MODE_FAULT = 9
+				SAFETY_MODE_FAULT = 9,
+				SAFETY_MODE_VALIDATE_JOINT_ID = 10,
+				SAFETY_MODE_UNDEFINED_SAFETY_MODE = 11
+			};
+			
+			enum SafetyStatus
+			{
+				SAFETY_STATUS_NORMAL = 1,
+				SAFETY_STATUS_REDUCED = 2,
+				SAFETY_STATUS_PROTECTIVE_STOP = 3,
+				SAFETY_STATUS_RECOVERY = 4,
+				SAFETY_STATUS_SAFEGUARD_STOP = 5,
+				SAFETY_STATUS_SYSTEM_EMERGENCY_STOP = 6,
+				SAFETY_STATUS_ROBOT_EMERGENCY_STOP = 7,
+				SAFETY_STATUS_VIOLATION = 8,
+				SAFETY_STATUS_FAULT = 9,
+				SAFETY_STATUS_VALIDATE_JOINT_ID = 10,
+				SAFETY_STATUS_UNDEFINED_SAFETY_MODE = 11,
+				SAFETY_STATUS_AUTOMATIC_MODE_SAFEGUARD_STOP = 12,
+				SAFETY_STATUS_SYSTEM_THREE_POSITION_ENABLING_STOP = 13
 			};
 			
 			UniversalRobotsRealtime(const ::std::string& address);
@@ -152,6 +177,8 @@ namespace rl
 			RobotMode getRobotMode() const;
 			
 			SafetyMode getSafetyMode() const;
+			
+			SafetyStatus getSafetyStatus() const;
 			
 			void open();
 			
@@ -252,6 +279,8 @@ namespace rl
 				double elbowPosition[3];
 				
 				double elbowVelocity[3];
+				
+				double safetyStatus;
 			};
 			
 			Message in;
