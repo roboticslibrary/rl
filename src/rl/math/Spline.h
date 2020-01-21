@@ -100,7 +100,7 @@ namespace rl
 			 * http://banach.millersville.edu/~bob/math375/CubicSpline/main.pdf
 			 * 
 			 * @param[in] x \f$x_0, \ldots, x_n\f$
-			 * @param[in] y \f$f(x_0), \ldots, f_(x_n)\f$
+			 * @param[in] y \f$f(x_0), \ldots, f(x_n)\f$
 			 * @param[in] yd0 \f$f'(x_0)\f$
 			 * @param[in] yd1 \f$f'(x_n)\f$
 			 */
@@ -198,7 +198,7 @@ namespace rl
 			 * http://banach.millersville.edu/~bob/math375/CubicSpline/main.pdf
 			 * 
 			 * @param[in] x \f$x_0, \ldots, x_n\f$
-			 * @param[in] y \f$f(x_0), \ldots, f_(x_n)\f$
+			 * @param[in] y \f$f(x_0), \ldots, f(x_n)\f$
 			 */
 			template<typename Container1, typename Container2>
 			static Spline CubicNatural(const Container1& x, const Container2& y)
