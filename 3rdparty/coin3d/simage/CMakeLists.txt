@@ -3,10 +3,11 @@ include(ExternalProject)
 ExternalProject_Add(
 	simage
 	DEPENDS cpack.d
-	#HG_REPOSITORY https://bitbucket.org/Coin3D/simage
-	#HG_TAG default
-	URL https://bitbucket.org/Coin3D/simage/get/default.tar.bz2
-	#URL ${CMAKE_CURRENT_SOURCE_DIR}/default.tar.bz2
+	#GIT_REPOSITORY https://github.com/coin3d/simage
+	#GIT_TAG simage-1.8.0
+	URL https://github.com/coin3d/simage/archive/simage-1.8.0.zip
+	#URL ${CMAKE_CURRENT_SOURCE_DIR}/simage-simage-1.8.0.tar.bz2
+	URL_MD5 0d517db68d839dec57eff95226245d46
 	PATCH_COMMAND
 	${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_BINARY_DIR}/../cpack.d/cpack.d-prefix/src/cpack.d <SOURCE_DIR>/cpack.d
 	CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_CFG_INTDIR=${CMAKE_CFG_INTDIR} -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH} -DCMAKE_TRY_COMPILE_CONFIGURATION=${CMAKE_TRY_COMPILE_CONFIGURATION}
