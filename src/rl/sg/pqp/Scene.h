@@ -51,6 +51,8 @@ namespace rl
 				
 				virtual ~Scene();
 				
+				using ::rl::sg::SimpleScene::areColliding;
+				
 				bool areColliding(::rl::sg::Shape* first, ::rl::sg::Shape* second);
 				
 				::rl::sg::Model* create();

@@ -52,11 +52,15 @@ namespace rl
 				
 				virtual ~Scene();
 				
+				using ::rl::sg::SimpleScene::areColliding;
+				
 				bool areColliding(::rl::sg::Body* first, ::rl::sg::Body* second);
 				
 				bool areColliding(::rl::sg::Shape* first, ::rl::sg::Shape* second);
 				
 				::rl::sg::Model* create();
+				
+				using ::rl::sg::DepthScene::depth;
 				
 				::rl::math::Real depth(::rl::sg::Body* first, ::rl::sg::Body* second, ::rl::math::Vector3& point1, ::rl::math::Vector3& point2);
 				

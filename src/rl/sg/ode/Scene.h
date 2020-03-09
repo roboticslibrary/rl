@@ -59,6 +59,8 @@ namespace rl
 				
 				::rl::sg::Model* create();
 				
+				using ::rl::sg::DepthScene::depth;
+				
 				::rl::math::Real depth(::rl::sg::Shape* first, ::rl::sg::Shape* second, ::rl::math::Vector3& point1, ::rl::math::Vector3& point2);
 				
 				bool isColliding();
