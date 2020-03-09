@@ -69,7 +69,7 @@ main(int argc, char** argv)
 		factory.load(argv[1], &scene);
 		
 		std::shared_ptr<rl::kin::Kinematics> kinematics(rl::kin::Kinematics::create(argv[2]));
-
+		
 		rl::plan::SimpleModel model;
 		model.kin = kinematics.get();
 		model.model = scene.getModel(0);
