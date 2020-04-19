@@ -16,7 +16,6 @@ jobs:
         include:
           - name: macos-latest
             cmake_prefix_path: /usr/local/opt/qt/lib/cmake
-            developer_dir: /Applications/Xcode_11.2.1.app/Contents/Developer
             os: macos-latest
             path: /usr/local/opt/ccache/libexec
           - name: ubuntu-latest-clang
@@ -33,7 +32,6 @@ jobs:
       CC: ${{ matrix.cc }}
       CMAKE_PREFIX_PATH: ${{ matrix.cmake_prefix_path }}
       CXX: ${{ matrix.cxx }}
-      DEVELOPER_DIR: ${{ matrix.developer_dir }}
     steps:
       - uses: actions/checkout@v1
       - if: matrix.os == 'macos-latest'
