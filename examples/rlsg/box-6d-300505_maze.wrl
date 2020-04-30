@@ -46,6 +46,7 @@ Transform {
 		}
 		DEF maze Inline {
 			url "maze.wrl"
-		}	]
+		}
+	]
 }
 

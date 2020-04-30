@@ -5,9 +5,11 @@ Transform {
 			children [
 				Inline {
 					url "unimation-puma560.convex/unimation-puma560.wrl"
-				}			]
+				}
+			]
 		}
 		DEF boxes Inline {
 			url "boxes.wrl"
-		}	]
+		}
+	]
 }
