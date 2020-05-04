@@ -38,6 +38,9 @@
 #include <QMessageBox>
 #include <QMimeData>
 #include <QUrl>
+#ifdef HAVE_SOSTLFILEKIT_H
+#include <Inventor/annex/ForeignFiles/SoSTLFileKit.h>
+#endif
 #include <Inventor/errors/SoReadError.h>
 #include <Inventor/nodes/SoCamera.h>
 #include <Inventor/nodes/SoCoordinate3.h>
@@ -161,6 +164,10 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	this->offscreenRenderer = new SoOffscreenRenderer(this->viewer->getViewportRegion());
 	
 	this->supportedFileEndings << ".iv" << ".iv.gz" << ".ivz" << ".wrl" << ".wrl.gz" << ".wrz";
+#if defined(HAVE_SOSTLFILEKIT_H) && defined(HAVE_SOSTLFILEKIT_CONVERT)
+	this->supportedFileEndings << ".stl";
+#endif
+	this->supportedFileEndings.sort();
 	
 	this->setCentralWidget(this->widget);
 	this->setFocusProxy(this->viewer->getWidget());
@@ -555,12 +562,6 @@ MainWindow::load(const QString filename)
 		return;
 	}
 	
-	if (!this->input.openFile(absoluteFilename.toStdString().c_str(), true))
-	{
-		QMessageBox::critical(this, "Error", "File '" + absoluteFilename + "' not found.");
-		return;
-	}
-	
 	if (nullptr != this->scene)
 	{
 		this->root->removeChild(this->scene);
@@ -568,9 +569,35 @@ MainWindow::load(const QString filename)
 		this->setWindowTitle("wrlview");
 	}
 	
-	this->scene = SoDB::readAll(&this->input);
-	
-	this->input.closeFile();
+#if defined(HAVE_SOSTLFILEKIT_H) && defined(HAVE_SOSTLFILEKIT_CONVERT)
+	if (absoluteFilename.endsWith(".stl", Qt::CaseInsensitive))
+	{
+		SoSTLFileKit* stlFileKit = new ::SoSTLFileKit();
+		stlFileKit->ref();
+		
+		if (!stlFileKit->readFile(absoluteFilename.toStdString().c_str()))
+		{
+			stlFileKit->unref();
+			QMessageBox::critical(this, "Error", "Error reading file '" + absoluteFilename + "'.");
+			return;
+		}
+		
+		this->scene = stlFileKit->convert();
+		stlFileKit->unref();
+	}
+	else
+#endif
+	{
+		if (!this->input.openFile(absoluteFilename.toStdString().c_str(), true))
+		{
+			QMessageBox::critical(this, "Error", "File '" + absoluteFilename + "' not found.");
+			return;
+		}
+		
+		this->scene = SoDB::readAll(&this->input);
+		
+		this->input.closeFile();
+	}
 	
 	if (nullptr == this->scene)
 	{

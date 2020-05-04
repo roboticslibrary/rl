@@ -41,6 +41,24 @@ if(Coin_FOUND AND OPENGL_FOUND AND QT_FOUND AND SoQt_FOUND)
 		${SoQt_DEFINITIONS}
 	)
 	
+	set(CMAKE_REQUIRED_DEFINITIONS ${Coin_DEFINITIONS})
+	set(CMAKE_REQUIRED_INCLUDES ${Coin_INCLUDE_DIRS})
+	set(CMAKE_REQUIRED_LIBRARIES ${Coin_LIBRARIES})
+	check_include_file_cxx(ForeignFiles/SoSTLFileKit.h HAVE_SOSTLFILEKIT_H)
+	if(HAVE_SOSTLFILEKIT_H)
+		target_compile_definitions(wrlview PRIVATE HAVE_SOSTLFILEKIT_H)
+		check_cxx_source_compiles("
+			#include <ForeignFiles/SoSTLFileKit.h>
+			int main() { SoSTLFileKit* stlFileKit = new SoSTLFileKit(); stlFileKit->convert(); return 0; }
+		" HAVE_SOSTLFILEKIT_CONVERT)
+		if(HAVE_SOSTLFILEKIT_CONVERT)
+			target_compile_definitions(wrlview PRIVATE HAVE_SOSTLFILEKIT_CONVERT)
+		endif()
+	endif()
+	unset(CMAKE_REQUIRED_DEFINITIONS)
+	unset(CMAKE_REQUIRED_INCLUDES)
+	unset(CMAKE_REQUIRED_LIBRARIES)
+	
 	target_include_directories(
 		wrlview
 		PRIVATE
@@ -60,7 +78,7 @@ if(Coin_FOUND AND OPENGL_FOUND AND QT_FOUND AND SoQt_FOUND)
 	set_target_properties(
 		wrlview
 		PROPERTIES
-		VERSION 0.1.13
+		VERSION 0.1.14
 	)
 	
 	if(WIN32)
