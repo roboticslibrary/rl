@@ -139,6 +139,8 @@ private:
 	
 	SoSeparator* scene;
 	
+	QStringList supportedFileEndings;
+	
 	SoQtExaminerViewer* viewer;
 	
 	QMenu* viewMenu;

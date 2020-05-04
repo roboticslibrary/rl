@@ -67,6 +67,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	origin1000Switch(nullptr),
 	root(nullptr),
 	scene(nullptr),
+	supportedFileEndings(),
 	viewer(nullptr),
 	widget(new QWidget(this))
 {
@@ -158,6 +159,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	this->root->addChild(this->origin1000Switch);
 	
 	this->offscreenRenderer = new SoOffscreenRenderer(this->viewer->getViewportRegion());
+	
+	this->supportedFileEndings << ".iv" << ".iv.gz" << ".ivz" << ".wrl" << ".wrl.gz" << ".wrz";
 	
 	this->setCentralWidget(this->widget);
 	this->setFocusProxy(this->viewer->getWidget());
@@ -535,7 +538,14 @@ MainWindow::inlineFetchUrlCallback(const SbString& url, void* userData, SoVRMLIn
 void
 MainWindow::load(const QString filename)
 {
-	if (!(filename.endsWith(".iv") || filename.endsWith(".wrl") || filename.endsWith(".wrl.gz") || filename.endsWith(".wrz")))
+	bool fileEndingSupported = false;
+	
+	for (int i = 0; i < this->supportedFileEndings.size(); ++i)
+	{
+		fileEndingSupported |= filename.endsWith(this->supportedFileEndings[i], Qt::CaseInsensitive);
+	}
+	
+	if (!fileEndingSupported)
 	{
 		QMessageBox::critical(this, "Error", "File format not supported.");
 		return;
@@ -575,7 +585,7 @@ MainWindow::load(const QString filename)
 void
 MainWindow::open()
 {
-	QString filename = QFileDialog::getOpenFileName(this, "", this->filename, "All Formats (*.iv *.wrl *.wrl.gz *.wrz)");
+	QString filename = QFileDialog::getOpenFileName(this, "", this->filename, "All Formats (*" + this->supportedFileEndings.join(" *") + ")");
 	
 	if (!filename.isEmpty())
 	{
