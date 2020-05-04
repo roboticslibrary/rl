@@ -538,25 +538,26 @@ MainWindow::inlineFetchUrlCallback(const SbString& url, void* userData, SoVRMLIn
 void
 MainWindow::load(const QString filename)
 {
+	QFileInfo fileInfo(filename);
+	QString absoluteFilename = QDir::toNativeSeparators(QDir::cleanPath(fileInfo.absoluteFilePath()));
+	QDir::setCurrent(fileInfo.path());
+	
 	bool fileEndingSupported = false;
 	
 	for (int i = 0; i < this->supportedFileEndings.size(); ++i)
 	{
-		fileEndingSupported |= filename.endsWith(this->supportedFileEndings[i], Qt::CaseInsensitive);
+		fileEndingSupported |= absoluteFilename.endsWith(this->supportedFileEndings[i], Qt::CaseInsensitive);
 	}
 	
 	if (!fileEndingSupported)
 	{
-		QMessageBox::critical(this, "Error", "File format not supported.");
+		QMessageBox::critical(this, "Error", "Format of file '" + absoluteFilename + "' not supported.");
 		return;
 	}
 	
-	QFileInfo fileInfo(filename);
-	QDir::setCurrent(fileInfo.path());
-	
-	if (!this->input.openFile(filename.toStdString().c_str(), true))
+	if (!this->input.openFile(absoluteFilename.toStdString().c_str(), true))
 	{
-		QMessageBox::critical(this, "Error", "File not found.");
+		QMessageBox::critical(this, "Error", "File '" + absoluteFilename + "' not found.");
 		return;
 	}
 	
@@ -573,13 +574,13 @@ MainWindow::load(const QString filename)
 	
 	if (nullptr == this->scene)
 	{
-		QMessageBox::critical(this, "Error", "Error reading file.");
+		QMessageBox::critical(this, "Error", "Error reading file '" + absoluteFilename + "'.");
 		return;
 	}
 	
 	this->root->addChild(this->scene);
-	this->filename = filename;
-	this->setWindowTitle(filename + " - wrlview");
+	this->filename = absoluteFilename;
+	this->setWindowTitle(absoluteFilename + " - wrlview");
 }
 
 void
