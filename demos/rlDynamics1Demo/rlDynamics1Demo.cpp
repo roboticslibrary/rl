@@ -30,6 +30,7 @@
 #include <boost/lexical_cast.hpp>
 #include <rl/mdl/Dynamic.h>
 #include <rl/mdl/RungeKuttaNystromIntegrator.h>
+#include <rl/mdl/UrdfFactory.h>
 #include <rl/mdl/XmlFactory.h>
 
 int
@@ -43,8 +44,19 @@ main(int argc, char** argv)
 	
 	try
 	{
-		rl::mdl::XmlFactory factory;
-		std::shared_ptr<rl::mdl::Dynamic> dynamic = std::dynamic_pointer_cast<rl::mdl::Dynamic>(factory.create(argv[1]));
+		std::string filename(argv[1]);
+		std::shared_ptr<rl::mdl::Dynamic> dynamic;
+		
+		if ("urdf" == filename.substr(filename.length() - 4, 4))
+		{
+			rl::mdl::UrdfFactory factory;
+			dynamic = std::dynamic_pointer_cast<rl::mdl::Dynamic>(factory.create(filename));
+		}
+		else
+		{
+			rl::mdl::XmlFactory factory;
+			dynamic = std::dynamic_pointer_cast<rl::mdl::Dynamic>(factory.create(filename));
+		}
 		
 		rl::math::Vector q(dynamic->getDofPosition());
 		rl::math::Vector qd(dynamic->getDof());
