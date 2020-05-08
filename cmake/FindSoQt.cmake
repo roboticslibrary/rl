@@ -124,9 +124,11 @@ set(SoQt_DEFINITIONS -DSOQT_DLL)
 
 mark_as_advanced(SoQt_DEFINITIONS) 
 
-file(STRINGS "${SoQt_INCLUDE_DIRS}/Inventor/Qt/SoQtBasic.h" GUI_TOOLKIT_VERSION_DEFINE REGEX "#define GUI_TOOLKIT_VERSION.*[0-9]+.*")
-string(REGEX REPLACE ".*([0-9])([0-9])([0-9]).*" "\\1" GUI_TOOLKIT_VERSION_MAJOR "${GUI_TOOLKIT_VERSION_DEFINE}")
-set(SoQt${GUI_TOOLKIT_VERSION_MAJOR}_FOUND ON)
+if(EXISTS "${SoQt_INCLUDE_DIRS}/Inventor/Qt/SoQtBasic.h")
+	file(STRINGS "${SoQt_INCLUDE_DIRS}/Inventor/Qt/SoQtBasic.h" GUI_TOOLKIT_VERSION_DEFINE REGEX "#define GUI_TOOLKIT_VERSION.*[0-9]+.*")
+	string(REGEX REPLACE ".*([0-9])([0-9])([0-9]).*" "\\1" GUI_TOOLKIT_VERSION_MAJOR "${GUI_TOOLKIT_VERSION_DEFINE}")
+	set(SoQt${GUI_TOOLKIT_VERSION_MAJOR}_FOUND ON)
+endif()
 
 find_package_handle_standard_args(
 	SoQt
