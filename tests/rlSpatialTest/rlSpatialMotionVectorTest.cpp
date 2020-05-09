@@ -94,6 +94,55 @@ main(int argc, char** argv)
 		exit(EXIT_FAILURE);
 	}
 	
+	rl::math::MotionVector mv1_mv1 = mv1 + mv1;
+	rl::math::MotionVector mv1_2 = mv1 * 2;
+	rl::math::MotionVector mv1_2b = mv1;
+	mv1_2b *= 2;
+	rl::math::MotionVector mv1_2_05 = mv1_2 * static_cast<rl::math::Real>(0.5);
+	rl::math::MotionVector mv1_mv1_2 = mv1_mv1 / 2;
+	rl::math::MotionVector mv1_mv1_2b = mv1_mv1;
+	mv1_mv1_2b /= 2;
+	
+	if (!mv1_2.matrix().isApprox(mv1_mv1.matrix()))
+	{
+		std::cerr << "mv1 * 2.0 != mv1 + mv1" << std::endl;
+		std::cerr << "mv1 * 2.0 = " << mv1_2.matrix().transpose() << std::endl;
+		std::cerr << "mv1 + mv1 = " << mv1_mv1.matrix().transpose() << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	
+	if (!mv1_2.matrix().isApprox(mv1_2b.matrix()))
+	{
+		std::cerr << "mv1 * 2.0 != mv1 *= 2.0" << std::endl;
+		std::cerr << "mv1 * 2.0 = " << mv1_2.matrix().transpose() << std::endl;
+		std::cerr << "mv1 *= 2.0 = " << mv1_2b.matrix().transpose() << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	
+	if (!mv1_2_05.matrix().isApprox(mv1.matrix()))
+	{
+		std::cerr << "mv1 * 2.0 / 0.5 != mv1" << std::endl;
+		std::cerr << "mv1 * 2.0 / 0.5 = " << mv1_2_05.matrix().transpose() << std::endl;
+		std::cerr << "mv1 = " << mv1.matrix().transpose() << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	
+	if (!mv1.matrix().isApprox(mv1_mv1_2.matrix()))
+	{
+		std::cerr << "mv1 != mv1 + mv1 / 2.0" << std::endl;
+		std::cerr << "mv1 = " << mv1.matrix().transpose() << std::endl;
+		std::cerr << "mv1 + mv1 / 2.0 = " << mv1_mv1_2.matrix().transpose() << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	
+	if (!mv1.matrix().isApprox(mv1_mv1_2b.matrix()))
+	{
+		std::cerr << "mv1 != mv1 + mv1 /= 2.0" << std::endl;
+		std::cerr << "mv1 = " << mv1.matrix().transpose() << std::endl;
+		std::cerr << "mv1 + mv1 /= 2.0 = " << mv1_mv1_2b.matrix().transpose() << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	
 	rl::math::Vector6 v5 = v1 * static_cast<rl::math::Real>(1.23);
 	rl::math::MotionVector mv5 = mv1 * static_cast<rl::math::Real>(1.23);
 	
@@ -123,6 +172,16 @@ main(int argc, char** argv)
 		std::cerr << "mv7 != v1" << std::endl;
 		std::cerr << "mv7 = " << mv7.matrix().transpose() << std::endl;
 		std::cerr << "v1 = " << v1.transpose() << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	
+	rl::math::MotionVector mv8 = mv1;
+	
+	if (!mv8.matrix().isApprox(mv1.matrix()))
+	{
+		std::cerr << "mv8 != mv1" << std::endl;
+		std::cerr << "mv8 = " << mv8.matrix().transpose() << std::endl;
+		std::cerr << "mv1 = " << mv1.matrix().transpose() << std::endl;
 		exit(EXIT_FAILURE);
 	}
 	

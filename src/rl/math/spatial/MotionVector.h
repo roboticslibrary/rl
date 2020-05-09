@@ -154,6 +154,38 @@ namespace rl
 				}
 				
 				template<typename OtherScalar>
+				MotionVector& operator+=(const MotionVector<OtherScalar>& other)
+				{
+					angular() += other.angular();
+					linear() += other.linear();
+					return *this;
+				}
+				
+				template<typename OtherScalar>
+				MotionVector& operator-=(const MotionVector<OtherScalar>& other)
+				{
+					angular() -= other.angular();
+					linear() -= other.linear();
+					return *this;
+				}
+				
+				template<typename OtherScalar>
+				MotionVector& operator*=(const OtherScalar& other)
+				{
+					angular() *= other;
+					linear() *= other;
+					return *this;
+				}
+				
+				template<typename OtherScalar>
+				MotionVector& operator/=(const OtherScalar& other)
+				{
+					angular() /= other;
+					linear() /= other;
+					return *this;
+				}
+				
+				template<typename OtherScalar>
 				MotionVector operator+(const MotionVector<OtherScalar>& other) const
 				{
 					MotionVector res;

@@ -161,6 +161,42 @@ namespace rl
 				}
 				
 				template<typename OtherScalar>
+				RigidBodyInertia& operator+=(const RigidBodyInertia<OtherScalar>& other)
+				{
+					cog() += other.cog();
+					inertia() += other.inertia();
+					mass() += other.mass();
+					return *this;
+				}
+				
+				template<typename OtherScalar>
+				RigidBodyInertia& operator-=(const RigidBodyInertia<OtherScalar>& other)
+				{
+					cog() -= other.cog();
+					inertia() -= other.inertia();
+					mass() -= other.mass();
+					return *this;
+				}
+				
+				template<typename OtherScalar>
+				RigidBodyInertia& operator*=(const OtherScalar& other)
+				{
+					cog() *= other;
+					inertia() *= other;
+					mass() *= other;
+					return *this;
+				}
+				
+				template<typename OtherScalar>
+				RigidBodyInertia& operator/=(const OtherScalar& other)
+				{
+					cog() /= other;
+					inertia() /= other;
+					mass() /= other;
+					return *this;
+				}
+				
+				template<typename OtherScalar>
 				RigidBodyInertia operator+(const RigidBodyInertia<OtherScalar>& other) const
 				{
 					RigidBodyInertia res;

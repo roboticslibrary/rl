@@ -122,6 +122,38 @@ namespace rl
 				}
 				
 				template<typename OtherScalar>
+				ForceVector& operator+=(const ForceVector<OtherScalar>& other)
+				{
+					moment() += other.moment();
+					force() += other.force();
+					return *this;
+				}
+				
+				template<typename OtherScalar>
+				ForceVector& operator-=(const ForceVector<OtherScalar>& other)
+				{
+					moment() -= other.moment();
+					force() -= other.force();
+					return *this;
+				}
+				
+				template<typename OtherScalar>
+				ForceVector& operator*=(const OtherScalar& other)
+				{
+					moment() *= other;
+					force() *= other;
+					return *this;
+				}
+				
+				template<typename OtherScalar>
+				ForceVector& operator/=(const OtherScalar& other)
+				{
+					moment() /= other;
+					force() /= other;
+					return *this;
+				}
+				
+				template<typename OtherScalar>
 				ForceVector operator+(const ForceVector<OtherScalar>& other) const
 				{
 					ForceVector res;

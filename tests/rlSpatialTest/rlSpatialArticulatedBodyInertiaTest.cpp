@@ -46,6 +46,10 @@ main(int argc, char** argv)
 	
 	rl::math::ArticulatedBodyInertia abi3 = abi1 + abi2;
 	rl::math::ArticulatedBodyInertia abi4 = abi3 - abi2;
+	rl::math::ArticulatedBodyInertia abi3b = abi1;
+	abi3b += abi2;
+	rl::math::ArticulatedBodyInertia abi4b = abi3b;
+	abi4b -= abi2;
 	
 	if (!abi4.matrix().isApprox(abi1.matrix()))
 	{
@@ -55,23 +59,68 @@ main(int argc, char** argv)
 		exit(EXIT_FAILURE);
 	}
 	
+	if (!abi3.matrix().isApprox(abi3b.matrix()))
+	{
+		std::cerr << "abi1 + abi2 != abi1 += abi2" << std::endl;
+		std::cerr << "abi1 + abi2 = " << std::endl << abi3.matrix() << std::endl;
+		std::cerr << "abi1 += abi2 = " << std::endl << abi3b.matrix() << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	
+	if (!abi4b.matrix().isApprox(abi1.matrix()))
+	{
+		std::cerr << "abi1 += abi2 -= abi2 != abi1" << std::endl;
+		std::cerr << "abi1 += abi2 -= abi2 = " << std::endl << abi4b.matrix() << std::endl;
+		std::cerr << "abi1 = " << std::endl << abi1.matrix() << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	
 	rl::math::ArticulatedBodyInertia abi1_2 = abi1 * 2;
+	rl::math::ArticulatedBodyInertia abi1_2b = abi1;
+	abi1_2b *= 2;
 	rl::math::ArticulatedBodyInertia abi1_abi1 = abi1 + abi1;
-	rl::math::ArticulatedBodyInertia abi1_2_05 = abi1_2 * 0.5;
+	rl::math::ArticulatedBodyInertia abi1_2_05 = abi1_2 * static_cast<rl::math::Real>(0.5);
+	rl::math::ArticulatedBodyInertia abi1_abi1_2 = abi1_abi1 / 2;
+	rl::math::ArticulatedBodyInertia abi1_abi1_2b = abi1_abi1;
+	abi1_abi1_2b /= 2;
 	
 	if (!abi1_2.matrix().isApprox(abi1_abi1.matrix()))
 	{
-		std::cerr << "abi1 * 2 != abi1 + abi1" << std::endl;
-		std::cerr << "abi1 * 2 = " << std::endl << abi1_2.matrix() << std::endl;
+		std::cerr << "abi1 * 2.0 != abi1 + abi1" << std::endl;
+		std::cerr << "abi1 * 2.0 = " << std::endl << abi1_2.matrix() << std::endl;
 		std::cerr << "abi1 + abi1 = " << std::endl << abi1_abi1.matrix() << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	
+	if (!abi1_2.matrix().isApprox(abi1_2b.matrix()))
+	{
+		std::cerr << "abi1 * 2.0 != abi1 *= 2.0" << std::endl;
+		std::cerr << "abi1 * 2.0 = " << std::endl << abi1_2.matrix() << std::endl;
+		std::cerr << "abi1 *= 2.0 = " << std::endl << abi1_2b.matrix() << std::endl;
 		exit(EXIT_FAILURE);
 	}
 	
 	if (!abi1_2_05.matrix().isApprox(abi1.matrix()))
 	{
-		std::cerr << "abi1 * 2 * 0.5 != abi1" << std::endl;
-		std::cerr << "abi1 * 2 * 0.5 = " << std::endl << abi1_2.matrix() << std::endl;
+		std::cerr << "abi1 * 2.0 * 0.5 != abi1" << std::endl;
+		std::cerr << "abi1 * 2.0 * 0.5 = " << std::endl << abi1_2.matrix() << std::endl;
 		std::cerr << "abi1 = " << std::endl << abi1.matrix() << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	
+	if (!abi1.matrix().isApprox(abi1_abi1_2.matrix()))
+	{
+		std::cerr << "abi1 != abi1 + abi1 / 2.0" << std::endl;
+		std::cerr << "abi1 = " << std::endl << abi1.matrix() << std::endl;
+		std::cerr << "abi1 + abi1 / 2.0 = " << std::endl << abi1_abi1_2.matrix() << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	
+	if (!abi1.matrix().isApprox(abi1_abi1_2b.matrix()))
+	{
+		std::cerr << "abi1 != abi1 + abi1 /= 2.0" << std::endl;
+		std::cerr << "abi1 = " << std::endl << abi1.matrix() << std::endl;
+		std::cerr << "abi1 + abi1 /= 2.0 = " << std::endl << abi1_abi1_2b.matrix() << std::endl;
 		exit(EXIT_FAILURE);
 	}
 	
@@ -107,6 +156,42 @@ main(int argc, char** argv)
 		std::cerr << "abi1 != matrixMotion(pt1)^T * abi5 * matrixMotion(pt1)" << std::endl;
 		std::cerr << "abi1 = " << std::endl << abi1.matrix() << std::endl;
 		std::cerr << "matrixMotion(pt1)^T * abi5 * matrixMotion(pt1) = " << std::endl << m2 << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	
+	rl::math::RigidBodyInertia rbi1;
+	rbi1.cog().setRandom();
+	rbi1.inertia().setRandom();
+	rbi1.mass() = static_cast<rl::math::Real>(1.23);
+	
+	rl::math::ArticulatedBodyInertia abi7 = abi1 + rbi1;
+	rl::math::ArticulatedBodyInertia abi8 = abi7 - rbi1;
+	rl::math::ArticulatedBodyInertia abi7b = abi1;
+	abi7b += rbi1;
+	rl::math::ArticulatedBodyInertia abi8b = abi7b;
+	abi8b -= rbi1;
+	
+	if (!abi8.matrix().isApprox(abi1.matrix()))
+	{
+		std::cerr << "abi1 + rbi1 - rbi1 != abi1" << std::endl;
+		std::cerr << "abi1 + rbi1 - rbi1 = " << std::endl << abi8.matrix() << std::endl;
+		std::cerr << "abi1 = " << std::endl << abi1.matrix() << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	
+	if (!abi7.matrix().isApprox(abi7b.matrix()))
+	{
+		std::cerr << "abi1 + rbi1 != abi1 += rbi1" << std::endl;
+		std::cerr << "abi1 + rbi1 = " << std::endl << abi7.matrix() << std::endl;
+		std::cerr << "abi1 += rbi2 = " << std::endl << abi7b.matrix() << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	
+	if (!abi8b.matrix().isApprox(abi1.matrix()))
+	{
+		std::cerr << "abi1 += rbi1 -= rbi1 != abi1" << std::endl;
+		std::cerr << "abi1 += rbi1 -= rbi1 = " << std::endl << abi8b.matrix() << std::endl;
+		std::cerr << "abi1 = " << std::endl << abi1.matrix() << std::endl;
 		exit(EXIT_FAILURE);
 	}
 	

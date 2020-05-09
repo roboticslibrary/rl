@@ -56,8 +56,13 @@ main(int argc, char** argv)
 	}
 	
 	rl::math::RigidBodyInertia rbi1_2 = rbi1 * 2;
+	rl::math::RigidBodyInertia rbi1_2b = rbi1;
+	rbi1_2b *= 2;
 	rl::math::RigidBodyInertia rbi1_rbi1 = rbi1 + rbi1;
-	rl::math::RigidBodyInertia rbi1_2_05 = rbi1_2 * 0.5;
+	rl::math::RigidBodyInertia rbi1_2_05 = rbi1_2 * static_cast<rl::math::Real>(0.5);
+	rl::math::RigidBodyInertia rbi1_rbi1_2 = rbi1_rbi1 / 2;
+	rl::math::RigidBodyInertia rbi1_rbi1_2b = rbi1_rbi1;
+	rbi1_rbi1_2b /= 2;
 	
 	if (!rbi1_2.matrix().isApprox(rbi1_rbi1.matrix()))
 	{
@@ -67,11 +72,35 @@ main(int argc, char** argv)
 		exit(EXIT_FAILURE);
 	}
 	
+	if (!rbi1_2.matrix().isApprox(rbi1_2b.matrix()))
+	{
+		std::cerr << "rbi1 * 2.0 != rbi1 *= 2.0" << std::endl;
+		std::cerr << "rbi1 * 2.0 = " << std::endl << rbi1_2.matrix() << std::endl;
+		std::cerr << "rbi1 *= 2.0 = " << std::endl << rbi1_2b.matrix() << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	
 	if (!rbi1_2_05.matrix().isApprox(rbi1.matrix()))
 	{
 		std::cerr << "rbi1 * 2 * 0.5 != rbi1" << std::endl;
 		std::cerr << "rbi1 * 2 * 0.5 = " << std::endl << rbi1_2_05.matrix() << std::endl;
 		std::cerr << "rbi1 = " << std::endl << rbi1.matrix() << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	
+	if (!rbi1.matrix().isApprox(rbi1_rbi1_2.matrix()))
+	{
+		std::cerr << "rbi1 != rbi1 + rbi1 / 2.0" << std::endl;
+		std::cerr << "rbi1 = " << std::endl << rbi1.matrix() << std::endl;
+		std::cerr << "rbi1 + rbi1 / 2.0 = " << std::endl << rbi1_rbi1_2.matrix() << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	
+	if (!rbi1.matrix().isApprox(rbi1_rbi1_2b.matrix()))
+	{
+		std::cerr << "rbi1 != rbi1 + rbi1 /= 2.0" << std::endl;
+		std::cerr << "rbi1 = " << std::endl << rbi1.matrix() << std::endl;
+		std::cerr << "rbi1 + rbi1 /= 2.0 = " << std::endl << rbi1_rbi1_2b.matrix() << std::endl;
 		exit(EXIT_FAILURE);
 	}
 	

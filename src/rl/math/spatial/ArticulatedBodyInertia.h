@@ -164,6 +164,48 @@ namespace rl
 				ArticulatedBodyInertia& operator=(const RigidBodyInertia<OtherScalar>& other);
 				
 				template<typename OtherScalar>
+				ArticulatedBodyInertia& operator+=(const ArticulatedBodyInertia<OtherScalar>& other)
+				{
+					cog() += other.cog();
+					inertia() += other.inertia();
+					mass() += other.mass();
+					return *this;
+				}
+				
+				template<typename OtherScalar>
+				ArticulatedBodyInertia& operator+=(const RigidBodyInertia<OtherScalar>& other);
+				
+				template<typename OtherScalar>
+				ArticulatedBodyInertia& operator-=(const ArticulatedBodyInertia<OtherScalar>& other)
+				{
+					cog() -= other.cog();
+					inertia() -= other.inertia();
+					mass() -= other.mass();
+					return *this;
+				}
+				
+				template<typename OtherScalar>
+				ArticulatedBodyInertia& operator-=(const RigidBodyInertia<OtherScalar>& other);
+				
+				template<typename OtherScalar>
+				ArticulatedBodyInertia& operator*=(const OtherScalar& other)
+				{
+					cog() *= other;
+					inertia() *= other;
+					mass() *= other;
+					return *this;
+				}
+				
+				template<typename OtherScalar>
+				ArticulatedBodyInertia& operator/=(const OtherScalar& other)
+				{
+					cog() /= other;
+					inertia() /= other;
+					mass() /= other;
+					return *this;
+				}
+				
+				template<typename OtherScalar>
 				ArticulatedBodyInertia operator+(const ArticulatedBodyInertia<OtherScalar>& other) const
 				{
 					ArticulatedBodyInertia res;

@@ -94,6 +94,55 @@ main(int argc, char** argv)
 		exit(EXIT_FAILURE);
 	}
 	
+	rl::math::ForceVector fv1_fv1 = fv1 + fv1;
+	rl::math::ForceVector fv1_2 = fv1 * 2;
+	rl::math::ForceVector fv1_2b = fv1;
+	fv1_2b *= 2;
+	rl::math::ForceVector fv1_2_05 = fv1_2 * static_cast<rl::math::Real>(0.5);
+	rl::math::ForceVector fv1_fv1_2 = fv1_fv1 / 2;
+	rl::math::ForceVector fv1_fv1_2b = fv1_fv1;
+	fv1_fv1_2b /= 2;
+	
+	if (!fv1_2.matrix().isApprox(fv1_fv1.matrix()))
+	{
+		std::cerr << "fv1 * 2.0 != fv1 + fv1" << std::endl;
+		std::cerr << "fv1 * 2.0 = " << fv1_2.matrix().transpose() << std::endl;
+		std::cerr << "fv1 + fv1 = " << fv1_fv1.matrix().transpose() << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	
+	if (!fv1_2.matrix().isApprox(fv1_2b.matrix()))
+	{
+		std::cerr << "fv1 * 2.0 != fv1 *= 2.0" << std::endl;
+		std::cerr << "fv1 * 2.0 = " << fv1_2.matrix().transpose() << std::endl;
+		std::cerr << "fv1 *= 2.0 = " << fv1_2b.matrix().transpose() << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	
+	if (!fv1_2_05.matrix().isApprox(fv1.matrix()))
+	{
+		std::cerr << "fv1 * 2.0 / 0.5 != fv1" << std::endl;
+		std::cerr << "fv1 * 2.0 / 0.5 = " << fv1_2_05.matrix().transpose() << std::endl;
+		std::cerr << "fv1 = " << fv1.matrix().transpose() << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	
+	if (!fv1.matrix().isApprox(fv1_fv1_2.matrix()))
+	{
+		std::cerr << "fv1 != fv1 + fv1 / 2.0" << std::endl;
+		std::cerr << "fv1 = " << fv1.matrix().transpose() << std::endl;
+		std::cerr << "fv1 + fv1 / 2.0 = " << fv1_fv1_2.matrix().transpose() << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	
+	if (!fv1.matrix().isApprox(fv1_fv1_2b.matrix()))
+	{
+		std::cerr << "fv1 != fv1 + fv1 /= 2.0" << std::endl;
+		std::cerr << "fv1 = " << fv1.matrix().transpose() << std::endl;
+		std::cerr << "fv1 + fv1 /= 2.0 = " << fv1_fv1_2b.matrix().transpose() << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	
 	rl::math::Vector6 v5 = v1 * static_cast<rl::math::Real>(1.23);
 	rl::math::ForceVector fv5 = fv1 * static_cast<rl::math::Real>(1.23);
 	
@@ -123,6 +172,16 @@ main(int argc, char** argv)
 		std::cerr << "fv7 != v1" << std::endl;
 		std::cerr << "fv7 = " << fv7.matrix().transpose() << std::endl;
 		std::cerr << "v1 = " << v1.transpose() << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	
+	rl::math::ForceVector fv8 = fv1;
+	
+	if (!fv8.matrix().isApprox(fv1.matrix()))
+	{
+		std::cerr << "fv8 != fv1" << std::endl;
+		std::cerr << "fv8 = " << fv8.matrix().transpose() << std::endl;
+		std::cerr << "fv1 = " << fv1.matrix().transpose() << std::endl;
 		exit(EXIT_FAILURE);
 	}
 	
