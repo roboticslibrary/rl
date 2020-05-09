@@ -43,15 +43,17 @@ namespace rl
 		void
 		World::forwardAcceleration()
 		{
+			this->a.angular().setZero();
 			this->a.linear().setZero();
 		}
 		
 		void
 		World::forwardDynamics1()
 		{
+			this->a.angular().setZero();
+			this->a.linear() = this->gravity;
 			this->iA.setZero();
 			this->pA.setZero();
-			this->a.linear() = this->gravity;
 		}
 		
 		const ::rl::math::Vector3&
@@ -63,8 +65,9 @@ namespace rl
 		void
 		World::inverseDynamics1()
 		{
-			this->f.setZero();
+			this->a.angular().setZero();
 			this->a.linear() = this->gravity;
+			this->f.setZero();
 		}
 		
 		void
