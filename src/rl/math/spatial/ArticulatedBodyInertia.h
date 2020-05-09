@@ -174,6 +174,9 @@ namespace rl
 				}
 				
 				template<typename OtherScalar>
+				ArticulatedBodyInertia operator+(const RigidBodyInertia<OtherScalar>& other) const;
+				
+				template<typename OtherScalar>
 				ArticulatedBodyInertia operator-(const ArticulatedBodyInertia<OtherScalar>& other) const
 				{
 					ArticulatedBodyInertia res;
@@ -182,6 +185,9 @@ namespace rl
 					res.mass() = mass() - other.mass();
 					return res;
 				}
+				
+				template<typename OtherScalar>
+				ArticulatedBodyInertia operator-(const RigidBodyInertia<OtherScalar>& other) const;
 				
 				template<typename OtherScalar>
 				ArticulatedBodyInertia operator*(const OtherScalar& other) const

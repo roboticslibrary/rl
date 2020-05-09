@@ -48,6 +48,32 @@ namespace rl
 			template<typename Scalar>
 			template<typename OtherScalar>
 			inline
+			ArticulatedBodyInertia<Scalar>
+			ArticulatedBodyInertia<Scalar>::operator+(const RigidBodyInertia<OtherScalar>& other) const
+			{
+				ArticulatedBodyInertia res;
+				res.cog() = cog() + other.cog().cross33();
+				res.inertia() = inertia() + other.inertia();
+				res.mass() = mass() + ::Eigen::Matrix<Scalar, 3, 3>::Identity() * other.mass();
+				return res;
+			}
+			
+			template<typename Scalar>
+			template<typename OtherScalar>
+			inline
+			ArticulatedBodyInertia<Scalar>
+			ArticulatedBodyInertia<Scalar>::operator-(const RigidBodyInertia<OtherScalar>& other) const
+			{
+				ArticulatedBodyInertia res;
+				res.cog() = cog() - other.cog().cross33();
+				res.inertia() = inertia() - other.inertia();
+				res.mass() = mass() - ::Eigen::Matrix<Scalar, 3, 3>::Identity() * other.mass();
+				return res;
+			}
+			
+			template<typename Scalar>
+			template<typename OtherScalar>
+			inline
 			ForceVector<Scalar>
 			ArticulatedBodyInertia<Scalar>::operator*(const MotionVector<OtherScalar>& other) const
 			{
