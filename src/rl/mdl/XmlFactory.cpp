@@ -91,7 +91,7 @@ namespace rl
 			
 			if (models.empty())
 			{
-				throw Exception("rl::mdl::XmlFactory::load() - No models found in file " + filename);
+				throw Exception("rl::mdl::XmlFactory::load() - No models found in file '" + filename + "'");
 			}
 			
 			for (int i = 0; i < ::std::min(1, models.size()); ++i)
@@ -191,7 +191,7 @@ namespace rl
 						
 						if (id2frame.find(frame->getName()) != id2frame.end())
 						{
-							throw Exception("rl::mdl::XmlFactory::load() - Frame with ID " + frame->getName() + " not unique in file " + filename);
+							throw Exception("rl::mdl::XmlFactory::load() - Frame with ID '" + frame->getName() + "' not unique in file '" + filename + "'");
 						}
 						
 						id2frame[frame->getName()] = frame;
@@ -210,7 +210,7 @@ namespace rl
 						
 						if (id2frame.find(b1Id) == id2frame.end())
 						{
-							throw Exception("rl::mdl::XmlFactory::load() - Body with ID " + b1Id + " not found in file " + filename);
+							throw Exception("rl::mdl::XmlFactory::load() - Body with ID '" + b1Id + "' not found in file '" + filename + "'");
 						}
 						
 						Body* b1 = dynamic_cast<Body*>(id2frame[b1Id]);
@@ -225,7 +225,7 @@ namespace rl
 								
 								if (id2frame.find(b2IdRef) == id2frame.end())
 								{
-									throw Exception("rl::mdl::XmlFactory::load() - Body with IDREF " + b2IdRef + " in Body with ID " + b1Id + " not found in file " + filename);
+									throw Exception("rl::mdl::XmlFactory::load() - Body with IDREF '" + b2IdRef + "' in Body with ID '" + b1Id + "' not found in file '" + filename + "'");
 								}
 								
 								Body* b2 = dynamic_cast<Body*>(id2frame[b2IdRef]);
@@ -255,7 +255,7 @@ namespace rl
 					
 					if (id2frame.find(aIdRef) == id2frame.end())
 					{
-						throw Exception("rl::mdl::XmlFactory::load() - Frame A with IDREF " + aIdRef + " in Transform with ID " + name + " not found in file " + filename);
+						throw Exception("rl::mdl::XmlFactory::load() - Frame A with IDREF '" + aIdRef + "' in Transform with ID '" + name + "' not found in file '" + filename + "'");
 					}
 					
 					Frame* a = id2frame[aIdRef];
@@ -264,7 +264,7 @@ namespace rl
 					
 					if (id2frame.find(bIdRef) == id2frame.end())
 					{
-						throw Exception("rl::mdl::XmlFactory::load() - Frame B with IDREF " + bIdRef + " in Transform with ID " + name + " not found in file " + filename);
+						throw Exception("rl::mdl::XmlFactory::load() - Frame B with IDREF '" + bIdRef + "' in Transform with ID '" + name + "' not found in file '" + filename + "'");
 					}
 					
 					Frame* b = id2frame[bIdRef];
@@ -431,7 +431,7 @@ namespace rl
 				{
 					if (home.size() != model->getDofPosition())
 					{
-						throw Exception("rl::mdl::XmlFactory::load() - Incorrect size of home position vector in file " + filename);
+						throw Exception("rl::mdl::XmlFactory::load() - Incorrect size of home position vector in file '" + filename + "'");
 					}
 					
 					::rl::math::Vector q(home.size());
@@ -460,7 +460,7 @@ namespace rl
 					
 					if (m != model->getDofPosition())
 					{
-						throw Exception("rl::mdl::XmlFactory::load() - Incorrect number of rows in gamma position matrix in file " + filename);
+						throw Exception("rl::mdl::XmlFactory::load() - Incorrect number of rows in gamma position matrix in file '" + filename + "'");
 					}
 					
 					::rl::math::Matrix G(m, n);
@@ -473,7 +473,7 @@ namespace rl
 						
 						if (path.eval("count(col)").getValue< ::std::size_t>(0) != model->getDofPosition())
 						{
-							throw Exception("rl::mdl::XmlFactory::load() - Incorrect number of columns in gamma position matrix in file " + filename);
+							throw Exception("rl::mdl::XmlFactory::load() - Incorrect number of columns in gamma position matrix in file '" + filename + "'");
 						}
 						
 						::rl::xml::NodeSet cols = path.eval("col").getValue< ::rl::xml::NodeSet>();
@@ -498,7 +498,7 @@ namespace rl
 					
 					if (m != model->getDof())
 					{
-						throw Exception("rl::mdl::XmlFactory::load() - Incorrect number of rows in gamma velocity matrix in file " + filename);
+						throw Exception("rl::mdl::XmlFactory::load() - Incorrect number of rows in gamma velocity matrix in file '" + filename + "'");
 					}
 					
 					::rl::math::Matrix G(m, n);
@@ -511,7 +511,7 @@ namespace rl
 						
 						if (path.eval("count(col)").getValue< ::std::size_t>(0) != model->getDof())
 						{
-							throw Exception("rl::mdl::XmlFactory::load() - Incorrect number of columns in gamma velocity matrix in file " + filename);
+							throw Exception("rl::mdl::XmlFactory::load() - Incorrect number of columns in gamma velocity matrix in file '" + filename + "'");
 						}
 						
 						::rl::xml::NodeSet cols = path.eval("col").getValue< ::rl::xml::NodeSet>();

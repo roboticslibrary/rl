@@ -77,7 +77,7 @@ namespace rl
 			
 			if (scenes.empty())
 			{
-				throw Exception("rl::sg::XmlFactory::load() - No scenes found in file " + filename);
+				throw Exception("rl::sg::XmlFactory::load() - No scenes found in file '" + filename + "'");
 			}
 			
 			for (int i = 0; i < ::std::min(1, scenes.size()); ++i)
@@ -86,14 +86,14 @@ namespace rl
 				
 				if (!input.openFile(scenes[i].getLocalPath(scenes[i].getProperty("href")).c_str() ,true))
 				{
-					throw Exception("rl::sg::XmlFactory::load() - Failed to open file");
+					throw Exception("rl::sg::XmlFactory::load() - Failed to open file '" + filename + "'");
 				}
 				
 				::SoVRMLGroup* root = SoDB::readAllVRML(&input);
 				
 				if (nullptr == root)
 				{
-					throw Exception("rl::sg::XmlFactory::load() - Failed to read file");
+					throw Exception("rl::sg::XmlFactory::load() - Failed to read file '" + filename + "'");
 				}
 				
 				::SbViewportRegion viewportRegion;
@@ -161,7 +161,7 @@ namespace rl
 							{
 								if (::std::abs(bodyScaleFactor[l] - 1) > static_cast< ::rl::math::Real>(1.0e-6))
 								{
-									throw Exception("rl::sg::XmlFactory::load() - bodyScaleFactor not supported");
+									throw Exception("rl::sg::XmlFactory::load() - bodyScaleFactor not supported in body '" + body->getName() + "'");
 								}
 							}
 						}
