@@ -170,6 +170,7 @@ add_library(
 	hal
 	${HDRS}
 	${SRCS}
+	${rl_BINARY_DIR}/robotics-library.rc
 )
 
 target_compile_definitions(

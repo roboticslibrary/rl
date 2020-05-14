@@ -169,6 +169,7 @@ add_library(
 	sg
 	${HDRS}
 	${SRCS}
+	${rl_BINARY_DIR}/robotics-library.rc
 )
 
 if(NOT CMAKE_VERSION VERSION_LESS 3.8)

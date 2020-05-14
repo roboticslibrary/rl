@@ -22,7 +22,7 @@ if(QT_FOUND AND SoQt_FOUND)
 		rlViewDemo
 		WIN32
 		rlViewDemo.cpp
-		${rl_SOURCE_DIR}/robotics-library.rc
+		${rl_BINARY_DIR}/robotics-library.rc
 	)
 	
 	target_compile_definitions(

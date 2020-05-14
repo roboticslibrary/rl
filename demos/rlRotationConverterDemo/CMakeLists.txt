@@ -39,13 +39,13 @@ if(QT_FOUND)
 		rlRotationConverterDemo.cpp
 		RotationMatrixModel.cpp
 		TableView.cpp
-		${rl_SOURCE_DIR}/robotics-library.rc
 	)
 	add_executable(
 		rlRotationConverterDemo
 		WIN32
 		${HDRS}
 		${SRCS}
+		${rl_BINARY_DIR}/robotics-library.rc
 	)
 	
 	target_link_libraries(

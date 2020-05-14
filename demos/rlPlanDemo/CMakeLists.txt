@@ -56,7 +56,6 @@ if(QT_FOUND AND SoQt_FOUND AND (Bullet_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE
 		SoGradientBackground.cpp
 		Thread.cpp
 		Viewer.cpp
-		${rl_SOURCE_DIR}/robotics-library.rc
 	)
 	
 	add_executable(
@@ -64,6 +63,7 @@ if(QT_FOUND AND SoQt_FOUND AND (Bullet_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE
 		WIN32
 		${HDRS}
 		${SRCS}
+		${rl_BINARY_DIR}/robotics-library.rc
 	)
 	
 	target_compile_definitions(

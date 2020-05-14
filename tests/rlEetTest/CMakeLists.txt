@@ -10,6 +10,7 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR PQP_FOUND OR SOLID3_FOUND)
 	add_executable(
 		rlEetTest
 		rlEetTest.cpp
+		${rl_BINARY_DIR}/robotics-library.rc
 	)
 	
 	target_include_directories(

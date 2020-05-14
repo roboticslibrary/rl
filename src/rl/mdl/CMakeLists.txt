@@ -78,6 +78,7 @@ add_library(
 	mdl
 	${HDRS}
 	${SRCS}
+	${rl_BINARY_DIR}/robotics-library.rc
 )
 
 if(MSVC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 19.00.23918)

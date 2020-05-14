@@ -11,6 +11,7 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE_FOUND OR PQP_FOUND OR SOLID3
 	add_executable(
 		rlCollisionTest
 		rlCollisionTest.cpp
+		${rl_BINARY_DIR}/robotics-library.rc
 	)
 	
 	target_include_directories(
@@ -36,6 +37,7 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE_FOUND OR PQP_FOUND OR SOLID3
 	add_executable(
 		rlSceneCollisionTest
 		rlSceneCollisionTest.cpp
+		${rl_BINARY_DIR}/robotics-library.rc
 	)
 	
 	target_link_libraries(

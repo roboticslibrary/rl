@@ -1,6 +1,7 @@
 add_executable(
 	rlKalmanDemo
 	rlKalmanDemo.cpp
+	${rl_BINARY_DIR}/robotics-library.rc
 )
 
 target_link_libraries(
@@ -11,6 +12,7 @@ target_link_libraries(
 add_executable(
 	rlKalmanDemo2
 	rlKalmanDemo2.cpp
+	${rl_BINARY_DIR}/robotics-library.rc
 )
 
 target_link_libraries(
@@ -21,6 +23,7 @@ target_link_libraries(
 add_executable(
 	rlLowPassDemo
 	rlLowPassDemo.cpp
+	${rl_BINARY_DIR}/robotics-library.rc
 )
 
 target_link_libraries(

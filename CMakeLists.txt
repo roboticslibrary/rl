@@ -9,6 +9,7 @@ project(rl)
 set(VERSION_MAJOR 0)
 set(VERSION_MINOR 7)
 set(VERSION_PATCH 0)
+set(VERSION_TWEAK 0)
 set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
@@ -72,6 +73,8 @@ cmake_dependent_option(RL_BUILD_SG "Build scene graph abstraction component" ON 
 cmake_dependent_option(RL_BUILD_PLAN "Build path planning component" ON "RL_BUILD_KIN;RL_BUILD_MATH;RL_BUILD_MDL;RL_BUILD_SG;RL_BUILD_UTIL;RL_BUILD_XML" OFF)
 
 include_directories(BEFORE src/rl/std)
+
+configure_file(robotics-library.rc.in robotics-library.rc)
 
 add_subdirectory(src/rl/std)
 add_subdirectory(src)

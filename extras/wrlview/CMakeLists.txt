@@ -1,5 +1,11 @@
 project(wrlview)
 
+set(VERSION_MAJOR 0)
+set(VERSION_MINOR 1)
+set(VERSION_PATCH 14)
+set(VERSION_TWEAK 0)
+set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
+
 find_package(SoQt)
 
 if(RL_USE_QT5 AND SoQt5_FOUND)
@@ -23,6 +29,8 @@ find_package(Coin)
 find_package(OpenGL)
 
 if(Coin_FOUND AND OPENGL_FOUND AND QT_FOUND AND SoQt_FOUND)
+	configure_file(wrlview.rc.in wrlview.rc)
+	
 	add_executable(
 		wrlview
 		WIN32
@@ -31,7 +39,7 @@ if(Coin_FOUND AND OPENGL_FOUND AND QT_FOUND AND SoQt_FOUND)
 		SoGradientBackground.cpp
 		SoGradientBackground.h
 		wrlview.cpp
-		wrlview.rc
+		${CMAKE_CURRENT_BINARY_DIR}/wrlview.rc
 	)
 	
 	target_compile_definitions(
@@ -78,7 +86,7 @@ if(Coin_FOUND AND OPENGL_FOUND AND QT_FOUND AND SoQt_FOUND)
 	set_target_properties(
 		wrlview
 		PROPERTIES
-		VERSION 0.1.14
+		VERSION ${VERSION}
 	)
 	
 	if(WIN32)

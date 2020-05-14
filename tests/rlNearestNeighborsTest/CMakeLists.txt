@@ -4,6 +4,7 @@ add_executable(
 	rlNearestNeighborsTest
 	iterator.h
 	rlNearestNeighborsTest.cpp
+	${rl_BINARY_DIR}/robotics-library.rc
 )
 
 if(MSVC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 19.00.23918)

@@ -42,7 +42,6 @@ if(QT_FOUND AND SoQt_FOUND)
 			MainWindow.cpp
 			rlCollisionDemo.cpp
 			SoGradientBackground.cpp
-			${rl_SOURCE_DIR}/robotics-library.rc
 		)
 		
 		add_executable(
@@ -50,6 +49,7 @@ if(QT_FOUND AND SoQt_FOUND)
 			WIN32
 			${HDRS}
 			${SRCS}
+			${rl_BINARY_DIR}/robotics-library.rc
 		)
 		
 		target_compile_definitions(

@@ -5,6 +5,7 @@ endif()
 add_executable(
 	rlGripperDemo
 	rlGripperDemo.cpp
+	${rl_BINARY_DIR}/robotics-library.rc
 )
 
 if(MSVC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 19.00.23918)
@@ -33,6 +34,7 @@ endif()
 add_executable(
 	rlRobotiqModelCDemo
 	rlRobotiqModelCDemo.cpp
+	${rl_BINARY_DIR}/robotics-library.rc
 )
 
 target_link_libraries(

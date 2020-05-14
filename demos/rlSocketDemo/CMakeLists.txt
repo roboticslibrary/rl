@@ -3,6 +3,7 @@ find_package(Boost REQUIRED)
 add_executable(
 	rlSocketDemoClient
 	rlSocketDemoClient.cpp
+	${rl_BINARY_DIR}/robotics-library.rc
 )
 
 target_include_directories(
@@ -19,6 +20,7 @@ target_link_libraries(
 add_executable(
 	rlSocketDemoServer
 	rlSocketDemoServer.cpp
+	${rl_BINARY_DIR}/robotics-library.rc
 )
 
 target_include_directories(

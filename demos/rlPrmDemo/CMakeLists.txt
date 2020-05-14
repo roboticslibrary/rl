@@ -8,6 +8,7 @@ if(Bullet_FOUND OR ODE_FOUND OR SOLID3_FOUND)
 	add_executable(
 		rlPrmDemo
 		rlPrmDemo.cpp
+		${rl_BINARY_DIR}/robotics-library.rc
 	)
 	
 	target_include_directories(

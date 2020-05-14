@@ -1,0 +1,20 @@
+IDI_ICON1 ICON DISCARDABLE "@rl_SOURCE_DIR@/robotics-library.ico"
+
+1 VERSIONINFO
+FILEVERSION @VERSION_MAJOR@,@VERSION_MINOR@,@VERSION_PATCH@,@VERSION_TWEAK@
+PRODUCTVERSION @VERSION_MAJOR@,@VERSION_MINOR@,@VERSION_PATCH@,@VERSION_TWEAK@
+{
+	BLOCK "StringFileInfo"
+	{
+		BLOCK "00000000"
+		{
+			VALUE "FileVersion", "@VERSION@\0"
+			VALUE "ProductName", "Robotics Library\0"
+			VALUE "ProductVersion", "@VERSION@\0"
+		}
+	}
+	BLOCK "VarFileInfo"
+	{
+		VALUE "Translation", 0x000, 0
+	}
+}
