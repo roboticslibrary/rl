@@ -4,7 +4,7 @@ find_package(Perl)
 
 configure_file(Doxyfile.in Doxyfile)
 
-if(BUILD_DOCUMENTATION)
+if(RL_BUILD_DOCUMENTATION)
 	add_custom_target(doc ALL ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
 elseif(DOXYGEN_FOUND)
 	add_custom_target(doc ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
