@@ -36,7 +36,9 @@ namespace rl
 		namespace spatial
 		{
 			template<typename Scalar> class ForceVector;
+			
 			template<typename Scalar> class MotionVector;
+			
 			template<typename Scalar> class RigidBodyInertia;
 			
 			/**

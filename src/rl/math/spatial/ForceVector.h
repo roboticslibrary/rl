@@ -35,7 +35,6 @@ namespace rl
 	{
 		namespace spatial
 		{
-			template<typename Scalar> class ArticulatedBodyInertia;
 			template<typename Scalar> class MotionVector;
 			
 			/**
