@@ -128,7 +128,7 @@ file(
 find_library(
 	Coin_LIBRARY_DEBUG
 	NAMES
-	Coind coin2d coin3d Coin4d Inventord
+	Coind coin2d coin3d Coin4d
 	HINTS
 	${Coin_LIBRARY_HINTS}
 	PATHS
@@ -138,7 +138,7 @@ find_library(
 find_library(
 	Coin_LIBRARY_RELEASE
 	NAMES
-	Coin coin2 coin3 Coin4 Inventor
+	Coin coin2 coin3 Coin4
 	HINTS
 	${Coin_LIBRARY_HINTS}
 	PATHS
