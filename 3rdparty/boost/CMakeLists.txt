@@ -7,9 +7,9 @@ include(GNUInstallDirs)
 
 ExternalProject_Add(
 	boost
-	URL https://dl.bintray.com/boostorg/release/1.72.0/source/boost_1_72_0.7z
-	#URL ${CMAKE_CURRENT_SOURCE_DIR}/boost_1_72_0.7z
-	URL_MD5 cbf2f2abf8cecf69210b60478bc51109
+	URL https://dl.bintray.com/boostorg/release/1.73.0/source/boost_1_73_0.7z
+	#URL ${CMAKE_CURRENT_SOURCE_DIR}/boost_1_73_0.7z
+	URL_MD5 b647977d33441b17e9276ce37309008f
 	CONFIGURE_COMMAND ""
 	BUILD_COMMAND ""
 	BUILD_IN_SOURCE 1
