@@ -1,6 +1,5 @@
 find_package(Doxygen)
 find_package(LATEX)
-find_package(Perl)
 
 configure_file(Doxyfile.in Doxyfile)
 
