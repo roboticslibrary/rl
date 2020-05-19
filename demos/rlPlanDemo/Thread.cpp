@@ -381,7 +381,6 @@ Thread::run()
 			this->drawSweptVolume(path);
 		}
 		
-		rl::math::Vector diff(MainWindow::instance()->model->getDofPosition());
 		rl::math::Vector inter(MainWindow::instance()->model->getDofPosition());
 		
 		while (this->animate)
@@ -401,8 +400,6 @@ Thread::run()
 			
 			for (; i != path.end() && j != path.end(); ++i, ++j)
 			{
-				diff = *j - *i;
-				
 				rl::math::Real steps = std::ceil(MainWindow::instance()->model->distance(*i, *j) / delta);
 				
 				for (std::size_t k = 1; k < steps + 1; ++k)
@@ -428,8 +425,6 @@ Thread::run()
 			
 			for (; ri != path.rend() && rj != path.rend(); ++ri, ++rj)
 			{
-				diff = *rj - *ri;
-				
 				rl::math::Real steps = std::ceil(MainWindow::instance()->model->distance(*ri, *rj) / delta);
 				
 				for (std::size_t k = 1; k < steps + 1; ++k)
