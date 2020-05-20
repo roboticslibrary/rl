@@ -27,27 +27,10 @@
 #ifndef RL_MATH_ALGORITHM_H
 #define RL_MATH_ALGORITHM_H
 
-#include <cassert>
-#include <cmath>
-#include <functional>
-
 namespace rl
 {
 	namespace math
 	{
-		template<typename T, typename Compare>
-		inline const T& clamp(const T& v, const T& lo, const T& hi, Compare comp)
-		{
-			assert(!comp(hi, lo));
-			return comp(v, lo) ? lo : comp(hi, v) ? hi : v;
-		}
-		
-		template<typename T>
-		inline const T& clamp(const T& v, const T& lo, const T& hi)
-		{
-			return clamp(v, lo, hi, ::std::less<T>());
-		}
-		
 		template<typename T>
 		inline T sign(const T& arg)
 		{

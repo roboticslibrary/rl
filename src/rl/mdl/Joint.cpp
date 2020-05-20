@@ -24,7 +24,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <rl/math/algorithm.h>
+#include <rl/std/algorithm.h>
 
 #include "Frame.h"
 #include "Joint.h"
@@ -83,7 +83,7 @@ namespace rl
 				}
 				else
 				{
-					q(i) = ::rl::math::clamp(q(i), this->min(i), this->max(i));
+					q(i) = ::rl::std17::clamp(q(i), this->min(i), this->max(i));
 				}
 			}
 		}

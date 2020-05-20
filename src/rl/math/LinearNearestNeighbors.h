@@ -297,11 +297,7 @@ namespace rl
 								neighbors3.pop_back();
 							}
 							
-#if defined(_MSC_VER) && _MSC_VER < 1800
-							neighbors3.push_back(::std::make_pair(distance, this->container[i]));
-#else
 							neighbors3.emplace_back(distance, this->container[i]);
-#endif
 							::std::push_heap(neighbors3.begin(), neighbors3.end(), NeighborCompare());
 						}
 					}

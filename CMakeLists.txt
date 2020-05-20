@@ -76,11 +76,8 @@ cmake_dependent_option(RL_BUILD_SG "Build scene graph abstraction component" ON 
 
 cmake_dependent_option(RL_BUILD_PLAN "Build path planning component" ON "RL_BUILD_KIN;RL_BUILD_MATH;RL_BUILD_MDL;RL_BUILD_SG;RL_BUILD_UTIL;RL_BUILD_XML" OFF)
 
-include_directories(BEFORE src/rl/std)
-
 configure_file(robotics-library.rc.in robotics-library.rc)
 
-add_subdirectory(src/rl/std)
 add_subdirectory(src)
 add_subdirectory(examples)
 
@@ -99,8 +96,6 @@ foreach(TARGET ${TARGETS})
 	list(APPEND RL_LIBRARIES "rl::${TARGET}")
 endforeach(TARGET)
 
-set(RL_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src/rl/std)
-
 configure_package_config_file(
 	rl-config.cmake.in rl-config.cmake
 	INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/rl-${VERSION}
@@ -111,8 +106,6 @@ export(
 	NAMESPACE rl::
 	FILE ${CMAKE_CURRENT_BINARY_DIR}/rl-export.cmake
 )
-
-set(RL_INCLUDE_DIRS \${PACKAGE_PREFIX_DIR}/include/rl-${VERSION}/rl/std)
 
 configure_package_config_file(
 	rl-config.cmake.in rl-config-install.cmake

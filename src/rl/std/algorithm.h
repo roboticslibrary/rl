@@ -24,22 +24,37 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef RL_STD_CMATH
-#define RL_STD_CMATH
+#ifndef RL_STD_ALGORITHM_H
+#define RL_STD_ALGORITHM_H
 
-#ifdef _MSC_VER
-#include <../include/cmath>
+#include <algorithm>
 
-#if _MSC_VER < 1800
-#include <boost/math/special_functions/cbrt.hpp>
+#ifndef __cpp_lib_clamp
+#include <cassert>
+#include <functional>
+#endif
 
-namespace std
+namespace rl
 {
-	using ::boost::math::cbrt;
+	namespace std17
+	{
+#ifdef __cpp_lib_clamp
+		using ::std::clamp;
+#else
+		template<typename T, typename Compare>
+		inline const T& clamp(const T& v, const T& lo, const T& hi, Compare comp)
+		{
+			assert(!comp(hi, lo));
+			return comp(v, lo) ? lo : comp(hi, v) ? hi : v;
+		}
+		
+		template<typename T>
+		inline const T& clamp(const T& v, const T& lo, const T& hi)
+		{
+			return clamp(v, lo, hi, ::std::less<T>());
+		}
+#endif
+	}
 }
-#endif // _MSC_VER < 1800
-#else // _MSC_VER
-#include_next <cmath>
-#endif // _MSC_VER
 
-#endif // RL_STD_CMATH
+#endif // RL_MATH_ALGORITHM_H

@@ -53,6 +53,7 @@ target_include_directories(
 target_link_libraries(
 	kin
 	math
+	std
 	xml
 )
 

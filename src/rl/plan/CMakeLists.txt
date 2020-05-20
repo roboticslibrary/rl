@@ -95,17 +95,6 @@ add_library(
 	${rl_BINARY_DIR}/robotics-library.rc
 )
 
-if(MSVC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 19.00.23918)
-	target_compile_definitions(
-		plan
-		PUBLIC
-		BOOST_ALL_NO_LIB
-		BOOST_CHRONO_HEADER_ONLY
-		BOOST_ERROR_CODE_HEADER_ONLY
-		BOOST_SYSTEM_NO_DEPRECATED
-	)
-endif()
-
 if(NOT CMAKE_VERSION VERSION_LESS 3.8)
 	target_compile_features(plan PUBLIC cxx_std_11)
 endif()

@@ -1,7 +1,3 @@
-if(MSVC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 19.00.23918)
-	find_package(Boost REQUIRED)
-endif()
-
 find_package(OpenGL REQUIRED)
 find_package(SoQt)
 
@@ -61,17 +57,6 @@ if(QT_FOUND AND SoQt_FOUND)
 		PUBLIC
 		${SoQt_DEFINITIONS}
 	)
-	
-	if(MSVC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 19.00.23918)
-		target_compile_definitions(
-			rlSimulator
-			PUBLIC
-			BOOST_ALL_NO_LIB
-			BOOST_CHRONO_HEADER_ONLY
-			BOOST_ERROR_CODE_HEADER_ONLY
-			BOOST_SYSTEM_NO_DEPRECATED
-		)
-	endif()
 	
 	target_include_directories(
 		rlSimulator

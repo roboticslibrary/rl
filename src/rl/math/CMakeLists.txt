@@ -84,6 +84,12 @@ target_include_directories(
 	${EIGEN3_INCLUDE_DIRS}
 )
 
+target_link_libraries(
+	math
+	INTERFACE
+	std
+)
+
 if(CMAKE_VERSION VERSION_LESS 3.0)
 	set_target_properties(
 		math

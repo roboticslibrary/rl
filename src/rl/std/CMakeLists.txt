@@ -1,18 +1,45 @@
 set(
-	BASE_HDRS
-	chrono
-	cmath
-	condition_variable
-	future
-	iterator
-	mutex
-	random
-	regex
-	string
-	thread
+	HDRS
+	algorithm.h
+	iterator.h
+	memory.h
 )
-list(APPEND HDRS ${BASE_HDRS})
 
-add_custom_target(std_sources SOURCES ${HDRS})
+if(NOT CMAKE_VERSION VERSION_LESS 3.0)
+	add_library(std INTERFACE)
+	add_custom_target(std_sources SOURCES ${HDRS})
+else()
+	add_library(std STATIC ${HDRS} dummy.cpp)
+endif()
 
-install(FILES ${BASE_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/std COMPONENT development)
+if(NOT CMAKE_VERSION VERSION_LESS 3.8)
+	target_compile_features(std INTERFACE cxx_std_11)
+endif()
+
+install(FILES ${HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/std COMPONENT development)
+
+if(CMAKE_VERSION VERSION_LESS 3.0)
+	set_target_properties(
+		std
+		PROPERTIES
+		OUTPUT_NAME rlstd
+		POSITION_INDEPENDENT_CODE ON
+		VERSION ${VERSION}
+	)
+	
+	if(WIN32)
+		set_target_properties(
+			std
+			PROPERTIES
+			DEBUG_POSTFIX d
+		)
+	endif()
+endif()
+
+install(
+	TARGETS std
+	EXPORT rl
+	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT development
+	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT runtime NAMELINK_SKIP
+	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT runtime
+)

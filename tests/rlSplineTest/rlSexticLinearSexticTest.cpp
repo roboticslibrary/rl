@@ -32,7 +32,6 @@
 int
 main(int argc, char** argv)
 {
-#if !(defined(_MSC_VER) && _MSC_VER < 1800)
 	{
 		for (std::size_t i = 0; i < 8; ++i)
 		{
@@ -80,7 +79,6 @@ main(int argc, char** argv)
 		
 		std::cout << "rlSexticLinearSexticTest(Real): Ok, done." << std::endl;
 	}
-#endif
 	
 	{
 		for (std::size_t i = 0; i < 4; ++i)

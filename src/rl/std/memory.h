@@ -24,30 +24,41 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef RL_STD_CHRONO
-#define RL_STD_CHRONO
+#ifndef RL_STD_MEMORY_H
+#define RL_STD_MEMORY_H
 
-#if defined(_MSC_FULL_VER) && _MSC_FULL_VER >= 190023918
-#include <../include/chrono>
-#elif defined(_MSC_VER)
-#include <boost/chrono.hpp>
+#include <memory>
 
-namespace std
+#ifndef __cpp_lib_make_unique
+#include <type_traits>
+#endif
+
+namespace rl
 {
-	namespace chrono = ::boost::chrono;
-}
-#else // _MSC_VER
-#include_next <chrono>
-
-#if __GNUC__ == 4 && __GNUC_MINOR__ < 7 && !__clang__
-namespace std
-{
-	namespace chrono
+	namespace std14
 	{
-		typedef monotonic_clock steady_clock;
+#ifdef __cpp_lib_make_unique
+		using ::std::make_unique;
+#else
+		template <typename T>
+		typename ::std::enable_if< ::std::is_array<T>::value, ::std::unique_ptr<T>>::type
+		make_unique(::std::size_t n)
+		{
+			return ::std::unique_ptr<T>(new typename ::std::remove_extent<T>::type[n]());
+		}
+		
+		template <typename T, typename... Args>
+		typename ::std::enable_if<!::std::is_array<T>::value, ::std::unique_ptr<T>>::type
+		make_unique(Args&&... args)
+		{
+			return ::std::unique_ptr<T>(new T(::std::forward<Args>(args)...));
+		}
+		
+		template <typename T, typename... Args>
+		typename ::std::enable_if< ::std::extent<T>::value != 0, ::std::unique_ptr<T>>::type
+		make_unique(Args&&...) = delete;
+#endif
 	}
 }
-#endif // __GNUC__
-#endif // _MSC_VER
 
-#endif // RL_STD_CHRONO
+#endif // RL_STD_MEMORY_H

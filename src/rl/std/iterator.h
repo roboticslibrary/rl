@@ -24,39 +24,31 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef RL_STD_FUTURE
-#define RL_STD_FUTURE
+#ifndef RL_STD_ITERATOR_H
+#define RL_STD_ITERATOR_H
 
-#if defined(_MSC_FULL_VER) && _MSC_FULL_VER >= 190023918
-#include <../include/future>
-#elif defined(_MSC_VER)
-#define BOOST_THREAD_PROVIDES_FUTURE
-#include <boost/thread/future.hpp>
+#include <iterator>
 
-namespace std
+namespace rl
 {
-	using ::boost::async;
-	
-	using ::boost::BOOST_THREAD_FUTURE;
-	
-	using ::boost::future_category;
-	
-	using ::boost::future_errc;
-	
-	using ::boost::future_error;
-	
-	using ::boost::future_status;
-	
-	using ::boost::launch;
-	
-	using ::boost::packaged_task;
-	
-	using ::boost::promise;
-	
-	using ::boost::shared_future;
+	namespace std17
+	{
+#ifdef __cpp_lib_nonmember_container_access
+		using ::std::size;
+#else
+		template<typename T>
+		constexpr auto size(const T& t) -> decltype(t.size())
+		{
+			return t.size();
+		}
+		
+		template<typename T, ::std::size_t N>
+		constexpr ::std::size_t size(const T (&t)[N])
+		{
+			return N;
+		}
+#endif
+	}
 }
-#else // _MSC_VER
-#include_next <future>
-#endif // _MSC_VER
 
-#endif // RL_STD_FUTURE
+#endif // RL_STD_ITERATOR_H

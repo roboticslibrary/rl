@@ -37,6 +37,8 @@
 #include <utility>
 #include <vector>
 #include <boost/optional.hpp>
+#include <rl/std/iterator.h>
+#include <rl/std/memory.h>
 
 namespace rl
 {
@@ -341,11 +343,7 @@ namespace rl
 				
 				for (::std::size_t i = 0; i < 2; ++i)
 				{
-#if __cplusplus > 201103L || _MSC_VER >= 1800
-					node.children[i] = ::std::make_unique<Node>();
-#else
-					node.children[i].reset(new Node());
-#endif
+					node.children[i] = ::rl::std14::make_unique<Node>();
 					
 					InputIterator begin = 0 == i ? first : split;
 					InputIterator end = 0 == i ? split : last;
@@ -364,7 +362,7 @@ namespace rl
 			void push(Node& node, const Value& value)
 			{
 				using ::std::begin;
-				using ::std::size;
+				using ::rl::std17::size;
 				
 				if (nullptr == node.children[0] && nullptr == node.children[1] && !node.data)
 				{
@@ -388,11 +386,7 @@ namespace rl
 					
 					for (::std::size_t i = 0; i < 2; ++i)
 					{
-#if __cplusplus > 201103L || _MSC_VER >= 1800
-						node.children[i] = ::std::make_unique<Node>();
-#else
-						node.children[i].reset(new Node());
-#endif
+						node.children[i] = ::rl::std14::make_unique<Node>();
 					}
 					
 					bool less = *(begin(value) + node.cut.index) < *(begin(*node.data) + node.cut.index);
@@ -420,7 +414,7 @@ namespace rl
 			
 			::std::vector<Neighbor> search(const Value& query, const ::std::size_t* k, const Distance* radius, const bool& sorted) const
 			{
-				using ::std::size;
+				using ::rl::std17::size;
 				
 				::std::vector<Neighbor> neighbors;
 				
@@ -476,11 +470,7 @@ namespace rl
 									neighbors.pop_back();
 								}
 								
-#if (defined(_MSC_VER) && _MSC_VER < 1800) || (defined(__GNUC__) && __GNUC__ == 4 && __GNUC_MINOR__ < 8)
-								neighbors.push_back(::std::make_pair(distance, *node.data));
-#else
 								neighbors.emplace_back(::std::piecewise_construct, ::std::forward_as_tuple(distance), ::std::forward_as_tuple(*node.data));
-#endif
 								::std::push_heap(neighbors.begin(), neighbors.end(), NeighborCompare());
 							}
 						}
@@ -514,11 +504,7 @@ namespace rl
 						{
 							::std::vector<Distance> newsidedist(sidedist);
 							newsidedist[node.cut.index] = cutdist;
-#if defined(_MSC_VER) && _MSC_VER < 1800
-							branches.push_back(Branch(newdist, ::std::move(newsidedist), node.children[worst].get()));
-#else
 							branches.emplace_back(newdist, ::std::move(newsidedist), node.children[worst].get());
-#endif
 							::std::push_heap(branches.begin(), branches.end(), BranchCompare());
 						}
 					}
@@ -529,7 +515,7 @@ namespace rl
 			Cut select(InputIterator first, InputIterator last)
 			{
 				using ::std::begin;
-				using ::std::size;
+				using ::rl::std17::size;
 				
 				::std::size_t distance = ::std::distance(first, last);
 				assert(distance > 0 || "mean expects at least one element");

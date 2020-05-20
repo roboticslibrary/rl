@@ -25,9 +25,9 @@
 //
 
 #include <algorithm>
-#include <rl/math/algorithm.h>
 #include <rl/math/Rotation.h>
 #include <rl/math/Unit.h>
+#include <rl/std/algorithm.h>
 #include <rl/xml/Attribute.h>
 #include <rl/xml/Document.h>
 #include <rl/xml/DomParser.h>
@@ -112,7 +112,7 @@ namespace rl
 				}
 				else
 				{
-					q(i) = ::rl::math::clamp(q(i), this->joints[i]->min, this->joints[i]->max);
+					q(i) = ::rl::std17::clamp(q(i), this->joints[i]->min, this->joints[i]->max);
 				}
 			}
 		}

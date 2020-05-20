@@ -21,6 +21,4 @@ set(RL_INCLUDE_DIRS "@RL_INCLUDE_DIRS@")
 set(RL_LIBRARY_DIRS "@RL_LIBRARY_DIRS@")
 set(RL_LIBRARIES "@RL_LIBRARIES@")
 
-include_directories(BEFORE ${RL_INCLUDE_DIRS})
-
 check_required_components(RL)

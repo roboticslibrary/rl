@@ -54,11 +54,7 @@ namespace rl
 			{
 				::std::queue< ::std::pair< ::std::size_t, ::std::size_t>> queue;
 				
-#if (defined(_MSC_VER) && _MSC_VER < 1800) || (defined(__GNUC__) && __GNUC__ == 4 && __GNUC_MINOR__ < 8)
-				queue.push(::std::make_pair(1, steps - 1));
-#else
 				queue.emplace(::std::piecewise_construct, ::std::forward_as_tuple(1), ::std::forward_as_tuple(steps - 1));
-#endif
 				
 				::rl::math::Vector inter(u.size());
 				
@@ -75,20 +71,12 @@ namespace rl
 					
 					if (queue.front().first < midpoint)
 					{
-#if (defined(_MSC_VER) && _MSC_VER < 1800) || (defined(__GNUC__) && __GNUC__ == 4 && __GNUC_MINOR__ < 8)
-						queue.push(::std::make_pair(queue.front().first, midpoint - 1));
-#else
 						queue.emplace(::std::piecewise_construct, ::std::forward_as_tuple(queue.front().first), ::std::forward_as_tuple(midpoint - 1));
-#endif
 					}
 					
 					if (queue.front().second > midpoint)
 					{
-#if (defined(_MSC_VER) && _MSC_VER < 1800) || (defined(__GNUC__) && __GNUC__ == 4 && __GNUC_MINOR__ < 8)
-						queue.push(::std::make_pair(midpoint + 1, queue.front().second));
-#else
 						queue.emplace(::std::piecewise_construct, ::std::forward_as_tuple(midpoint + 1), ::std::forward_as_tuple(queue.front().second));
-#endif
 					}
 					
 					queue.pop();

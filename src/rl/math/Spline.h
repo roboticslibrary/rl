@@ -697,7 +697,6 @@ namespace rl
 				return f;
 			}
 			
-#if !(defined(_MSC_VER) && _MSC_VER < 1800)
 			/**
 			 * Generates a spline of polynomials of degrees 4-1-4 from rest to rest
 			 * for one dimension.
@@ -748,7 +747,6 @@ namespace rl
 				
 				return f;
 			}
-#endif
 			
 			/**
 			 * Generates a spline of polynomials of degrees 4-1-4 from rest to rest
@@ -760,7 +758,6 @@ namespace rl
 			 * is omitted.
 			 * The result is the shortest synchronized 4-1-4 spline with continuous acceleration.
 			 */
-#if !(defined(_MSC_VER) && _MSC_VER < 1800)
 			template<typename U = T>
 			static Spline QuarticLinearQuarticAtRest(
 				const typename ::std::enable_if< ::std::is_class<U>::value, U>::type& q0,
@@ -768,9 +765,6 @@ namespace rl
 				const typename ::std::enable_if< ::std::is_class<U>::value, U>::type& vmax,
 				const typename ::std::enable_if< ::std::is_class<U>::value, U>::type& amax
 			)
-#else
-			static Spline QuarticLinearQuarticAtRest(const T& q0, const T& q1, const T& vmax, const T& amax)
-#endif
 			{
 				assert(q0.size() >= 1 && q0.size() == q1.size() && q0.size() == vmax.size() && q0.size() == amax.size() && "QuarticLinearQuarticAtRest: parameters must have same dimension.");
 				
@@ -834,7 +828,6 @@ namespace rl
 				return f;
 			}
 			
-#if !(defined(_MSC_VER) && _MSC_VER < 1800)
 			/**
 			 * Generates a spline of polynomials of degrees 6-1-6 from rest to rest
 			 * for one dimension.
@@ -888,7 +881,6 @@ namespace rl
 				
 				return f;
 			}
-#endif
 			
 			/**
 			 * Generates a spline of polynomials of degrees 6-1-6 from rest to rest
@@ -900,7 +892,6 @@ namespace rl
 			 * is omitted.
 			 * The result is the shortest synchronized 6-1-6 spline with continuous jerk.
 			 */
-#if !(defined(_MSC_VER) && _MSC_VER < 1800)
 			template<typename U = T>
 			static Spline SexticLinearSexticAtRest(
 				const typename ::std::enable_if< ::std::is_class<U>::value, U>::type& q0,
@@ -908,9 +899,6 @@ namespace rl
 				const typename ::std::enable_if< ::std::is_class<U>::value, U>::type& vmax,
 				const typename ::std::enable_if< ::std::is_class<U>::value, U>::type& amax
 			)
-#else
-			static Spline SexticLinearSexticAtRest(const T& q0, const T& q1, const T& vmax, const T& amax)
-#endif
 			{
 				assert(q0.size() >= 1 && q0.size() == q1.size() && q0.size() == vmax.size() && q0.size() == amax.size() && "SexticLinearSexticAtRest: parameters must have same dimension.");
 				

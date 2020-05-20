@@ -32,7 +32,6 @@
 int
 main(int argc, char** argv)
 {
-#if !(defined(_MSC_VER) && _MSC_VER < 1800)
 	{
 		for (std::size_t i = 0; i < 8; ++i)
 		{
@@ -78,7 +77,6 @@ main(int argc, char** argv)
 		
 		std::cout << "rlQuarticLinearQuarticTest(Real): Ok, done." << std::endl;
 	}
-#endif
 	
 	{
 		for (std::size_t i = 0; i < 4; ++i)
@@ -111,7 +109,7 @@ main(int argc, char** argv)
 			
 			rl::math::Spline<rl::math::ArrayX> f = rl::math::Spline<rl::math::ArrayX>::QuarticLinearQuarticAtRest(q0, q1, vmax, amax);
 			
-#if 1
+#if 0
 			// plot for [i=2:5] "interpolation.dat" using 1:i with lines
 			std::ofstream stream;
 			stream.open("interpolation.dat", std::fstream::trunc);

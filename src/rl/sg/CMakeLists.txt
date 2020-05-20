@@ -179,6 +179,7 @@ endif()
 target_link_libraries(
 	sg
 	math
+	std
 	util
 	xml
 )

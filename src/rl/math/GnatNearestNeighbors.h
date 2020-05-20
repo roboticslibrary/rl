@@ -515,11 +515,7 @@ namespace rl
 									neighbors.pop_back();
 								}
 								
-#if (defined(_MSC_VER) && _MSC_VER < 1800) || (defined(__GNUC__) && __GNUC__ == 4 && __GNUC_MINOR__ < 8)
-								neighbors.push_back(::std::make_pair(distance, node.data[i]));
-#else
 								neighbors.emplace_back(::std::piecewise_construct, ::std::forward_as_tuple(distance), ::std::forward_as_tuple(node.data[i]));
-#endif
 								::std::push_heap(neighbors.begin(), neighbors.end(), NeighborCompare());
 							}
 						}
@@ -553,11 +549,7 @@ namespace rl
 											neighbors.pop_back();
 										}
 										
-#if (defined(_MSC_VER) && _MSC_VER < 1800) || (defined(__GNUC__) && __GNUC__ == 4 && __GNUC_MINOR__ < 8)
-										neighbors.push_back(::std::make_pair(distances[i], node.children[i].pivot));
-#else
 										neighbors.emplace_back(::std::piecewise_construct, ::std::forward_as_tuple(distances[i]), ::std::forward_as_tuple(node.children[i].pivot));
-#endif
 										::std::push_heap(neighbors.begin(), neighbors.end(), NeighborCompare());
 									}
 								}
@@ -596,11 +588,7 @@ namespace rl
 							if (distances[i] - distance <= node.children[i].max[i] &&
 								distances[i] + distance >= node.children[i].min[i])
 							{
-#if defined(_MSC_VER) && _MSC_VER < 1800
-								branches.push_back(::std::make_pair(distances[i], &node.children[i]));
-#else
 								branches.emplace_back(distances[i], &node.children[i]);
-#endif
 								::std::push_heap(branches.begin(), branches.end(), BranchCompare());
 							}
 						}
@@ -617,11 +605,7 @@ namespace rl
 				
 				for (::std::size_t i = 0; i < centers.size(); ++i)
 				{
-#if defined(_MSC_VER) && _MSC_VER < 1800
-					node.children.push_back(Node(i, node.degree - 1, this->nodeDegree, this->nodeDataMax));
-#else
 					node.children.emplace_back(i, node.degree - 1, this->nodeDegree, this->nodeDataMax);
-#endif
 					node.children[i].pivot = ::std::move(node.data[centers[i]]);
 				}
 				

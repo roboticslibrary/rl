@@ -1,8 +1,4 @@
-if(MSVC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 19.00.23918)
-	find_package(Boost REQUIRED COMPONENTS thread)
-else()
-	find_package(Boost REQUIRED)
-endif()
+find_package(Boost REQUIRED)
 
 find_package(ATIDAQ)
 find_package(cifX)
@@ -179,17 +175,6 @@ target_compile_definitions(
 	BOOST_ALL_NO_LIB
 )
 
-if(MSVC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 19.00.23918)
-	target_compile_definitions(
-		hal
-		PUBLIC
-		BOOST_ALL_NO_LIB
-		BOOST_CHRONO_HEADER_ONLY
-		BOOST_ERROR_CODE_HEADER_ONLY
-		BOOST_SYSTEM_NO_DEPRECATED
-	)
-endif()
-
 if(BIG_ENDIAN)
 	target_compile_definitions(hal PRIVATE HAVE_BIG_ENDIAN)
 else()
@@ -205,10 +190,6 @@ target_link_libraries(
 	math
 	util
 )
-
-if(MSVC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 19.00.23918)
-	target_link_libraries(hal ${Boost_LIBRARIES})
-endif()
 
 target_include_directories(
 	hal

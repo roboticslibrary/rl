@@ -35,6 +35,7 @@
 #include <iterator>
 #include <limits>
 #include <Eigen/Core>
+#include <rl/std/iterator.h>
 
 namespace rl
 {
@@ -59,7 +60,7 @@ namespace rl
 			static T abs(const T& t)
 			{
 				using ::std::abs;
-				using ::std::size;
+				using ::rl::std17::size;
 				using ::std::transform;
 				T res(size(t));
 				transform(t.begin(), t.end(), res.begin(), static_cast<value_type(*)(value_type)>(&abs));
@@ -110,7 +111,7 @@ namespace rl
 			
 			static ::std::size_t size(const T& t)
 			{
-				using ::std::size;
+				using ::rl::std17::size;
 				return size(t);
 			}
 			

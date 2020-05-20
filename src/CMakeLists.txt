@@ -1,3 +1,6 @@
+add_subdirectory(rl/std)
+list(APPEND TARGETS std)
+
 if(RL_BUILD_MATH)
 	add_subdirectory(rl/math)
 	list(APPEND TARGETS math)
