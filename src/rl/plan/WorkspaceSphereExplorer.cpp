@@ -38,14 +38,14 @@ namespace rl
 	{
 		WorkspaceSphereExplorer::WorkspaceSphereExplorer() :
 			boundingBox(
-				::rl::math::Vector3::Constant(-::std::numeric_limits< ::rl::math::Real>::max()),
-				::rl::math::Vector3::Constant(::std::numeric_limits< ::rl::math::Real>::max())
+				::rl::math::Vector3::Constant(-::std::numeric_limits<::rl::math::Real>::max()),
+				::rl::math::Vector3::Constant(::std::numeric_limits<::rl::math::Real>::max())
 			),
 			goal(),
 			greedy(GREEDY_SPACE),
 			model(nullptr),
 			radius(0),
-			range(::std::numeric_limits< ::rl::math::Real>::max()),
+			range(::std::numeric_limits<::rl::math::Real>::max()),
 			samples(10),
 			start(),
 			viewer(nullptr),
@@ -96,7 +96,7 @@ namespace rl
 		WorkspaceSphereExplorer::explore()
 		{
 			WorkspaceSphere start;
-			start.center = ::std::make_shared< ::rl::math::Vector3>(*this->start);
+			start.center = ::std::make_shared<::rl::math::Vector3>(*this->start);
 			start.radius = ::std::min(
 				this->model->distance(*start.center),
 				this->boundingBox.interiorDistance(*start.center)
@@ -130,7 +130,7 @@ namespace rl
 					if ((*this->goal - *top.center).norm() < top.radius)
 					{
 						WorkspaceSphere goal;
-						goal.center = ::std::make_shared< ::rl::math::Vector3>(*this->goal);
+						goal.center = ::std::make_shared<::rl::math::Vector3>(*this->goal);
 						goal.radius = this->model->distance(*goal.center);
 						goal.parent = vertex;
 						goal.priority = (*this->goal - *goal.center).norm() - goal.radius;
@@ -170,7 +170,7 @@ namespace rl
 //for (::std::size_t i = 0; i < this->samples; ++i) // TODO
 					{
 						WorkspaceSphere sphere;
-						sphere.center = ::std::make_shared< ::rl::math::Vector3>(
+						sphere.center = ::std::make_shared<::rl::math::Vector3>(
 							top.radius * ::rl::math::Vector3::RandomOnSphere(::rl::math::Vector2(this->rand(), this->rand())) + *top.center
 						);
 						sphere.parent = vertex;
@@ -279,7 +279,7 @@ namespace rl
 			return false;
 		}
 		
-		::std::uniform_real_distribution< ::rl::math::Real>::result_type
+		::std::uniform_real_distribution<::rl::math::Real>::result_type
 		WorkspaceSphereExplorer::rand()
 		{
 			return this->randDistribution(this->randEngine);

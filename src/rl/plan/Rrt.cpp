@@ -36,7 +36,7 @@ namespace rl
 		Rrt::Rrt(const ::std::size_t& trees) :
 			Planner(),
 			delta(1),
-			epsilon(static_cast< ::rl::math::Real>(1.0e-3)),
+			epsilon(static_cast<::rl::math::Real>(1.0e-3)),
 			sampler(nullptr),
 			begin(trees, nullptr),
 			end(trees, nullptr),
@@ -117,7 +117,7 @@ namespace rl
 				step = this->delta;
 			}
 			
-			VectorPtr last = ::std::make_shared< ::rl::math::Vector>(this->model->getDofPosition());
+			VectorPtr last = ::std::make_shared<::rl::math::Vector>(this->model->getDofPosition());
 			
 			this->model->interpolate(*get(tree, nearest.second)->q, chosen, step / distance, *last);
 			
@@ -169,7 +169,7 @@ namespace rl
 			::rl::math::Real distance = nearest.first;
 			::rl::math::Real step = ::std::min(distance, this->delta);
 			
-			VectorPtr next = ::std::make_shared< ::rl::math::Vector>(this->model->getDofPosition());
+			VectorPtr next = ::std::make_shared<::rl::math::Vector>(this->model->getDofPosition());
 			
 			this->model->interpolate(*get(tree, nearest.second)->q, chosen, step / distance, *next);
 			
@@ -278,7 +278,7 @@ namespace rl
 		{
 			this->time = ::std::chrono::steady_clock::now();
 			
-			this->begin[0] = this->addVertex(this->tree[0], ::std::make_shared< ::rl::math::Vector>(*this->start));
+			this->begin[0] = this->addVertex(this->tree[0], ::std::make_shared<::rl::math::Vector>(*this->start));
 			
 			while ((::std::chrono::steady_clock::now() - this->time) < this->duration)
 			{

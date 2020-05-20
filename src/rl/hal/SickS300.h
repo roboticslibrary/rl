@@ -87,7 +87,7 @@ namespace rl
 			
 			::std::size_t recv(::std::uint8_t* buf);
 			
-			::std::array< ::std::uint8_t, 2048> data;
+			::std::array<::std::uint8_t, 2048> data;
 			
 			Serial serial;
 		};

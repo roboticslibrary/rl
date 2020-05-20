@@ -106,9 +106,9 @@ namespace rl
 		protected:
 			
 		private:
-			::std::shared_ptr< ::xmlXPathObject> object;
+			::std::shared_ptr<::xmlXPathObject> object;
 			
-			::std::shared_ptr< ::xmlNodeSet> nodeSet;
+			::std::shared_ptr<::xmlNodeSet> nodeSet;
 		};
 		
 		template<>
@@ -267,7 +267,7 @@ namespace rl
 		
 		template<>
 		inline
-		::std::string Object::getValue< ::std::string>() const
+		::std::string Object::getValue<::std::string>() const
 		{
 			return nullptr != this->object->stringval ? reinterpret_cast<char*>(this->object->stringval) : ::std::string();
 		}

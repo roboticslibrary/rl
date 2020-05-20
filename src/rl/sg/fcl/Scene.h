@@ -92,7 +92,7 @@ namespace rl
 			private:
 				struct CollisionData
 				{
-					CollisionData(const ::std::unordered_map< ::fcl::CollisionObject*, Body*>& bodyForObj) :
+					CollisionData(const ::std::unordered_map<::fcl::CollisionObject*, Body*>& bodyForObj) :
 						bodyForObj(bodyForObj),
 						done(false),
 						request(),
@@ -100,7 +100,7 @@ namespace rl
 					{
 					}
 					
-					const ::std::unordered_map< ::fcl::CollisionObject*, Body*>& bodyForObj;
+					const ::std::unordered_map<::fcl::CollisionObject*, Body*>& bodyForObj;
 					
 					bool done;
 					
@@ -111,7 +111,7 @@ namespace rl
 				
 				struct DistanceData
 				{
-					DistanceData(const ::std::unordered_map< ::fcl::CollisionObject*, Body*>& bodyForObj) :
+					DistanceData(const ::std::unordered_map<::fcl::CollisionObject*, Body*>& bodyForObj) :
 						bodyForObj(bodyForObj),
 						done(false),
 						request(true),
@@ -119,7 +119,7 @@ namespace rl
 					{
 					}
 					
-					const ::std::unordered_map< ::fcl::CollisionObject*, Body*>& bodyForObj;
+					const ::std::unordered_map<::fcl::CollisionObject*, Body*>& bodyForObj;
 					
 					bool done;
 					
@@ -132,7 +132,7 @@ namespace rl
 				
 				static bool defaultDistanceFunction(::fcl::CollisionObject* o1, ::fcl::CollisionObject* o2, void* data, ::fcl::FCL_REAL& dist);
 				
-				::std::unordered_map< ::fcl::CollisionObject*, Body*> bodyForObj;
+				::std::unordered_map<::fcl::CollisionObject*, Body*> bodyForObj;
 			};
 		}
 	}

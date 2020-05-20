@@ -78,7 +78,7 @@ namespace rl
 			
 			Method method;
 			
-			::std::uniform_real_distribution< ::rl::math::Real> randDistribution;
+			::std::uniform_real_distribution<::rl::math::Real> randDistribution;
 			
 			::std::mt19937 randEngine;
 		};

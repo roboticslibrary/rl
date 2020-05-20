@@ -124,7 +124,7 @@ namespace rl
 			
 			::rl::math::Vector distances(this->getDistancesCount());
 			
-			::rl::math::Real scale = static_cast< ::rl::math::Real>(0.01);
+			::rl::math::Real scale = static_cast<::rl::math::Real>(0.01);
 			
 			for (::std::size_t i = 0; i < this->getDistancesCount(); ++i)
 			{
@@ -138,7 +138,7 @@ namespace rl
 ::std::cerr << "Measured value detected within protective field" << ::std::endl;
 				case 32:
 ::std::cerr << "Glare (dazzling) detected" << ::std::endl;
-					distances(i) = ::std::numeric_limits< ::rl::math::Real>::quiet_NaN();
+					distances(i) = ::std::numeric_limits<::rl::math::Real>::quiet_NaN();
 					break;
 				default:
 					distances(i) = value * scale;

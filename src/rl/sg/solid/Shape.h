@@ -77,7 +77,7 @@ namespace rl
 				
 				DT_ShapeHandle create(const SoMFVec3f& point, const SoMFInt32& coordIndex);
 				
-				::Eigen::Transform< ::rl::math::Real, 3, ::Eigen::Affine, ::Eigen::ColMajor> frame;
+				::Eigen::Transform<::rl::math::Real, 3, ::Eigen::Affine, ::Eigen::ColMajor> frame;
 				
 				DT_Vector3 max;
 				

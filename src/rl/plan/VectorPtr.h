@@ -34,7 +34,7 @@ namespace rl
 {
 	namespace plan
 	{
-		typedef ::std::shared_ptr< ::rl::math::Vector> VectorPtr;
+		typedef ::std::shared_ptr<::rl::math::Vector> VectorPtr;
 	}
 }
 

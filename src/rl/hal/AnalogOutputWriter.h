@@ -43,7 +43,7 @@ namespace rl
 			
 			virtual ~AnalogOutputWriter();
 			
-			virtual void setAnalogOutput(const ::std::vector< ::rl::math::Real>& values);
+			virtual void setAnalogOutput(const ::std::vector<::rl::math::Real>& values);
 			
 			virtual void setAnalogOutput(const ::std::size_t& i, const ::rl::math::Real& value) = 0;
 			

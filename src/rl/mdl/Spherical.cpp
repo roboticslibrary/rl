@@ -65,7 +65,7 @@ namespace rl
 		void
 		Spherical::clamp(::rl::math::VectorRef q) const
 		{
-			::Eigen::Map< ::rl::math::Quaternion>(q.data()).normalize();
+			::Eigen::Map<::rl::math::Quaternion>(q.data()).normalize();
 		}
 		
 		::rl::math::Real
@@ -105,13 +105,13 @@ namespace rl
 		bool
 		Spherical::isValid(const ::rl::math::ConstVectorRef& q) const
 		{
-			return ::Eigen::internal::isApprox(q.norm(), static_cast< ::rl::math::Real>(1), static_cast< ::rl::math::Real>(1.0e-3));
+			return ::Eigen::internal::isApprox(q.norm(), static_cast<::rl::math::Real>(1), static_cast<::rl::math::Real>(1.0e-3));
 		}
 		
 		void
 		Spherical::normalize(::rl::math::VectorRef q) const
 		{
-			::Eigen::Map< ::rl::math::Quaternion> quaternion(q.data());
+			::Eigen::Map<::rl::math::Quaternion> quaternion(q.data());
 			
 			if (quaternion.squaredNorm() > 0)
 			{

@@ -40,7 +40,7 @@ namespace rl
 		}
 		
 		void
-		AnalogInputWriter::setAnalogInput(const ::std::vector< ::rl::math::Real>& values)
+		AnalogInputWriter::setAnalogInput(const ::std::vector<::rl::math::Real>& values)
 		{
 			for (::std::size_t i = 0; i < this->getAnalogInputCount(); ++i)
 			{

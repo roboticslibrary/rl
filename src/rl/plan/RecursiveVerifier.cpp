@@ -52,7 +52,7 @@ namespace rl
 			
 			if (steps > 1)
 			{
-				::std::queue< ::std::pair< ::std::size_t, ::std::size_t>> queue;
+				::std::queue<::std::pair<::std::size_t, ::std::size_t>> queue;
 				
 				queue.emplace(::std::piecewise_construct, ::std::forward_as_tuple(1), ::std::forward_as_tuple(steps - 1));
 				
@@ -62,7 +62,7 @@ namespace rl
 				{
 					::std::size_t midpoint = (queue.front().first + queue.front().second) / 2;
 					
-					this->model->interpolate(u, v, static_cast< ::rl::math::Real>(midpoint) / static_cast< ::rl::math::Real>(steps), inter);
+					this->model->interpolate(u, v, static_cast<::rl::math::Real>(midpoint) / static_cast<::rl::math::Real>(steps), inter);
 					
 					if (this->model->isColliding(inter))
 					{

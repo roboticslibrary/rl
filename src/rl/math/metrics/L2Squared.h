@@ -72,7 +72,7 @@ namespace rl
 			};
 			
 			template<typename Scalar, int Rows, int Options, int MaxRows, int MaxCols>
-			struct L2Squared< ::Eigen::Matrix<Scalar, Rows, 1, Options, MaxRows, MaxCols>>
+			struct L2Squared<::Eigen::Matrix<Scalar, Rows, 1, Options, MaxRows, MaxCols>>
 			{
 				typedef Scalar Distance;
 				
@@ -93,7 +93,7 @@ namespace rl
 			};
 			
 			template<typename Scalar, int Rows, int Options, int MaxRows, int MaxCols>
-			struct L2Squared< ::Eigen::Matrix<Scalar, Rows, 1, Options, MaxRows, MaxCols>*>
+			struct L2Squared<::Eigen::Matrix<Scalar, Rows, 1, Options, MaxRows, MaxCols>*>
 			{
 				typedef Scalar Distance;
 				

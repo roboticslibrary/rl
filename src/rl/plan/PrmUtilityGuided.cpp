@@ -81,7 +81,7 @@ namespace rl
 					}
 #else
 					// This works better in our examples. Here we define entropy by using samples where we are unsure, if they are colliding.
-					if (::std::abs(pFree - static_cast< ::rl::math::Real>(0.5)) < ::std::abs(pBest - static_cast< ::rl::math::Real>(0.5)))
+					if (::std::abs(pFree - static_cast<::rl::math::Real>(0.5)) < ::std::abs(pBest - static_cast<::rl::math::Real>(0.5)))
 					{   
 						pBest = pFree;
 						bestSample = sample;
@@ -94,7 +94,7 @@ namespace rl
 				{
 					// store the sample in the graph
 					bestSample.isColliding = false;
-					Vertex v = this->addVertex(::std::make_shared< ::rl::math::Vector>(bestSample.q));
+					Vertex v = this->addVertex(::std::make_shared<::rl::math::Vector>(bestSample.q));
 					this->insert(v);
 				}
 				
@@ -109,13 +109,13 @@ namespace rl
 			// indices for two random vertices
 			// the first sample uses the start ot the end component
 #ifdef ORIGINAL_VERSION
-			::std::size_t randIndex1 = static_cast< ::std::size_t>(::std::floor(this->rand() * this->getNumVertices()));
+			::std::size_t randIndex1 = static_cast<::std::size_t>(::std::floor(this->rand() * this->getNumVertices()));
 #else
 			// here we always pick a component containing the beginning or end vertex
 			// this prevents roadmap building in remote areas.
-			::std::size_t randIndex1 = static_cast< ::std::size_t>(::std::floor(this->rand() * 2));
+			::std::size_t randIndex1 = static_cast<::std::size_t>(::std::floor(this->rand() * 2));
 #endif
-			::std::size_t randIndex2 = static_cast< ::std::size_t>(::std::floor(this->rand() * this->getNumVertices()));
+			::std::size_t randIndex2 = static_cast<::std::size_t>(::std::floor(this->rand() * this->getNumVertices()));
 			
 			// two random vertices
 			Vertex sample1 = ::boost::vertex(randIndex1, this->graph);
@@ -137,7 +137,7 @@ namespace rl
 			while (::boost::same_component(sample1, sample2, this->ds));
 			
 			// The point in the middle of the two samples.
-			::rl::math::Vector midPoint = static_cast< ::rl::math::Real>(0.5) * (*this->graph[sample1].q + *this->graph[sample2].q);
+			::rl::math::Vector midPoint = static_cast<::rl::math::Real>(0.5) * (*this->graph[sample1].q + *this->graph[sample2].q);
 			
 			// add variance drawn randomly from [-variance, variance] to the point
 			for (::std::ptrdiff_t i = 0; i < midPoint.size(); ++i)
@@ -176,7 +176,7 @@ namespace rl
 				queue.pop(); 
 			}
 			
-			return 1 - static_cast< ::rl::math::Real>(collisionCount) / static_cast< ::rl::math::Real>(count);
+			return 1 - static_cast<::rl::math::Real>(collisionCount) / static_cast<::rl::math::Real>(count);
 		}
 		
 		::std::string
@@ -185,7 +185,7 @@ namespace rl
 			return "PRM Utility Guided"; 
 		}
 		
-		::std::uniform_real_distribution< ::rl::math::Real>::result_type
+		::std::uniform_real_distribution<::rl::math::Real>::result_type
 		PrmUtilityGuided::rand()
 		{
 			return this->randDistribution(this->randEngine);

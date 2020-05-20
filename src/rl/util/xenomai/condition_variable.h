@@ -122,7 +122,7 @@ namespace rl
 				template<typename Duration>
 				::std::cv_status wait_until(::std::unique_lock<mutex>& lock, const ::std::chrono::time_point<clock_t, Duration>& atime)
 				{
-					::std::chrono::time_point<clock_t, ::std::chrono::nanoseconds> ns = ::std::chrono::time_point_cast< ::std::chrono::nanoseconds>(atime);
+					::std::chrono::time_point<clock_t, ::std::chrono::nanoseconds> ns = ::std::chrono::time_point_cast<::std::chrono::nanoseconds>(atime);
 					int e = ::rt_cond_wait_until(&this->M_cond, lock.mutex()->native_handle(), ::rt_timer_ns2ticks(ns.time_since_epoch().count()));
 					
 					if (e)

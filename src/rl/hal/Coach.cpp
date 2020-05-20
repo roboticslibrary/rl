@@ -71,7 +71,7 @@ namespace rl
 		{
 			::rl::math::Vector q(this->getDof());
 			
-			::boost::iostreams::stream< ::boost::iostreams::basic_array_source<char>> stream(this->in.data(), this->in.size());
+			::boost::iostreams::stream<::boost::iostreams::basic_array_source<char>> stream(this->in.data(), this->in.size());
 			
 			::std::size_t cmd;
 			stream >> cmd;

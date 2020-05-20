@@ -60,11 +60,11 @@ namespace rl
 				
 				::rl::math::Transform baseTransform;
 				
-				::std::vector< ::dTriIndex> indices;
+				::std::vector<::dTriIndex> indices;
 				
 				::rl::math::Transform transform;
 				
-				::std::vector< ::dReal> vertices;
+				::std::vector<::dReal> vertices;
 			};
 		}
 	}

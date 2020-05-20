@@ -92,7 +92,7 @@ namespace rl
 			
 			::rl::math::Vector doAcquireSingleFrame();
 			
-			::std::pair< ::std::chrono::system_clock::time_point, ::std::chrono::system_clock::duration> doGetCalibrationDateLifetime();
+			::std::pair<::std::chrono::system_clock::time_point, ::std::chrono::system_clock::duration> doGetCalibrationDateLifetime();
 			
 			::rl::math::Matrix doGetCalibrationMatrix();
 			
@@ -121,7 +121,7 @@ namespace rl
 			
 			::std::size_t doGetVerboseLevel();
 			
-			::std::vector< ::std::string> doPrintVariable(const ::std::vector< ::std::string>& variables);
+			::std::vector<::std::string> doPrintVariable(const ::std::vector<::std::string>& variables);
 			
 			::boost::dynamic_bitset<> doSetDataAcquisitionMask(const ::boost::dynamic_bitset<>& mask);
 			

@@ -45,7 +45,7 @@ namespace rl
 			{
 			}
 			
-			explicit NodeSet(const ::std::shared_ptr< ::xmlNodeSet>& nodeSet) :
+			explicit NodeSet(const ::std::shared_ptr<::xmlNodeSet>& nodeSet) :
 				nodeSet(nodeSet)
 			{
 			}
@@ -97,7 +97,7 @@ namespace rl
 		protected:
 			
 		private:
-			::std::shared_ptr< ::xmlNodeSet> nodeSet;
+			::std::shared_ptr<::xmlNodeSet> nodeSet;
 		};
 	}
 }

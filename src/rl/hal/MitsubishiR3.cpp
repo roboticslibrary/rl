@@ -136,7 +136,7 @@ namespace rl
 				state.stopSts.isProgramSelectEnable = stopSts[4];
 				state.stopSts.isPseudoInput = stopSts[6];
 				
-				::std::vector< ::std::string> tokens;
+				::std::vector<::std::string> tokens;
 				::std::string tmp = reply.substr(7);
 				::boost::split(tokens, tmp, ::boost::is_any_of(";"));
 				
@@ -219,7 +219,7 @@ namespace rl
 			{
 				::std::array<Hand, 8> state;
 				
-				::std::vector< ::std::string> tokens;
+				::std::vector<::std::string> tokens;
 				::std::string tmp = reply.substr(3);
 				::boost::split(tokens, tmp, ::boost::is_any_of(";"));
 				
@@ -314,7 +314,7 @@ namespace rl
 			
 			if ("QoK" == reply.substr(0, 3))
 			{
-				::std::vector< ::std::string> tokens;
+				::std::vector<::std::string> tokens;
 				::std::string tmp = reply.substr(3);
 				::boost::split(tokens, tmp, ::boost::is_any_of(";"));
 				

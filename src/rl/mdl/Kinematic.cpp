@@ -137,10 +137,10 @@ namespace rl
 			{
 				invJ.setZero();
 				
-				::Eigen::JacobiSVD< ::rl::math::Matrix> svd(J, ::Eigen::ComputeFullU | ::Eigen::ComputeFullV);
+				::Eigen::JacobiSVD<::rl::math::Matrix> svd(J, ::Eigen::ComputeFullU | ::Eigen::ComputeFullV);
 				
 				::rl::math::Real wMin = svd.singularValues().minCoeff();
-				::rl::math::Real lambdaSqr = wMin < static_cast< ::rl::math::Real>(1.0e-9) ? (1 - ::std::pow((wMin / static_cast< ::rl::math::Real>(1.0e-9)), 2)) * ::std::pow(lambda, 2) : 0;
+				::rl::math::Real lambdaSqr = wMin < static_cast<::rl::math::Real>(1.0e-9) ? (1 - ::std::pow((wMin / static_cast<::rl::math::Real>(1.0e-9)), 2)) * ::std::pow(lambda, 2) : 0;
 				
 				for (::std::ptrdiff_t i = 0; i < svd.nonzeroSingularValues(); ++i)
 				{
@@ -225,8 +225,8 @@ namespace rl
 		bool
 		Kinematic::isSingular(const ::rl::math::Matrix& J) const
 		{
-			::Eigen::JacobiSVD< ::rl::math::Matrix> svd(J);
-			return (::std::abs(svd.singularValues()(svd.singularValues().size() - 1)) > ::std::numeric_limits< ::rl::math::Real>::epsilon()) ? false : true;
+			::Eigen::JacobiSVD<::rl::math::Matrix> svd(J);
+			return (::std::abs(svd.singularValues()(svd.singularValues().size() - 1)) > ::std::numeric_limits<::rl::math::Real>::epsilon()) ? false : true;
 		}
 		
 		void

@@ -62,7 +62,7 @@ main(int argc, char** argv)
 				t1,
 				q3,
 				0,
-				std::numeric_limits< ::rl::math::Real>::infinity(),
+				std::numeric_limits<::rl::math::Real>::infinity(),
 				static_cast<rl::math::Real>(1.0e-6),
 				100000,
 				std::chrono::nanoseconds::max()

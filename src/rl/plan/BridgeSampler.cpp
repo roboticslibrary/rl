@@ -33,7 +33,7 @@ namespace rl
 	{
 		BridgeSampler::BridgeSampler() :
 			GaussianSampler(),
-			ratio(static_cast< ::rl::math::Real>(5) / static_cast< ::rl::math::Real>(6))
+			ratio(static_cast<::rl::math::Real>(5) / static_cast<::rl::math::Real>(6))
 		{
 		}
 		
@@ -68,7 +68,7 @@ namespace rl
 						
 						if (this->model->isColliding(q3))
 						{
-							this->model->interpolate(q2, q3, static_cast< ::rl::math::Real>(0.5), q);
+							this->model->interpolate(q2, q3, static_cast<::rl::math::Real>(0.5), q);
 							
 							if (!this->model->isColliding(q))
 							{

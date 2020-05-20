@@ -88,7 +88,7 @@ namespace rl
 		protected:
 			
 		private:
-			::std::shared_ptr< ::xmlParserCtxt> parser;
+			::std::shared_ptr<::xmlParserCtxt> parser;
 		};
 	}
 }

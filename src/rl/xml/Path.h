@@ -105,7 +105,7 @@ namespace rl
 		protected:
 			
 		private:
-			::std::shared_ptr< ::xmlXPathContext> context;
+			::std::shared_ptr<::xmlXPathContext> context;
 			
 			::xmlDocPtr document;
 		};

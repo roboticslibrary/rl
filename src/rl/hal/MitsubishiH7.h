@@ -80,7 +80,7 @@ namespace rl
 			
 			::rl::math::Transform getCartesianPosition() const;
 			
-			::Eigen::Matrix< ::std::int32_t, ::Eigen::Dynamic, 1> getCurrentFeedback() const;
+			::Eigen::Matrix<::std::int32_t, ::Eigen::Dynamic, 1> getCurrentFeedback() const;
 			
 			::std::size_t getFilter() const;
 			
@@ -90,7 +90,7 @@ namespace rl
 			
 			Mode getMode() const;
 			
-			::Eigen::Matrix< ::std::int32_t, ::Eigen::Dynamic, 1> getMotorPulse() const;
+			::Eigen::Matrix<::std::int32_t, ::Eigen::Dynamic, 1> getMotorPulse() const;
 			
 			void halt();
 			
@@ -110,7 +110,7 @@ namespace rl
 			
 			void setMode(const Mode& mode);
 			
-			void setMotorPulse(const ::Eigen::Matrix< ::std::int32_t, ::Eigen::Dynamic, 1>& p);
+			void setMotorPulse(const ::Eigen::Matrix<::std::int32_t, ::Eigen::Dynamic, 1>& p);
 			
 			void setOutput(const ::std::uint16_t& bitTop, const ::std::uint16_t& bitMask, const ::std::uint16_t& ioData);
 			

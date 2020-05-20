@@ -53,7 +53,7 @@ namespace rl
 			return this->container.empty();
 		}
 		
-		::boost::optional< ::std::size_t>
+		::boost::optional<::std::size_t>
 		KdtreeBoundingBoxNearestNeighbors::getChecks() const
 		{
 			return this->container.getChecks();
@@ -84,7 +84,7 @@ namespace rl
 		}
 		
 		void
-		KdtreeBoundingBoxNearestNeighbors::setChecks(const ::boost::optional< ::std::size_t>& checks)
+		KdtreeBoundingBoxNearestNeighbors::setChecks(const ::boost::optional<::std::size_t>& checks)
 		{
 			this->container.setChecks(checks);
 		}

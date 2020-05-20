@@ -73,7 +73,7 @@ namespace rl
 			
 			::rl::xml::Path path(document);
 			
-			::rl::xml::NodeSet scenes = path.eval("(/rl/sg|/rlsg)/scene").getValue< ::rl::xml::NodeSet>();
+			::rl::xml::NodeSet scenes = path.eval("(/rl/sg|/rlsg)/scene").getValue<::rl::xml::NodeSet>();
 			
 			if (scenes.empty())
 			{
@@ -102,7 +102,7 @@ namespace rl
 				
 				// model
 				
-				::rl::xml::NodeSet models = ::rl::xml::Path(document, scenes[i]).eval("model").getValue< ::rl::xml::NodeSet>();
+				::rl::xml::NodeSet models = ::rl::xml::Path(document, scenes[i]).eval("model").getValue<::rl::xml::NodeSet>();
 				
 				for (int j = 0; j < models.size(); ++j)
 				{
@@ -123,13 +123,13 @@ namespace rl
 					
 					// body
 					
-					::rl::xml::NodeSet bodies = path.eval("body").getValue< ::rl::xml::NodeSet>();
+					::rl::xml::NodeSet bodies = path.eval("body").getValue<::rl::xml::NodeSet>();
 					
 					for (int k = 0; k < bodies.size(); ++k)
 					{
 						::SoSearchAction bodySearchAction;
 						bodySearchAction.setName(bodies[k].getProperty("name").c_str());
-						bodySearchAction.apply(static_cast< ::SoFullPath*>(modelSearchAction.getPath())->getTail());
+						bodySearchAction.apply(static_cast<::SoFullPath*>(modelSearchAction.getPath())->getTail());
 						
 						if (nullptr == bodySearchAction.getPath())
 						{
@@ -141,11 +141,11 @@ namespace rl
 						body->setName(bodies[k].getProperty("name"));
 						
 						::SoSearchAction pathSearchAction;
-						pathSearchAction.setNode(static_cast< ::SoFullPath*>(bodySearchAction.getPath())->getTail());
+						pathSearchAction.setNode(static_cast<::SoFullPath*>(bodySearchAction.getPath())->getTail());
 						pathSearchAction.apply(root);
 						
 						::SoGetMatrixAction bodyGetMatrixAction(viewportRegion);
-						bodyGetMatrixAction.apply(static_cast< ::SoFullPath*>(pathSearchAction.getPath()));
+						bodyGetMatrixAction.apply(static_cast<::SoFullPath*>(pathSearchAction.getPath()));
 						::SbMatrix bodyMatrix = bodyGetMatrixAction.getMatrix();
 						
 						if (!scene->isScalingSupported())
@@ -159,7 +159,7 @@ namespace rl
 							
 							for (int l = 0; l < 3; ++l)
 							{
-								if (::std::abs(bodyScaleFactor[l] - 1) > static_cast< ::rl::math::Real>(1.0e-6))
+								if (::std::abs(bodyScaleFactor[l] - 1) > static_cast<::rl::math::Real>(1.0e-6))
 								{
 									throw Exception("rl::sg::XmlFactory::load() - bodyScaleFactor not supported in body '" + body->getName() + "'");
 								}
@@ -178,9 +178,9 @@ namespace rl
 						
 						body->setFrame(frame);
 						
-						if (static_cast< ::SoFullPath*>(bodySearchAction.getPath())->getTail()->isOfType(::SoVRMLTransform::getClassTypeId()))
+						if (static_cast<::SoFullPath*>(bodySearchAction.getPath())->getTail()->isOfType(::SoVRMLTransform::getClassTypeId()))
 						{
-							::SoVRMLTransform* bodyVrmlTransform = static_cast< ::SoVRMLTransform*>(static_cast< ::SoFullPath*>(bodySearchAction.getPath())->getTail());
+							::SoVRMLTransform* bodyVrmlTransform = static_cast<::SoVRMLTransform*>(static_cast<::SoFullPath*>(bodySearchAction.getPath())->getTail());
 							
 							for (int l = 0; l < 3; ++l)
 							{
@@ -195,15 +195,15 @@ namespace rl
 						::SoSearchAction shapeSearchAction;
 						shapeSearchAction.setInterest(::SoSearchAction::ALL);
 						shapeSearchAction.setType(::SoVRMLShape::getClassTypeId());
-						shapeSearchAction.apply(static_cast< ::SoFullPath*>(bodySearchAction.getPath())->getTail());
+						shapeSearchAction.apply(static_cast<::SoFullPath*>(bodySearchAction.getPath())->getTail());
 						
 						for (int l = 0; l < shapeSearchAction.getPaths().getLength(); ++l)
 						{
-							::SoFullPath* path = static_cast< ::SoFullPath*>(shapeSearchAction.getPaths()[l]);
+							::SoFullPath* path = static_cast<::SoFullPath*>(shapeSearchAction.getPaths()[l]);
 							
 							if (path->getLength() > 1)
 							{
-								path = static_cast< ::SoFullPath*>(shapeSearchAction.getPaths()[l]->copy(1, static_cast< ::SoFullPath*>(shapeSearchAction.getPaths()[l])->getLength() - 1));
+								path = static_cast<::SoFullPath*>(shapeSearchAction.getPaths()[l]->copy(1, static_cast<::SoFullPath*>(shapeSearchAction.getPaths()[l])->getLength() - 1));
 							}
 							
 							pathList.append(path);
@@ -223,14 +223,14 @@ namespace rl
 								
 								for (int m = 0; m < 3; ++m)
 								{
-									if (::std::abs(shapeScaleFactor[m] - 1) > static_cast< ::rl::math::Real>(1.0e-6))
+									if (::std::abs(shapeScaleFactor[m] - 1) > static_cast<::rl::math::Real>(1.0e-6))
 									{
 										throw Exception("rl::sg::XmlFactory::load() - shapeScaleFactor not supported");
 									}
 								}
 							}
 							
-							::SoVRMLShape* shapeVrmlShape = static_cast< ::SoVRMLShape*>(static_cast< ::SoFullPath*>(shapeSearchAction.getPaths()[l])->getTail());
+							::SoVRMLShape* shapeVrmlShape = static_cast<::SoVRMLShape*>(static_cast<::SoFullPath*>(shapeSearchAction.getPaths()[l])->getTail());
 							
 							Shape* shape = body->create(shapeVrmlShape);
 							
@@ -282,7 +282,7 @@ namespace rl
 		void
 		XmlFactory::triangleCallback(void* userData, SoCallbackAction* action, const SoPrimitiveVertex* v1, const SoPrimitiveVertex* v2, const SoPrimitiveVertex* v3)
 		{
-			::std::vector< ::rl::math::Vector3>* points = static_cast< ::std::vector< ::rl::math::Vector3>*>(userData);
+			::std::vector<::rl::math::Vector3>* points = static_cast<::std::vector<::rl::math::Vector3>*>(userData);
 			
 			::rl::math::Vector3 p1;
 			p1(0) = v1->getPoint()[0];

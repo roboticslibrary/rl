@@ -60,7 +60,7 @@ namespace rl
 		{
 			this->send("addToLog " + message + "\n");
 			
-			::std::array< ::std::uint8_t, 4096> buffer;
+			::std::array<::std::uint8_t, 4096> buffer;
 			::std::size_t size = this->socket.recv(buffer.data(), buffer.size());
 			::std::string reply(reinterpret_cast<char*>(buffer.data()), size);
 			
@@ -83,7 +83,7 @@ namespace rl
 		{
 			this->send("brake release\n");
 			
-			::std::array< ::std::uint8_t, 4096> buffer;
+			::std::array<::std::uint8_t, 4096> buffer;
 			::std::size_t size = this->socket.recv(buffer.data(), buffer.size());
 			::std::string reply(reinterpret_cast<char*>(buffer.data()), size);
 			
@@ -102,7 +102,7 @@ namespace rl
 		{
 			this->send("close popup\n");
 			
-			::std::array< ::std::uint8_t, 4096> buffer;
+			::std::array<::std::uint8_t, 4096> buffer;
 			::std::size_t size = this->socket.recv(buffer.data(), buffer.size());
 			::std::string reply(reinterpret_cast<char*>(buffer.data()), size);
 			
@@ -121,7 +121,7 @@ namespace rl
 		{
 			this->send("close safety popup\n");
 			
-			::std::array< ::std::uint8_t, 4096> buffer;
+			::std::array<::std::uint8_t, 4096> buffer;
 			::std::size_t size = this->socket.recv(buffer.data(), buffer.size());
 			::std::string reply(reinterpret_cast<char*>(buffer.data()), size);
 			
@@ -140,7 +140,7 @@ namespace rl
 		{
 			this->send("get loaded program\n");
 			
-			::std::array< ::std::uint8_t, 4096> buffer;
+			::std::array<::std::uint8_t, 4096> buffer;
 			::std::size_t size = this->socket.recv(buffer.data(), buffer.size());
 			::std::string reply(reinterpret_cast<char*>(buffer.data()), size);
 			
@@ -163,7 +163,7 @@ namespace rl
 		{
 			this->send("isProgramSaved\n");
 			
-			::std::array< ::std::uint8_t, 4096> buffer;
+			::std::array<::std::uint8_t, 4096> buffer;
 			::std::size_t size = this->socket.recv(buffer.data(), buffer.size());
 			::std::string reply(reinterpret_cast<char*>(buffer.data()), size);
 			
@@ -186,7 +186,7 @@ namespace rl
 		{
 			this->send("load " + program + "\n");
 			
-			::std::array< ::std::uint8_t, 4096> buffer;
+			::std::array<::std::uint8_t, 4096> buffer;
 			::std::size_t size = this->socket.recv(buffer.data(), buffer.size());
 			::std::string reply(reinterpret_cast<char*>(buffer.data()), size);
 			
@@ -213,7 +213,7 @@ namespace rl
 		{
 			this->send("load installation " + installation + "\n");
 			
-			::std::array< ::std::uint8_t, 4096> buffer;
+			::std::array<::std::uint8_t, 4096> buffer;
 			::std::size_t size = this->socket.recv(buffer.data(), buffer.size());
 			::std::string reply(reinterpret_cast<char*>(buffer.data()), size);
 			
@@ -240,7 +240,7 @@ namespace rl
 		{
 			this->send("pause\n");
 			
-			::std::array< ::std::uint8_t, 4096> buffer;
+			::std::array<::std::uint8_t, 4096> buffer;
 			::std::size_t size = this->socket.recv(buffer.data(), buffer.size());
 			::std::string reply(reinterpret_cast<char*>(buffer.data()), size);
 			
@@ -263,7 +263,7 @@ namespace rl
 		{
 			this->send("play\n");
 			
-			::std::array< ::std::uint8_t, 4096> buffer;
+			::std::array<::std::uint8_t, 4096> buffer;
 			::std::size_t size = this->socket.recv(buffer.data(), buffer.size());
 			::std::string reply(reinterpret_cast<char*>(buffer.data()), size);
 			
@@ -286,7 +286,7 @@ namespace rl
 		{
 			this->send("PolyscopeVersion\n");
 			
-			::std::array< ::std::uint8_t, 4096> buffer;
+			::std::array<::std::uint8_t, 4096> buffer;
 			::std::size_t size = this->socket.recv(buffer.data(), buffer.size());
 			::std::string reply(reinterpret_cast<char*>(buffer.data()), size);
 			
@@ -298,7 +298,7 @@ namespace rl
 		{
 			this->send("popup " + text + "\n");
 			
-			::std::array< ::std::uint8_t, 4096> buffer;
+			::std::array<::std::uint8_t, 4096> buffer;
 			::std::size_t size = this->socket.recv(buffer.data(), buffer.size());
 			::std::string reply(reinterpret_cast<char*>(buffer.data()), size);
 			
@@ -317,7 +317,7 @@ namespace rl
 		{
 			this->send("power off\n");
 			
-			::std::array< ::std::uint8_t, 4096> buffer;
+			::std::array<::std::uint8_t, 4096> buffer;
 			::std::size_t size = this->socket.recv(buffer.data(), buffer.size());
 			::std::string reply(reinterpret_cast<char*>(buffer.data()), size);
 			
@@ -336,7 +336,7 @@ namespace rl
 		{
 			this->send("power on\n");
 			
-			::std::array< ::std::uint8_t, 4096> buffer;
+			::std::array<::std::uint8_t, 4096> buffer;
 			::std::size_t size = this->socket.recv(buffer.data(), buffer.size());
 			::std::string reply(reinterpret_cast<char*>(buffer.data()), size);
 			
@@ -355,7 +355,7 @@ namespace rl
 		{
 			this->send("programState\n");
 			
-			::std::array< ::std::uint8_t, 4096> buffer;
+			::std::array<::std::uint8_t, 4096> buffer;
 			::std::size_t size = this->socket.recv(buffer.data(), buffer.size());
 			::std::string reply(reinterpret_cast<char*>(buffer.data()), size);
 			
@@ -382,7 +382,7 @@ namespace rl
 		{
 			this->send("robotmode\n");
 			
-			::std::array< ::std::uint8_t, 4096> buffer;
+			::std::array<::std::uint8_t, 4096> buffer;
 			::std::size_t size = this->socket.recv(buffer.data(), buffer.size());
 			::std::string reply(reinterpret_cast<char*>(buffer.data()), size);
 			
@@ -433,7 +433,7 @@ namespace rl
 		{
 			this->send("running\n");
 			
-			::std::array< ::std::uint8_t, 4096> buffer;
+			::std::array<::std::uint8_t, 4096> buffer;
 			::std::size_t size = this->socket.recv(buffer.data(), buffer.size());
 			::std::string reply(reinterpret_cast<char*>(buffer.data()), size);
 			
@@ -456,7 +456,7 @@ namespace rl
 		{
 			this->send("safetymode\n");
 			
-			::std::array< ::std::uint8_t, 4096> buffer;
+			::std::array<::std::uint8_t, 4096> buffer;
 			::std::size_t size = this->socket.recv(buffer.data(), buffer.size());
 			::std::string reply(reinterpret_cast<char*>(buffer.data()), size);
 			
@@ -507,7 +507,7 @@ namespace rl
 		{
 			this->send("shutdown\n");
 			
-			::std::array< ::std::uint8_t, 4096> buffer;
+			::std::array<::std::uint8_t, 4096> buffer;
 			::std::size_t size = this->socket.recv(buffer.data(), buffer.size());
 			::std::string reply(reinterpret_cast<char*>(buffer.data()), size);
 			
@@ -526,7 +526,7 @@ namespace rl
 		{
 			this->send("stop\n");
 			
-			::std::array< ::std::uint8_t, 4096> buffer;
+			::std::array<::std::uint8_t, 4096> buffer;
 			::std::size_t size = this->socket.recv(buffer.data(), buffer.size());
 			::std::string reply(reinterpret_cast<char*>(buffer.data()), size);
 			
@@ -549,7 +549,7 @@ namespace rl
 		{
 			this->send("quit\n");
 			
-			::std::array< ::std::uint8_t, 4096> buffer;
+			::std::array<::std::uint8_t, 4096> buffer;
 			::std::size_t size = this->socket.recv(buffer.data(), buffer.size());
 			::std::string reply(reinterpret_cast<char*>(buffer.data()), size);
 			
@@ -568,7 +568,7 @@ namespace rl
 		{
 			this->send("unlock protective stop\n");
 			
-			::std::array< ::std::uint8_t, 4096> buffer;
+			::std::array<::std::uint8_t, 4096> buffer;
 			::std::size_t size = this->socket.recv(buffer.data(), buffer.size());
 			::std::string reply(reinterpret_cast<char*>(buffer.data()), size);
 			
@@ -590,7 +590,7 @@ namespace rl
 			this->socket.setOption(::rl::hal::Socket::OPTION_NODELAY, 1);
 			this->setConnected(true);
 			
-			::std::array< ::std::uint8_t, 4096> buffer;
+			::std::array<::std::uint8_t, 4096> buffer;
 			::std::size_t size = this->socket.recv(buffer.data(), buffer.size());
 			::std::string reply(reinterpret_cast<char*>(buffer.data()), size);
 		}

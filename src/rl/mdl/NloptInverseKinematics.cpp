@@ -79,7 +79,7 @@ namespace rl
 			
 			if (nullptr != grad)
 			{
-				::Eigen::Map< ::Eigen::VectorXd> grad2(grad, n, 1);
+				::Eigen::Map<::Eigen::VectorXd> grad2(grad, n, 1);
 				ik->kinematic->calculateJacobian();
 				grad2 = -2 * ik->kinematic->getJacobian().transpose() * dx;
 			}

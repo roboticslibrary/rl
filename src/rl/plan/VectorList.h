@@ -34,7 +34,7 @@ namespace rl
 {
 	namespace plan
 	{
-		typedef ::std::list< ::rl::math::Vector> VectorList;
+		typedef ::std::list<::rl::math::Vector> VectorList;
 	}
 }
 

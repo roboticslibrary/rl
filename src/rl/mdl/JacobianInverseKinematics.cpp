@@ -33,7 +33,7 @@ namespace rl
 	{
 		JacobianInverseKinematics::JacobianInverseKinematics(Kinematic* kinematic) :
 			IterativeInverseKinematics(kinematic),
-			delta(::std::numeric_limits< ::rl::math::Real>::infinity()),
+			delta(::std::numeric_limits<::rl::math::Real>::infinity()),
 			method(METHOD_SVD),
 			randDistribution(0, 1),
 			randEngine(::std::random_device()())

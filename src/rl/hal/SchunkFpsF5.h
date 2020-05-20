@@ -107,7 +107,7 @@ namespace rl
 			
 			bool closed;
 			
-			::std::set< ::std::pair< ::rl::math::Real, ::rl::math::Real>> fulcrums;
+			::std::set<::std::pair<::rl::math::Real, ::rl::math::Real>> fulcrums;
 			
 			::rl::math::Real interpolated;
 			

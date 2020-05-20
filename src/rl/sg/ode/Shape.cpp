@@ -53,11 +53,11 @@ namespace rl
 				transform(::rl::math::Transform::Identity()),
 				vertices()
 			{
-				::SoVRMLGeometry* geometry = static_cast< ::SoVRMLGeometry*>(shape->geometry.getValue());
+				::SoVRMLGeometry* geometry = static_cast<::SoVRMLGeometry*>(shape->geometry.getValue());
 				
 				if (geometry->isOfType(::SoVRMLBox::getClassTypeId()))
 				{
-					::SoVRMLBox* box = static_cast< ::SoVRMLBox*>(geometry);
+					::SoVRMLBox* box = static_cast<::SoVRMLBox*>(geometry);
 					this->geom = ::dCreateBox(static_cast<Body*>(this->getBody())->space, box->size.getValue()[0], box->size.getValue()[1], box->size.getValue()[2]);
 				}
 				else if (geometry->isOfType(::SoVRMLCone::getClassTypeId()))
@@ -66,7 +66,7 @@ namespace rl
 				}
 				else if (geometry->isOfType(::SoVRMLCylinder::getClassTypeId()))
 				{
-					::SoVRMLCylinder* cylinder = static_cast< ::SoVRMLCylinder*>(geometry);
+					::SoVRMLCylinder* cylinder = static_cast<::SoVRMLCylinder*>(geometry);
 					this->geom = ::dCreateCylinder(static_cast<Body*>(this->getBody())->space, cylinder->radius.getValue(), cylinder->height.getValue());
 					
 					this->baseTransform(0, 0) = 1;
@@ -98,7 +98,7 @@ namespace rl
 				}
 				else if (geometry->isOfType(::SoVRMLSphere::getClassTypeId()))
 				{
-					::SoVRMLSphere* sphere = static_cast< ::SoVRMLSphere*>(geometry);
+					::SoVRMLSphere* sphere = static_cast<::SoVRMLSphere*>(geometry);
 					this->geom = ::dCreateSphere(static_cast<Body*>(this->getBody())->space, sphere->radius.getValue());
 				}
 				else
@@ -165,9 +165,9 @@ namespace rl
 				
 				::dGeomSetOffsetPosition(
 					this->geom,
-					static_cast< ::dReal>(totalTransform(0, 3)),
-					static_cast< ::dReal>(totalTransform(1, 3)),
-					static_cast< ::dReal>(totalTransform(2, 3))
+					static_cast<::dReal>(totalTransform(0, 3)),
+					static_cast<::dReal>(totalTransform(1, 3)),
+					static_cast<::dReal>(totalTransform(2, 3))
 				);
 				
 				::dMatrix3 rotation;
@@ -176,7 +176,7 @@ namespace rl
 				{
 					for (::std::size_t j = 0; j < 3; ++j)
 					{
-						rotation[i * 4 + j] = static_cast< ::dReal>(totalTransform(i, j));
+						rotation[i * 4 + j] = static_cast<::dReal>(totalTransform(i, j));
 					}
 				}
 				

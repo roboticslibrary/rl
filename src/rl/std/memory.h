@@ -41,7 +41,7 @@ namespace rl
 		using ::std::make_unique;
 #else
 		template <typename T>
-		typename ::std::enable_if< ::std::is_array<T>::value, ::std::unique_ptr<T>>::type
+		typename ::std::enable_if<::std::is_array<T>::value, ::std::unique_ptr<T>>::type
 		make_unique(::std::size_t n)
 		{
 			return ::std::unique_ptr<T>(new typename ::std::remove_extent<T>::type[n]());
@@ -55,7 +55,7 @@ namespace rl
 		}
 		
 		template <typename T, typename... Args>
-		typename ::std::enable_if< ::std::extent<T>::value != 0, ::std::unique_ptr<T>>::type
+		typename ::std::enable_if<::std::extent<T>::value != 0, ::std::unique_ptr<T>>::type
 		make_unique(Args&&...) = delete;
 #endif
 	}

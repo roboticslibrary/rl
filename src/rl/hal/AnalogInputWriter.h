@@ -43,7 +43,7 @@ namespace rl
 			
 			virtual ~AnalogInputWriter();
 			
-			virtual void setAnalogInput(const ::std::vector< ::rl::math::Real>& values);
+			virtual void setAnalogInput(const ::std::vector<::rl::math::Real>& values);
 			
 			virtual void setAnalogInput(const ::std::size_t& i, const ::rl::math::Real& value) = 0;
 			

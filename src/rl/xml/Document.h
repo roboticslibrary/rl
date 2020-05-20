@@ -71,7 +71,7 @@ namespace rl
 				int size;
 				
 				::xmlDocDumpFormatMemory(this->doc.get(), &mem, &size, format ? 1 : 0);
-				::boost::shared_array< ::xmlChar> memory(mem, ::xmlFree);
+				::boost::shared_array<::xmlChar> memory(mem, ::xmlFree);
 				
 				return nullptr != memory.get() ? reinterpret_cast<const char*>(memory.get()) : ::std::string();
 			}
@@ -82,7 +82,7 @@ namespace rl
 				int size;
 				
 				::xmlDocDumpMemory(this->doc.get(), &mem, &size);
-				::boost::shared_array< ::xmlChar> memory(mem, ::xmlFree);
+				::boost::shared_array<::xmlChar> memory(mem, ::xmlFree);
 				
 				return nullptr != memory.get() ? reinterpret_cast<const char*>(memory.get()) : ::std::string();
 			}
@@ -173,7 +173,7 @@ namespace rl
 		protected:
 			
 		private:
-			::std::unique_ptr< ::xmlDoc, decltype(&::xmlFreeDoc)> doc;
+			::std::unique_ptr<::xmlDoc, decltype(&::xmlFreeDoc)> doc;
 		};
 	}
 }

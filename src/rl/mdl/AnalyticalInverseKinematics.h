@@ -40,10 +40,10 @@ namespace rl
 			
 			virtual ~AnalyticalInverseKinematics();
 			
-			const ::std::vector< ::rl::math::Vector>& getSolutions() const;
+			const ::std::vector<::rl::math::Vector>& getSolutions() const;
 			
 		protected:
-			::std::vector< ::rl::math::Vector> solutions;
+			::std::vector<::rl::math::Vector> solutions;
 			
 		private:
 			

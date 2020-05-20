@@ -34,7 +34,7 @@ namespace rl
 	{
 		AddRrtConCon::AddRrtConCon() :
 			RrtConCon(),
-			alpha(static_cast< ::rl::math::Real>(0.05)),
+			alpha(static_cast<::rl::math::Real>(0.05)),
 			lower(2),
 			radius(20)
 		{
@@ -50,7 +50,7 @@ namespace rl
 			::std::shared_ptr<VertexBundle> bundle = ::std::make_shared<VertexBundle>();
 			bundle->index = ::boost::num_vertices(tree) - 1;
 			bundle->q = q;
-			bundle->radius = ::std::numeric_limits< ::rl::math::Real>::max();
+			bundle->radius = ::std::numeric_limits<::rl::math::Real>::max();
 			
 			Vertex v = ::boost::add_vertex(tree);
 			tree[v] = bundle;
@@ -82,8 +82,8 @@ namespace rl
 		{
 			this->time = ::std::chrono::steady_clock::now();
 			
-			this->begin[0] = this->addVertex(this->tree[0], ::std::make_shared< ::rl::math::Vector>(*this->start));
-			this->begin[1] = this->addVertex(this->tree[1], ::std::make_shared< ::rl::math::Vector>(*this->goal));
+			this->begin[0] = this->addVertex(this->tree[0], ::std::make_shared<::rl::math::Vector>(*this->start));
+			this->begin[1] = this->addVertex(this->tree[1], ::std::make_shared<::rl::math::Vector>(*this->goal));
 			
 			Tree* a = &this->tree[0];
 			Tree* b = &this->tree[1];
@@ -107,7 +107,7 @@ namespace rl
 					
 					if (nullptr != aConnected)
 					{
-						if (get(*a, aNearest.second)->radius < ::std::numeric_limits< ::rl::math::Real>::max())
+						if (get(*a, aNearest.second)->radius < ::std::numeric_limits<::rl::math::Real>::max())
 						{
 							get(*a, aNearest.second)->radius *= (1 + this->alpha);
 						}
@@ -127,7 +127,7 @@ namespace rl
 					}
 					else
 					{
-						if (get(*a, aNearest.second)->radius < ::std::numeric_limits< ::rl::math::Real>::max())
+						if (get(*a, aNearest.second)->radius < ::std::numeric_limits<::rl::math::Real>::max())
 						{
 							get(*a, aNearest.second)->radius *= (1 - this->alpha);
 							get(*a, aNearest.second)->radius = ::std::max(this->lower, get(*a, aNearest.second)->radius);

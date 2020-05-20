@@ -130,13 +130,13 @@ namespace rl
 		::rl::math::Real
 		RobotiqModelC::getPositionPercentage() const
 		{
-			return this->in[7] / static_cast< ::rl::math::Real>(0xFF);
+			return this->in[7] / static_cast<::rl::math::Real>(0xFF);
 		}
 		
 		::rl::math::Real
 		RobotiqModelC::getPositionRequestEchoPercentage() const
 		{
-			return this->in[6] / static_cast< ::rl::math::Real>(0xFF);
+			return this->in[6] / static_cast<::rl::math::Real>(0xFF);
 		}
 		
 		void
@@ -203,19 +203,19 @@ namespace rl
 		void
 		RobotiqModelC::setForcePercentage(const ::rl::math::Real& forcePercentage)
 		{
-			this->out[12] = static_cast< ::std::uint8_t>(0xFF * forcePercentage);
+			this->out[12] = static_cast<::std::uint8_t>(0xFF * forcePercentage);
 		}
 		
 		void
 		RobotiqModelC::setPositionPercentage(const ::rl::math::Real& positionPercentage)
 		{
-			this->out[10] = static_cast< ::std::uint8_t>(0xFF * positionPercentage);
+			this->out[10] = static_cast<::std::uint8_t>(0xFF * positionPercentage);
 		}
 		
 		void
 		RobotiqModelC::setSpeedPercentage(const ::rl::math::Real& speedPercentage)
 		{
-			this->out[11] = static_cast< ::std::uint8_t>(0xFF * speedPercentage);
+			this->out[11] = static_cast<::std::uint8_t>(0xFF * speedPercentage);
 		}
 		
 		void

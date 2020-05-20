@@ -43,7 +43,7 @@ namespace rl
 		::std::size_t
 		Verifier::getSteps(const ::rl::math::Real& d)
 		{
-			return static_cast< ::std::size_t>(::std::ceil(d / this->delta));
+			return static_cast<::std::size_t>(::std::ceil(d / this->delta));
 		}
 	}
 }

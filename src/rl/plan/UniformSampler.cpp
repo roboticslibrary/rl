@@ -57,7 +57,7 @@ namespace rl
 			return this->model->generatePositionUniform(rand);
 		}
 		
-		::std::uniform_real_distribution< ::rl::math::Real>::result_type
+		::std::uniform_real_distribution<::rl::math::Real>::result_type
 		UniformSampler::rand()
 		{
 			return this->randDistribution(this->randEngine);

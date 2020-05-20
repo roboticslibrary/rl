@@ -77,7 +77,7 @@ namespace rl
 			
 			::rl::xml::Path path(document);
 			
-			::rl::xml::NodeSet robots = path.eval("/robot").getValue< ::rl::xml::NodeSet>();
+			::rl::xml::NodeSet robots = path.eval("/robot").getValue<::rl::xml::NodeSet>();
 			
 			if (robots.empty())
 			{
@@ -88,14 +88,14 @@ namespace rl
 			
 			// name
 			
-			model->setName(path.eval("string(@name)").getValue< ::std::string>());
+			model->setName(path.eval("string(@name)").getValue<::std::string>());
 ::std::cout << model->getName() << ::std::endl;
 			
 			// links
 			
-			::rl::xml::NodeSet links = path.eval("link").getValue< ::rl::xml::NodeSet>();
+			::rl::xml::NodeSet links = path.eval("link").getValue<::rl::xml::NodeSet>();
 			
-			::std::unordered_map< ::std::string, Frame*> name2frame;
+			::std::unordered_map<::std::string, Frame*> name2frame;
 			
 			for (int j = 0; j < links.size(); ++j)
 			{
@@ -108,14 +108,14 @@ namespace rl
 				
 				if (path.eval("count(inertial/origin/@xyz) > 0").getValue<bool>())
 				{
-					::std::vector< ::std::string> xyz;
-					::std::string tmp = path.eval("string(inertial/origin/@xyz)").getValue< ::std::string>();
+					::std::vector<::std::string> xyz;
+					::std::string tmp = path.eval("string(inertial/origin/@xyz)").getValue<::std::string>();
 					::boost::split(xyz, tmp, ::boost::algorithm::is_space(), ::boost::algorithm::token_compress_on);
 					
 					b->setCenterOfMass(
-						::boost::lexical_cast< ::rl::math::Real>(xyz[0]),
-						::boost::lexical_cast< ::rl::math::Real>(xyz[1]),
-						::boost::lexical_cast< ::rl::math::Real>(xyz[2])
+						::boost::lexical_cast<::rl::math::Real>(xyz[0]),
+						::boost::lexical_cast<::rl::math::Real>(xyz[1]),
+						::boost::lexical_cast<::rl::math::Real>(xyz[2])
 					);
 				}
 				else
@@ -130,41 +130,41 @@ namespace rl
 				}
 				
 				b->setInertia(
-					path.eval("number(inertial/inertia/@ixx)").getValue< ::rl::math::Real>(1),
-					path.eval("number(inertial/inertia/@iyy)").getValue< ::rl::math::Real>(1),
-					path.eval("number(inertial/inertia/@izz)").getValue< ::rl::math::Real>(1),
-					path.eval("number(inertial/inertia/@iyz)").getValue< ::rl::math::Real>(0),
-					path.eval("number(inertial/inertia/@ixz)").getValue< ::rl::math::Real>(0),
-					path.eval("number(inertial/inertia/@ixy)").getValue< ::rl::math::Real>(0)
+					path.eval("number(inertial/inertia/@ixx)").getValue<::rl::math::Real>(1),
+					path.eval("number(inertial/inertia/@iyy)").getValue<::rl::math::Real>(1),
+					path.eval("number(inertial/inertia/@izz)").getValue<::rl::math::Real>(1),
+					path.eval("number(inertial/inertia/@iyz)").getValue<::rl::math::Real>(0),
+					path.eval("number(inertial/inertia/@ixz)").getValue<::rl::math::Real>(0),
+					path.eval("number(inertial/inertia/@ixy)").getValue<::rl::math::Real>(0)
 				);
 ::std::cout << "\tinertia: " << b->ic.voigt6().transpose() << ::std::endl;
 				
 				b->setMass(
-					path.eval("number(inertial/mass/@value)").getValue< ::rl::math::Real>(1)
+					path.eval("number(inertial/mass/@value)").getValue<::rl::math::Real>(1)
 				);
 ::std::cout << "\tmass: " << b->m << ::std::endl;
 				
-				b->setName(path.eval("string(@name)").getValue< ::std::string>());
+				b->setName(path.eval("string(@name)").getValue<::std::string>());
 ::std::cout << "\tname: " << b->getName() << ::std::endl;
 				
-				name2frame[path.eval("string(@name)").getValue< ::std::string>()] = b;
+				name2frame[path.eval("string(@name)").getValue<::std::string>()] = b;
 			}
 			
 			// joints
 			
-			::std::unordered_map< ::std::string, ::std::string> child2parent;
+			::std::unordered_map<::std::string, ::std::string> child2parent;
 			
-			::rl::xml::NodeSet joints = path.eval("joint").getValue< ::rl::xml::NodeSet>();
+			::rl::xml::NodeSet joints = path.eval("joint").getValue<::rl::xml::NodeSet>();
 			
 			for (int j = 0; j < joints.size(); ++j)
 			{
 ::std::cout << "joint: " << j << ::std::endl;
 				::rl::xml::Path path(document, joints[j]);
 				
-				child2parent[path.eval("string(child/@link)").getValue< ::std::string>()] = path.eval("string(parent/@link)").getValue< ::std::string>();
+				child2parent[path.eval("string(child/@link)").getValue<::std::string>()] = path.eval("string(parent/@link)").getValue<::std::string>();
 				
-				Frame* parent = name2frame[path.eval("string(parent/@link)").getValue< ::std::string>()];
-				Frame* child = name2frame[path.eval("string(child/@link)").getValue< ::std::string>()];
+				Frame* parent = name2frame[path.eval("string(parent/@link)").getValue<::std::string>()];
+				Frame* child = name2frame[path.eval("string(child/@link)").getValue<::std::string>()];
 ::std::cout << "\tparent: " << parent->getName() << ::std::endl;
 ::std::cout << "\tchild: " << child->getName() << ::std::endl;
 				
@@ -184,44 +184,44 @@ namespace rl
 				
 				if (path.eval("count(origin/@rpy) > 0").getValue<bool>())
 				{
-					::std::vector< ::std::string> rpy;
-					::std::string tmp = path.eval("string(origin/@rpy)").getValue< ::std::string>();
+					::std::vector<::std::string> rpy;
+					::std::string tmp = path.eval("string(origin/@rpy)").getValue<::std::string>();
 					::boost::split(rpy, tmp, ::boost::algorithm::is_space(), ::boost::algorithm::token_compress_on);
 					
 					fixed->x.linear() = ::rl::math::AngleAxis(
-						::boost::lexical_cast< ::rl::math::Real>(rpy[2]),
+						::boost::lexical_cast<::rl::math::Real>(rpy[2]),
 						 ::rl::math::Vector3::UnitZ()
 					) * ::rl::math::AngleAxis(
-						::boost::lexical_cast< ::rl::math::Real>(rpy[1]),
+						::boost::lexical_cast<::rl::math::Real>(rpy[1]),
 						::rl::math::Vector3::UnitY()
 					) * ::rl::math::AngleAxis(
-						::boost::lexical_cast< ::rl::math::Real>(rpy[0]),
+						::boost::lexical_cast<::rl::math::Real>(rpy[0]),
 						::rl::math::Vector3::UnitX()
 					).toRotationMatrix();
 				}
 				
 				if (path.eval("count(origin/@xyz) > 0").getValue<bool>())
 				{
-					::std::vector< ::std::string> xyz;
-					::std::string tmp = path.eval("string(origin/@xyz)").getValue< ::std::string>();
+					::std::vector<::std::string> xyz;
+					::std::string tmp = path.eval("string(origin/@xyz)").getValue<::std::string>();
 					::boost::split(xyz, tmp, ::boost::algorithm::is_space(), ::boost::algorithm::token_compress_on);
 					
-					fixed->x.translation().x() = ::boost::lexical_cast< ::rl::math::Real>(xyz[0]);
-					fixed->x.translation().y() = ::boost::lexical_cast< ::rl::math::Real>(xyz[1]);
-					fixed->x.translation().z() = ::boost::lexical_cast< ::rl::math::Real>(xyz[2]);
+					fixed->x.translation().x() = ::boost::lexical_cast<::rl::math::Real>(xyz[0]);
+					fixed->x.translation().y() = ::boost::lexical_cast<::rl::math::Real>(xyz[1]);
+					fixed->x.translation().z() = ::boost::lexical_cast<::rl::math::Real>(xyz[2]);
 				}
 ::std::cout << "\torigin.translation: " << fixed->x.translation().transpose() << ::std::endl;
 ::std::cout << "\torigin.rotation: " << fixed->x.linear().eulerAngles(2, 1, 0).reverse().transpose() * ::rl::math::RAD2DEG << ::std::endl;
 				
 				// joint
 				
-				::std::string type = path.eval("string(@type)").getValue< ::std::string>();
+				::std::string type = path.eval("string(@type)").getValue<::std::string>();
 ::std::cout << "\ttype: " << type << ::std::endl;
 				
 				if ("fixed" == type)
 				{
 					model->add(fixed, parent, child);
-					fixed->setName(path.eval("string(@name)").getValue< ::std::string>());
+					fixed->setName(path.eval("string(@name)").getValue<::std::string>());
 ::std::cout << "\tname: " << fixed->getName() << ::std::endl;
 				}
 				else if ("floating" == type)
@@ -231,7 +231,7 @@ namespace rl
 					model->add(fixed, parent, frame);
 					model->add(s, frame, child);
 					
-					s->setName(path.eval("string(@name)").getValue< ::std::string>());
+					s->setName(path.eval("string(@name)").getValue<::std::string>());
 ::std::cout << "\tname: " << s->getName() << ::std::endl;
 				}
 				else if ("planar" == type)
@@ -245,24 +245,24 @@ namespace rl
 					model->add(fixed, parent, frame);
 					model->add(p, frame, child);
 					
-					p->max(0) = path.eval("number(limit/@upper)").getValue< ::rl::math::Real>(::std::numeric_limits< ::rl::math::Real>::max());
+					p->max(0) = path.eval("number(limit/@upper)").getValue<::rl::math::Real>(::std::numeric_limits<::rl::math::Real>::max());
 ::std::cout << "\tmax: " << p->max(0) << ::std::endl;
-					p->min(0) = path.eval("number(limit/@lower)").getValue< ::rl::math::Real>(-::std::numeric_limits< ::rl::math::Real>::max());
+					p->min(0) = path.eval("number(limit/@lower)").getValue<::rl::math::Real>(-::std::numeric_limits<::rl::math::Real>::max());
 ::std::cout << "\tmin: " << p->min(0) << ::std::endl;
 					p->offset(0) = 0;
-					p->speed(0) = path.eval("number(limit/@velocity)").getValue< ::rl::math::Real>(0);
+					p->speed(0) = path.eval("number(limit/@velocity)").getValue<::rl::math::Real>(0);
 ::std::cout << "\tspeed: " << p->speed(0) << ::std::endl;
 					p->wraparound(0) = false;
 					
 					if (path.eval("count(axis/@xyz) > 0").getValue<bool>())
 					{
-						::std::vector< ::std::string> xyz;
-						::std::string tmp = path.eval("string(axis/@xyz)").getValue< ::std::string>();
+						::std::vector<::std::string> xyz;
+						::std::string tmp = path.eval("string(axis/@xyz)").getValue<::std::string>();
 						::boost::split(xyz, tmp, ::boost::algorithm::is_space(), ::boost::algorithm::token_compress_on);
 						
-						p->S(3, 0) = ::boost::lexical_cast< ::rl::math::Real>(xyz[0]);
-						p->S(4, 0) = ::boost::lexical_cast< ::rl::math::Real>(xyz[1]);
-						p->S(5, 0) = ::boost::lexical_cast< ::rl::math::Real>(xyz[2]);
+						p->S(3, 0) = ::boost::lexical_cast<::rl::math::Real>(xyz[0]);
+						p->S(4, 0) = ::boost::lexical_cast<::rl::math::Real>(xyz[1]);
+						p->S(5, 0) = ::boost::lexical_cast<::rl::math::Real>(xyz[2]);
 					}
 					else
 					{
@@ -272,7 +272,7 @@ namespace rl
 					}
 ::std::cout << "\taxis: " << p->S(3, 0) << " " << p->S(4, 0) << " " << p->S(5, 0) << ::std::endl;
 					
-					p->setName(path.eval("string(@name)").getValue< ::std::string>());
+					p->setName(path.eval("string(@name)").getValue<::std::string>());
 ::std::cout << "\tname: " << p->getName() << ::std::endl;
 				}
 				else if ("revolute" == type || "continuous" == type)
@@ -282,7 +282,7 @@ namespace rl
 					model->add(fixed, parent, frame);
 					model->add(r, frame, child);
 					
-					if ("continuous" == path.eval("string(@type)").getValue< ::std::string>())
+					if ("continuous" == path.eval("string(@type)").getValue<::std::string>())
 					{
 						r->max(0) = 180 * ::rl::math::DEG2RAD;
 						r->min(0) = -180 * ::rl::math::DEG2RAD;
@@ -290,26 +290,26 @@ namespace rl
 					}
 					else
 					{
-						r->max(0) = path.eval("number(limit/@upper)").getValue< ::rl::math::Real>(::std::numeric_limits< ::rl::math::Real>::max());
-						r->min(0) = path.eval("number(limit/@lower)").getValue< ::rl::math::Real>(-::std::numeric_limits< ::rl::math::Real>::max());
+						r->max(0) = path.eval("number(limit/@upper)").getValue<::rl::math::Real>(::std::numeric_limits<::rl::math::Real>::max());
+						r->min(0) = path.eval("number(limit/@lower)").getValue<::rl::math::Real>(-::std::numeric_limits<::rl::math::Real>::max());
 						r->wraparound(0) = false;
 					}
 ::std::cout << "\tmax: " << r->max(0) * ::rl::math::RAD2DEG << ::std::endl;
 ::std::cout << "\tmin: " << r->min(0) * ::rl::math::RAD2DEG << ::std::endl;
 					
 					r->offset(0) = 0;
-					r->speed(0) = path.eval("number(limit/@velocity)").getValue< ::rl::math::Real>(0);
+					r->speed(0) = path.eval("number(limit/@velocity)").getValue<::rl::math::Real>(0);
 ::std::cout << "\tspeed: " << r->speed(0) * ::rl::math::RAD2DEG << ::std::endl;
 					
 					if (path.eval("count(axis/@xyz) > 0").getValue<bool>())
 					{
-						::std::vector< ::std::string> xyz;
-						::std::string tmp = path.eval("string(axis/@xyz)").getValue< ::std::string>();
+						::std::vector<::std::string> xyz;
+						::std::string tmp = path.eval("string(axis/@xyz)").getValue<::std::string>();
 						::boost::split(xyz, tmp, ::boost::algorithm::is_space(), ::boost::algorithm::token_compress_on);
 						
-						r->S(0, 0) = ::boost::lexical_cast< ::rl::math::Real>(xyz[0]);
-						r->S(1, 0) = ::boost::lexical_cast< ::rl::math::Real>(xyz[1]);
-						r->S(2, 0) = ::boost::lexical_cast< ::rl::math::Real>(xyz[2]);
+						r->S(0, 0) = ::boost::lexical_cast<::rl::math::Real>(xyz[0]);
+						r->S(1, 0) = ::boost::lexical_cast<::rl::math::Real>(xyz[1]);
+						r->S(2, 0) = ::boost::lexical_cast<::rl::math::Real>(xyz[2]);
 					}
 					else
 					{
@@ -319,7 +319,7 @@ namespace rl
 					}
 ::std::cout << "\taxis: " << r->S(0, 0) << " " << r->S(1, 0) << " " << r->S(2, 0) << ::std::endl;
 					
-					r->setName(path.eval("string(@name)").getValue< ::std::string>());
+					r->setName(path.eval("string(@name)").getValue<::std::string>());
 ::std::cout << "\tname: " << r->getName() << ::std::endl;
 				}
 			}
@@ -332,7 +332,7 @@ namespace rl
 			
 			Frame* root = nullptr;
 			
-			for (::std::unordered_map< ::std::string, Frame*>::const_iterator frame = name2frame.begin(); frame != name2frame.end(); ++frame)
+			for (::std::unordered_map<::std::string, Frame*>::const_iterator frame = name2frame.begin(); frame != name2frame.end(); ++frame)
 			{
 				if (child2parent.end() == child2parent.find(frame->first))
 				{

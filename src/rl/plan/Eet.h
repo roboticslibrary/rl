@@ -140,7 +140,7 @@ namespace rl
 			
 			Vertex extend(Tree& tree, const Neighbor& nearest, const ::rl::math::Transform& chosen);
 			
-			::std::normal_distribution< ::rl::math::Real>::result_type gauss();
+			::std::normal_distribution<::rl::math::Real>::result_type gauss();
 			
 			static VertexBundle* get(const Tree& tree, const Vertex& v);
 			
@@ -148,13 +148,13 @@ namespace rl
 			
 			Neighbor nearest(const Tree& tree, const ::rl::math::Transform& chosen);
 			
-			::std::uniform_real_distribution< ::rl::math::Real>::result_type rand();
+			::std::uniform_real_distribution<::rl::math::Real>::result_type rand();
 			
-			::std::normal_distribution< ::rl::math::Real> gaussDistribution;
+			::std::normal_distribution<::rl::math::Real> gaussDistribution;
 			
 			::std::mt19937 gaussEngine;
 			
-			::std::uniform_real_distribution< ::rl::math::Real> randDistribution;
+			::std::uniform_real_distribution<::rl::math::Real> randDistribution;
 			
 			::std::mt19937 randEngine;
 			

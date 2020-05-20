@@ -74,7 +74,7 @@ namespace rl
 		}
 		
 		void
-		Body::getBoundingBoxPoints(const ::rl::math::Transform& frame, ::std::vector< ::rl::math::Vector3>& p) const
+		Body::getBoundingBoxPoints(const ::rl::math::Transform& frame, ::std::vector<::rl::math::Vector3>& p) const
 		{
 			p.resize(8);
 			
@@ -110,7 +110,7 @@ namespace rl
 		}
 		
 		void
-		Body::getPoints(const ::rl::math::Transform& frame, ::std::vector< ::rl::math::Vector3>& p) const
+		Body::getPoints(const ::rl::math::Transform& frame, ::std::vector<::rl::math::Vector3>& p) const
 		{
 			p.resize(this->points.size());
 			

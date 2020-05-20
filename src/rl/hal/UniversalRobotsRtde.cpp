@@ -100,7 +100,7 @@ namespace rl
 				return this->output.toolAnalogInput1;
 				break;
 			default:
-				return ::std::numeric_limits< ::rl::math::Real>::signaling_NaN();
+				return ::std::numeric_limits<::rl::math::Real>::signaling_NaN();
 			}
 		}
 		
@@ -128,7 +128,7 @@ namespace rl
 				return 0 == (this->output.toolAnalogInputTypes & 2) ? 1 : 24;
 				break;
 			default:
-				return ::std::numeric_limits< ::rl::math::Real>::signaling_NaN();
+				return ::std::numeric_limits<::rl::math::Real>::signaling_NaN();
 				break;
 			}
 		}
@@ -139,10 +139,10 @@ namespace rl
 			return 0;
 		}
 		
-		::std::vector< ::rl::math::Unit>
+		::std::vector<::rl::math::Unit>
 		UniversalRobotsRtde::getAnalogInputUnit() const
 		{
-			::std::vector< ::rl::math::Unit> values;
+			::std::vector<::rl::math::Unit> values;
 			
 			for (::std::size_t i = 0; i < this->getAnalogInputCount(); ++i)
 			{
@@ -193,7 +193,7 @@ namespace rl
 				return this->output.toolOutputCurrent;
 				break;
 			default:
-				return ::std::numeric_limits< ::rl::math::Real>::signaling_NaN();
+				return ::std::numeric_limits<::rl::math::Real>::signaling_NaN();
 			}
 		}
 		
@@ -221,7 +221,7 @@ namespace rl
 				return 1;
 				break;
 			default:
-				return ::std::numeric_limits< ::rl::math::Real>::signaling_NaN();
+				return ::std::numeric_limits<::rl::math::Real>::signaling_NaN();
 				break;
 			}
 		}
@@ -232,10 +232,10 @@ namespace rl
 			return 0;
 		}
 		
-		::std::vector< ::rl::math::Unit>
+		::std::vector<::rl::math::Unit>
 		UniversalRobotsRtde::getAnalogOutputUnit() const
 		{
-			::std::vector< ::rl::math::Unit> values;
+			::std::vector<::rl::math::Unit> values;
 			
 			for (::std::size_t i = 0; i < this->getAnalogOutputCount(); ++i)
 			{
@@ -289,7 +289,7 @@ namespace rl
 			::rl::math::Vector3 orientation(this->output.actualTcpPose[3], this->output.actualTcpPose[4], this->output.actualTcpPose[5]);
 			::rl::math::Real norm = orientation.norm();
 			
-			if (::std::abs(norm) <= ::std::numeric_limits< ::rl::math::Real>::epsilon())
+			if (::std::abs(norm) <= ::std::numeric_limits<::rl::math::Real>::epsilon())
 			{
 				x.linear().setIdentity();
 			}
@@ -313,7 +313,7 @@ namespace rl
 			::rl::math::Vector3 orientation(this->output.targetTcpPose[3], this->output.targetTcpPose[4], this->output.targetTcpPose[5]);
 			::rl::math::Real norm = orientation.norm();
 			
-			if (::std::abs(norm) <= ::std::numeric_limits< ::rl::math::Real>::epsilon())
+			if (::std::abs(norm) <= ::std::numeric_limits<::rl::math::Real>::epsilon())
 			{
 				x.linear().setIdentity();
 			}
@@ -577,14 +577,14 @@ namespace rl
 				"output_double_register_22",
 				"output_double_register_23"
 			};
-			static const ::std::vector< ::std::string> outputs(::std::begin(outputsArray), ::std::end(outputsArray));
+			static const ::std::vector<::std::string> outputs(::std::begin(outputsArray), ::std::end(outputsArray));
 			this->send(COMMAND_CONTROL_PACKAGE_SETUP_OUTPUTS, outputs);
 			this->recv();
 			
 			static const ::std::string inputs1Array[] = {
 				"input_int_register_0"
 			};
-			static const ::std::vector< ::std::string> inputs1(::std::begin(inputs1Array), ::std::end(inputs1Array));
+			static const ::std::vector<::std::string> inputs1(::std::begin(inputs1Array), ::std::end(inputs1Array));
 			this->send(COMMAND_CONTROL_PACKAGE_SETUP_INPUTS, inputs1);
 			this->recv();
 			
@@ -603,7 +603,7 @@ namespace rl
 				"input_double_register_11",
 				"input_double_register_12"
 			};
-			static const ::std::vector< ::std::string> inputs2(::std::begin(inputs2Array), ::std::end(inputs2Array));
+			static const ::std::vector<::std::string> inputs2(::std::begin(inputs2Array), ::std::end(inputs2Array));
 			this->send(COMMAND_CONTROL_PACKAGE_SETUP_INPUTS, inputs2);
 			this->recv();
 			
@@ -613,7 +613,7 @@ namespace rl
 				"standard_digital_output",
 				"configurable_digital_output"
 			};
-			static const ::std::vector< ::std::string> inputs3(::std::begin(inputs3Array), ::std::end(inputs3Array));
+			static const ::std::vector<::std::string> inputs3(::std::begin(inputs3Array), ::std::end(inputs3Array));
 			this->send(COMMAND_CONTROL_PACKAGE_SETUP_INPUTS, inputs3);
 			this->recv();
 			
@@ -623,7 +623,7 @@ namespace rl
 				"standard_analog_output_0",
 				"standard_analog_output_1"
 			};
-			static const ::std::vector< ::std::string> inputs4(::std::begin(inputs4Array), ::std::end(inputs4Array));
+			static const ::std::vector<::std::string> inputs4(::std::begin(inputs4Array), ::std::end(inputs4Array));
 			this->send(COMMAND_CONTROL_PACKAGE_SETUP_INPUTS, inputs4);
 			this->recv();
 			
@@ -631,7 +631,7 @@ namespace rl
 				"input_bit_registers0_to_31",
 				"input_bit_registers32_to_63"
 			};
-			static const ::std::vector< ::std::string> inputs5(::std::begin(inputs5Array), ::std::end(inputs5Array));
+			static const ::std::vector<::std::string> inputs5(::std::begin(inputs5Array), ::std::end(inputs5Array));
 			this->send(COMMAND_CONTROL_PACKAGE_SETUP_INPUTS, inputs5);
 			this->recv();
 		}
@@ -639,7 +639,7 @@ namespace rl
 		void
 		UniversalRobotsRtde::recv()
 		{
-			::std::array< ::std::uint8_t, 4096> buffer;
+			::std::array<::std::uint8_t, 4096> buffer;
 			::std::size_t size = this->socket4.recv(buffer.data(), buffer.size());
 #if !defined(__APPLE__) && !defined(__QNX__) && !defined(WIN32)
 			this->socket4.setOption(::rl::hal::Socket::OPTION_QUICKACK, 1);
@@ -792,12 +792,12 @@ namespace rl
 		void
 		UniversalRobotsRtde::send(::std::uint8_t* buffer, const ::std::size_t& size)
 		{
-			if (size > ::std::numeric_limits< ::std::uint16_t>::max())
+			if (size > ::std::numeric_limits<::std::uint16_t>::max())
 			{
 				throw DeviceException("Package size too large");
 			}
 			
-			::std::uint16_t packageSize = static_cast< ::std::uint16_t>(size);
+			::std::uint16_t packageSize = static_cast<::std::uint16_t>(size);
 			
 			buffer[0] = Endian::hostHighByte(packageSize);
 			buffer[1] = Endian::hostLowByte(packageSize);
@@ -808,7 +808,7 @@ namespace rl
 		void
 		UniversalRobotsRtde::send(const ::std::uint8_t& command)
 		{
-			::std::vector< ::std::uint8_t> buffer;
+			::std::vector<::std::uint8_t> buffer;
 			
 			buffer.reserve(3);
 			
@@ -820,9 +820,9 @@ namespace rl
 		}
 		
 		void
-		UniversalRobotsRtde::send(const ::std::uint8_t& command, const ::std::vector< ::std::string>& strings)
+		UniversalRobotsRtde::send(const ::std::uint8_t& command, const ::std::vector<::std::string>& strings)
 		{
-			::std::vector< ::std::uint8_t> buffer;
+			::std::vector<::std::uint8_t> buffer;
 			
 			buffer.reserve(3);
 			
@@ -854,7 +854,7 @@ namespace rl
 		void
 		UniversalRobotsRtde::send(const ::std::uint8_t& command, const ::std::uint16_t& word)
 		{
-			::std::vector< ::std::uint8_t> buffer;
+			::std::vector<::std::uint8_t> buffer;
 			
 			buffer.reserve(5);
 			
@@ -870,7 +870,7 @@ namespace rl
 		void
 		UniversalRobotsRtde::sendAnalogOutputs()
 		{
-			::std::vector< ::std::uint8_t> buffer;
+			::std::vector<::std::uint8_t> buffer;
 			
 			buffer.reserve(4);
 			
@@ -894,7 +894,7 @@ namespace rl
 		void
 		UniversalRobotsRtde::sendBitRegisters()
 		{
-			::std::vector< ::std::uint8_t> buffer;
+			::std::vector<::std::uint8_t> buffer;
 			
 			buffer.reserve(4);
 			
@@ -923,7 +923,7 @@ namespace rl
 		void
 		UniversalRobotsRtde::sendDigitalOutputs()
 		{
-			::std::vector< ::std::uint8_t> buffer;
+			::std::vector<::std::uint8_t> buffer;
 			
 			buffer.reserve(4);
 			
@@ -947,7 +947,7 @@ namespace rl
 		void
 		UniversalRobotsRtde::sendDoubleRegister()
 		{
-			::std::vector< ::std::uint8_t> buffer;
+			::std::vector<::std::uint8_t> buffer;
 			
 			buffer.reserve(4);
 			
@@ -971,7 +971,7 @@ namespace rl
 		void
 		UniversalRobotsRtde::sendIntegerRegister()
 		{
-			::std::vector< ::std::uint8_t> buffer;
+			::std::vector<::std::uint8_t> buffer;
 			
 			buffer.reserve(4);
 			
@@ -1026,7 +1026,7 @@ namespace rl
 		}
 		
 		void
-		UniversalRobotsRtde::setAnalogOutputUnit(const ::std::vector< ::rl::math::Unit>& values)
+		UniversalRobotsRtde::setAnalogOutputUnit(const ::std::vector<::rl::math::Unit>& values)
 		{
 			for (::std::size_t i = 0; i < this->getAnalogOutputCount(); ++i)
 			{
@@ -1184,9 +1184,9 @@ namespace rl
 			program << '\t' << '\t' << "qd[5] = read_input_float_register(11)" << '\n';
 			program << '\t' << '\t' << "qdd = read_input_float_register(12)" << '\n';
 #if 1
-			program << '\t' << '\t' << "servoj(q, 0, 0, " << ::std::chrono::duration_cast< ::std::chrono::duration<rl::math::Real>>(this->getUpdateRate()).count() << ", 0.03, 2000)" << '\n';
+			program << '\t' << '\t' << "servoj(q, 0, 0, " << ::std::chrono::duration_cast<::std::chrono::duration<rl::math::Real>>(this->getUpdateRate()).count() << ", 0.03, 2000)" << '\n';
 #else
-			program << '\t' << '\t' << "speedj(qd, qdd, " << ::std::chrono::duration_cast< ::std::chrono::duration<rl::math::Real>>(this->getUpdateRate()).count() << ")" << '\n';
+			program << '\t' << '\t' << "speedj(qd, qdd, " << ::std::chrono::duration_cast<::std::chrono::duration<rl::math::Real>>(this->getUpdateRate()).count() << ")" << '\n';
 #endif
 			program << '\t' << "end" << '\n';
 			program << "end" << '\n';

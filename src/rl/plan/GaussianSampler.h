@@ -57,9 +57,9 @@ namespace rl
 			::rl::math::Vector* sigma;
 			
 		protected:
-			::std::normal_distribution< ::rl::math::Real>::result_type gauss();
+			::std::normal_distribution<::rl::math::Real>::result_type gauss();
 			
-			::std::normal_distribution< ::rl::math::Real> gaussDistribution;
+			::std::normal_distribution<::rl::math::Real> gaussDistribution;
 			
 			::std::mt19937 gaussEngine;
 			

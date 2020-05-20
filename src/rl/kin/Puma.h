@@ -85,19 +85,19 @@ namespace rl
 			template<typename T> T atan2(const T& y, const T& x) const
 			{
 				T a = ::std::atan2(y, x);
-				return (::std::abs(a) <= static_cast< ::rl::math::Real>(1.0e-6)) ? 0 : a;
+				return (::std::abs(a) <= static_cast<::rl::math::Real>(1.0e-6)) ? 0 : a;
 			}
 			
 			template<typename T> T cos(const T& x) const
 			{
 				T c = ::std::cos(x);
-				return (::std::abs(c) <= static_cast< ::rl::math::Real>(1.0e-6)) ? 0 : c;
+				return (::std::abs(c) <= static_cast<::rl::math::Real>(1.0e-6)) ? 0 : c;
 			}
 			
 			template<typename T> T sin(const T& x) const
 			{
 				T s = ::std::sin(x);
-				return (::std::abs(s) <= static_cast< ::rl::math::Real>(1.0e-6)) ? 0 : s;
+				return (::std::abs(s) <= static_cast<::rl::math::Real>(1.0e-6)) ? 0 : s;
 			}
 			
 			Arm arm;

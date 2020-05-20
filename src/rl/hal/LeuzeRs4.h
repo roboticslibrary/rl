@@ -125,7 +125,7 @@ namespace rl
 			
 			BaudRate baudRate;
 			
-			::std::array< ::std::uint8_t, 1099> data;
+			::std::array<::std::uint8_t, 1099> data;
 			
 			BaudRate desired;
 			

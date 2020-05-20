@@ -68,7 +68,7 @@ namespace rl
 		private:
 			FILE* fp;
 			
-			::std::list< ::rl::math::Vector> history;
+			::std::list<::rl::math::Vector> history;
 			
 			::std::size_t max;
 			

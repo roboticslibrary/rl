@@ -147,7 +147,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			::std::array< ::std::uint8_t, 64> buf;
+			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x24;
 			buf[this->HEADER_SIZE] = 0x61;
@@ -163,7 +163,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			::std::array< ::std::uint8_t, 64> buf;
+			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x36;
 			
@@ -179,7 +179,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			::std::array< ::std::uint8_t, 64> buf;
+			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x07;
 			
@@ -192,7 +192,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			::std::array< ::std::uint8_t, 64> buf;
+			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x23;
 			
@@ -205,7 +205,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			::std::array< ::std::uint8_t, 64> buf;
+			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x31;
 			
@@ -222,7 +222,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			::std::array< ::std::uint8_t, 64> buf;
+			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x45;
 			buf[this->HEADER_SIZE] = 0x00 | (doAutomaticUpdate << 0) | (doAutomaticUpdate << 1);
@@ -238,7 +238,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			::std::array< ::std::uint8_t, 64> buf;
+			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x33;
 			
@@ -253,7 +253,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			::std::array< ::std::uint8_t, 64> buf;
+			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x41;
 			buf[this->HEADER_SIZE] = 0x00 | (doAutomaticUpdate << 0) | (doUpdateOnChange << 1);
@@ -269,7 +269,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			::std::array< ::std::uint8_t, 64> buf;
+			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x42;
 			buf[this->HEADER_SIZE] = 0x00 | doReset;
@@ -287,7 +287,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			::std::array< ::std::uint8_t, 64> buf;
+			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x43;
 			buf[this->HEADER_SIZE] = 0x00 | (doAutomaticUpdate << 0) | (doUpdateOnChange << 1);
@@ -303,7 +303,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			::std::array< ::std::uint8_t, 64> buf;
+			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x35;
 			
@@ -322,7 +322,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			::std::array< ::std::uint8_t, 64> buf;
+			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x44;
 			buf[this->HEADER_SIZE] = 0x00 | (doAutomaticUpdate << 0) | (doUpdateOnChange << 1);
@@ -338,7 +338,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			::std::array< ::std::uint8_t, 64> buf;
+			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x50;
 			
@@ -356,7 +356,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			::std::array< ::std::uint8_t, 64> buf;
+			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x53;
 			
@@ -384,7 +384,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			::std::array< ::std::uint8_t, 64> buf;
+			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x40;
 			buf[this->HEADER_SIZE] = 0x00 | (doAutomaticUpdate << 0) | (doUpdateOnChange << 1);
@@ -407,7 +407,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			::std::array< ::std::uint8_t, 64> buf;
+			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x46;
 			
@@ -429,7 +429,7 @@ namespace rl
 			float widthMilli = width * static_cast<float>(::rl::math::UNIT2MILLI);
 			float speedMilli = speed * static_cast<float>(::rl::math::UNIT2MILLI);
 			
-			::std::array< ::std::uint8_t, 64> buf;
+			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x25;
 			::std::memcpy(&buf[this->HEADER_SIZE], &widthMilli, sizeof(widthMilli));
@@ -447,7 +447,7 @@ namespace rl
 			assert(this->isConnected());
 			assert(direction < 3);
 			
-			::std::array< ::std::uint8_t, 64> buf;
+			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x20;
 			buf[this->HEADER_SIZE] = direction;
@@ -462,7 +462,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			::std::array< ::std::uint8_t, 64> buf;
+			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x37;
 			buf[4] = 0x00;
@@ -486,7 +486,7 @@ namespace rl
 			float widthMilli = width * static_cast<float>(::rl::math::UNIT2MILLI);
 			float speedMilli = speed * static_cast<float>(::rl::math::UNIT2MILLI);
 			
-			::std::array< ::std::uint8_t, 64> buf;
+			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x21;
 			buf[this->HEADER_SIZE] = 0x00;
@@ -519,7 +519,7 @@ namespace rl
 			float widthMilli = width * static_cast<float>(::rl::math::UNIT2MILLI);
 			float speedMilli = speed * static_cast<float>(::rl::math::UNIT2MILLI);
 			
-			::std::array< ::std::uint8_t, 64> buf;
+			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x26;
 			::std::memcpy(&buf[this->HEADER_SIZE], &widthMilli, sizeof(widthMilli));
@@ -537,7 +537,7 @@ namespace rl
 			
 			float accelerationMilli = acceleration * static_cast<float>(::rl::math::UNIT2MILLI);
 			
-			::std::array< ::std::uint8_t, 64> buf;
+			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x30;
 			::std::memcpy(&buf[this->HEADER_SIZE], &accelerationMilli, sizeof(accelerationMilli));
@@ -554,7 +554,7 @@ namespace rl
 			assert(this->isConnected());
 			assert(force >= 5.0f && force <= 80.0f);
 			
-			::std::array< ::std::uint8_t, 64> buf;
+			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x32;
 			::std::memcpy(&buf[this->HEADER_SIZE], &force, sizeof(force));
@@ -573,7 +573,7 @@ namespace rl
 			float limitMinusMilli = limitMinus * static_cast<float>(::rl::math::UNIT2MILLI);
 			float limitPlusMilli = limitPlus * static_cast<float>(::rl::math::UNIT2MILLI);
 			
-			::std::array< ::std::uint8_t, 64> buf;
+			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x34;
 			::std::memcpy(&buf[this->HEADER_SIZE], &limitMinusMilli, sizeof(limitMinusMilli));
@@ -591,7 +591,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			::std::array< ::std::uint8_t, 64> buf;
+			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x22;
 			
@@ -604,7 +604,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			::std::array< ::std::uint8_t, 64> buf;
+			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x38;
 			
@@ -909,7 +909,7 @@ namespace rl
 			assert(this->isConnected());
 			assert(this->isRunning());
 			
-			::std::array< ::std::uint8_t, 64> buf;
+			::std::array<::std::uint8_t, 64> buf;
 			
 			this->recv(buf.data()); // doGetForce
 			this->recv(buf.data()); // doGetGraspingState

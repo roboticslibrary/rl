@@ -83,7 +83,7 @@ namespace rl
 			
 			::rl::xml::Path path(document);
 			
-			::rl::xml::NodeSet robots = path.eval("/robot").getValue< ::rl::xml::NodeSet>();
+			::rl::xml::NodeSet robots = path.eval("/robot").getValue<::rl::xml::NodeSet>();
 			
 			if (robots.empty())
 			{
@@ -98,14 +98,14 @@ namespace rl
 				
 				// name
 				
-				model->setName(path.eval("string(@name)").getValue< ::std::string>());
+				model->setName(path.eval("string(@name)").getValue<::std::string>());
 ::std::cout << model->getName() << ::std::endl;
 				
 				// materials
 				
-				::rl::xml::NodeSet materials = path.eval("material").getValue< ::rl::xml::NodeSet>();
+				::rl::xml::NodeSet materials = path.eval("material").getValue<::rl::xml::NodeSet>();
 				
-				::std::unordered_map< ::std::string, ::SoVRMLMaterial*> name2material;
+				::std::unordered_map<::std::string, ::SoVRMLMaterial*> name2material;
 				
 				for (int j = 0; j < materials.size(); ++j)
 				{
@@ -114,8 +114,8 @@ namespace rl
 					
 					if (path.eval("count(color/@rgba) > 0").getValue<bool>())
 					{
-						::std::vector< ::std::string> rgba;
-						::std::string tmp = path.eval("string(color/@rgba)").getValue< ::std::string>();
+						::std::vector<::std::string> rgba;
+						::std::string tmp = path.eval("string(color/@rgba)").getValue<::std::string>();
 						::boost::split(rgba, tmp, ::boost::algorithm::is_space(), ::boost::algorithm::token_compress_on);
 ::std::cout << "\trgba: " << rgba[0] << " " << rgba[1] << " " << rgba[2] << " " << rgba[3] << ::std::endl;
 						
@@ -123,43 +123,43 @@ namespace rl
 						vrmlMaterial->ref();
 						
 						vrmlMaterial->diffuseColor.setValue(
-							::boost::lexical_cast< ::rl::math::Real>(rgba[0]),
-							::boost::lexical_cast< ::rl::math::Real>(rgba[1]),
-							::boost::lexical_cast< ::rl::math::Real>(rgba[2])
+							::boost::lexical_cast<::rl::math::Real>(rgba[0]),
+							::boost::lexical_cast<::rl::math::Real>(rgba[1]),
+							::boost::lexical_cast<::rl::math::Real>(rgba[2])
 						);
 						vrmlMaterial->transparency.setValue(
-							1 - ::boost::lexical_cast< ::rl::math::Real>(rgba[3])
+							1 - ::boost::lexical_cast<::rl::math::Real>(rgba[3])
 						);
 						
-						name2material[path.eval("string(@name)").getValue< ::std::string>()] = vrmlMaterial;
-::std::cout << "\tname: " << path.eval("string(@name)").getValue< ::std::string>() << ::std::endl;
+						name2material[path.eval("string(@name)").getValue<::std::string>()] = vrmlMaterial;
+::std::cout << "\tname: " << path.eval("string(@name)").getValue<::std::string>() << ::std::endl;
 					}
 				}
 				
 				// joints
 				
-				::std::unordered_map< ::std::string, ::std::string> child2parent;
-				::std::unordered_map< ::std::string, ::rl::xml::Node> name2link;
-				::std::multimap< ::std::string, ::std::string> parent2child;
+				::std::unordered_map<::std::string, ::std::string> child2parent;
+				::std::unordered_map<::std::string, ::rl::xml::Node> name2link;
+				::std::multimap<::std::string, ::std::string> parent2child;
 				
-				::rl::xml::NodeSet joints = path.eval("joint").getValue< ::rl::xml::NodeSet>();
+				::rl::xml::NodeSet joints = path.eval("joint").getValue<::rl::xml::NodeSet>();
 				
 				for (int j = 0; j < joints.size(); ++j)
 				{
 ::std::cout << "joint: " << j << ::std::endl;
 					::rl::xml::Path path(document, joints[j]);
 					
-					::std::string child = path.eval("string(child/@link)").getValue< ::std::string>();
-					::std::string parent = path.eval("string(parent/@link)").getValue< ::std::string>();
+					::std::string child = path.eval("string(child/@link)").getValue<::std::string>();
+					::std::string parent = path.eval("string(parent/@link)").getValue<::std::string>();
 					
 					child2parent[child] = parent;
-					parent2child.insert(::std::pair< ::std::string, ::std::string>(parent, child));
+					parent2child.insert(::std::pair<::std::string, ::std::string>(parent, child));
 ::std::cout << "\tconnect: " << parent << " -> " << child << ::std::endl;
 				}
 				
 				// links
 				
-				::rl::xml::NodeSet links = path.eval("link").getValue< ::rl::xml::NodeSet>();
+				::rl::xml::NodeSet links = path.eval("link").getValue<::rl::xml::NodeSet>();
 				
 				::std::string root;
 				
@@ -167,7 +167,7 @@ namespace rl
 				{
 					::rl::xml::Path path(document, links[j]);
 					
-					::std::string name = path.eval("string(@name)").getValue< ::std::string>();
+					::std::string name = path.eval("string(@name)").getValue<::std::string>();
 					
 					name2link[name] = links[j];
 					
@@ -204,22 +204,22 @@ namespace rl
 					{
 						if (path.eval("count(collision) > 0").getValue<bool>())
 						{
-							path.setNode(path.eval("collision").getValue< ::rl::xml::NodeSet>()[0]);
+							path.setNode(path.eval("collision").getValue<::rl::xml::NodeSet>()[0]);
 						}
 						else if (path.eval("count(visual) > 0").getValue<bool>())
 						{
-							path.setNode(path.eval("visual").getValue< ::rl::xml::NodeSet>()[0]);
+							path.setNode(path.eval("visual").getValue<::rl::xml::NodeSet>()[0]);
 						}
 					}
 					else
 					{
 						if (path.eval("count(visual) > 0").getValue<bool>())
 						{
-							path.setNode(path.eval("visual").getValue< ::rl::xml::NodeSet>()[0]);
+							path.setNode(path.eval("visual").getValue<::rl::xml::NodeSet>()[0]);
 						}
 						else if (path.eval("count(collision) > 0").getValue<bool>())
 						{
-							path.setNode(path.eval("collision").getValue< ::rl::xml::NodeSet>()[0]);
+							path.setNode(path.eval("collision").getValue<::rl::xml::NodeSet>()[0]);
 						}
 					}
 					
@@ -231,28 +231,28 @@ namespace rl
 					
 					if (path.eval("count(material/color/@rgba) > 0").getValue<bool>())
 					{
-						::std::vector< ::std::string> rgba;
-						::std::string tmp = path.eval("string(material/color/@rgba)").getValue< ::std::string>();
+						::std::vector<::std::string> rgba;
+						::std::string tmp = path.eval("string(material/color/@rgba)").getValue<::std::string>();
 						::boost::split(rgba, tmp, ::boost::algorithm::is_space(), ::boost::algorithm::token_compress_on);
 ::std::cout << "\tmaterial rgba: " << rgba[0] << " " << rgba[1] << " " << rgba[2] << " " << rgba[3] << ::std::endl;
 						
 						::SoVRMLMaterial* vrmlMaterial = new ::SoVRMLMaterial();
 						
 						vrmlMaterial->diffuseColor.setValue(
-							::boost::lexical_cast< ::rl::math::Real>(rgba[0]),
-							::boost::lexical_cast< ::rl::math::Real>(rgba[1]),
-							::boost::lexical_cast< ::rl::math::Real>(rgba[2])
+							::boost::lexical_cast<::rl::math::Real>(rgba[0]),
+							::boost::lexical_cast<::rl::math::Real>(rgba[1]),
+							::boost::lexical_cast<::rl::math::Real>(rgba[2])
 						);
 						vrmlMaterial->transparency.setValue(
-							1 - ::boost::lexical_cast< ::rl::math::Real>(rgba[3])
+							1 - ::boost::lexical_cast<::rl::math::Real>(rgba[3])
 						);
 						
 						vrmlAppearance->material = vrmlMaterial;
 					}
 					else if (path.eval("count(material/@name) > 0").getValue<bool>())
 					{
-::std::cout << "\tmaterial name: " << path.eval("string(material/@name)").getValue< ::std::string>() << ::std::endl;
-						vrmlAppearance->material = name2material[path.eval("string(material/@name)").getValue< ::std::string>()];
+::std::cout << "\tmaterial name: " << path.eval("string(material/@name)").getValue<::std::string>() << ::std::endl;
+						vrmlAppearance->material = name2material[path.eval("string(material/@name)").getValue<::std::string>()];
 					}
 					else
 					{
@@ -260,7 +260,7 @@ namespace rl
 						vrmlAppearance->material = vrmlMaterial;
 					}
 					
-					::rl::xml::NodeSet shapes = path.eval("geometry/box|geometry/cylinder|geometry/mesh|geometry/sphere").getValue< ::rl::xml::NodeSet>();
+					::rl::xml::NodeSet shapes = path.eval("geometry/box|geometry/cylinder|geometry/mesh|geometry/sphere").getValue<::rl::xml::NodeSet>();
 					
 					for (int k = 0; k < shapes.size(); ++k)
 					{
@@ -270,14 +270,14 @@ namespace rl
 							
 							if (!shapes[k].getProperty("size").empty())
 							{
-								::std::vector< ::std::string> size;
+								::std::vector<::std::string> size;
 								::std::string tmp = shapes[k].getProperty("size");
 								::boost::split(size, tmp, ::boost::algorithm::is_space(), ::boost::algorithm::token_compress_on);
 								
 								box->size.setValue(
-									::boost::lexical_cast< ::rl::math::Real>(size[0]),
-									::boost::lexical_cast< ::rl::math::Real>(size[1]),
-									::boost::lexical_cast< ::rl::math::Real>(size[2])
+									::boost::lexical_cast<::rl::math::Real>(size[0]),
+									::boost::lexical_cast<::rl::math::Real>(size[1]),
+									::boost::lexical_cast<::rl::math::Real>(size[2])
 								);
 							}
 							
@@ -291,14 +291,14 @@ namespace rl
 							if (!shapes[k].getProperty("length").empty())
 							{
 								cylinder->height.setValue(
-									::boost::lexical_cast< ::rl::math::Real>(shapes[k].getProperty("length"))
+									::boost::lexical_cast<::rl::math::Real>(shapes[k].getProperty("length"))
 								);
 							}
 							
 							if (!shapes[k].getProperty("radius").empty())
 							{
 								cylinder->radius.setValue(
-									::boost::lexical_cast< ::rl::math::Real>(shapes[k].getProperty("radius"))
+									::boost::lexical_cast<::rl::math::Real>(shapes[k].getProperty("radius"))
 								);
 							}
 							
@@ -344,7 +344,7 @@ namespace rl
 								
 								for (int l = 0; l < searchAction.getPaths().getLength(); ++l)
 								{
-									vrmlShape->geometry = static_cast< ::SoVRMLShape*>(static_cast< ::SoFullPath*>(searchAction.getPaths()[l])->getTail())->geometry;
+									vrmlShape->geometry = static_cast<::SoVRMLShape*>(static_cast<::SoFullPath*>(searchAction.getPaths()[l])->getTail())->geometry;
 									
 									if (vrmlShape->geometry.getValue()->isOfType(::SoVRMLIndexedFaceSet::getClassTypeId()))
 									{
@@ -366,7 +366,7 @@ namespace rl
 							if (!shapes[k].getProperty("radius").empty())
 							{
 								sphere->radius.setValue(
-									::boost::lexical_cast< ::rl::math::Real>(shapes[k].getProperty("radius"))
+									::boost::lexical_cast<::rl::math::Real>(shapes[k].getProperty("radius"))
 								);
 							}
 							
@@ -383,19 +383,19 @@ namespace rl
 						
 						if (path.eval("count(origin/@rpy) > 0").getValue<bool>())
 						{
-							::std::vector< ::std::string> rpy;
-							::std::string tmp = path.eval("string(origin/@rpy)").getValue< ::std::string>();
+							::std::vector<::std::string> rpy;
+							::std::string tmp = path.eval("string(origin/@rpy)").getValue<::std::string>();
 							::boost::split(rpy, tmp, ::boost::algorithm::is_space(), ::boost::algorithm::token_compress_on);
 ::std::cout << "\torigin rpy: " << rpy[0] << " " << rpy[1] << " " << rpy[2] << ::std::endl;
 							
 							origin.linear() = ::rl::math::AngleAxis(
-								::boost::lexical_cast< ::rl::math::Real>(rpy[2]),
+								::boost::lexical_cast<::rl::math::Real>(rpy[2]),
 								 ::rl::math::Vector3::UnitZ()
 							) * ::rl::math::AngleAxis(
-								::boost::lexical_cast< ::rl::math::Real>(rpy[1]),
+								::boost::lexical_cast<::rl::math::Real>(rpy[1]),
 								::rl::math::Vector3::UnitY()
 							) * ::rl::math::AngleAxis(
-								::boost::lexical_cast< ::rl::math::Real>(rpy[0]),
+								::boost::lexical_cast<::rl::math::Real>(rpy[0]),
 								::rl::math::Vector3::UnitX()
 							).toRotationMatrix();
 						}
@@ -407,14 +407,14 @@ namespace rl
 						
 						if (path.eval("count(origin/@xyz) > 0").getValue<bool>())
 						{
-							::std::vector< ::std::string> xyz;
-							::std::string tmp = path.eval("string(origin/@xyz)").getValue< ::std::string>();
+							::std::vector<::std::string> xyz;
+							::std::string tmp = path.eval("string(origin/@xyz)").getValue<::std::string>();
 							::boost::split(xyz, tmp, ::boost::algorithm::is_space(), ::boost::algorithm::token_compress_on);
 ::std::cout << "\torigin xyz: " << xyz[0] << " " << xyz[1] << " " << xyz[2] << ::std::endl;
 							
-							origin.translation().x() = ::boost::lexical_cast< ::rl::math::Real>(xyz[0]);
-							origin.translation().y() = ::boost::lexical_cast< ::rl::math::Real>(xyz[1]);
-							origin.translation().z() = ::boost::lexical_cast< ::rl::math::Real>(xyz[2]);
+							origin.translation().x() = ::boost::lexical_cast<::rl::math::Real>(xyz[0]);
+							origin.translation().y() = ::boost::lexical_cast<::rl::math::Real>(xyz[1]);
+							origin.translation().z() = ::boost::lexical_cast<::rl::math::Real>(xyz[2]);
 						}
 						
 						shape->setTransform(origin);
@@ -427,22 +427,22 @@ namespace rl
 					dfs.pop_front();
 					
 					::std::pair<
-						::std::multimap< ::std::string, ::std::string>::const_iterator,
-						::std::multimap< ::std::string, ::std::string>::const_iterator
+						::std::multimap<::std::string, ::std::string>::const_iterator,
+						::std::multimap<::std::string, ::std::string>::const_iterator
 					> range = parent2child.equal_range(name);
 					
 					// reverse order
 					
-					::std::multimap< ::std::string, ::std::string>::const_iterator first = --range.second;
-					::std::multimap< ::std::string, ::std::string>::const_iterator second = --range.first;
+					::std::multimap<::std::string, ::std::string>::const_iterator first = --range.second;
+					::std::multimap<::std::string, ::std::string>::const_iterator second = --range.first;
 					
-					for (::std::multimap< ::std::string, ::std::string>::const_iterator k = first; k != second; --k)
+					for (::std::multimap<::std::string, ::std::string>::const_iterator k = first; k != second; --k)
 					{
 						dfs.push_front(k->second);
 					}
 				}
 				
-				for (::std::unordered_map< ::std::string, ::SoVRMLMaterial*>::iterator j = name2material.begin(); j != name2material.end(); ++j)
+				for (::std::unordered_map<::std::string, ::SoVRMLMaterial*>::iterator j = name2material.begin(); j != name2material.end(); ++j)
 				{
 					j->second->unref();
 				}

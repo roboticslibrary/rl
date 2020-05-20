@@ -708,10 +708,10 @@ namespace rl
 			 */
 			template<typename U = T>
 			static Spline QuarticLinearQuarticAtRest(
-				const typename ::std::enable_if< ::std::is_floating_point<U>::value, U>::type& q0,
-				const typename ::std::enable_if< ::std::is_floating_point<U>::value, U>::type& q1,
-				const typename ::std::enable_if< ::std::is_floating_point<U>::value, U>::type& vmax,
-				const typename ::std::enable_if< ::std::is_floating_point<U>::value, U>::type& amax
+				const typename ::std::enable_if<::std::is_floating_point<U>::value, U>::type& q0,
+				const typename ::std::enable_if<::std::is_floating_point<U>::value, U>::type& q1,
+				const typename ::std::enable_if<::std::is_floating_point<U>::value, U>::type& vmax,
+				const typename ::std::enable_if<::std::is_floating_point<U>::value, U>::type& amax
 			)
 			{
 				T xta = 3 * ::std::pow(vmax, 2) / (4 * amax); // travel distance during acceleration (or, deceleration)
@@ -760,10 +760,10 @@ namespace rl
 			 */
 			template<typename U = T>
 			static Spline QuarticLinearQuarticAtRest(
-				const typename ::std::enable_if< ::std::is_class<U>::value, U>::type& q0,
-				const typename ::std::enable_if< ::std::is_class<U>::value, U>::type& q1,
-				const typename ::std::enable_if< ::std::is_class<U>::value, U>::type& vmax,
-				const typename ::std::enable_if< ::std::is_class<U>::value, U>::type& amax
+				const typename ::std::enable_if<::std::is_class<U>::value, U>::type& q0,
+				const typename ::std::enable_if<::std::is_class<U>::value, U>::type& q1,
+				const typename ::std::enable_if<::std::is_class<U>::value, U>::type& vmax,
+				const typename ::std::enable_if<::std::is_class<U>::value, U>::type& amax
 			)
 			{
 				assert(q0.size() >= 1 && q0.size() == q1.size() && q0.size() == vmax.size() && q0.size() == amax.size() && "QuarticLinearQuarticAtRest: parameters must have same dimension.");
@@ -842,10 +842,10 @@ namespace rl
 			 */
 			template<typename U = T>
 			static Spline SexticLinearSexticAtRest(
-				const typename ::std::enable_if< ::std::is_floating_point<U>::value, U>::type& q0,
-				const typename ::std::enable_if< ::std::is_floating_point<U>::value, U>::type& q1,
-				const typename ::std::enable_if< ::std::is_floating_point<U>::value, U>::type& vmax,
-				const typename ::std::enable_if< ::std::is_floating_point<U>::value, U>::type& amax
+				const typename ::std::enable_if<::std::is_floating_point<U>::value, U>::type& q0,
+				const typename ::std::enable_if<::std::is_floating_point<U>::value, U>::type& q1,
+				const typename ::std::enable_if<::std::is_floating_point<U>::value, U>::type& vmax,
+				const typename ::std::enable_if<::std::is_floating_point<U>::value, U>::type& amax
 			)
 			{
 				T xta = 15 * ::std::pow(vmax, 2) / (16 * amax); // travel distance during acceleration (or, deceleration)
@@ -894,10 +894,10 @@ namespace rl
 			 */
 			template<typename U = T>
 			static Spline SexticLinearSexticAtRest(
-				const typename ::std::enable_if< ::std::is_class<U>::value, U>::type& q0,
-				const typename ::std::enable_if< ::std::is_class<U>::value, U>::type& q1,
-				const typename ::std::enable_if< ::std::is_class<U>::value, U>::type& vmax,
-				const typename ::std::enable_if< ::std::is_class<U>::value, U>::type& amax
+				const typename ::std::enable_if<::std::is_class<U>::value, U>::type& q0,
+				const typename ::std::enable_if<::std::is_class<U>::value, U>::type& q1,
+				const typename ::std::enable_if<::std::is_class<U>::value, U>::type& vmax,
+				const typename ::std::enable_if<::std::is_class<U>::value, U>::type& amax
 			)
 			{
 				assert(q0.size() >= 1 && q0.size() == q1.size() && q0.size() == vmax.size() && q0.size() == amax.size() && "SexticLinearSexticAtRest: parameters must have same dimension.");

@@ -60,7 +60,7 @@ namespace rl
 			
 			Iterator end();
 			
-			void getBoundingBoxPoints(const ::rl::math::Transform& frame, ::std::vector< ::rl::math::Vector3>& p) const;
+			void getBoundingBoxPoints(const ::rl::math::Transform& frame, ::std::vector<::rl::math::Vector3>& p) const;
 			
 			Model* getModel() const;
 			
@@ -68,7 +68,7 @@ namespace rl
 			
 			::std::size_t getNumShapes() const;
 			
-			void getPoints(const ::rl::math::Transform& frame, ::std::vector< ::rl::math::Vector3>& p) const;
+			void getPoints(const ::rl::math::Transform& frame, ::std::vector<::rl::math::Vector3>& p) const;
 			
 			Shape* getShape(const ::std::size_t& i) const;
 			
@@ -86,7 +86,7 @@ namespace rl
 			
 			::rl::math::Vector3 min;
 			
-			::std::vector< ::rl::math::Vector3> points;
+			::std::vector<::rl::math::Vector3> points;
 			
 		protected:
 			Model* model;

@@ -52,14 +52,14 @@ namespace rl
 	{
 		Eet::Eet() :
 			RrtCon(),
-			alpha(static_cast< ::rl::math::Real>(0.01)),
+			alpha(static_cast<::rl::math::Real>(0.01)),
 			alternativeDistanceComputation(false),
 			beta(0),
-			distanceWeight(static_cast< ::rl::math::Real>(0.1)),
+			distanceWeight(static_cast<::rl::math::Real>(0.1)),
 			explorers(),
 			explorersSetup(),
-			gamma(static_cast< ::rl::math::Real>(1) / static_cast< ::rl::math::Real>(3)),
-			goalEpsilon(static_cast< ::rl::math::Real>(0.1)),
+			gamma(static_cast<::rl::math::Real>(1) / static_cast<::rl::math::Real>(3)),
+			goalEpsilon(static_cast<::rl::math::Real>(0.1)),
 			goalEpsilonUseOrientation(false),
 			max(::rl::math::Vector3::Zero()),
 			min(::rl::math::Vector3::Zero()),
@@ -120,8 +120,8 @@ namespace rl
 			do
 			{
 				VertexBundle best;
-				best.q = ::std::make_shared< ::rl::math::Vector>(this->model->getDofPosition());
-				best.t = ::std::make_shared< ::rl::math::Transform>();
+				best.q = ::std::make_shared<::rl::math::Vector>(this->model->getDofPosition());
+				best.t = ::std::make_shared<::rl::math::Transform>();
 				
 				state = this->expand(get(tree, n), *get(tree, nearest.second)->t, chosen, distance, best); // TODO
 				
@@ -201,7 +201,7 @@ namespace rl
 			
 			this->model->step(*nearest->q, qdot, *expanded.q);
 			
-			if (this->model->getManipulabilityMeasure() < static_cast< ::rl::math::Real>(1.0e-3)) // within singularity
+			if (this->model->getManipulabilityMeasure() < static_cast<::rl::math::Real>(1.0e-3)) // within singularity
 			{
 				*expanded.q = this->sampler->generate(); // uniform sampling for singularities
 				::rl::math::Real tmp = this->model->distance(*nearest->q, *expanded.q);
@@ -236,8 +236,8 @@ namespace rl
 			Vertex extended = nullptr;
 			
 			VertexBundle best;
-			best.q = ::std::make_shared< ::rl::math::Vector>(this->model->getDofPosition());
-			best.t = ::std::make_shared< ::rl::math::Transform>();
+			best.q = ::std::make_shared<::rl::math::Vector>(this->model->getDofPosition());
+			best.t = ::std::make_shared<::rl::math::Transform>();
 			
 			if (this->expand(get(tree, nearest.second), *get(tree, nearest.second)->t, chosen, distance, best) >= 0)
 			{
@@ -249,7 +249,7 @@ namespace rl
 			return extended;
 		}
 		
-		::std::normal_distribution< ::rl::math::Real>::result_type
+		::std::normal_distribution<::rl::math::Real>::result_type
 		Eet::gauss()
 		{
 			return this->gaussDistribution(this->gaussEngine);
@@ -294,11 +294,11 @@ namespace rl
 		Rrt::Neighbor
 		Eet::nearest(const Tree& tree, const ::rl::math::Transform& chosen)
 		{
-			::std::vector< ::rl::math::GnatNearestNeighbors<WorkspaceMetric>::Neighbor> neighbors = this->nn.nearest(WorkspaceMetric::Value(&chosen, Vertex()), 1);
+			::std::vector<::rl::math::GnatNearestNeighbors<WorkspaceMetric>::Neighbor> neighbors = this->nn.nearest(WorkspaceMetric::Value(&chosen, Vertex()), 1);
 			return Neighbor(neighbors.front().first, neighbors.front().second.second);
 		}
 		
-		::std::uniform_real_distribution< ::rl::math::Real>::result_type
+		::std::uniform_real_distribution<::rl::math::Real>::result_type
 		Eet::rand()
 		{
 			return this->randDistribution(this->randEngine);
@@ -391,10 +391,10 @@ namespace rl
 			
 			// tree initialization with start configuration
 			
-			this->begin[0] = this->addVertex(this->tree[0], ::std::make_shared< ::rl::math::Vector>(*this->start));
+			this->begin[0] = this->addVertex(this->tree[0], ::std::make_shared<::rl::math::Vector>(*this->start));
 			this->model->setPosition(*this->start);
 			this->model->updateFrames();
-			get(this->tree[0], this->begin[0])->t = ::std::make_shared< ::rl::math::Transform>(this->model->forwardPosition());
+			get(this->tree[0], this->begin[0])->t = ::std::make_shared<::rl::math::Transform>(this->model->forwardPosition());
 			this->nn.push(WorkspaceMetric::Value(get(this->tree[0], this->begin[0])->t.get(), begin[0]));
 			
 			::rl::math::Transform chosen;
@@ -413,7 +413,7 @@ namespace rl
 				{
 					Neighbor nearest;
 					
-					if (path.end() == i + 1 && this->rand() < static_cast< ::rl::math::Real>(0.5)) // within last sphere
+					if (path.end() == i + 1 && this->rand() < static_cast<::rl::math::Real>(0.5)) // within last sphere
 					{
 						chosen = goal; // select goal position and orientation
 						nearest = this->nearest(this->tree[0], chosen); // nearest vertex in tree
@@ -477,7 +477,7 @@ namespace rl
 						}
 						
 						sigma *= 1 - this->alpha; // increase exploitation
-						sigma = ::std::max(static_cast< ::rl::math::Real>(0.1), sigma);
+						sigma = ::std::max(static_cast<::rl::math::Real>(0.1), sigma);
 						
 						for (WorkspaceSphereVector::reverse_iterator k = ++path.rbegin(); k.base() != i; ++k) // search spheres backwards
 						{

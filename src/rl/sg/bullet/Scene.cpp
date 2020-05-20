@@ -129,8 +129,8 @@ namespace rl
 				::btVoronoiSimplexSolver simplexSolver;
 				::btGjkEpaPenetrationDepthSolver penetrationDepthSolver;
 				::btGjkPairDetector pairDetector(
-					static_cast< ::btConvexShape*>(shape1->shape),
-					static_cast< ::btConvexShape*>(shape2->shape),
+					static_cast<::btConvexShape*>(shape1->shape),
+					static_cast<::btConvexShape*>(shape2->shape),
 					&simplexSolver,
 					&penetrationDepthSolver
 				);
@@ -163,8 +163,8 @@ namespace rl
 				
 				::btGjkEpaPenetrationDepthSolver epa;
 				::btGjkPairDetector convexConvex(
-					static_cast< ::btConvexShape*>(static_cast<Shape*>(shape)->shape),
-					static_cast< ::btConvexShape*>(&sphere),
+					static_cast<::btConvexShape*>(static_cast<Shape*>(shape)->shape),
+					static_cast<::btConvexShape*>(&sphere),
 					&sGjkSimplexSolver,
 					&epa
 				);
@@ -176,9 +176,9 @@ namespace rl
 				input.m_transformA = body->object.getWorldTransform() * static_cast<Shape*>(shape)->transform;
 				input.m_transformB.setIdentity();
 				input.m_transformB.getOrigin().setValue(
-					static_cast< ::btScalar>(point.x()),
-					static_cast< ::btScalar>(point.y()),
-					static_cast< ::btScalar>(point.z())
+					static_cast<::btScalar>(point.x()),
+					static_cast<::btScalar>(point.y()),
+					static_cast<::btScalar>(point.z())
 				);
 				
 				convexConvex.getClosestPoints(input, gjkOutput, 0);
@@ -222,15 +222,15 @@ namespace rl
 			Scene::raycast(const ::rl::math::Vector3& source, const ::rl::math::Vector3& target, ::rl::math::Real& distance)
 			{
 				::btVector3 rayFromWorld(
-					static_cast< ::btScalar>(source.x()),
-					static_cast< ::btScalar>(source.y()),
-					static_cast< ::btScalar>(source.z())
+					static_cast<::btScalar>(source.x()),
+					static_cast<::btScalar>(source.y()),
+					static_cast<::btScalar>(source.z())
 				);
 				
 				::btVector3 rayToWorld(
-					static_cast< ::btScalar>(target.x()),
-					static_cast< ::btScalar>(target.y()),
-					static_cast< ::btScalar>(target.z())
+					static_cast<::btScalar>(target.x()),
+					static_cast<::btScalar>(target.y()),
+					static_cast<::btScalar>(target.z())
 				);
 				
 				RayResultCallback resultCallback;
@@ -246,7 +246,7 @@ namespace rl
 				}
 				else
 				{
-					distance = ::std::numeric_limits< ::btScalar>::quiet_NaN();
+					distance = ::std::numeric_limits<::btScalar>::quiet_NaN();
 					return nullptr;
 				}
 			}
@@ -257,9 +257,9 @@ namespace rl
 				Body* body = static_cast<Body*>(shape->getBody());
 				
 				::btVector3 rayFromWorld(
-					static_cast< ::btScalar>(source.x()),
-					static_cast< ::btScalar>(source.y()),
-					static_cast< ::btScalar>(source.z())
+					static_cast<::btScalar>(source.x()),
+					static_cast<::btScalar>(source.y()),
+					static_cast<::btScalar>(source.z())
 				);
 				
 				::btTransform rayFromTrans;
@@ -267,9 +267,9 @@ namespace rl
 				rayFromTrans.setOrigin(rayFromWorld);
 				
 				::btVector3 rayToWorld(
-					static_cast< ::btScalar>(target.x()),
-					static_cast< ::btScalar>(target.y()),
-					static_cast< ::btScalar>(target.z())
+					static_cast<::btScalar>(target.x()),
+					static_cast<::btScalar>(target.y()),
+					static_cast<::btScalar>(target.z())
 				);
 				
 				::btTransform rayToTrans;
@@ -296,7 +296,7 @@ namespace rl
 				}
 				else
 				{
-					distance = ::std::numeric_limits< ::btScalar>::quiet_NaN();
+					distance = ::std::numeric_limits<::btScalar>::quiet_NaN();
 					return false;
 				}
 			}

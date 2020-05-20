@@ -227,7 +227,7 @@ namespace rl
 				template<typename Rep, typename Period>
 				void set_periodic(const ::std::chrono::duration<Rep, Period>& period)
 				{
-					::std::chrono::nanoseconds period_ns = ::std::chrono::duration_cast< ::std::chrono::nanoseconds>(period);
+					::std::chrono::nanoseconds period_ns = ::std::chrono::duration_cast<::std::chrono::nanoseconds>(period);
 					
 					int e = ::rt_task_make_periodic(this->M_id.M_task, ::rt_get_time(), ::nano2count(period_ns.count()));
 					
@@ -240,8 +240,8 @@ namespace rl
 				template<typename Duration, typename Rep, typename Period>
 				void set_periodic(const ::std::chrono::time_point<chrono::system_clock, Duration>& idate, const ::std::chrono::duration<Rep, Period>& period)
 				{
-					::std::chrono::time_point<chrono::system_clock, ::std::chrono::nanoseconds> idate_ns = ::std::chrono::time_point_cast< ::std::chrono::nanoseconds>(idate);
-					::std::chrono::nanoseconds period_ns = ::std::chrono::duration_cast< ::std::chrono::nanoseconds>(period);
+					::std::chrono::time_point<chrono::system_clock, ::std::chrono::nanoseconds> idate_ns = ::std::chrono::time_point_cast<::std::chrono::nanoseconds>(idate);
+					::std::chrono::nanoseconds period_ns = ::std::chrono::duration_cast<::std::chrono::nanoseconds>(period);
 					
 					int e = ::rt_task_make_periodic(this->M_id.M_task, ::nano2count(idate_ns.time_since_epoch().count()), ::nano2count(period_ns.count()));
 					
@@ -416,7 +416,7 @@ namespace rl
 				template<typename Rep, typename Period>
 				inline void sleep_for(const ::std::chrono::duration<Rep, Period>& rtime)
 				{
-					::std::chrono::nanoseconds ns = ::std::chrono::duration_cast< ::std::chrono::nanoseconds>(rtime);
+					::std::chrono::nanoseconds ns = ::std::chrono::duration_cast<::std::chrono::nanoseconds>(rtime);
 					int e = ::rt_sleep(::nano2count(ns.count()));
 					
 					if (e)
@@ -428,7 +428,7 @@ namespace rl
 				template<typename Duration>
 				inline void sleep_until(const ::std::chrono::time_point<chrono::system_clock, Duration>& atime)
 				{
-					::std::chrono::time_point<chrono::system_clock, ::std::chrono::nanoseconds> ns = ::std::chrono::time_point_cast< ::std::chrono::nanoseconds>(atime);
+					::std::chrono::time_point<chrono::system_clock, ::std::chrono::nanoseconds> ns = ::std::chrono::time_point_cast<::std::chrono::nanoseconds>(atime);
 					int e = ::rt_sleep_until(::nano2count(ns.time_since_epoch().count()));
 					
 					if (e)
@@ -481,11 +481,11 @@ namespace rl
 namespace std
 {
 	template<>
-	struct hash< ::rl::util::rtai::thread::id>
+	struct hash<::rl::util::rtai::thread::id>
 	{
 		size_t operator()(const ::rl::util::rtai::thread::id& id) const
 		{
-			return hash< ::rl::util::rtai::thread::native_handle_type>()(id.M_thread);
+			return hash<::rl::util::rtai::thread::native_handle_type>()(id.M_thread);
 		}
 	};
 	

@@ -101,10 +101,10 @@ namespace rl
 			return x;
 		}
 		
-		::Eigen::Matrix< ::std::int32_t, ::Eigen::Dynamic, 1>
+		::Eigen::Matrix<::std::int32_t, ::Eigen::Dynamic, 1>
 		MitsubishiH7::getCurrentFeedback() const
 		{
-			::Eigen::Matrix< ::std::int32_t, ::Eigen::Dynamic, 1> c(this->getDof());
+			::Eigen::Matrix<::std::int32_t, ::Eigen::Dynamic, 1> c(this->getDof());
 			
 			switch (this->getDof())
 			{
@@ -179,10 +179,10 @@ namespace rl
 			return this->mode;
 		}
 		
-		::Eigen::Matrix< ::std::int32_t, ::Eigen::Dynamic, 1>
+		::Eigen::Matrix<::std::int32_t, ::Eigen::Dynamic, 1>
 		MitsubishiH7::getMotorPulse() const
 		{
-			::Eigen::Matrix< ::std::int32_t, ::Eigen::Dynamic, 1> p(this->getDof());
+			::Eigen::Matrix<::std::int32_t, ::Eigen::Dynamic, 1> p(this->getDof());
 			
 			switch (this->getDof())
 			{
@@ -318,7 +318,7 @@ namespace rl
 		}
 		
 		void
-		MitsubishiH7::setMotorPulse(const ::Eigen::Matrix< ::std::int32_t, ::Eigen::Dynamic, 1>& p)
+		MitsubishiH7::setMotorPulse(const ::Eigen::Matrix<::std::int32_t, ::Eigen::Dynamic, 1>& p)
 		{
 			assert(p.size() >= this->getDof());
 			

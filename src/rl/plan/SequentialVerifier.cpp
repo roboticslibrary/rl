@@ -52,7 +52,7 @@ namespace rl
 			
 			for (::std::size_t i = 0; i < steps - 1; ++i)
 			{
-				this->model->interpolate(u, v, static_cast< ::rl::math::Real>(i + 1) / static_cast< ::rl::math::Real>(steps), inter);
+				this->model->interpolate(u, v, static_cast<::rl::math::Real>(i + 1) / static_cast<::rl::math::Real>(steps), inter);
 				
 				if (this->model->isColliding(inter))
 				{

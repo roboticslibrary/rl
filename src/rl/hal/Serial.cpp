@@ -396,8 +396,8 @@ namespace rl
 			return 0;
 #else
 			::timeval tv;
-			tv.tv_sec = ::std::chrono::duration_cast< ::std::chrono::seconds>(timeout).count();
-			tv.tv_usec = ::std::chrono::duration_cast< ::std::chrono::microseconds>(timeout - ::std::chrono::duration_cast< ::std::chrono::seconds>(timeout)).count();
+			tv.tv_sec = ::std::chrono::duration_cast<::std::chrono::seconds>(timeout).count();
+			tv.tv_usec = ::std::chrono::duration_cast<::std::chrono::microseconds>(timeout - ::std::chrono::duration_cast<::std::chrono::seconds>(timeout)).count();
 			
 			::fd_set readfds;
 			FD_ZERO(&readfds);

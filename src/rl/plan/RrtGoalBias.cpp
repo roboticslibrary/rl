@@ -35,7 +35,7 @@ namespace rl
 	{
 		RrtGoalBias::RrtGoalBias() :
 			Rrt(),
-			probability(static_cast< ::rl::math::Real>(0.05)),
+			probability(static_cast<::rl::math::Real>(0.05)),
 			randDistribution(0, 1),
 			randEngine(::std::random_device()())
 		{
@@ -64,7 +64,7 @@ namespace rl
 			return "RRT Goal Bias";
 		}
 		
-		::std::uniform_real_distribution< ::rl::math::Real>::result_type
+		::std::uniform_real_distribution<::rl::math::Real>::result_type
 		RrtGoalBias::rand()
 		{
 			return this->randDistribution(this->randEngine);

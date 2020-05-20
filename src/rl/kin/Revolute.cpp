@@ -79,15 +79,15 @@ namespace rl
 		void
 		Revolute::normalize(::rl::math::Real& q)
 		{
-			q = ::std::remainder(q, 2 * static_cast< ::rl::math::Real>(M_PI));
+			q = ::std::remainder(q, 2 * static_cast<::rl::math::Real>(M_PI));
 			
 			if (q < this->min)
 			{
-				q += 2 * static_cast< ::rl::math::Real>(M_PI);
+				q += 2 * static_cast<::rl::math::Real>(M_PI);
 			}
 			else if (q > this->max)
 			{
-				q -= 2 * static_cast< ::rl::math::Real>(M_PI);
+				q -= 2 * static_cast<::rl::math::Real>(M_PI);
 			}
 		}
 		

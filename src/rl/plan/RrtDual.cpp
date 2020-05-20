@@ -79,8 +79,8 @@ namespace rl
 		{
 			this->time = ::std::chrono::steady_clock::now();
 			
-			this->begin[0] = this->addVertex(this->tree[0], ::std::make_shared< ::rl::math::Vector>(*this->start));
-			this->begin[1] = this->addVertex(this->tree[1], ::std::make_shared< ::rl::math::Vector>(*this->goal));
+			this->begin[0] = this->addVertex(this->tree[0], ::std::make_shared<::rl::math::Vector>(*this->start));
+			this->begin[1] = this->addVertex(this->tree[1], ::std::make_shared<::rl::math::Vector>(*this->goal));
 			
 			while ((::std::chrono::steady_clock::now() - this->time) < this->duration)
 			{

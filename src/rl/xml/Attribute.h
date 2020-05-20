@@ -100,7 +100,7 @@ namespace rl
 			{
 				if (nullptr != this->attr->ns)
 				{
-					::boost::shared_array< ::xmlChar> value(
+					::boost::shared_array<::xmlChar> value(
 						::xmlGetNsProp(
 							this->attr->parent,
 							this->attr->name,
@@ -113,7 +113,7 @@ namespace rl
 				}
 				else
 				{
-					::boost::shared_array< ::xmlChar> value(
+					::boost::shared_array<::xmlChar> value(
 						::xmlGetProp(
 							this->attr->parent,
 							this->attr->name

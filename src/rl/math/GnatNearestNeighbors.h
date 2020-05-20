@@ -162,7 +162,7 @@ namespace rl
 				return this->root.removed && this->root.data.empty() && this->root.children.empty();
 			}
 			
-			::boost::optional< ::std::size_t> getChecks() const
+			::boost::optional<::std::size_t> getChecks() const
 			{
 				return this->checks;
 			}
@@ -231,7 +231,7 @@ namespace rl
 				this->generator.seed(value);
 			}
 			
-			void setChecks(const ::boost::optional< ::std::size_t>& checks)
+			void setChecks(const ::boost::optional<::std::size_t>& checks)
 			{
 				this->checks = checks;
 			}
@@ -370,12 +370,12 @@ namespace rl
 				bool removed;
 			};
 			
-			void choose(const Node& node, ::std::vector< ::std::size_t>& centers, ::std::vector< ::std::vector<Distance>>& distances)
+			void choose(const Node& node, ::std::vector<::std::size_t>& centers, ::std::vector<::std::vector<Distance>>& distances)
 			{
 				::std::size_t k = node.degree;
 				::std::vector<Distance> min(node.data.size(), ::std::numeric_limits<Distance>::infinity());
 				
-				::std::uniform_int_distribution< ::std::size_t> distribution(0, node.data.size() - 1);
+				::std::uniform_int_distribution<::std::size_t> distribution(0, node.data.size() - 1);
 				centers[0] = distribution(this->generator);
 				
 				for (::std::size_t i = 0; i < k - 1; ++i)
@@ -599,8 +599,8 @@ namespace rl
 			void split(Node& node)
 			{
 				
-				::std::vector< ::std::vector<Distance>> distances(node.degree, ::std::vector<Distance>(node.data.size()));
-				::std::vector< ::std::size_t> centers(node.degree);
+				::std::vector<::std::vector<Distance>> distances(node.degree, ::std::vector<Distance>(node.data.size()));
+				::std::vector<::std::size_t> centers(node.degree);
 				this->choose(node, centers, distances);
 				
 				for (::std::size_t i = 0; i < centers.size(); ++i)
@@ -676,7 +676,7 @@ namespace rl
 				}
 			}
 			
-			::boost::optional< ::std::size_t> checks;
+			::boost::optional<::std::size_t> checks;
 			
 			::std::mt19937 generator;
 			

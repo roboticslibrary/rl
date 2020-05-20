@@ -107,9 +107,9 @@ namespace rl
 			
 			::rl::math::Vector lb;
 			
-			::std::unique_ptr< ::nlopt_opt_s, decltype(&::nlopt_destroy)> opt;
+			::std::unique_ptr<::nlopt_opt_s, decltype(&::nlopt_destroy)> opt;
 			
-			::std::uniform_real_distribution< ::rl::math::Real> randDistribution;
+			::std::uniform_real_distribution<::rl::math::Real> randDistribution;
 			
 			::std::mt19937 randEngine;
 			

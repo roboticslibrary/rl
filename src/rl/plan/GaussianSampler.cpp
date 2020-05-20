@@ -45,7 +45,7 @@ namespace rl
 		{
 		}
 		
-		::std::normal_distribution< ::rl::math::Real>::result_type
+		::std::normal_distribution<::rl::math::Real>::result_type
 		GaussianSampler::gauss()
 		{
 			return this->gaussDistribution(this->gaussEngine);

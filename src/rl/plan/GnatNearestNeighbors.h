@@ -48,7 +48,7 @@ namespace rl
 			
 			bool empty() const;
 			
-			::boost::optional< ::std::size_t> getChecks() const;
+			::boost::optional<::std::size_t> getChecks() const;
 			
 			::std::size_t getNodeDataMax() const;
 			
@@ -66,7 +66,7 @@ namespace rl
 			
 			void seed(const ::std::mt19937::result_type& value);
 			
-			void setChecks(const ::boost::optional< ::std::size_t>& checks);
+			void setChecks(const ::boost::optional<::std::size_t>& checks);
 			
 			void setNodeDataMax(const ::std::size_t& nodeDataMax);
 			

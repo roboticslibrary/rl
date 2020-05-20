@@ -90,15 +90,15 @@ namespace rl
 			Body::setFrame(const ::rl::math::Transform& frame)
 			{
 				this->object.getWorldTransform().getOrigin().setValue(
-					static_cast< ::btScalar>(frame(0, 3)),
-					static_cast< ::btScalar>(frame(1, 3)),
-					static_cast< ::btScalar>(frame(2, 3))
+					static_cast<::btScalar>(frame(0, 3)),
+					static_cast<::btScalar>(frame(1, 3)),
+					static_cast<::btScalar>(frame(2, 3))
 				);
 				
 				this->object.getWorldTransform().getBasis().setValue(
-					static_cast< ::btScalar>(frame(0, 0)), static_cast< ::btScalar>(frame(0, 1)), static_cast< ::btScalar>(frame(0, 2)),
-					static_cast< ::btScalar>(frame(1, 0)), static_cast< ::btScalar>(frame(1, 1)), static_cast< ::btScalar>(frame(1, 2)),
-					static_cast< ::btScalar>(frame(2, 0)), static_cast< ::btScalar>(frame(2, 1)), static_cast< ::btScalar>(frame(2, 2))
+					static_cast<::btScalar>(frame(0, 0)), static_cast<::btScalar>(frame(0, 1)), static_cast<::btScalar>(frame(0, 2)),
+					static_cast<::btScalar>(frame(1, 0)), static_cast<::btScalar>(frame(1, 1)), static_cast<::btScalar>(frame(1, 2)),
+					static_cast<::btScalar>(frame(2, 0)), static_cast<::btScalar>(frame(2, 1)), static_cast<::btScalar>(frame(2, 2))
 				);
 			}
 		}

@@ -75,11 +75,11 @@ namespace rl
 				return Document(::xsltApplyStylesheet(this->stylesheet.get(), this->stylesheet.get()->doc, nullptr));
 			}
 			
-			Document apply(const ::std::map< ::std::string, ::std::string>& parameters)
+			Document apply(const ::std::map<::std::string, ::std::string>& parameters)
 			{
 				::std::vector<const char*> params;
 				
-				for (::std::map< ::std::string, ::std::string>::const_iterator i = parameters.begin(); i != parameters.end(); ++i)
+				for (::std::map<::std::string, ::std::string>::const_iterator i = parameters.begin(); i != parameters.end(); ++i)
 				{
 					params.push_back(i->first.c_str());
 					params.push_back(i->second.c_str());
@@ -95,11 +95,11 @@ namespace rl
 				return Document(::xsltApplyStylesheet(this->stylesheet.get(), document.get(), nullptr));
 			}
 			
-			Document apply(const Document& document, const ::std::map< ::std::string, ::std::string>& parameters)
+			Document apply(const Document& document, const ::std::map<::std::string, ::std::string>& parameters)
 			{
 				::std::vector<const char*> params;
 				
-				for (::std::map< ::std::string, ::std::string>::const_iterator i = parameters.begin(); i != parameters.end(); ++i)
+				for (::std::map<::std::string, ::std::string>::const_iterator i = parameters.begin(); i != parameters.end(); ++i)
 				{
 					params.push_back(i->first.c_str());
 					params.push_back(i->second.c_str());
@@ -116,7 +116,7 @@ namespace rl
 				int size;
 				
 				::xmlDocDumpFormatMemory(this->stylesheet.get()->doc, &mem, &size, format ? 1 : 0);
-				::boost::shared_array< ::xmlChar> memory(mem, ::xmlFree);
+				::boost::shared_array<::xmlChar> memory(mem, ::xmlFree);
 				
 				return nullptr != memory.get() ? reinterpret_cast<const char*>(memory.get()) : ::std::string();
 			}
@@ -127,7 +127,7 @@ namespace rl
 				int size;
 				
 				::xmlDocDumpMemory(this->stylesheet.get()->doc, &mem, &size);
-				::boost::shared_array< ::xmlChar> memory(mem, ::xmlFree);
+				::boost::shared_array<::xmlChar> memory(mem, ::xmlFree);
 				
 				return nullptr != memory.get() ? reinterpret_cast<const char*>(memory.get()) : ::std::string();
 			}
@@ -182,7 +182,7 @@ namespace rl
 		protected:
 			
 		private:
-			::std::shared_ptr< ::xsltStylesheet> stylesheet;
+			::std::shared_ptr<::xsltStylesheet> stylesheet;
 		};
 	}
 }

@@ -128,9 +128,9 @@ namespace rl
 			::socklen_t addrlen = sizeof(addr);
 			
 #ifdef WIN32
-			SOCKET fd = ::accept(this->fd, reinterpret_cast< ::sockaddr*>(&addr), &addrlen);
+			SOCKET fd = ::accept(this->fd, reinterpret_cast<::sockaddr*>(&addr), &addrlen);
 #else // WIN32
-			int fd = ::accept(this->fd, reinterpret_cast< ::sockaddr*>(&addr), &addrlen);
+			int fd = ::accept(this->fd, reinterpret_cast<::sockaddr*>(&addr), &addrlen);
 #endif // WIN32
 			
 #ifdef WIN32
@@ -403,7 +403,7 @@ namespace rl
 #ifdef WIN32
 			int numbytes = ::recvfrom(this->fd, static_cast<char*>(buf), count, 0, reinterpret_cast<::sockaddr*>(&addr), &addrlen);
 #else // WIN32
-			::ssize_t numbytes = ::recvfrom(this->fd, buf, count, 0, reinterpret_cast< ::sockaddr*>(&addr), reinterpret_cast< ::socklen_t*>(&addrlen));
+			::ssize_t numbytes = ::recvfrom(this->fd, buf, count, 0, reinterpret_cast<::sockaddr*>(&addr), reinterpret_cast<::socklen_t*>(&addrlen));
 #endif // WIN32
 			
 			address = Address(addr);
@@ -427,8 +427,8 @@ namespace rl
 		Socket::select(const bool& read, const bool& write, const ::std::chrono::nanoseconds& timeout)
 		{
 			::timeval tv;
-			tv.tv_sec = ::std::chrono::duration_cast< ::std::chrono::seconds>(timeout).count();
-			tv.tv_usec = ::std::chrono::duration_cast< ::std::chrono::microseconds>(timeout - ::std::chrono::duration_cast< ::std::chrono::seconds>(timeout)).count();
+			tv.tv_sec = ::std::chrono::duration_cast<::std::chrono::seconds>(timeout).count();
+			tv.tv_usec = ::std::chrono::duration_cast<::std::chrono::microseconds>(timeout - ::std::chrono::duration_cast<::std::chrono::seconds>(timeout)).count();
 			
 			::fd_set readfds;
 			FD_ZERO(&readfds);
@@ -746,11 +746,11 @@ namespace rl
 			{
 			case AF_INET:
 				hexadecimal.resize(4);
-				::std::memcpy(hexadecimal.data(), &reinterpret_cast< ::sockaddr_in*>(&this->addr)->sin_addr.s_addr, hexadecimal.size());
+				::std::memcpy(hexadecimal.data(), &reinterpret_cast<::sockaddr_in*>(&this->addr)->sin_addr.s_addr, hexadecimal.size());
 				break;
 			case AF_INET6:
 				hexadecimal.resize(16);
-				::std::memcpy(hexadecimal.data(), &reinterpret_cast< ::sockaddr_in6*>(&this->addr)->sin6_addr.s6_addr, hexadecimal.size());
+				::std::memcpy(hexadecimal.data(), &reinterpret_cast<::sockaddr_in6*>(&this->addr)->sin6_addr.s6_addr, hexadecimal.size());
 				break;
 			default:
 				break;
@@ -801,7 +801,7 @@ namespace rl
 		void
 		Socket::Address::setInfo(const ::std::string& string, const unsigned short int& port, const bool& asNumeric)
 		{
-			this->setInfo(string, ::boost::lexical_cast< ::std::string>(port), asNumeric);
+			this->setInfo(string, ::boost::lexical_cast<::std::string>(port), asNumeric);
 		}
 		
 		void

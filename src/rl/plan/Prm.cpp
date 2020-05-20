@@ -43,9 +43,9 @@ namespace rl
 		Prm::Prm() :
 			Planner(),
 			astar(true),
-			degree(::std::numeric_limits< ::std::size_t>::max()),
+			degree(::std::numeric_limits<::std::size_t>::max()),
 			k(30),
-			radius(::std::numeric_limits< ::rl::math::Real>::max()),
+			radius(::std::numeric_limits<::rl::math::Real>::max()),
 			sampler(nullptr),
 			verifier(nullptr),
 			begin(nullptr),
@@ -99,7 +99,7 @@ namespace rl
 		{
 			for (::std::size_t i = 0; i < steps; ++i)
 			{
-				VectorPtr q = ::std::make_shared< ::rl::math::Vector>(this->model->getDofPosition());
+				VectorPtr q = ::std::make_shared<::rl::math::Vector>(this->model->getDofPosition());
 				*q = this->sampler->generateCollisionFree();
 				Vertex v = this->addVertex(q);
 				this->insert(v);
@@ -209,10 +209,10 @@ namespace rl
 		{
 			this->time = ::std::chrono::steady_clock::now();
 			
-			this->begin = this->addVertex(::std::make_shared< ::rl::math::Vector>(*this->start));
+			this->begin = this->addVertex(::std::make_shared<::rl::math::Vector>(*this->start));
 			this->insert(this->begin);
 			
-			this->end = this->addVertex(::std::make_shared< ::rl::math::Vector>(*this->goal));
+			this->end = this->addVertex(::std::make_shared<::rl::math::Vector>(*this->goal));
 			this->insert(this->end);
 			
 			while ((::std::chrono::steady_clock::now() - this->time) < this->duration && !::boost::same_component(this->begin, this->end, this->ds))
@@ -238,9 +238,9 @@ namespace rl
 					::boost::get(&EdgeBundle::weight, this->graph),
 					::boost::get(&VertexBundle::index, this->graph),
 					::boost::get(&VertexBundle::color, this->graph),
-					::std::less< ::rl::math::Real>(),
-					::std::plus< ::rl::math::Real>(),
-					::std::numeric_limits< ::rl::math::Real>::max(),
+					::std::less<::rl::math::Real>(),
+					::std::plus<::rl::math::Real>(),
+					::std::numeric_limits<::rl::math::Real>::max(),
 					0
 				);
 			}
@@ -253,9 +253,9 @@ namespace rl
 					::boost::get(&VertexBundle::distance, this->graph),
 					::boost::get(&EdgeBundle::weight, this->graph),
 					::boost::get(&VertexBundle::index, this->graph),
-					::std::less< ::rl::math::Real>(),
-					::boost::closed_plus< ::rl::math::Real>(),
-					::std::numeric_limits< ::rl::math::Real>::max(),
+					::std::less<::rl::math::Real>(),
+					::boost::closed_plus<::rl::math::Real>(),
+					::std::numeric_limits<::rl::math::Real>::max(),
 					0,
 					::boost::default_dijkstra_visitor()
 				);

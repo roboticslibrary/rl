@@ -132,7 +132,7 @@ namespace rl
 			
 			assert(this->isConnected());
 			
-			::std::array< ::std::uint8_t, 812> buf;
+			::std::array<::std::uint8_t, 812> buf;
 			
 			buf[4] = 0x74;
 			
@@ -199,7 +199,7 @@ namespace rl
 			
 			assert(this->isConnected());
 			
-			::std::array< ::std::uint8_t, 812> buf;
+			::std::array<::std::uint8_t, 812> buf;
 			
 			buf[4] = 0x31;
 			
@@ -312,10 +312,10 @@ namespace rl
 			switch (this->data[6] & 192)
 			{
 			case 0:
-				scale = static_cast< ::rl::math::Real>(0.01);
+				scale = static_cast<::rl::math::Real>(0.01);
 				break;
 			case 64:
-				scale = static_cast< ::rl::math::Real>(0.001);
+				scale = static_cast<::rl::math::Real>(0.001);
 				break;
 			default:
 				throw DeviceException("unknown scale");
@@ -369,11 +369,11 @@ namespace rl
 ::std::cerr << "Signal-to-noise ratio too small" << ::std::endl;
 					case 0x1FFA:
 ::std::cerr << "Error when reading channel 1" << ::std::endl;
-						distances(i) = ::std::numeric_limits< ::rl::math::Real>::quiet_NaN();
+						distances(i) = ::std::numeric_limits<::rl::math::Real>::quiet_NaN();
 						break;
 					case 0x1FF7:
 ::std::cerr << "Measured value > Maximum value" << ::std::endl;
-						distances(i) = ::std::numeric_limits< ::rl::math::Real>::infinity();
+						distances(i) = ::std::numeric_limits<::rl::math::Real>::infinity();
 						break;
 					default:
 						distances(i) = value;
@@ -396,11 +396,11 @@ namespace rl
 ::std::cerr << "Signal-to-noise ratio too small" << ::std::endl;
 					case 0x3FFA:
 ::std::cerr << "Error when reading channel 1" << ::std::endl;
-						distances(i) = ::std::numeric_limits< ::rl::math::Real>::quiet_NaN();
+						distances(i) = ::std::numeric_limits<::rl::math::Real>::quiet_NaN();
 						break;
 					case 0x3FF7:
 ::std::cerr << "Measured value > Maximum value" << ::std::endl;
-						distances(i) = ::std::numeric_limits< ::rl::math::Real>::infinity();
+						distances(i) = ::std::numeric_limits<::rl::math::Real>::infinity();
 						break;
 					default:
 						distances(i) = value;
@@ -421,11 +421,11 @@ namespace rl
 ::std::cerr << "Signal-to-noise ratio too small" << ::std::endl;
 					case 0x7FFA:
 ::std::cerr << "Error when reading channel 1" << ::std::endl;
-						distances(i) = ::std::numeric_limits< ::rl::math::Real>::quiet_NaN();
+						distances(i) = ::std::numeric_limits<::rl::math::Real>::quiet_NaN();
 						break;
 					case 0x7FF7:
 ::std::cerr << "Measured value > Maximum value" << ::std::endl;
-						distances(i) = ::std::numeric_limits< ::rl::math::Real>::infinity();
+						distances(i) = ::std::numeric_limits<::rl::math::Real>::infinity();
 						break;
 					default:
 						distances(i) = value;
@@ -537,11 +537,11 @@ namespace rl
 			switch (this->variant)
 			{
 			case VARIANT_100_25:
-				return static_cast< ::rl::math::Real>(0.25) * ::rl::math::DEG2RAD;
+				return static_cast<::rl::math::Real>(0.25) * ::rl::math::DEG2RAD;
 				break;
 			case VARIANT_100_50:
 			case VARIANT_180_50:
-				return static_cast< ::rl::math::Real>(0.5) * ::rl::math::DEG2RAD;
+				return static_cast<::rl::math::Real>(0.5) * ::rl::math::DEG2RAD;
 				break;
 			case VARIANT_100_100:
 			case VARIANT_180_100:
@@ -605,7 +605,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			::std::array< ::std::uint8_t, 812> buf;
+			::std::array<::std::uint8_t, 812> buf;
 			
 			buf[4] = 0x3A;
 			
@@ -635,7 +635,7 @@ namespace rl
 			
 			this->setConnected(true);
 			
-			::std::array< ::std::uint8_t, 812> buf;
+			::std::array<::std::uint8_t, 812> buf;
 			
 			// synchronize baud rates
 			
@@ -843,7 +843,7 @@ namespace rl
 			
 			::std::uint16_t length = Endian::hostWord(buf[3], buf[2]);
 			
-			if (len != static_cast< ::std::size_t>(length) + 6)
+			if (len != static_cast<::std::size_t>(length) + 6)
 			{
 				throw DeviceException("data length mismatch in command " + ::std::to_string(command));
 			}
@@ -897,7 +897,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			::std::array< ::std::uint8_t, 812> buf;
+			::std::array<::std::uint8_t, 812> buf;
 			
 			buf[4] = 0x10;
 			
@@ -946,7 +946,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			::std::array< ::std::uint8_t, 812> buf;
+			::std::array<::std::uint8_t, 812> buf;
 			
 			buf[4] = 0x20;
 			
@@ -1020,7 +1020,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			::std::array< ::std::uint8_t, 812> buf;
+			::std::array<::std::uint8_t, 812> buf;
 			
 			// transmit password
 			
@@ -1118,7 +1118,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			::std::array< ::std::uint8_t, 812> buf;
+			::std::array<::std::uint8_t, 812> buf;
 			
 			buf[4] = 0x20;
 			
@@ -1162,7 +1162,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			::std::array< ::std::uint8_t, 812> buf;
+			::std::array<::std::uint8_t, 812> buf;
 			
 			buf[4] = 0x3B;
 			

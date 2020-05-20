@@ -39,10 +39,10 @@ namespace rl
 		{
 		}
 		
-		::std::vector< ::rl::math::Real>
+		::std::vector<::rl::math::Real>
 		AnalogOutputReader::getAnalogOutput() const
 		{
-			::std::vector< ::rl::math::Real> values;
+			::std::vector<::rl::math::Real> values;
 			
 			for (::std::size_t i = 0; i < this->getAnalogOutputCount(); ++i)
 			{

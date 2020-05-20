@@ -151,7 +151,7 @@ namespace rl
 				return this->root.data.empty() && nullptr == this->root.children[0] && nullptr == this->root.children[1];
 			}
 			
-			::boost::optional< ::std::size_t> getChecks() const
+			::boost::optional<::std::size_t> getChecks() const
 			{
 				return this->checks;
 			}
@@ -233,7 +233,7 @@ namespace rl
 				return this->search(query, nullptr, &radius, sorted);
 			}
 			
-			void setChecks(const ::boost::optional< ::std::size_t>& checks)
+			void setChecks(const ::boost::optional<::std::size_t>& checks)
 			{
 				this->checks = checks;
 			}
@@ -374,7 +374,7 @@ namespace rl
 					lhs.swap(rhs);
 				}
 				
-				::std::array< ::std::unique_ptr<Node>, 2> children;
+				::std::array<::std::unique_ptr<Node>, 2> children;
 				
 				::std::vector<Value> data;
 				
@@ -690,7 +690,7 @@ namespace rl
 			
 			BoundingBox boundingBox;
 			
-			::boost::optional< ::std::size_t> checks;
+			::boost::optional<::std::size_t> checks;
 			
 			Metric metric;
 			

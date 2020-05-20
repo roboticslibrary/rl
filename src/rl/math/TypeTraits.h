@@ -216,7 +216,7 @@ namespace rl
 		};
 		
 		template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
-		class TypeTraits< ::Eigen::Array<Scalar, Rows, Cols, Options, MaxRows, MaxCols>>
+		class TypeTraits<::Eigen::Array<Scalar, Rows, Cols, Options, MaxRows, MaxCols>>
 		{
 		public:
 			typedef Scalar value_type;
@@ -263,7 +263,7 @@ namespace rl
 		};
 		
 		template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
-		class TypeTraits< ::Eigen::Matrix<Scalar, Rows, Cols, Options, MaxRows, MaxCols>>
+		class TypeTraits<::Eigen::Matrix<Scalar, Rows, Cols, Options, MaxRows, MaxCols>>
 		{
 		public:
 			typedef Scalar value_type;

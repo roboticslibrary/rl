@@ -214,7 +214,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			return this->stepSize * static_cast< ::rl::math::Real>(0.36) * ::rl::math::DEG2RAD;
+			return this->stepSize * static_cast<::rl::math::Real>(0.36) * ::rl::math::DEG2RAD;
 		}
 		
 		::rl::math::Real
@@ -222,7 +222,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			return (-5 + this->startIndex * static_cast< ::rl::math::Real>(0.36)) * ::rl::math::DEG2RAD;
+			return (-5 + this->startIndex * static_cast<::rl::math::Real>(0.36)) * ::rl::math::DEG2RAD;
 		}
 		
 		::rl::math::Real
@@ -230,7 +230,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			return (185 - (528 - this->stopIndex) * static_cast< ::rl::math::Real>(0.36)) * ::rl::math::DEG2RAD;
+			return (185 - (528 - this->stopIndex) * static_cast<::rl::math::Real>(0.36)) * ::rl::math::DEG2RAD;
 		}
 		
 		void
@@ -241,7 +241,7 @@ namespace rl
 			this->setConnected(true);
 			
 #if 0
-			::std::array< ::std::uint8_t, 1099> buf;
+			::std::array<::std::uint8_t, 1099> buf;
 			
 			// synchronize baud rates
 			
@@ -458,7 +458,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			::std::array< ::std::uint8_t, 1099> buf;
+			::std::array<::std::uint8_t, 1099> buf;
 			
 			buf[2] = 0x10;
 			buf[3] = 0x21;
@@ -545,7 +545,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			::std::array< ::std::uint8_t, 1099> buf;
+			::std::array<::std::uint8_t, 1099> buf;
 			
 			buf[2] = 0x19;
 			buf[3] = 0x41;
@@ -648,7 +648,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			::std::array< ::std::uint8_t, 1099> buf;
+			::std::array<::std::uint8_t, 1099> buf;
 			
 			buf[2] = 0x1A;
 			buf[3] = 0x41;
@@ -697,7 +697,7 @@ namespace rl
 			
 			if (2 == this->type)
 			{
-				::std::array< ::std::uint8_t, 1099> buf;
+				::std::array<::std::uint8_t, 1099> buf;
 				
 				buf[2] = 0x24;
 				buf[3] = 0x01;

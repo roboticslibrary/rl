@@ -116,7 +116,7 @@ main(int argc, char** argv)
 		std::cout << "Frame send divider: " << sensor.doGetFrameSendDivider() << std::endl;
 		std::cout << "Tare: " << sensor.doGetTare() << std::endl;
 		std::cout << "Filter: " << sensor.doGetFilter() << std::endl;
-		::std::pair< ::std::chrono::system_clock::time_point, ::std::chrono::system_clock::duration> calibrationDateLifetime = sensor.doGetCalibrationDateLifetime();
+		::std::pair<::std::chrono::system_clock::time_point, ::std::chrono::system_clock::duration> calibrationDateLifetime = sensor.doGetCalibrationDateLifetime();
 		std::cout << "Calibration date: " << calibrationDateLifetime.first.time_since_epoch().count() << " " << toIsoString(calibrationDateLifetime.first) << std::endl;
 		std::cout << "Calibration lifetime: " << calibrationDateLifetime.second.count() << " " << toIsoString(calibrationDateLifetime.first + calibrationDateLifetime.second) << std::endl;
 #endif

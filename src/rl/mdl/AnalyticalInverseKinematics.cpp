@@ -40,7 +40,7 @@ namespace rl
 		{
 		}
 		
-		const ::std::vector< ::rl::math::Vector>&
+		const ::std::vector<::rl::math::Vector>&
 		AnalyticalInverseKinematics::getSolutions() const
 		{
 			return this->solutions;

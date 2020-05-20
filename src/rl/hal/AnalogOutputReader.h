@@ -43,7 +43,7 @@ namespace rl
 			
 			virtual ~AnalogOutputReader();
 			
-			virtual ::std::vector< ::rl::math::Real> getAnalogOutput() const;
+			virtual ::std::vector<::rl::math::Real> getAnalogOutput() const;
 			
 			virtual ::rl::math::Real getAnalogOutput(const ::std::size_t& i) const = 0;
 			

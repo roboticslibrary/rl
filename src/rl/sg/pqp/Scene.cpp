@@ -93,8 +93,8 @@ namespace rl
 					shape2->rotation,
 					shape2->translation,
 					&shape2->model,
-					::std::numeric_limits< ::rl::math::Real>::epsilon(),
-					::std::numeric_limits< ::rl::math::Real>::epsilon()
+					::std::numeric_limits<::rl::math::Real>::epsilon(),
+					::std::numeric_limits<::rl::math::Real>::epsilon()
 				);
 				
 				point1(0) = result.P1()[0];
@@ -142,8 +142,8 @@ namespace rl
 					rotation,
 					translation,
 					&model,
-					::std::numeric_limits< ::rl::math::Real>::epsilon(),
-					::std::numeric_limits< ::rl::math::Real>::epsilon()
+					::std::numeric_limits<::rl::math::Real>::epsilon(),
+					::std::numeric_limits<::rl::math::Real>::epsilon()
 				);
 				
 				point1(0) = result.P1()[0];

@@ -259,7 +259,7 @@ namespace rl
 				}
 				
 #ifdef _OPENMP
-				::std::vector< ::std::vector<Neighbor>> neighbors2(::omp_get_max_threads());
+				::std::vector<::std::vector<Neighbor>> neighbors2(::omp_get_max_threads());
 				
 				if (nullptr != k)
 				{

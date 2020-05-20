@@ -122,7 +122,7 @@ namespace rl
 			
 			::rl::math::Vector distances(this->getDistancesCount());
 			
-			::rl::math::Real scale = static_cast< ::rl::math::Real>(0.01);
+			::rl::math::Real scale = static_cast<::rl::math::Real>(0.01);
 			::std::uint16_t count = Endian::hostWord(this->data[8], this->data[7]);
 			::std::uint8_t mask = 0x1F;
 			
@@ -130,7 +130,7 @@ namespace rl
 			{
 				if (this->data[10 + i * 2] & 32)
 				{
-					distances(i) = ::std::numeric_limits< ::rl::math::Real>::quiet_NaN();
+					distances(i) = ::std::numeric_limits<::rl::math::Real>::quiet_NaN();
 				}
 				else
 				{
@@ -177,7 +177,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			return static_cast< ::rl::math::Real>(0.36) * ::rl::math::DEG2RAD;
+			return static_cast<::rl::math::Real>(0.36) * ::rl::math::DEG2RAD;
 		}
 		
 		::rl::math::Real
@@ -201,7 +201,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			::std::array< ::std::uint8_t, 1013> buf;
+			::std::array<::std::uint8_t, 1013> buf;
 			
 			buf[4] = 0x00;
 			
@@ -235,7 +235,7 @@ namespace rl
 			
 			this->setConnected(true);
 			
-			::std::array< ::std::uint8_t, 1013> buf;
+			::std::array<::std::uint8_t, 1013> buf;
 			
 			// synchronize baud rates
 			
@@ -345,7 +345,7 @@ namespace rl
 			
 			::std::uint16_t length = Endian::hostWord(buf[3], buf[2]);
 			
-			if (len != static_cast< ::std::size_t>(length) + 6)
+			if (len != static_cast<::std::size_t>(length) + 6)
 			{
 				throw DeviceException("data length mismatch in command " + ::std::to_string(command));
 			}
@@ -371,7 +371,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			::std::array< ::std::uint8_t, 1013> buf;
+			::std::array<::std::uint8_t, 1013> buf;
 			
 			buf[4] = 0x10;
 			
@@ -416,7 +416,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			::std::array< ::std::uint8_t, 1013> buf;
+			::std::array<::std::uint8_t, 1013> buf;
 			
 			buf[4] = 0x66;
 			
@@ -479,7 +479,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			::std::array< ::std::uint8_t, 1013> buf;
+			::std::array<::std::uint8_t, 1013> buf;
 			
 			buf[4] = 0x20;
 			

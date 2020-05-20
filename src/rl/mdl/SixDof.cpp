@@ -87,7 +87,7 @@ namespace rl
 				q(i) = ::rl::std17::clamp(q(i), this->min(i), this->max(i));
 			}
 			
-			::Eigen::Map< ::rl::math::Quaternion>(q.tail<4>().data()).normalize();
+			::Eigen::Map<::rl::math::Quaternion>(q.tail<4>().data()).normalize();
 		}
 		
 		::rl::math::Real
@@ -149,13 +149,13 @@ namespace rl
 				}
 			}
 			
-			return ::Eigen::internal::isApprox(q.tail<4>().norm(), static_cast< ::rl::math::Real>(1), static_cast< ::rl::math::Real>(1.0e-3));
+			return ::Eigen::internal::isApprox(q.tail<4>().norm(), static_cast<::rl::math::Real>(1), static_cast<::rl::math::Real>(1.0e-3));
 		}
 		
 		void
 		SixDof::normalize(::rl::math::VectorRef q) const
 		{
-			::Eigen::Map< ::rl::math::Quaternion> quaternion(q.tail<4>().data());
+			::Eigen::Map<::rl::math::Quaternion> quaternion(q.tail<4>().data());
 			
 			if (quaternion.squaredNorm() > 0)
 			{

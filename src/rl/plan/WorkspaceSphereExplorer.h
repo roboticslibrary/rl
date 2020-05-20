@@ -127,7 +127,7 @@ namespace rl
 			
 			bool isCovered(const Vertex& parent, const ::rl::math::Vector3& point) const;
 			
-			::std::uniform_real_distribution< ::rl::math::Real>::result_type rand();
+			::std::uniform_real_distribution<::rl::math::Real>::result_type rand();
 			
 			Vertex begin;
 			
@@ -137,7 +137,7 @@ namespace rl
 			
 			::std::multiset<WorkspaceSphere> queue;
 			
-			::std::uniform_real_distribution< ::rl::math::Real> randDistribution;
+			::std::uniform_real_distribution<::rl::math::Real> randDistribution;
 			
 			::std::mt19937 randEngine;
 			

@@ -34,7 +34,7 @@ namespace rl
 {
 	namespace plan
 	{
-		typedef ::std::list< ::rl::math::Real> RealList;
+		typedef ::std::list<::rl::math::Real> RealList;
 	}
 }
 

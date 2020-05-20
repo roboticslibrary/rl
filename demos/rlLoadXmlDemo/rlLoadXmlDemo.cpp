@@ -48,7 +48,7 @@ main(int argc, char** argv)
 		{
 			if (document.getRootElement().hasNamespace() && "http://www.w3.org/1999/XSL/Transform" == document.getRootElement().getNamespace().getHref())
 			{
-				::std::map< ::std::string, ::std::string> parameters;
+				::std::map<::std::string, ::std::string> parameters;
 				
 				for (int i = 2; i < argc - 1; i += 2)
 				{

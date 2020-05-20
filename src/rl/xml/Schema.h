@@ -70,11 +70,11 @@ namespace rl
 		protected:
 			
 		private:
-			::std::shared_ptr< ::xmlSchemaParserCtxt> parser;
+			::std::shared_ptr<::xmlSchemaParserCtxt> parser;
 			
-			::std::shared_ptr< ::xmlSchema> schema;
+			::std::shared_ptr<::xmlSchema> schema;
 			
-			::std::shared_ptr< ::xmlSchemaValidCtxt> valid;
+			::std::shared_ptr<::xmlSchemaValidCtxt> valid;
 		};
 	}
 }

@@ -157,7 +157,7 @@ namespace rl
 						++rt;
 					}
 					
-					::std::chrono::nanoseconds ns = ::std::chrono::duration_cast< ::std::chrono::nanoseconds>(rt);
+					::std::chrono::nanoseconds ns = ::std::chrono::duration_cast<::std::chrono::nanoseconds>(rt);
 					int e = ::rt_mutex_acquire(static_cast<Derived*>(this)->native_handle(), ::rt_timer_ns2ticks(ns.count()));
 					
 					switch (e)
@@ -177,7 +177,7 @@ namespace rl
 				template<typename Duration>
 				bool M_try_lock_until(const ::std::chrono::time_point<clock_t, Duration>& atime)
 				{
-					::std::chrono::time_point<clock_t, ::std::chrono::nanoseconds> ns = ::std::chrono::time_point_cast< ::std::chrono::nanoseconds>(atime);
+					::std::chrono::time_point<clock_t, ::std::chrono::nanoseconds> ns = ::std::chrono::time_point_cast<::std::chrono::nanoseconds>(atime);
 					int e = ::rt_mutex_acquire_until(static_cast<Derived*>(this)->native_handle(), ::rt_timer_ns2ticks(ns.time_since_epoch().count()));
 					
 					switch (e)

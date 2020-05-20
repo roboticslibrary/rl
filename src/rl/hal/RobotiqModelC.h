@@ -158,9 +158,9 @@ namespace rl
 			
 			void send(::std::uint8_t* buf, const ::std::size_t& len);
 			
-			::std::array< ::std::uint8_t, 32> in;
+			::std::array<::std::uint8_t, 32> in;
 			
-			::std::array< ::std::uint8_t, 32> out;
+			::std::array<::std::uint8_t, 32> out;
 			
 			Serial serial;
 		};

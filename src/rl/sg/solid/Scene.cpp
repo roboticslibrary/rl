@@ -237,7 +237,7 @@ namespace rl
 				
 				distance = ::std::sqrt(::std::pow(hit[0] - source[0], 2) + ::std::pow(hit[1] - source[1], 2) + ::std::pow(hit[2] - source[2], 2));;
 				
-				return static_cast< ::rl::sg::Shape*>(object);
+				return static_cast<::rl::sg::Shape*>(object);
 			}
 			
 			bool

@@ -188,11 +188,11 @@ namespace rl
 			 */
 			void getPosition(::rl::math::Vector& q) const;
 			
-			void getPositionUnits(::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1>& units) const;
+			void getPositionUnits(::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1>& units) const;
 			
 			void getSpeed(::rl::math::Vector& speed) const;
 			
-			void getSpeedUnits(::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1>& units) const;
+			void getSpeedUnits(::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1>& units) const;
 			
 			void getWraparounds(::Eigen::Matrix<bool, ::Eigen::Dynamic, 1>& wraparounds) const;
 			
@@ -219,8 +219,8 @@ namespace rl
 				const ::rl::math::Transform& x,
 				::rl::math::Vector& q,
 				const ::std::size_t& leaf = 0,
-				const ::rl::math::Real& delta = ::std::numeric_limits< ::rl::math::Real>::infinity(),
-				const ::rl::math::Real& epsilon = static_cast< ::rl::math::Real>(1.0e-3),
+				const ::rl::math::Real& delta = ::std::numeric_limits<::rl::math::Real>::infinity(),
+				const ::rl::math::Real& epsilon = static_cast<::rl::math::Real>(1.0e-3),
 				const ::std::size_t& iterations = 10000,
 				const ::std::chrono::nanoseconds& duration = ::std::chrono::milliseconds(1000)
 			);
@@ -384,9 +384,9 @@ namespace rl
 			Tree tree;
 			
 		private:
-			::std::uniform_real_distribution< ::rl::math::Real>::result_type rand();
+			::std::uniform_real_distribution<::rl::math::Real>::result_type rand();
 			
-			::std::uniform_real_distribution< ::rl::math::Real> randDistribution;
+			::std::uniform_real_distribution<::rl::math::Real> randDistribution;
 			
 			::std::mt19937 randEngine;
 		};

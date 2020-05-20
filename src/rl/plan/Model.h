@@ -88,7 +88,7 @@ namespace rl
 			
 			virtual ::std::size_t getOperationalDof() const;
 			
-			virtual ::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1> getPositionUnits() const;
+			virtual ::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1> getPositionUnits() const;
 			
 			virtual ::Eigen::Matrix<bool, ::Eigen::Dynamic, 1> getWraparounds() const;
 			

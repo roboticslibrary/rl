@@ -100,7 +100,7 @@ namespace rl
 			::rl::math::Vector3 orientation(this->in.toolVectorActual[3], this->in.toolVectorActual[4], this->in.toolVectorActual[5]);
 			::rl::math::Real norm = orientation.norm();
 			
-			if (::std::abs(norm) <= ::std::numeric_limits< ::rl::math::Real>::epsilon())
+			if (::std::abs(norm) <= ::std::numeric_limits<::rl::math::Real>::epsilon())
 			{
 				x.linear().setIdentity();
 			}
@@ -252,7 +252,7 @@ namespace rl
 		void
 		UniversalRobotsRealtime::step()
 		{
-			::std::array< ::std::uint8_t, 1116> buffer;
+			::std::array<::std::uint8_t, 1116> buffer;
 			
 			this->socket.recv(buffer.data(), sizeof(this->in.messageSize));
 #if !defined(__APPLE__) && !defined(__QNX__) && !defined(WIN32)

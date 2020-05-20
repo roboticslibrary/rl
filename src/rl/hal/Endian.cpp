@@ -110,7 +110,7 @@ namespace rl
 #ifdef HAVE_BIG_ENDIAN
 			return hostQuadWord(highDoubleWord, lowDoubleWord);
 #elif defined(HAVE_LITTLE_ENDIAN)
-			return (static_cast< ::std::uint64_t>(lowDoubleWord) << 32) | highDoubleWord;
+			return (static_cast<::std::uint64_t>(lowDoubleWord) << 32) | highDoubleWord;
 #endif
 		}
 		
@@ -390,7 +390,7 @@ namespace rl
 		Endian::littleQuadWord(const ::std::uint32_t& highDoubleWord, const ::std::uint32_t& lowDoubleWord)
 		{
 #ifdef HAVE_BIG_ENDIAN
-			return (static_cast< ::std::uint64_t>(lowDoubleWord) << 32) | highDoubleWord;
+			return (static_cast<::std::uint64_t>(lowDoubleWord) << 32) | highDoubleWord;
 #elif defined(HAVE_LITTLE_ENDIAN)
 			return hostQuadWord(highDoubleWord, lowDoubleWord);
 #endif

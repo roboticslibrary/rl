@@ -212,10 +212,10 @@ namespace rl
 			return this->invGammaVelocity * qdd;
 		}
 		
-		::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1>
+		::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1>
 		Model::getAccelerationUnits() const
 		{
-			::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1> units(this->getDof());
+			::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1> units(this->getDof());
 			
 			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDof(), ++i)
 			{
@@ -420,10 +420,10 @@ namespace rl
 			return this->invGammaPosition * q;
 		}
 		
-		::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1>
+		::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1>
 		Model::getPositionUnits() const
 		{
-			::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1> units(this->getDofPosition());
+			::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1> units(this->getDofPosition());
 			
 			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDofPosition(), ++i)
 			{
@@ -446,10 +446,10 @@ namespace rl
 			return speed;
 		}
 		
-		::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1>
+		::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1>
 		Model::getSpeedUnits() const
 		{
-			::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1> units(this->getDof());
+			::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1> units(this->getDof());
 			
 			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDof(), ++i)
 			{
@@ -472,10 +472,10 @@ namespace rl
 			return tau;
 		}
 		
-		::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1>
+		::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1>
 		Model::getTorqueUnits() const
 		{
-			::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1> units(this->getDof());
+			::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1> units(this->getDof());
 			
 			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDof(), ++i)
 			{
@@ -512,10 +512,10 @@ namespace rl
 			return this->invGammaVelocity * qd;
 		}
 		
-		::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1>
+		::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1>
 		Model::getVelocityUnits() const
 		{
-			::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1> units(this->getDof());
+			::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1> units(this->getDof());
 			
 			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDof(), ++i)
 			{
@@ -558,7 +558,7 @@ namespace rl
 			return this->bodies[i]->collision;
 		}
 		
-		::std::uniform_real_distribution< ::rl::math::Real>::result_type
+		::std::uniform_real_distribution<::rl::math::Real>::result_type
 		Model::rand()
 		{
 			return this->randDistribution(this->randEngine);
@@ -625,12 +625,12 @@ namespace rl
 		Model::setGammaPosition(const ::rl::math::Matrix& gammaPosition)
 		{
 			this->gammaPosition = gammaPosition;
-			::Eigen::JacobiSVD< ::rl::math::Matrix> svd(this->gammaPosition, ::Eigen::ComputeThinU | ::Eigen::ComputeThinV);
+			::Eigen::JacobiSVD<::rl::math::Matrix> svd(this->gammaPosition, ::Eigen::ComputeThinU | ::Eigen::ComputeThinV);
 			::rl::math::Vector singularValues(svd.singularValues().size());
 			
 			for (::std::ptrdiff_t i = 0; i < svd.singularValues().size(); ++i)
 			{
-				singularValues[i] = svd.singularValues()[i] > ::std::numeric_limits< ::rl::math::Real>::epsilon() ? 1 / svd.singularValues()[i] : 0;
+				singularValues[i] = svd.singularValues()[i] > ::std::numeric_limits<::rl::math::Real>::epsilon() ? 1 / svd.singularValues()[i] : 0;
 			}
 			
 			this->invGammaPosition = svd.matrixV() * singularValues.asDiagonal() * svd.matrixU().transpose();
@@ -640,12 +640,12 @@ namespace rl
 		Model::setGammaVelocity(const ::rl::math::Matrix& gammaVelocity)
 		{
 			this->gammaVelocity = gammaVelocity;
-			::Eigen::JacobiSVD< ::rl::math::Matrix> svd(this->gammaVelocity, ::Eigen::ComputeThinU | ::Eigen::ComputeThinV);
+			::Eigen::JacobiSVD<::rl::math::Matrix> svd(this->gammaVelocity, ::Eigen::ComputeThinU | ::Eigen::ComputeThinV);
 			::rl::math::Vector singularValues(svd.singularValues().size());
 			
 			for (::std::ptrdiff_t i = 0; i < svd.singularValues().size(); ++i)
 			{
-				singularValues[i] = svd.singularValues()[i] > ::std::numeric_limits< ::rl::math::Real>::epsilon() ? 1 / svd.singularValues()[i] : 0;
+				singularValues[i] = svd.singularValues()[i] > ::std::numeric_limits<::rl::math::Real>::epsilon() ? 1 / svd.singularValues()[i] : 0;
 			}
 			
 			this->invGammaVelocity = svd.matrixV() * singularValues.asDiagonal() * svd.matrixU().transpose();

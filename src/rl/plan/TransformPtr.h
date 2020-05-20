@@ -34,7 +34,7 @@ namespace rl
 {
 	namespace plan
 	{
-		typedef ::std::shared_ptr< ::rl::math::Transform> TransformPtr;
+		typedef ::std::shared_ptr<::rl::math::Transform> TransformPtr;
 	}
 }
 

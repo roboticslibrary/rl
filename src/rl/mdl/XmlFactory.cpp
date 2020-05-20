@@ -87,7 +87,7 @@ namespace rl
 			
 			::rl::xml::Path path(document);
 			
-			::rl::xml::NodeSet models = path.eval("(/rl/mdl|/rlmdl)/model").getValue< ::rl::xml::NodeSet>();
+			::rl::xml::NodeSet models = path.eval("(/rl/mdl|/rlmdl)/model").getValue<::rl::xml::NodeSet>();
 			
 			if (models.empty())
 			{
@@ -100,17 +100,17 @@ namespace rl
 				
 				// manufacturer
 				
-				model->setManufacturer(path.eval("string(manufacturer)").getValue< ::std::string>());
+				model->setManufacturer(path.eval("string(manufacturer)").getValue<::std::string>());
 				
 				// name
 				
-				model->setName(path.eval("string(name)").getValue< ::std::string>());
+				model->setName(path.eval("string(name)").getValue<::std::string>());
 				
 				// frame
 				
-				::rl::xml::NodeSet frames = path.eval("body|frame|world").getValue< ::rl::xml::NodeSet>();
+				::rl::xml::NodeSet frames = path.eval("body|frame|world").getValue<::rl::xml::NodeSet>();
 				
-				::std::unordered_map< ::std::string, Frame*> id2frame;
+				::std::unordered_map<::std::string, Frame*> id2frame;
 				
 				for (int j = 0; j < frames.size(); ++j)
 				{
@@ -125,22 +125,22 @@ namespace rl
 						model->add(b);
 						
 						b->setCenterOfMass(
-							path.eval("number(cm/x)").getValue< ::rl::math::Real>(0),
-							path.eval("number(cm/y)").getValue< ::rl::math::Real>(0),
-							path.eval("number(cm/z)").getValue< ::rl::math::Real>(0)
+							path.eval("number(cm/x)").getValue<::rl::math::Real>(0),
+							path.eval("number(cm/y)").getValue<::rl::math::Real>(0),
+							path.eval("number(cm/z)").getValue<::rl::math::Real>(0)
 						);
 						
 						b->setInertia(
-							path.eval("number(i/xx)").getValue< ::rl::math::Real>(1),
-							path.eval("number(i/yy)").getValue< ::rl::math::Real>(1),
-							path.eval("number(i/zz)").getValue< ::rl::math::Real>(1),
-							path.eval("number(i/yz)").getValue< ::rl::math::Real>(0),
-							path.eval("number(i/xz)").getValue< ::rl::math::Real>(0),
-							path.eval("number(i/xy)").getValue< ::rl::math::Real>(0)
+							path.eval("number(i/xx)").getValue<::rl::math::Real>(1),
+							path.eval("number(i/yy)").getValue<::rl::math::Real>(1),
+							path.eval("number(i/zz)").getValue<::rl::math::Real>(1),
+							path.eval("number(i/yz)").getValue<::rl::math::Real>(0),
+							path.eval("number(i/xz)").getValue<::rl::math::Real>(0),
+							path.eval("number(i/xy)").getValue<::rl::math::Real>(0)
 						);
 						
 						b->setMass(
-							path.eval("number(m)").getValue< ::rl::math::Real>(1)
+							path.eval("number(m)").getValue<::rl::math::Real>(1)
 						);
 						
 						frame = b;
@@ -160,25 +160,25 @@ namespace rl
 						model->add(w);
 						
 						w->x.linear() = ::rl::math::AngleAxis(
-							path.eval("number(rotation/z)").getValue< ::rl::math::Real>(0) * ::rl::math::DEG2RAD,
+							path.eval("number(rotation/z)").getValue<::rl::math::Real>(0) * ::rl::math::DEG2RAD,
 							::rl::math::Vector3::UnitZ()
 						) * ::rl::math::AngleAxis(
-							path.eval("number(rotation/y)").getValue< ::rl::math::Real>(0) * ::rl::math::DEG2RAD,
+							path.eval("number(rotation/y)").getValue<::rl::math::Real>(0) * ::rl::math::DEG2RAD,
 							::rl::math::Vector3::UnitY()
 						) * ::rl::math::AngleAxis(
-							path.eval("number(rotation/x)").getValue< ::rl::math::Real>(0) * ::rl::math::DEG2RAD,
+							path.eval("number(rotation/x)").getValue<::rl::math::Real>(0) * ::rl::math::DEG2RAD,
 							::rl::math::Vector3::UnitX()
 						).toRotationMatrix();
 						
-						w->x.translation().x() = path.eval("number(translation/x)").getValue< ::rl::math::Real>(0);
-						w->x.translation().y() = path.eval("number(translation/y)").getValue< ::rl::math::Real>(0);
-						w->x.translation().z() = path.eval("number(translation/z)").getValue< ::rl::math::Real>(0);
+						w->x.translation().x() = path.eval("number(translation/x)").getValue<::rl::math::Real>(0);
+						w->x.translation().y() = path.eval("number(translation/y)").getValue<::rl::math::Real>(0);
+						w->x.translation().z() = path.eval("number(translation/z)").getValue<::rl::math::Real>(0);
 						
 						w->setGravity(
 							::rl::math::Vector3(
-								path.eval("number(g/x)").getValue< ::rl::math::Real>(0),
-								path.eval("number(g/y)").getValue< ::rl::math::Real>(0),
-								path.eval("number(g/z)").getValue< ::rl::math::Real>(0)
+								path.eval("number(g/x)").getValue<::rl::math::Real>(0),
+								path.eval("number(g/y)").getValue<::rl::math::Real>(0),
+								path.eval("number(g/z)").getValue<::rl::math::Real>(0)
 							)
 						);
 						
@@ -187,7 +187,7 @@ namespace rl
 					
 					if (nullptr != frame)
 					{
-						frame->setName(path.eval("string(@id)").getValue< ::std::string>());
+						frame->setName(path.eval("string(@id)").getValue<::std::string>());
 						
 						if (id2frame.find(frame->getName()) != id2frame.end())
 						{
@@ -206,7 +206,7 @@ namespace rl
 					
 					if ("body" == frames[j].getName())
 					{
-						::std::string b1Id = path.eval("string(@id)").getValue< ::std::string>();
+						::std::string b1Id = path.eval("string(@id)").getValue<::std::string>();
 						
 						if (id2frame.find(b1Id) == id2frame.end())
 						{
@@ -215,7 +215,7 @@ namespace rl
 						
 						Body* b1 = dynamic_cast<Body*>(id2frame[b1Id]);
 						
-						::rl::xml::NodeSet ignores = path.eval("ignore").getValue< ::rl::xml::NodeSet>();
+						::rl::xml::NodeSet ignores = path.eval("ignore").getValue<::rl::xml::NodeSet>();
 						
 						for (int k = 0; k < ignores.size(); ++k)
 						{
@@ -243,15 +243,15 @@ namespace rl
 				
 				// transforms
 				
-				::rl::xml::NodeSet transforms = path.eval("cylindrical|fixed|helical|prismatic|revolute|sixDof|spherical").getValue< ::rl::xml::NodeSet>();
+				::rl::xml::NodeSet transforms = path.eval("cylindrical|fixed|helical|prismatic|revolute|sixDof|spherical").getValue<::rl::xml::NodeSet>();
 				
 				for (int j = 0; j < transforms.size(); ++j)
 				{
 					::rl::xml::Path path(document, transforms[j]);
 					
-					::std::string name = path.eval("string(@id)").getValue< ::std::string>();
+					::std::string name = path.eval("string(@id)").getValue<::std::string>();
 					
-					::std::string aIdRef = path.eval("string(frame/a/@idref)").getValue< ::std::string>();
+					::std::string aIdRef = path.eval("string(frame/a/@idref)").getValue<::std::string>();
 					
 					if (id2frame.find(aIdRef) == id2frame.end())
 					{
@@ -260,7 +260,7 @@ namespace rl
 					
 					Frame* a = id2frame[aIdRef];
 					
-					::std::string bIdRef = path.eval("string(frame/b/@idref)").getValue< ::std::string>();
+					::std::string bIdRef = path.eval("string(frame/b/@idref)").getValue<::std::string>();
 					
 					if (id2frame.find(bIdRef) == id2frame.end())
 					{
@@ -277,25 +277,25 @@ namespace rl
 						
 						model->add(c, a, b);
 						
-						c->max(0) = path.eval("number(max[1])").getValue< ::rl::math::Real>(::std::numeric_limits< ::rl::math::Real>::max());
-						c->min(0) = path.eval("number(min[1])").getValue< ::rl::math::Real>(-::std::numeric_limits< ::rl::math::Real>::max());
-						c->offset(0) = path.eval("number(offset[1])").getValue< ::rl::math::Real>(0);
-						c->speed(0) = path.eval("number(speed[1])").getValue< ::rl::math::Real>(0);
+						c->max(0) = path.eval("number(max[1])").getValue<::rl::math::Real>(::std::numeric_limits<::rl::math::Real>::max());
+						c->min(0) = path.eval("number(min[1])").getValue<::rl::math::Real>(-::std::numeric_limits<::rl::math::Real>::max());
+						c->offset(0) = path.eval("number(offset[1])").getValue<::rl::math::Real>(0);
+						c->speed(0) = path.eval("number(speed[1])").getValue<::rl::math::Real>(0);
 						c->wraparound(0) = path.eval("count(wraparound[1]) > 0").getValue<bool>();
 						
-						c->max(1) = path.eval("number(max[2])").getValue< ::rl::math::Real>(::std::numeric_limits< ::rl::math::Real>::max());
-						c->min(1) = path.eval("number(min[2])").getValue< ::rl::math::Real>(-::std::numeric_limits< ::rl::math::Real>::max());
-						c->offset(1) = path.eval("number(offset[2])").getValue< ::rl::math::Real>(0);
-						c->speed(1) = path.eval("number(speed[2])").getValue< ::rl::math::Real>(0);
+						c->max(1) = path.eval("number(max[2])").getValue<::rl::math::Real>(::std::numeric_limits<::rl::math::Real>::max());
+						c->min(1) = path.eval("number(min[2])").getValue<::rl::math::Real>(-::std::numeric_limits<::rl::math::Real>::max());
+						c->offset(1) = path.eval("number(offset[2])").getValue<::rl::math::Real>(0);
+						c->speed(1) = path.eval("number(speed[2])").getValue<::rl::math::Real>(0);
 						c->wraparound(1) = path.eval("count(wraparound[2]) > 0").getValue<bool>();
 						
-						c->S(0, 0) = path.eval("number(axis[1]/x)").getValue< ::rl::math::Real>(0);
-						c->S(1, 0) = path.eval("number(axis[1]/y)").getValue< ::rl::math::Real>(0);
-						c->S(2, 0) = path.eval("number(axis[1]/z)").getValue< ::rl::math::Real>(1);
+						c->S(0, 0) = path.eval("number(axis[1]/x)").getValue<::rl::math::Real>(0);
+						c->S(1, 0) = path.eval("number(axis[1]/y)").getValue<::rl::math::Real>(0);
+						c->S(2, 0) = path.eval("number(axis[1]/z)").getValue<::rl::math::Real>(1);
 						
-						c->S(3, 1) = path.eval("number(axis[2]/x)").getValue< ::rl::math::Real>(0);
-						c->S(4, 1) = path.eval("number(axis[2]/y)").getValue< ::rl::math::Real>(0);
-						c->S(5, 1) = path.eval("number(axis[2]/z)").getValue< ::rl::math::Real>(1);
+						c->S(3, 1) = path.eval("number(axis[2]/x)").getValue<::rl::math::Real>(0);
+						c->S(4, 1) = path.eval("number(axis[2]/y)").getValue<::rl::math::Real>(0);
+						c->S(5, 1) = path.eval("number(axis[2]/z)").getValue<::rl::math::Real>(1);
 						
 						transform = c;
 					}
@@ -306,19 +306,19 @@ namespace rl
 						model->add(f, a, b);
 						
 						f->x.linear() = ::rl::math::AngleAxis(
-							path.eval("number(rotation/z)").getValue< ::rl::math::Real>(0) * ::rl::math::DEG2RAD,
+							path.eval("number(rotation/z)").getValue<::rl::math::Real>(0) * ::rl::math::DEG2RAD,
 							::rl::math::Vector3::UnitZ()
 						) * ::rl::math::AngleAxis(
-							path.eval("number(rotation/y)").getValue< ::rl::math::Real>(0) * ::rl::math::DEG2RAD,
+							path.eval("number(rotation/y)").getValue<::rl::math::Real>(0) * ::rl::math::DEG2RAD,
 							::rl::math::Vector3::UnitY()
 						) * ::rl::math::AngleAxis(
-							path.eval("number(rotation/x)").getValue< ::rl::math::Real>(0) * ::rl::math::DEG2RAD,
+							path.eval("number(rotation/x)").getValue<::rl::math::Real>(0) * ::rl::math::DEG2RAD,
 							::rl::math::Vector3::UnitX()
 						).toRotationMatrix();
 						
-						f->x.translation().x() = path.eval("number(translation/x)").getValue< ::rl::math::Real>(0);
-						f->x.translation().y() = path.eval("number(translation/y)").getValue< ::rl::math::Real>(0);
-						f->x.translation().z() = path.eval("number(translation/z)").getValue< ::rl::math::Real>(0);
+						f->x.translation().x() = path.eval("number(translation/x)").getValue<::rl::math::Real>(0);
+						f->x.translation().y() = path.eval("number(translation/y)").getValue<::rl::math::Real>(0);
+						f->x.translation().z() = path.eval("number(translation/z)").getValue<::rl::math::Real>(0);
 						
 						transform = f;
 					}
@@ -328,21 +328,21 @@ namespace rl
 						
 						model->add(h, a, b);
 						
-						h->max(0) = path.eval("number(max)").getValue< ::rl::math::Real>(::std::numeric_limits< ::rl::math::Real>::max());
-						h->min(0) = path.eval("number(min)").getValue< ::rl::math::Real>(-::std::numeric_limits< ::rl::math::Real>::max());
-						h->offset(0) = path.eval("number(offset)").getValue< ::rl::math::Real>(0);
-						h->speed(0) = path.eval("number(speed)").getValue< ::rl::math::Real>(0);
+						h->max(0) = path.eval("number(max)").getValue<::rl::math::Real>(::std::numeric_limits<::rl::math::Real>::max());
+						h->min(0) = path.eval("number(min)").getValue<::rl::math::Real>(-::std::numeric_limits<::rl::math::Real>::max());
+						h->offset(0) = path.eval("number(offset)").getValue<::rl::math::Real>(0);
+						h->speed(0) = path.eval("number(speed)").getValue<::rl::math::Real>(0);
 						h->wraparound(0) = path.eval("count(wraparound) > 0").getValue<bool>();
 						
-						h->S(0, 0) = path.eval("number(axis[1]/x)").getValue< ::rl::math::Real>(0);
-						h->S(1, 0) = path.eval("number(axis[1]/y)").getValue< ::rl::math::Real>(0);
-						h->S(2, 0) = path.eval("number(axis[1]/z)").getValue< ::rl::math::Real>(1);
+						h->S(0, 0) = path.eval("number(axis[1]/x)").getValue<::rl::math::Real>(0);
+						h->S(1, 0) = path.eval("number(axis[1]/y)").getValue<::rl::math::Real>(0);
+						h->S(2, 0) = path.eval("number(axis[1]/z)").getValue<::rl::math::Real>(1);
 						
-						h->S(3, 0) = path.eval("number(axis[2]/x)").getValue< ::rl::math::Real>(0);
-						h->S(4, 0) = path.eval("number(axis[2]/y)").getValue< ::rl::math::Real>(0);
-						h->S(5, 0) = path.eval("number(axis[2]/z)").getValue< ::rl::math::Real>(1);
+						h->S(3, 0) = path.eval("number(axis[2]/x)").getValue<::rl::math::Real>(0);
+						h->S(4, 0) = path.eval("number(axis[2]/y)").getValue<::rl::math::Real>(0);
+						h->S(5, 0) = path.eval("number(axis[2]/z)").getValue<::rl::math::Real>(1);
 						
-						h->setPitch(path.eval("number(pitch)").getValue< ::rl::math::Real>(1));
+						h->setPitch(path.eval("number(pitch)").getValue<::rl::math::Real>(1));
 						
 						transform = h;
 					}
@@ -352,15 +352,15 @@ namespace rl
 						
 						model->add(p, a, b);
 						
-						p->max(0) = path.eval("number(max)").getValue< ::rl::math::Real>(::std::numeric_limits< ::rl::math::Real>::max());
-						p->min(0) = path.eval("number(min)").getValue< ::rl::math::Real>(-::std::numeric_limits< ::rl::math::Real>::max());
-						p->offset(0) = path.eval("number(offset)").getValue< ::rl::math::Real>(0);
-						p->speed(0) = path.eval("number(speed)").getValue< ::rl::math::Real>(0);
+						p->max(0) = path.eval("number(max)").getValue<::rl::math::Real>(::std::numeric_limits<::rl::math::Real>::max());
+						p->min(0) = path.eval("number(min)").getValue<::rl::math::Real>(-::std::numeric_limits<::rl::math::Real>::max());
+						p->offset(0) = path.eval("number(offset)").getValue<::rl::math::Real>(0);
+						p->speed(0) = path.eval("number(speed)").getValue<::rl::math::Real>(0);
 						p->wraparound(0) = path.eval("count(wraparound) > 0").getValue<bool>();
 						
-						p->S(3, 0) = path.eval("number(axis/x)").getValue< ::rl::math::Real>(0);
-						p->S(4, 0) = path.eval("number(axis/y)").getValue< ::rl::math::Real>(0);
-						p->S(5, 0) = path.eval("number(axis/z)").getValue< ::rl::math::Real>(1);
+						p->S(3, 0) = path.eval("number(axis/x)").getValue<::rl::math::Real>(0);
+						p->S(4, 0) = path.eval("number(axis/y)").getValue<::rl::math::Real>(0);
+						p->S(5, 0) = path.eval("number(axis/z)").getValue<::rl::math::Real>(1);
 						
 						transform = p;
 					}
@@ -370,15 +370,15 @@ namespace rl
 						
 						model->add(r, a, b);
 						
-						r->max(0) = path.eval("number(max)").getValue< ::rl::math::Real>(::std::numeric_limits< ::rl::math::Real>::max());
-						r->min(0) = path.eval("number(min)").getValue< ::rl::math::Real>(-::std::numeric_limits< ::rl::math::Real>::max());
-						r->offset(0) = path.eval("number(offset)").getValue< ::rl::math::Real>(0);
-						r->speed(0) = path.eval("number(speed)").getValue< ::rl::math::Real>(0);
+						r->max(0) = path.eval("number(max)").getValue<::rl::math::Real>(::std::numeric_limits<::rl::math::Real>::max());
+						r->min(0) = path.eval("number(min)").getValue<::rl::math::Real>(-::std::numeric_limits<::rl::math::Real>::max());
+						r->offset(0) = path.eval("number(offset)").getValue<::rl::math::Real>(0);
+						r->speed(0) = path.eval("number(speed)").getValue<::rl::math::Real>(0);
 						r->wraparound(0) = path.eval("count(wraparound) > 0").getValue<bool>();
 						
-						r->S(0, 0) = path.eval("number(axis/x)").getValue< ::rl::math::Real>(0);
-						r->S(1, 0) = path.eval("number(axis/y)").getValue< ::rl::math::Real>(0);
-						r->S(2, 0) = path.eval("number(axis/z)").getValue< ::rl::math::Real>(1);
+						r->S(0, 0) = path.eval("number(axis/x)").getValue<::rl::math::Real>(0);
+						r->S(1, 0) = path.eval("number(axis/y)").getValue<::rl::math::Real>(0);
+						r->S(2, 0) = path.eval("number(axis/z)").getValue<::rl::math::Real>(1);
 						
 						r->max *= ::rl::math::DEG2RAD;
 						r->min *= ::rl::math::DEG2RAD;
@@ -393,18 +393,18 @@ namespace rl
 						
 						model->add(s, a, b);
 						
-						s->max(0) = path.eval("number(max[1])").getValue< ::rl::math::Real>(::std::numeric_limits< ::rl::math::Real>::max());
-						s->max(1) = path.eval("number(max[2])").getValue< ::rl::math::Real>(::std::numeric_limits< ::rl::math::Real>::max());
-						s->max(2) = path.eval("number(max[3])").getValue< ::rl::math::Real>(::std::numeric_limits< ::rl::math::Real>::max());
-						s->min(0) = path.eval("number(min[1])").getValue< ::rl::math::Real>(-::std::numeric_limits< ::rl::math::Real>::max());
-						s->min(1) = path.eval("number(min[2])").getValue< ::rl::math::Real>(-::std::numeric_limits< ::rl::math::Real>::max());
-						s->min(2) = path.eval("number(min[3])").getValue< ::rl::math::Real>(-::std::numeric_limits< ::rl::math::Real>::max());
-						s->offset(0) = path.eval("number(offset[1])").getValue< ::rl::math::Real>(0);
-						s->offset(1) = path.eval("number(offset[2])").getValue< ::rl::math::Real>(0);
-						s->offset(2) = path.eval("number(offset[3])").getValue< ::rl::math::Real>(0);
-						s->speed(0) = path.eval("number(speed[1])").getValue< ::rl::math::Real>(0);
-						s->speed(1) = path.eval("number(speed[2])").getValue< ::rl::math::Real>(0);
-						s->speed(2) = path.eval("number(speed[3])").getValue< ::rl::math::Real>(0);
+						s->max(0) = path.eval("number(max[1])").getValue<::rl::math::Real>(::std::numeric_limits<::rl::math::Real>::max());
+						s->max(1) = path.eval("number(max[2])").getValue<::rl::math::Real>(::std::numeric_limits<::rl::math::Real>::max());
+						s->max(2) = path.eval("number(max[3])").getValue<::rl::math::Real>(::std::numeric_limits<::rl::math::Real>::max());
+						s->min(0) = path.eval("number(min[1])").getValue<::rl::math::Real>(-::std::numeric_limits<::rl::math::Real>::max());
+						s->min(1) = path.eval("number(min[2])").getValue<::rl::math::Real>(-::std::numeric_limits<::rl::math::Real>::max());
+						s->min(2) = path.eval("number(min[3])").getValue<::rl::math::Real>(-::std::numeric_limits<::rl::math::Real>::max());
+						s->offset(0) = path.eval("number(offset[1])").getValue<::rl::math::Real>(0);
+						s->offset(1) = path.eval("number(offset[2])").getValue<::rl::math::Real>(0);
+						s->offset(2) = path.eval("number(offset[3])").getValue<::rl::math::Real>(0);
+						s->speed(0) = path.eval("number(speed[1])").getValue<::rl::math::Real>(0);
+						s->speed(1) = path.eval("number(speed[2])").getValue<::rl::math::Real>(0);
+						s->speed(2) = path.eval("number(speed[3])").getValue<::rl::math::Real>(0);
 						
 						transform = s;
 					}
@@ -425,7 +425,7 @@ namespace rl
 				
 				model->update();
 				
-				::rl::xml::NodeSet home = path.eval("home/q").getValue< ::rl::xml::NodeSet>();
+				::rl::xml::NodeSet home = path.eval("home/q").getValue<::rl::xml::NodeSet>();
 				
 				if (home.size() > 0)
 				{
@@ -438,7 +438,7 @@ namespace rl
 					
 					for (int j = 0; j < home.size(); ++j)
 					{
-						q(j) = ::boost::lexical_cast< ::rl::math::Real>(home[j].getContent().c_str());
+						q(j) = ::boost::lexical_cast<::rl::math::Real>(home[j].getContent().c_str());
 						
 						if ("deg" == home[j].getProperty("unit"))
 						{
@@ -449,14 +449,14 @@ namespace rl
 					model->setHomePosition(q);
 				}
 				
-				::rl::xml::NodeSet gammaPosition = path.eval("gammaPosition").getValue< ::rl::xml::NodeSet>();
+				::rl::xml::NodeSet gammaPosition = path.eval("gammaPosition").getValue<::rl::xml::NodeSet>();
 				
 				for (int j = 0; j < gammaPosition.size(); ++j)
 				{
 					::rl::xml::Path path(document, gammaPosition[j]);
 					
-					::std::size_t m = path.eval("count(row)").getValue< ::std::size_t>(0);
-					::std::size_t n = path.eval("count(row[1]/col)").getValue< ::std::size_t>(0);
+					::std::size_t m = path.eval("count(row)").getValue<::std::size_t>(0);
+					::std::size_t n = path.eval("count(row[1]/col)").getValue<::std::size_t>(0);
 					
 					if (m != model->getDofPosition())
 					{
@@ -465,36 +465,36 @@ namespace rl
 					
 					::rl::math::Matrix G(m, n);
 					
-					::rl::xml::NodeSet rows = path.eval("row").getValue< ::rl::xml::NodeSet>();
+					::rl::xml::NodeSet rows = path.eval("row").getValue<::rl::xml::NodeSet>();
 					
 					for (int k = 0; k < rows.size(); ++k)
 					{
 						::rl::xml::Path path(document, rows[k]);
 						
-						if (path.eval("count(col)").getValue< ::std::size_t>(0) != model->getDofPosition())
+						if (path.eval("count(col)").getValue<::std::size_t>(0) != model->getDofPosition())
 						{
 							throw Exception("rl::mdl::XmlFactory::load() - Incorrect number of columns in gamma position matrix in file '" + filename + "'");
 						}
 						
-						::rl::xml::NodeSet cols = path.eval("col").getValue< ::rl::xml::NodeSet>();
+						::rl::xml::NodeSet cols = path.eval("col").getValue<::rl::xml::NodeSet>();
 						
 						for (int l = 0; l < cols.size(); ++l)
 						{
-							G(k, l) = boost::lexical_cast< ::rl::math::Real>(cols[l].getContent().c_str());
+							G(k, l) = boost::lexical_cast<::rl::math::Real>(cols[l].getContent().c_str());
 						}
 					}
 					
 					model->setGammaPosition(G);
 				}
 				
-				::rl::xml::NodeSet gammaVelocity = path.eval("gammaVelocity").getValue< ::rl::xml::NodeSet>();
+				::rl::xml::NodeSet gammaVelocity = path.eval("gammaVelocity").getValue<::rl::xml::NodeSet>();
 				
 				for (int j = 0; j < gammaVelocity.size(); ++j)
 				{
 					::rl::xml::Path path(document, gammaVelocity[j]);
 					
-					::std::size_t m = path.eval("count(row)").getValue< ::std::size_t>(0);
-					::std::size_t n = path.eval("count(row[1]/col)").getValue< ::std::size_t>(0);
+					::std::size_t m = path.eval("count(row)").getValue<::std::size_t>(0);
+					::std::size_t n = path.eval("count(row[1]/col)").getValue<::std::size_t>(0);
 					
 					if (m != model->getDof())
 					{
@@ -503,22 +503,22 @@ namespace rl
 					
 					::rl::math::Matrix G(m, n);
 					
-					::rl::xml::NodeSet rows = path.eval("row").getValue< ::rl::xml::NodeSet>();
+					::rl::xml::NodeSet rows = path.eval("row").getValue<::rl::xml::NodeSet>();
 					
 					for (int k = 0; k < rows.size(); ++k)
 					{
 						::rl::xml::Path path(document, rows[k]);
 						
-						if (path.eval("count(col)").getValue< ::std::size_t>(0) != model->getDof())
+						if (path.eval("count(col)").getValue<::std::size_t>(0) != model->getDof())
 						{
 							throw Exception("rl::mdl::XmlFactory::load() - Incorrect number of columns in gamma velocity matrix in file '" + filename + "'");
 						}
 						
-						::rl::xml::NodeSet cols = path.eval("col").getValue< ::rl::xml::NodeSet>();
+						::rl::xml::NodeSet cols = path.eval("col").getValue<::rl::xml::NodeSet>();
 						
 						for (int l = 0; l < cols.size(); ++l)
 						{
-							G(k, l) = boost::lexical_cast< ::rl::math::Real>(cols[l].getContent().c_str());
+							G(k, l) = boost::lexical_cast<::rl::math::Real>(cols[l].getContent().c_str());
 						}
 					}
 					

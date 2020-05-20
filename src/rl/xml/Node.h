@@ -110,7 +110,7 @@ namespace rl
 			
 			::std::string getContent() const
 			{
-				::boost::shared_array< ::xmlChar> content(
+				::boost::shared_array<::xmlChar> content(
 					::xmlNodeGetContent(this->node),
 					 ::xmlFree
 				);
@@ -135,7 +135,7 @@ namespace rl
 			
 			::std::string getLocalPath(const ::std::string& uri) const
 			{
-				::boost::shared_array< ::xmlChar> absolute(
+				::boost::shared_array<::xmlChar> absolute(
 					::xmlBuildURI(
 						reinterpret_cast<const ::xmlChar*>(uri.c_str()),
 						::xmlNodeGetBase(this->node->doc, this->node)
@@ -213,7 +213,7 @@ namespace rl
 			
 			::std::string getProperty(const ::std::string& name) const
 			{
-				::boost::shared_array< ::xmlChar> prop(
+				::boost::shared_array<::xmlChar> prop(
 					::xmlGetProp(
 						this->node,
 						reinterpret_cast<const ::xmlChar*>(name.c_str())
@@ -226,7 +226,7 @@ namespace rl
 			
 			::std::string getProperty(const ::std::string& name, const ::std::string& nameSpace) const
 			{
-				::boost::shared_array< ::xmlChar> prop(
+				::boost::shared_array<::xmlChar> prop(
 					::xmlGetNsProp(
 						this->node,
 						reinterpret_cast<const ::xmlChar*>(name.c_str()),
@@ -240,7 +240,7 @@ namespace rl
 			
 			::std::string getRelativeUri(const ::std::string& uri) const
 			{
-				::boost::shared_array< ::xmlChar> relative(
+				::boost::shared_array<::xmlChar> relative(
 					::xmlBuildRelativeURI(
 						reinterpret_cast<const ::xmlChar*>(uri.c_str()),
 						::xmlNodeGetBase(this->node->doc, this->node)
@@ -253,7 +253,7 @@ namespace rl
 			
 			::std::string getUri(const ::std::string& uri) const
 			{
-				::boost::shared_array< ::xmlChar> absolute(
+				::boost::shared_array<::xmlChar> absolute(
 					::xmlBuildURI(
 						reinterpret_cast<const ::xmlChar*>(uri.c_str()),
 						::xmlNodeGetBase(this->node->doc, this->node)

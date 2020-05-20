@@ -62,7 +62,7 @@ namespace rl
 					this->translation[i] = static_cast<PQP_REAL>(this->frame(i, 3));
 				}
 				
-				::SoVRMLGeometry* geometry = static_cast< ::SoVRMLGeometry*>(shape->geometry.getValue());
+				::SoVRMLGeometry* geometry = static_cast<::SoVRMLGeometry*>(shape->geometry.getValue());
 				
 				::SoGetPrimitiveCountAction* primitiveCountAction = new ::SoGetPrimitiveCountAction();
 				primitiveCountAction->apply(geometry);

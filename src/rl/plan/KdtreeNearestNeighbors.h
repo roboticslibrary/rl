@@ -48,7 +48,7 @@ namespace rl
 			
 			bool empty() const;
 			
-			::boost::optional< ::std::size_t> getChecks() const;
+			::boost::optional<::std::size_t> getChecks() const;
 			
 			::std::size_t getSamples() const;
 			
@@ -58,7 +58,7 @@ namespace rl
 			
 			::std::vector<NearestNeighbors::Neighbor> radius(const Value& query, const Distance& radius, const bool& sorted = true) const;
 			
-			void setChecks(const ::boost::optional< ::std::size_t>& checks);
+			void setChecks(const ::boost::optional<::std::size_t>& checks);
 			
 			void setSamples(const ::std::size_t& samples);
 			

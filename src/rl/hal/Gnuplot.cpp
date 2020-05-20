@@ -154,7 +154,7 @@ namespace rl
 				{
 					::std::size_t t = this->max - this->history.size();
 					
-					for (::std::list< ::rl::math::Vector>::iterator j = this->history.begin(); j != this->history.end(); ++j)
+					for (::std::list<::rl::math::Vector>::iterator j = this->history.begin(); j != this->history.end(); ++j)
 					{
 #ifdef WIN32
 						fprintf(this->fp, "%Iu %f\n", t, (*j)(i) * ::rl::math::RAD2DEG);

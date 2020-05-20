@@ -88,7 +88,7 @@ namespace rl
 			return frame;
 		}
 		
-		::std::pair< ::std::chrono::system_clock::time_point, ::std::chrono::system_clock::duration>
+		::std::pair<::std::chrono::system_clock::time_point, ::std::chrono::system_clock::duration>
 		WeissKms40::doGetCalibrationDateLifetime()
 		{
 			::std::string command = "CALDATE()\n";
@@ -243,8 +243,8 @@ namespace rl
 			return ::std::stoi(reply.substr(3));
 		}
 		
-		::std::vector< ::std::string>
-		WeissKms40::doPrintVariable(const ::std::vector< ::std::string>& variables)
+		::std::vector<::std::string>
+		WeissKms40::doPrintVariable(const ::std::vector<::std::string>& variables)
 		{
 			::std::string command = "PRINT(";
 			
@@ -258,7 +258,7 @@ namespace rl
 			
 			::std::string reply = this->recv("PRINT=");
 			
-			::std::vector< ::std::string> values(variables.size());
+			::std::vector<::std::string> values(variables.size());
 			
 			for (::std::size_t i = 0, start = 6; i < 6; ++i)
 			{
@@ -401,7 +401,7 @@ namespace rl
 				return 3;
 				break;
 			default:
-				return ::std::numeric_limits< ::rl::math::Real>::signaling_NaN();
+				return ::std::numeric_limits<::rl::math::Real>::signaling_NaN();
 				break;
 			}
 		}
@@ -422,7 +422,7 @@ namespace rl
 				return -3;
 				break;
 			default:
-				return ::std::numeric_limits< ::rl::math::Real>::signaling_NaN();
+				return ::std::numeric_limits<::rl::math::Real>::signaling_NaN();
 				break;
 			}
 		}

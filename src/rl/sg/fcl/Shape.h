@@ -52,7 +52,7 @@ namespace rl
 				
 				void update(const ::rl::math::Transform& frame);
 				
-				::std::shared_ptr< ::fcl::CollisionObject> collisionObject;
+				::std::shared_ptr<::fcl::CollisionObject> collisionObject;
 				
 			protected:
 				
@@ -63,23 +63,23 @@ namespace rl
 				
 				::rl::math::Transform currentFrame;
 				
-				::std::vector< ::fcl::FCL_REAL> distances;
+				::std::vector<::fcl::FCL_REAL> distances;
 				
 #if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 5
-				::boost::shared_ptr< ::fcl::CollisionGeometry> geometry;
+				::boost::shared_ptr<::fcl::CollisionGeometry> geometry;
 #else
-				::std::shared_ptr< ::fcl::CollisionGeometry> geometry;
+				::std::shared_ptr<::fcl::CollisionGeometry> geometry;
 #endif
 				
 				::std::vector<int> indices;
 				
-				::std::vector< ::fcl::Vec3f> normals;
+				::std::vector<::fcl::Vec3f> normals;
 				
 				::std::vector<int> polygons;
 				
 				::rl::math::Transform transform;
 				
-				::std::vector< ::fcl::Vec3f> vertices;
+				::std::vector<::fcl::Vec3f> vertices;
 			};
 		}
 	}

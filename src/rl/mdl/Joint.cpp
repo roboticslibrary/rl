@@ -37,8 +37,8 @@ namespace rl
 			a(::rl::math::MotionVector::Zero()),
 			c(::rl::math::MotionVector::Zero()),
 			D(::rl::math::Matrix::Zero(dofVelocity, dofVelocity)),
-			max(::rl::math::Vector::Constant(dofPosition, ::std::numeric_limits< ::rl::math::Real>::max())),
-			min(::rl::math::Vector::Constant(dofPosition, -::std::numeric_limits< ::rl::math::Real>::max())),
+			max(::rl::math::Vector::Constant(dofPosition, ::std::numeric_limits<::rl::math::Real>::max())),
+			min(::rl::math::Vector::Constant(dofPosition, -::std::numeric_limits<::rl::math::Real>::max())),
 			offset(::rl::math::Vector::Zero(dofPosition)),
 			q(::rl::math::Vector::Zero(dofPosition)),
 			qUnits(dofPosition),
@@ -47,7 +47,7 @@ namespace rl
 			qdd(::rl::math::Vector::Zero(dofVelocity)),
 			qddUnits(dofVelocity),
 			S(::rl::math::Matrix::Zero(6, dofVelocity)),
-			speed(::rl::math::Vector::Constant(dofVelocity, ::std::numeric_limits< ::rl::math::Real>::max())),
+			speed(::rl::math::Vector::Constant(dofVelocity, ::std::numeric_limits<::rl::math::Real>::max())),
 			speedUnits(dofVelocity),
 			tau(::rl::math::Vector::Zero(dofVelocity)),
 			tauUnits(dofVelocity),
@@ -183,7 +183,7 @@ namespace rl
 			return this->qdd;
 		}
 		
-		const ::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1>&
+		const ::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1>&
 		Joint::getAccelerationUnits() const
 		{
 			return this->qddUnits;
@@ -219,7 +219,7 @@ namespace rl
 			return this->q;
 		}
 		
-		const ::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1>&
+		const ::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1>&
 		Joint::getPositionUnits() const
 		{
 			return this->qUnits;
@@ -231,7 +231,7 @@ namespace rl
 			return this->tau;
 		}
 		
-		const ::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1>&
+		const ::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1>&
 		Joint::getTorqueUnits() const
 		{
 			return this->tauUnits;
@@ -243,7 +243,7 @@ namespace rl
 			return this->speed;
 		}
 		
-		const ::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1>&
+		const ::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1>&
 		Joint::getSpeedUnits() const
 		{
 			return this->speedUnits;
@@ -255,7 +255,7 @@ namespace rl
 			return this->qd;
 		}
 		
-		const ::Eigen::Matrix< ::rl::math::Unit, ::Eigen::Dynamic, 1>&
+		const ::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1>&
 		Joint::getVelocityUnits() const
 		{
 			return this->qdUnits;

@@ -53,7 +53,7 @@ namespace rl
 			return this->container.empty();
 		}
 		
-		::boost::optional< ::std::size_t>
+		::boost::optional<::std::size_t>
 		GnatNearestNeighbors::getChecks() const
 		{
 			return this->container.getChecks();
@@ -108,7 +108,7 @@ namespace rl
 		}
 		
 		void
-		GnatNearestNeighbors::setChecks(const ::boost::optional< ::std::size_t>& checks)
+		GnatNearestNeighbors::setChecks(const ::boost::optional<::std::size_t>& checks)
 		{
 			this->container.setChecks(checks);
 		}

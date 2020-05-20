@@ -50,9 +50,9 @@ namespace rl
 			virtual void seed(const ::std::mt19937::result_type& value);
 			
 		protected:
-			::std::uniform_real_distribution< ::rl::math::Real>::result_type rand();
+			::std::uniform_real_distribution<::rl::math::Real>::result_type rand();
 			
-			::std::uniform_real_distribution< ::rl::math::Real> randDistribution;
+			::std::uniform_real_distribution<::rl::math::Real> randDistribution;
 			
 			::std::mt19937 randEngine;
 			

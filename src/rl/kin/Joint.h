@@ -61,7 +61,7 @@ namespace rl
 			
 			::rl::math::Real d;
 			
-			::std::unordered_set< ::std::size_t> leaves;
+			::std::unordered_set<::std::size_t> leaves;
 			
 			::rl::math::Real max;
 			

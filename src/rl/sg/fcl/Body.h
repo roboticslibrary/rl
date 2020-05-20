@@ -57,7 +57,7 @@ namespace rl
 				
 				void setFrame(const ::rl::math::Transform& frame);
 				
-				::std::vector< ::fcl::CollisionObject*> collisionObjects;
+				::std::vector<::fcl::CollisionObject*> collisionObjects;
 				
 				::fcl::DynamicAABBTreeCollisionManager manager;
 				

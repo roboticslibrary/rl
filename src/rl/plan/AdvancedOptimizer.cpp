@@ -36,7 +36,7 @@ namespace rl
 		AdvancedOptimizer::AdvancedOptimizer() :
 			SimpleOptimizer(),
 			length(1),
-			ratio(static_cast< ::rl::math::Real>(0.1))
+			ratio(static_cast<::rl::math::Real>(0.1))
 		{
 		}
 		
@@ -117,7 +117,7 @@ namespace rl
 				{
 					if (this->model->distance(*i, *j) > this->length)
 					{
-						this->model->interpolate(*i, *j, static_cast< ::rl::math::Real>(0.5), inter);
+						this->model->interpolate(*i, *j, static_cast<::rl::math::Real>(0.5), inter);
 						
 						j = path.insert(j, inter);
 						

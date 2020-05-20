@@ -168,7 +168,7 @@ namespace rl
 			
 			::std::uint8_t configuration;
 			
-			::std::array< ::std::uint8_t, 812> data;
+			::std::array<::std::uint8_t, 812> data;
 			
 			BaudRate desired;
 			

@@ -69,7 +69,7 @@ collides(rl::sg::SimpleScene* scene, const rl::mdl::Kinematic* kinematic)
 				{
 					for (::rl::sg::Model::Iterator k = (*j)->begin(); k != (*j)->end(); ++k)
 					{
-						if (dynamic_cast< ::rl::sg::SimpleScene*>(scene)->areColliding(robotModel->getBody(i), *k))
+						if (dynamic_cast<::rl::sg::SimpleScene*>(scene)->areColliding(robotModel->getBody(i), *k))
 						{
 							return true;
 						}
@@ -82,7 +82,7 @@ collides(rl::sg::SimpleScene* scene, const rl::mdl::Kinematic* kinematic)
 		{
 			if (kinematic->areColliding(i, j))
 			{
-				if (dynamic_cast< ::rl::sg::SimpleScene*>(scene)->areColliding(robotModel->getBody(i), robotModel->getBody(j)))
+				if (dynamic_cast<::rl::sg::SimpleScene*>(scene)->areColliding(robotModel->getBody(i), robotModel->getBody(j)))
 				{
 					return true;
 				}

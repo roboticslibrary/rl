@@ -80,7 +80,7 @@ namespace rl
 					static ::std::time_t to_time_t(const time_point& t)
 					{
 						return ::std::time_t(
-							::std::chrono::duration_cast< ::std::chrono::seconds>(
+							::std::chrono::duration_cast<::std::chrono::seconds>(
 								t.time_since_epoch()
 							).count()
 						);

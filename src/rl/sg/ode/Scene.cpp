@@ -63,8 +63,8 @@ namespace rl
 				bool data = false;
 				
 				::dSpaceCollide2(
-					reinterpret_cast< ::dGeomID>(static_cast<Body*>(first)->space),
-					reinterpret_cast< ::dGeomID>(static_cast<Body*>(second)->space),
+					reinterpret_cast<::dGeomID>(static_cast<Body*>(first)->space),
+					reinterpret_cast<::dGeomID>(static_cast<Body*>(second)->space),
 					&data,
 					&Scene::shapeSimpleCallback
 				);
@@ -78,8 +78,8 @@ namespace rl
 				bool data = false;
 				
 				::dSpaceCollide2(
-					reinterpret_cast< ::dGeomID>(static_cast<Model*>(first)->space),
-					reinterpret_cast< ::dGeomID>(static_cast<Model*>(second)->space),
+					reinterpret_cast<::dGeomID>(static_cast<Model*>(first)->space),
+					reinterpret_cast<::dGeomID>(static_cast<Model*>(second)->space),
 					&data,
 					&Scene::bodySimpleCallback
 				);
@@ -159,47 +159,47 @@ namespace rl
 					return;
 				}
 				
-				::dSpaceCollide(reinterpret_cast< ::dSpaceID>(o1), data, &Scene::bodySimpleCallback);
+				::dSpaceCollide(reinterpret_cast<::dSpaceID>(o1), data, &Scene::bodySimpleCallback);
 				
 				if (*static_cast<bool*>(data))
 				{
 					return;
 				}
 				
-				::dSpaceCollide(reinterpret_cast< ::dSpaceID>(o2), data, &Scene::bodySimpleCallback);
+				::dSpaceCollide(reinterpret_cast<::dSpaceID>(o2), data, &Scene::bodySimpleCallback);
 			}
 			
 			::rl::sg::Shape*
 			Scene::raycast(const ::rl::math::Vector3& source, const ::rl::math::Vector3& target, ::rl::math::Real& distance)
 			{
-				::dGeomID ray = ::dCreateRay(nullptr, ::std::numeric_limits< ::dReal>::max());
+				::dGeomID ray = ::dCreateRay(nullptr, ::std::numeric_limits<::dReal>::max());
 				
 				::dGeomRaySet(
 					ray,
-					static_cast< ::dReal>(source.x()),
-					static_cast< ::dReal>(source.y()),
-					static_cast< ::dReal>(source.z()),
-					static_cast< ::dReal>(target.x() - source.x()),
-					static_cast< ::dReal>(target.y() - source.y()),
-					static_cast< ::dReal>(target.z() - source.z())
+					static_cast<::dReal>(source.x()),
+					static_cast<::dReal>(source.y()),
+					static_cast<::dReal>(source.z()),
+					static_cast<::dReal>(target.x() - source.x()),
+					static_cast<::dReal>(target.y() - source.y()),
+					static_cast<::dReal>(target.z() - source.z())
 				);
 				
 				::dContactGeom contact;
-				contact.depth = ::std::numeric_limits< ::dReal>::max();
+				contact.depth = ::std::numeric_limits<::dReal>::max();
 				contact.g1 = nullptr;
 				contact.g2 = nullptr;
 				
-				::dSpaceCollide2(ray, reinterpret_cast< ::dGeomID>(this->space), &contact, &Scene::rayNearCallback);
+				::dSpaceCollide2(ray, reinterpret_cast<::dGeomID>(this->space), &contact, &Scene::rayNearCallback);
 				
 				distance = contact.depth;
 				
 				if (nullptr != contact.g1 && ray != contact.g1)
 				{
-					return static_cast< ::rl::sg::Shape*>(::dGeomGetData(contact.g1));
+					return static_cast<::rl::sg::Shape*>(::dGeomGetData(contact.g1));
 				}
 				else if (nullptr != contact.g2 && ray != contact.g2)
 				{
-					return static_cast< ::rl::sg::Shape*>(::dGeomGetData(contact.g2));
+					return static_cast<::rl::sg::Shape*>(::dGeomGetData(contact.g2));
 				}
 				else
 				{
@@ -210,16 +210,16 @@ namespace rl
 			bool
 			Scene::raycast(::rl::sg::Shape* shape, const ::rl::math::Vector3& source, const ::rl::math::Vector3& target, ::rl::math::Real& distance)
 			{
-				::dGeomID ray = ::dCreateRay(nullptr, ::std::numeric_limits< ::dReal>::max());
+				::dGeomID ray = ::dCreateRay(nullptr, ::std::numeric_limits<::dReal>::max());
 				
 				::dGeomRaySet(
 					ray,
-					static_cast< ::dReal>(source.x()),
-					static_cast< ::dReal>(source.y()),
-					static_cast< ::dReal>(source.z()),
-					static_cast< ::dReal>(target.x() - source.x()),
-					static_cast< ::dReal>(target.y() - source.y()),
-					static_cast< ::dReal>(target.z() - source.z())
+					static_cast<::dReal>(source.x()),
+					static_cast<::dReal>(source.y()),
+					static_cast<::dReal>(source.z()),
+					static_cast<::dReal>(target.x() - source.x()),
+					static_cast<::dReal>(target.y() - source.y()),
+					static_cast<::dReal>(target.z() - source.z())
 				);
 				
 				::dContactGeom contacts[1];
@@ -231,7 +231,7 @@ namespace rl
 				}
 				else
 				{
-					distance = ::std::numeric_limits< ::dReal>::quiet_NaN();
+					distance = ::std::numeric_limits<::dReal>::quiet_NaN();
 					return false;
 				}
 			}
@@ -245,12 +245,12 @@ namespace rl
 					
 					if (::dGeomIsSpace(o1))
 					{
-						::dSpaceCollide(reinterpret_cast< ::dSpaceID>(o1), data, &Scene::rayNearCallback);
+						::dSpaceCollide(reinterpret_cast<::dSpaceID>(o1), data, &Scene::rayNearCallback);
 					}
 					
 					if (::dGeomIsSpace(o2))
 					{
-						::dSpaceCollide(reinterpret_cast< ::dSpaceID>(o2), data, &Scene::rayNearCallback);
+						::dSpaceCollide(reinterpret_cast<::dSpaceID>(o2), data, &Scene::rayNearCallback);
 					}
 				}
 				else
@@ -259,11 +259,11 @@ namespace rl
 					
 					if (::dCollide(o1, o2, 1, contacts, sizeof(::dContactGeom)) > 0)
 					{
-						if (contacts[0].depth < static_cast< ::dContactGeom*>(data)->depth)
+						if (contacts[0].depth < static_cast<::dContactGeom*>(data)->depth)
 						{
-							static_cast< ::dContactGeom*>(data)->depth = contacts[0].depth;
-							static_cast< ::dContactGeom*>(data)->g1 = o1;
-							static_cast< ::dContactGeom*>(data)->g2 = o2;
+							static_cast<::dContactGeom*>(data)->depth = contacts[0].depth;
+							static_cast<::dContactGeom*>(data)->g1 = o1;
+							static_cast<::dContactGeom*>(data)->g2 = o2;
 						}
 					}
 				}
@@ -272,7 +272,7 @@ namespace rl
 			void
 			Scene::shapeDepthCallback(void* data, ::dGeomID o1, ::dGeomID o2)
 			{
-				::dCollide(o1, o2, 1, static_cast< ::dContactGeom*>(data), sizeof(::dContactGeom));
+				::dCollide(o1, o2, 1, static_cast<::dContactGeom*>(data), sizeof(::dContactGeom));
 			}
 			
 			void

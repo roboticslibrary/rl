@@ -40,7 +40,7 @@ namespace rl
 		class RL_MDL_EXPORT InverseKinematics
 		{
 		public:
-			typedef ::std::pair< ::rl::math::Transform, ::std::size_t> Goal;
+			typedef ::std::pair<::rl::math::Transform, ::std::size_t> Goal;
 			
 			InverseKinematics(Kinematic* kinematic);
 			

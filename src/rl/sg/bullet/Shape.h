@@ -62,7 +62,7 @@ namespace rl
 				
 				::btTriangleIndexVertexArray* triangleIndexVertexArray;
 				
-				::std::vector< ::btScalar> vertices;
+				::std::vector<::btScalar> vertices;
 			};
 		}
 	}

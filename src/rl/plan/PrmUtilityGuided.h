@@ -103,13 +103,13 @@ namespace rl
 			*/
 			::rl::math::Real getFreeProbability(const Sample& sample);
 			
-			::std::uniform_real_distribution< ::rl::math::Real>::result_type rand();
+			::std::uniform_real_distribution<::rl::math::Real>::result_type rand();
 			
 			::std::size_t numNeighbors;
 			
 			::std::size_t numSamples;
 			
-			::std::uniform_real_distribution< ::rl::math::Real> randDistribution;
+			::std::uniform_real_distribution<::rl::math::Real> randDistribution;
 			
 			::std::mt19937 randEngine;
 			

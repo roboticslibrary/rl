@@ -116,7 +116,7 @@ namespace rl
 			
 			static ::std::uint64_t hostQuadWord(const ::std::uint32_t& highDoubleWord, const ::std::uint32_t& lowDoubleWord)
 			{
-				return (static_cast< ::std::uint64_t>(highDoubleWord) << 32) | lowDoubleWord;
+				return (static_cast<::std::uint64_t>(highDoubleWord) << 32) | lowDoubleWord;
 			}
 			
 			static void hostToBig(::std::int8_t& character)
@@ -246,7 +246,7 @@ namespace rl
 			
 			static void reverse(float& real32)
 			{
-				reverse(*reinterpret_cast< ::std::uint32_t*>(&real32));
+				reverse(*reinterpret_cast<::std::uint32_t*>(&real32));
 			}
 			
 			static void reverse(::std::int64_t& quadWord)
@@ -263,7 +263,7 @@ namespace rl
 			
 			static void reverse(double& real64)
 			{
-				reverse(*reinterpret_cast< ::std::uint64_t*>(&real64));
+				reverse(*reinterpret_cast<::std::uint64_t*>(&real64));
 			}
 			
 		protected:

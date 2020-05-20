@@ -169,7 +169,7 @@ namespace rl
 			
 			::rl::math::Real getAnalogInputMinimum(const ::std::size_t& i) const;
 			
-			::std::vector< ::rl::math::Unit> getAnalogInputUnit() const;
+			::std::vector<::rl::math::Unit> getAnalogInputUnit() const;
 			
 			::rl::math::Unit getAnalogInputUnit(const ::std::size_t& i) const;
 			
@@ -183,7 +183,7 @@ namespace rl
 			
 			::rl::math::Real getAnalogOutputMinimum(const ::std::size_t& i) const;
 			
-			::std::vector< ::rl::math::Unit> getAnalogOutputUnit() const;
+			::std::vector<::rl::math::Unit> getAnalogOutputUnit() const;
 			
 			::rl::math::Unit getAnalogOutputUnit(const ::std::size_t& i) const;
 			
@@ -235,7 +235,7 @@ namespace rl
 			
 			void setAnalogOutput(const ::std::size_t& i, const ::rl::math::Real& value);
 			
-			void setAnalogOutputUnit(const ::std::vector< ::rl::math::Unit>& values);
+			void setAnalogOutputUnit(const ::std::vector<::rl::math::Unit>& values);
 			
 			void setAnalogOutputUnit(const ::std::size_t& i, const ::rl::math::Unit& value);
 			
@@ -272,29 +272,29 @@ namespace rl
 			
 			struct Input
 			{
-				::boost::optional< ::std::uint8_t> configurableDigitalOutput;
+				::boost::optional<::std::uint8_t> configurableDigitalOutput;
 				
-				::boost::optional< ::std::uint8_t> configurableDigitalOutputMask;
+				::boost::optional<::std::uint8_t> configurableDigitalOutputMask;
 				
-				::boost::optional< ::std::uint32_t> inputBitRegisters0;
+				::boost::optional<::std::uint32_t> inputBitRegisters0;
 				
-				::boost::optional< ::std::uint32_t> inputBitRegisters1;
+				::boost::optional<::std::uint32_t> inputBitRegisters1;
 				
 				::std::vector<double> inputDoubleRegister;
 				
-				::std::vector< ::std::int32_t> inputIntRegister;
+				::std::vector<::std::int32_t> inputIntRegister;
 				
 				::boost::optional<double> standardAnalogOutput0;
 				
 				::boost::optional<double> standardAnalogOutput1;
 				
-				::boost::optional< ::std::uint8_t> standardAnalogOutputMask;
+				::boost::optional<::std::uint8_t> standardAnalogOutputMask;
 				
 				::std::uint8_t standardAnalogOutputType;
 				
-				::boost::optional< ::std::uint8_t> standardDigitalOutput;
+				::boost::optional<::std::uint8_t> standardDigitalOutput;
 				
-				::boost::optional< ::std::uint8_t> standardDigitalOutputMask;
+				::boost::optional<::std::uint8_t> standardDigitalOutputMask;
 			};
 			
 			struct Output
@@ -381,7 +381,7 @@ namespace rl
 			
 			void send(const ::std::uint8_t& command);
 			
-			void send(const ::std::uint8_t& command, const ::std::vector< ::std::string>& strings);
+			void send(const ::std::uint8_t& command, const ::std::vector<::std::string>& strings);
 			
 			void send(const ::std::uint8_t& command, const ::std::uint16_t& word);
 			

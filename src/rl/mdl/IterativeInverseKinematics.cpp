@@ -33,7 +33,7 @@ namespace rl
 		IterativeInverseKinematics::IterativeInverseKinematics(Kinematic* kinematic) :
 			InverseKinematics(kinematic),
 			duration(::std::chrono::milliseconds(1000)),
-			epsilon(static_cast< ::rl::math::Real>(1.0e-6)),
+			epsilon(static_cast<::rl::math::Real>(1.0e-6)),
 			iterations(10000)
 		{
 		}

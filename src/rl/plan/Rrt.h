@@ -119,7 +119,7 @@ namespace rl
 			
 			typedef ::std::pair<EdgeIterator, EdgeIterator> EdgeIteratorPair;
 			
-			typedef ::std::pair< ::rl::math::Real, Vertex> Neighbor;
+			typedef ::std::pair<::rl::math::Real, Vertex> Neighbor;
 			
 			typedef ::boost::graph_traits<Tree>::vertex_iterator VertexIterator;
 			

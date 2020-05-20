@@ -40,7 +40,7 @@ namespace rl
 		}
 		
 		void
-		AnalogOutputWriter::setAnalogOutput(const ::std::vector< ::rl::math::Real>& values)
+		AnalogOutputWriter::setAnalogOutput(const ::std::vector<::rl::math::Real>& values)
 		{
 			for (::std::size_t i = 0; i < this->getAnalogOutputCount(); ++i)
 			{
