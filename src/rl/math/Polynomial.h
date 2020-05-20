@@ -666,7 +666,7 @@ namespace rl
 				
 				return scaled;
 			}
-
+			
 			/**
 			 * Translates a polynomial along the x-axis by a given parameter translation.
 			 *
@@ -684,7 +684,7 @@ namespace rl
 				{
 					translated.coefficient(n) = TypeTraits<T>::Zero(TypeTraits<T>::size(this->coefficient(n)));
 				}
-
+				
 				for (::std::size_t n = 0; n < this->degree() + 1; ++n)
 				{
 					T c = this->coefficient(n);
@@ -694,12 +694,12 @@ namespace rl
 					{
 						// b is the binomial coefficient n over k
 						translated.coefficient(k) += b * ::std::pow(translation, static_cast<int>(n - k)) * c;
-
+						
 						// compute next binomial coefficient, integer division is ok because b is divisible
 						b = b * (n - k) / (k + 1);
 					}
 				}
-
+				
 				return translated;
 			}
 			
