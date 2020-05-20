@@ -32,6 +32,7 @@
 #include <Inventor/VRMLnodes/SoVRMLGeometry.h>
 #include <Inventor/VRMLnodes/SoVRMLIndexedFaceSet.h>
 #include <Inventor/VRMLnodes/SoVRMLSphere.h>
+#include <rl/std/memory.h>
 
 #include "../Exception.h"
 #include "Body.h"
@@ -47,10 +48,10 @@ namespace rl
 		{
 			Shape::Shape(::SoVRMLShape* shape, Body* body) :
 				::rl::sg::Shape(shape, body),
-				shape(nullptr),
+				shape(),
 				transform(),
 				indices(),
-				triangleIndexVertexArray(nullptr),
+				triangleIndexVertexArray(),
 				vertices()
 			{
 				::SoVRMLGeometry* geometry = static_cast<::SoVRMLGeometry*>(shape->geometry.getValue());
@@ -59,17 +60,17 @@ namespace rl
 				{
 					::SoVRMLBox* box = static_cast<::SoVRMLBox*>(geometry);
 					::btVector3 boxHalfExtents(box->size.getValue()[0] / 2, box->size.getValue()[1] / 2, box->size.getValue()[2] / 2);
-					this->shape = new ::btBoxShape(boxHalfExtents);
+					this->shape = ::rl::std14::make_unique<::btBoxShape>(boxHalfExtents);
 				}
 				else if (geometry->isOfType(::SoVRMLCone::getClassTypeId()))
 				{
 					::SoVRMLCone* cone = static_cast<::SoVRMLCone*>(geometry);
-					this->shape = new ::btConeShape(cone->bottomRadius.getValue(), cone->height.getValue());
+					this->shape = ::rl::std14::make_unique<::btConeShape>(cone->bottomRadius.getValue(), cone->height.getValue());
 				}
 				else if (geometry->isOfType(::SoVRMLCylinder::getClassTypeId()))
 				{
 					::SoVRMLCylinder* cylinder = static_cast<::SoVRMLCylinder*>(geometry);
-					this->shape = new ::btCylinderShape(::btVector3(cylinder->radius.getValue(), cylinder->height.getValue() / 2, cylinder->radius.getValue()));
+					this->shape = ::rl::std14::make_unique<::btCylinderShape>(::btVector3(cylinder->radius.getValue(), cylinder->height.getValue() / 2, cylinder->radius.getValue()));
 				}
 				else if (geometry->isOfType(::SoVRMLIndexedFaceSet::getClassTypeId()))
 				{
@@ -81,7 +82,7 @@ namespace rl
 					
 					if (indexedFaceSet->convex.getValue())
 					{
-						this->shape = new ::btConvexHullShape(
+						this->shape = ::rl::std14::make_unique<::btConvexHullShape>(
 							&this->vertices[0],
 							this->vertices.size() / 3,
 							3 * sizeof(btScalar)
@@ -89,7 +90,7 @@ namespace rl
 					}
 					else
 					{
-						this->triangleIndexVertexArray = new ::btTriangleIndexVertexArray(
+						this->triangleIndexVertexArray = ::rl::std14::make_unique<::btTriangleIndexVertexArray>(
 							this->indices.size() / 3,
 							&this->indices[0],
 							3 * sizeof(int),
@@ -98,13 +99,13 @@ namespace rl
 							3 * sizeof(btScalar)
 						);
 						
-						this->shape = new ::btBvhTriangleMeshShape(this->triangleIndexVertexArray, true);
+						this->shape = ::rl::std14::make_unique<::btBvhTriangleMeshShape>(this->triangleIndexVertexArray.get(), true);
 					}
 				}
 				else if (geometry->isOfType(::SoVRMLSphere::getClassTypeId()))
 				{
 					::SoVRMLSphere* sphere = static_cast<::SoVRMLSphere*>(geometry);
-					this->shape = new ::btSphereShape(sphere->radius.getValue());
+					this->shape = ::rl::std14::make_unique<::btSphereShape>(sphere->radius.getValue());
 				}
 				else
 				{
@@ -116,7 +117,7 @@ namespace rl
 				if (nullptr != this->shape)
 				{
 					this->transform.setIdentity();
-					dynamic_cast<Body*>(this->getBody())->shape.addChildShape(this->transform, this->shape);
+					dynamic_cast<Body*>(this->getBody())->shape.addChildShape(this->transform, this->shape.get());
 					this->shape->setMargin(0);
 					this->shape->setUserPointer(this);
 				}
@@ -126,13 +127,10 @@ namespace rl
 			{
 				if (nullptr != this->shape)
 				{
-					dynamic_cast<Body*>(this->getBody())->shape.removeChildShape(this->shape);
+					dynamic_cast<Body*>(this->getBody())->shape.removeChildShape(this->shape.get());
 				}
 				
 				this->getBody()->remove(this);
-				
-				delete this->triangleIndexVertexArray;
-				delete this->shape;
 			}
 			
 			void
@@ -142,7 +140,7 @@ namespace rl
 				
 				for (int i = 0; i < body->shape.getNumChildShapes(); ++i)
 				{
-					if (this->shape == body->shape.getChildList()[i].m_childShape)
+					if (this->shape.get() == body->shape.getChildList()[i].m_childShape)
 					{
 						for (int j = 0; j < 3; ++j)
 						{
@@ -172,7 +170,7 @@ namespace rl
 				
 				for (int i = 0; i < body->shape.getNumChildShapes(); ++i)
 				{
-					if (this->shape == body->shape.getChildList()[i].m_childShape)
+					if (this->shape.get() == body->shape.getChildList()[i].m_childShape)
 					{
 						this->transform.getOrigin().setValue(
 							static_cast<::btScalar>(transform(0, 3)),

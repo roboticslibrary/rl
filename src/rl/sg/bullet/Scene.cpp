@@ -129,8 +129,8 @@ namespace rl
 				::btVoronoiSimplexSolver simplexSolver;
 				::btGjkEpaPenetrationDepthSolver penetrationDepthSolver;
 				::btGjkPairDetector pairDetector(
-					static_cast<::btConvexShape*>(shape1->shape),
-					static_cast<::btConvexShape*>(shape2->shape),
+					static_cast<::btConvexShape*>(shape1->shape.get()),
+					static_cast<::btConvexShape*>(shape2->shape.get()),
 					&simplexSolver,
 					&penetrationDepthSolver
 				);
@@ -163,7 +163,7 @@ namespace rl
 				
 				::btGjkEpaPenetrationDepthSolver epa;
 				::btGjkPairDetector convexConvex(
-					static_cast<::btConvexShape*>(static_cast<Shape*>(shape)->shape),
+					static_cast<::btConvexShape*>(static_cast<Shape*>(shape)->shape.get()),
 					static_cast<::btConvexShape*>(&sphere),
 					&sGjkSimplexSolver,
 					&epa
@@ -282,7 +282,7 @@ namespace rl
 					rayFromTrans,
 					rayToTrans,
 					&body->object,
-					static_cast<Shape*>(shape)->shape,
+					static_cast<Shape*>(shape)->shape.get(),
 					body->object.getWorldTransform() * static_cast<Shape*>(shape)->transform, // TODO
 					resultCallback
 				);

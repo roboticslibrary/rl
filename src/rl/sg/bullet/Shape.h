@@ -27,6 +27,7 @@
 #ifndef RL_SG_BULLET_SHAPE_H
 #define RL_SG_BULLET_SHAPE_H
 
+#include <memory>
 #include <btBulletCollisionCommon.h>
 #include <Inventor/actions/SoCallbackAction.h>
 
@@ -49,7 +50,7 @@ namespace rl
 				
 				void setTransform(const ::rl::math::Transform& transform);
 				
-				::btCollisionShape* shape;
+				::std::unique_ptr<::btCollisionShape> shape;
 				
 				::btTransform transform;
 				
@@ -60,7 +61,7 @@ namespace rl
 				
 				::std::vector<int> indices;
 				
-				::btTriangleIndexVertexArray* triangleIndexVertexArray;
+				::std::unique_ptr<::btTriangleIndexVertexArray> triangleIndexVertexArray;
 				
 				::std::vector<::btScalar> vertices;
 			};
