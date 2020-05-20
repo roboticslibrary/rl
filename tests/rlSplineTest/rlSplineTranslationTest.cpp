@@ -25,79 +25,87 @@
 //
 
 #include <iostream>
-#include <rl/math/Array.h>
-#include <rl/math/Spline.h>
+#include <rl/math/algorithm.h>
+#include <rl/math/Polynomial.h>
 
-void printPoly(const rl::math::Polynomial<rl::math::ArrayX>& p)
+std::ostream& operator<<(std::ostream& os, const rl::math::Polynomial<rl::math::Real>& p)
 {
+	bool first = true;
+	
 	for (int n = p.degree(); n >= 0; --n)
 	{
-		if (p.coefficient(n).matrix().squaredNorm() > 0)
+		if (std::abs(p.coefficient(n)) > ::std::numeric_limits<rl::math::Real>::epsilon())
 		{
-			std::cout << p.coefficient(n) << "*x^" << n << " ";
+			if (first)
+			{
+				os << p.coefficient(n);
+			}
+			else
+			{
+				os << (rl::math::sign(p.coefficient(n)) < 0 ? " - " : " + ") << std::abs(p.coefficient(n));
+			}
+			
+			if (n > 0)
+			{
+				os << " x^" << n;
+			}
+			
+			first = false;
 		}
 	}
 	
-	std::cout << std::endl;
+	return os;
 }
 
-bool testPolynomialTranslation(const rl::math::Polynomial<rl::math::ArrayX>& p)
+bool testPolynomialTranslation(const rl::math::Polynomial<rl::math::Real>& p)
 {
-	rl::math::Real eps = 1e-6;
-	rl::math::Real translation = 0.2 + (p.degree() / 3);
-	rl::math::Polynomial<rl::math::ArrayX> q = p.translatedX(translation);
-	printPoly(p);
-	printPoly(q);
-	bool ok = true;
+	rl::math::Real translation = Eigen::internal::random(-10.0, 10.0);
+	rl::math::Polynomial<rl::math::Real> q = p.translatedX(translation);
+	
+	std::cout << p.degree() << ": p(x) = " << p << std::endl;
+	std::cout << q.degree() << ": q(x) = " << q << std::endl;
+	std::cout << p.degree() << ": p(x) = q(x " << (rl::math::sign(translation) < 0 ? "-" : "+") << " " << std::abs(translation) << ")" << std::endl;
 	
 	for (rl::math::Real x = 0; x < 1; x += 0.1)
 	{
-		if ((p(x) - q(x - translation)).matrix().squaredNorm() > eps)
+		rl::math::Real squaredNorm = std::pow(p(x) - q(x - translation), 2);
+		
+		if (squaredNorm > 1.0e-6)
 		{
-			ok = false;
+			std::cerr << "testPolynomialTranslation: Error at degree " << p.degree() << std::endl;
+			std::cerr << "p(" << x << ") = " << p(x) << std::endl;
+			std::cerr << "q(" << x - translation << ") = " << q(x - translation) << std::endl;
+			std::cerr << "squaredNorm: " << squaredNorm << std::endl;
+			return false;
 		}
 	}
 	
-	if (!ok)
-	{
-		std::cerr << "testPolynomialTranslation: at degree " << p.degree() << " a difference was detected." << std::endl;
-	}
-	
-	return ok;
+	return true;
 }
 
 int
 main(int argc, char** argv)
 {
-	bool ok = true;
-	
-	for (std::size_t degree = 5; degree < 15; ++degree)
+	for (std::size_t degree = 0; degree < 10; ++degree)
 	{
-		rl::math::Polynomial<rl::math::ArrayX> p(degree);
+		if (degree > 0)
+		{
+			std::cout << std::endl;
+		}
+		
+		rl::math::Polynomial<rl::math::Real> p(degree);
 		p.upper() = 1;
 		
 		for (std::size_t n = 0; n < p.degree() + 1; ++n)
 		{
-			p.coefficient(n) = rl::math::ArrayX::Zero(1);
+			p.coefficient(n) = Eigen::internal::random(-10.0, 10.0);
 		}
 		
-		p.coefficient(degree) = rl::math::ArrayX::Constant(1, 1.7);
-		p.coefficient(degree / 2) = rl::math::ArrayX::Constant(1, -2.5);
-		p.coefficient(degree / 3) = rl::math::ArrayX::Constant(1, 1.5);
-		ok &= testPolynomialTranslation(p);
-	
-		p.coefficient(degree - 1) = rl::math::ArrayX::Constant(1, -0.5);
-		ok &= testPolynomialTranslation(p);
+		if (!testPolynomialTranslation(p))
+		{
+			return EXIT_FAILURE;
+		}
 	}
 	
-	if (ok)
-	{
-		std::cout << "rlSplineTranslationTest: Verify Polynomial::translatedX done." << std::endl;
-		return EXIT_SUCCESS;
-	}
-	else
-	{
-		std::cerr << "rlSplineTranslationTest: Polynomial::translatedX is wrong." << std::endl;
-		return EXIT_FAILURE;
-	}
+	return EXIT_SUCCESS;
 }
