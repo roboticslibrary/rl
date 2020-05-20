@@ -101,9 +101,9 @@ namespace rl
 			/** The number of the calibration within the file (usually 1). */
 			unsigned short int index;
 			
-			std::array<float, 6> values;
+			::std::array<float, 6> values;
 			
-			std::array<float, 6> voltages;
+			::std::array<float, 6> voltages;
 		};
 	}
 }

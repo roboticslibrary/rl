@@ -644,7 +644,7 @@ namespace rl
 #if !defined(__APPLE__) && !defined(__QNX__) && !defined(WIN32)
 			this->socket4.setOption(::rl::hal::Socket::OPTION_QUICKACK, 1);
 #endif // __APPLE__ || __QNX__ || WIN32
-//			std::cout << "size: " << size << std::endl;
+//			::std::cout << "size: " << size << ::std::endl;
 			
 			::std::uint8_t* ptr = buffer.data();
 			
@@ -652,18 +652,18 @@ namespace rl
 			{
 				::std::uint16_t packageSize;
 				this->unserialize(ptr, packageSize);
-//				std::cout << "packageSize: " << packageSize << std::endl;
+//				::std::cout << "packageSize: " << packageSize << ::std::endl;
 				
 				::std::uint8_t packageType;
 				this->unserialize(ptr, packageType);
-//				std::cout << "packageType: " << packageType << std::endl;
+//				::std::cout << "packageType: " << packageType << ::std::endl;
 				
 				switch (packageType)
 				{
 				case COMMAND_CONTROL_PACKAGE_PAUSE:
 					::std::uint8_t pauseAccepted;
 					this->unserialize(ptr, pauseAccepted);
-//					std::cout << "accepted: " << static_cast<bool>(pauseAccepted & 0x01) << std::endl;
+//					::std::cout << "accepted: " << static_cast<bool>(pauseAccepted & 0x01) << ::std::endl;
 					
 					if (!pauseAccepted)
 					{
@@ -675,7 +675,7 @@ namespace rl
 				{
 					::std::uint8_t recipeId;
 					this->unserialize(ptr, recipeId);
-//					std::cout << "recipeId: " << static_cast<int>(recipeId) << std::endl;
+//					::std::cout << "recipeId: " << static_cast<int>(recipeId) << ::std::endl;
 					
 					if (0 == recipeId)
 					{
@@ -683,17 +683,17 @@ namespace rl
 					}
 					
 					::std::string variableTypes(reinterpret_cast<char*>(ptr), packageSize - 4);
-//					std::cout << "variableTypes: " << variableTypes << std::endl;
+//					::std::cout << "variableTypes: " << variableTypes << ::std::endl;
 					ptr += packageSize - 4;
 				}
 					break;
 				case COMMAND_CONTROL_PACKAGE_SETUP_OUTPUTS:
 				{
 					::std::string variableTypes(reinterpret_cast<char*>(ptr), packageSize - 3);
-//					std::cout << "variableTypes: " << variableTypes << std::endl;
+//					::std::cout << "variableTypes: " << variableTypes << ::std::endl;
 					ptr += packageSize - 3;
 					
-					if (std::string::npos != variableTypes.find("NOT_FOUND"))
+					if (::std::string::npos != variableTypes.find("NOT_FOUND"))
 					{
 						throw DeviceException("Output recipe invalid");
 					}
@@ -702,7 +702,7 @@ namespace rl
 				case COMMAND_CONTROL_PACKAGE_START:
 					::std::uint8_t startAccepted;
 					this->unserialize(ptr, startAccepted);
-//					std::cout << "accepted: " << static_cast<bool>(startAccepted & 0x01) << std::endl;
+//					::std::cout << "accepted: " << static_cast<bool>(startAccepted & 0x01) << ::std::endl;
 					
 					if (!startAccepted)
 					{
@@ -746,18 +746,18 @@ namespace rl
 					break;
 				case COMMAND_GET_URCONTROL_VERSION:
 					this->unserialize(ptr, this->version.major);
-//					std::cout << "major: " << this->version.major << std::endl;
+//					::std::cout << "major: " << this->version.major << ::std::endl;
 					this->unserialize(ptr, this->version.minor);
-//					std::cout << "minor: " << this->version.minor << std::endl;
+//					::std::cout << "minor: " << this->version.minor << ::std::endl;
 					this->unserialize(ptr, this->version.bugfix);
-//					std::cout << "bugfix: " << this->version.bugfix << std::endl;
+//					::std::cout << "bugfix: " << this->version.bugfix << ::std::endl;
 					this->unserialize(ptr, this->version.build);
-//					std::cout << "build: " << this->version.build << std::endl;
+//					::std::cout << "build: " << this->version.build << ::std::endl;
 					break;
 				case COMMAND_REQUEST_PROTOCOL_VERSION:
 					::std::uint8_t protocolAccepted;
 					this->unserialize(ptr, protocolAccepted);
-//					std::cout << "accepted: " << static_cast<bool>(protocolAccepted & 0x01) << std::endl;
+//					::std::cout << "accepted: " << static_cast<bool>(protocolAccepted & 0x01) << ::std::endl;
 					
 					if (!protocolAccepted)
 					{
@@ -769,10 +769,10 @@ namespace rl
 				{
 					::std::uint8_t level;
 					this->unserialize(ptr, level);
-//					std::cout << "level: " << static_cast<int>(level) << std::endl;
+//					::std::cout << "level: " << static_cast<int>(level) << ::std::endl;
 					
 					::std::string message(reinterpret_cast<char*>(ptr), packageSize - 4);
-//					std::cout << "message: " << message << std::endl;
+//					::std::cout << "message: " << message << ::std::endl;
 					ptr += packageSize - 4;
 					
 					if (level < 2)

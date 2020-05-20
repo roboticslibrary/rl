@@ -182,7 +182,7 @@ namespace rl
 				
 				condition_variable_any() :
 					M_cond(),
-					M_mutex(std::make_shared<mutex>())
+					M_mutex(::std::make_shared<mutex>())
 				{
 				}
 				

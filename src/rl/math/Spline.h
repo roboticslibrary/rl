@@ -351,8 +351,8 @@ namespace rl
 					Real parabolicIntervalPrev = (x[i] - x[i - 1]) * parabolicPercent;
 					Real parabolicIntervalNext = (x[i + 1] - x[i]) * parabolicPercent;
 					Real parabolicIntervalNextNext = (x[i + 2] - x[i + 1]) * parabolicPercent;
-					parabolicIntervalPrev = std::min(parabolicIntervalPrev, parabolicIntervalNext);
-					parabolicIntervalNext = std::min(parabolicIntervalNext, parabolicIntervalNextNext);
+					parabolicIntervalPrev = ::std::min(parabolicIntervalPrev, parabolicIntervalNext);
+					parabolicIntervalNext = ::std::min(parabolicIntervalNext, parabolicIntervalNextNext);
 					Real deltaXPrev = x[i] - x[i - 1];
 					Real deltaXNext = x[i + 1] - x[i];
 					Real deltaXNextNext = x[i + 2] - x[i + 1];
@@ -375,7 +375,7 @@ namespace rl
 					{
 						Real parabolicIntervalPrev = (x[n - 2] - x[n - 3]) * parabolicPercent;
 						Real parabolicIntervalNext = (x[n - 1] - x[n - 2]) * parabolicPercent;
-						parabolicIntervalPrev = std::min(parabolicIntervalPrev, parabolicIntervalNext);
+						parabolicIntervalPrev = ::std::min(parabolicIntervalPrev, parabolicIntervalNext);
 						Real deltaXPrev = x[n - 2] - x[n - 3];
 						Real deltaXNext = x[n - 1] - x[n - 2];
 						Real linearInterval = deltaXNext - (parabolicIntervalPrev/2) - (parabolicIntervalNext/2);
@@ -498,8 +498,8 @@ namespace rl
 					Real quarticIntervalPrev = (x[i] - x[i - 1]) * quarticPercent;
 					Real quarticIntervalNext = (x[i + 1] - x[i]) * quarticPercent;
 					Real quarticIntervalNextNext = (x[i + 2] - x[i + 1]) * quarticPercent;
-					quarticIntervalPrev = std::min(quarticIntervalPrev, quarticIntervalNext);
-					quarticIntervalNext = std::min(quarticIntervalNext, quarticIntervalNextNext);
+					quarticIntervalPrev = ::std::min(quarticIntervalPrev, quarticIntervalNext);
+					quarticIntervalNext = ::std::min(quarticIntervalNext, quarticIntervalNextNext);
 					Real deltaXPrev = x[i] - x[i - 1];
 					Real deltaXNext = x[i + 1] - x[i];
 					Real deltaXNextNext = x[i + 2] - x[i + 1];
@@ -522,7 +522,7 @@ namespace rl
 					{
 						Real quarticIntervalPrev = (x[n - 2] - x[n - 3]) * quarticPercent;
 						Real quarticIntervalNext = (x[n - 1] - x[n - 2]) * quarticPercent;
-						quarticIntervalPrev = std::min(quarticIntervalPrev, quarticIntervalNext);
+						quarticIntervalPrev = ::std::min(quarticIntervalPrev, quarticIntervalNext);
 						Real deltaXPrev = x[n - 2] - x[n - 3];
 						Real deltaXNext = x[n - 1] - x[n - 2];
 						Real linearInterval = deltaXNext - (quarticIntervalPrev/2) - (quarticIntervalNext/2);
@@ -645,8 +645,8 @@ namespace rl
 					Real sexticIntervalPrev = (x[i] - x[i - 1]) * sexticPercent;
 					Real sexticIntervalNext = (x[i + 1] - x[i]) * sexticPercent;
 					Real sexticIntervalNextNext = (x[i + 2] - x[i + 1]) * sexticPercent;
-					sexticIntervalPrev = std::min(sexticIntervalPrev, sexticIntervalNext);
-					sexticIntervalNext = std::min(sexticIntervalNext, sexticIntervalNextNext);
+					sexticIntervalPrev = ::std::min(sexticIntervalPrev, sexticIntervalNext);
+					sexticIntervalNext = ::std::min(sexticIntervalNext, sexticIntervalNextNext);
 					Real deltaXPrev = x[i] - x[i - 1];
 					Real deltaXNext = x[i + 1] - x[i];
 					Real deltaXNextNext = x[i + 2] - x[i + 1];
@@ -669,7 +669,7 @@ namespace rl
 					{
 						Real sexticIntervalPrev = (x[n - 2] - x[n - 3]) * sexticPercent;
 						Real sexticIntervalNext = (x[n - 1] - x[n - 2]) * sexticPercent;
-						sexticIntervalPrev = std::min(sexticIntervalPrev, sexticIntervalNext);
+						sexticIntervalPrev = ::std::min(sexticIntervalPrev, sexticIntervalNext);
 						Real deltaXPrev = x[n - 2] - x[n - 3];
 						Real deltaXNext = x[n - 1] - x[n - 2];
 						Real linearInterval = deltaXNext - (sexticIntervalPrev/2) - (sexticIntervalNext/2);

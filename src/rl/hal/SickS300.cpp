@@ -324,7 +324,7 @@ namespace rl
 			}
 			
 			::std::uint16_t length = Endian::hostWord(buf[6], buf[7]);
-std::cout << "length " << length << std::endl;
+::std::cout << "length " << length << ::std::endl;
 			
 			if (length != 552)
 			{
@@ -355,10 +355,10 @@ std::cout << "length " << length << std::endl;
 				Endian::hostWord(buf[17], buf[16]),
 				Endian::hostWord(buf[15], buf[14])
 			);
-::std::cout << "scanNumber " << scanNumber << std::endl;
+::std::cout << "scanNumber " << scanNumber << ::std::endl;
 			
 			::std::uint16_t telegramNumber = Endian::hostWord(buf[19], buf[18]);
-::std::cout << "telegramNumber " << telegramNumber << std::endl;
+::std::cout << "telegramNumber " << telegramNumber << ::std::endl;
 			
 			for (::std::size_t i = 0; i < 2; ++i)
 			{

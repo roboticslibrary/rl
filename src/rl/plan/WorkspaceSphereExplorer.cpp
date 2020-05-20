@@ -38,8 +38,8 @@ namespace rl
 	{
 		WorkspaceSphereExplorer::WorkspaceSphereExplorer() :
 			boundingBox(
-				::rl::math::Vector3::Constant(-std::numeric_limits< ::rl::math::Real>::max()),
-				::rl::math::Vector3::Constant(std::numeric_limits< ::rl::math::Real>::max())
+				::rl::math::Vector3::Constant(-::std::numeric_limits< ::rl::math::Real>::max()),
+				::rl::math::Vector3::Constant(::std::numeric_limits< ::rl::math::Real>::max())
 			),
 			goal(),
 			greedy(GREEDY_SPACE),

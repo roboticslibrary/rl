@@ -630,7 +630,7 @@ namespace rl
 			
 			for (::std::ptrdiff_t i = 0; i < svd.singularValues().size(); ++i)
 			{
-				singularValues[i] = svd.singularValues()[i] > std::numeric_limits< ::rl::math::Real>::epsilon() ? 1 / svd.singularValues()[i] : 0;
+				singularValues[i] = svd.singularValues()[i] > ::std::numeric_limits< ::rl::math::Real>::epsilon() ? 1 / svd.singularValues()[i] : 0;
 			}
 			
 			this->invGammaPosition = svd.matrixV() * singularValues.asDiagonal() * svd.matrixU().transpose();
@@ -645,7 +645,7 @@ namespace rl
 			
 			for (::std::ptrdiff_t i = 0; i < svd.singularValues().size(); ++i)
 			{
-				singularValues[i] = svd.singularValues()[i] > std::numeric_limits< ::rl::math::Real>::epsilon() ? 1 / svd.singularValues()[i] : 0;
+				singularValues[i] = svd.singularValues()[i] > ::std::numeric_limits< ::rl::math::Real>::epsilon() ? 1 / svd.singularValues()[i] : 0;
 			}
 			
 			this->invGammaVelocity = svd.matrixV() * singularValues.asDiagonal() * svd.matrixU().transpose();

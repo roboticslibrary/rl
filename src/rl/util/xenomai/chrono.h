@@ -86,7 +86,7 @@ namespace rl
 						);
 					}
 					
-					static time_point from_time_t(std::time_t t)
+					static time_point from_time_t(::std::time_t t)
 					{
 						return ::std::chrono::time_point_cast<system_clock::duration>(
 							::std::chrono::time_point<system_clock, ::std::chrono::seconds>(

@@ -129,7 +129,7 @@ namespace rl
 			
 			Document& operator=(Document&& other)
 			{
-				this->doc = std::move(other.doc);
+				this->doc = ::std::move(other.doc);
 				return *this;
 			}
 			

@@ -85,9 +85,9 @@ namespace rl
 		private:
 			Comedi comedi;
 			
-			std::array<float, 6> values;
+			::std::array<float, 6> values;
 			
-			std::array<float, 6> zeroes;
+			::std::array<float, 6> zeroes;
 		};
 	}
 }

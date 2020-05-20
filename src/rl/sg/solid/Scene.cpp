@@ -225,7 +225,7 @@ namespace rl
 					nullptr,
 					vector1,
 					vector2,
-					std::numeric_limits<DT_Scalar>::max(),
+					::std::numeric_limits<DT_Scalar>::max(),
 					&param,
 					normal
 				);
@@ -235,7 +235,7 @@ namespace rl
 				hit[1] = vector1[1] + (vector2[1] - vector1[1]) * param;
 				hit[2] = vector1[2] + (vector2[2] - vector1[2]) * param;
 				
-				distance = std::sqrt(std::pow(hit[0] - source[0], 2) + std::pow(hit[1] - source[1], 2) + std::pow(hit[2] - source[2], 2));;
+				distance = ::std::sqrt(::std::pow(hit[0] - source[0], 2) + ::std::pow(hit[1] - source[1], 2) + ::std::pow(hit[2] - source[2], 2));;
 				
 				return static_cast< ::rl::sg::Shape*>(object);
 			}
@@ -260,7 +260,7 @@ namespace rl
 					static_cast<Shape*>(shape)->object,
 					vector1,
 					vector2,
-					std::numeric_limits<DT_Scalar>::max(),
+					::std::numeric_limits<DT_Scalar>::max(),
 					&param,
 					normal
 				);
@@ -270,7 +270,7 @@ namespace rl
 				hit[1] = vector1[1] + (vector2[1] - vector1[1]) * param;
 				hit[2] = vector1[2] + (vector2[2] - vector1[2]) * param;
 				
-				distance = std::sqrt(std::pow(hit[0] - source[0], 2) + std::pow(hit[1] - source[1], 2) + std::pow(hit[2] - source[2], 2));;
+				distance = ::std::sqrt(::std::pow(hit[0] - source[0], 2) + ::std::pow(hit[1] - source[1], 2) + ::std::pow(hit[2] - source[2], 2));;
 				
 				return (DT_TRUE == object) ? true : false;
 			}
