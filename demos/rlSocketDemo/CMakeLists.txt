@@ -9,7 +9,7 @@ add_executable(
 target_include_directories(
 	rlSocketDemoClient
 	PUBLIC
-	${Boost_INCLUDE_DIR}
+	${Boost_INCLUDE_DIRS}
 )
 
 target_link_libraries(
@@ -26,7 +26,7 @@ add_executable(
 target_include_directories(
 	rlSocketDemoServer
 	PUBLIC
-	${Boost_INCLUDE_DIR}
+	${Boost_INCLUDE_DIRS}
 )
 
 target_link_libraries(

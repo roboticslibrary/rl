@@ -61,7 +61,7 @@ if(QT_FOUND AND SoQt_FOUND)
 	target_include_directories(
 		rlSimulator
 		PUBLIC
-		${Boost_INCLUDE_DIR}
+		${Boost_INCLUDE_DIRS}
 		${Coin_INCLUDE_DIRS}
 		${OPENGL_INCLUDE_DIR}
 		${SoQt_INCLUDE_DIRS}

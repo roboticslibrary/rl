@@ -75,7 +75,7 @@ if(QT_FOUND AND SoQt_FOUND AND (Bullet_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE
 	target_include_directories(
 		rlPlanDemo
 		PUBLIC
-		${Boost_INCLUDE_DIR}
+		${Boost_INCLUDE_DIRS}
 		${OPENGL_INCLUDE_DIR}
 		${SoQt_INCLUDE_DIRS}
 	)

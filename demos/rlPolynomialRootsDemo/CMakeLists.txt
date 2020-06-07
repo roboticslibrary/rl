@@ -9,7 +9,7 @@ add_executable(
 target_include_directories(
 	rlPolynomialRootsDemo
 	PUBLIC
-	${Boost_INCLUDE_DIR}
+	${Boost_INCLUDE_DIRS}
 )
 
 target_link_libraries(

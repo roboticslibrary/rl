@@ -18,7 +18,7 @@ if(Coin_FOUND)
 	target_include_directories(
 		tris2wrl
 		PUBLIC
-		${Boost_INCLUDE_DIR}
+		${Boost_INCLUDE_DIRS}
 		${Coin_INCLUDE_DIRS}
 	)
 	

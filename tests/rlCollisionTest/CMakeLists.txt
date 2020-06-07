@@ -17,7 +17,7 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE_FOUND OR PQP_FOUND OR SOLID3
 	target_include_directories(
 		rlCollisionTest
 		PUBLIC
-		${Boost_INCLUDE_DIR}
+		${Boost_INCLUDE_DIRS}
 	)
 	
 	target_link_libraries(

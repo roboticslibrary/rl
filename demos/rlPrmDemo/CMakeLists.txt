@@ -14,7 +14,7 @@ if(Bullet_FOUND OR ODE_FOUND OR SOLID3_FOUND)
 	target_include_directories(
 		rlPrmDemo
 		PUBLIC
-		${Boost_INCLUDE_DIR}
+		${Boost_INCLUDE_DIRS}
 	)
 	
 	target_link_libraries(

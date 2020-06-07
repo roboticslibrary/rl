@@ -10,7 +10,7 @@ add_executable(
 target_include_directories(
 	rlNearestNeighborsTest
 	PUBLIC
-	${Boost_INCLUDE_DIR}
+	${Boost_INCLUDE_DIRS}
 )
 
 target_link_libraries(
