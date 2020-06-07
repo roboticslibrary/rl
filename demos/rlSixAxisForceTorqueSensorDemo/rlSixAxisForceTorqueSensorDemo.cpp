@@ -64,8 +64,8 @@ toIsoString(const std::chrono::system_clock::time_point& timePoint)
 	std::tm result;
 #ifdef __STDC_LIB_EXT1__
 	std::strftime(str.data(), str.size(), "%Y-%m-%d %H:%M:%S", gmtime_s(&time, &result));
-#elif _MSC_VER
-	if (NULL == gmtime_s(&result, &time))
+#elif defined(_MSC_VER) || defined(__MINGW32__)
+	if (0 == gmtime_s(&result, &time))
 	{
 		std::strftime(str.data(), str.size(), "%Y-%m-%d %H:%M:%S", &result);
 	}
