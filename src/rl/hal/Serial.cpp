@@ -546,12 +546,14 @@ namespace rl
 			case BAUDRATE_3000000BPS:
 				speed = B3000000;
 				break;
+#ifndef __CYGWIN__
 			case BAUDRATE_3500000BPS:
 				speed = B3500000;
 				break;
 			case BAUDRATE_4000000BPS:
 				speed = B4000000;
 				break;
+#endif // __CYGWIN__
 #endif // __APPLE__
 #endif // __QNX__
 			default:

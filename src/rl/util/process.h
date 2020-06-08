@@ -64,12 +64,12 @@ namespace rl
 			
 			inline void memory_lock_all()
 			{
-#if !defined(WIN32) && !defined(__APPLE__)
+#if !defined(WIN32) && !defined(__APPLE__) && !defined(__CYGWIN__)
 				if (-1 == ::mlockall(MCL_CURRENT | MCL_FUTURE))
 				{
 					throw ::std::system_error(::std::error_code(errno, ::std::generic_category()));
 				}
-#endif // !WIN32 && !__APPLE__
+#endif // !WIN32 && !__APPLE__ && !__CYGWIN__
 			}
 			
 			inline void memory_reserve(const ::std::size_t& size)
@@ -89,12 +89,12 @@ namespace rl
 			
 			inline void memory_unlock_all()
 			{
-#if !defined(WIN32) && !defined(__APPLE__)
+#if !defined(WIN32) && !defined(__APPLE__) && !defined(__CYGWIN__)
 				if (-1 == ::munlockall())
 				{
 					throw ::std::system_error(::std::error_code(errno, ::std::generic_category()));
 				}
-#endif // !WIN32 && !__APPLE__
+#endif // !WIN32 && !__APPLE__ && !__CYGWIN__
 			}
 			
 			inline void set_priority(const int& priority)

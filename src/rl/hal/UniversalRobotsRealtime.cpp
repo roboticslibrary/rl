@@ -255,9 +255,9 @@ namespace rl
 			::std::array<::std::uint8_t, 1116> buffer;
 			
 			this->socket.recv(buffer.data(), sizeof(this->in.messageSize));
-#if !defined(__APPLE__) && !defined(__QNX__) && !defined(WIN32)
+#if !defined(__APPLE__) && !defined(__QNX__) && !defined(WIN32) && !defined(__CYGWIN__)
 			this->socket.setOption(::rl::hal::Socket::OPTION_QUICKACK, 1);
-#endif // __APPLE__ || __QNX__ || WIN32
+#endif // !__APPLE__ && !__QNX__ && !WIN32 && !__CYGWIN__
 			
 			::std::uint8_t* ptr = buffer.data();
 			this->in.unserialize(ptr, this->in.messageSize);
@@ -272,9 +272,9 @@ namespace rl
 			case 1108:
 			case 1116:
 				this->socket.recv(ptr, this->in.messageSize - sizeof(this->in.messageSize));
-#if !defined(__APPLE__) && !defined(__QNX__) && !defined(WIN32)
+#if !defined(__APPLE__) && !defined(__QNX__) && !defined(WIN32) && !defined(__CYGWIN__)
 				this->socket.setOption(::rl::hal::Socket::OPTION_QUICKACK, 1);
-#endif // __APPLE__ || __QNX__ || WIN32
+#endif // !__APPLE__ && !__QNX__ && !WIN32 && !__CYGWIN__
 				this->in.unserialize(ptr);
 				break;
 			default:

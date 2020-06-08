@@ -107,11 +107,15 @@ namespace rl
 				/** 2,500,000 bps. */
 				BAUDRATE_2500000BPS,
 				/** 3,000,000 bps. */
+#ifdef __CYGWIN__
+				BAUDRATE_3000000BPS
+#else // __CYGWIN__
 				BAUDRATE_3000000BPS,
 				/** 3,500,000 bps. */
 				BAUDRATE_3500000BPS,
 				/** 4,000,000 bps. */
 				BAUDRATE_4000000BPS
+#endif // __CYGWIN__
 #endif // __QNX__
 #endif // WIN32
 			};

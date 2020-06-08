@@ -269,12 +269,12 @@ namespace rl
 				level = IPPROTO_TCP;
 				optname = TCP_NODELAY;
 				break;
-#if !defined(__APPLE__) && !defined(__QNX__) && !defined(WIN32)
+#if !defined(__APPLE__) && !defined(__QNX__) && !defined(WIN32) && !defined(__CYGWIN__)
 			case OPTION_QUICKACK:
 				level = IPPROTO_TCP;
 				optname = TCP_QUICKACK;
 				break;
-#endif // __APPLE__ || __QNX__ || WIN32
+#endif // !__APPLE__ && !__QNX__ && !WIN32 && !__CYGWIN__
 			default:
 				break;
 			}
@@ -557,12 +557,12 @@ namespace rl
 				level = IPPROTO_TCP;
 				optname = TCP_NODELAY;
 				break;
-#if !defined(__APPLE__) && !defined(__QNX__) && !defined(WIN32)
+#if !defined(__APPLE__) && !defined(__QNX__) && !defined(WIN32) && !defined(__CYGWIN__)
 			case OPTION_QUICKACK:
 				level = IPPROTO_TCP;
 				optname = TCP_QUICKACK;
 				break;
-#endif // __APPLE__ || __QNX__ || WIN32
+#endif // !__APPLE__ && !__QNX__ && !WIN32 && !__CYGWIN__
 			default:
 				break;
 			}

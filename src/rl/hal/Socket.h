@@ -92,12 +92,12 @@ namespace rl
 				OPTION_KEEPALIVE,
 				OPTION_MULTICAST_LOOP,
 				OPTION_MULTICAST_TTL,
-#if defined(__APPLE__) || defined(__QNX__) || defined(WIN32)
+#if defined(__APPLE__) || defined(__QNX__) || defined(WIN32) || defined(__CYGWIN__)
 				OPTION_NODELAY
-#else // __APPLE__ || __QNX__ || WIN32
+#else // __APPLE__ || __QNX__ || WIN32 || __CYGWIN__
 				OPTION_NODELAY,
 				OPTION_QUICKACK
-#endif // __APPLE__ || __QNX__ || WIN32
+#endif // __APPLE__ || __QNX__ || WIN32 || __CYGWIN__
 			};
 			
 			Socket(const Socket& socket);

@@ -641,9 +641,9 @@ namespace rl
 		{
 			::std::array<::std::uint8_t, 4096> buffer;
 			::std::size_t size = this->socket4.recv(buffer.data(), buffer.size());
-#if !defined(__APPLE__) && !defined(__QNX__) && !defined(WIN32)
+#if !defined(__APPLE__) && !defined(__QNX__) && !defined(WIN32) && !defined(__CYGWIN__)
 			this->socket4.setOption(::rl::hal::Socket::OPTION_QUICKACK, 1);
-#endif // __APPLE__ || __QNX__ || WIN32
+#endif // !__APPLE__ && !__QNX__ && !WIN32 && !__CYGWIN__
 //			::std::cout << "size: " << size << ::std::endl;
 			
 			::std::uint8_t* ptr = buffer.data();
