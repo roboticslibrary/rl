@@ -61,7 +61,6 @@ else()
 endif()
 
 option(RL_BUILD_DEMOS "Build demos" ON)
-option(RL_BUILD_DOCUMENTATION "Build documentation" OFF)
 option(RL_BUILD_EXTRAS "Build extras" ON)
 option(RL_BUILD_MATH "Build mathematics component" ON)
 option(RL_BUILD_TESTS "Build tests" ON)
