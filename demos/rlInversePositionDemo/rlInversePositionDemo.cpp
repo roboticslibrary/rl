@@ -25,10 +25,8 @@
 //
 
 #include <chrono>
-#include <functional>
 #include <iostream>
 #include <memory>
-#include <random>
 #include <stdexcept>
 #include <boost/lexical_cast.hpp>
 #include <rl/hal/Coach.h>
@@ -55,11 +53,6 @@ main(int argc, char** argv)
 	
 	try
 	{
-		std::function<rl::math::Real()> rand = std::bind(
-			std::uniform_real_distribution<rl::math::Real>(0, 1),
-			std::mt19937(std::random_device()())
-		);
-		
 		std::string filename(argv[1]);
 		std::shared_ptr<rl::mdl::Kinematic> kinematic;
 		
@@ -99,14 +92,7 @@ main(int argc, char** argv)
 		std::cout << " with timeout of " << std::chrono::duration_cast<std::chrono::milliseconds>(ik.getDuration()).count() << " ms" << std::endl;
 		ik.addGoal(kinematic->getOperationalPosition(0), 0);
 		
-		rl::math::Vector min = kinematic->getMinimum();
-		rl::math::Vector max = kinematic->getMaximum();
-		
-		for (std::size_t i = 0; i < kinematic->getDofPosition(); ++i)
-		{
-			q(i) = min(i) + rand() * (max(i) - min(i));
-		}
-		
+		q = kinematic->generatePositionUniform();
 		kinematic->setPosition(q);
 		
 		std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
