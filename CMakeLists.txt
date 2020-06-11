@@ -44,17 +44,22 @@ else()
 	endif()
 endif()
 
-if(WIN32)
+if(MSVC)
 	add_definitions(
 		-D_ENABLE_EXTENDED_ALIGNED_STORAGE
 		-D_USE_MATH_DEFINES
+	)
+endif()
+
+if(WIN32)
+	add_definitions(
 		-D_WIN32_WINNT=0x501
 		-DNOMINMAX
 		-DWIN32_LEAN_AND_MEAN
 	)
 endif()
 
-if(WIN32)
+if(MSVC)
 	option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 else()
 	option(BUILD_SHARED_LIBS "Build shared libraries" ON)
