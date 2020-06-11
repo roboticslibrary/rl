@@ -41,8 +41,8 @@ ConfigurationSpaceScene::ConfigurationSpaceScene(QObject* parent) :
 	delta0(1),
 	delta1(1),
 	model(nullptr),
-	edges(),
-	path(),
+	edges(nullptr),
+	path(nullptr),
 	scene(nullptr),
 	thread(new ConfigurationSpaceThread(this))
 {
@@ -86,9 +86,6 @@ ConfigurationSpaceScene::clear()
 	{
 		delete items.takeFirst();
 	}
-	
-	this->edges.clear();
-	this->path.clear();
 }
 
 void
@@ -107,10 +104,9 @@ ConfigurationSpaceScene::drawConfigurationEdge(const rl::math::Vector& u, const 
 		free ? QPen(QBrush(QColor(0, 128, 0)), 0) : QPen(QBrush(QColor(128, 0, 0)), 0)
 	);
 	
-	line->setParentItem(this->scene);
 	line->setZValue(2);
 	
-	this->edges.push_back(line);
+	this->edges->addToGroup(line);
 }
 
 void
@@ -136,10 +132,9 @@ ConfigurationSpaceScene::drawConfigurationPath(const rl::plan::VectorList& path)
 			QPen(QBrush(QColor(0, 255, 0)), 0)
 		);
 		
-		line->setParentItem(this->scene);
 		line->setZValue(3);
 		
-		this->path.push_back(line);
+		this->path->addToGroup(line);
 		
 		++i;
 		++j;
@@ -239,6 +234,9 @@ ConfigurationSpaceScene::init()
 	this->scene->setZValue(0);
 	
 	this->setSceneRect(this->scene->boundingRect());
+	
+	this->edges = new QGraphicsItemGroup(this->scene);
+	this->path = new QGraphicsItemGroup(this->scene);
 }
 
 void
@@ -297,9 +295,11 @@ ConfigurationSpaceScene::reset()
 void
 ConfigurationSpaceScene::resetEdges()
 {
-	while (!this->edges.isEmpty())
+	QList<QGraphicsItem*> items = this->edges->childItems();
+	
+	while (!items.isEmpty())
 	{
-		delete this->edges.takeFirst();
+		delete items.takeFirst();
 	}
 }
 
@@ -311,9 +311,11 @@ ConfigurationSpaceScene::resetLines()
 void
 ConfigurationSpaceScene::resetPath()
 {
-	while (!this->path.isEmpty())
+	QList<QGraphicsItem*> items = this->path->childItems();
+	
+	while (!items.isEmpty())
 	{
-		delete this->path.takeFirst();
+		delete items.takeFirst();
 	}
 }
 

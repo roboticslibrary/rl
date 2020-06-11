@@ -55,7 +55,7 @@ public:
 	std::shared_ptr<rl::sg::so::Scene> viewScene;
 	
 protected:
-	MainWindow(QWidget* parent = nullptr, Qt::WindowFlags f = 0);
+	MainWindow(QWidget* parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
 	
 private:
 	std::size_t body;

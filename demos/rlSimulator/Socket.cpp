@@ -195,6 +195,10 @@ Socket::readClient()
 			break;
 		}
 		
+#if QT_VERSION >= 0x050E00
+		textStream << Qt::endl;
+#else // QT_VERSION
 		textStream << endl;
+#endif // QT_VERSION
 	}
 }

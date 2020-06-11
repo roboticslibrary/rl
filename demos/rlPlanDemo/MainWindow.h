@@ -178,7 +178,7 @@ public slots:
 	void toggleViewActive(const bool& doOn);
 	
 protected:
-	MainWindow(QWidget* parent = nullptr, Qt::WindowFlags f = 0);
+	MainWindow(QWidget* parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
 	
 private:
 	void clear();

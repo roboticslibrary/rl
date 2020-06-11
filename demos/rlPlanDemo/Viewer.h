@@ -51,7 +51,7 @@ class Viewer : public QWidget, public rl::plan::Viewer
 	Q_OBJECT
 	
 public:
-	Viewer(QWidget* parent = nullptr, Qt::WindowFlags f = 0);
+	Viewer(QWidget* parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
 	
 	virtual ~Viewer();
 	

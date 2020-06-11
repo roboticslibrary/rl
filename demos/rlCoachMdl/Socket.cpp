@@ -170,7 +170,11 @@ Socket::readClient()
 				
 				if (list.size() < 2)
 				{
+#if QT_VERSION >= 0x050E00
+					textStream << Qt::endl;
+#else // QT_VERSION
 					textStream << endl;
+#endif // QT_VERSION
 					continue;
 				}
 				
@@ -187,7 +191,11 @@ Socket::readClient()
 					}
 				}
 				
+#if QT_VERSION >= 0x050E00
+				textStream << Qt::endl;
+#else // QT_VERSION
 				textStream << endl;
+#endif // QT_VERSION
 			}
 			break;
 		default:

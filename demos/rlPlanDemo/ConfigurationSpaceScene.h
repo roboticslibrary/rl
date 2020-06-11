@@ -27,9 +27,8 @@
 #ifndef CONFIGURATIONSPACESCENE_H
 #define CONFIGURATIONSPACESCENE_H
 
-#include <QGraphicsLineItem>
+#include <QGraphicsItemGroup>
 #include <QGraphicsScene>
-#include <QLinkedList>
 #include <rl/plan/Model.h>
 #include <rl/plan/Viewer.h>
 
@@ -109,9 +108,9 @@ protected:
 	void mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent);
 	
 private:
-	QLinkedList<QGraphicsLineItem*> edges;
+	QGraphicsItemGroup* edges;
 	
-	QLinkedList<QGraphicsLineItem*> path;
+	QGraphicsItemGroup* path;
 
 	QGraphicsRectItem* scene;
 	

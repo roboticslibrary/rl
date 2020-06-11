@@ -75,7 +75,11 @@ TableView::keyPressEvent(QKeyEvent* event)
 	{
 		QString text = QApplication::clipboard()->text();
 		
+#if QT_VERSION >= 0x050E00
+		QStringList rowContents = text.split("\n", Qt::SkipEmptyParts);
+#else // QT_VERSION
 		QStringList rowContents = text.split("\n", QString::SkipEmptyParts);
+#endif // QT_VERSION
 		
 		if (!this->selectionModel()->hasSelection())
 		{

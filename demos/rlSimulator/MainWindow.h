@@ -101,7 +101,7 @@ public slots:
 	void saveScene();
 	
 protected:
-	MainWindow(QWidget* parent = nullptr, Qt::WindowFlags f = 0);
+	MainWindow(QWidget* parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
 
 	void timerEvent(QTimerEvent *event);
 	
