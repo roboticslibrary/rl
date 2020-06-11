@@ -24,23 +24,25 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef WIN32
+#ifdef WIN32
+#include <windows.h>
+#else // WIN32
 #include <cerrno>
+#include <fcntl.h>
+#include <termios.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
 #ifdef __QNX__
 #include <sys/select.h>
 #endif // __QNX__
 #include <sys/stat.h>
-#ifdef __APPLE__
-#include <termios.h>
-#endif // __APPLE__
 #include <sys/types.h>
 #endif // WIN32
 
 #include <cassert>
 #include <cstring>
 #include <iostream>
+#include <rl/std/memory.h>
 
 #include "ComException.h"
 #include "Serial.h"
@@ -54,6 +56,55 @@ namespace rl
 {
 	namespace hal
 	{
+		struct Serial::Impl
+		{
+#ifdef WIN32
+			DCB current;
+			
+			HANDLE fd;
+			
+			DCB restore;
+#else // WIN32
+			struct termios current;
+			
+			int fd;
+			
+			struct termios restore;
+#endif // WIN32
+		};
+		
+		Serial::Serial(
+			const ::std::string& filename,
+			const BaudRate& baudRate,
+			const DataBits& dataBits,
+			const FlowControl& flowControl,
+			const Parity& parity,
+			const StopBits& stopBits
+		) :
+			Com(),
+			baudRate(baudRate),
+			dataBits(dataBits),
+			filename(filename),
+#ifdef WIN32
+			flags(GENERIC_READ | GENERIC_WRITE),
+#else // WIN32
+			flags(O_RDWR | O_NOCTTY),
+#endif // WIN32
+			flowControl(flowControl),
+			impl(::rl::std14::make_unique<Impl>()),
+			parity(parity),
+			stopBits(stopBits)
+		{
+#ifndef WIN32
+			::cfmakeraw(&this->impl->current);
+#endif // WIN32
+			this->setBaudRate(this->baudRate);
+			this->setDataBits(this->dataBits);
+			this->setFlowControl(this->flowControl);
+			this->setParity(this->parity);
+			this->setStopBits(this->stopBits);
+		}
+		
 		Serial::Serial(
 			const ::std::string& filename,
 			const BaudRate& baudRate,
@@ -65,18 +116,16 @@ namespace rl
 		) :
 			Com(),
 			baudRate(baudRate),
-			current(),
 			dataBits(dataBits),
-			fd(0),
 			filename(filename),
 			flags(flags),
 			flowControl(flowControl),
+			impl(::rl::std14::make_unique<Impl>()),
 			parity(parity),
-			restore(),
 			stopBits(stopBits)
 		{
 #ifndef WIN32
-			::cfmakeraw(&this->current);
+			::cfmakeraw(&this->impl->current);
 #endif // WIN32
 			this->setBaudRate(this->baudRate);
 			this->setDataBits(this->dataBits);
@@ -97,12 +146,12 @@ namespace rl
 		Serial::changeParameters()
 		{
 #ifdef WIN32
-			if (0 == ::SetCommState(this->fd, &this->current))
+			if (0 == ::SetCommState(this->impl->fd, &this->impl->current))
 			{
 				throw ComException(::GetLastError());
 			}
 #else // WIN32
-			if (-1 == ::tcsetattr(this->fd, TCSANOW, &this->current))
+			if (-1 == ::tcsetattr(this->impl->fd, TCSANOW, &this->impl->current))
 			{
 				throw ComException(errno);
 			}
@@ -115,26 +164,26 @@ namespace rl
 			assert(this->isConnected());
 			
 #ifdef WIN32
-			if (0 == ::SetCommState(this->fd, &this->restore))
+			if (0 == ::SetCommState(this->impl->fd, &this->impl->restore))
 			{
 				throw ComException(::GetLastError());
 			}
 			
 			this->flush(true, true);
 			
-			if (0 == ::CloseHandle(this->fd))
+			if (0 == ::CloseHandle(this->impl->fd))
 			{
 				throw ComException(::GetLastError());
 			}
 #else // WIN32
-			if (-1 == ::tcsetattr(this->fd, TCSANOW, &this->restore))
+			if (-1 == ::tcsetattr(this->impl->fd, TCSANOW, &this->impl->restore))
 			{
 				throw ComException(errno);
 			}
 			
 			this->flush(true, true);
 			
-			if (-1 == ::close(this->fd))
+			if (-1 == ::close(this->impl->fd))
 			{
 				throw ComException(errno);
 			}
@@ -147,12 +196,12 @@ namespace rl
 		Serial::doBreak(const bool& doOn)
 		{
 #ifdef WIN32
-			if (0 == ::EscapeCommFunction(this->fd, doOn ? SETBREAK : CLRBREAK))
+			if (0 == ::EscapeCommFunction(this->impl->fd, doOn ? SETBREAK : CLRBREAK))
 			{
 				throw ComException(::GetLastError());
 			}
 #else // WIN32
-			if (-1 == ::ioctl(this->fd, doOn ? TIOCSBRK : TIOCCBRK))
+			if (-1 == ::ioctl(this->impl->fd, doOn ? TIOCSBRK : TIOCCBRK))
 			{
 				throw ComException(errno);
 			}
@@ -163,12 +212,12 @@ namespace rl
 		Serial::doDtr(const bool& doOn)
 		{
 #ifdef WIN32
-			if (0 == ::EscapeCommFunction(this->fd, doOn ? SETDTR : CLRDTR))
+			if (0 == ::EscapeCommFunction(this->impl->fd, doOn ? SETDTR : CLRDTR))
 			{
 				throw ComException(::GetLastError());
 			}
 #else // WIN32
-			if (-1 == ::ioctl(this->fd, doOn ? TIOCMBIS : TIOCMBIC, TIOCM_DTR))
+			if (-1 == ::ioctl(this->impl->fd, doOn ? TIOCMBIS : TIOCMBIC, TIOCM_DTR))
 			{
 				throw ComException(errno);
 			}
@@ -181,7 +230,7 @@ namespace rl
 #ifdef WIN32
 			::DWORD status;
 			
-			if (0 == ::GetCommModemStatus(this->fd, &status))
+			if (0 == ::GetCommModemStatus(this->impl->fd, &status))
 			{
 				throw ComException(::GetLastError());
 			}
@@ -193,7 +242,7 @@ namespace rl
 #else // WIN32
 			int status = 0;
 			
-			if (-1 == ::ioctl(this->fd, TIOCMGET, status))
+			if (-1 == ::ioctl(this->impl->fd, TIOCMGET, status))
 			{
 				throw ComException(errno);
 			}
@@ -209,12 +258,12 @@ namespace rl
 		Serial::doRts(const bool& doOn)
 		{
 #ifdef WIN32
-			if (0 == ::EscapeCommFunction(this->fd, doOn ? SETRTS : CLRRTS))
+			if (0 == ::EscapeCommFunction(this->impl->fd, doOn ? SETRTS : CLRRTS))
 			{
 				throw ComException(::GetLastError());
 			}
 #else // WIN32
-			if (-1 == ::ioctl(this->fd, doOn ? TIOCMBIS : TIOCMBIC, TIOCM_RTS))
+			if (-1 == ::ioctl(this->impl->fd, doOn ? TIOCMBIS : TIOCMBIC, TIOCM_RTS))
 			{
 				throw ComException(errno);
 			}
@@ -229,21 +278,21 @@ namespace rl
 #ifdef WIN32
 			if (read && write)
 			{
-				if (0 == ::PurgeComm(this->fd, PURGE_RXCLEAR | PURGE_TXCLEAR))
+				if (0 == ::PurgeComm(this->impl->fd, PURGE_RXCLEAR | PURGE_TXCLEAR))
 				{
 					throw ComException(::GetLastError());
 				}
 			}
 			else if (read)
 			{
-				if (0 == ::PurgeComm(this->fd, PURGE_RXCLEAR))
+				if (0 == ::PurgeComm(this->impl->fd, PURGE_RXCLEAR))
 				{
 					throw ComException(::GetLastError());
 				}
 			}
 			else if (write)
 			{
-				if (0 == ::PurgeComm(this->fd, PURGE_TXCLEAR))
+				if (0 == ::PurgeComm(this->impl->fd, PURGE_TXCLEAR))
 				{
 					throw ComException(::GetLastError());
 				}
@@ -251,21 +300,21 @@ namespace rl
 #else // WIN32
 			if (read && write)
 			{
-				if (-1 == ::tcflush(this->fd, TCIOFLUSH))
+				if (-1 == ::tcflush(this->impl->fd, TCIOFLUSH))
 				{
 					throw ComException(errno);
 				}
 			}
 			else if (read)
 			{
-				if (-1 == ::tcflush(this->fd, TCIFLUSH))
+				if (-1 == ::tcflush(this->impl->fd, TCIFLUSH))
 				{
 					throw ComException(errno);
 				}
 			}
 			else if (write)
 			{
-				if (-1 == ::tcflush(this->fd, TCOFLUSH))
+				if (-1 == ::tcflush(this->impl->fd, TCOFLUSH))
 				{
 					throw ComException(errno);
 				}
@@ -315,47 +364,47 @@ namespace rl
 			assert(!this->isConnected());
 			
 #ifdef WIN32
-			this->fd = ::CreateFile(this->filename.c_str(), this->flags, 0, nullptr, OPEN_EXISTING, 0, nullptr);
+			this->impl->fd = ::CreateFile(this->filename.c_str(), this->flags, 0, nullptr, OPEN_EXISTING, 0, nullptr);
 			
-			if (INVALID_HANDLE_VALUE == this->fd)
+			if (INVALID_HANDLE_VALUE == this->impl->fd)
 			{
-				this->fd = 0;
+				this->impl->fd = 0;
 				throw ComException(::GetLastError());
 			}
 			
 			this->setConnected(true);
 			
-			if (0 == GetCommState(this->fd, &this->restore))
+			if (0 == GetCommState(this->impl->fd, &this->impl->restore))
 			{
 				throw ComException(::GetLastError());
 			}
 			
 			this->flush(true, true);
 			
-			if (0 == ::SetCommState(this->fd, &this->current))
+			if (0 == ::SetCommState(this->impl->fd, &this->impl->current))
 			{
 				throw ComException(::GetLastError());
 			}
 #else // WIN32
-			this->fd = ::open(this->filename.c_str(), this->flags);
+			this->impl->fd = ::open(this->filename.c_str(), this->flags);
 			
-			if (-1 == this->fd)
+			if (-1 == this->impl->fd)
 			{
 				throw ComException(errno);
 			}
 			
 			this->setConnected(true);
 			
-			if (-1 == ::tcgetattr(this->fd, &this->restore))
+			if (-1 == ::tcgetattr(this->impl->fd, &this->impl->restore))
 			{ 
 				throw ComException(errno);
 			}
 			
 			this->flush(true, true);
 			
-			this->current.c_cflag |= CREAD | CLOCAL;
+			this->impl->current.c_cflag |= CREAD | CLOCAL;
 			
-			if (-1 == ::tcsetattr(this->fd, TCSANOW, &this->current))
+			if (-1 == ::tcsetattr(this->impl->fd, TCSANOW, &this->impl->current))
 			{
 				throw ComException(errno);
 			}
@@ -372,12 +421,12 @@ namespace rl
 #ifdef WIN32
 			::DWORD numbytes;
 			
-			if (0 == ::ReadFile(this->fd, buf, count, &numbytes, nullptr))
+			if (0 == ::ReadFile(this->impl->fd, buf, count, &numbytes, nullptr))
 			{
 				throw ComException(::GetLastError());
 			}
 #else // WIN32
-			::ssize_t numbytes = ::read(this->fd, buf, count);
+			::ssize_t numbytes = ::read(this->impl->fd, buf, count);
 			
 			if (-1 == numbytes)
 			{
@@ -401,13 +450,13 @@ namespace rl
 			
 			::fd_set readfds;
 			FD_ZERO(&readfds);
-			FD_SET(this->fd, &readfds);
+			FD_SET(this->impl->fd, &readfds);
 			
 			::fd_set writefds;
 			FD_ZERO(&writefds);
-			FD_SET(this->fd, &writefds);
+			FD_SET(this->impl->fd, &writefds);
 			
-			::ssize_t numdescriptors = ::select(this->fd + 1, read ? &readfds : nullptr, write ? &writefds : nullptr, nullptr, &tv);
+			::ssize_t numdescriptors = ::select(this->impl->fd + 1, read ? &readfds : nullptr, write ? &writefds : nullptr, nullptr, &tv);
 			
 			if (0 == numdescriptors)
 			{
@@ -429,46 +478,46 @@ namespace rl
 			switch (baudRate)
 			{
 			case BAUDRATE_110BPS:
-				this->current.BaudRate = CBR_110;
+				this->impl->current.BaudRate = CBR_110;
 				break;
 			case BAUDRATE_300BPS:
-				this->current.BaudRate = CBR_300;
+				this->impl->current.BaudRate = CBR_300;
 				break;
 			case BAUDRATE_600BPS:
-				this->current.BaudRate = CBR_600;
+				this->impl->current.BaudRate = CBR_600;
 				break;
 			case BAUDRATE_1200BPS:
-				this->current.BaudRate = CBR_1200;
+				this->impl->current.BaudRate = CBR_1200;
 				break;
 			case BAUDRATE_2400BPS:
-				this->current.BaudRate = CBR_2400;
+				this->impl->current.BaudRate = CBR_2400;
 				break;
 			case BAUDRATE_4800BPS:
-				this->current.BaudRate = CBR_4800;
+				this->impl->current.BaudRate = CBR_4800;
 				break;
 			case BAUDRATE_9600BPS:
-				this->current.BaudRate = CBR_9600;
+				this->impl->current.BaudRate = CBR_9600;
 				break;
 			case BAUDRATE_14400BPS:
-				this->current.BaudRate = CBR_14400;
+				this->impl->current.BaudRate = CBR_14400;
 				break;
 			case BAUDRATE_19200BPS:
-				this->current.BaudRate = CBR_19200;
+				this->impl->current.BaudRate = CBR_19200;
 				break;
 			case BAUDRATE_38400BPS:
-				this->current.BaudRate = CBR_38400;
+				this->impl->current.BaudRate = CBR_38400;
 				break;
 			case BAUDRATE_57600BPS:
-				this->current.BaudRate = CBR_57600;
+				this->impl->current.BaudRate = CBR_57600;
 				break;
 			case BAUDRATE_115200BPS:
-				this->current.BaudRate = CBR_115200;
+				this->impl->current.BaudRate = CBR_115200;
 				break;
 			case BAUDRATE_128000BPS:
-				this->current.BaudRate = CBR_128000;
+				this->impl->current.BaudRate = CBR_128000;
 				break;
 			case BAUDRATE_256000BPS:
-				this->current.BaudRate = CBR_256000;
+				this->impl->current.BaudRate = CBR_256000;
 				break;
 			default:
 				break;
@@ -560,12 +609,12 @@ namespace rl
 				break;
 			}
 			
-			if (-1 == ::cfsetispeed(&this->current, speed))
+			if (-1 == ::cfsetispeed(&this->impl->current, speed))
 			{
 				throw ComException(errno);
 			}
 			
-			if (-1 == ::cfsetospeed(&this->current, speed))
+			if (-1 == ::cfsetospeed(&this->impl->current, speed))
 			{
 				throw ComException(errno);
 			}
@@ -581,16 +630,16 @@ namespace rl
 			switch (dataBits)
 			{
 			case DATABITS_5BITS:
-				this->current.ByteSize = 5;
+				this->impl->current.ByteSize = 5;
 				break;
 			case DATABITS_6BITS:
-				this->current.ByteSize = 6;
+				this->impl->current.ByteSize = 6;
 				break;
 			case DATABITS_7BITS:
-				this->current.ByteSize = 7;
+				this->impl->current.ByteSize = 7;
 				break;
 			case DATABITS_8BITS:
-				this->current.ByteSize = 8;
+				this->impl->current.ByteSize = 8;
 				break;
 			default:
 				break;
@@ -599,24 +648,24 @@ namespace rl
 			switch (dataBits)
 			{
 			case DATABITS_5BITS:
-				this->current.c_cflag &= ~(CS6 | CS7 | CS8);
-				this->current.c_cflag |= CS5;
-				this->current.c_iflag |= ISTRIP;
+				this->impl->current.c_cflag &= ~(CS6 | CS7 | CS8);
+				this->impl->current.c_cflag |= CS5;
+				this->impl->current.c_iflag |= ISTRIP;
 				break;
 			case DATABITS_6BITS:
-				this->current.c_cflag &= ~(CS5 | CS7 | CS8);
-				this->current.c_cflag |= CS6;
-				this->current.c_iflag |= ISTRIP;
+				this->impl->current.c_cflag &= ~(CS5 | CS7 | CS8);
+				this->impl->current.c_cflag |= CS6;
+				this->impl->current.c_iflag |= ISTRIP;
 				break;
 			case DATABITS_7BITS:
-				this->current.c_cflag &= ~(CS5 | CS6 | CS8);
-				this->current.c_cflag |= CS7;
-				this->current.c_iflag |= ISTRIP;
+				this->impl->current.c_cflag &= ~(CS5 | CS6 | CS8);
+				this->impl->current.c_cflag |= CS7;
+				this->impl->current.c_iflag |= ISTRIP;
 				break;
 			case DATABITS_8BITS:
-				this->current.c_cflag &= ~(CS5 | CS6 | CS7);
-				this->current.c_cflag |= CS8;
-				this->current.c_iflag &= ~ISTRIP;
+				this->impl->current.c_cflag &= ~(CS5 | CS6 | CS7);
+				this->impl->current.c_cflag |= CS8;
+				this->impl->current.c_iflag &= ~ISTRIP;
 				break;
 			default:
 				break;
@@ -639,34 +688,34 @@ namespace rl
 			switch (flowControl)
 			{
 			case FLOWCONTROL_OFF:
-				this->current.fOutxCtsFlow = false;
-				this->current.fOutxDsrFlow = false;
-				this->current.fDtrControl = DTR_CONTROL_DISABLE;
-				this->current.fOutX = false;
-				this->current.fInX = false;
-				this->current.fRtsControl = RTS_CONTROL_DISABLE;
-				this->current.XoffChar = 0x00;
-				this->current.XonChar = 0x00;
+				this->impl->current.fOutxCtsFlow = false;
+				this->impl->current.fOutxDsrFlow = false;
+				this->impl->current.fDtrControl = DTR_CONTROL_DISABLE;
+				this->impl->current.fOutX = false;
+				this->impl->current.fInX = false;
+				this->impl->current.fRtsControl = RTS_CONTROL_DISABLE;
+				this->impl->current.XoffChar = 0x00;
+				this->impl->current.XonChar = 0x00;
 				break;
 			case FLOWCONTROL_RTSCTS:
-				this->current.fOutxCtsFlow = true;
-				this->current.fOutxDsrFlow = true;
-				this->current.fDtrControl = DTR_CONTROL_HANDSHAKE;
-				this->current.fOutX = false;
-				this->current.fInX = false;
-				this->current.fRtsControl = RTS_CONTROL_HANDSHAKE;
-				this->current.XoffChar = 0x00;
-				this->current.XonChar = 0x00;
+				this->impl->current.fOutxCtsFlow = true;
+				this->impl->current.fOutxDsrFlow = true;
+				this->impl->current.fDtrControl = DTR_CONTROL_HANDSHAKE;
+				this->impl->current.fOutX = false;
+				this->impl->current.fInX = false;
+				this->impl->current.fRtsControl = RTS_CONTROL_HANDSHAKE;
+				this->impl->current.XoffChar = 0x00;
+				this->impl->current.XonChar = 0x00;
 				break;
 			case FLOWCONTROL_XONXOFF:
-				this->current.fOutxCtsFlow = false;
-				this->current.fOutxDsrFlow = false;
-				this->current.fDtrControl = DTR_CONTROL_DISABLE;
-				this->current.fOutX = true;
-				this->current.fInX = true;
-				this->current.fRtsControl = RTS_CONTROL_DISABLE;
-				this->current.XoffChar = 0x13;
-				this->current.XonChar = 0x11;
+				this->impl->current.fOutxCtsFlow = false;
+				this->impl->current.fOutxDsrFlow = false;
+				this->impl->current.fDtrControl = DTR_CONTROL_DISABLE;
+				this->impl->current.fOutX = true;
+				this->impl->current.fInX = true;
+				this->impl->current.fRtsControl = RTS_CONTROL_DISABLE;
+				this->impl->current.XoffChar = 0x13;
+				this->impl->current.XonChar = 0x11;
 				break;
 			default:
 				break;
@@ -675,22 +724,22 @@ namespace rl
 			switch (flowControl)
 			{
 			case FLOWCONTROL_OFF:
-				this->current.c_cflag &= ~CRTSCTS;
-				this->current.c_iflag &= ~(IXANY | IXOFF | IXON);
-				this->current.c_cc[VSTART] = 0x00;
-				this->current.c_cc[VSTOP] = 0x00;
+				this->impl->current.c_cflag &= ~CRTSCTS;
+				this->impl->current.c_iflag &= ~(IXANY | IXOFF | IXON);
+				this->impl->current.c_cc[VSTART] = 0x00;
+				this->impl->current.c_cc[VSTOP] = 0x00;
 				break;
 			case FLOWCONTROL_RTSCTS:
-				this->current.c_cflag |= CRTSCTS;
-				this->current.c_iflag &= ~(IXANY | IXOFF | IXON);
-				this->current.c_cc[VSTART] = 0x00;
-				this->current.c_cc[VSTOP] = 0x00;
+				this->impl->current.c_cflag |= CRTSCTS;
+				this->impl->current.c_iflag &= ~(IXANY | IXOFF | IXON);
+				this->impl->current.c_cc[VSTART] = 0x00;
+				this->impl->current.c_cc[VSTOP] = 0x00;
 				break;
 			case FLOWCONTROL_XONXOFF:
-				this->current.c_cflag &= ~CRTSCTS;
-				this->current.c_iflag |= IXANY | IXOFF | IXON;
-				this->current.c_cc[VSTART] = 0x11;
-				this->current.c_cc[VSTOP] = 0x13;
+				this->impl->current.c_cflag &= ~CRTSCTS;
+				this->impl->current.c_iflag |= IXANY | IXOFF | IXON;
+				this->impl->current.c_cc[VSTART] = 0x11;
+				this->impl->current.c_cc[VSTOP] = 0x13;
 				break;
 			default:
 				break;
@@ -707,13 +756,13 @@ namespace rl
 			switch (parity)
 			{
 			case PARITY_EVENPARITY:
-				this->current.Parity = EVENPARITY;
+				this->impl->current.Parity = EVENPARITY;
 				break;
 			case PARITY_NOPARITY:
-				this->current.Parity = NOPARITY;
+				this->impl->current.Parity = NOPARITY;
 				break;
 			case PARITY_ODDPARITY:
-				this->current.Parity = ODDPARITY;
+				this->impl->current.Parity = ODDPARITY;
 				break;
 			default:
 				break;
@@ -722,20 +771,20 @@ namespace rl
 			switch (parity)
 			{
 			case PARITY_EVENPARITY:
-				this->current.c_cflag &= ~PARODD;
-				this->current.c_cflag |= PARENB;
-				this->current.c_iflag &= ~IGNPAR;
-				this->current.c_iflag |= INPCK;
+				this->impl->current.c_cflag &= ~PARODD;
+				this->impl->current.c_cflag |= PARENB;
+				this->impl->current.c_iflag &= ~IGNPAR;
+				this->impl->current.c_iflag |= INPCK;
 				break;
 			case PARITY_NOPARITY:
-				this->current.c_cflag &= ~(PARENB | PARODD);
-				this->current.c_iflag &= ~INPCK;
-				this->current.c_iflag |= IGNPAR;
+				this->impl->current.c_cflag &= ~(PARENB | PARODD);
+				this->impl->current.c_iflag &= ~INPCK;
+				this->impl->current.c_iflag |= IGNPAR;
 				break;
 			case PARITY_ODDPARITY:
-				this->current.c_cflag |= PARENB | PARODD;
-				this->current.c_iflag &= ~IGNPAR;
-				this->current.c_iflag |= INPCK;
+				this->impl->current.c_cflag |= PARENB | PARODD;
+				this->impl->current.c_iflag &= ~IGNPAR;
+				this->impl->current.c_iflag |= INPCK;
 				break;
 			default:
 				break;
@@ -752,10 +801,10 @@ namespace rl
 			switch (stopBits)
 			{
 			case STOPBITS_1BIT:
-				this->current.StopBits = ONESTOPBIT;
+				this->impl->current.StopBits = ONESTOPBIT;
 				break;
 			case STOPBITS_2BITS:
-				this->current.StopBits = TWOSTOPBITS;
+				this->impl->current.StopBits = TWOSTOPBITS;
 				break;
 			default:
 				break;
@@ -764,10 +813,10 @@ namespace rl
 			switch (stopBits)
 			{
 			case STOPBITS_1BIT:
-				this->current.c_cflag &= ~CSTOPB;
+				this->impl->current.c_cflag &= ~CSTOPB;
 				break;
 			case STOPBITS_2BITS:
-				this->current.c_cflag |= CSTOPB;
+				this->impl->current.c_cflag |= CSTOPB;
 				break;
 			default:
 				break;
@@ -785,12 +834,12 @@ namespace rl
 #ifdef WIN32
 			::DWORD numbytes;
 			
-			if (0 == ::WriteFile(this->fd, buf, count, &numbytes, nullptr))
+			if (0 == ::WriteFile(this->impl->fd, buf, count, &numbytes, nullptr))
 			{
 				throw ComException(::GetLastError());
 			}
 #else // WIN32
-			::ssize_t numbytes = ::write(this->fd, buf, count);
+			::ssize_t numbytes = ::write(this->impl->fd, buf, count);
 			
 			if (-1 == numbytes)
 			{

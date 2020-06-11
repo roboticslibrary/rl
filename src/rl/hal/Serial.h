@@ -27,14 +27,8 @@
 #ifndef RL_HAL_SERIAL_H
 #define RL_HAL_SERIAL_H
 
-#ifdef WIN32
-#include <windows.h>
-#else // WIN32
-#include <fcntl.h>
-#include <termios.h>
-#endif // WIN32
-
 #include <chrono>
+#include <memory>
 #include <string>
 #include <rl/math/Real.h>
 
@@ -166,12 +160,17 @@ namespace rl
 				const DataBits& dataBits = DATABITS_8BITS,
 				const FlowControl& flowControl = FLOWCONTROL_OFF,
 				const Parity& parity = PARITY_NOPARITY,
-				const StopBits& stopBits = STOPBITS_1BIT,
-#ifdef WIN32
-				const int& flags = GENERIC_READ | GENERIC_WRITE
-#else // WIN32
-				const int& flags = O_RDWR | O_NOCTTY
-#endif // WIN32
+				const StopBits& stopBits = STOPBITS_1BIT
+			);
+			
+			Serial(
+				const ::std::string& filename,
+				const BaudRate& baudRate,
+				const DataBits& dataBits,
+				const FlowControl& flowControl,
+				const Parity& parity,
+				const StopBits& stopBits,
+				const int& flags
 			);
 			
 			virtual ~Serial();
@@ -225,21 +224,11 @@ namespace rl
 		protected:
 			
 		private:
+			struct Impl;
+			
 			BaudRate baudRate;
 			
-#ifdef WIN32
-			DCB current;
-#else // WIN32
-			struct termios current;
-#endif // WIN32
-			
 			DataBits dataBits;
-			
-#ifdef WIN32
-			HANDLE fd;
-#else // WIN32
-			int fd;
-#endif // WIN32
 			
 			::std::string filename;
 			
@@ -247,13 +236,9 @@ namespace rl
 			
 			FlowControl flowControl;
 			
-			Parity parity;
+			::std::unique_ptr<Impl> impl;
 			
-#ifdef WIN32
-			DCB restore;
-#else // WIN32
-			struct termios restore;
-#endif // WIN32
+			Parity parity;
 			
 			StopBits stopBits;
 		};

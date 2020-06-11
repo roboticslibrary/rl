@@ -27,13 +27,8 @@
 #ifndef RL_HAL_SOCKET_H
 #define RL_HAL_SOCKET_H
 
-#ifdef WIN32
-#include <winsock2.h>
-#else
-#include <sys/socket.h>
-#endif // WIN32
-
 #include <chrono>
+#include <memory>
 #include <string>
 #include <vector>
 #include <rl/math/Real.h>
@@ -50,11 +45,11 @@ namespace rl
 			class RL_HAL_EXPORT Address
 			{
 			public:
+				struct Impl;
+				
 				Address();
 				
 				Address(const Address& address);
-				
-				Address(const ::sockaddr_storage& addr);
 				
 				virtual ~Address();
 				
@@ -66,7 +61,7 @@ namespace rl
 				
 				static Address Ipv6(const ::std::string& string, const ::std::string& port, const bool& asNumeric = false);
 				
-				const ::sockaddr_storage& get() const;
+				Impl* get() const;
 				
 				::std::vector<unsigned char> getHexadecimal();
 				
@@ -81,10 +76,11 @@ namespace rl
 				void setInfo(const ::std::string& string, const ::std::string& port, const bool& asNumeric = false);
 				
 			protected:
-				Address(const int& family);
 				
 			private:
-				::sockaddr_storage addr;
+				Address(const int& family);
+				
+				::std::unique_ptr<Impl> impl;
 			};
 			
 			enum Option
@@ -149,21 +145,20 @@ namespace rl
 			void shutdown(const bool& read = true, const bool& write = true);
 			
 		protected:
+			
+		private:
 			Socket(const int& type, const int& protocol, const Address& address);
 			
 #ifdef WIN32
-			Socket(const int& type, const int& protocol, const Address& address, const SOCKET& fd);
+#ifdef _WIN64
+			Socket(const int& type, const int& protocol, const Address& address, const unsigned __int64& fd);
+#else // _WIN64
+			Socket(const int& type, const int& protocol, const Address& address, const unsigned int& fd);
+#endif // _WIN64
 #else // WIN32
 			Socket(const int& type, const int& protocol, const Address& address, const int& fd);
 #endif // WIN32
 			
-#ifdef WIN32
-			SOCKET fd;
-#else // WIN32
-			int fd;
-#endif // WIN32
-			
-		private:
 #ifdef WIN32
 			static void cleanup();
 			
@@ -171,6 +166,16 @@ namespace rl
 #endif // WIN32
 			
 			Address address;
+			
+#ifdef WIN32
+#ifdef _WIN64
+			unsigned __int64 fd;
+#else // _WIN64
+			unsigned int fd;
+#endif // _WIN64
+#else // WIN32
+			int fd;
+#endif // WIN32
 			
 			int protocol;
 			

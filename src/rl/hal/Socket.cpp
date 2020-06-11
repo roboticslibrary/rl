@@ -25,6 +25,7 @@
 //
 
 #ifdef WIN32
+#include <winsock2.h>
 #include <windows.h>
 #include <ws2tcpip.h>
 #else // WIN32
@@ -37,12 +38,14 @@
 #ifdef __QNX__
 #include <sys/select.h>
 #endif // __QNX__
+#include <sys/socket.h>
 #include <sys/types.h>
 #endif // WIN32
 
 #include <cstring>
 #include <sstream>
 #include <boost/lexical_cast.hpp>
+#include <rl/std/memory.h>
 
 #include "ComException.h"
 #include "Socket.h"
@@ -52,9 +55,14 @@ namespace rl
 {
 	namespace hal
 	{
+		struct Socket::Address::Impl
+		{
+			::sockaddr_storage addr;
+		};
+		
 		Socket::Socket(const Socket& socket) :
-			fd(socket.fd),
 			address(socket.address),
+			fd(socket.fd),
 			protocol(socket.protocol),
 			type(socket.type)
 		{
@@ -65,12 +73,12 @@ namespace rl
 		
 		Socket::Socket(const int& type, const int& protocol, const Address& address) :
 			Com(),
+			address(address),
 #ifdef WIN32
 			fd(INVALID_SOCKET),
 #else // WIN32
 			fd(-1),
 #endif // WIN32
-			address(address),
 			protocol(protocol),
 			type(type)
 		{
@@ -85,8 +93,8 @@ namespace rl
 		Socket::Socket(const int& type, const int& protocol, const Address& address, const int& fd) :
 #endif // WIN32
 			Com(),
-			fd(fd),
 			address(address),
+			fd(fd),
 			protocol(protocol),
 			type(type)
 		{
@@ -124,13 +132,13 @@ namespace rl
 		Socket
 		Socket::accept()
 		{
-			::sockaddr_storage addr;
-			::socklen_t addrlen = sizeof(addr);
+			Address address;
+			::socklen_t addrlen = address.getLength();
 			
 #ifdef WIN32
-			SOCKET fd = ::accept(this->fd, reinterpret_cast<::sockaddr*>(&addr), &addrlen);
+			SOCKET fd = ::accept(this->fd, reinterpret_cast<::sockaddr*>(&address.get()->addr), &addrlen);
 #else // WIN32
-			int fd = ::accept(this->fd, reinterpret_cast<::sockaddr*>(&addr), &addrlen);
+			int fd = ::accept(this->fd, reinterpret_cast<::sockaddr*>(&address.get()->addr), &addrlen);
 #endif // WIN32
 			
 #ifdef WIN32
@@ -145,13 +153,13 @@ namespace rl
 			}
 #endif // WIN32
 			
-			return Socket(this->type, this->protocol, Address(addr), fd);
+			return Socket(this->type, this->protocol, address, fd);
 		}
 		
 		void
 		Socket::bind()
 		{
-			int err = ::bind(this->fd, reinterpret_cast<const ::sockaddr*>(&this->address.get()), this->address.getLength());
+			int err = ::bind(this->fd, reinterpret_cast<const ::sockaddr*>(&this->address.get()->addr), this->address.getLength());
 			
 #ifdef WIN32
 			if (SOCKET_ERROR == err)
@@ -202,7 +210,7 @@ namespace rl
 		void
 		Socket::connect()
 		{
-			int err = ::connect(this->fd, reinterpret_cast<const ::sockaddr*>(&this->address.get()), this->address.getLength());
+			int err = ::connect(this->fd, reinterpret_cast<const ::sockaddr*>(&this->address.get()->addr), this->address.getLength());
 			
 #ifdef WIN32
 			if (SOCKET_ERROR == err)
@@ -242,7 +250,7 @@ namespace rl
 				optname = SO_KEEPALIVE;
 				break;
 			case OPTION_MULTICAST_LOOP:
-				if (AF_INET6 == this->address.get().ss_family)
+				if (AF_INET6 == this->address.get()->addr.ss_family)
 				{
 					level = IPPROTO_IPV6;
 					optname = IPV6_MULTICAST_LOOP;
@@ -254,7 +262,7 @@ namespace rl
 				}
 				break;
 			case OPTION_MULTICAST_TTL:
-				if (AF_INET6 == this->address.get().ss_family)
+				if (AF_INET6 == this->address.get()->addr.ss_family)
 				{
 					level = IPPROTO_IPV6;
 					optname = IPV6_MULTICAST_HOPS;
@@ -276,6 +284,7 @@ namespace rl
 				break;
 #endif // !__APPLE__ && !__QNX__ && !WIN32 && !__CYGWIN__
 			default:
+				throw ComException("Unsupported option");
 				break;
 			}
 			
@@ -339,7 +348,7 @@ namespace rl
 		void
 		Socket::open()
 		{
-			this->fd = ::socket(this->address.get().ss_family, this->type, this->protocol);
+			this->fd = ::socket(this->address.get()->addr.ss_family, this->type, this->protocol);
 			
 #ifdef WIN32
 			if (INVALID_SOCKET == this->fd)
@@ -395,18 +404,15 @@ namespace rl
 		::std::size_t
 		Socket::recvfrom(void* buf, const ::std::size_t& count, Address& address)
 		{
-			::sockaddr_storage addr;
-			int addrlen = sizeof(addr);
+			int addrlen = address.getLength();
 			
 			::std::memset(buf, 0, count);
 			
 #ifdef WIN32
-			int numbytes = ::recvfrom(this->fd, static_cast<char*>(buf), count, 0, reinterpret_cast<::sockaddr*>(&addr), &addrlen);
+			int numbytes = ::recvfrom(this->fd, static_cast<char*>(buf), count, 0, reinterpret_cast<::sockaddr*>(&address.get()->addr), &addrlen);
 #else // WIN32
-			::ssize_t numbytes = ::recvfrom(this->fd, buf, count, 0, reinterpret_cast<::sockaddr*>(&addr), reinterpret_cast<::socklen_t*>(&addrlen));
+			::ssize_t numbytes = ::recvfrom(this->fd, buf, count, 0, reinterpret_cast<::sockaddr*>(&address.get()->addr), reinterpret_cast<::socklen_t*>(&addrlen));
 #endif // WIN32
-			
-			address = Address(addr);
 			
 #ifdef WIN32
 			if (SOCKET_ERROR == numbytes)
@@ -491,9 +497,9 @@ namespace rl
 		Socket::sendto(const void* buf, const ::std::size_t& count, const Address& address)
 		{
 #ifdef WIN32
-			int numbytes = ::sendto(this->fd, static_cast<const char*>(buf), count, 0, reinterpret_cast<const ::sockaddr*>(&address.get()), sizeof(address.get()));
+			int numbytes = ::sendto(this->fd, static_cast<const char*>(buf), count, 0, reinterpret_cast<const ::sockaddr*>(&address.get()->addr), address.getLength());
 #else // WIN32
-			::ssize_t numbytes = ::sendto(this->fd, buf, count, 0, reinterpret_cast<const ::sockaddr*>(&address.get()), sizeof(address.get()));
+			::ssize_t numbytes = ::sendto(this->fd, buf, count, 0, reinterpret_cast<const ::sockaddr*>(&address.get()->addr), address.getLength());
 #endif // WIN32
 			
 #ifdef WIN32
@@ -530,7 +536,7 @@ namespace rl
 				optname = SO_KEEPALIVE;
 				break;
 			case OPTION_MULTICAST_LOOP:
-				if (AF_INET6 == this->address.get().ss_family)
+				if (AF_INET6 == this->address.get()->addr.ss_family)
 				{
 					level = IPPROTO_IPV6;
 					optname = IPV6_MULTICAST_LOOP;
@@ -542,7 +548,7 @@ namespace rl
 				}
 				break;
 			case OPTION_MULTICAST_TTL:
-				if (AF_INET6 == this->address.get().ss_family)
+				if (AF_INET6 == this->address.get()->addr.ss_family)
 				{
 					level = IPPROTO_IPV6;
 					optname = IPV6_MULTICAST_HOPS;
@@ -564,6 +570,7 @@ namespace rl
 				break;
 #endif // !__APPLE__ && !__QNX__ && !WIN32 && !__CYGWIN__
 			default:
+				throw ComException("Unsupported option");
 				break;
 			}
 			
@@ -659,7 +666,7 @@ namespace rl
 #endif // WIN32
 		
 		Socket::Address::Address() :
-			addr()
+			impl(::rl::std14::make_unique<Impl>())
 		{
 #ifdef WIN32
 			Socket::startup();
@@ -667,29 +674,22 @@ namespace rl
 		}
 		
 		Socket::Address::Address(const Address& address) :
-			addr(address.addr)
+			impl(::rl::std14::make_unique<Impl>())
 		{
-#ifdef WIN32
-			Socket::startup();
-#endif // WIN32
-		}
-		
-		Socket::Address::Address(const ::sockaddr_storage& addr) :
-			addr(addr)
-		{
+			this->impl->addr = address.impl->addr;
 #ifdef WIN32
 			Socket::startup();
 #endif // WIN32
 		}
 		
 		Socket::Address::Address(const int& family) :
-			addr()
+			impl(::rl::std14::make_unique<Impl>())
 		{
 #ifdef WIN32
 			Socket::startup();
 #endif // WIN32
 			
-			this->addr.ss_family = family;
+			this->impl->addr.ss_family = family;
 		}
 		
 		Socket::Address::~Address()
@@ -731,10 +731,10 @@ namespace rl
 			return address;
 		}
 		
-		const ::sockaddr_storage&
+		Socket::Address::Impl*
 		Socket::Address::get() const
 		{
-			return this->addr;
+			return this->impl.get();
 		}
 		
 		::std::vector<unsigned char>
@@ -742,15 +742,15 @@ namespace rl
 		{
 			::std::vector<unsigned char> hexadecimal;
 			
-			switch (this->addr.ss_family)
+			switch (this->impl->addr.ss_family)
 			{
 			case AF_INET:
 				hexadecimal.resize(4);
-				::std::memcpy(hexadecimal.data(), &reinterpret_cast<::sockaddr_in*>(&this->addr)->sin_addr.s_addr, hexadecimal.size());
+				::std::memcpy(hexadecimal.data(), &reinterpret_cast<::sockaddr_in*>(&this->impl->addr)->sin_addr.s_addr, hexadecimal.size());
 				break;
 			case AF_INET6:
 				hexadecimal.resize(16);
-				::std::memcpy(hexadecimal.data(), &reinterpret_cast<::sockaddr_in6*>(&this->addr)->sin6_addr.s6_addr, hexadecimal.size());
+				::std::memcpy(hexadecimal.data(), &reinterpret_cast<::sockaddr_in6*>(&this->impl->addr)->sin6_addr.s6_addr, hexadecimal.size());
 				break;
 			default:
 				break;
@@ -762,7 +762,7 @@ namespace rl
 		::std::size_t
 		Socket::Address::getLength() const
 		{
-			switch (this->addr.ss_family)
+			switch (this->impl->addr.ss_family)
 			{
 			case AF_INET:
 				return sizeof(::sockaddr_in);
@@ -771,7 +771,7 @@ namespace rl
 				return sizeof(::sockaddr_in6);
 				break;
 			default:
-				return 0;
+				return sizeof(this->impl->addr);
 				break;
 			}
 		}
@@ -781,7 +781,7 @@ namespace rl
 		{
 			char host[INET6_ADDRSTRLEN];
 			
-			int err = ::getnameinfo(reinterpret_cast<const ::sockaddr*>(&this->addr), sizeof(this->addr), host, INET6_ADDRSTRLEN, nullptr, 0, asNumeric ? NI_NUMERICHOST : 0);
+			int err = ::getnameinfo(reinterpret_cast<const ::sockaddr*>(&this->impl->addr), this->getLength(), host, INET6_ADDRSTRLEN, nullptr, 0, asNumeric ? NI_NUMERICHOST : 0);
 			
 			if (0 != err)
 			{
@@ -794,7 +794,7 @@ namespace rl
 		Socket::Address&
 		Socket::Address::operator=(const Socket::Address& other)
 		{
-			this->addr = other.addr;
+			this->impl->addr = other.impl->addr;
 			return *this;
 		}
 		
@@ -809,7 +809,7 @@ namespace rl
 		{
 			::addrinfo hints;
 			::std::memset(&hints, 0, sizeof(hints));
-			hints.ai_family = this->addr.ss_family;
+			hints.ai_family = this->impl->addr.ss_family;
 			hints.ai_flags = asNumeric ? AI_NUMERICHOST | AI_PASSIVE : AI_PASSIVE;
 			hints.ai_socktype = 0;
 			
@@ -822,7 +822,7 @@ namespace rl
 				throw ComException(::gai_strerror(err));
 			}
 			
-			::std::memcpy(&this->addr, res->ai_addr, res->ai_addrlen);
+			::std::memcpy(&this->impl->addr, res->ai_addr, res->ai_addrlen);
 			
 			::freeaddrinfo(res);
 		}
