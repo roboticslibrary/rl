@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rlplan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="rlplan.xsd">
+	<prm>
+		<duration>1200</duration>
+		<goal>
+			<q>9</q>
+			<q>11</q>
+			<q>1</q>
+			<q>0</q>
+			<q>0</q>
+			<q>-0.70710678</q>
+			<q>0.70710678</q>
+		</goal>
+		<model>
+			<kinematics href="../rlmdl/box-6d-300505.sixdof.xml" type="mdl"/>
+			<model>0</model>
+			<scene href="../rlsg/box-6d-300505_maze.mdl.xml"/>
+		</model>
+		<start>
+			<q>2</q>
+			<q>1</q>
+			<q>1</q>
+			<q>0</q>
+			<q>0</q>
+			<q>0</q>
+			<q>1</q>
+		</start>
+		<viewer>
+			<delta unit="deg">1</delta>
+			<model>
+				<kinematics href="../rlmdl/box-6d-300505.sixdof.xml" type="mdl"/>
+				<model>0</model>
+				<scene href="../rlsg/box-6d-300505_maze.mdl.xml"/>
+			</model>
+			<swept unit="deg">100</swept>
+		</viewer>
+		<gnatNearestNeighbors/>
+		<uniformSampler/>
+		<recursiveVerifier>
+			<delta unit="deg">1</delta>
+		</recursiveVerifier>
+	</prm>
+</rlplan>

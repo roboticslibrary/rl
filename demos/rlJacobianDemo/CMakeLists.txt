@@ -14,5 +14,5 @@ target_include_directories(
 
 target_link_libraries(
 	rlJacobianDemo
-	kin
+	mdl
 )

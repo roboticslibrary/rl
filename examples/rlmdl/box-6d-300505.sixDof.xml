@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rlmdl xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="rlmdl.xsd">
+	<model>
+		<manufacturer></manufacturer>
+		<name>6D Box (3.0m x 0.5m x 0.5m)</name>
+		<world id="world">
+			<rotation>
+				<x>0</x>
+				<y>0</y>
+				<z>0</z>
+			</rotation>
+			<translation>
+				<x>0</x>
+				<y>0</y>
+				<z>0</z>
+			</translation>
+			<g>
+				<x>0</x>
+				<y>0</y>
+				<z>9.86055</z>
+			</g>
+		</world>
+		<sixDof id="joint0">
+			<frame>
+				<a idref="world"/>
+				<b idref="body1"/>
+			</frame>
+			<max>30</max>
+			<max>30</max>
+			<max>2</max>
+			<min>0</min>
+			<min>0</min>
+			<min>0</min>
+		</sixDof>
+		<body id="body1"/>
+		<fixed id="tool">
+			<frame>
+				<a idref="body1"/>
+				<b idref="tcp"/>
+			</frame>
+			<rotation>
+				<x>0</x>
+				<y>0</y>
+				<z>0</z>
+			</rotation>
+			<translation>
+				<x>1.5</x>
+				<y>0</y>
+				<z>0</z>
+			</translation>
+		</fixed>
+		<frame id="tcp"/>
+	</model>
+</rlmdl>

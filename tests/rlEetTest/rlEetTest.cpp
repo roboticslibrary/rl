@@ -28,8 +28,9 @@
 #include <memory>
 #include <stdexcept>
 #include <boost/lexical_cast.hpp>
-#include <rl/kin/Kinematics.h>
 #include <rl/math/Unit.h>
+#include <rl/mdl/Kinematic.h>
+#include <rl/mdl/XmlFactory.h>
 #include <rl/plan/DistanceModel.h>
 #include <rl/plan/Eet.h>
 #include <rl/plan/LinearNearestNeighbors.h>
@@ -89,17 +90,17 @@ main(int argc, char** argv)
 		}
 #endif // RL_SG_SOLID
 		
-		rl::sg::XmlFactory factory;
-		factory.load(argv[2], scene.get());
+		rl::sg::XmlFactory factory1;
+		factory1.load(argv[2], scene.get());
 		
-		std::shared_ptr<rl::kin::Kinematics> kinematics(rl::kin::Kinematics::create(argv[3]));
+		rl::mdl::XmlFactory factory2;
+		std::shared_ptr<rl::mdl::Kinematic> kinematic = std::dynamic_pointer_cast<rl::mdl::Kinematic>(factory2.create(argv[3]));
 		
-		Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> qUnits(kinematics->getDof());
-		kinematics->getPositionUnits(qUnits);
+		Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> qUnits = kinematic->getPositionUnits();
 		
-		rl::math::Vector start(kinematics->getDof());
+		rl::math::Vector start(kinematic->getDofPosition());
 		
-		for (std::size_t i = 0; i < kinematics->getDof(); ++i)
+		for (std::ptrdiff_t i = 0; i < start.size(); ++i)
 		{
 			start(i) = boost::lexical_cast<rl::math::Real>(argv[i + 6]);
 			
@@ -109,11 +110,11 @@ main(int argc, char** argv)
 			}
 		}
 		
-		rl::math::Vector goal(kinematics->getDof());
+		rl::math::Vector goal(kinematic->getDofPosition());
 		
-		for (std::size_t i = 0; i < kinematics->getDof(); ++i)
+		for (std::ptrdiff_t i = 0; i < goal.size(); ++i)
 		{
-			goal(i) = boost::lexical_cast<rl::math::Real>(argv[kinematics->getDof() + i + 6]);
+			goal(i) = boost::lexical_cast<rl::math::Real>(argv[start.size() + i + 6]);
 			
 			if (rl::math::UNIT_RADIAN == qUnits(i))
 			{
@@ -122,7 +123,7 @@ main(int argc, char** argv)
 		}
 		
 		rl::plan::DistanceModel model;
-		model.kin = kinematics.get();
+		model.mdl = kinematic.get();
 		model.model = scene->getModel(0);
 		model.scene = scene.get();
 		

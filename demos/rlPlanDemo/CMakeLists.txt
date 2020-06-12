@@ -128,7 +128,7 @@ if(QT_FOUND AND SoQt_FOUND AND (Bullet_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE
 			\\\"$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\rlPlanDemo.lnk\\\" \\\\
 			\\\"$INSTDIR\\\\${CMAKE_INSTALL_BINDIR}\\\\rlPlanDemo.exe\\\" \\\\
 			\\\"\\\\
-				\\\$\\\\\\\"$INSTDIR\\\\${CMAKE_INSTALL_DATADIR}\\\\rl-${VERSION}\\\\examples\\\\rlplan\\\\unimation-puma560_boxes_rrtConCon.xml\\\$\\\\\\\"\\\\
+				\\\$\\\\\\\"$INSTDIR\\\\${CMAKE_INSTALL_DATADIR}\\\\rl-${VERSION}\\\\examples\\\\rlplan\\\\unimation-puma560_boxes_rrtConCon.mdl.xml\\\$\\\\\\\"\\\\
 			\\\" \\\\
 			\\\"\\\" \\\"\\\" \\\"\\\" \\\"\\\" \\\\
 			\\\"Path planning demo with Unimation Puma 560 and RRT algorithm\\\""
@@ -140,7 +140,7 @@ if(QT_FOUND AND SoQt_FOUND AND (Bullet_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE
 		WIX_SHORTCUTS
 		${WIX_SHORTCUTS}
 		"<Shortcut
-			Arguments=\"&quot;[INSTALL_ROOT]${CMAKE_INSTALL_DATADIR}\\rl-${VERSION}\\examples\\rlplan\\unimation-puma560_boxes_rrtConCon.xml&quot;\"
+			Arguments=\"&quot;[INSTALL_ROOT]${CMAKE_INSTALL_DATADIR}\\rl-${VERSION}\\examples\\rlplan\\unimation-puma560_boxes_rrtConCon.mdl.xml&quot;\"
 			Description=\"Path planning demo with Unimation Puma 560 and RRT algorithm\"
 			Id=\"CM_SP_bin.rlPlanDemo.exe\"
 			Name=\"rlPlanDemo\"

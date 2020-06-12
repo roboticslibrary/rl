@@ -28,12 +28,15 @@
 #include <memory>
 #include <stdexcept>
 #include <boost/lexical_cast.hpp>
-#include <rl/kin/Kinematics.h>
 #include <rl/math/Unit.h>
+#include <rl/mdl/Kinematic.h>
+#include <rl/mdl/UrdfFactory.h>
+#include <rl/mdl/XmlFactory.h>
 #include <rl/plan/KdtreeNearestNeighbors.h>
 #include <rl/plan/RrtConCon.h>
 #include <rl/plan/SimpleModel.h>
 #include <rl/plan/UniformSampler.h>
+#include <rl/sg/UrdfFactory.h>
 #include <rl/sg/XmlFactory.h>
 
 #if defined(RL_SG_SOLID)
@@ -58,7 +61,7 @@ main(int argc, char** argv)
 	
 	try
 	{
-		rl::sg::XmlFactory factory;
+		std::string scenefile(argv[1]);
 #if defined(RL_SG_SOLID)
 		rl::sg::solid::Scene scene;
 #elif defined(RL_SG_BULLET)
@@ -66,12 +69,34 @@ main(int argc, char** argv)
 #elif defined(RL_SG_ODE)
 		rl::sg::ode::Scene scene;
 #endif
-		factory.load(argv[1], &scene);
 		
-		std::shared_ptr<rl::kin::Kinematics> kinematics(rl::kin::Kinematics::create(argv[2]));
+		if ("urdf" == scenefile.substr(scenefile.length() - 4, 4))
+		{
+			rl::sg::UrdfFactory factory;
+			factory.load(scenefile, &scene);
+		}
+		else
+		{
+			rl::sg::XmlFactory factory;
+			factory.load(scenefile, &scene);
+		}
+		
+		std::string kinematicsfile(argv[2]);
+		std::shared_ptr<rl::mdl::Kinematic> kinematic;
+		
+		if ("urdf" == kinematicsfile.substr(kinematicsfile.length() - 4, 4))
+		{
+			rl::mdl::UrdfFactory factory;
+			kinematic = std::dynamic_pointer_cast<rl::mdl::Kinematic>(factory.create(kinematicsfile));
+		}
+		else
+		{
+			rl::mdl::XmlFactory factory;
+			kinematic = std::dynamic_pointer_cast<rl::mdl::Kinematic>(factory.create(kinematicsfile));
+		}
 		
 		rl::plan::SimpleModel model;
-		model.kin = kinematics.get();
+		model.mdl = kinematic.get();
 		model.model = scene.getModel(0);
 		model.scene = &scene;
 		
@@ -89,20 +114,20 @@ main(int argc, char** argv)
 		
 		planner.delta = 1 * rl::math::DEG2RAD;
 		
-		rl::math::Vector start(kinematics->getDof());
+		rl::math::Vector start(kinematic->getDofPosition());
 		
-		for (std::size_t i = 0; i < kinematics->getDof(); ++i)
+		for (std::ptrdiff_t i = 0; i < start.size(); ++i)
 		{
 			start(i) = boost::lexical_cast<rl::math::Real>(argv[i + 3]) * rl::math::DEG2RAD;
 		}
 		
 		planner.start = &start;
 		
-		rl::math::Vector goal(kinematics->getDof());
+		rl::math::Vector goal(kinematic->getDofPosition());
 		
-		for (std::size_t i = 0; i < kinematics->getDof(); ++i)
+		for (std::ptrdiff_t i = 0; i < goal.size(); ++i)
 		{
-			goal(i) = boost::lexical_cast<rl::math::Real>(argv[kinematics->getDof() + i + 3]) * rl::math::DEG2RAD;
+			goal(i) = boost::lexical_cast<rl::math::Real>(argv[start.size() + i + 3]) * rl::math::DEG2RAD;
 		}
 		
 		planner.goal = &goal;

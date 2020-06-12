@@ -31,11 +31,11 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR PQP_FOUND OR SOLID3_FOUND)
 			NAME rlEetTestBulletBox6d300505Maze
 			COMMAND rlEetTest
 			bullet
-			${rl_SOURCE_DIR}/examples/rlsg/box-6d-300505_maze.xml
-			${rl_SOURCE_DIR}/examples/rlkin/box-6d-300505.xml
+			${rl_SOURCE_DIR}/examples/rlsg/box-6d-300505_maze.mdl.xml
+			${rl_SOURCE_DIR}/examples/rlmdl/box-6d-300505.sixDof.xml
 			270 269
-			2 1 1 0 0 0
-			9 11 1 0 0 -90
+			2 1 1 0 0 0 1
+			9 11 1 0 0 -0.70710678 0.70710678
 		)
 	endif()
 	
@@ -44,11 +44,11 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR PQP_FOUND OR SOLID3_FOUND)
 			NAME rlEetTestFclBox6d300505Maze
 			COMMAND rlEetTest
 			fcl
-			${rl_SOURCE_DIR}/examples/rlsg/box-6d-300505_maze.xml
-			${rl_SOURCE_DIR}/examples/rlkin/box-6d-300505.xml
+			${rl_SOURCE_DIR}/examples/rlsg/box-6d-300505_maze.mdl.xml
+			${rl_SOURCE_DIR}/examples/rlmdl/box-6d-300505.sixDof.xml
 			242 241
-			2 1 1 0 0 0
-			9 11 1 0 0 -90
+			2 1 1 0 0 0 1
+			9 11 1 0 0 -0.70710678 0.70710678
 		)
 	endif()
 	
@@ -57,11 +57,11 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR PQP_FOUND OR SOLID3_FOUND)
 			NAME rlEetTestPqpBox6d300505Maze
 			COMMAND rlEetTest
 			pqp
-			${rl_SOURCE_DIR}/examples/rlsg/box-6d-300505_maze.xml
-			${rl_SOURCE_DIR}/examples/rlkin/box-6d-300505.xml
+			${rl_SOURCE_DIR}/examples/rlsg/box-6d-300505_maze.mdl.xml
+			${rl_SOURCE_DIR}/examples/rlmdl/box-6d-300505.sixDof.xml
 			239 238
-			2 1 1 0 0 0
-			9 11 1 0 0 -90
+			2 1 1 0 0 0 1
+			9 11 1 0 0 -0.70710678 0.70710678
 		)
 	endif()
 	
@@ -70,11 +70,11 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR PQP_FOUND OR SOLID3_FOUND)
 			NAME rlEetTestSolidBox6d300505Maze
 			COMMAND rlEetTest
 			solid
-			${rl_SOURCE_DIR}/examples/rlsg/box-6d-300505_maze.xml
-			${rl_SOURCE_DIR}/examples/rlkin/box-6d-300505.xml
+			${rl_SOURCE_DIR}/examples/rlsg/box-6d-300505_maze.mdl.xml
+			${rl_SOURCE_DIR}/examples/rlmdl/box-6d-300505.sixDof.xml
 			321 320
-			2 1 1 0 0 0
-			9 11 1 0 0 -90
+			2 1 1 0 0 0 1
+			9 11 1 0 0 -0.70710678 0.70710678
 		)
 	endif()
 endif()

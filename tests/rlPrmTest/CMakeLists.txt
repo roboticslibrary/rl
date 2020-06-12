@@ -33,7 +33,7 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE_FOUND OR PQP_FOUND OR SOLID3
 			COMMAND rlPrmTest
 			bullet
 			${rl_SOURCE_DIR}/examples/rlsg/unimation-puma560_boxes.convex.xml
-			${rl_SOURCE_DIR}/examples/rlkin/unimation-puma560.xml
+			${rl_SOURCE_DIR}/examples/rlmdl/unimation-puma560.xml
 			17 16
 			0 0 0 0 0 90
 			110 -200 60 0 0 0
@@ -45,7 +45,7 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE_FOUND OR PQP_FOUND OR SOLID3
 			COMMAND rlPrmTest
 			bullet
 			${rl_SOURCE_DIR}/examples/rlsg/unimation-puma560_boxes.convex.xml
-			${rl_SOURCE_DIR}/examples/rlkin/unimation-puma560.xml
+			${rl_SOURCE_DIR}/examples/rlmdl/unimation-puma560.xml
 			17 16
 			0 0 0 0 0 90
 			90 -180 90 0 0 0
@@ -59,7 +59,7 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE_FOUND OR PQP_FOUND OR SOLID3
 			COMMAND rlPrmTest
 			fcl
 			${rl_SOURCE_DIR}/examples/rlsg/unimation-puma560_boxes.convex.xml
-			${rl_SOURCE_DIR}/examples/rlkin/unimation-puma560.xml
+			${rl_SOURCE_DIR}/examples/rlmdl/unimation-puma560.xml
 			17 16
 			0 0 0 0 0 90
 			110 -200 60 0 0 0
@@ -71,7 +71,7 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE_FOUND OR PQP_FOUND OR SOLID3
 			COMMAND rlPrmTest
 			fcl
 			${rl_SOURCE_DIR}/examples/rlsg/unimation-puma560_boxes.convex.xml
-			${rl_SOURCE_DIR}/examples/rlkin/unimation-puma560.xml
+			${rl_SOURCE_DIR}/examples/rlmdl/unimation-puma560.xml
 			17 16
 			0 0 0 0 0 90
 			90 -180 90 0 0 0
@@ -85,7 +85,7 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE_FOUND OR PQP_FOUND OR SOLID3
 			COMMAND rlPrmTest
 			ode
 			${rl_SOURCE_DIR}/examples/rlsg/unimation-puma560_boxes.convex.xml
-			${rl_SOURCE_DIR}/examples/rlkin/unimation-puma560.xml
+			${rl_SOURCE_DIR}/examples/rlmdl/unimation-puma560.xml
 			17 16
 			0 0 0 0 0 90
 			110 -200 60 0 0 0
@@ -97,7 +97,7 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE_FOUND OR PQP_FOUND OR SOLID3
 			COMMAND rlPrmTest
 			ode
 			${rl_SOURCE_DIR}/examples/rlsg/unimation-puma560_boxes.convex.xml
-			${rl_SOURCE_DIR}/examples/rlkin/unimation-puma560.xml
+			${rl_SOURCE_DIR}/examples/rlmdl/unimation-puma560.xml
 			17 16
 			0 0 0 0 0 90
 			90 -180 90 0 0 0
@@ -111,7 +111,7 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE_FOUND OR PQP_FOUND OR SOLID3
 			COMMAND rlPrmTest
 			pqp
 			${rl_SOURCE_DIR}/examples/rlsg/unimation-puma560_boxes.convex.xml
-			${rl_SOURCE_DIR}/examples/rlkin/unimation-puma560.xml
+			${rl_SOURCE_DIR}/examples/rlmdl/unimation-puma560.xml
 			17 16
 			0 0 0 0 0 90
 			110 -200 60 0 0 0
@@ -123,7 +123,7 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE_FOUND OR PQP_FOUND OR SOLID3
 			COMMAND rlPrmTest
 			pqp
 			${rl_SOURCE_DIR}/examples/rlsg/unimation-puma560_boxes.convex.xml
-			${rl_SOURCE_DIR}/examples/rlkin/unimation-puma560.xml
+			${rl_SOURCE_DIR}/examples/rlmdl/unimation-puma560.xml
 			17 16
 			0 0 0 0 0 90
 			90 -180 90 0 0 0
@@ -137,7 +137,7 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE_FOUND OR PQP_FOUND OR SOLID3
 			COMMAND rlPrmTest
 			solid
 			${rl_SOURCE_DIR}/examples/rlsg/unimation-puma560_boxes.convex.xml
-			${rl_SOURCE_DIR}/examples/rlkin/unimation-puma560.xml
+			${rl_SOURCE_DIR}/examples/rlmdl/unimation-puma560.xml
 			17 16
 			0 0 0 0 0 90
 			110 -200 60 0 0 0
@@ -149,7 +149,7 @@ if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE_FOUND OR PQP_FOUND OR SOLID3
 			COMMAND rlPrmTest
 			solid
 			${rl_SOURCE_DIR}/examples/rlsg/unimation-puma560_boxes.convex.xml
-			${rl_SOURCE_DIR}/examples/rlkin/unimation-puma560.xml
+			${rl_SOURCE_DIR}/examples/rlmdl/unimation-puma560.xml
 			17 16
 			0 0 0 0 0 90
 			90 -180 90 0 0 0

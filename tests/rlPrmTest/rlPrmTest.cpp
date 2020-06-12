@@ -28,8 +28,9 @@
 #include <memory>
 #include <stdexcept>
 #include <boost/lexical_cast.hpp>
-#include <rl/kin/Kinematics.h>
 #include <rl/math/Unit.h>
+#include <rl/mdl/Kinematic.h>
+#include <rl/mdl/XmlFactory.h>
 #include <rl/plan/KdtreeNearestNeighbors.h>
 #include <rl/plan/Prm.h>
 #include <rl/plan/RecursiveVerifier.h>
@@ -99,10 +100,11 @@ main(int argc, char** argv)
 		}
 #endif // RL_SG_SOLID
 		
-		rl::sg::XmlFactory factory;
-		factory.load(argv[2], scene.get());
+		rl::sg::XmlFactory factory1;
+		factory1.load(argv[2], scene.get());
 		
-		std::shared_ptr<rl::kin::Kinematics> kinematics(rl::kin::Kinematics::create(argv[3]));
+		rl::mdl::XmlFactory factory2;
+		std::shared_ptr<rl::mdl::Kinematic> kinematic = std::dynamic_pointer_cast<rl::mdl::Kinematic>(factory2.create(argv[3]));
 		
 		rl::math::Transform world = rl::math::Transform::Identity();
 		
@@ -121,10 +123,10 @@ main(int argc, char** argv)
 		world.translation().y() = boost::lexical_cast<rl::math::Real>(argv[7]);
 		world.translation().z() = boost::lexical_cast<rl::math::Real>(argv[8]);
 		
-		kinematics->world() = world;
+		kinematic->world() = world;
 		
 		rl::plan::SimpleModel model;
-		model.kin = kinematics.get();
+		model.mdl = kinematic.get();
 		model.model = scene->getModel(0);
 		model.scene = scene.get();
 		
@@ -145,20 +147,20 @@ main(int argc, char** argv)
 		verifier.delta = 1 * rl::math::DEG2RAD;
 		verifier.model = &model;
 		
-		rl::math::Vector start(kinematics->getDof());
+		rl::math::Vector start(kinematic->getDofPosition());
 		
-		for (std::size_t i = 0; i < kinematics->getDof(); ++i)
+		for (std::ptrdiff_t i = 0; i < start.size(); ++i)
 		{
 			start(i) = boost::lexical_cast<rl::math::Real>(argv[i + 12]) * rl::math::DEG2RAD;
 		}
 		
 		planner.start = &start;
 		
-		rl::math::Vector goal(kinematics->getDof());
+		rl::math::Vector goal(kinematic->getDofPosition());
 		
-		for (std::size_t i = 0; i < kinematics->getDof(); ++i)
+		for (std::ptrdiff_t i = 0; i < goal.size(); ++i)
 		{
-			goal(i) = boost::lexical_cast<rl::math::Real>(argv[kinematics->getDof() + i + 12]) * rl::math::DEG2RAD;
+			goal(i) = boost::lexical_cast<rl::math::Real>(argv[start.size() + i + 12]) * rl::math::DEG2RAD;
 		}
 		
 		planner.goal = &goal;

@@ -28,8 +28,10 @@
 #include <memory>
 #include <stdexcept>
 #include <boost/lexical_cast.hpp>
-#include <rl/kin/Kinematics.h>
 #include <rl/math/Unit.h>
+#include <rl/mdl/Kinematic.h>
+#include <rl/mdl/UrdfFactory.h>
+#include <rl/mdl/XmlFactory.h>
 
 int
 main(int argc, char** argv)
@@ -42,46 +44,56 @@ main(int argc, char** argv)
 	
 	try
 	{
-		std::shared_ptr<rl::kin::Kinematics> kinematics(rl::kin::Kinematics::create(argv[1]));
+		std::string filename(argv[1]);
+		std::shared_ptr<rl::mdl::Kinematic> kinematic;
 		
-		rl::math::Vector q(kinematics->getDof());
+		if ("urdf" == filename.substr(filename.length() - 4, 4))
+		{
+			rl::mdl::UrdfFactory factory;
+			kinematic = std::dynamic_pointer_cast<rl::mdl::Kinematic>(factory.create(filename));
+		}
+		else
+		{
+			rl::mdl::XmlFactory factory;
+			kinematic = std::dynamic_pointer_cast<rl::mdl::Kinematic>(factory.create(filename));
+		}
+		
+		rl::math::Vector q(kinematic->getDofPosition());
 		
 		for (std::ptrdiff_t i = 0; i < q.size(); ++i)
 		{
 			q(i) = boost::lexical_cast<rl::math::Real>(argv[i + 2]);
 		}
 		
-		rl::math::Vector qdot(kinematics->getDof());
+		rl::math::Vector qdot(kinematic->getDof());
 		
 		for (std::ptrdiff_t i = 0; i < qdot.size(); ++i)
 		{
 			qdot(i) = boost::lexical_cast<rl::math::Real>(argv[q.size() + i + 2]);
 		}
 		
-		kinematics->setPosition(q);
-		kinematics->updateFrames();
-		kinematics->updateJacobian();
+		kinematic->setPosition(q);
+		kinematic->forwardPosition();
+		kinematic->calculateJacobian();
 		
-		std::cout << "J=" << std::endl << kinematics->getJacobian() << std::endl;
+		std::cout << "J=" << std::endl << kinematic->getJacobian() << std::endl;
 		
-		rl::math::Vector xdot(kinematics->getOperationalDof() * 6);
-		
-		kinematics->forwardVelocity(qdot, xdot);
+		rl::math::Vector xdot = kinematic->getJacobian() * qdot;
 		
 		std::cout << "xdot=" << std::endl;
 		
-		for (std::size_t i = 0; i < kinematics->getOperationalDof(); ++i)
+		for (std::size_t i = 0; i < kinematic->getOperationalDof(); ++i)
 		{
 			std::cout << i << " " << xdot.transpose() << std::endl;
 		}
 		
-		kinematics->updateJacobianInverse(static_cast<rl::math::Real>(1.0e-9));
+		kinematic->calculateJacobianInverse();
 		
-		std::cout << "invJ=" << std::endl << kinematics->getJacobianInverse() << std::endl;
+		std::cout << "invJ=" << std::endl << kinematic->getJacobianInverse() << std::endl;
 		
-		kinematics->inverseVelocity(xdot, qdot);
+		rl::math::Vector qdot2 = kinematic->getJacobianInverse() * xdot;
 		
-		std::cout << "qdot=" << std::endl << qdot.transpose() << std::endl;
+		std::cout << "qdot=" << std::endl << qdot2.transpose() << std::endl;
 	}
 	catch (const std::exception& e)
 	{

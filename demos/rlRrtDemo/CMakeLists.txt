@@ -19,8 +19,8 @@ if(Bullet_FOUND OR ODE_FOUND OR SOLID3_FOUND)
 	
 	target_link_libraries(
 		rlRrtDemo
+		mdl
 		plan
-		kin
 		sg
 	)
 endif()
