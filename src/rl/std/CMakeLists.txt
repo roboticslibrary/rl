@@ -16,6 +16,14 @@ if(NOT CMAKE_VERSION VERSION_LESS 3.8)
 	target_compile_features(std INTERFACE cxx_std_11)
 endif()
 
+target_include_directories(
+	std
+	INTERFACE
+	$<BUILD_INTERFACE:${rl_BINARY_DIR}/src>
+	$<BUILD_INTERFACE:${rl_SOURCE_DIR}/src>
+	$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}>
+)
+
 install(FILES ${HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/std COMPONENT development)
 
 if(CMAKE_VERSION VERSION_LESS 3.0)

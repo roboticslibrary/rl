@@ -1,3 +1,6 @@
+configure_file(rl/version.h.in rl/version.h)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/rl/version.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl COMPONENT development)
+
 add_subdirectory(rl/std)
 list(APPEND TARGETS std)
 

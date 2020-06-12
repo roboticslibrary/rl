@@ -82,6 +82,7 @@ endif()
 target_include_directories(
 	math
 	INTERFACE
+	$<BUILD_INTERFACE:${rl_BINARY_DIR}/src>
 	$<BUILD_INTERFACE:${rl_SOURCE_DIR}/src>
 	$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}>
 	${Boost_INCLUDE_DIRS}
