@@ -27,6 +27,7 @@
 #include <algorithm>
 
 #include "Scene.h"
+#include "XmlFactory.h"
 
 namespace rl
 {
@@ -83,6 +84,13 @@ namespace rl
 		Scene::isScalingSupported() const
 		{
 			return true;
+		}
+		
+		void
+		Scene::load(const ::std::string& filename, const bool& doBoundingBoxPoints, const bool& doPoints)
+		{
+			XmlFactory factory;
+			factory.load(filename, this, doBoundingBoxPoints, doPoints);
 		}
 		
 		void

@@ -66,6 +66,8 @@ namespace rl
 			
 			virtual bool isScalingSupported() const;
 			
+			RL_SG_DEPRECATED void load(const ::std::string& filename, const bool& doBoundingBoxPoints = false, const bool& doPoints = false);
+			
 			virtual void remove(Model* model);
 			
 			virtual void setName(const ::std::string& name);
