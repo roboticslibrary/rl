@@ -41,7 +41,7 @@ namespace rl
 	{
 		/**
 		 * Flexible Collision Library.
-		 * 
+		 *
 		 * https://github.com/flexible-collision-library/fcl
 		 */
 		namespace fcl

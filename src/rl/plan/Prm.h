@@ -46,19 +46,19 @@ namespace rl
 		
 		/**
 		 * Probabilistic Roadmaps.
-		 * 
+		 *
 		 * Lydia Kavraki and Jean-Claude Latombe. Randomized preprocessing of
 		 * configuration space for path planning: Articulated robots. In Proceedings
 		 * of the IEEE/RSJ/GI International Conference on Intelligent Robots and
 		 * Systems, pages 1764-1771, Munich, Germany, September 1994.
-		 * 
+		 *
 		 * http://dx.doi.org/10.1109/IROS.1994.407619
-		 * 
+		 *
 		 * Lydia E. Kavraki, Petr &Scaron;vestka, Jean-Claude Latombe, and Mark H.
 		 * Overmars. Probabilistic roadmaps for path planning in high-dimensional
 		 * configuration spaces. IEEE Transactions on Robotics and Automation,
 		 * 12(4):566-580, August 1996.
-		 * 
+		 *
 		 * http://dx.doi.org/10.1109/70.508439
 		 */
 		class RL_PLAN_EXPORT Prm : public Planner
@@ -114,7 +114,7 @@ namespace rl
 				::boost::listS,
 				::boost::undirectedS,
 				::boost::listS
-			>::vertex_descriptor Vertex; 
+			>::vertex_descriptor Vertex;
 			
 			struct VertexBundle
 			{

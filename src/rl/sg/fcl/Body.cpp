@@ -98,7 +98,7 @@ namespace rl
 			
 			void
 			Body::setFrame(const ::rl::math::Transform& frame)
-			{	
+			{
 				this->frame = frame;
 				
 				for (Iterator i = this->begin(); i != this->end(); ++i)

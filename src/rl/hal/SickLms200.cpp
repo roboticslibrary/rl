@@ -104,7 +104,7 @@ namespace rl
 		
 		::std::uint16_t
 		SickLms200::crc(const ::std::uint8_t* buf, const ::std::size_t& len) const
-		{	
+		{
 			::std::uint16_t checksum = buf[0];
 			
 			for (::std::size_t i = 1; i < len; ++i)

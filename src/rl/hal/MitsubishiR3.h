@@ -230,24 +230,24 @@ namespace rl
 			
 			/**
 			 * The install status is read.
-			 * 
+			 *
 			 * @param[out] state Install state
 			 */
 			CalibState doCalib();
 			
 			/**
 			 * Operation enable or disable.
-			 * 
+			 *
 			 * When the command which needs the operation right such as program start,
 			 * servo ON and more is used, the operation right should be made effective.
-			 * 
+			 *
 			 * @param[in] doOn OFF / ON
 			 */
 			void doCntl(const bool& doOn);
 			
 			/**
 			 * The origin is set by the data input.
-			 * 
+			 *
 			 * @param[in] j1 Joint 1 data
 			 * @param[in] j2 Joint 2 data
 			 * @param[in] j3 Joint 3 data
@@ -260,7 +260,7 @@ namespace rl
 			
 			/**
 			 * The origin is set by the data input.
-			 * 
+			 *
 			 * @param[in] j1 Joint 1 data
 			 * @param[in] j2 Joint 2 data
 			 * @param[in] j3 Joint 3 data
@@ -276,30 +276,30 @@ namespace rl
 			
 			/**
 			 * The stop state is read.
-			 * 
+			 *
 			 * @param[out] state Stop state
 			 */
 			StopState doDstate();
 			
 			/**
 			 * Clear program contents.
-			 * 
+			 *
 			 * It is effective in the edit slot.
 			 */
 			void doEclr();
 			
 			/**
 			 * More line and position are registered in the program.
-			 * 
+			 *
 			 * It is effective in the edit slot.
-			 * 
+			 *
 			 * @param[in] program Line data and positional data (<line or position>[0b<line or position>...])
 			 */
 			void doEmdat(const ::std::string& program);
 			
 			/**
 			 * The content of the error is read.
-			 * 
+			 *
 			 * @param[in] errorNo Error number
 			 * @return Content of the error
 			 */
@@ -307,14 +307,14 @@ namespace rl
 			
 			/**
 			 * The instruction is executed directly.
-			 * 
+			 *
 			 * @param[in] instruction Instruction of MELFA-BASIC IV or MOVEMASTER commands
 			 */
 			void doExec(const ::std::string& instruction);
 			
 			/**
 			 * The hand is openend and closed.
-			 * 
+			 *
 			 * @param[in] doOpen CLOSE / OPEN
 			 * @param[in] handNo Hand number (1 - 8) is specified
 			 */
@@ -322,14 +322,14 @@ namespace rl
 			
 			/**
 			 * The setting and the output of the hand are read.
-			 * 
+			 *
 			 * @param[out] state Hand state
 			 */
 			::std::array<Hand, 8> doHndsts();
 			
 			/**
 			 * The input signal is pseudo-input.
-			 * 
+			 *
 			 * @param[in] inNo Input signal number
 			 * @param[in] inVal Pseudo-input signal value by 4 hex number fixation
 			 */
@@ -337,7 +337,7 @@ namespace rl
 			
 			/**
 			 * Open the program for edit.
-			 * 
+			 *
 			 * @param[in] programName Edit program name
 			 */
 			void doLoad(const ::std::string& programName);
@@ -349,7 +349,7 @@ namespace rl
 			
 			/**
 			 * The output signal is compelling output.
-			 * 
+			 *
 			 * @param[in] outNo Output signal number
 			 * @param[in] outVal Output signal value by 4 hex number fixation
 			 */
@@ -367,7 +367,7 @@ namespace rl
 			
 			/**
 			 * The program is started.
-			 * 
+			 *
 			 * @param[in] programName Program name
 			 * @param[in] doModeCycle Repeat start / cycle start
 			 */
@@ -385,14 +385,14 @@ namespace rl
 			
 			/**
 			 * The servo power supply is turned on and off.
-			 * 
+			 *
 			 * @param[in] doOn OFF / ON
 			 */
 			void doSrv(const bool& doOn);
 			
 			/**
 			 * The run state is read.
-			 * 
+			 *
 			 * @param[out] state Run state
 			 */
 			RunState doState();
@@ -404,7 +404,7 @@ namespace rl
 			
 			/**
 			 * The state of the stop signal is read.
-			 * 
+			 *
 			 * @param[out] state Stop signal state
 			 */
 			StopSignalState doStpsig();

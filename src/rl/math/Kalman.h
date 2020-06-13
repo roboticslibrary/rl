@@ -40,11 +40,11 @@ namespace rl
 	{
 		/**
 		 * Kalman filter.
-		 * 
+		 *
 		 * Greg Welch and Gary Bishop. An introduction to the Kalman filter. Technical
 		 * Report TR 95-041, University of North Carolina at Chapel Hill, Chapel Hill,
 		 * NC, USA, July 2006.
-		 * 
+		 *
 		 * http://www.cs.unc.edu/~welch/media/pdf/kalman_intro.pdf
 		 */
 		template<typename Scalar>
@@ -86,14 +86,14 @@ namespace rl
 			
 			/**
 			 * Measurement update ("correct").
-			 * 
+			 *
 			 * Compute the Kalman gain
 			 * \f[ \matr{K}_{k} = \matr{P}^{-}_{k} \matr{H}^{\mathrm{T}} \left( \matr{H} \matr{P}^{-}_{k} \matr{H}^{\mathrm{T}} + \matr{R} \right)^{-1} \f]
 			 * Update estimate with measurement \f$\vec{z}_{k}\f$
 			 * \f[ \hat{\vec{x}}_{k} = \hat{\vec{x}}^{-}_{k} + \matr{K}_{k} \left( \vec{z}_{k} - \matr{H} \hat{\vec{x}}^{-}_{k} \right) \f]
 			 * Update the error covariance
 			 * \f[ \matr{P}_{k} = \left( \matr{1} - \matr{K}_{k} \matr{H} \right) \matr{P}^{-}_{k} \f]
-			 * 
+			 *
 			 * @param[in] z Measurement \f$\vec{z}_{k}\f$
 			 */
 			VectorType correct(const VectorType& z)
@@ -151,7 +151,7 @@ namespace rl
 			
 			/**
 			 * Time update ("predict") without control input.
-			 * 
+			 *
 			 * Project the state ahead
 			 * \f[ \hat{\vec{x}}^{-}_{k} = \matr{A} \hat{\vec{x}}_{k - 1} \f]
 			 * Project the error covariance ahead
@@ -168,12 +168,12 @@ namespace rl
 			
 			/**
 			 * Time update ("predict") with control input.
-			 * 
+			 *
 			 * Project the state ahead
 			 * \f[ \hat{\vec{x}}^{-}_{k} = \matr{A} \hat{\vec{x}}_{k - 1} + \matr{B} \vec{u}_{k - 1} \f]
 			 * Project the error covariance ahead
 			 * \f[ \matr{P}^{-}_{k} = \matr{A} \matr{P}_{k - 1} \matr{A}^{\mathrm{T}} + \matr{Q} \f]
-			 * 
+			 *
 			 * @param[in] u Control input \f$\vec{u}_{k - 1}\f$
 			 */
 			VectorType predict(const VectorType& u)

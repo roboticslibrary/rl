@@ -53,7 +53,7 @@ namespace rl
 	{
 		/**
 		 * A polynomial function.
-		 * 
+		 *
 		 * \f[ f(x) = c_0 + c_1 x + c_2 x^2 + \ldots + c_{n - 1} x^{n - 1} + c_n x^n \f]
 		 */
 		template<typename T>
@@ -229,13 +229,13 @@ namespace rl
 			}
 			
 			/**
-			 * Returns the array of the maximum function values of each dimension 
+			 * Returns the array of the maximum function values of each dimension
 			 * within the definition range, not regarding the sign of the function values.
-			 * 
+			 *
 			 * For polynomials higher than cubics, Eigen::PolynomialSolver is required
 			 * and calculations become iterative, without guaranteeing convergence.
 			 * A common use case is to verify speed limits with the comparison
-			 * (trajectory.derivate().getAbsoluteMaximum() < maximumSpeed).all() 
+			 * (trajectory.derivate().getAbsoluteMaximum() < maximumSpeed).all()
 			 */
 			T getAbsoluteMaximum() const
 			{
@@ -538,7 +538,7 @@ namespace rl
 					
 					if (det > 0)
 					{
-						Real sqrtDet = ::std::sqrt(det); 
+						Real sqrtDet = ::std::sqrt(det);
 						::std::vector<Real> roots(2);
 						roots[0] = (-c[1] + sqrtDet) / (2 * c[2]);
 						roots[1] = (-c[1] - sqrtDet) / (2 * c[2]);
@@ -645,12 +645,12 @@ namespace rl
 				}
 			}
 			
-			/** 
+			/**
 			 * Stretches the x-axis of a polynomial by a given factor.
-			 * 
+			 *
 			 * The returned, scaled polynomial p' of a given polynomial p fulfills
 			 * p'(x * factor) = p(x), and p'.duration() = factor * p.duration().
-			 * This is done by recalculating the underlying polynomial coefficients. 
+			 * This is done by recalculating the underlying polynomial coefficients.
 			 */
 			Polynomial scaledX(const Real& factor) const
 			{

@@ -83,7 +83,7 @@ namespace rl
 			
 			::std::string getName() const
 			{
-				return nullptr != this->attr->name ? reinterpret_cast<const char*>(this->attr->name) : ::std::string(); 
+				return nullptr != this->attr->name ? reinterpret_cast<const char*>(this->attr->name) : ::std::string();
 			}
 			
 			Attribute getNext() const

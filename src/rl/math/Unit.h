@@ -335,7 +335,7 @@ namespace rl
 		 * Constant for converting an angular value in
 		 * [degree](https://en.wikipedia.org/wiki/Degree_(angle)) to
 		 * [radian](https://en.wikipedia.org/wiki/Radian).
-		 * 
+		 *
 		 * This is equal to a multiplication by &pi; and a division by 180.
 		 */
 		static const Real DEG2RAD = static_cast<Real>(M_PI) / static_cast<Real>(180);
@@ -344,7 +344,7 @@ namespace rl
 		
 		/**
 		 * Standard acceleration due to gravity.
-		 * 
+		 *
 		 * [Standard gravity](https://en.wikipedia.org/wiki/Standard_gravity) is the nominal
 		 * [gravitational acceleration](https://en.wikipedia.org/wiki/Gravitational_acceleration)
 		 * of an object in a vacuum near the surface of the earth. It is defined as 9.80665 m &middot; s<sup>-2</sup>
@@ -366,7 +366,7 @@ namespace rl
 		 * Constant for converting an angular value in
 		 * [radian](https://en.wikipedia.org/wiki/Radian) to
 		 * [degree](https://en.wikipedia.org/wiki/Degree_(angle)).
-		 * 
+		 *
 		 * This is equal to a multiplication by 180 and a division by &pi;.
 		 */
 		static const Real RAD2DEG = static_cast<Real>(180) / static_cast<Real>(M_PI);

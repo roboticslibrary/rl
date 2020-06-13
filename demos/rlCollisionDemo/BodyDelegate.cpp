@@ -94,7 +94,7 @@ void
 BodyDelegate::updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
 	editor->setGeometry(option.rect);
-}	
+}
 
 void
 BodyDelegate::valueChanged(double d)

@@ -42,11 +42,11 @@ namespace rl
 	{
 		/**
 		 * Geometric Near-Neighbor Access Tree (GNAT).
-		 * 
+		 *
 		 * Sergey Brin. Near neighbor search in large metric spaces. In Proceedings of
 		 * the International Conference on Very Large Data Bases, pages 574-584,
 		 * Zurich, Switzerland, September, 1985.
-		 * 
+		 *
 		 * http://www.vldb.org/conf/1995/P574.PDF
 		 */
 		template<typename MetricT>

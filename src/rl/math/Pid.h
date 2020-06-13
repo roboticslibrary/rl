@@ -57,9 +57,9 @@ namespace rl
 			
 			/**
 			 * Calculate next step.
-			 * 
+			 *
 			 * \f[ k_{\mathrm{p}} \, e(t) + k_{\mathrm{i}} \int_{0}^{t} e(\tau) \, \mathrm{d}\tau + k_{\mathrm{d}} \, \frac{\mathrm{d}}{\mathrm{d}t} \, e(t) \f]
-			 * 
+			 *
 			 * @param[in] dt \f$\mathrm{d}t\f$
 			 */
 			T operator()(const T& x, const Real& dt)

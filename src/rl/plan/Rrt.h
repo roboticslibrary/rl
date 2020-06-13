@@ -44,11 +44,11 @@ namespace rl
 		
 		/**
 		 * Rapidly-Exploring Random Trees.
-		 * 
+		 *
 		 * Steven M. LaValle. Rapidly-exploring random trees: A new tool for path
 		 * planning. Technical Report TR 98-11, Iowa State University, Ames, IA,
 		 * USA, October 1998.
-		 * 
+		 *
 		 * http://msl.cs.uiuc.edu/~lavalle/papers/Lav98c.pdf
 		 */
 		class RL_PLAN_EXPORT Rrt : public Planner
@@ -106,7 +106,7 @@ namespace rl
 				::boost::listS,
 				::boost::bidirectionalS,
 				::boost::listS
-			>::vertex_descriptor Vertex; 
+			>::vertex_descriptor Vertex;
 			
 			struct TreeBundle
 			{

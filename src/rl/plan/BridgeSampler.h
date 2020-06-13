@@ -35,12 +35,12 @@ namespace rl
 	{
 		/**
 		 * Bridge test sampling strategy.
-		 * 
+		 *
 		 * David Hsu, Tingting Jiang, John Reif, and Zheng Sun. The bridge test
 		 * for sampling narrow passages with probabilistic roadmap planners. In
 		 * Proceedings of the IEEE International Conference on Robotics and Automation,
 		 * pages 4420-4426, September 2003.
-		 * 
+		 *
 		 * http://dx.doi.org/10.1109/ROBOT.2003.1242285
 		 */
 		class RL_PLAN_EXPORT BridgeSampler : public GaussianSampler

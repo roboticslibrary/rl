@@ -43,7 +43,7 @@ namespace rl
 				::boost::listS,
 				::boost::listS,
 				::boost::bidirectionalS
-			>::vertex_descriptor Vertex; 
+			>::vertex_descriptor Vertex;
 			
 			bool operator<(const WorkspaceSphere& rhs) const;
 			

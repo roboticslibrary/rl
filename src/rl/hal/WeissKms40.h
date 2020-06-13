@@ -43,7 +43,7 @@ namespace rl
 	{
 		/**
 		 * Weiss Robotics Force-Torque Sensor KMS 40.
-		 * 
+		 *
 		 * See "KMS Command Set Reference Manual":
 		 * <www.weiss-robotics.de/en/download.html?cid=70&fid=37&id=164>
 		 */

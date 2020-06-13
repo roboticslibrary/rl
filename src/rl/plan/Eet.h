@@ -42,11 +42,11 @@ namespace rl
 		
 		/**
 		 * Exploring/Exploiting Trees
-		 * 
+		 *
 		 * Markus Rickert, Arne Sieverling, and Oliver Brock. Balancing exploration
 		 * and exploitation in sampling-based motion planning. IEEE Transactions on
 		 * Robotics, 30(6):1305-1317, December 2014.
-		 * 
+		 *
 		 * http://dx.doi.org/10.1109/TRO.2014.2340191
 		 */
 		class RL_PLAN_EXPORT Eet : public RrtCon

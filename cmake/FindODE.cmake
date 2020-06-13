@@ -162,7 +162,7 @@ if(ODE_INCLUDE_DIRS AND ODE_LIBRARIES)
 	endif()
 endif()
 
-mark_as_advanced(ODE_DEFINITIONS) 
+mark_as_advanced(ODE_DEFINITIONS)
 
 find_package_handle_standard_args(
 	ODE

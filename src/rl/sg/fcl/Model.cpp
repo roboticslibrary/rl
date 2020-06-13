@@ -65,7 +65,7 @@ namespace rl
 				}
 			}
 			
-			void 
+			void
 			Model::addCollisionObject(::fcl::CollisionObject* collisionObject, Body* body)
 			{
 				this->manager.registerObject(collisionObject);
@@ -97,7 +97,7 @@ namespace rl
 				}
 			}
 			
-			void 
+			void
 			Model::removeCollisionObject(::fcl::CollisionObject* collisionObject)
 			{
 				this->manager.unregisterObject(collisionObject);

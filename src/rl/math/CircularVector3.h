@@ -40,7 +40,7 @@
 #include "Circular.h"
 #include "CircularVector2.h"
 #include "Function.h"
-#include "Matrix.h" 
+#include "Matrix.h"
 #include "Vector.h"
 
 namespace rl
@@ -50,7 +50,6 @@ namespace rl
 		/**
 		 * Circular segment function that maps from a time x to a point in 3D on
 		 * a circular trajectory.
-		 * 
 		 */
 		template<>
 		class Circular<Vector3> : public Function<Vector3>
@@ -68,7 +67,7 @@ namespace rl
 			
 			/**
 			 * Generates a circular segment through three given points in 3D.
-			 * 
+			 *
 			 * The given points must not be (numerically close to) colinear.
 			 */
 			static Circular<Vector3> ThreePoints(const Vector3& y0, const Vector3& yi, const Vector3& y1, const Real& x1 = 1)
@@ -119,14 +118,13 @@ namespace rl
 			/**
 			 * Generates a circular segment through three given points in 3D with
 			 * a given segment angle.
-			 * 
+			 *
 			 * The given points must not be (numerically close to) colinear.
 			 * Contrary to ThreePoints, where the circular segment ends in y1,
 			 * the circular segments ends after a given angle.
 			 * With this, a full circle can be constructed, given an angle of 2*pi.
 			 * The given segment angle may be any real number, which allows
 			 * multiple rotations.
-			 * 
 			 */
 			static Circular<Vector3> ThreePointsAngle(const Vector3& y0, const Vector3& yi, const Vector3& y1, const Real& angle, const Real& x1 = 1)
 			{
@@ -162,7 +160,7 @@ namespace rl
 			
 			/**
 			 * Evaluates the circular segment function for a given x.
-			 * 
+			 *
 			 * Note that only the first two derivatives are implemented, all higher
 			 * orders will return NaN.
 			 */

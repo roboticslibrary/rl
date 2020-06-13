@@ -36,7 +36,7 @@ namespace rl
 	{
 		/**
 		 * Spatial vector algebra.
-		 * 
+		 *
 		 * Roy Featherstone. Rigid Body Dynamics Algorithms. Springer, New
 		 * York, NY, USA, 2008.
 		 */

@@ -49,12 +49,12 @@ main(int argc, char** argv)
 	std::srand(0); // get reproducible results
 	
 	for (std::size_t n = 0; n < 5; ++n)
-	{					
+	{
 		rl::math::Vector q(dof);
 		
 		for (std::size_t i = 0; i < dof; ++i)
 		{
-			rl::math::Real r = static_cast<rl::math::Real>(std::rand()) / static_cast<rl::math::Real>(RAND_MAX); 
+			rl::math::Real r = static_cast<rl::math::Real>(std::rand()) / static_cast<rl::math::Real>(RAND_MAX);
 			q(i) = (r - 0.5) * 360 * rl::math::DEG2RAD;
 		}
 		

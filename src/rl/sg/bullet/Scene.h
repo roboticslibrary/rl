@@ -40,7 +40,7 @@ namespace rl
 	{
 		/**
 		 * Bullet Physics Library.
-		 * 
+		 *
 		 * http://bulletphysics.org/
 		 */
 		namespace bullet
@@ -91,7 +91,7 @@ namespace rl
 			protected:
 				
 			private:
-				struct ContactResultCallback : public ::btCollisionWorld::ContactResultCallback 
+				struct ContactResultCallback : public ::btCollisionWorld::ContactResultCallback
 				{
 					ContactResultCallback();
 					

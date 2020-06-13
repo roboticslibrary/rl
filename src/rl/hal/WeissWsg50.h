@@ -41,10 +41,10 @@ namespace rl
 	{
 		/**
 		 * Weiss Robotics Universal Gripper WSG 50.
-		 * 
+		 *
 		 * See "WSG Series of Intelligent Servo-Electric Grippers: Command Set Reference Manual":
 		 * <http://www.weiss-robotics.de/en/download.html?cid=1&fid=37&id=314>
-		 * 
+		 *
 		 * Important: Before use, you usually need to set "Part Width Tolerance"
 		 * and "Default Clamping Travel" to maximum in the web interface.
 		 * Otherwise, the gripper will not grasp if object width is different
@@ -150,9 +150,9 @@ namespace rl
 			
 			/**
 			 * Perform necessary homing motion for calibration.
-			 * 
+			 *
 			 * This function call is blocking until the calibration is complete.
-			 * 
+			 *
 			 * @param[in] direction 0 = default from system configuration, 1 = positive movement, 2 = negative movement
 			 */
 			void doHomingMotion(const unsigned int& direction = 0);

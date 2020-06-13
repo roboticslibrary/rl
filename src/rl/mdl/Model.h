@@ -43,7 +43,7 @@ namespace rl
 {
 	/**
 	 * Rigid body kinematics and dynamics.
-	 * 
+	 *
 	 * Roy Featherstone. Rigid Body Dynamics Algorithms. Springer, New
 	 * York, NY, USA, 2008.
 	 */

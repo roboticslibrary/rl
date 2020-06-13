@@ -34,7 +34,7 @@ main(int argc, char** argv)
 	{
 		rl::math::Polynomial<rl::math::ArrayX> p = rl::math::Polynomial<rl::math::ArrayX>::Quadratic(
 			rl::math::ArrayX::Constant(1, 0),
-			rl::math::ArrayX::Constant(1, 1), 
+			rl::math::ArrayX::Constant(1, 1),
 			rl::math::ArrayX::Constant(1, 0),
 			1
 		);

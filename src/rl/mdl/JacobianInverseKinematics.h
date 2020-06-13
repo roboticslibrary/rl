@@ -39,10 +39,10 @@ namespace rl
 	{
 		/**
 		 * Iterative inverse kinematics using Jacobian with random restarts.
-		 * 
+		 *
 		 * Samuel R. Buss, Introduction to Inverse Kinematics with Jacobian
 		 * Transpose, Pseudoinverse and Damped Least Squares Methods, 2009.
-		 * 
+		 *
 		 * https://www.math.ucsd.edu/~sbuss/ResearchWeb/ikmethods/iksurvey.pdf
 		 */
 		class RL_MDL_EXPORT JacobianInverseKinematics : public IterativeInverseKinematics

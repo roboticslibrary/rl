@@ -51,7 +51,7 @@ public:
 	
 	void setBody(rl::sg::Body* collision, rl::sg::Body* view);
 	
-	bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole); 
+	bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole);
 	
 protected:
 	

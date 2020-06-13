@@ -122,7 +122,7 @@ select_library_configurations(SoQt)
 
 set(SoQt_DEFINITIONS -DSOQT_DLL)
 
-mark_as_advanced(SoQt_DEFINITIONS) 
+mark_as_advanced(SoQt_DEFINITIONS)
 
 if(EXISTS "${SoQt_INCLUDE_DIRS}/Inventor/Qt/SoQtBasic.h")
 	file(STRINGS "${SoQt_INCLUDE_DIRS}/Inventor/Qt/SoQtBasic.h" GUI_TOOLKIT_VERSION_DEFINE REGEX "#define GUI_TOOLKIT_VERSION.*[0-9]+.*")

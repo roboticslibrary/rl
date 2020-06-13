@@ -222,7 +222,7 @@ namespace rl
 			unsigned int width;
 			unsigned int height;
 			
-			::dc1394error_t error = ::dc1394_get_image_size_from_video_mode(this->camera, static_cast<::dc1394video_mode_t>(this->videoMode), &width, &height); 
+			::dc1394error_t error = ::dc1394_get_image_size_from_video_mode(this->camera, static_cast<::dc1394video_mode_t>(this->videoMode), &width, &height);
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -250,7 +250,7 @@ namespace rl
 		void
 		Dc1394Camera::getFeatureBoundaries(const Feature& feature, unsigned int& min, unsigned int& max) const
 		{
-			::dc1394error_t error = ::dc1394_feature_get_boundaries(this->camera, static_cast<::dc1394feature_t>(feature), &min, &max); 
+			::dc1394error_t error = ::dc1394_feature_get_boundaries(this->camera, static_cast<::dc1394feature_t>(feature), &min, &max);
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -261,7 +261,7 @@ namespace rl
 		void
 		Dc1394Camera::getFeatureBoundariesAbsolute(const Feature& feature, float& min, float& max) const
 		{
-			::dc1394error_t error = ::dc1394_feature_get_absolute_boundaries(this->camera, static_cast<::dc1394feature_t>(feature), &min, &max); 
+			::dc1394error_t error = ::dc1394_feature_get_absolute_boundaries(this->camera, static_cast<::dc1394feature_t>(feature), &min, &max);
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -274,7 +274,7 @@ namespace rl
 		{
 			::dc1394feature_mode_t mode;
 			
-			::dc1394error_t error = ::dc1394_feature_get_mode(this->camera, static_cast<::dc1394feature_t>(feature), &mode); 
+			::dc1394error_t error = ::dc1394_feature_get_mode(this->camera, static_cast<::dc1394feature_t>(feature), &mode);
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -322,7 +322,7 @@ namespace rl
 		{
 			unsigned int value;
 			
-			::dc1394error_t error = ::dc1394_feature_get_value(this->camera, static_cast<::dc1394feature_t>(feature), &value); 
+			::dc1394error_t error = ::dc1394_feature_get_value(this->camera, static_cast<::dc1394feature_t>(feature), &value);
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -337,7 +337,7 @@ namespace rl
 		{
 			float value;
 			
-			::dc1394error_t error = ::dc1394_feature_get_absolute_value(this->camera, static_cast<::dc1394feature_t>(feature), &value); 
+			::dc1394error_t error = ::dc1394_feature_get_absolute_value(this->camera, static_cast<::dc1394feature_t>(feature), &value);
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -361,7 +361,7 @@ namespace rl
 		void
 		Dc1394Camera::getFormat7MaximumImageSize(const unsigned int& mode, unsigned int& width, unsigned& height) const
 		{
-			::dc1394error_t error = ::dc1394_format7_get_max_image_size(this->camera, static_cast<::dc1394video_mode_t>(mode), &width, &height); 
+			::dc1394error_t error = ::dc1394_format7_get_max_image_size(this->camera, static_cast<::dc1394video_mode_t>(mode), &width, &height);
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -401,7 +401,7 @@ namespace rl
 		{
 			OperationMode operationMode;
 			
-			::dc1394error_t error = ::dc1394_video_get_operation_mode(this->camera, reinterpret_cast<::dc1394operation_mode_t*>(&operationMode)); 
+			::dc1394error_t error = ::dc1394_video_get_operation_mode(this->camera, reinterpret_cast<::dc1394operation_mode_t*>(&operationMode));
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -417,7 +417,7 @@ namespace rl
 			unsigned int width;
 			unsigned int height;
 			
-			::dc1394error_t error = ::dc1394_get_image_size_from_video_mode(this->camera, static_cast<::dc1394video_mode_t>(this->videoMode), &width, &height); 
+			::dc1394error_t error = ::dc1394_get_image_size_from_video_mode(this->camera, static_cast<::dc1394video_mode_t>(this->videoMode), &width, &height);
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -488,7 +488,7 @@ namespace rl
 		{
 			VideoMode videoMode;
 			
-			::dc1394error_t error = ::dc1394_video_get_mode(this->camera, reinterpret_cast<::dc1394video_mode_t*>(&videoMode)); 
+			::dc1394error_t error = ::dc1394_video_get_mode(this->camera, reinterpret_cast<::dc1394video_mode_t*>(&videoMode));
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -504,7 +504,7 @@ namespace rl
 			unsigned int width;
 			unsigned int height;
 			
-			::dc1394error_t error = ::dc1394_get_image_size_from_video_mode(this->camera, static_cast<::dc1394video_mode_t>(this->videoMode), &width, &height); 
+			::dc1394error_t error = ::dc1394_get_image_size_from_video_mode(this->camera, static_cast<::dc1394video_mode_t>(this->videoMode), &width, &height);
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -517,7 +517,7 @@ namespace rl
 		void
 		Dc1394Camera::grab(unsigned char* image)
 		{
-			::dc1394error_t error = ::dc1394_capture_dequeue(this->camera, ::DC1394_CAPTURE_POLICY_WAIT, &this->frame); 
+			::dc1394error_t error = ::dc1394_capture_dequeue(this->camera, ::DC1394_CAPTURE_POLICY_WAIT, &this->frame);
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -539,7 +539,7 @@ namespace rl
 		{
 			::dc1394bool_t hasAbsoluteControl;
 			
-			::dc1394error_t error = ::dc1394_feature_has_absolute_control(this->camera, static_cast<::dc1394feature_t>(feature), &hasAbsoluteControl); 
+			::dc1394error_t error = ::dc1394_feature_has_absolute_control(this->camera, static_cast<::dc1394feature_t>(feature), &hasAbsoluteControl);
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -554,7 +554,7 @@ namespace rl
 		{
 			::dc1394switch_t isFeatureOn;
 			
-			::dc1394error_t error = ::dc1394_feature_get_power(this->camera, static_cast<::dc1394feature_t>(feature), &isFeatureOn); 
+			::dc1394error_t error = ::dc1394_feature_get_power(this->camera, static_cast<::dc1394feature_t>(feature), &isFeatureOn);
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -569,7 +569,7 @@ namespace rl
 		{
 			::dc1394bool_t isFeaturePresent;
 			
-			::dc1394error_t error = ::dc1394_feature_is_present(this->camera, static_cast<::dc1394feature_t>(feature), &isFeaturePresent); 
+			::dc1394error_t error = ::dc1394_feature_is_present(this->camera, static_cast<::dc1394feature_t>(feature), &isFeaturePresent);
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -584,7 +584,7 @@ namespace rl
 		{
 			::dc1394bool_t canReadOut;
 			
-			::dc1394error_t error = ::dc1394_feature_is_readable(this->camera, static_cast<::dc1394feature_t>(feature), &canReadOut); 
+			::dc1394error_t error = ::dc1394_feature_is_readable(this->camera, static_cast<::dc1394feature_t>(feature), &canReadOut);
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -599,7 +599,7 @@ namespace rl
 		{
 			::dc1394bool_t canTurnOnOff;
 			
-			::dc1394error_t error = ::dc1394_feature_is_switchable(this->camera, static_cast<::dc1394feature_t>(feature), &canTurnOnOff); 
+			::dc1394error_t error = ::dc1394_feature_is_switchable(this->camera, static_cast<::dc1394feature_t>(feature), &canTurnOnOff);
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -631,7 +631,7 @@ namespace rl
 		void
 		Dc1394Camera::reset()
 		{
-			::dc1394error_t error = ::dc1394_camera_reset(this->camera); 
+			::dc1394error_t error = ::dc1394_camera_reset(this->camera);
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -647,7 +647,7 @@ namespace rl
 		void
 		Dc1394Camera::setFeatureEnabled(const Feature& feature, const bool& doOn)
 		{
-			::dc1394error_t error = ::dc1394_feature_set_power(this->camera, static_cast<::dc1394feature_t>(feature), static_cast<::dc1394switch_t>(doOn)); 
+			::dc1394error_t error = ::dc1394_feature_set_power(this->camera, static_cast<::dc1394feature_t>(feature), static_cast<::dc1394switch_t>(doOn));
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -658,7 +658,7 @@ namespace rl
 		void
 		Dc1394Camera::setFeatureMode(const Feature& feature, const FeatureMode& mode)
 		{
-			::dc1394error_t error = ::dc1394_feature_set_mode(this->camera, static_cast<::dc1394feature_t>(feature), static_cast<::dc1394feature_mode_t>(mode)); 
+			::dc1394error_t error = ::dc1394_feature_set_mode(this->camera, static_cast<::dc1394feature_t>(feature), static_cast<::dc1394feature_mode_t>(mode));
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -669,7 +669,7 @@ namespace rl
 		void
 		Dc1394Camera::setFeatureValue(const Feature& feature, const unsigned int& value)
 		{
-			::dc1394error_t error = ::dc1394_feature_set_value(this->camera, static_cast<::dc1394feature_t>(feature), value); 
+			::dc1394error_t error = ::dc1394_feature_set_value(this->camera, static_cast<::dc1394feature_t>(feature), value);
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -680,7 +680,7 @@ namespace rl
 		void
 		Dc1394Camera::setFeatureValueAbsolute(const Feature& feature, const float& value)
 		{
-			::dc1394error_t error = ::dc1394_feature_set_absolute_value(this->camera, static_cast<::dc1394feature_t>(feature), value); 
+			::dc1394error_t error = ::dc1394_feature_set_absolute_value(this->camera, static_cast<::dc1394feature_t>(feature), value);
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -700,7 +700,7 @@ namespace rl
 				top,
 				width,
 				height
-			); 
+			);
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -718,7 +718,7 @@ namespace rl
 		void
 		Dc1394Camera::setFramerate(const Framerate& framerate)
 		{
-			::dc1394error_t error = ::dc1394_video_set_framerate(this->camera, static_cast<::dc1394framerate_t>(framerate));  
+			::dc1394error_t error = ::dc1394_video_set_framerate(this->camera, static_cast<::dc1394framerate_t>(framerate));
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -737,7 +737,7 @@ namespace rl
 		void
 		Dc1394Camera::setOperationMode(const OperationMode& mode)
 		{
-			::dc1394error_t error = ::dc1394_video_set_operation_mode(this->camera, static_cast<::dc1394operation_mode_t>(mode)); 
+			::dc1394error_t error = ::dc1394_video_set_operation_mode(this->camera, static_cast<::dc1394operation_mode_t>(mode));
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -748,7 +748,7 @@ namespace rl
 		void
 		Dc1394Camera::setSpeed(const IsoSpeed& speed)
 		{
-			::dc1394error_t error = ::dc1394_video_set_iso_speed(this->camera, static_cast<::dc1394speed_t>(speed)); 
+			::dc1394error_t error = ::dc1394_video_set_iso_speed(this->camera, static_cast<::dc1394speed_t>(speed));
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -761,7 +761,7 @@ namespace rl
 		void
 		Dc1394Camera::setVideoMode(const VideoMode& videoMode)
 		{
-			::dc1394error_t error = ::dc1394_video_set_mode(this->camera, static_cast<::dc1394video_mode_t>(videoMode)); 
+			::dc1394error_t error = ::dc1394_video_set_mode(this->camera, static_cast<::dc1394video_mode_t>(videoMode));
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -781,14 +781,14 @@ namespace rl
 				throw Exception(error);
 			}
 			
-			error = ::dc1394_camera_set_power(this->camera, ::DC1394_ON); 
+			error = ::dc1394_camera_set_power(this->camera, ::DC1394_ON);
 			
 			if (::DC1394_SUCCESS != error)
 			{
 				throw Exception(error);
 			}
 			
-			error = ::dc1394_video_set_transmission(this->camera, ::DC1394_ON); 
+			error = ::dc1394_video_set_transmission(this->camera, ::DC1394_ON);
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -804,7 +804,7 @@ namespace rl
 		void
 		Dc1394Camera::stop()
 		{
-			::dc1394error_t error = ::dc1394_video_set_transmission(this->camera, ::DC1394_OFF); 
+			::dc1394error_t error = ::dc1394_video_set_transmission(this->camera, ::DC1394_OFF);
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -818,7 +818,7 @@ namespace rl
 				throw Exception(error);
 			}
 			
-			error = ::dc1394_capture_stop(this->camera); 
+			error = ::dc1394_capture_stop(this->camera);
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -853,7 +853,7 @@ namespace rl
 			default:
 				return ::dc1394_error_get_string(this->error);
 				break;
-			} 
+			}
 		}
 	}
 }

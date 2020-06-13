@@ -240,8 +240,8 @@ namespace rl
 			Scene::rayNearCallback(void* data, ::dGeomID o1, ::dGeomID o2)
 			{
 				if (::dGeomIsSpace(o1) || ::dGeomIsSpace(o2))
-				{ 
-					::dSpaceCollide2(o1, o2, data, &Scene::rayNearCallback); 
+				{
+					::dSpaceCollide2(o1, o2, data, &Scene::rayNearCallback);
 					
 					if (::dGeomIsSpace(o1))
 					{

@@ -91,7 +91,7 @@ void
 OperationalDelegate::updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
 	editor->setGeometry(option.rect);
-}	
+}
 
 void
 OperationalDelegate::valueChanged(double d)

@@ -46,11 +46,11 @@ namespace rl
 	{
 		/**
 		 * k-d tree.
-		 * 
+		 *
 		 * Jon Louis Bentley. Multidimensional binary search trees used for
 		 * associative searching. Communications of the ACM, 18(9):509-517,
 		 * September 1975.
-		 * 
+		 *
 		 * http://dx.doi.org/10.1145/361002.361007
 		 */
 		template<typename MetricT>

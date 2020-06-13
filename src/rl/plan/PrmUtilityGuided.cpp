@@ -82,7 +82,7 @@ namespace rl
 #else
 					// This works better in our examples. Here we define entropy by using samples where we are unsure, if they are colliding.
 					if (::std::abs(pFree - static_cast<::rl::math::Real>(0.5)) < ::std::abs(pBest - static_cast<::rl::math::Real>(0.5)))
-					{   
+					{
 						pBest = pFree;
 						bestSample = sample;
 					}
@@ -173,7 +173,7 @@ namespace rl
 					++collisionCount;
 				}
 				
-				queue.pop(); 
+				queue.pop();
 			}
 			
 			return 1 - static_cast<::rl::math::Real>(collisionCount) / static_cast<::rl::math::Real>(count);
@@ -182,7 +182,7 @@ namespace rl
 		::std::string
 		PrmUtilityGuided::getName() const
 		{
-			return "PRM Utility Guided"; 
+			return "PRM Utility Guided";
 		}
 		
 		::std::uniform_real_distribution<::rl::math::Real>::result_type

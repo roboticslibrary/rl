@@ -39,7 +39,7 @@ namespace rl
 	{
 		/**
 		 * Proximity Query Package.
-		 * 
+		 *
 		 * http://gamma.cs.unc.edu/SSV/
 		 */
 		namespace pqp

@@ -162,7 +162,7 @@ main(int argc, char** argv)
 	
 	for (std::size_t i = 0; i < scenes.size(); ++i)
 	{
-		std::cout << "Testing SimpleScene::isColliding() in " << sceneNames[i] << ": "; 
+		std::cout << "Testing SimpleScene::isColliding() in " << sceneNames[i] << ": ";
 		std::cout << (collides(scenes[i], kinematics.get()) ? "true" : "false") << std::endl;
 	}
 	

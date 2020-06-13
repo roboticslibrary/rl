@@ -39,7 +39,7 @@ namespace rl
 	{
 		/**
 		 * Open Dynamics Engine.
-		 * 
+		 *
 		 * http://www.ode.org/
 		 */
 		namespace ode

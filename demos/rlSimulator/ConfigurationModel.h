@@ -49,9 +49,9 @@ public:
 	
 	virtual int rowCount(const QModelIndex& parent = QModelIndex()) const = 0;
 	
-	bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole); 
+	bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole);
 	
-	bool setData(const rl::math::Vector& q); 
+	bool setData(const rl::math::Vector& q);
 	
 public slots:
 	void operationalChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight);

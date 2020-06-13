@@ -95,7 +95,7 @@ namespace rl
 		
 		::std::uint8_t
 		LeuzeRs4::crc(const ::std::uint8_t* buf, const ::std::size_t& len) const
-		{	
+		{
 			::std::uint8_t checksum = buf[0];
 			
 			for (::std::size_t i = 1; i < len; ++i)

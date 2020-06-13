@@ -153,7 +153,7 @@ set(Xenomai_LIBRARIES ${Xenomai_NATIVE_LIBRARIES} ${Xenomai_XENOMAI_LIBRARIES} p
 
 set(Xenomai_DEFINITIONS -D__XENO__ -D_GNU_SOURCE -D_REENTRANT)
 
-mark_as_advanced(Xenomai_DEFINITIONS) 
+mark_as_advanced(Xenomai_DEFINITIONS)
 
 find_package_handle_standard_args(
 	Xenomai

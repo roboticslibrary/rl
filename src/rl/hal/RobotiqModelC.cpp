@@ -67,7 +67,7 @@ namespace rl
 		
 		::std::uint16_t
 		RobotiqModelC::crc(const ::std::uint8_t* buf, const ::std::size_t& len) const
-		{	
+		{
 			::std::uint16_t checksum = 0xFFFF;
 			
 			for (::std::size_t i = 0; i < len; ++i)

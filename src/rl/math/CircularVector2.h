@@ -39,7 +39,7 @@
 
 #include "Circular.h"
 #include "Function.h"
-#include "Matrix.h" 
+#include "Matrix.h"
 #include "Vector.h"
 
 namespace rl
@@ -49,7 +49,6 @@ namespace rl
 		/**
 		 * Circular segment function that maps from a time x to a point in 2D on
 		 * a circular trajectory.
-		 * 
 		 */
 		template<>
 		class Circular<Vector2> : public Function<Vector2>
@@ -67,7 +66,7 @@ namespace rl
 			
 			/**
 			 * Generates a circular segment function in 2D through three given points.
-			 * 
+			 *
 			 * The given points most not be (numerically close to) colinear.
 			 */
 			static Circular<Vector2> ThreePoints(const Vector2& y0, const Vector2& yi, const Vector2& y1, const Real& x1 = 1)
@@ -81,7 +80,7 @@ namespace rl
 				Matrix33 A;
 				A << Matrix::Ones(3, 1), -points2d.transpose();
 				Vector3 b = - (points2d.transpose() * points2d).diagonal();
-				Vector3 x = A.fullPivLu().solve(b); 
+				Vector3 x = A.fullPivLu().solve(b);
 				Vector2 center2d = x.bottomRows(2) / 2;
 				//Real radiusSquared = center2d.transpose() * center2d - x(0);
 				//Real radius = ::std::sqrt(radiusSquared);
@@ -112,14 +111,13 @@ namespace rl
 			/**
 			 * Generates a circular segment through three given points in 2D with
 			 * a given segment angle.
-			 * 
+			 *
 			 * The given points must not be (numerically close to) colinear.
 			 * Contrary to ThreePoints, where the circular segment ends in y1,
 			 * the circular segments ends after a given angle.
 			 * With this, a full circle can be constructed, given an angle of 2*pi.
 			 * The given segment angle may be any real number, which allows
 			 * multiple rotations.
-			 * 
 			 */
 			static Circular<Vector2> ThreePointsAngle(const Vector2& y0, const Vector2& yi, const Vector2& y1, const Real& angle, const Real& x1 = 1)
 			{
@@ -155,7 +153,7 @@ namespace rl
 			
 			/**
 			 * Evaluates the circular segment function for a given x.
-			 * 
+			 *
 			 * Note that only the first two derivatives are implemented, all higher
 			 * orders will return NaN.
 			 */

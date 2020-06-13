@@ -41,9 +41,9 @@ static CartesianFromPolar(const MatrixBase<OtherDerived>& polar)
 
 /**
  * Convert polar coordinates into Cartesian coordinates.
- * 
+ *
  * http://mathworld.wolfram.com/PolarCoordinates.html
- * 
+ *
  * @param[in] r Radial distance from the origin
  * @param[in] theta Counterclockwise angle from the x-axis
  */
@@ -73,9 +73,9 @@ static CartesianFromSpherical(const MatrixBase<OtherDerived>& spherical)
 
 /**
  * Convert spherical coordinates into Cartesian coordinates.
- * 
+ *
  * http://mathworld.wolfram.com/SphericalCoordinates.html
- * 
+ *
  * @param[in] r Radial distance from the origin
  * @param[in] theta Azimuthal angle in the xy-plane from the x-axis
  * @param[in] phi Polar angle (also known as the zenith angle and colatitude) from the positive z-axis
@@ -109,7 +109,7 @@ static PolarFromCartesian(const MatrixBase<OtherDerived>& cartesian)
 
 /**
  * Convert Cartesian coordinates into polar coordinates.
- * 
+ *
  * http://mathworld.wolfram.com/PolarCoordinates.html
  */
 Matrix<Scalar, 2, 1>
@@ -135,7 +135,7 @@ static RandomOnCircle()
 
 /**
  * Generate random point on unit circle.
- * 
+ *
  * http://mathworld.wolfram.com/CirclePointPicking.html
  */
 Matrix<Scalar, 2, 1>
@@ -170,7 +170,7 @@ static RandomOnSphere()
 
 /**
  * Generate random point on unit sphere.
- * 
+ *
  * http://mathworld.wolfram.com/SpherePointPicking.html
  */
 template<typename OtherDerived>
@@ -211,7 +211,7 @@ static SphericalFromCartesian(const MatrixBase<OtherDerived>& cartesian)
 
 /**
  * Convert Cartesian coordinates into spherical coordinates.
- * 
+ *
  * http://mathworld.wolfram.com/SphericalCoordinates.html
  */
 template<typename OtherDerived>

@@ -39,10 +39,10 @@ namespace rl
 	{
 		/**
 		 * A piecewise polynomial function.
-		 * 
+		 *
 		 * A Spline is a function consisting of a list of polynomials, which
 		 * may have different degrees.
-		 * 
+		 *
 		 * @see Polynomial
 		 */
 		template<typename T>
@@ -70,7 +70,7 @@ namespace rl
 			/**
 			 * Generates a cubic spline that interpolates a set of data points
 			 * with known first derivatives at the endpoints.
-			 * 
+			 *
 			 * A cubic spline interpolant \f$S\f$ for a function \f$f\f$ with a
 			 * set of nodes \f$x_0 < x_1 < \cdots < x_n\f$ is a piecewise cubic polynomial
 			 * \f$S_i\f$ on \f$[x_i, x_{i + 1}]\f$ for \f$i = 0, \ldots, n - 1\f$
@@ -80,7 +80,7 @@ namespace rl
 			 * S_i'(x) &= b_i + 2 c_i (x - x_i) + 3 d_i (x - x_i)^2 \, , \\
 			 * S_i''(x) &= 2 c_i + 6 d_i (x - x_i) \, .
 			 * \f}
-			 * 
+			 *
 			 * The spline matches the nodes and is continuous in the first and second
 			 * derivatives as defined by the properties
 			 * \f{align*}{
@@ -89,16 +89,16 @@ namespace rl
 			 * S'_i(x_{i + 1}) &= S'_{i + 1}(x_{i + 1}) \, , \\
 			 * S''_i(x_{i + 1}) &= S''_{i + 1}(x_{i + 1}) \, .
 			 * \f}
-			 * 
+			 *
 			 * In this variant, the boundary conditions are defined by the first
 			 * derivatives
 			 * \f{align*}{
 			 * S'(x_0) = f'(x_0) \, , \\
 			 * S'(x_n) = f'(x_n) \, .
 			 * \f}
-			 * 
+			 *
 			 * http://banach.millersville.edu/~bob/math375/CubicSpline/main.pdf
-			 * 
+			 *
 			 * @param[in] x \f$x_0, \ldots, x_n\f$
 			 * @param[in] y \f$f(x_0), \ldots, f(x_n)\f$
 			 * @param[in] yd0 \f$f'(x_0)\f$
@@ -169,7 +169,7 @@ namespace rl
 			/**
 			 * Generates a cubic spline that interpolates a set of data points
 			 * with second derivatives at the endpoints set to zero.
-			 * 
+			 *
 			 * A cubic spline interpolant \f$S\f$ for a function \f$f\f$ with a
 			 * set of nodes \f$x_0 < x_1 < \cdots < x_n\f$ is a piecewise cubic polynomial
 			 * \f$S_i\f$ on \f$[x_i, x_{i + 1}]\f$ for \f$i = 0, \ldots, n - 1\f$
@@ -179,7 +179,7 @@ namespace rl
 			 * S_i'(x) &= b_i + 2 c_i (x - x_i) + 3 d_i (x - x_i)^2 \, , \\
 			 * S_i''(x) &= 2 c_i + 6 d_i (x - x_i) \, .
 			 * \f}
-			 * 
+			 *
 			 * The spline matches the nodes and is continuous in the first and second
 			 * derivatives as defined by the properties
 			 * \f{align*}{
@@ -188,15 +188,15 @@ namespace rl
 			 * S'_i(x_{i + 1}) &= S'_{i + 1}(x_{i + 1}) \, , \\
 			 * S''_i(x_{i + 1}) &= S''_{i + 1}(x_{i + 1}) \, .
 			 * \f}
-			 * 
+			 *
 			 * In this variant, the boundary conditions are defined by the second
 			 * derivatives
 			 * \f{align*}{
 			 * S''(x_0) = S''(x_n) = 0 \, .
 			 * \f}
-			 * 
+			 *
 			 * http://banach.millersville.edu/~bob/math375/CubicSpline/main.pdf
-			 * 
+			 *
 			 * @param[in] x \f$x_0, \ldots, x_n\f$
 			 * @param[in] y \f$f(x_0), \ldots, f(x_n)\f$
 			 */
@@ -259,11 +259,11 @@ namespace rl
 			/**
 			 * Generates a piecewise spline with parabolic segments around the
 			 * given supporting points y and linear segments in between.
-			 * 
+			 *
 			 * Note that the duration of the returned Spline is longer than the
 			 * given x, because there is one parabolic interval more than segments
 			 * in x.
-			 * 
+			 *
 			 * @param[in] parabolicInterval Gives the duration of a parabolic interval,
 			 * the following linear interval then has a duration of x(n+1) - x(n) -
 			 * parabolicInterval
@@ -406,11 +406,11 @@ namespace rl
 			/**
 			 * Generates a piecewise spline with quartic polynomial segments around
 			 * the given supporting points y and linear segments in between.
-			 * 
+			 *
 			 * Note that the duration of the returned Spline is longer than the
 			 * given x, because there is one quartic polynomial interval more than
 			 * segments in x.
-			 * 
+			 *
 			 * @param[in] quarticInterval Gives the duration of a quartic interval,
 			 * the following linear interval then has a duration of x(n+1) - x(n) -
 			 * quarticInterval
@@ -449,7 +449,7 @@ namespace rl
 					T ydNext = (y[i + 1] - y[i]) / deltaXNext;
 					T yBeforeQuartic = y[i] + (-quarticInterval / 2 * ydPrev);
 					T yBeforeLinear = y[i] + (quarticInterval / 2 * ydNext);
-					T yAfterLinear = y[i] + ((quarticInterval / 2 + linearInterval) * ydNext); 
+					T yAfterLinear = y[i] + ((quarticInterval / 2 + linearInterval) * ydNext);
 					
 					Polynomial<T> quartic = Polynomial<T>::QuarticFirstSecond(yBeforeQuartic, yBeforeLinear, ydPrev, ydNext, TypeTraits<T>::Zero(dim), quarticInterval);
 					f.push_back(quartic);
@@ -553,11 +553,11 @@ namespace rl
 			/**
 			 * Generates a piecewise spline with sextic polynomial segments around
 			 * the given supporting points y and linear segments in between.
-			 * 
+			 *
 			 * Note that the duration of the returned Spline is longer than the
 			 * given x, because there is one sextic polynomial interval more than
 			 * segments in x.
-			 * 
+			 *
 			 * @param[in] sexticInterval Gives the duration of a sextic interval,
 			 * the following linear interval then has a duration of x(n+1) - x(n) -
 			 * sexticInterval
@@ -596,7 +596,7 @@ namespace rl
 					T ydNext = (y[i + 1] - y[i]) / deltaXNext;
 					T yBeforeSextic = y[i] + (-sexticInterval / 2 * ydPrev);
 					T yBeforeLinear = y[i] + (sexticInterval / 2 * ydNext);
-					T yAfterLinear = y[i] + ((sexticInterval / 2 + linearInterval) * ydNext); 
+					T yAfterLinear = y[i] + ((sexticInterval / 2 + linearInterval) * ydNext);
 					
 					Polynomial<T> sextic = Polynomial<T>::SexticFirstSecondThird(yBeforeSextic, yBeforeLinear, ydPrev, ydNext, TypeTraits<T>::Zero(dim), TypeTraits<T>::Zero(dim), TypeTraits<T>::Zero(dim), sexticInterval);
 					f.push_back(sextic);
@@ -700,7 +700,7 @@ namespace rl
 			/**
 			 * Generates a spline of polynomials of degrees 4-1-4 from rest to rest
 			 * for one dimension.
-			 * 
+			 *
 			 * Its acceleration and deceleration segments are parabolic and reach amax.
 			 * vmax may or may not be reached; in the latter case, the linear segment
 			 * is omitted.
@@ -751,7 +751,7 @@ namespace rl
 			/**
 			 * Generates a spline of polynomials of degrees 4-1-4 from rest to rest
 			 * that is phase-synchronized for multiple degree-of-freedoms.
-			 * 
+			 *
 			 * Its acceleration and deceleration segments are parabolic and at least
 			 * one degree-of-freedon reaches its maximum acceleration amax.
 			 * vmax may or may not be reached; in the latter case, the linear segment
@@ -831,12 +831,12 @@ namespace rl
 			/**
 			 * Generates a spline of polynomials of degrees 6-1-6 from rest to rest
 			 * for one dimension.
-			 * 
+			 *
 			 * Its acceleration and deceleration segments are quartic and reach amax.
 			 * vmax may or may not be reached; in the latter case, the linear segment
 			 * is omitted.
 			 * Compared to QuarticLinearQuarticAtRest, SexticLinearSexticAtRest
-			 * makes sure the jerk is continuous, which results in a smoother and 
+			 * makes sure the jerk is continuous, which results in a smoother and
 			 * slightly longer trajectory.
 			 * The result is the shortest such 6-1-6 spline.
 			 */
@@ -885,7 +885,7 @@ namespace rl
 			/**
 			 * Generates a spline of polynomials of degrees 6-1-6 from rest to rest
 			 * that is phase-synchronized for multiple degree-of-freedoms.
-			 * 
+			 *
 			 * Its acceleration and deceleration segments are quartic and at least
 			 * one degree-of-freedon reaches its maximum acceleration amax.
 			 * vmax may or may not be reached; in the latter case, the linear segment
@@ -965,10 +965,10 @@ namespace rl
 			/**
 			 * Generates a trapezoidal acceleration trajectory from rest to rest
 			 * for multiple dimensions that are phase-synchronized.
-			 * 
-			 * A trapezoidal acceleration trajectory has up to seven segments of 
+			 *
+			 * A trapezoidal acceleration trajectory has up to seven segments of
 			 * constant jerk. Its velocity curve is double-S shaped.
-			 * 
+			 *
 			 * L. Biagiotti, C. Melchiorri (2008) "Trajectory Planning for Automatic
 			 * Machines and Robots", pp. 90ff.
 			 */
@@ -1174,13 +1174,13 @@ namespace rl
 			}
 			
 			/**
-			 * Returns the array of the maximum function values of each dimension 
+			 * Returns the array of the maximum function values of each dimension
 			 * within the definition range, not regarding the sign of the function values.
-			 * 
+			 *
 			 * For polynomials higher than cubics, Eigen::PolynomialSolver is required
 			 * and calculations become iterative, without guaranteeing convergence.
 			 * A common use case is to verify speed limits with the comparison
-			 * (trajectory.derivate().getAbsoluteMaximum() < maximumSpeed).all() 
+			 * (trajectory.derivate().getAbsoluteMaximum() < maximumSpeed).all()
 			 */
 			T getAbsoluteMaximum() const
 			{
@@ -1231,12 +1231,12 @@ namespace rl
 			}
 			
 			/**
-			 * Verifies that the spline is smooth and has no jumps 
+			 * Verifies that the spline is smooth and has no jumps
 			 * at the piecewise function boundaries.
-			 * 
+			 *
 			 * Mathematically, it checks whether the spline and a certain number
 			 * of its derivatives are continuous.
-			 *  
+			 *
 			 * @param[in] upToDerivative Sets the number of derivatives that are
 			 * also checked for continuity.
 			 */
@@ -1315,12 +1315,12 @@ namespace rl
 				}
 			}
 			
-			/** 
+			/**
 			 * Stretches the x-axis of a spline by a given factor.
-			 * 
+			 *
 			 * The returned, scaled spline s' of a given spline s fulfills
 			 * s'(x * factor) = s(x), and s'.duration() = factor * s.duration().
-			 * This is done by recalculating the underlying polynomial coefficients. 
+			 * This is done by recalculating the underlying polynomial coefficients.
 			 */
 			Spline scaledX(const Real& factor) const
 			{

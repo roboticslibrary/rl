@@ -363,19 +363,19 @@ MainWindow::~MainWindow()
 	MainWindow::singleton = nullptr;
 }
 
-void 
+void
 MainWindow::changeSimulationGravity(double value)
 {
 	this->simulationGravityValue = value;
 }
 
-void 
+void
 MainWindow::changeSimulationDampingFactor(double value)
 {
 	this->simulationDampingValue = value;
 }
 
-void 
+void
 MainWindow::clickSimulationStart()
 {
 	this->simulationIsRunning = true;
@@ -451,7 +451,7 @@ MainWindow::timerEvent(QTimerEvent *event)
 	rl::math::Vector torque(this->dynamicModel->getDof());
 	rl::math::Matrix M(this->dynamicModel->getDof(), this->dynamicModel->getDof());
 	
-#if 1 
+#if 1
 	for (int i = 0; i < this->simulationStepsPerFrame; ++i)
 	{
 		this->dynamicModel->setTorque(this->externalTorque);
@@ -468,7 +468,7 @@ MainWindow::timerEvent(QTimerEvent *event)
 		this->dynamicModel->setVelocity(qd);
 		this->dynamicModel->setAcceleration(qdd);
 #else
-		this->dynamicModel->rungeKuttaNystrom(simulationTimeStep); // its side effects do not work with damping 
+		this->dynamicModel->rungeKuttaNystrom(simulationTimeStep); // its side effects do not work with damping
 #endif
 	}
 	

@@ -27,7 +27,7 @@
 #include <iostream> // TODO
 #include <unordered_map>
 #include <boost/lexical_cast.hpp>
-#include <boost/algorithm/string.hpp> 
+#include <boost/algorithm/string.hpp>
 #include <rl/math/Quaternion.h>
 #include <rl/math/Rotation.h>
 #include <rl/math/Unit.h>

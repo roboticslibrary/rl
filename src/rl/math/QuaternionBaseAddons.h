@@ -33,11 +33,11 @@ namespace Eigen { template<typename Derived> class QuaternionBase {
 
 /**
  * QuTEM (Quaternion Tangent Ellipsoid at the Mean) sampling algorithm.
- * 
+ *
  * Michael Patrick Johnson. Exploiting Quaternions to Support Expressive
  * Interactive Character Motion. PhD Thesis, Massachusetts Institute of
  * Technology, Cambridge, MA, USA, February 2003.
- * 
+ *
  * http://characters.media.mit.edu/Theses/johnson_phd.pdf
  */
 template<typename OtherDerived1, typename OtherDerived2, typename OtherDerived3>
@@ -72,11 +72,11 @@ static Quaternion<Scalar> Random()
 
 /**
  * Generate uniformly-distributed random unit quaternions.
- * 
+ *
  * James J. Kuffner. Effective Sampling and Distance Metrics for 3D Rigid Body
  * Path Planning. Proceedings of the IEEE International Conference on Robotics
  * and Automation, pages 3993-3998. New Orleans, LA, USA, April 2004.
- * 
+ *
  * https://doi.org/10.1109/ROBOT.2004.1308895
  */
 template<typename OtherDerived>

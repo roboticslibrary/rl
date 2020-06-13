@@ -35,12 +35,12 @@ namespace rl
 	{
 		/**
 		 * Adaptive Dynamic-Domain RRT.
-		 * 
+		 *
 		 * L&eacute;onard Jaillet, Anna Yershova, Steven M. LaValle, and Thiery
 		 * Sim&eacute;on. Adaptive tuning of the sampling domain for dynamic-domain
 		 * RRTs. In Proceedings of the IEEE/RSJ International Conference on Intelligent
 		 * Robots and Systems, pages 2851-2856, August 2005.
-		 * 
+		 *
 		 * http://dx.doi.org/10.1109/IROS.2005.1545607
 		 */
 		class RL_PLAN_EXPORT AddRrtConCon : public RrtConCon

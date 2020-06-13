@@ -46,12 +46,12 @@ namespace rl
 		
 		/**
 		 * Wavefront expansion.
-		 * 
+		 *
 		 * Oliver Brock and Lydia E. Kavraki. Decomposition-based motion planning:
 		 * A framework for real-time motion planning in high-dimensional configuration
 		 * spaces. In Proceedings of the IEEE International Conference on Robotics
 		 * and Automation, pages 1469-1474, 2001.
-		 * 
+		 *
 		 * http://dx.doi.org/10.1109/ROBOT.2001.932817
 		 */
 		class RL_PLAN_EXPORT WorkspaceSphereExplorer

@@ -39,7 +39,7 @@ namespace rl
 	namespace hal
 	{
 		/**
-		 * IEEE 1394 based cameras. 
+		 * IEEE 1394 based cameras.
 		 */
 		class RL_HAL_EXPORT Dc1394Camera : public Camera, public CyclicDevice
 		{

@@ -36,7 +36,6 @@ namespace rl
 		/**
 		 * Circular segment function that maps from a time x to a point on
 		 * a circular trajectory.
-		 * 
 		 */
 		template<typename T>
 		class Circular : public Function<T>

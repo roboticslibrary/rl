@@ -232,7 +232,7 @@ namespace rl
 					point2(i) = distanceData.result.nearest_points[1][i];
 				}
 				
-				return distanceData.result.min_distance; 
+				return distanceData.result.min_distance;
 			}
 			
 			::rl::math::Real
@@ -252,7 +252,7 @@ namespace rl
 					point2(i) = distanceData.result.nearest_points[1][i];
 				}
 				
-				return distanceData.result.min_distance; 
+				return distanceData.result.min_distance;
 			}
 			
 			::rl::math::Real

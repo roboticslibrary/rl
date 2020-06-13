@@ -41,7 +41,7 @@ namespace rl
 	{
 		/**
 		 * SOLID.
-		 * 
+		 *
 		 * http://www.dtecta.com/
 		 */
 		namespace solid

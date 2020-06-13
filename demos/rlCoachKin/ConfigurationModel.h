@@ -49,9 +49,9 @@ public:
 	
 	int rowCount(const QModelIndex& parent = QModelIndex()) const;
 	
-	bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole); 
+	bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole);
 	
-	bool setData(const rl::math::Vector& q); 
+	bool setData(const rl::math::Vector& q);
 	
 	std::size_t id;
 	

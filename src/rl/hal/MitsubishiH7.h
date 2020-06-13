@@ -148,7 +148,7 @@ namespace rl
 			};
 			
 			struct Joint
-			{	
+			{
 				/** J1 axis angle [rad]. */
 				float j1;
 				/** J2 axis angle [rad]. */

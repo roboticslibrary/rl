@@ -49,7 +49,7 @@
 #include "TimeoutException.h"
 
 #ifdef __QNX__
-#define CRTSCTS (IHFLOW | OHFLOW) 
+#define CRTSCTS (IHFLOW | OHFLOW)
 #endif // __QNX__
 
 namespace rl
@@ -396,7 +396,7 @@ namespace rl
 			this->setConnected(true);
 			
 			if (-1 == ::tcgetattr(this->impl->fd, &this->impl->restore))
-			{ 
+			{
 				throw ComException(errno);
 			}
 			

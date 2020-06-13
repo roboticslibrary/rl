@@ -235,7 +235,7 @@ namespace rl
 				
 				RayResultCallback resultCallback;
 				
-				this->world.rayTest(rayFromWorld, rayToWorld, resultCallback); 
+				this->world.rayTest(rayFromWorld, rayToWorld, resultCallback);
 				
 				if (nullptr != resultCallback.collisionShape)
 				{

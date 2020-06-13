@@ -40,11 +40,11 @@ namespace rl
 	{
 		/**
 		 * Probabilistic Roadmaps with Utility-Guided Sampling.
-		 * 
+		 *
 		 * Brendan Burns and Oliver Brock. Toward optimal configuration space sampling.
 		 * In Proceedings of the Robotics Science and Systems Conference, Cambridge,
 		 * MA, USA, June 2005.
-		 * 
+		 *
 		 * http://www.roboticsproceedings.org/rss01/p15.pdf
 		 */
 		class RL_PLAN_EXPORT PrmUtilityGuided : public Prm

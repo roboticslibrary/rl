@@ -133,7 +133,7 @@ namespace rl
 			// shoulder (see Siegert p82)
 			// FIXME: For a1 != 0, the configuration model deviates from the Puma 560
 			// In this case, Siegert's formula may give a (correct) solution with wrong arm handedness
-			// For instance, for the Mitsubishi RV-6SL robot with a1=50mm, poses near 
+			// For instance, for the Mitsubishi RV-6SL robot with a1=50mm, poses near
 			// the boundaries of one configuration will yield an inverse solution in the wrong
 			// configuration space.
 			// A fix would be to enumerate all (eight) solutions and pick the one thats best
@@ -299,7 +299,7 @@ namespace rl
 			::rl::math::Real d4 = this->joints[3]->d;
 			
 			// z_1 component of the derivative of wrist location wrt to theta2
-			::rl::math::Real tmp = d4 * c2 * s3 + d4 * s2 * c3 + a3 * s2 * s3 - a3 * c2 * c3 - a2 * c2; 
+			::rl::math::Real tmp = d4 * c2 * s3 + d4 * s2 * c3 + a3 * s2 * s3 - a3 * c2 * c3 - a2 * c2;
 			
 			// y_2 component of wrist location
 			::rl::math::Real tmp2 = a3 * s3 + d4 * c3;

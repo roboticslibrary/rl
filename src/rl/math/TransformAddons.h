@@ -52,7 +52,7 @@ distance(const Transform<OtherScalar, OtherDim, OtherMode, OtherOptions>& other,
 
 /**
  * Calculate transformation from a linear and angular velocity vector.
- * 
+ *
  * @param[in] useApproximation For rotations a, b, c smaller than a
  * few degrees, you can use a faster bi-linear approximation. For
  * rotations larger than 90 degrees, this approximation would be
@@ -163,7 +163,7 @@ setDelta(const Matrix<OtherScalar, 6, 1>& delta)
 
 /**
  * Calculate the linear and angular velocity vector between two transformations.
- * 
+ *
  * @param[in] useApproximation For rotations from t1 to t2 smaller
  * than a few degrees, you can use a faster bi-linear approximation.
  * (For a rotation angle < 1e-3, the approximated angular velocity

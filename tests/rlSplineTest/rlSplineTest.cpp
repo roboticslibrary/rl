@@ -33,7 +33,7 @@ main(int argc, char** argv)
 {
 	/* We mostly test against (Eigen) asserts in the Spline methods,
 	 * the tests for continuity are just in addition.
-	 */ 
+	 */
 	
 	{
 		// One-dimensional

@@ -37,7 +37,7 @@
 namespace rl
 {
 	/**
-	 * Collision-free path planning. 
+	 * Collision-free path planning.
 	 */
 	namespace plan
 	{
@@ -55,7 +55,7 @@ namespace rl
 			
 			/**
 			 * Get solution path.
-			 * 
+			 *
 			 * @pre solve()
 			 */
 			virtual VectorList getPath() = 0;

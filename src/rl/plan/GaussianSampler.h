@@ -35,12 +35,12 @@ namespace rl
 	{
 		/**
 		 * Gaussian sampling strategy.
-		 * 
+		 *
 		 * Val&eacute;rie Boor, Mark H. Overmars, and A. Frank van der Stappen.
 		 * The Gaussian sampling strategy for probabilistic roadmap planners.
 		 * In Proceedings of the IEEE International Conference on Robotics and
 		 * Automation, pages 1018-1023, Detroit, MI, USA, May 1999.
-		 * 
+		 *
 		 * http://dx.doi.org/10.1109/ROBOT.1999.772447
 		 */
 		class RL_PLAN_EXPORT GaussianSampler : public UniformSampler

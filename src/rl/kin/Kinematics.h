@@ -67,7 +67,7 @@ namespace rl
 			
 			/**
 			 * Clamp specified configuration to be within joint limits.
-			 * 
+			 *
 			 * @param[out] q \f$\vec{q}\f$
 			 */
 			virtual void clamp(::rl::math::Vector& q) const;
@@ -76,7 +76,7 @@ namespace rl
 			
 			/**
 			 * Calculate distance measure between specified configuration.
-			 * 
+			 *
 			 * @param[in] q1 \f$\vec{q}_{1}\f$
 			 * @param[in] q2 \f$\vec{q}_{2}\f$
 			 */
@@ -84,21 +84,21 @@ namespace rl
 			
 			/**
 			 * Get forward position kinematics.
-			 * 
+			 *
 			 * @param[in] i End effector
-			 * 
+			 *
 			 * @pre updateFrames()
 			 */
 			virtual const ::rl::math::Transform& forwardPosition(const ::std::size_t& i = 0) const;
 			
 			/**
 			 * Calculate forward force kinematics.
-			 * 
+			 *
 			 * \f[ \vec{F} = \matr{J}^{-\mathrm{T}} \vec{\tau} \f]
-			 * 
+			 *
 			 * @param[in] tau \f$\vec{\tau}\f$
 			 * @param[out] f \f$\vec{F}\f$
-			 * 
+			 *
 			 * @pre updateJacobian()
 			 * @pre updateJacobianInverse()
 			 */
@@ -106,12 +106,12 @@ namespace rl
 			
 			/**
 			 * Calculate forward velocity kinematics.
-			 * 
+			 *
 			 * \f[ \dot{\vec{x}} = \matr{J} \dot{\vec{q}} \f]
-			 * 
+			 *
 			 * @param[in] qdot \f$\dot{\vec{q}}\f$
 			 * @param[out] xdot \f$\dot{\vec{x}}\f$
-			 * 
+			 *
 			 * @pre updateJacobian()
 			 */
 			virtual void forwardVelocity(const ::rl::math::Vector& qdot, ::rl::math::Vector& xdot) const;
@@ -136,21 +136,21 @@ namespace rl
 			
 			/**
 			 * Get link frame.
-			 * 
+			 *
 			 * @pre updateFrames()
 			 */
 			const ::rl::math::Transform& getFrame(const ::std::size_t& i) const;
 			
 			/**
 			 * Get Jacobian.
-			 * 
+			 *
 			 * @pre updateJacobian()
 			 */
 			const ::rl::math::Matrix& getJacobian() const;
 			
 			/**
 			 * Get Jacobian-Inverse.
-			 * 
+			 *
 			 * @pre updateJacobianInverse()
 			 */
 			const ::rl::math::Matrix& getJacobianInverse() const;
@@ -159,7 +159,7 @@ namespace rl
 			
 			/**
 			 * Get manipulability measure.
-			 * 
+			 *
 			 * @pre updateJacobian()
 			 */
 			::rl::math::Real getManipulabilityMeasure() const;
@@ -183,7 +183,7 @@ namespace rl
 			
 			/**
 			 * Get current joint position.
-			 * 
+			 *
 			 * @param[out] q \f$\vec{q}\f$
 			 */
 			void getPosition(::rl::math::Vector& q) const;
@@ -200,12 +200,12 @@ namespace rl
 			
 			/**
 			 * Calculate inverse force kinematics.
-			 * 
+			 *
 			 * \f[ \vec{\tau} = \matr{J}^{\mathrm{T}} \vec{F} \f]
-			 * 
+			 *
 			 * @param[in] f \f$\vec{F}\f$
 			 * @param[out] tau \f$\vec{\tau}\f$
-			 * 
+			 *
 			 * @pre updateJacobian()
 			 */
 			virtual void inverseForce(const ::rl::math::Vector& f, ::rl::math::Vector& tau) const;
@@ -227,12 +227,12 @@ namespace rl
 			
 			/**
 			 * Calculate inverse velocity kinematics.
-			 * 
+			 *
 			 * \f[ \dot{\vec{q}} = \matr{J}^{\dagger} \dot{\vec{x}} \f]
-			 * 
+			 *
 			 * @param[in] xdot \f$\dot{\vec{x}}\f$
 			 * @param[out] qdot \f$\dot{\vec{q}}\f$
-			 * 
+			 *
 			 * @pre updateJacobianInverse()
 			 */
 			virtual void inverseVelocity(const ::rl::math::Vector& xdot, ::rl::math::Vector& qdot) const;
@@ -249,7 +249,7 @@ namespace rl
 			
 			/**
 			 * Check if specified configuration is within joint limits.
-			 * 
+			 *
 			 * @param[in] q \f$\vec{q}\f$
 			 */
 			virtual bool isValid(const ::rl::math::Vector& q) const;
@@ -270,7 +270,7 @@ namespace rl
 			
 			/**
 			 * Update current joint position.
-			 * 
+			 *
 			 * @param[in] q \f$\vec{q}\f$
 			 */
 			void setPosition(const ::rl::math::Vector& q);
@@ -289,31 +289,31 @@ namespace rl
 			
 			/**
 			 * Update frames.
-			 * 
+			 *
 			 * \f[ {_{0}^{n}\matr{T}} = {_{0}^{1}\matr{T}} \, {_{0}^{1}\matr{T}} \, \ldots \, {_{n-1}^{n}\matr{T}} \f]
-			 * 
+			 *
 			 * @pre setPosition()
 			 */
 			virtual void updateFrames();
 			
 			/**
 			 * Update Jacobian.
-			 * 
+			 *
 			 * \f[ {^{0}\matr{J}} = \begin{pmatrix} {^{0}\matr{J}_{1}} & {^{0}\matr{J}_{2}} & \cdots & {^{0}\matr{J}_{n}} \end{pmatrix} \f]
-			 * 
+			 *
 			 * @pre updateFrames()
 			 */
 			virtual void updateJacobian();
 			
 			/**
 			 * Update Jacobian-Inverse.
-			 * 
+			 *
 			 * \f[ \matr{J}^{\dagger}(\vec{q}) = \sum_{i = 1}^{r} \frac{ \sigma_{i} }{ \sigma_{i}^{2} + \lambda^{2} } \, \vec{v}_{i} \, \vec{u}_{i}^{\mathrm{T}} \f]
 			 * \f[ \matr{J}^{\dagger}(\vec{q}) = \matr{J}^{\mathrm{T}}(\vec{q}) \, \bigl( \matr{J}(\vec{q}) \, \matr{J}^{\mathrm{T}}(\vec{q}) + \lambda^{2} \, \matr{1} \bigr)^{-1} \f]
-			 * 
+			 *
 			 * @param[in] lambda Damping factor \f$\lambda\f$
 			 * @param[in] doSvd Use singular value decomposition or damped least squares
-			 * 
+			 *
 			 * @pre updateJacobian()
 			 */
 			virtual void updateJacobianInverse(const ::rl::math::Real& lambda = 0, const bool& doSvd = true);

@@ -37,7 +37,7 @@ void run(const std::size_t& i)
 	
 	for (std::size_t j = 0; j < 5; ++j)
 	{
-		double seconds = rand(); 
+		double seconds = rand();
 		std::this_thread::sleep_for(std::chrono::duration<double>(seconds));
 		std::cout << "Thread[" << i << "] - " << j << " - " << seconds << " seconds" << std::endl;
 	}

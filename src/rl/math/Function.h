@@ -35,7 +35,7 @@ namespace rl
 	{
 		/**
 		 * A mathematical mapping from Real -> ArrayX.
-		 * 
+		 *
 		 * A Function is guaranteed to be defined in the interval [lower() upper()],
 		 * and may be defined outside this interval. Its computation is expected
 		 * to be numerically stable, accurate and efficient.
@@ -83,16 +83,16 @@ namespace rl
 			
 			/**
 			 * Evaluates the function or a derivative thereof for a given value x.
-			 * 
+			 *
 			 * Some functions are only defined in the interval [lower(), upper()],
-			 * and fail to evaluate outside of 
+			 * and fail to evaluate outside of
 			 * [lower() - FUNCTION_BOUNDARY, upper() + FUNCTION_BOUNDARY].
 			 * In Debug mode, this is signaled by failing asserts.
 			 * In Release mode, the function is evaluated if algebraically possible,
-			 * or will return an empty ArrayX otherwise. 
-			 * Some functions are not indefinitely often differentiable, 
+			 * or will return an empty ArrayX otherwise.
+			 * Some functions are not indefinitely often differentiable,
 			 * and will return a NaN array for all higher orders.
-			 * 
+			 *
 			 * @param[in] x Input value of the function or derivative
 			 * @param[in] derivative Order of the derivative to be evaluated
 			 */
