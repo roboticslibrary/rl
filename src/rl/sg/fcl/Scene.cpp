@@ -64,7 +64,7 @@ namespace rl
 			{
 				Model* modelFcl = static_cast<Model*>(model);
 				this->models.push_back(model);
-				::std::vector< ::fcl::CollisionObject*> objects;
+				::std::vector<::fcl::CollisionObject*> objects;
 				modelFcl->manager.getObjects(objects);
 				
 				if (objects.size() > 0)
@@ -281,15 +281,15 @@ namespace rl
 			Scene::distance(::rl::sg::Shape* shape, const ::rl::math::Vector3& point, ::rl::math::Vector3& point1, ::rl::math::Vector3& point2)
 			{
 #if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 5
-				::boost::shared_ptr< ::fcl::CollisionGeometry> geometry = ::boost::make_shared< ::fcl::Sphere>(0);
+				::boost::shared_ptr<::fcl::CollisionGeometry> geometry = ::boost::make_shared<::fcl::Sphere>(0);
 #else
-				::std::shared_ptr< ::fcl::CollisionGeometry> geometry = ::std::make_shared< ::fcl::Sphere>(0);
+				::std::shared_ptr<::fcl::CollisionGeometry> geometry = ::std::make_shared<::fcl::Sphere>(0);
 #endif
 				::fcl::Vec3f translation(point(0), point(1), point(2));
 #if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 5
-				::boost::shared_ptr< ::fcl::CollisionObject> collisionObject = ::boost::make_shared< ::fcl::CollisionObject>(geometry, ::fcl::Transform3f(translation));
+				::boost::shared_ptr<::fcl::CollisionObject> collisionObject = ::boost::make_shared<::fcl::CollisionObject>(geometry, ::fcl::Transform3f(translation));
 #else
-				::std::shared_ptr< ::fcl::CollisionObject> collisionObject = ::std::make_shared< ::fcl::CollisionObject>(geometry, ::fcl::Transform3f(translation));
+				::std::shared_ptr<::fcl::CollisionObject> collisionObject = ::std::make_shared<::fcl::CollisionObject>(geometry, ::fcl::Transform3f(translation));
 #endif
 				
 				::fcl::DistanceRequest request;
@@ -331,7 +331,7 @@ namespace rl
 				if (found != this->models.end())
 				{
 					this->models.erase(found);
-					::std::vector< ::fcl::CollisionObject*> objects;
+					::std::vector<::fcl::CollisionObject*> objects;
 					static_cast<Model*>(model)->manager.getObjects(objects);
 					
 					for (::std::size_t i = 0; i < objects.size(); ++i)

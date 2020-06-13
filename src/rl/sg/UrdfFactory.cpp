@@ -185,7 +185,7 @@ namespace rl
 					}
 				}
 				
-				::std::deque< ::std::string> dfs;
+				::std::deque<::std::string> dfs;
 				dfs.push_front(root);
 				
 				while (!dfs.empty())

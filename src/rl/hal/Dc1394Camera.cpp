@@ -274,7 +274,7 @@ namespace rl
 			unsigned int width;
 			unsigned int height;
 			
-			::dc1394error_t error = ::dc1394_get_image_size_from_video_mode(this->camera, static_cast< ::dc1394video_mode_t>(this->videoMode), &width, &height); 
+			::dc1394error_t error = ::dc1394_get_image_size_from_video_mode(this->camera, static_cast<::dc1394video_mode_t>(this->videoMode), &width, &height); 
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -293,7 +293,7 @@ namespace rl
 			::dc1394bool_t hasAbsoluteControl;
 			
 #if (LIBDC1394_VERSION_MAJOR > 10)
-			::dc1394error_t error = ::dc1394_feature_has_absolute_control(this->camera, static_cast< ::dc1394feature_t>(feature), &hasAbsoluteControl);
+			::dc1394error_t error = ::dc1394_feature_has_absolute_control(this->camera, static_cast<::dc1394feature_t>(feature), &hasAbsoluteControl);
 #else
 			int error = ::dc1394_has_absolute_control(this->handle, this->nodes[this->node], feature, &hasAbsoluteControl);
 #endif
@@ -310,7 +310,7 @@ namespace rl
 		Dc1394Camera::getFeatureBoundaries(const Feature& feature, unsigned int& min, unsigned int& max) const
 		{
 #if (LIBDC1394_VERSION_MAJOR > 10)
-			::dc1394error_t error = ::dc1394_feature_get_boundaries(this->camera, static_cast< ::dc1394feature_t>(feature), &min, &max); 
+			::dc1394error_t error = ::dc1394_feature_get_boundaries(this->camera, static_cast<::dc1394feature_t>(feature), &min, &max); 
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -337,7 +337,7 @@ namespace rl
 		Dc1394Camera::getFeatureBoundariesAbsolute(const Feature& feature, float& min, float& max) const
 		{
 #if (LIBDC1394_VERSION_MAJOR > 10)
-			::dc1394error_t error = ::dc1394_feature_get_absolute_boundaries(this->camera, static_cast< ::dc1394feature_t>(feature), &min, &max); 
+			::dc1394error_t error = ::dc1394_feature_get_absolute_boundaries(this->camera, static_cast<::dc1394feature_t>(feature), &min, &max); 
 #else
 			int error = ::dc1394_query_absolute_feature_min_max(this->handle, this->nodes[this->node], feature, &min, &max);
 #endif
@@ -354,7 +354,7 @@ namespace rl
 #if (LIBDC1394_VERSION_MAJOR > 10)
 			::dc1394feature_mode_t mode;
 			
-			::dc1394error_t error = ::dc1394_feature_get_mode(this->camera, static_cast< ::dc1394feature_t>(feature), &mode); 
+			::dc1394error_t error = ::dc1394_feature_get_mode(this->camera, static_cast<::dc1394feature_t>(feature), &mode); 
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -401,7 +401,7 @@ namespace rl
 #if (LIBDC1394_VERSION_MAJOR > 10)
 			::dc1394feature_modes_t modes;
 			
-			::dc1394error_t error = ::dc1394_feature_get_modes(this->camera, static_cast< ::dc1394feature_t>(feature), &modes);
+			::dc1394error_t error = ::dc1394_feature_get_modes(this->camera, static_cast<::dc1394feature_t>(feature), &modes);
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -428,21 +428,21 @@ namespace rl
 				}
 			}
 #else
-			int error = ::dc1394_has_manual_mode(this->handle, this->nodes[this->node], feature, static_cast< ::dc1394bool_t*>(&hasManual));
+			int error = ::dc1394_has_manual_mode(this->handle, this->nodes[this->node], feature, static_cast<::dc1394bool_t*>(&hasManual));
 			
 			if (::DC1394_SUCCESS != error)
 			{
 				throw Exception(error);
 			}
 			
-			error = ::dc1394_has_auto_mode(this->handle, this->nodes[this->node], feature, stataic_cast< ::dc1394bool_t*>(&hasAuto));
+			error = ::dc1394_has_auto_mode(this->handle, this->nodes[this->node], feature, static_cast<::dc1394bool_t*>(&hasAuto));
 			
 			if (::DC1394_SUCCESS != error)
 			{
 				throw Exception(error);
 			}
 			
-			error = ::dc1394_has_one_push_auto(this->handle, this->nodes[this->node], feature, static_cast< ::dc1394bool_t*>(&hasOnePushAuto));
+			error = ::dc1394_has_one_push_auto(this->handle, this->nodes[this->node], feature, static_cast<::dc1394bool_t*>(&hasOnePushAuto));
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -457,7 +457,7 @@ namespace rl
 			unsigned int value;
 			
 #if (LIBDC1394_VERSION_MAJOR > 10)
-			::dc1394error_t error = ::dc1394_feature_get_value(this->camera, static_cast< ::dc1394feature_t>(feature), &value); 
+			::dc1394error_t error = ::dc1394_feature_get_value(this->camera, static_cast<::dc1394feature_t>(feature), &value); 
 #else
 			int error = ::dc1394_get_feature_value(this->handle, this->nodes[this->node], feature, &value);
 #endif
@@ -476,7 +476,7 @@ namespace rl
 			float value;
 			
 #if (LIBDC1394_VERSION_MAJOR > 10)
-			::dc1394error_t error = ::dc1394_feature_get_absolute_value(this->camera, static_cast< ::dc1394feature_t>(feature), &value); 
+			::dc1394error_t error = ::dc1394_feature_get_absolute_value(this->camera, static_cast<::dc1394feature_t>(feature), &value); 
 #else
 			int error = ::dc1394_query_absolute_feature_value(this->handle, this->nodes[this->node], feature, &value);
 #endif
@@ -510,7 +510,7 @@ namespace rl
 		Dc1394Camera::getFormat7MaximumImageSize(const unsigned int& mode, unsigned int& width, unsigned& height) const
 		{
 #if (LIBDC1394_VERSION_MAJOR > 10)
-			::dc1394error_t error = ::dc1394_format7_get_max_image_size(this->camera, static_cast< ::dc1394video_mode_t>(mode), &width, &height); 
+			::dc1394error_t error = ::dc1394_format7_get_max_image_size(this->camera, static_cast<::dc1394video_mode_t>(mode), &width, &height); 
 #else
 			int error = ::dc1394_query_format7_max_image_size(this->handle, this->nodes[this->node], mode, &width, &height);
 #endif
@@ -527,7 +527,7 @@ namespace rl
 			Framerate framerate;
 			
 #if (LIBDC1394_VERSION_MAJOR > 10)
-			::dc1394error_t error = ::dc1394_video_get_framerate(this->camera, reinterpret_cast< ::dc1394framerate_t*>(&framerate));
+			::dc1394error_t error = ::dc1394_video_get_framerate(this->camera, reinterpret_cast<::dc1394framerate_t*>(&framerate));
 #else
 			int error = ::dc1394_get_video_framerate(this->handle, this->nodes[this->node], reinterpret_cast<unsigned int*>(&framerate));
 #endif
@@ -558,7 +558,7 @@ namespace rl
 			OperationMode operationMode;
 			
 #if (LIBDC1394_VERSION_MAJOR > 10)
-			::dc1394error_t error = ::dc1394_video_get_operation_mode(this->camera, reinterpret_cast< ::dc1394operation_mode_t*>(&operationMode)); 
+			::dc1394error_t error = ::dc1394_video_get_operation_mode(this->camera, reinterpret_cast<::dc1394operation_mode_t*>(&operationMode)); 
 #else
 			int error = ::dc1394_get_operation_mode(this->handle, this->nodes[this->node], reinterpret_cast<unsigned int*>(&operationMode));
 #endif
@@ -578,7 +578,7 @@ namespace rl
 			unsigned int width;
 			unsigned int height;
 			
-			::dc1394error_t error = ::dc1394_get_image_size_from_video_mode(this->camera, static_cast< ::dc1394video_mode_t>(this->videoMode), &width, &height); 
+			::dc1394error_t error = ::dc1394_get_image_size_from_video_mode(this->camera, static_cast<::dc1394video_mode_t>(this->videoMode), &width, &height); 
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -597,7 +597,7 @@ namespace rl
 			IsoSpeed speed;
 			
 #if (LIBDC1394_VERSION_MAJOR > 10)
-			::dc1394error_t error = ::dc1394_video_get_iso_speed(this->camera, reinterpret_cast< ::dc1394speed_t*>(&speed));
+			::dc1394error_t error = ::dc1394_video_get_iso_speed(this->camera, reinterpret_cast<::dc1394speed_t*>(&speed));
 #else
 			unsigned int channel;
 			int error = ::dc1394_get_iso_channel_and_speed(this->handle, this->nodes[this->node], &channel, reinterpret_cast<unsigned int*>(&speed));
@@ -647,7 +647,7 @@ namespace rl
 				break;
 			}
 			
-			return ::std::chrono::duration_cast< ::std::chrono::nanoseconds>(
+			return ::std::chrono::duration_cast<::std::chrono::nanoseconds>(
 				::std::chrono::duration<double>(1.0 / framerate * rl::math::UNIT2NANO)
 			);
 		}
@@ -658,7 +658,7 @@ namespace rl
 			VideoMode videoMode;
 			
 #if (LIBDC1394_VERSION_MAJOR > 10)
-			::dc1394error_t error = ::dc1394_video_get_mode(this->camera, reinterpret_cast< ::dc1394video_mode_t*>(&videoMode)); 
+			::dc1394error_t error = ::dc1394_video_get_mode(this->camera, reinterpret_cast<::dc1394video_mode_t*>(&videoMode)); 
 #else
 			int error = ::dc1394_get_video_mode(this->handle, this->nodes[this->node], reinterpret_cast<unsigned int*>(&videoMode));
 #endif
@@ -678,7 +678,7 @@ namespace rl
 			unsigned int width;
 			unsigned int height;
 			
-			::dc1394error_t error = ::dc1394_get_image_size_from_video_mode(this->camera, static_cast< ::dc1394video_mode_t>(this->videoMode), &width, &height); 
+			::dc1394error_t error = ::dc1394_get_image_size_from_video_mode(this->camera, static_cast<::dc1394video_mode_t>(this->videoMode), &width, &height); 
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -735,7 +735,7 @@ namespace rl
 			::dc1394bool_t hasAbsoluteControl;
 			
 #if (LIBDC1394_VERSION_MAJOR > 10)
-			::dc1394error_t error = ::dc1394_feature_has_absolute_control(this->camera, static_cast< ::dc1394feature_t>(feature), &hasAbsoluteControl); 
+			::dc1394error_t error = ::dc1394_feature_has_absolute_control(this->camera, static_cast<::dc1394feature_t>(feature), &hasAbsoluteControl); 
 #else
 			int error = ::dc1394_has_absolute_control(this->handle, this->nodes[this->node], feature, &hasAbsoluteControl);
 #endif
@@ -754,7 +754,7 @@ namespace rl
 #if (LIBDC1394_VERSION_MAJOR > 10)
 			::dc1394switch_t isFeatureOn;
 			
-			::dc1394error_t error = ::dc1394_feature_get_power(this->camera, static_cast< ::dc1394feature_t>(feature), &isFeatureOn); 
+			::dc1394error_t error = ::dc1394_feature_get_power(this->camera, static_cast<::dc1394feature_t>(feature), &isFeatureOn); 
 #else
 			::dc1394bool_t isFeatureOn;
 			
@@ -775,7 +775,7 @@ namespace rl
 			::dc1394bool_t isFeaturePresent;
 			
 #if (LIBDC1394_VERSION_MAJOR > 10)
-			::dc1394error_t error = ::dc1394_feature_is_present(this->camera, static_cast< ::dc1394feature_t>(feature), &isFeaturePresent); 
+			::dc1394error_t error = ::dc1394_feature_is_present(this->camera, static_cast<::dc1394feature_t>(feature), &isFeaturePresent); 
 #else
 			int error = ::dc1394_is_feature_present(this->handle, this->nodes[this->node], feature, &isFeaturePresent);
 #endif
@@ -794,7 +794,7 @@ namespace rl
 			::dc1394bool_t canReadOut;
 			
 #if (LIBDC1394_VERSION_MAJOR > 10)
-			::dc1394error_t error = ::dc1394_feature_is_readable(this->camera, static_cast< ::dc1394feature_t>(feature), &canReadOut); 
+			::dc1394error_t error = ::dc1394_feature_is_readable(this->camera, static_cast<::dc1394feature_t>(feature), &canReadOut); 
 #else
 			int error = ::dc1394_can_read_out(this->handle, this->nodes[this->node], feature, &canReadOut);
 #endif
@@ -813,7 +813,7 @@ namespace rl
 			::dc1394bool_t canTurnOnOff;
 			
 #if (LIBDC1394_VERSION_MAJOR > 10)
-			::dc1394error_t error = ::dc1394_feature_is_switchable(this->camera, static_cast< ::dc1394feature_t>(feature), &canTurnOnOff); 
+			::dc1394error_t error = ::dc1394_feature_is_switchable(this->camera, static_cast<::dc1394feature_t>(feature), &canTurnOnOff); 
 #else
 			int error = ::dc1394_can_turn_on_off(this->handle, this->nodes[this->node], feature, &canTurnOnOff);
 #endif
@@ -873,14 +873,14 @@ namespace rl
 				throw Exception(error);
 			}
 			
-			error = ::dc1394_get_video_framerate(this->handle, this->nodes[this->node], static_cast< ::dc1394framerate_t*>(&this->framerate));
+			error = ::dc1394_get_video_framerate(this->handle, this->nodes[this->node], static_cast<::dc1394framerate_t*>(&this->framerate));
 			
 			if (::DC1394_SUCCESS != error)
 			{
 				throw Exception(error);
 			}
 			
-			error = ::dc1394_get_video_mode(this->handle, this->nodes[this->node], static_cast< ::dc1394video_mode_t*>(&this->videoMode));
+			error = ::dc1394_get_video_mode(this->handle, this->nodes[this->node], static_cast<::dc1394video_mode_t*>(&this->videoMode));
 			
 			if (::DC1394_SUCCESS != error)
 			{
@@ -922,7 +922,7 @@ namespace rl
 		Dc1394Camera::setFeatureEnabled(const Feature& feature, const bool& doOn)
 		{
 #if (LIBDC1394_VERSION_MAJOR > 10)
-			::dc1394error_t error = ::dc1394_feature_set_power(this->camera, static_cast< ::dc1394feature_t>(feature), static_cast< ::dc1394switch_t>(doOn)); 
+			::dc1394error_t error = ::dc1394_feature_set_power(this->camera, static_cast<::dc1394feature_t>(feature), static_cast<::dc1394switch_t>(doOn)); 
 #else
 			int error = ::dc1394_feature_on_off(this->handle, this->nodes[this->node], feature, doOn);
 #endif
@@ -937,7 +937,7 @@ namespace rl
 		Dc1394Camera::setFeatureMode(const Feature& feature, const FeatureMode& mode)
 		{
 #if (LIBDC1394_VERSION_MAJOR > 10)
-			::dc1394error_t error = ::dc1394_feature_set_mode(this->camera, static_cast< ::dc1394feature_t>(feature), static_cast< ::dc1394feature_mode_t>(mode)); 
+			::dc1394error_t error = ::dc1394_feature_set_mode(this->camera, static_cast<::dc1394feature_t>(feature), static_cast<::dc1394feature_mode_t>(mode)); 
 #else
 			int error;
 			
@@ -967,7 +967,7 @@ namespace rl
 		Dc1394Camera::setFeatureValue(const Feature& feature, const unsigned int& value)
 		{
 #if (LIBDC1394_VERSION_MAJOR > 10)
-			::dc1394error_t error = ::dc1394_feature_set_value(this->camera, static_cast< ::dc1394feature_t>(feature), value); 
+			::dc1394error_t error = ::dc1394_feature_set_value(this->camera, static_cast<::dc1394feature_t>(feature), value); 
 #else
 			int error = ::dc1394_set_feature_value(this->handle, this->nodes[this->node], feature, value);
 #endif
@@ -982,7 +982,7 @@ namespace rl
 		Dc1394Camera::setFeatureValueAbsolute(const Feature& feature, const float& value)
 		{
 #if (LIBDC1394_VERSION_MAJOR > 10)
-			::dc1394error_t error = ::dc1394_feature_set_absolute_value(this->camera, static_cast< ::dc1394feature_t>(feature), value); 
+			::dc1394error_t error = ::dc1394_feature_set_absolute_value(this->camera, static_cast<::dc1394feature_t>(feature), value); 
 #else
 			int error = ::dc1394_set_absolute_feature_value(this->handle, this->nodes[this->node], feature, value);
 #endif
@@ -1005,8 +1005,8 @@ namespace rl
 #if (LIBDC1394_VERSION_MAJOR > 10)
 			::dc1394error_t error = ::dc1394_format7_set_roi(
 				this->camera,
-				static_cast< ::dc1394video_mode_t>(videoMode),
-				static_cast< ::dc1394color_coding_t>(colorCoding),
+				static_cast<::dc1394video_mode_t>(videoMode),
+				static_cast<::dc1394color_coding_t>(colorCoding),
 				DC1394_QUERY_FROM_CAMERA,
 				left,
 				top,
@@ -1032,7 +1032,7 @@ namespace rl
 		Dc1394Camera::setFramerate(const Framerate& framerate)
 		{
 #if (LIBDC1394_VERSION_MAJOR > 10)
-			::dc1394error_t error = ::dc1394_video_set_framerate(this->camera, static_cast< ::dc1394framerate_t>(framerate));  
+			::dc1394error_t error = ::dc1394_video_set_framerate(this->camera, static_cast<::dc1394framerate_t>(framerate));  
 #else
 			int error = ::dc1394_set_video_framerate(this->handle, this->nodes[node], framerate);
 #endif
@@ -1055,7 +1055,7 @@ namespace rl
 		Dc1394Camera::setOperationMode(const OperationMode& mode)
 		{
 #if (LIBDC1394_VERSION_MAJOR > 10)
-			::dc1394error_t error = ::dc1394_video_set_operation_mode(this->camera, static_cast< ::dc1394operation_mode_t>(mode)); 
+			::dc1394error_t error = ::dc1394_video_set_operation_mode(this->camera, static_cast<::dc1394operation_mode_t>(mode)); 
 #else
 			int error = ::dc1394_set_operation_mode(this->handle, this->nodes[this->node], mode);
 #endif
@@ -1070,7 +1070,7 @@ namespace rl
 		Dc1394Camera::setSpeed(const IsoSpeed& speed)
 		{
 #if (LIBDC1394_VERSION_MAJOR > 10)
-			::dc1394error_t error = ::dc1394_video_set_iso_speed(this->camera, static_cast< ::dc1394speed_t>(speed)); 
+			::dc1394error_t error = ::dc1394_video_set_iso_speed(this->camera, static_cast<::dc1394speed_t>(speed)); 
 #else
 			int error = ::dc1394_set_iso_channel_and_speed(this->handle, this->nodes[node], this->channel, speed);
 #endif
@@ -1087,7 +1087,7 @@ namespace rl
 		Dc1394Camera::setVideoMode(const VideoMode& videoMode)
 		{
 #if (LIBDC1394_VERSION_MAJOR > 10)
-			::dc1394error_t error = ::dc1394_video_set_mode(this->camera, static_cast< ::dc1394video_mode_t>(videoMode)); 
+			::dc1394error_t error = ::dc1394_video_set_mode(this->camera, static_cast<::dc1394video_mode_t>(videoMode)); 
 #else
 			unsigned int format;
 			

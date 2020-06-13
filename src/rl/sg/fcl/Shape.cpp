@@ -60,18 +60,18 @@ namespace rl
 				{
 					SoVRMLBox* box = static_cast<SoVRMLBox*>(vrmlGeometry);
 #if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 5
-					this->geometry = ::boost::make_shared< ::fcl::Box>(box->size.getValue()[0], box->size.getValue()[1], box->size.getValue()[2]);
+					this->geometry = ::boost::make_shared<::fcl::Box>(box->size.getValue()[0], box->size.getValue()[1], box->size.getValue()[2]);
 #else
-					this->geometry = ::std::make_shared< ::fcl::Box>(box->size.getValue()[0], box->size.getValue()[1], box->size.getValue()[2]);
+					this->geometry = ::std::make_shared<::fcl::Box>(box->size.getValue()[0], box->size.getValue()[1], box->size.getValue()[2]);
 #endif
 				}
 				else if (vrmlGeometry->isOfType(SoVRMLCone::getClassTypeId()))
 				{
 					SoVRMLCone* cone = static_cast<SoVRMLCone*>(vrmlGeometry);
 #if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 5
-					this->geometry = ::boost::make_shared< ::fcl::Cone>(cone->bottomRadius.getValue(), cone->height.getValue());
+					this->geometry = ::boost::make_shared<::fcl::Cone>(cone->bottomRadius.getValue(), cone->height.getValue());
 #else
-					this->geometry = ::std::make_shared< ::fcl::Cone>(cone->bottomRadius.getValue(), cone->height.getValue());
+					this->geometry = ::std::make_shared<::fcl::Cone>(cone->bottomRadius.getValue(), cone->height.getValue());
 #endif
 					
 					this->baseTransform(0, 0) = 1;
@@ -95,9 +95,9 @@ namespace rl
 				{
 					SoVRMLCylinder* cylinder = static_cast<SoVRMLCylinder*>(vrmlGeometry);
 #if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 5
-					this->geometry = ::boost::make_shared< ::fcl::Cylinder>(cylinder->radius.getValue(), cylinder->height.getValue());
+					this->geometry = ::boost::make_shared<::fcl::Cylinder>(cylinder->radius.getValue(), cylinder->height.getValue());
 #else
-					this->geometry = ::std::make_shared< ::fcl::Cylinder>(cylinder->radius.getValue(), cylinder->height.getValue());
+					this->geometry = ::std::make_shared<::fcl::Cylinder>(cylinder->radius.getValue(), cylinder->height.getValue());
 #endif
 					
 					this->baseTransform(0, 0) = 1;
@@ -127,8 +127,8 @@ namespace rl
 					
 					if (indexedFaceSet->convex.getValue() && !indexedFaceSet->convex.isDefault())
 					{
-						this->normals = ::std::vector< ::fcl::Vec3f>(this->indices.size() / 3);
-						this->distances = ::std::vector< ::fcl::FCL_REAL>(this->indices.size() / 3);
+						this->normals = ::std::vector<::fcl::Vec3f>(this->indices.size() / 3);
+						this->distances = ::std::vector<::fcl::FCL_REAL>(this->indices.size() / 3);
 						this->polygons = ::std::vector<int>(this->indices.size() + this->indices.size() / 3);
 						
 						for (::std::size_t i = 0; i < this->indices.size() / 3; ++i)
@@ -143,9 +143,9 @@ namespace rl
 						}
 						
 #if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 5
-						this->geometry = ::boost::make_shared< ::fcl::Convex>(
+						this->geometry = ::boost::make_shared<::fcl::Convex>(
 #else
-						this->geometry = ::std::make_shared< ::fcl::Convex>(
+						this->geometry = ::std::make_shared<::fcl::Convex>(
 #endif
 							this->normals.data(),
 							this->distances.data(),
@@ -158,9 +158,9 @@ namespace rl
 					else
 					{
 #if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 5
-						::boost::shared_ptr< ::fcl::BVHModel< ::fcl::OBBRSS>> mesh = ::boost::make_shared< ::fcl::BVHModel< ::fcl::OBBRSS>>();
+						::boost::shared_ptr<::fcl::BVHModel<::fcl::OBBRSS>> mesh = ::boost::make_shared<::fcl::BVHModel<::fcl::OBBRSS>>();
 #else
-						::std::shared_ptr< ::fcl::BVHModel< ::fcl::OBBRSS>> mesh = ::std::make_shared< ::fcl::BVHModel< ::fcl::OBBRSS>>();
+						::std::shared_ptr<::fcl::BVHModel<::fcl::OBBRSS>> mesh = ::std::make_shared<::fcl::BVHModel<::fcl::OBBRSS>>();
 #endif
 						mesh->beginModel(this->indices.size() / 3, this->vertices.size());
 						
@@ -181,13 +181,13 @@ namespace rl
 				{
 					SoVRMLSphere* sphere = static_cast<SoVRMLSphere*>(vrmlGeometry);
 #if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 5
-					this->geometry = ::boost::make_shared< ::fcl::Sphere>(sphere->radius.getValue());
+					this->geometry = ::boost::make_shared<::fcl::Sphere>(sphere->radius.getValue());
 #else
-					this->geometry = ::std::make_shared< ::fcl::Sphere>(sphere->radius.getValue());
+					this->geometry = ::std::make_shared<::fcl::Sphere>(sphere->radius.getValue());
 #endif
 				}
 				
-				this->collisionObject = ::std::make_shared< ::fcl::CollisionObject>(this->geometry, ::fcl::Transform3f());
+				this->collisionObject = ::std::make_shared<::fcl::CollisionObject>(this->geometry, ::fcl::Transform3f());
 				
 				this->getBody()->add(this);
 				setTransform(::rl::math::Transform::Identity());

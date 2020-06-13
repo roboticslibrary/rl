@@ -41,7 +41,7 @@ namespace rl
 			values(),
 			zeroes()
 		{
-			this->values.fill(::std::numeric_limits< ::rl::math::Real>::quiet_NaN());
+			this->values.fill(::std::numeric_limits<::rl::math::Real>::quiet_NaN());
 			this->zeroes.fill(0);
 		}
 		

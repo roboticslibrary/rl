@@ -56,7 +56,7 @@ namespace rl
 			Model::add(Body* body)
 			{
 				this->bodies.push_back(body);
-				::std::vector< ::fcl::CollisionObject*> objects;
+				::std::vector<::fcl::CollisionObject*> objects;
 				body->manager.getObjects(objects);
 				
 				if (objects.size() > 0)
@@ -87,7 +87,7 @@ namespace rl
 				if (found != this->bodies.end())
 				{
 					this->bodies.erase(found);
-					::std::vector< ::fcl::CollisionObject*> objects;
+					::std::vector<::fcl::CollisionObject*> objects;
 					body->manager.getObjects(objects);
 					
 					for (::std::size_t i = 0; i < objects.size(); ++i)

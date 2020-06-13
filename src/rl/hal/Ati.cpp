@@ -57,8 +57,8 @@ namespace rl
 				throw DeviceException("Could not load the desired calibration");
 			}
 			
-			this->values.fill(::std::numeric_limits< ::rl::math::Real>::quiet_NaN());
-			this->voltages.fill(::std::numeric_limits< ::rl::math::Real>::quiet_NaN());
+			this->values.fill(::std::numeric_limits<::rl::math::Real>::quiet_NaN());
+			this->voltages.fill(::std::numeric_limits<::rl::math::Real>::quiet_NaN());
 		}
 		
 		Ati::~Ati()
