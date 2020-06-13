@@ -35,7 +35,7 @@ main(int argc, char** argv)
 {
 	try
 	{
-		rl::hal::Dc1394Camera dc1394(argc > 1 ? argv[1] : "");
+		rl::hal::Dc1394Camera dc1394(argc > 1 ? std::stoi(argv[1]) : 0);
 		
 		dc1394.open();
 		dc1394.start();

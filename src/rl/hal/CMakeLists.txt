@@ -216,7 +216,6 @@ if(RL_BUILD_HAL_COMEDI)
 endif()
 
 if(RL_BUILD_HAL_LIBDC1394)
-	target_compile_definitions(hal PUBLIC ${libdc1394_DEFINITIONS})
 	target_include_directories(hal PUBLIC ${libdc1394_INCLUDE_DIRS})
 	target_link_libraries(hal ${libdc1394_LIBRARIES})
 endif()

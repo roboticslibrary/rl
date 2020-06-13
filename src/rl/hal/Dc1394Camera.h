@@ -27,14 +27,8 @@
 #ifndef RL_HAL_DC1394CAMERA_H
 #define RL_HAL_DC1394CAMERA_H
 
-#if (LIBDC1394_VERSION_MAJOR > 10)
-#include <dc1394/dc1394.h>
-#else
-#include <libdc1394/dc1394_control.h>
-#include <libraw1394/raw1394.h>
-#endif
-
 #include <string>
+#include <dc1394/dc1394.h>
 
 #include "Camera.h"
 #include "CyclicDevice.h"
@@ -52,11 +46,7 @@ namespace rl
 			public:
 				enum ColorCoding
 				{
-#if (LIBDC1394_VERSION_MAJOR > 10)
 					  COLOR_CODING_MONO8 = ::DC1394_COLOR_CODING_MONO8,
-#else
-					  COLOR_CODING_MONO8 = ::COLOR_FORMAT7_MONO8,
-#endif
 					  COLOR_CODING_YUV411,
 					  COLOR_CODING_YUV422,
 					  COLOR_CODING_YUV444,
@@ -71,11 +61,7 @@ namespace rl
 				
 				enum Feature
 				{
-#if (LIBDC1394_VERSION_MAJOR > 10)
 					FEATURE_BRIGHTNESS = ::DC1394_FEATURE_BRIGHTNESS,
-#else
-					FEATURE_BRIGHTNESS = ::FEATURE_BRIGHTNESS,
-#endif
 					FEATURE_EXPOSURE,
 					FEATURE_SHARPNESS,
 					FEATURE_WHITE_BALANCE,
@@ -101,22 +87,14 @@ namespace rl
 				
 				enum FeatureMode
 				{
-#if (LIBDC1394_VERSION_MAJOR > 10)
 					FEATURE_MODE_MANUAL = ::DC1394_FEATURE_MODE_MANUAL,
-#else
-					FEATURE_MODE_MANUAL,
-#endif
 					FEATURE_MODE_AUTO,
 					FEATURE_MODE_ONE_PUSH_AUTO
 				};
 				
 				enum Framerate
 				{
-#if (LIBDC1394_VERSION_MAJOR > 10)
 					FRAMERATE_1_875 = ::DC1394_FRAMERATE_1_875,
-#else
-					FRAMERATE_1_875 = ::FRAMERATE_1_875,
-#endif
 					FRAMERATE_3_75,
 					FRAMERATE_7_5,
 					FRAMERATE_15,
@@ -128,11 +106,7 @@ namespace rl
 				
 				enum IsoSpeed
 				{
-#if (LIBDC1394_VERSION_MAJOR > 10)
 					ISO_SPEED_100 = ::DC1394_ISO_SPEED_100,
-#else
-					ISO_SPEED_100 = ::SPEED_100,
-#endif
 					ISO_SPEED_200,
 					ISO_SPEED_400,
 					ISO_SPEED_800,
@@ -142,32 +116,20 @@ namespace rl
 				
 				enum OperationMode
 				{
-#if (LIBDC1394_VERSION_MAJOR > 10)
 					OPERATION_MODE_LEGACY = ::DC1394_OPERATION_MODE_LEGACY,
-#else
-					OPERATION_MODE_LEGACY = ::OPERATION_MODE_LEGACY,
-#endif
 					OPERATION_MODE_1394B
 				};
 				
 				enum VideoMode
 				{
-#if (LIBDC1394_VERSION_MAJOR > 10)
 					VIDEO_MODE_160x120_YUV444 = ::DC1394_VIDEO_MODE_160x120_YUV444,
-#else
-					VIDEO_MODE_160x120_YUV444 = ::MODE_160x120_YUV444,
-#endif
 					VIDEO_MODE_320x240_YUV422,
 					VIDEO_MODE_640x480_YUV411,
 					VIDEO_MODE_640x480_YUV422,
 					VIDEO_MODE_640x480_RGB8,
 					VIDEO_MODE_640x480_MONO8,
 					VIDEO_MODE_640x480_MONO16,
-#if (LIBDC1394_VERSION_MAJOR > 10)
 					VIDEO_MODE_800x600_YUV422,
-#else
-					VIDEO_MODE_800x600_YUV422 = ::MODE_800x600_YUV422,
-#endif
 					VIDEO_MODE_800x600_RGB8,
 					VIDEO_MODE_800x600_MONO8,
 					VIDEO_MODE_1024x768_YUV422,
@@ -175,11 +137,7 @@ namespace rl
 					VIDEO_MODE_1024x768_MONO8,
 					VIDEO_MODE_800x600_MONO16,
 					VIDEO_MODE_1024x768_MONO16,
-#if (LIBDC1394_VERSION_MAJOR > 10)
 					VIDEO_MODE_1280x960_YUV422,
-#else
-					VIDEO_MODE_1280x960_YUV422 = ::MODE_1280x960_YUV422,
-#endif
 					VIDEO_MODE_1280x960_RGB8,
 					VIDEO_MODE_1280x960_MONO8,
 					VIDEO_MODE_1600x1200_YUV422,
@@ -187,16 +145,8 @@ namespace rl
 					VIDEO_MODE_1600x1200_MONO8,
 					VIDEO_MODE_1280x960_MONO16,
 					VIDEO_MODE_1600x1200_MONO16,
-#if (LIBDC1394_VERSION_MAJOR > 10)
 					VIDEO_MODE_EXIF,
-#else
-					VIDEO_MODE_EXIF = ::MODE_EXIF,
-#endif
-#if (LIBDC1394_VERSION_MAJOR > 10)
 					VIDEO_MODE_FORMAT7_0,
-#else
-					VIDEO_MODE_FORMAT7_0 = ::MODE_FORMAT7_0,
-#endif
 					VIDEO_MODE_FORMAT7_1,
 					VIDEO_MODE_FORMAT7_2,
 					VIDEO_MODE_FORMAT7_3,
@@ -209,33 +159,21 @@ namespace rl
 				class Exception : public DeviceException
 				{
 				public:
-#if (LIBDC1394_VERSION_MAJOR > 10)
 					Exception(const ::dc1394error_t& error);
-#else
-					Exception(const int& error);
-#endif
 					
 					virtual ~Exception() throw();
 					
-#if (LIBDC1394_VERSION_MAJOR > 10)
 					::dc1394error_t getError() const;
-#else
-					int getError() const;
-#endif
 					
 					virtual const char* what() const throw();
 					
 				protected:
 					
 				private:
-#if (LIBDC1394_VERSION_MAJOR > 10)
 					::dc1394error_t error;
-#else
-					int error;
-#endif
 				};
 				
-				Dc1394Camera(const ::std::string& filename = "", const unsigned int& node = 0);
+				Dc1394Camera(const unsigned int& node = 0);
 				
 				virtual ~Dc1394Camera();
 				
@@ -260,8 +198,6 @@ namespace rl
 				unsigned int getFeatureValue(const Feature& feature) const;
 				
 				float getFeatureValueAbsolute(const Feature& feature) const;
-				
-				::std::string getFilename() const;
 				
 				void getFormat7(VideoMode& videoMode, ColorCoding& colorCoding, unsigned int& left, unsigned int& top, unsigned int& width, unsigned int& height) const;
 				
@@ -313,8 +249,6 @@ namespace rl
 				
 				void setFeatureValueAbsolute(const Feature& feature, const float& value);
 				
-				void setFilename(const ::std::string& filename);
-				
 				void setFormat7(const VideoMode& videoMode, const ColorCoding& colorCoding, const unsigned int& left, const unsigned int& top, const unsigned int& width, const unsigned int& height);
 				
 				void setFramerate(const Framerate& framerate);
@@ -338,7 +272,6 @@ namespace rl
 			protected:
 				
 			private:
-#if (LIBDC1394_VERSION_MAJOR > 10)
 				unsigned int buffer;
 				
 				::dc1394camera_t* camera;
@@ -348,8 +281,6 @@ namespace rl
 				ColorCoding colorCoding;
 				
 				::dc1394_t* dc1394;
-				
-				::std::string filename;
 				
 				::dc1394video_frame_t* frame;
 				
@@ -368,45 +299,6 @@ namespace rl
 				VideoMode videoMode;
 				
 				unsigned int width;
-#else
-				unsigned int buffer;
-				
-				::dc1394_cameracapture camera;
-				
-				int cameras;
-				
-				unsigned int channel;
-				
-				ColorCoding colorCoding;
-				
-				unsigned int drop;
-				
-				::std::string filename;
-				
-				Framerate framerate;
-				
-				::raw1394handle_t handle;
-				
-				unsigned int height;
-				
-				::dc1394_camerainfo info;
-				
-				unsigned int left;
-				
-				unsigned int node;
-				
-				nodeid_t* nodes;
-				
-				unsigned int port;
-				
-				unsigned int speed;
-				
-				unsigned int top;
-				
-				VideoMode videoMode;
-				
-				unsigned int width;
-#endif
 		};
 	}
 }

@@ -38,21 +38,7 @@ foreach(PATH $ENV{PATH})
 endforeach()
 
 find_path(
-	libdc1394_V1_INCLUDE_DIRS
-	libdc1394/dc1394_control.h
-	HINTS
-	${libdc1394_INCLUDE_HINTS}
-	PATHS
-	$ENV{HOME}/include
-	/usr/local/include
-	/opt/local/include
-	/usr/include
-)
-
-mark_as_advanced(libdc1394_V1_INCLUDE_DIRS)
-
-find_path(
-	libdc1394_V2_INCLUDE_DIRS
+	libdc1394_INCLUDE_DIRS
 	dc1394/dc1394.h
 	HINTS
 	${libdc1394_INCLUDE_HINTS}
@@ -63,13 +49,7 @@ find_path(
 	/usr/include
 )
 
-mark_as_advanced(libdc1394_V2_INCLUDE_DIRS)
-
-if(libdc1394_V1_INCLUDE_DIRS)
-	set(libdc1394_INCLUDE_DIRS ${libdc1394_V1_INCLUDE_DIRS})
-elseif(libdc1394_V2_INCLUDE_DIRS)
-	set(libdc1394_INCLUDE_DIRS ${libdc1394_V2_INCLUDE_DIRS})
-endif()
+mark_as_advanced(libdc1394_INCLUDE_DIRS)
 
 foreach(PATH ${CMAKE_PREFIX_PATH})
 	file(
@@ -107,19 +87,7 @@ foreach(PATH $ENV{PATH})
 endforeach()
 
 find_library(
-	libdc1394_V1_LIBRARY_RELEASE
-	NAMES
-	dc1394_control
-	HINTS
-	${libdc1394_LIBRARY_HINTS}
-	PATHS
-	$ENV{HOME}/lib
-	/usr/local/lib
-	/opt/local/lib
-	/usr/lib
-)
-find_library(
-	libdc1394_V2_LIBRARY_RELEASE
+	libdc1394_LIBRARY_RELEASE
 	NAMES
 	dc1394
 	HINTS
@@ -132,24 +100,9 @@ find_library(
 	/usr/lib
 )
 
-mark_as_advanced(libdc1394_V1_LIBRARY_RELEASE)
-mark_as_advanced(libdc1394_V2_LIBRARY_RELEASE)
-
-if(libdc1394_V1_LIBRARY_RELEASE)
-	set(libdc1394_LIBRARY_RELEASE ${libdc1394_V1_LIBRARY_RELEASE})
-elseif(libdc1394_V2_LIBRARY_RELEASE)
-	set(libdc1394_LIBRARY_RELEASE ${libdc1394_V2_LIBRARY_RELEASE})
-endif()
+mark_as_advanced(libdc1394_LIBRARY_RELEASE)
 
 select_library_configurations(libdc1394)
-
-if(libdc1394_V1_LIBRARY_RELEASE AND libdc1394_V1_INCLUDE_DIRS)
-	set(libdc1394_DEFINITIONS -DLIBDC1394_VERSION_MAJOR=10)
-elseif(libdc1394_V2_LIBRARY_RELEASE AND libdc1394_V2_INCLUDE_DIRS)
-	set(libdc1394_DEFINITIONS -DLIBDC1394_VERSION_MAJOR=20)
-endif()
-
-mark_as_advanced(libdc1394_DEFINITIONS)
 
 find_package_handle_standard_args(
 	libdc1394
