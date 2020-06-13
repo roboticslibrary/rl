@@ -347,6 +347,22 @@ namespace rl
 				this->bodyForObj.erase(collisionObject);
 				this->manager.unregisterObject(collisionObject);
 			}
+			
+			Scene::CollisionData::CollisionData(const ::std::unordered_map<::fcl::CollisionObject*, Body*>& bodyForObj) :
+				bodyForObj(bodyForObj),
+				done(false),
+				request(),
+				result()
+			{
+			}
+			
+			Scene::DistanceData::DistanceData(const ::std::unordered_map<::fcl::CollisionObject*, Body*>& bodyForObj) :
+				bodyForObj(bodyForObj),
+				done(false),
+				request(true),
+				result()
+			{
+			}
 		}
 	}
 }

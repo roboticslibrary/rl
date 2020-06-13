@@ -75,8 +75,7 @@ namespace rl
 			::rl::sg::Body*
 			Model::create()
 			{
-				Body* newBody = new Body(this);
-				return newBody;
+				return new Body(this);
 			}
 			
 			void

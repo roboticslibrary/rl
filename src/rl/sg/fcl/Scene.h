@@ -92,13 +92,7 @@ namespace rl
 			private:
 				struct CollisionData
 				{
-					CollisionData(const ::std::unordered_map<::fcl::CollisionObject*, Body*>& bodyForObj) :
-						bodyForObj(bodyForObj),
-						done(false),
-						request(),
-						result()
-					{
-					}
+					CollisionData(const ::std::unordered_map<::fcl::CollisionObject*, Body*>& bodyForObj);
 					
 					const ::std::unordered_map<::fcl::CollisionObject*, Body*>& bodyForObj;
 					
@@ -111,13 +105,7 @@ namespace rl
 				
 				struct DistanceData
 				{
-					DistanceData(const ::std::unordered_map<::fcl::CollisionObject*, Body*>& bodyForObj) :
-						bodyForObj(bodyForObj),
-						done(false),
-						request(true),
-						result()
-					{
-					}
+					DistanceData(const ::std::unordered_map<::fcl::CollisionObject*, Body*>& bodyForObj);
 					
 					const ::std::unordered_map<::fcl::CollisionObject*, Body*>& bodyForObj;
 					

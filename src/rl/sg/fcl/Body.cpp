@@ -46,11 +46,6 @@ namespace rl
 			
 			Body::~Body()
 			{
-				for (::std::size_t i = 0; i < this->collisionObjects.size(); ++i)
-				{
-					manager.unregisterObject(this->collisionObjects[i]);
-				}
-				
 				while (this->shapes.size() > 0)
 				{
 					delete this->shapes[0];
@@ -59,21 +54,20 @@ namespace rl
 				this->getModel()->remove(this);
 			}
 			
-			::rl::sg::Shape*
-			Body::create(SoVRMLShape* shape)
-			{
-				Shape* newShape = new Shape(shape, this);
-				return newShape;
-			}
-			
 			void
 			Body::add(::rl::sg::Shape* shape)
 			{
 				Shape* fclShape = static_cast<Shape*>(shape);
 				this->shapes.push_back(fclShape);
-				fclShape->update(frame);
+				fclShape->update(this->frame);
 				this->manager.registerObject(fclShape->collisionObject.get());
 				static_cast<Model*>(getModel())->addCollisionObject(fclShape->collisionObject.get(), this);
+			}
+			
+			::rl::sg::Shape*
+			Body::create(SoVRMLShape* shape)
+			{
+				return new Shape(shape, this);
 			}
 			
 			void

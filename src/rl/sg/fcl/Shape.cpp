@@ -190,7 +190,7 @@ namespace rl
 				this->collisionObject = ::std::make_shared<::fcl::CollisionObject>(this->geometry, ::fcl::Transform3f());
 				
 				this->getBody()->add(this);
-				setTransform(::rl::math::Transform::Identity());
+				this->setTransform(::rl::math::Transform::Identity());
 			}
 			
 			Shape::~Shape()
