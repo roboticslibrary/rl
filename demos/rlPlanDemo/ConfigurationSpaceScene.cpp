@@ -41,6 +41,7 @@ ConfigurationSpaceScene::ConfigurationSpaceScene(QObject* parent) :
 	delta0(1),
 	delta1(1),
 	model(nullptr),
+	collisions(nullptr),
 	edges(nullptr),
 	path(nullptr),
 	scene(nullptr),
@@ -73,19 +74,17 @@ ConfigurationSpaceScene::addCollision(const qreal& x, const qreal& y, const qrea
 		QBrush(QColor(rgb, rgb, rgb))
 	);
 	
-	rect->setParentItem(this->scene);
-	rect->setZValue(1);
+	this->collisions->addToGroup(rect);
 }
 
 void
 ConfigurationSpaceScene::clear()
 {
-	QList<QGraphicsItem*> items = this->items();
-	
-	while (!items.isEmpty())
-	{
-		delete items.takeFirst();
-	}
+	QGraphicsScene::clear();
+	this->collisions = nullptr;
+	this->edges = nullptr;
+	this->path = nullptr;
+	this->scene = nullptr;
 }
 
 void
@@ -104,8 +103,6 @@ ConfigurationSpaceScene::drawConfigurationEdge(const rl::math::Vector& u, const 
 		free ? QPen(QBrush(QColor(0, 128, 0)), 0) : QPen(QBrush(QColor(128, 0, 0)), 0)
 	);
 	
-	line->setZValue(2);
-	
 	this->edges->addToGroup(line);
 }
 
@@ -122,7 +119,7 @@ ConfigurationSpaceScene::drawConfigurationPath(const rl::plan::VectorList& path)
 	rl::plan::VectorList::const_iterator i = path.begin();
 	rl::plan::VectorList::const_iterator j = ++path.begin();
 	
-	while (i != path.end() && j != path.end())
+	for (; i != path.end() && j != path.end(); ++i, ++j)
 	{
 		QGraphicsLineItem* line = this->addLine(
 			(*i)(this->axis0),
@@ -132,12 +129,7 @@ ConfigurationSpaceScene::drawConfigurationPath(const rl::plan::VectorList& path)
 			QPen(QBrush(QColor(0, 255, 0)), 0)
 		);
 		
-		line->setZValue(3);
-		
 		this->path->addToGroup(line);
-		
-		++i;
-		++j;
 	}
 }
 
@@ -235,8 +227,14 @@ ConfigurationSpaceScene::init()
 	
 	this->setSceneRect(this->scene->boundingRect());
 	
-	this->edges = new QGraphicsItemGroup(this->scene);
-	this->path = new QGraphicsItemGroup(this->scene);
+	this->collisions = this->createItemGroup(QList<QGraphicsItem*>());
+	this->collisions->setZValue(1);
+	
+	this->edges = this->createItemGroup(QList<QGraphicsItem*>());
+	this->edges->setZValue(2);
+	
+	this->path = this->createItemGroup(QList<QGraphicsItem*>());
+	this->path->setZValue(3);
 }
 
 void
@@ -295,6 +293,11 @@ ConfigurationSpaceScene::reset()
 void
 ConfigurationSpaceScene::resetEdges()
 {
+	if (nullptr == this->edges)
+	{
+		return;
+	}
+	
 	QList<QGraphicsItem*> items = this->edges->childItems();
 	
 	while (!items.isEmpty())
@@ -311,6 +314,11 @@ ConfigurationSpaceScene::resetLines()
 void
 ConfigurationSpaceScene::resetPath()
 {
+	if (nullptr == this->path)
+	{
+		return;
+	}
+	
 	QList<QGraphicsItem*> items = this->path->childItems();
 	
 	while (!items.isEmpty())

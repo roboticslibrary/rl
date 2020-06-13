@@ -108,6 +108,8 @@ protected:
 	void mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent);
 	
 private:
+	QGraphicsItemGroup* collisions;
+	
 	QGraphicsItemGroup* edges;
 	
 	QGraphicsItemGroup* path;
