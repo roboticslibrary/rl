@@ -25,6 +25,7 @@
 //
 
 #include <rl/math/Rotation.h>
+#include <rl/math/TypeTraits.h>
 
 #include "Revolute.h"
 
@@ -106,15 +107,15 @@ namespace rl
 		void
 		Revolute::normalize(::rl::math::VectorRef q) const
 		{
-			q(0) = ::std::remainder(q(0), 2 * static_cast<::rl::math::Real>(M_PI));
+			q(0) = ::std::remainder(q(0), 2 * ::rl::math::TypeTraits<::rl::math::Real>::pi);
 			
 			if (q(0) < this->min(0))
 			{
-				q(0) += 2 * static_cast<::rl::math::Real>(M_PI);
+				q(0) += 2 * ::rl::math::TypeTraits<::rl::math::Real>::pi;
 			}
 			else if (q(0) > this->max(0))
 			{
-				q(0) -= 2 * static_cast<::rl::math::Real>(M_PI);
+				q(0) -= 2 * ::rl::math::TypeTraits<::rl::math::Real>::pi;
 			}
 		}
 		

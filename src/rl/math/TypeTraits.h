@@ -209,6 +209,32 @@ namespace rl
 				return 1;
 			}
 			
+			static constexpr T e = T(2.718281828459045235360287471352662498L);
+			
+			static constexpr T log2e = T(1.442695040888963407359924681001892137L);
+			
+			static constexpr T log10e = T(0.434294481903251827651128918916605082L);
+			
+			static constexpr T pi = T(3.141592653589793238462643383279502884L);
+			
+			static constexpr T inv_pi = T(0.318309886183790671537767526745028724L);
+			
+			static constexpr T inv_sqrtpi = T(0.564189583547756286948079451560772586L);
+			
+			static constexpr T ln2 = T(0.693147180559945309417232121458176568L);
+			
+			static constexpr T ln10 = T(2.302585092994045684017991454684364208L);
+			
+			static constexpr T sqrt2 = T(1.414213562373095048801688724209698079L);
+			
+			static constexpr T sqrt3 = T(1.732050807568877293527446341505872367L);
+			
+			static constexpr T inv_sqrt3 = T(0.577350269189625764509148780501957456L);
+			
+			static constexpr T egamma = T(0.577215664901532860606512090082402431L);
+			
+			static constexpr T phi = T(1.618033988749894848204586834365638118L);
+			
 		protected:
 			
 		private:

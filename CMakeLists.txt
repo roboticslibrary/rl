@@ -47,7 +47,6 @@ endif()
 if(MSVC)
 	add_definitions(
 		-D_ENABLE_EXTENDED_ALIGNED_STORAGE
-		-D_USE_MATH_DEFINES
 	)
 endif()
 

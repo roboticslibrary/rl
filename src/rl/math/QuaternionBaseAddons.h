@@ -96,8 +96,13 @@ static Quaternion<Scalar> Random(const MatrixBase<OtherDerived>& rand)
 	
 	Scalar sigma1 = sqrt(Scalar(1) - rand(0));
 	Scalar sigma2 = sqrt(rand(0));
+#ifdef EIGEN_PI
+	Scalar theta1 = Scalar(2) * Scalar(EIGEN_PI) * rand(1);
+	Scalar theta2 = Scalar(2) * Scalar(EIGEN_PI) * rand(2);
+#else
 	Scalar theta1 = Scalar(2) * Scalar(M_PI) * rand(1);
 	Scalar theta2 = Scalar(2) * Scalar(M_PI) * rand(2);
+#endif
 	
 	return Quaternion<Scalar>(
 		cos(theta2) * sigma2,

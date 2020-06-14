@@ -26,6 +26,7 @@
 
 #include <cassert>
 #include <rl/math/Rotation.h>
+#include <rl/math/TypeTraits.h>
 
 #include "Frame.h"
 #include "Joint.h"
@@ -138,13 +139,13 @@ namespace rl
 			::rl::math::Real c2 = cosAlpha * cosBeta - K * sinAlpha * sinBeta;
 			
 			// arm
-			::rl::math::Real theta2 = this->atan2(s2, c2) + static_cast<::rl::math::Real>(M_PI_2);
+			::rl::math::Real theta2 = this->atan2(s2, c2) + ::rl::math::TypeTraits<::rl::math::Real>::pi * 0.5;
 			
 			::rl::math::Real c3 = (a2_2 + a3_2 - Q_2) / (2 * a2 * a3);
 			::rl::math::Real s3 = K * ::std::sqrt(1 - ::std::pow(c3, 2));
 			
 			// elbow
-			::rl::math::Real theta3 = this->atan2(s3, c3) + static_cast<::rl::math::Real>(M_PI);
+			::rl::math::Real theta3 = this->atan2(s3, c3) + ::rl::math::TypeTraits<::rl::math::Real>::pi;
 			
 			::rl::math::Real c23 = this->cos(theta2 + theta3);
 			::rl::math::Real s23 = this->sin(theta2 + theta3);

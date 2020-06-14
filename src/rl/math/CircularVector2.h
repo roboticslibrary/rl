@@ -40,6 +40,7 @@
 #include "Circular.h"
 #include "Function.h"
 #include "Matrix.h"
+#include "TypeTraits.h"
 #include "Vector.h"
 
 namespace rl
@@ -100,7 +101,7 @@ namespace rl
 				
 				if (f.angle < 0)
 				{
-					f.angle += 2 * static_cast<Real>(M_PI);
+					f.angle += 2 * TypeTraits<Real>::pi;
 				}
 				
 				f.x1 = x1;

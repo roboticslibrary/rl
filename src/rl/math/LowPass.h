@@ -27,9 +27,8 @@
 #ifndef RL_MATH_LOWPASS_H
 #define RL_MATH_LOWPASS_H
 
-#include <cmath>
-
 #include "Real.h"
+#include "TypeTraits.h"
 
 namespace rl
 {
@@ -52,7 +51,7 @@ namespace rl
 			
 			static LowPass<T> Frequency(const Real& frequency, const Real& dt, const T& y = T())
 			{
-				Real rc = 1 / (2 * static_cast<Real>(M_PI) * frequency);
+				Real rc = 1 / (2 * TypeTraits<Real>::pi * frequency);
 				Real alpha = dt / (rc + dt);
 				return LowPass<T>(alpha, dt, rc, y);
 			}

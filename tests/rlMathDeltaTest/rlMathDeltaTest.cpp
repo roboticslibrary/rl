@@ -30,6 +30,7 @@
 #include <rl/math/Rotation.h>
 #include <rl/math/Transform.h>
 #include <rl/math/Unit.h>
+#include <rl/math/TypeTraits.h>
 #include <rl/math/Vector.h>
 
 int
@@ -49,16 +50,16 @@ main(int argc, char** argv)
 			rotation = 0.1;
 			break;
 		case 2:
-			rotation = M_PI / 2;
+			rotation = rl::math::TypeTraits<rl::math::Real>::pi * 0.5;
 			break;
 		case 3:
-			rotation = M_PI;
+			rotation = rl::math::TypeTraits<rl::math::Real>::pi;
 			break;
 		case 4:
-			rotation = 2 * M_PI;
+			rotation = 2 * rl::math::TypeTraits<rl::math::Real>::pi;
 			break;
 		default:
-			rotation = -M_PI / 2;
+			rotation = -rl::math::TypeTraits<rl::math::Real>::pi * 0.5;
 			break;
 		}
 		

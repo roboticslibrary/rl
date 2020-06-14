@@ -27,9 +27,8 @@
 #ifndef RL_MATH_UNIT_H
 #define RL_MATH_UNIT_H
 
-#include <cmath>
-
 #include "Real.h"
+#include "TypeTraits.h"
 
 namespace rl
 {
@@ -338,7 +337,7 @@ namespace rl
 		 *
 		 * This is equal to a multiplication by &pi; and a division by 180.
 		 */
-		static const Real DEG2RAD = static_cast<Real>(M_PI) / static_cast<Real>(180);
+		static const Real DEG2RAD = TypeTraits<Real>::pi / static_cast<Real>(180);
 		
 		static const Real GIGA2UNIT = static_cast<Real>(1.0e+9);
 		
@@ -369,7 +368,7 @@ namespace rl
 		 *
 		 * This is equal to a multiplication by 180 and a division by &pi;.
 		 */
-		static const Real RAD2DEG = static_cast<Real>(180) / static_cast<Real>(M_PI);
+		static const Real RAD2DEG = static_cast<Real>(180) / TypeTraits<Real>::pi;
 		
 		static const Real UNIT2GIGA = static_cast<Real>(1.0e-9);
 		

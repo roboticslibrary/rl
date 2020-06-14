@@ -71,10 +71,6 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4)
 	target_compile_definitions(math INTERFACE EIGEN_DONT_ALIGN_STATICALLY)
 endif()
 
-if(MSVC)
-	target_compile_definitions(math INTERFACE _USE_MATH_DEFINES)
-endif()
-
 if(NOT CMAKE_VERSION VERSION_LESS 3.8)
 	target_compile_features(math INTERFACE cxx_std_11)
 endif()
