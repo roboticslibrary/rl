@@ -56,7 +56,7 @@ namespace rl
 			Model::add(Body* body)
 			{
 				this->bodies.push_back(body);
-				::std::vector<::fcl::CollisionObject*> objects;
+				::std::vector<CollisionObject*> objects;
 				body->manager.getObjects(objects);
 				
 				if (objects.size() > 0)
@@ -66,7 +66,7 @@ namespace rl
 			}
 			
 			void
-			Model::addCollisionObject(::fcl::CollisionObject* collisionObject, Body* body)
+			Model::addCollisionObject(CollisionObject* collisionObject, Body* body)
 			{
 				this->manager.registerObject(collisionObject);
 				dynamic_cast<Scene*>(this->getScene())->addCollisionObject(collisionObject, body);
@@ -86,7 +86,7 @@ namespace rl
 				if (found != this->bodies.end())
 				{
 					this->bodies.erase(found);
-					::std::vector<::fcl::CollisionObject*> objects;
+					::std::vector<CollisionObject*> objects;
 					body->manager.getObjects(objects);
 					
 					for (::std::size_t i = 0; i < objects.size(); ++i)
@@ -97,7 +97,7 @@ namespace rl
 			}
 			
 			void
-			Model::removeCollisionObject(::fcl::CollisionObject* collisionObject)
+			Model::removeCollisionObject(CollisionObject* collisionObject)
 			{
 				this->manager.unregisterObject(collisionObject);
 				dynamic_cast<Scene*>(this->getScene())->removeCollisionObject(collisionObject);

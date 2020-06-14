@@ -27,8 +27,13 @@
 #ifndef RL_SG_FCL_BODY_H
 #define RL_SG_FCL_BODY_H
 
-#include <fcl/collision.h>
+#include <fcl/config.h>
+
+#if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 6
 #include <fcl/broadphase/broadphase.h>
+#else
+#include <fcl/broadphase/broadphase_dynamic_AABB_tree.h>
+#endif
 
 #include "../Body.h"
 
@@ -38,6 +43,12 @@ namespace rl
 	{
 		namespace fcl
 		{
+#if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 6
+			typedef ::fcl::DynamicAABBTreeCollisionManager DynamicAABBTreeCollisionManager;
+#else
+			typedef ::fcl::DynamicAABBTreeCollisionManager<::rl::math::Real> DynamicAABBTreeCollisionManager;
+#endif
+			
 			class Model;
 			
 			class RL_SG_EXPORT Body : public ::rl::sg::Body
@@ -57,7 +68,7 @@ namespace rl
 				
 				void setFrame(const ::rl::math::Transform& frame);
 				
-				::fcl::DynamicAABBTreeCollisionManager manager;
+				DynamicAABBTreeCollisionManager manager;
 				
 			protected:
 				::rl::math::Transform frame;
@@ -69,4 +80,4 @@ namespace rl
 	}
 }
 
-#endif // RL_SG_BULLET_BODY_H
+#endif // RL_SG_FCL_BODY_H

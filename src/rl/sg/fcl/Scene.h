@@ -28,8 +28,15 @@
 #define RL_SG_FCL_SCENE_H
 
 #include <unordered_map>
+#include <fcl/config.h>
+
+#if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 6
 #include <fcl/collision.h>
 #include <fcl/broadphase/broadphase.h>
+#else
+#include <fcl/broadphase/broadphase_dynamic_AABB_tree.h>
+#include <fcl/narrowphase/collision.h>
+#endif
 
 #include "../DepthScene.h"
 #include "../DistanceScene.h"
@@ -46,6 +53,24 @@ namespace rl
 		 */
 		namespace fcl
 		{
+#if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 6
+			typedef ::fcl::CollisionObject CollisionObject;
+			typedef ::fcl::CollisionRequest CollisionRequest;
+			typedef ::fcl::CollisionResult CollisionResult;
+			typedef ::fcl::DistanceRequest DistanceRequest;
+			typedef ::fcl::DistanceResult DistanceResult;
+			typedef ::fcl::DynamicAABBTreeCollisionManager DynamicAABBTreeCollisionManager;
+			typedef ::fcl::FCL_REAL Real;
+#else
+			typedef ::fcl::CollisionObject<::rl::math::Real> CollisionObject;
+			typedef ::fcl::CollisionRequest<::rl::math::Real> CollisionRequest;
+			typedef ::fcl::CollisionResult<::rl::math::Real> CollisionResult;
+			typedef ::fcl::DistanceRequest<::rl::math::Real> DistanceRequest;
+			typedef ::fcl::DistanceResult<::rl::math::Real> DistanceResult;
+			typedef ::fcl::DynamicAABBTreeCollisionManager<::rl::math::Real> DynamicAABBTreeCollisionManager;
+			typedef ::rl::math::Real Real;
+#endif
+			
 			class RL_SG_EXPORT Scene : public ::rl::sg::DepthScene, public ::rl::sg::DistanceScene, public ::rl::sg::SimpleScene
 			{
 			public:
@@ -55,7 +80,7 @@ namespace rl
 				
 				void add(::rl::sg::Model* model);
 				
-				void addCollisionObject(::fcl::CollisionObject* collisionObject, Body* body);
+				void addCollisionObject(CollisionObject* collisionObject, Body* body);
 				
 				bool areColliding(::rl::sg::Body* first, ::rl::sg::Body* second);
 				
@@ -83,44 +108,44 @@ namespace rl
 				
 				void remove(::rl::sg::Model* model);
 				
-				void removeCollisionObject(::fcl::CollisionObject* collisionObject);
+				void removeCollisionObject(CollisionObject* collisionObject);
 				
-				::fcl::DynamicAABBTreeCollisionManager manager;
+				DynamicAABBTreeCollisionManager manager;
 				
 			protected:
 				
 			private:
 				struct CollisionData
 				{
-					CollisionData(const ::std::unordered_map<::fcl::CollisionObject*, Body*>& bodyForObj);
+					CollisionData(const ::std::unordered_map<CollisionObject*, Body*>& bodyForObj);
 					
-					const ::std::unordered_map<::fcl::CollisionObject*, Body*>& bodyForObj;
+					const ::std::unordered_map<CollisionObject*, Body*>& bodyForObj;
 					
 					bool done;
 					
-					::fcl::CollisionRequest request;
+					CollisionRequest request;
 					
-					::fcl::CollisionResult result;
+					CollisionResult result;
 				};
 				
 				struct DistanceData
 				{
-					DistanceData(const ::std::unordered_map<::fcl::CollisionObject*, Body*>& bodyForObj);
+					DistanceData(const ::std::unordered_map<CollisionObject*, Body*>& bodyForObj);
 					
-					const ::std::unordered_map<::fcl::CollisionObject*, Body*>& bodyForObj;
+					const ::std::unordered_map<CollisionObject*, Body*>& bodyForObj;
 					
 					bool done;
 					
-					::fcl::DistanceRequest request;
+					DistanceRequest request;
 					
-					::fcl::DistanceResult result;
+					DistanceResult result;
 				};
 				
-				static bool defaultCollisionFunction(::fcl::CollisionObject* o1, ::fcl::CollisionObject* o2, void* data);
+				static bool defaultCollisionFunction(CollisionObject* o1, CollisionObject* o2, void* data);
 				
-				static bool defaultDistanceFunction(::fcl::CollisionObject* o1, ::fcl::CollisionObject* o2, void* data, ::fcl::FCL_REAL& dist);
+				static bool defaultDistanceFunction(CollisionObject* o1, CollisionObject* o2, void* data, Real& dist);
 				
-				::std::unordered_map<::fcl::CollisionObject*, Body*> bodyForObj;
+				::std::unordered_map<CollisionObject*, Body*> bodyForObj;
 			};
 		}
 	}

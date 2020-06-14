@@ -27,7 +27,13 @@
 #ifndef RL_SG_FCL_MODEL_H
 #define RL_SG_FCL_MODEL_H
 
+#include <fcl/config.h>
+
+#if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 6
 #include <fcl/broadphase/broadphase.h>
+#else
+#include <fcl/broadphase/broadphase_dynamic_AABB_tree.h>
+#endif
 
 #include "../Model.h"
 
@@ -37,6 +43,14 @@ namespace rl
 	{
 		namespace fcl
 		{
+#if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 6
+			typedef ::fcl::CollisionObject CollisionObject;
+			typedef ::fcl::DynamicAABBTreeCollisionManager DynamicAABBTreeCollisionManager;
+#else
+			typedef ::fcl::CollisionObject<::rl::math::Real> CollisionObject;
+			typedef ::fcl::DynamicAABBTreeCollisionManager<::rl::math::Real> DynamicAABBTreeCollisionManager;
+#endif
+			
 			class Scene;
 			
 			class RL_SG_EXPORT Model : public ::rl::sg::Model
@@ -48,15 +62,15 @@ namespace rl
 				
 				void add(Body* body);
 				
-				void addCollisionObject(::fcl::CollisionObject* collisionObject, Body* body);
+				void addCollisionObject(CollisionObject* collisionObject, Body* body);
 				
 				::rl::sg::Body* create();
 				
 				void remove(Body* body);
 				
-				void removeCollisionObject(::fcl::CollisionObject* collisionObject);
+				void removeCollisionObject(CollisionObject* collisionObject);
 				
-				::fcl::DynamicAABBTreeCollisionManager manager;
+				DynamicAABBTreeCollisionManager manager;
 				
 			protected:
 				

@@ -24,8 +24,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <fcl/broadphase/broadphase.h>
-#include <fcl/BVH/BVH_model.h>
+#include <fcl/config.h>
 #include <Inventor/SoPrimitiveVertex.h>
 #include <Inventor/VRMLnodes/SoVRMLBox.h>
 #include <Inventor/VRMLnodes/SoVRMLCone.h>
@@ -34,6 +33,12 @@
 #include <Inventor/VRMLnodes/SoVRMLGeometry.h>
 #include <Inventor/VRMLnodes/SoVRMLIndexedFaceSet.h>
 #include <Inventor/VRMLnodes/SoVRMLSphere.h>
+
+#if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 6
+#include <fcl/BVH/BVH_model.h>
+#else
+#include <fcl/geometry/bvh/BVH_model.h>
+#endif
 
 #if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 5
 #include <boost/make_shared.hpp>
@@ -48,11 +53,39 @@ namespace rl
 	{
 		namespace fcl
 		{
+#if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 6
+			typedef ::fcl::Box Box;
+			typedef ::fcl::Cone Cone;
+			typedef ::fcl::Convex Convex;
+			typedef ::fcl::Cylinder Cylinder;
+			typedef ::fcl::OBBRSS OBBRSS;
+			typedef ::fcl::Sphere Sphere;
+			typedef ::fcl::Transform3f Transform3;
+#else
+			typedef ::fcl::Box<::rl::math::Real> Box;
+			typedef ::fcl::Cone<::rl::math::Real> Cone;
+			typedef ::fcl::Convex<::rl::math::Real> Convex;
+			typedef ::fcl::Cylinder<::rl::math::Real> Cylinder;
+			typedef ::fcl::OBBRSS<::rl::math::Real> OBBRSS;
+			typedef ::fcl::Sphere<::rl::math::Real> Sphere;
+			typedef ::fcl::Transform3<::rl::math::Real> Transform3;
+#endif
+			
 			Shape::Shape(SoVRMLShape* shape, ::rl::sg::Body* body) :
 				::rl::sg::Shape(shape, body),
-				baseTransform(::rl::math::Transform::Identity()),
-				currentFrame(::rl::math::Transform::Identity()),
-				transform(::rl::math::Transform::Identity())
+				base(::rl::math::Transform::Identity()),
+#if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 6
+				distances(),
+#endif
+				frame(::rl::math::Transform::Identity()),
+				geometry(),
+				indices(),
+#if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 6
+				normals(),
+#endif
+				polygons(),
+				transform(::rl::math::Transform::Identity()),
+				vertices()
 			{
 				SoVRMLGeometry* vrmlGeometry = static_cast<SoVRMLGeometry*>(shape->geometry.getValue());
 				
@@ -60,62 +93,62 @@ namespace rl
 				{
 					SoVRMLBox* box = static_cast<SoVRMLBox*>(vrmlGeometry);
 #if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 5
-					this->geometry = ::boost::make_shared<::fcl::Box>(box->size.getValue()[0], box->size.getValue()[1], box->size.getValue()[2]);
+					this->geometry = ::boost::make_shared<Box>(box->size.getValue()[0], box->size.getValue()[1], box->size.getValue()[2]);
 #else
-					this->geometry = ::std::make_shared<::fcl::Box>(box->size.getValue()[0], box->size.getValue()[1], box->size.getValue()[2]);
+					this->geometry = ::std::make_shared<Box>(box->size.getValue()[0], box->size.getValue()[1], box->size.getValue()[2]);
 #endif
 				}
 				else if (vrmlGeometry->isOfType(SoVRMLCone::getClassTypeId()))
 				{
 					SoVRMLCone* cone = static_cast<SoVRMLCone*>(vrmlGeometry);
 #if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 5
-					this->geometry = ::boost::make_shared<::fcl::Cone>(cone->bottomRadius.getValue(), cone->height.getValue());
+					this->geometry = ::boost::make_shared<Cone>(cone->bottomRadius.getValue(), cone->height.getValue());
 #else
-					this->geometry = ::std::make_shared<::fcl::Cone>(cone->bottomRadius.getValue(), cone->height.getValue());
+					this->geometry = ::std::make_shared<Cone>(cone->bottomRadius.getValue(), cone->height.getValue());
 #endif
 					
-					this->baseTransform(0, 0) = 1;
-					this->baseTransform(0, 1) = 0;
-					this->baseTransform(0, 2) = 0;
-					this->baseTransform(0, 3) = 0;
-					this->baseTransform(1, 0) = 0;
-					this->baseTransform(1, 1) = 0;
-					this->baseTransform(1, 2) = 1;
-					this->baseTransform(1, 3) = 0;
-					this->baseTransform(2, 0) = 0;
-					this->baseTransform(2, 1) = -1;
-					this->baseTransform(2, 2) = 0;
-					this->baseTransform(2, 3) = 0;
-					this->baseTransform(3, 0) = 0;
-					this->baseTransform(3, 1) = 0;
-					this->baseTransform(3, 2) = 0;
-					this->baseTransform(3, 3) = 1;
+					this->base(0, 0) = 1;
+					this->base(0, 1) = 0;
+					this->base(0, 2) = 0;
+					this->base(0, 3) = 0;
+					this->base(1, 0) = 0;
+					this->base(1, 1) = 0;
+					this->base(1, 2) = 1;
+					this->base(1, 3) = 0;
+					this->base(2, 0) = 0;
+					this->base(2, 1) = -1;
+					this->base(2, 2) = 0;
+					this->base(2, 3) = 0;
+					this->base(3, 0) = 0;
+					this->base(3, 1) = 0;
+					this->base(3, 2) = 0;
+					this->base(3, 3) = 1;
 				}
 				else if (vrmlGeometry->isOfType(SoVRMLCylinder::getClassTypeId()))
 				{
 					SoVRMLCylinder* cylinder = static_cast<SoVRMLCylinder*>(vrmlGeometry);
 #if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 5
-					this->geometry = ::boost::make_shared<::fcl::Cylinder>(cylinder->radius.getValue(), cylinder->height.getValue());
+					this->geometry = ::boost::make_shared<Cylinder>(cylinder->radius.getValue(), cylinder->height.getValue());
 #else
-					this->geometry = ::std::make_shared<::fcl::Cylinder>(cylinder->radius.getValue(), cylinder->height.getValue());
+					this->geometry = ::std::make_shared<Cylinder>(cylinder->radius.getValue(), cylinder->height.getValue());
 #endif
 					
-					this->baseTransform(0, 0) = 1;
-					this->baseTransform(0, 1) = 0;
-					this->baseTransform(0, 2) = 0;
-					this->baseTransform(0, 3) = 0;
-					this->baseTransform(1, 0) = 0;
-					this->baseTransform(1, 1) = 0;
-					this->baseTransform(1, 2) = 1;
-					this->baseTransform(1, 3) = 0;
-					this->baseTransform(2, 0) = 0;
-					this->baseTransform(2, 1) = -1;
-					this->baseTransform(2, 2) = 0;
-					this->baseTransform(2, 3) = 0;
-					this->baseTransform(3, 0) = 0;
-					this->baseTransform(3, 1) = 0;
-					this->baseTransform(3, 2) = 0;
-					this->baseTransform(3, 3) = 1;
+					this->base(0, 0) = 1;
+					this->base(0, 1) = 0;
+					this->base(0, 2) = 0;
+					this->base(0, 3) = 0;
+					this->base(1, 0) = 0;
+					this->base(1, 1) = 0;
+					this->base(1, 2) = 1;
+					this->base(1, 3) = 0;
+					this->base(2, 0) = 0;
+					this->base(2, 1) = -1;
+					this->base(2, 2) = 0;
+					this->base(2, 3) = 0;
+					this->base(3, 0) = 0;
+					this->base(3, 1) = 0;
+					this->base(3, 2) = 0;
+					this->base(3, 3) = 1;
 				}
 				else if (vrmlGeometry->isOfType(SoVRMLIndexedFaceSet::getClassTypeId()))
 				{
@@ -127,40 +160,52 @@ namespace rl
 					
 					if (indexedFaceSet->convex.getValue() && !indexedFaceSet->convex.isDefault())
 					{
-						this->normals = ::std::vector<::fcl::Vec3f>(this->indices.size() / 3);
-						this->distances = ::std::vector<::fcl::FCL_REAL>(this->indices.size() / 3);
+#if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 6
+						this->normals = ::std::vector<Vector3>(this->indices.size() / 3);
+						this->distances = ::std::vector<Real>(this->indices.size() / 3);
+#endif
 						this->polygons = ::std::vector<int>(this->indices.size() + this->indices.size() / 3);
 						
 						for (::std::size_t i = 0; i < this->indices.size() / 3; ++i)
 						{
-							::fcl::Vec3f normal = (this->vertices[this->indices[i * 3 + 1]] - this->vertices[this->indices[i * 3]]).cross(this->vertices[this->indices[i * 3 + 2]] - this->vertices[this->indices[i * 3]]);
+#if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 6
+							Vector3 normal = (this->vertices[this->indices[i * 3 + 1]] - this->vertices[this->indices[i * 3]]).cross(this->vertices[this->indices[i * 3 + 2]] - this->vertices[this->indices[i * 3]]);
 							this->normals[i] = normal.normalize();
 							this->distances[i] = this->vertices[this->indices[i * 3 + 1]].dot(normal);
+#endif
 							this->polygons[i * 4] = 3;
 							this->polygons[i * 4 + 1] = this->indices[i * 3];
 							this->polygons[i * 4 + 2] = this->indices[i * 3 + 1];
 							this->polygons[i * 4 + 3] = this->indices[i * 3 + 2];
 						}
 						
+#if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 6
 #if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 5
-						this->geometry = ::boost::make_shared<::fcl::Convex>(
+						this->geometry = ::boost::make_shared<Convex>(
 #else
-						this->geometry = ::std::make_shared<::fcl::Convex>(
+						this->geometry = ::std::make_shared<Convex>(
 #endif
 							this->normals.data(),
 							this->distances.data(),
 							this->indices.size() / 3,
-							this->vertices.empty() ? 0 : &this->vertices.front(),
+							this->vertices.data(),
 							this->vertices.size(),
 							this->polygons.data()
 						);
+#else
+						this->geometry = ::std::make_shared<Convex>(
+							::std::shared_ptr<const ::std::vector<Vector3>>(&this->vertices),
+							this->indices.size() / 3,
+							::std::shared_ptr<const ::std::vector<int>>(&this->polygons)
+						);
+#endif
 					}
 					else
 					{
 #if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 5
-						::boost::shared_ptr<::fcl::BVHModel<::fcl::OBBRSS>> mesh = ::boost::make_shared<::fcl::BVHModel<::fcl::OBBRSS>>();
+						::boost::shared_ptr<::fcl::BVHModel<OBBRSS>> mesh = ::boost::make_shared<::fcl::BVHModel<OBBRSS>>();
 #else
-						::std::shared_ptr<::fcl::BVHModel<::fcl::OBBRSS>> mesh = ::std::make_shared<::fcl::BVHModel<::fcl::OBBRSS>>();
+						::std::shared_ptr<::fcl::BVHModel<OBBRSS>> mesh = ::std::make_shared<::fcl::BVHModel<OBBRSS>>();
 #endif
 						mesh->beginModel(this->indices.size() / 3, this->vertices.size());
 						
@@ -181,13 +226,13 @@ namespace rl
 				{
 					SoVRMLSphere* sphere = static_cast<SoVRMLSphere*>(vrmlGeometry);
 #if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 5
-					this->geometry = ::boost::make_shared<::fcl::Sphere>(sphere->radius.getValue());
+					this->geometry = ::boost::make_shared<Sphere>(sphere->radius.getValue());
 #else
-					this->geometry = ::std::make_shared<::fcl::Sphere>(sphere->radius.getValue());
+					this->geometry = ::std::make_shared<Sphere>(sphere->radius.getValue());
 #endif
 				}
 				
-				this->collisionObject = ::std::make_shared<::fcl::CollisionObject>(this->geometry, ::fcl::Transform3f());
+				this->collisionObject = ::std::make_shared<CollisionObject>(this->geometry, Transform3());
 				
 				this->getBody()->add(this);
 				this->setTransform(::rl::math::Transform::Identity());
@@ -208,7 +253,7 @@ namespace rl
 			Shape::setTransform(const ::rl::math::Transform& transform)
 			{
 				this->transform = transform;
-				this->update(this->currentFrame);
+				this->update(this->frame);
 			}
 			
 			void
@@ -217,34 +262,42 @@ namespace rl
 				Shape* shape = static_cast<Shape*>(userData);
 				
 				shape->indices.push_back(shape->vertices.size());
-				::fcl::Vec3f fclVertex1(v1->getPoint()[0], v1->getPoint()[1], v1->getPoint()[2]);
-				shape->vertices.push_back(fclVertex1);
+				Vector3 vertex1(v1->getPoint()[0], v1->getPoint()[1], v1->getPoint()[2]);
+				shape->vertices.push_back(vertex1);
 				
 				shape->indices.push_back(shape->vertices.size());
-				::fcl::Vec3f fclVertex2(v2->getPoint()[0], v2->getPoint()[1], v2->getPoint()[2]);
-				shape->vertices.push_back(fclVertex2);
+				Vector3 vertex2(v2->getPoint()[0], v2->getPoint()[1], v2->getPoint()[2]);
+				shape->vertices.push_back(vertex2);
 				
 				shape->indices.push_back(shape->vertices.size());
-				::fcl::Vec3f fclVertex3(v3->getPoint()[0], v3->getPoint()[1], v3->getPoint()[2]);
-				shape->vertices.push_back(fclVertex3);
+				Vector3 vertex3(v3->getPoint()[0], v3->getPoint()[1], v3->getPoint()[2]);
+				shape->vertices.push_back(vertex3);
 			}
 			
 			void
 			Shape::update(const ::rl::math::Transform& frame)
 			{
-				this->currentFrame = frame;
+				this->frame = frame;
 				
-				::rl::math::Transform fullTransform = this->currentFrame * this->transform * this->baseTransform;
+				::rl::math::Transform transform = this->frame * this->transform;
 				
-				::fcl::Vec3f translation(fullTransform(0, 3), fullTransform(1, 3), fullTransform(2, 3));
+				if (::fcl::GEOM_CONE == this->geometry->getNodeType() || ::fcl::GEOM_CYLINDER == this->geometry->getNodeType())
+				{
+					transform = transform * this->base;
+				}
 				
+#if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 6
 				::fcl::Matrix3f rotation(
-					fullTransform(0, 0), fullTransform(0, 1), fullTransform(0, 2),
-					fullTransform(1, 0), fullTransform(1, 1), fullTransform(1, 2),
-					fullTransform(2, 0), fullTransform(2, 1), fullTransform(2, 2)
+					transform(0, 0), transform(0, 1), transform(0, 2),
+					transform(1, 0), transform(1, 1), transform(1, 2),
+					transform(2, 0), transform(2, 1), transform(2, 2)
 				);
-				
+				Vector3 translation(transform(0, 3), transform(1, 3), transform(2, 3));
 				this->collisionObject->setTransform(rotation, translation);
+#else
+				this->collisionObject->setTransform(transform.linear(), transform.translation());
+#endif
+				
 				this->collisionObject->computeAABB();
 			}
 		}

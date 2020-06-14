@@ -49,7 +49,7 @@ file(
 find_path(
 	FCL_INCLUDE_DIRS
 	NAMES
-	fcl/distance.h
+	fcl/config.h
 	HINTS
 	${FCL_INCLUDE_HINTS}
 	PATHS

@@ -28,8 +28,14 @@
 #define RL_SG_FCL_SHAPE_H
 
 #include <memory>
-#include <fcl/collision.h>
+#include <fcl/config.h>
 #include <Inventor/actions/SoCallbackAction.h>
+
+#if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 6
+#include <fcl/collision.h>
+#else
+#include <fcl/narrowphase/collision.h>
+#endif
 
 #include "../Shape.h"
 
@@ -39,6 +45,18 @@ namespace rl
 	{
 		namespace fcl
 		{
+#if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 6
+			typedef ::fcl::CollisionGeometry CollisionGeometry;
+			typedef ::fcl::CollisionObject CollisionObject;
+			typedef ::fcl::FCL_REAL Real;
+			typedef ::fcl::Vec3f Vector3;
+#else
+			typedef ::fcl::CollisionGeometry<::rl::math::Real> CollisionGeometry;
+			typedef ::fcl::CollisionObject<::rl::math::Real> CollisionObject;
+			typedef ::rl::math::Real Real;
+			typedef ::fcl::Vector3<::rl::math::Real> Vector3;
+#endif
+			
 			class RL_SG_EXPORT Shape : public ::rl::sg::Shape
 			{
 			public:
@@ -52,34 +70,38 @@ namespace rl
 				
 				void update(const ::rl::math::Transform& frame);
 				
-				::std::shared_ptr<::fcl::CollisionObject> collisionObject;
+				::std::shared_ptr<CollisionObject> collisionObject;
 				
 			protected:
 				
 			private:
 				static void triangleCallback(void* userData, SoCallbackAction* action, const SoPrimitiveVertex* v1, const SoPrimitiveVertex* v2, const SoPrimitiveVertex* v3);
 				
-				::rl::math::Transform baseTransform;
+				::rl::math::Transform base;
 				
-				::rl::math::Transform currentFrame;
+#if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 6
+				::std::vector<Real> distances;
+#endif
 				
-				::std::vector<::fcl::FCL_REAL> distances;
+				::rl::math::Transform frame;
 				
 #if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 5
-				::boost::shared_ptr<::fcl::CollisionGeometry> geometry;
+				::boost::shared_ptr<CollisionGeometry> geometry;
 #else
-				::std::shared_ptr<::fcl::CollisionGeometry> geometry;
+				::std::shared_ptr<CollisionGeometry> geometry;
 #endif
 				
 				::std::vector<int> indices;
 				
-				::std::vector<::fcl::Vec3f> normals;
+#if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 6
+				::std::vector<Vector3> normals;
+#endif
 				
 				::std::vector<int> polygons;
 				
 				::rl::math::Transform transform;
 				
-				::std::vector<::fcl::Vec3f> vertices;
+				::std::vector<Vector3> vertices;
 			};
 		}
 	}

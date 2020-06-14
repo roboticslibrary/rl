@@ -24,11 +24,17 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <fcl/distance.h>
-#include <fcl/BVH/BVH_model.h>
+#include <fcl/config.h>
 
+#if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 6
 #if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 5
 #include <boost/make_shared.hpp>
+#endif
+#include <fcl/distance.h>
+#include <fcl/BVH/BVH_model.h>
+#else
+#include <fcl/geometry/bvh/BVH_model.h>
+#include <fcl/narrowphase/distance.h>
 #endif
 
 #include "../Exception.h"
@@ -43,10 +49,24 @@ namespace rl
 	{
 		namespace fcl
 		{
+#if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 6
+			typedef ::fcl::Contact Contact;
+			typedef ::fcl::Sphere Sphere;
+			typedef ::fcl::Transform3f Transform3;
+			typedef ::fcl::Vec3f Vector3;
+#else
+			typedef ::fcl::Contact<::rl::math::Real> Contact;
+			typedef ::fcl::Sphere<::rl::math::Real> Sphere;
+			typedef ::fcl::Transform3<::rl::math::Real> Transform3;
+			typedef ::fcl::Translation3<::rl::math::Real> Translation3;
+			typedef ::fcl::Vector3<::rl::math::Real> Vector3;
+#endif
+			
 			Scene::Scene() :
 				::rl::sg::Scene(),
 				::rl::sg::SimpleScene(),
-				manager()
+				manager(),
+				bodyForObj()
 			{
 				this->manager.setup();
 			}
@@ -62,10 +82,9 @@ namespace rl
 			void
 			Scene::add(::rl::sg::Model* model)
 			{
-				Model* modelFcl = static_cast<Model*>(model);
 				this->models.push_back(model);
-				::std::vector<::fcl::CollisionObject*> objects;
-				modelFcl->manager.getObjects(objects);
+				::std::vector<CollisionObject*> objects;
+				static_cast<Model*>(model)->manager.getObjects(objects);
 				
 				if (objects.size() > 0)
 				{
@@ -74,7 +93,7 @@ namespace rl
 			}
 			
 			void
-			Scene::addCollisionObject(::fcl::CollisionObject* collisionObject, Body* body)
+			Scene::addCollisionObject(CollisionObject* collisionObject, Body* body)
 			{
 				this->bodyForObj[collisionObject] = body;
 				this->manager.registerObject(collisionObject);
@@ -91,7 +110,7 @@ namespace rl
 				CollisionData collisionData(this->bodyForObj);
 				body1->manager.collide(&body2->manager, &collisionData, Scene::defaultCollisionFunction);
 				
-				return collisionData.result.numContacts() > 0;
+				return collisionData.result.isCollision();
 			}
 			
 			bool
@@ -105,7 +124,7 @@ namespace rl
 				CollisionData collisionData(this->bodyForObj);
 				model1->manager.collide(&model2->manager, &collisionData, Scene::defaultCollisionFunction);
 				
-				return collisionData.result.numContacts() > 0;
+				return collisionData.result.isCollision();
 			}
 			
 			bool
@@ -114,8 +133,8 @@ namespace rl
 				Shape* shape1 = static_cast<Shape*>(first);
 				Shape* shape2 = static_cast<Shape*>(second);
 				
-				::fcl::CollisionRequest request;
-				::fcl::CollisionResult result;
+				CollisionRequest request;
+				CollisionResult result;
 				::fcl::collide(shape1->collisionObject.get(), shape2->collisionObject.get(), request, result);
 				
 				return result.isCollision();
@@ -128,11 +147,11 @@ namespace rl
 			}
 			
 			bool
-			Scene::defaultCollisionFunction(::fcl::CollisionObject* o1, ::fcl::CollisionObject* o2, void* data)
+			Scene::defaultCollisionFunction(CollisionObject* o1, CollisionObject* o2, void* data)
 			{
 				CollisionData* collisionData = static_cast<CollisionData*>(data);
-				const ::fcl::CollisionRequest& request = collisionData->request;
-				::fcl::CollisionResult& result = collisionData->result;
+				const CollisionRequest& request = collisionData->request;
+				CollisionResult& result = collisionData->result;
 				
 				if (collisionData->done)
 				{
@@ -155,11 +174,11 @@ namespace rl
 			}
 			
 			bool
-			Scene::defaultDistanceFunction(::fcl::CollisionObject* o1, ::fcl::CollisionObject* o2, void* data, ::fcl::FCL_REAL& dist)
+			Scene::defaultDistanceFunction(CollisionObject* o1, CollisionObject* o2, void* data, Real& dist)
 			{
 				DistanceData* distanceData = static_cast<DistanceData*>(data);
-				const ::fcl::DistanceRequest& request = distanceData->request;
-				::fcl::DistanceResult& result = distanceData->result;
+				const DistanceRequest& request = distanceData->request;
+				DistanceResult& result = distanceData->result;
 				
 				if (distanceData->done)
 				{
@@ -175,8 +194,10 @@ namespace rl
 				::fcl::distance(o1, o2, request, result);
 				
 				dist = result.min_distance;
+#if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 6
 				result.nearest_points[0] = o1->getTransform().transform(result.nearest_points[0]);
 				result.nearest_points[1] = o2->getTransform().transform(result.nearest_points[1]);
+#endif
 				
 				if (dist <= 0)
 				{
@@ -192,8 +213,8 @@ namespace rl
 				Shape* shape1 = static_cast<Shape*>(first);
 				Shape* shape2 = static_cast<Shape*>(second);
 				
-				::fcl::CollisionRequest request(1, true);
-				::fcl::CollisionResult result;
+				CollisionRequest request(1, true);
+				CollisionResult result;
 				::fcl::collide(shape1->collisionObject.get(), shape2->collisionObject.get(), request, result);
 				
 				if (0 == result.numContacts())
@@ -201,16 +222,25 @@ namespace rl
 					return 0;
 				}
 				
-				const ::fcl::Contact& contact = result.getContact(0);
+				const Contact& contact = result.getContact(0);
 				
-				::fcl::Vec3f pos1 = contact.pos;
-				::fcl::Vec3f pos2 = contact.pos + contact.normal * contact.penetration_depth;
+#if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 6
+				Vector3 pos1 = contact.pos;
+#if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 5
+				Vector3 pos2 = contact.pos + contact.normal * contact.penetration_depth;
+#else
+				Vector3 pos2 = contact.pos - contact.normal * contact.penetration_depth;
+#endif
 				
 				for (::std::size_t i = 0; i < 3; ++i)
 				{
 					point1(i) = pos1[i];
 					point2(i) = pos2[i];
 				}
+#else
+				point1 = contact.pos - contact.normal * contact.penetration_depth * 0.5;
+				point2 = contact.pos + contact.normal * contact.penetration_depth * 0.5;
+#endif
 				
 				return result.isCollision() ? ::std::abs(contact.penetration_depth) : 0;
 			}
@@ -226,13 +256,18 @@ namespace rl
 				DistanceData distanceData(this->bodyForObj);
 				body1->manager.distance(&body2->manager, &distanceData, Scene::defaultDistanceFunction);
 				
+#if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 6
 				for (::std::size_t i = 0; i < 3; ++i)
 				{
 					point1(i) = distanceData.result.nearest_points[0][i];
 					point2(i) = distanceData.result.nearest_points[1][i];
 				}
+#else
+				point1 = distanceData.result.nearest_points[0];
+				point2 = distanceData.result.nearest_points[1];
+#endif
 				
-				return distanceData.result.min_distance;
+				return ::std::max(static_cast<Real>(0), distanceData.result.min_distance);
 			}
 			
 			::rl::math::Real
@@ -246,13 +281,18 @@ namespace rl
 				DistanceData distanceData(this->bodyForObj);
 				model1->manager.distance(&model2->manager, &distanceData, Scene::defaultDistanceFunction);
 				
+#if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 6
 				for (::std::size_t i = 0; i < 3; ++i)
 				{
 					point1(i) = distanceData.result.nearest_points[0][i];
 					point2(i) = distanceData.result.nearest_points[1][i];
 				}
+#else
+				point1 = distanceData.result.nearest_points[0];
+				point2 = distanceData.result.nearest_points[1];
+#endif
 				
-				return distanceData.result.min_distance;
+				return ::std::max(static_cast<Real>(0), distanceData.result.min_distance);
 			}
 			
 			::rl::math::Real
@@ -261,51 +301,65 @@ namespace rl
 				Shape* shape1 = static_cast<Shape*>(first);
 				Shape* shape2 = static_cast<Shape*>(second);
 				
-				::fcl::DistanceRequest request(true);
-				::fcl::DistanceResult result;
+				DistanceRequest request(true);
+				DistanceResult result;
 				::fcl::distance(shape1->collisionObject.get(), shape2->collisionObject.get(), request, result);
 				
-				::fcl::Vec3f nearestPoint1 = shape1->collisionObject->getTransform().transform(result.nearest_points[0]);
-				::fcl::Vec3f nearestPoint2 = shape2->collisionObject->getTransform().transform(result.nearest_points[1]);
+#if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 6
+				Vector3 nearestPoint1 = shape1->collisionObject->getTransform().transform(result.nearest_points[0]);
+				Vector3 nearestPoint2 = shape2->collisionObject->getTransform().transform(result.nearest_points[1]);
 				
 				for (::std::size_t i = 0; i < 3; ++i)
 				{
 					point1(i) = nearestPoint1[i];
 					point2(i) = nearestPoint2[i];
 				}
+#else
+				point1 = result.nearest_points[0];
+				point2 = result.nearest_points[1];
+#endif
 				
-				return result.min_distance;
+				return ::std::max(static_cast<Real>(0), result.min_distance);
 			}
 			
 			::rl::math::Real
 			Scene::distance(::rl::sg::Shape* shape, const ::rl::math::Vector3& point, ::rl::math::Vector3& point1, ::rl::math::Vector3& point2)
 			{
 #if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 5
-				::boost::shared_ptr<::fcl::CollisionGeometry> geometry = ::boost::make_shared<::fcl::Sphere>(0);
+				::boost::shared_ptr<CollisionGeometry> geometry = ::boost::make_shared<Sphere>(0);
 #else
-				::std::shared_ptr<::fcl::CollisionGeometry> geometry = ::std::make_shared<::fcl::Sphere>(0);
+				::std::shared_ptr<CollisionGeometry> geometry = ::std::make_shared<Sphere>(0);
 #endif
-				::fcl::Vec3f translation(point(0), point(1), point(2));
+#if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 6
+				Vector3 translation(point(0), point(1), point(2));
 #if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 5
-				::boost::shared_ptr<::fcl::CollisionObject> collisionObject = ::boost::make_shared<::fcl::CollisionObject>(geometry, ::fcl::Transform3f(translation));
+				::boost::shared_ptr<CollisionObject> collisionObject = ::boost::make_shared<CollisionObject>(geometry, Transform3(translation));
 #else
-				::std::shared_ptr<::fcl::CollisionObject> collisionObject = ::std::make_shared<::fcl::CollisionObject>(geometry, ::fcl::Transform3f(translation));
+				::std::shared_ptr<CollisionObject> collisionObject = ::std::make_shared<CollisionObject>(geometry, Transform3(translation));
+#endif
+#else
+				::std::shared_ptr<CollisionObject> collisionObject = ::std::make_shared<CollisionObject>(geometry, Transform3(Translation3(point)));
 #endif
 				
-				::fcl::DistanceRequest request;
-				::fcl::DistanceResult result;
+				DistanceRequest request;
+				DistanceResult result;
 				::fcl::distance(static_cast<Shape*>(shape)->collisionObject.get(), collisionObject.get(), request, result);
 				
-				::fcl::Vec3f nearestPoint1 = static_cast<Shape*>(shape)->collisionObject->getTransform().transform(result.nearest_points[0]);
-				::fcl::Vec3f nearestPoint2 = collisionObject->getTransform().transform(result.nearest_points[1]);
+#if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 6
+				Vector3 nearestPoint1 = static_cast<Shape*>(shape)->collisionObject->getTransform().transform(result.nearest_points[0]);
+				Vector3 nearestPoint2 = collisionObject->getTransform().transform(result.nearest_points[1]);
 				
 				for (::std::size_t i = 0; i < 3; ++i)
 				{
 					point1(i) = nearestPoint1[i];
 					point2(i) = nearestPoint2[i];
 				}
+#else
+				point1 = result.nearest_points[0];
+				point2 = result.nearest_points[1];
+#endif
 				
-				return result.min_distance;
+				return ::std::max(static_cast<Real>(0), result.min_distance);
 			}
 			
 			bool
@@ -314,7 +368,7 @@ namespace rl
 				this->manager.update();
 				CollisionData collisionData(bodyForObj);
 				this->manager.collide(&collisionData, Scene::defaultCollisionFunction);
-				return collisionData.result.numContacts() > 0;
+				return collisionData.result.isCollision();
 			}
 			
 			bool
@@ -331,7 +385,7 @@ namespace rl
 				if (found != this->models.end())
 				{
 					this->models.erase(found);
-					::std::vector<::fcl::CollisionObject*> objects;
+					::std::vector<CollisionObject*> objects;
 					static_cast<Model*>(model)->manager.getObjects(objects);
 					
 					for (::std::size_t i = 0; i < objects.size(); ++i)
@@ -342,13 +396,13 @@ namespace rl
 			}
 			
 			void
-			Scene::removeCollisionObject(::fcl::CollisionObject* collisionObject)
+			Scene::removeCollisionObject(CollisionObject* collisionObject)
 			{
 				this->bodyForObj.erase(collisionObject);
 				this->manager.unregisterObject(collisionObject);
 			}
 			
-			Scene::CollisionData::CollisionData(const ::std::unordered_map<::fcl::CollisionObject*, Body*>& bodyForObj) :
+			Scene::CollisionData::CollisionData(const ::std::unordered_map<CollisionObject*, Body*>& bodyForObj) :
 				bodyForObj(bodyForObj),
 				done(false),
 				request(),
@@ -356,7 +410,7 @@ namespace rl
 			{
 			}
 			
-			Scene::DistanceData::DistanceData(const ::std::unordered_map<::fcl::CollisionObject*, Body*>& bodyForObj) :
+			Scene::DistanceData::DistanceData(const ::std::unordered_map<CollisionObject*, Body*>& bodyForObj) :
 				bodyForObj(bodyForObj),
 				done(false),
 				request(true),

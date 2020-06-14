@@ -57,11 +57,11 @@ namespace rl
 			void
 			Body::add(::rl::sg::Shape* shape)
 			{
-				Shape* fclShape = static_cast<Shape*>(shape);
-				this->shapes.push_back(fclShape);
-				fclShape->update(this->frame);
-				this->manager.registerObject(fclShape->collisionObject.get());
-				static_cast<Model*>(getModel())->addCollisionObject(fclShape->collisionObject.get(), this);
+				Shape* fcl = static_cast<Shape*>(shape);
+				this->shapes.push_back(fcl);
+				fcl->update(this->frame);
+				this->manager.registerObject(fcl->collisionObject.get());
+				static_cast<Model*>(getModel())->addCollisionObject(fcl->collisionObject.get(), this);
 			}
 			
 			::rl::sg::Shape*
@@ -83,10 +83,10 @@ namespace rl
 			
 				if (found != this->shapes.end())
 				{
-					Shape* fclShape = static_cast<Shape*>(shape);
+					Shape* fcl = static_cast<Shape*>(shape);
 					this->shapes.erase(found);
-					this->manager.unregisterObject(fclShape->collisionObject.get());
-					static_cast<Model*>(this->getModel())->removeCollisionObject(fclShape->collisionObject.get());
+					this->manager.unregisterObject(fcl->collisionObject.get());
+					static_cast<Model*>(this->getModel())->removeCollisionObject(fcl->collisionObject.get());
 				}
 			}
 			
