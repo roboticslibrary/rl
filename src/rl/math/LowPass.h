@@ -42,7 +42,7 @@ namespace rl
 		class LowPass
 		{
 		public:
-			LowPass(const ::rl::math::Real& alpha, const ::rl::math::Real& dt, const ::rl::math::Real& rc, const T& y = T()) :
+			LowPass(const Real& alpha, const Real& dt, const Real& rc, const T& y = T()) :
 				alpha(alpha),
 				dt(dt),
 				rc(rc),
@@ -50,10 +50,10 @@ namespace rl
 			{
 			}
 			
-			static LowPass<T> Frequency(const ::rl::math::Real& frequency, const ::rl::math::Real& dt, const T& y = T())
+			static LowPass<T> Frequency(const Real& frequency, const Real& dt, const T& y = T())
 			{
-				::rl::math::Real rc = 1 / (2 * M_PI * frequency);
-				::rl::math::Real alpha = dt / (rc + dt);
+				Real rc = 1 / (2 * static_cast<Real>(M_PI) * frequency);
+				Real alpha = dt / (rc + dt);
 				return LowPass<T>(alpha, dt, rc, y);
 			}
 			
@@ -69,11 +69,11 @@ namespace rl
 		protected:
 			
 		private:
-			::rl::math::Real alpha;
+			Real alpha;
 			
-			::rl::math::Real dt;
+			Real dt;
 			
-			::rl::math::Real rc;
+			Real rc;
 			
 			T y;
 		};
