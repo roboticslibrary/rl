@@ -41,7 +41,7 @@ namespace rl
 {
 	namespace math
 	{
-		template<typename T>
+		template<typename T, typename Enable = void>
 		class TypeTraits
 		{
 		public:
@@ -121,43 +121,43 @@ namespace rl
 			
 		};
 		
-		template<>
-		class TypeTraits<float>
+		template<typename T>
+		class TypeTraits<T, typename ::std::enable_if<::std::is_integral<T>::value>::type>
 		{
 		public:
-			typedef float value_type;
+			typedef T value_type;
 			
-			static float Constant(const ::std::size_t& i, const float& value)
+			static T Constant(const ::std::size_t& i, const T& value)
 			{
 				return value;
 			}
 			
-			static float Zero(const ::std::size_t& i)
+			static T Zero(const ::std::size_t& i)
 			{
 				return 0;
 			}
 			
-			static float abs(const float& t)
+			static T abs(const float& t)
 			{
 				return ::std::abs(t);
 			}
 			
-			static bool equal(const float& lhs, const float& rhs, const float& epsilon = ::Eigen::NumTraits<float>::dummy_precision())
+			static bool equal(const T& lhs, const T& rhs)
 			{
-				return ::Eigen::internal::isApprox(lhs, rhs, epsilon);
+				return lhs == rhs;
 			}
 			
-			static float max_element(const float& t)
-			{
-				return t;
-			}
-			
-			static float min_element(const float& t)
+			static T max_element(const T& t)
 			{
 				return t;
 			}
 			
-			static ::std::size_t size(const float& t)
+			static T min_element(const T& t)
+			{
+				return t;
+			}
+			
+			static ::std::size_t size(const T& t)
 			{
 				return 1;
 			}
@@ -168,43 +168,43 @@ namespace rl
 			
 		};
 		
-		template<>
-		class TypeTraits<double>
+		template<typename T>
+		class TypeTraits<T, typename ::std::enable_if<::std::is_floating_point<T>::value>::type>
 		{
 		public:
-			typedef double value_type;
+			typedef T value_type;
 			
-			static double Constant(const ::std::size_t& i, const double& value)
+			static T Constant(const ::std::size_t& i, const T& value)
 			{
 				return value;
 			}
 			
-			static double Zero(const ::std::size_t& i)
+			static T Zero(const ::std::size_t& i)
 			{
 				return 0;
 			}
 			
-			static double abs(const double& t)
+			static T abs(const float& t)
 			{
 				return ::std::abs(t);
 			}
 			
-			static bool equal(const double& lhs, const double& rhs, const double& epsilon = ::Eigen::NumTraits<double>::dummy_precision())
+			static bool equal(const T& lhs, const T& rhs, const T& epsilon = ::Eigen::NumTraits<T>::dummy_precision())
 			{
 				return ::Eigen::internal::isApprox(lhs, rhs, epsilon);
 			}
 			
-			static double max_element(const double& t)
+			static T max_element(const T& t)
 			{
 				return t;
 			}
 			
-			static double min_element(const double& t)
+			static T min_element(const T& t)
 			{
 				return t;
 			}
 			
-			static ::std::size_t size(const double& t)
+			static ::std::size_t size(const T& t)
 			{
 				return 1;
 			}
