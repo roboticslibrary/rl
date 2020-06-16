@@ -171,7 +171,7 @@ namespace rl
 				
 				Body* body = static_cast<Body*>(shape->getBody());
 				
-				::btPointCollector gjkOutput;
+				::btPointCollector pointCollector;
 				::btGjkPairDetector::ClosestPointInput input;
 				input.m_transformA = body->object.getWorldTransform() * static_cast<Shape*>(shape)->transform;
 				input.m_transformB.setIdentity();
@@ -181,19 +181,19 @@ namespace rl
 					static_cast<::btScalar>(point.z())
 				);
 				
-				convexConvex.getClosestPoints(input, gjkOutput, 0);
+				convexConvex.getClosestPoints(input, pointCollector, 0);
 				
-				point1.x() = gjkOutput.m_pointInWorld.x();
-				point1.y() = gjkOutput.m_pointInWorld.y();
-				point1.z() = gjkOutput.m_pointInWorld.z();
+				point1.x() = pointCollector.m_pointInWorld.x();
+				point1.y() = pointCollector.m_pointInWorld.y();
+				point1.z() = pointCollector.m_pointInWorld.z();
 				
-				::btVector3 endPt = gjkOutput.m_pointInWorld + gjkOutput.m_normalOnBInWorld * gjkOutput.m_distance;
+				::btVector3 endPt = pointCollector.m_pointInWorld + pointCollector.m_normalOnBInWorld * pointCollector.m_distance;
 				
 				point2.x() = endPt.x();
 				point2.y() = endPt.y();
 				point2.z() = endPt.z();
 				
-				return gjkOutput.m_distance;
+				return pointCollector.m_distance;
 			}
 			
 			bool
