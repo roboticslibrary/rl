@@ -151,7 +151,7 @@ namespace rl
 				point2.y() = endPt.y();
 				point2.z() = endPt.z();
 				
-				return pointCollector.m_distance;
+				return ::std::max(static_cast<::btScalar>(0), pointCollector.m_distance);
 			}
 			
 			::rl::math::Real
@@ -193,7 +193,7 @@ namespace rl
 				point2.y() = endPt.y();
 				point2.z() = endPt.z();
 				
-				return pointCollector.m_distance;
+				return ::std::max(static_cast<::btScalar>(0), pointCollector.m_distance);
 			}
 			
 			bool
