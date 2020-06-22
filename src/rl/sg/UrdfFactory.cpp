@@ -123,12 +123,12 @@ namespace rl
 						vrmlMaterial->ref();
 						
 						vrmlMaterial->diffuseColor.setValue(
-							::boost::lexical_cast<::rl::math::Real>(rgba[0]),
-							::boost::lexical_cast<::rl::math::Real>(rgba[1]),
-							::boost::lexical_cast<::rl::math::Real>(rgba[2])
+							::boost::lexical_cast<float>(rgba[0]),
+							::boost::lexical_cast<float>(rgba[1]),
+							::boost::lexical_cast<float>(rgba[2])
 						);
 						vrmlMaterial->transparency.setValue(
-							1 - ::boost::lexical_cast<::rl::math::Real>(rgba[3])
+							1 - ::boost::lexical_cast<float>(rgba[3])
 						);
 						
 						name2material[path.eval("string(@name)").getValue<::std::string>()] = vrmlMaterial;
@@ -239,12 +239,12 @@ namespace rl
 						::SoVRMLMaterial* vrmlMaterial = new ::SoVRMLMaterial();
 						
 						vrmlMaterial->diffuseColor.setValue(
-							::boost::lexical_cast<::rl::math::Real>(rgba[0]),
-							::boost::lexical_cast<::rl::math::Real>(rgba[1]),
-							::boost::lexical_cast<::rl::math::Real>(rgba[2])
+							::boost::lexical_cast<float>(rgba[0]),
+							::boost::lexical_cast<float>(rgba[1]),
+							::boost::lexical_cast<float>(rgba[2])
 						);
 						vrmlMaterial->transparency.setValue(
-							1 - ::boost::lexical_cast<::rl::math::Real>(rgba[3])
+							1 - ::boost::lexical_cast<float>(rgba[3])
 						);
 						
 						vrmlAppearance->material = vrmlMaterial;
@@ -275,9 +275,9 @@ namespace rl
 								::boost::split(size, tmp, ::boost::algorithm::is_space(), ::boost::algorithm::token_compress_on);
 								
 								box->size.setValue(
-									::boost::lexical_cast<::rl::math::Real>(size[0]),
-									::boost::lexical_cast<::rl::math::Real>(size[1]),
-									::boost::lexical_cast<::rl::math::Real>(size[2])
+									::boost::lexical_cast<float>(size[0]),
+									::boost::lexical_cast<float>(size[1]),
+									::boost::lexical_cast<float>(size[2])
 								);
 							}
 							
@@ -291,14 +291,14 @@ namespace rl
 							if (!shapes[k].getProperty("length").empty())
 							{
 								cylinder->height.setValue(
-									::boost::lexical_cast<::rl::math::Real>(shapes[k].getProperty("length"))
+									::boost::lexical_cast<float>(shapes[k].getProperty("length"))
 								);
 							}
 							
 							if (!shapes[k].getProperty("radius").empty())
 							{
 								cylinder->radius.setValue(
-									::boost::lexical_cast<::rl::math::Real>(shapes[k].getProperty("radius"))
+									::boost::lexical_cast<float>(shapes[k].getProperty("radius"))
 								);
 							}
 							
@@ -366,7 +366,7 @@ namespace rl
 							if (!shapes[k].getProperty("radius").empty())
 							{
 								sphere->radius.setValue(
-									::boost::lexical_cast<::rl::math::Real>(shapes[k].getProperty("radius"))
+									::boost::lexical_cast<float>(shapes[k].getProperty("radius"))
 								);
 							}
 							
