@@ -197,6 +197,7 @@ target_include_directories(
 
 if(RL_BUILD_SG_BULLET)
 	target_compile_definitions(sg INTERFACE RL_SG_BULLET)
+	target_compile_definitions(sg PUBLIC ${BULLET_DEFINITIONS})
 	target_include_directories(sg PUBLIC ${BULLET_INCLUDE_DIRS})
 	target_link_libraries(sg ${BULLET_LIBRARIES})
 	install(FILES ${BULLET_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/sg/bullet COMPONENT development)

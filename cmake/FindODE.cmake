@@ -2,128 +2,26 @@ include(CheckCSourceRuns)
 include(CheckSymbolExists)
 include(CMakePushCheckState)
 include(FindPackageHandleStandardArgs)
-include(GNUInstallDirs)
 include(SelectLibraryConfigurations)
-
-foreach(PATH ${CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/ODE*/${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND ODE_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-list(
-	APPEND
-	ODE_INCLUDE_HINTS
-	$ENV{ODE_DIR}/${CMAKE_INSTALL_INCLUDEDIR}
-)
-
-foreach(PATH $ENV{CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/ODE*/${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND ODE_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-foreach(PATH $ENV{PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/../${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND ODE_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-file(
-	GLOB
-	ODE_INCLUDE_PATHS
-	$ENV{HOME}/include
-	/usr/local/include
-	/opt/local/include
-	/usr/include
-)
 
 find_path(
 	ODE_INCLUDE_DIRS
 	NAMES
 	ode/ode.h
-	HINTS
-	${ODE_INCLUDE_HINTS}
-	PATHS
-	${ODE_INCLUDE_PATHS}
 )
 
 mark_as_advanced(ODE_INCLUDE_DIRS)
-
-foreach(PATH ${CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_LIBDIR}
-		${PATH}/ODE*/${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND ODE_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-list(
-	APPEND
-	ODE_LIBRARY_HINTS
-	$ENV{ODE_DIR}/${CMAKE_INSTALL_LIBDIR}
-)
-
-foreach(PATH $ENV{CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_LIBDIR}
-		${PATH}/ODE*/${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND ODE_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-foreach(PATH $ENV{PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/../${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND ODE_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-file(
-	GLOB
-	ODE_LIBRARY_PATHS
-	$ENV{ODE_LIBRARYDIR}
-	$ENV{HOME}/lib
-	/usr/local/lib
-	/opt/local/lib
-	/usr/lib
-)
 
 find_library(
 	ODE_LIBRARY_DEBUG
 	NAMES
 	ode_doubled ode_singled oded
-	HINTS
-	${ODE_LIBRARY_HINTS}
-	PATHS
-	${ODE_LIBRARY_PATHS}
 )
 
 find_library(
 	ODE_LIBRARY_RELEASE
 	NAMES
 	ode_double ode_single ode
-	HINTS
-	${ODE_LIBRARY_HINTS}
-	PATHS
-	${ODE_LIBRARY_PATHS}
 )
 
 select_library_configurations(ODE)
@@ -131,47 +29,58 @@ select_library_configurations(ODE)
 if(ODE_INCLUDE_DIRS AND ODE_LIBRARIES)
 	cmake_push_check_state(RESET)
 	set(CMAKE_REQUIRED_INCLUDES ${ODE_INCLUDE_DIRS})
+	check_symbol_exists(dDOUBLE "ode/precision.h" _ODE_HAVE_dDOUBLE)
 	
-	check_symbol_exists(dDOUBLE "ode/precision.h" ODE_HAVE_DOUBLE)
-	
-	if(NOT ODE_HAVE_DOUBLE)
-		check_symbol_exists(dSINGLE "ode/precision.h" ODE_HAVE_SINGLE)
-	endif()
-	
-	if(NOT ODE_HAVE_DOUBLE AND NOT ODE_HAVE_SINGLE)
-		set(CMAKE_REQUIRED_DEFINITIONS -DdDOUBLE)
-		set(CMAKE_REQUIRED_LIBRARIES ${ODE_LIBRARIES})
+	if(NOT _ODE_HAVE_dDOUBLE)
+		check_symbol_exists(dSINGLE "ode/precision.h" _ODE_HAVE_dSINGLE)
 		
-		check_c_source_runs("
-			#include <ode/ode.h>
-			int main() { return 1 == dCheckConfiguration(\"ODE_double_precision\") ? 0 : 1; }
-		" ODE_DOUBLE_PRECISION)
-		
-		if(ODE_DOUBLE_PRECISION)
-			set(ODE_DEFINITIONS -DdDOUBLE)
-		else()
-			set(CMAKE_REQUIRED_DEFINITIONS -DdSINGLE)
-			
+		if(NOT _ODE_HAVE_dSINGLE)
+			set(CMAKE_REQUIRED_DEFINITIONS -DdDOUBLE)
+			set(CMAKE_REQUIRED_LIBRARIES ${ODE_LIBRARIES})
 			check_c_source_runs("
 				#include <ode/ode.h>
-				int main() { return 1 == dCheckConfiguration(\"ODE_single_precision\") ? 0 : 1; }
-			" ODE_SINGLE_PRECISION)
+				int main() { return 1 == dCheckConfiguration(\"ODE_double_precision\") ? 0 : 1; }
+			" _ODE_DOUBLE_PRECISION)
 			
-			if(ODE_SINGLE_PRECISION)
-				set(ODE_DEFINITIONS -DdSINGLE)
+			if(_ODE_DOUBLE_PRECISION)
+				set(ODE_DEFINITIONS -DdDOUBLE)
+			else()
+				set(CMAKE_REQUIRED_DEFINITIONS -DdSINGLE)
+				check_c_source_runs("
+					#include <ode/ode.h>
+					int main() { return 1 == dCheckConfiguration(\"ODE_single_precision\") ? 0 : 1; }
+				" _ODE_SINGLE_PRECISION)
+				
+				if(_ODE_SINGLE_PRECISION)
+					set(ODE_DEFINITIONS -DdSINGLE)
+				endif()
+				
+				unset(_ODE_SINGLE_PRECISION)
 			endif()
+			
+			unset(_ODE_DOUBLE_PRECISION)
 		endif()
+		
+		unset(_ODE_HAVE_dSINGLE)
 	endif()
 	
+	unset(_ODE_HAVE_dDOUBLE)
 	cmake_pop_check_state()
 endif()
 
 mark_as_advanced(ODE_DEFINITIONS)
 
+if(ODE_INCLUDE_DIRS AND EXISTS "${ODE_INCLUDE_DIRS}/ode/version.h")
+	file(STRINGS "${ODE_INCLUDE_DIRS}/ode/version.h" _ODE_VERSION_DEFINE REGEX "#define[\t ]+dODE_VERSION[\t ]+\"[^\"]*\".*")
+	string(REGEX REPLACE "#define[\t ]+dODE_VERSION[\t ]+\"([^\"]*)\".*" "\\1" ODE_VERSION "${_ODE_VERSION_DEFINE}")
+	unset(_ODE_VERSION_DEFINE)
+endif()
+
 find_package_handle_standard_args(
 	ODE
 	FOUND_VAR ODE_FOUND
 	REQUIRED_VARS ODE_INCLUDE_DIRS ODE_LIBRARIES
+	VERSION_VAR ODE_VERSION
 )
 
 if(ODE_FOUND AND NOT TARGET ODE::ODE)

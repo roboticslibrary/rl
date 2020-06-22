@@ -1,124 +1,23 @@
 include(FindPackageHandleStandardArgs)
-include(GNUInstallDirs)
 include(SelectLibraryConfigurations)
-
-foreach(PATH ${CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/NLopt*/${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND NLOPT_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-list(
-	APPEND
-	NLOPT_INCLUDE_HINTS
-	$ENV{NLopt_DIR}/${CMAKE_INSTALL_INCLUDEDIR}
-)
-
-foreach(PATH $ENV{CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/NLopt*/${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND NLOPT_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-foreach(PATH $ENV{PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/../${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND NLOPT_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-file(
-	GLOB
-	NLOPT_INCLUDE_PATHS
-	$ENV{HOME}/include
-	/usr/local/include
-	/opt/local/include
-	/usr/include
-)
 
 find_path(
 	NLOPT_INCLUDE_DIRS
 	NAMES
 	nlopt.h
-	HINTS
-	${NLOPT_INCLUDE_HINTS}
-	PATHS
-	${NLOPT_INCLUDE_PATHS}
 )
 
 mark_as_advanced(NLOPT_INCLUDE_DIRS)
 
-foreach(PATH ${CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_LIBDIR}
-		${PATH}/NLopt*/${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND NLOPT_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-list(
-	APPEND
-	NLOPT_LIBRARY_HINTS
-	$ENV{NLopt_DIR}/${CMAKE_INSTALL_LIBDIR}
-)
-
-foreach(PATH $ENV{CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_LIBDIR}
-		${PATH}/NLopt*/${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND NLOPT_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-foreach(PATH $ENV{PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/../${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND NLOPT_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-file(
-	GLOB
-	NLOPT_LIBRARY_PATHS
-	$ENV{HOME}/lib
-	/usr/local/lib
-	/opt/local/lib
-	/usr/lib
-)
-
 find_library(
 	NLOPT_LIBRARY_DEBUG
 	NAMES
-	nloptd nlopt_cxxd
-	HINTS
-	${NLOPT_LIBRARY_HINTS}
-	PATHS
-	${NLOPT_LIBRARY_PATHS}
+	nloptd
 )
 find_library(
 	NLOPT_LIBRARY_RELEASE
 	NAMES
-	nlopt nlopt_cxx
-	HINTS
-	${NLOPT_LIBRARY_HINTS}
-	PATHS
-	${NLOPT_LIBRARY_PATHS}
+	nlopt
 )
 
 select_library_configurations(NLOPT)

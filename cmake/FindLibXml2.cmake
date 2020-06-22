@@ -1,135 +1,40 @@
 include(FindPackageHandleStandardArgs)
-include(GNUInstallDirs)
 include(SelectLibraryConfigurations)
-
-foreach(PATH ${CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/libxml2*/${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND LIBXML2_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-list(
-	APPEND
-	LIBXML2_INCLUDE_HINTS
-	$ENV{LibXml2_DIR}/${CMAKE_INSTALL_INCLUDEDIR}
-)
-
-foreach(PATH $ENV{CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/libxml2*/${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND LIBXML2_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-foreach(PATH $ENV{PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/../${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND LIBXML2_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-file(
-	GLOB
-	LIBXML2_INCLUDE_PATHS
-	$ENV{HOME}/include
-	/usr/local/include
-	/opt/local/include
-	/usr/include
-	${CMAKE_OSX_SYSROOT}/usr/include
-)
 
 find_path(
 	LIBXML2_INCLUDE_DIRS
 	NAMES
 	libxml/parser.h
-	HINTS
-	${LIBXML2_INCLUDE_HINTS}
-	PATHS
-	${LIBXML2_INCLUDE_PATHS}
 	PATH_SUFFIXES
 	libxml2
 )
 
 mark_as_advanced(LIBXML2_INCLUDE_DIRS)
 
-foreach(PATH ${CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_LIBDIR}
-		${PATH}/libxml2*/${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND LIBXML2_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-list(
-	APPEND
-	LIBXML2_LIBRARY_HINTS
-	$ENV{LibXml2_DIR}/${CMAKE_INSTALL_LIBDIR}
-)
-
-foreach(PATH $ENV{CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_LIBDIR}
-		${PATH}/libxml2*/${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND LIBXML2_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-foreach(PATH $ENV{PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/../${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND LIBXML2_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-file(
-	GLOB
-	LIBXML2_LIBRARY_PATHS
-	$ENV{HOME}/lib
-	/usr/local/lib
-	/opt/local/lib
-	/usr/lib
-)
-
 find_library(
 	LIBXML2_LIBRARY_DEBUG
 	NAMES
 	libxml2d xml2d
-	HINTS
-	${LIBXML2_LIBRARY_HINTS}
-	PATHS
-	${LIBXML2_LIBRARY_PATHS}
 )
 find_library(
 	LIBXML2_LIBRARY_RELEASE
 	NAMES
 	libxml2 xml2
-	HINTS
-	${LIBXML2_LIBRARY_HINTS}
-	PATHS
-	${LIBXML2_LIBRARY_PATHS}
 )
 
 select_library_configurations(LIBXML2)
+
+if(LIBXML2_INCLUDE_DIRS AND EXISTS "${LIBXML2_INCLUDE_DIRS}/libxml/xmlversion.h")
+	file(STRINGS "${LIBXML2_INCLUDE_DIRS}/libxml/xmlversion.h" _LIBXML2_VERSION_DEFINE REGEX "#define[\t ]+LIBXML_DOTTED_VERSION[\t ]+\"[^\"]*\".*")
+	string(REGEX REPLACE "#define[\t ]+LIBXML_DOTTED_VERSION[\t ]+\"([^\"]*)\".*" "\\1" LIBXML2_VERSION "${_LIBXML2_VERSION_DEFINE}")
+	unset(_LIBXML2_VERSION_DEFINE)
+endif()
 
 find_package_handle_standard_args(
 	LibXml2
 	FOUND_VAR LibXml2_FOUND
 	REQUIRED_VARS LIBXML2_INCLUDE_DIRS LIBXML2_LIBRARIES
+	VERSION_VAR LIBXML2_VERSION
 )
 
 if(LibXml2_FOUND AND NOT TARGET LibXml2::LibXml2)

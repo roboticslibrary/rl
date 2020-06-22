@@ -1,133 +1,38 @@
 include(FindPackageHandleStandardArgs)
-include(GNUInstallDirs)
 include(SelectLibraryConfigurations)
-
-foreach(PATH ${CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/libxslt*/${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND LIBXSLT_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-list(
-	APPEND
-	LIBXSLT_INCLUDE_HINTS
-	$ENV{LibXslt_DIR}/${CMAKE_INSTALL_INCLUDEDIR}
-)
-
-foreach(PATH $ENV{CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/libxslt*/${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND LIBXSLT_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-foreach(PATH $ENV{PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/../${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND LIBXSLT_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-file(
-	GLOB
-	LIBXSLT_INCLUDE_PATHS
-	$ENV{HOME}/include
-	/usr/local/include
-	/opt/local/include
-	/usr/include
-	${CMAKE_OSX_SYSROOT}/usr/include
-)
 
 find_path(
 	LIBXSLT_INCLUDE_DIRS
 	NAMES
 	libxslt/xslt.h
-	HINTS
-	${LIBXSLT_INCLUDE_HINTS}
-	PATHS
-	${LIBXSLT_INCLUDE_PATHS}
 )
 
 mark_as_advanced(LIBXSLT_INCLUDE_DIRS)
-
-foreach(PATH ${CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_LIBDIR}
-		${PATH}/libxslt*/${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND LIBXSLT_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-list(
-	APPEND
-	LIBXSLT_LIBRARY_HINTS
-	$ENV{LibXslt_DIR}/${CMAKE_INSTALL_LIBDIR}
-)
-
-foreach(PATH $ENV{CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_LIBDIR}
-		${PATH}/libxslt*/${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND LIBXSLT_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-foreach(PATH $ENV{PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/../${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND LIBXSLT_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-file(
-	GLOB
-	LIBXSLT_LIBRARY_PATHS
-	$ENV{HOME}/lib
-	/usr/local/lib
-	/opt/local/lib
-	/usr/lib
-)
 
 find_library(
 	LIBXSLT_LIBRARY_DEBUG
 	NAMES
 	libxsltd xsltd
-	HINTS
-	${LIBXSLT_LIBRARY_HINTS}
-	PATHS
-	${LIBXSLT_LIBRARY_PATHS}
 )
 find_library(
 	LIBXSLT_LIBRARY_RELEASE
 	NAMES
 	libxslt xslt
-	HINTS
-	${LIBXSLT_LIBRARY_HINTS}
-	PATHS
-	${LIBXSLT_LIBRARY_PATHS}
 )
 
 select_library_configurations(LIBXSLT)
+
+if(LIBXSLT_INCLUDE_DIRS AND EXISTS "${LIBXSLT_INCLUDE_DIRS}/libxslt/xsltconfig.h")
+	file(STRINGS "${LIBXSLT_INCLUDE_DIRS}/libxslt/xsltconfig.h" _LIBXSLT_VERSION_DEFINE REGEX "#define[\t ]+LIBXSLT_DOTTED_VERSION[\t ]+\"[^\"]*\".*")
+	string(REGEX REPLACE "#define[\t ]+LIBXSLT_DOTTED_VERSION[\t ]+\"([^\"]*)\".*" "\\1" LIBXSLT_VERSION "${_LIBXSLT_VERSION_DEFINE}")
+	unset(_LIBXSLT_VERSION_DEFINE)
+endif()
 
 find_package_handle_standard_args(
 	LibXslt
 	FOUND_VAR LIBXSLT_FOUND
 	REQUIRED_VARS LIBXSLT_INCLUDE_DIRS LIBXSLT_LIBRARIES
+	VERSION_VAR LIBXSLT_VERSION
 )
 
 if(LIBXSLT_FOUND AND NOT TARGET LibXslt::LibXslt)

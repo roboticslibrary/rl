@@ -1,119 +1,24 @@
 include(FindPackageHandleStandardArgs)
-include(GNUInstallDirs)
 include(SelectLibraryConfigurations)
-
-foreach(PATH ${CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/Comedi*/${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND Comedi_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-list(
-	APPEND
-	Comedi_INCLUDE_HINTS
-	$ENV{Comedi_DIR}/${CMAKE_INSTALL_INCLUDEDIR}
-)
-
-foreach(PATH $ENV{CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/Comedi*/${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND Comedi_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-foreach(PATH $ENV{PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/../${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND Comedi_INCLUDE_HINTS ${HINTS})
-endforeach()
 
 find_path(
 	Comedi_INCLUDE_DIRS
 	NAMES
 	comedilib.h
-	HINTS
-	${Comedi_INCLUDE_HINTS}
-	PATHS
-	$ENV{HOME}/include
-	/usr/local/include
-	/opt/local/include
-	/usr/include
 )
 
 mark_as_advanced(Comedi_INCLUDE_DIRS)
-
-foreach(PATH ${CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_LIBDIR}
-		${PATH}/Comedi*/${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND Comedi_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-list(
-	APPEND
-	Comedi_LIBRARY_HINTS
-	$ENV{Comedi_DIR}/${CMAKE_INSTALL_LIBDIR}
-)
-
-foreach(PATH $ENV{CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_LIBDIR}
-		${PATH}/Comedi*/${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND Comedi_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-foreach(PATH $ENV{PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/../${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND Comedi_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-file(
-	GLOB
-	Comedi_LIBRARY_PATHS
-	$ENV{HOME}/lib
-	/usr/local/lib
-	/opt/local/lib
-	/usr/lib
-)
 
 find_library(
 	Comedi_LIBRARY_DEBUG
 	NAMES
 	comedid
-	HINTS
-	${Comedi_LIBRARY_HINTS}
-	PATHS
-	${Comedi_LIBRARY_PATHS}
 )
 
 find_library(
 	Comedi_LIBRARY_RELEASE
 	NAMES
 	comedi
-	HINTS
-	${Comedi_LIBRARY_HINTS}
-	PATHS
-	${Comedi_LIBRARY_PATHS}
 )
 
 select_library_configurations(Comedi)

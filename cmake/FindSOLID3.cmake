@@ -1,125 +1,24 @@
 include(FindPackageHandleStandardArgs)
-include(GNUInstallDirs)
 include(SelectLibraryConfigurations)
 
-foreach(PATH ${CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/SOLID*/${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND SOLID3_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-list(
-	APPEND
-	SOLID3_INCLUDE_HINTS
-	$ENV{SOLID3_DIR}/${CMAKE_INSTALL_INCLUDEDIR}
-)
-
-foreach(PATH $ENV{CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/SOLID*/${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND SOLID3_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-foreach(PATH $ENV{PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/../${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND SOLID3_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-file(
-	GLOB
-	SOLID3_INCLUDE_PATHS
-	$ENV{HOME}/include
-	/usr/local/include
-	/opt/local/include
-	/usr/include
-)
-
 find_path(
-SOLID3_INCLUDE_DIRS
+	SOLID3_INCLUDE_DIRS
 	NAMES
 	SOLID/SOLID.h
-	HINTS
-	${SOLID3_INCLUDE_HINTS}
-	PATHS
-	${SOLID3_INCLUDE_PATHS}
 )
 
 mark_as_advanced(SOLID3_INCLUDE_DIRS)
-
-foreach(PATH ${CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_LIBDIR}
-		${PATH}/SOLID*/${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND SOLID3_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-list(
-	APPEND
-	SOLID3_LIBRARY_HINTS
-	$ENV{SOLID3_DIR}/${CMAKE_INSTALL_LIBDIR}
-)
-
-foreach(PATH $ENV{CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_LIBDIR}
-		${PATH}/SOLID*/${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND SOLID3_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-foreach(PATH $ENV{PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/../${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND SOLID3_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-file(
-	GLOB
-	SOLID3_LIBRARY_PATHS
-	$ENV{HOME}/lib
-	/usr/local/lib
-	/opt/local/lib
-	/usr/lib
-)
 
 find_library(
 	SOLID3_LIBRARY_DEBUG
 	NAMES
 	solid3d_d solid3_d solidd solidsd
-	HINTS
-	${SOLID3_LIBRARY_HINTS}
-	PATHS
-	${SOLID3_LIBRARY_PATHS}
 )
 
 find_library(
 	SOLID3_LIBRARY_RELEASE
 	NAMES
 	solid3d solid3 solid solids
-	HINTS
-	${SOLID3_LIBRARY_HINTS}
-	PATHS
-	${SOLID3_LIBRARY_PATHS}
 )
 
 select_library_configurations(SOLID3)

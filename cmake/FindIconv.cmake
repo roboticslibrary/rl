@@ -1,139 +1,75 @@
+include(CheckCSourceRuns)
+include(CMakePushCheckState)
 include(FindPackageHandleStandardArgs)
-include(GNUInstallDirs)
 include(SelectLibraryConfigurations)
-
-foreach(PATH ${CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/libiconv*/${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND Iconv_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-list(
-	APPEND
-	Iconv_INCLUDE_HINTS
-	$ENV{Iconv_DIR}/${CMAKE_INSTALL_INCLUDEDIR}
-)
-
-foreach(PATH $ENV{CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/libiconv*/${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND Iconv_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-foreach(PATH $ENV{PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/../${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND Iconv_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-file(
-	GLOB
-	Iconv_INCLUDE_PATHS
-	$ENV{HOME}/include
-	/usr/local/include
-	/opt/local/include
-	/usr/include
-	$ENV{ProgramW6432}/GnuWin32/include
-	$ENV{ProgramFiles}/GnuWin32/include
-	${CMAKE_OSX_SYSROOT}/usr/include
-)
 
 find_path(
 	Iconv_INCLUDE_DIRS
 	NAMES
 	iconv.h
-	HINTS
-	${Iconv_INCLUDE_HINTS}
-	PATHS
-	${Iconv_INCLUDE_PATHS}
 )
 
 mark_as_advanced(Iconv_INCLUDE_DIRS)
 
-foreach(PATH ${CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_LIBDIR}
-		${PATH}/libiconv*/${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND Iconv_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-list(
-	APPEND
-	Iconv_LIBRARY_HINTS
-	$ENV{Iconv_DIR}/${CMAKE_INSTALL_LIBDIR}
-)
-
-foreach(PATH $ENV{CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_LIBDIR}
-		${PATH}/libiconv*/${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND Iconv_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-foreach(PATH $ENV{PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/../${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND Iconv_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-file(
-	GLOB
-	Iconv_LIBRARY_PATHS
-	$ENV{HOME}/lib
-	/usr/local/lib
-	/opt/local/lib
-	/usr/lib
-	$ENV{ProgramW6432}/GnuWin32/lib
-	$ENV{ProgramFiles}/GnuWin32/lib
-)
-
 find_library(
 	Iconv_LIBRARY_DEBUG
 	NAMES
-	iconvd libiconvd libiconvd_a
-	HINTS
-	${Iconv_LIBRARY_HINTS}
-	PATHS
-	${Iconv_LIBRARY_PATHS}
+	libiconvd iconvd
 )
 
 find_library(
 	Iconv_LIBRARY_RELEASE
 	NAMES
-	iconv libiconv liblibiconv_a
-	HINTS
-	${Iconv_LIBRARY_HINTS}
-	PATHS
-	${Iconv_LIBRARY_PATHS}
+	libiconv iconv
 )
 
 select_library_configurations(Iconv)
 
-find_package_handle_standard_args(
-	Iconv
-	FOUND_VAR Iconv_FOUND
-	REQUIRED_VARS Iconv_INCLUDE_DIRS Iconv_LIBRARIES
-)
+if(Iconv_INCLUDE_DIRS AND NOT Iconv_LIBRARIES)
+	cmake_push_check_state(RESET)
+	set(CMAKE_REQUIRED_INCLUDES ${Iconv_INCLUDE_DIRS})
+	check_c_source_runs("
+		#include <iconv.h>
+		int main() { iconv_t ic = iconv_open(\"to\", \"from\"); return 0; }
+	" Iconv_IS_BUILT_IN)
+	cmake_pop_check_state()
+	
+	if(Iconv_IS_BUILT_IN)
+		unset(Iconv_LIBRARIES)
+	endif()
+endif()
+
+if(Iconv_INCLUDE_DIRS AND EXISTS "${Iconv_INCLUDE_DIRS}/iconv.h")
+	file(STRINGS "${Iconv_INCLUDE_DIRS}/iconv.h" _Iconv_VERSION_DEFINE REGEX "#define[\t ]+_LIBICONV_VERSION[\t ]+0x[0-9A-F][0-9A-F][0-9A-F][0-9A-F].*")
+	string(REGEX REPLACE "#define[\t ]+_LIBICONV_VERSION[\t ]+0x([0-9A-F][0-9A-F])[0-9A-F][0-9A-F].*" "\\1" _Iconv_VERSION_MAJOR_HEXADECIMAL "${_Iconv_VERSION_DEFINE}")
+	string(REGEX REPLACE "#define[\t ]+_LIBICONV_VERSION[\t ]+0x[0-9A-F][0-9A-F]([0-9A-F][0-9A-F]).*" "\\1" _Iconv_VERSION_MINOR_HEXADECIMAL "${_Iconv_VERSION_DEFINE}")
+	
+	if(NOT _Iconv_VERSION_MAJOR_HEXADECIMAL STREQUAL "" AND NOT _Iconv_VERSION_MINOR_HEXADECIMAL STREQUAL "")
+		math(EXPR Iconv_VERSION_MAJOR "0x${_Iconv_VERSION_MAJOR_HEXADECIMAL}" OUTPUT_FORMAT DECIMAL)
+		math(EXPR Iconv_VERSION_MINOR "0x${_Iconv_VERSION_MINOR_HEXADECIMAL}" OUTPUT_FORMAT DECIMAL)
+		set(Iconv_VERSION "${Iconv_VERSION_MAJOR}.${Iconv_VERSION_MINOR}")
+	endif()
+	
+	unset(_Iconv_VERSION_DEFINE)
+	unset(_Iconv_VERSION_MAJOR_HEXADECIMAL)
+	unset(_Iconv_VERSION_MINOR_HEXADECIMAL)
+endif()
+
+if(Iconv_IS_BUILT_IN)
+	find_package_handle_standard_args(
+		Iconv
+		FOUND_VAR Iconv_FOUND
+		REQUIRED_VARS Iconv_INCLUDE_DIRS
+		VERSION_VAR Iconv_VERSION
+	)
+else()
+	find_package_handle_standard_args(
+		Iconv
+		FOUND_VAR Iconv_FOUND
+		REQUIRED_VARS Iconv_INCLUDE_DIRS Iconv_LIBRARIES
+		VERSION_VAR Iconv_VERSION
+	)
+endif()
 
 if(Iconv_FOUND AND NOT TARGET Iconv::Iconv)
 	add_library(Iconv::Iconv UNKNOWN IMPORTED)

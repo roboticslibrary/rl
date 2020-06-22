@@ -1,53 +1,11 @@
 include(FindPackageHandleStandardArgs)
-include(GNUInstallDirs)
 include(SelectLibraryConfigurations)
-
-foreach(PATH ${CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/cifX*/${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND cifX_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-list(
-	APPEND
-	cifX_INCLUDE_HINTS
-	$ENV{cifX_DIR}/${CMAKE_INSTALL_INCLUDEDIR}
-)
-
-foreach(PATH $ENV{CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/cifX*/${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND cifX_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-foreach(PATH $ENV{PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/../${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND cifX_INCLUDE_HINTS ${HINTS})
-endforeach()
 
 find_path(
 	cifX_INCLUDE_DIRS
 	NAMES
 	cifXUser.h
-	HINTS
-	${cifX_INCLUDE_HINTS}
 	PATHS
-	$ENV{HOME}/include
-	/usr/local/include
-	/opt/local/include
-	/usr/include
 	"$ENV{ProgramW6432}/cifX Device Driver/SDK/includes"
 	"$ENV{ProgramFiles}/cifX Device Driver/SDK/includes"
 	PATH_SUFFIXES
@@ -62,64 +20,11 @@ else()
 	set(cifX_ARCHITECTURE "x86")
 endif()
 
-foreach(PATH ${CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_LIBDIR}
-		${PATH}/libs
-		${PATH}/libs/${cifX_ARCHITECTURE}
-		${PATH}/cifX*/${CMAKE_INSTALL_LIBDIR}
-		${PATH}/cifX*/libs
-		${PATH}/cifX*/libs/${cifX_ARCHITECTURE}
-	)
-	list(APPEND cifX_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-list(
-	APPEND
-	cifX_LIBRARY_HINTS
-	$ENV{cifX_DIR}/${CMAKE_INSTALL_LIBDIR}
-	$ENV{cifX_DIR}/libs
-	$ENV{cifX_DIR}/libs/${cifX_ARCHITECTURE}
-)
-
-foreach(PATH $ENV{CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_LIBDIR}
-		${PATH}/libs
-		${PATH}/libs/${cifX_ARCHITECTURE}
-		${PATH}/cifX*/${CMAKE_INSTALL_LIBDIR}
-		${PATH}/cifX*/libs
-		${PATH}/cifX*/libs/${cifX_ARCHITECTURE}
-	)
-	list(APPEND cifX_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-foreach(PATH $ENV{PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/../${CMAKE_INSTALL_LIBDIR}
-		${PATH}/../libs
-		${PATH}/../libs/${cifX_ARCHITECTURE}
-	)
-	list(APPEND cifX_LIBRARY_HINTS ${HINTS})
-endforeach()
-
 find_library(
 	cifX_LIBRARY_RELEASE
 	NAMES
 	cifx cifx32dll
-	HINTS
-	${cifX_LIBRARY_HINTS}
 	PATHS
-	$ENV{HOME}/lib
-	/usr/local/lib
-	/opt/local/lib
-	/usr/lib
 	"$ENV{ProgramW6432}/cifX Device Driver/SDK/libs/${cifX_ARCHITECTURE}"
 	"$ENV{ProgramFiles}/cifX Device Driver/SDK/libs/${cifX_ARCHITECTURE}"
 )

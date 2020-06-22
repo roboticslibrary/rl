@@ -1,103 +1,18 @@
 include(FindPackageHandleStandardArgs)
-include(GNUInstallDirs)
 include(SelectLibraryConfigurations)
-
-foreach(PATH ${CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/libdc1394*/${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND libdc1394_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-list(
-	APPEND
-	libdc1394_INCLUDE_HINTS
-	$ENV{libdc1394_DIR}/${CMAKE_INSTALL_INCLUDEDIR}
-)
-
-foreach(PATH $ENV{CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/libdc1394*/${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND libdc1394_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-foreach(PATH $ENV{PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/../${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND libdc1394_INCLUDE_HINTS ${HINTS})
-endforeach()
 
 find_path(
 	libdc1394_INCLUDE_DIRS
+	NAMES
 	dc1394/dc1394.h
-	HINTS
-	${libdc1394_INCLUDE_HINTS}
-	PATHS
-	$ENV{HOME}/include
-	/usr/local/include
-	/opt/local/include
-	/usr/include
 )
 
 mark_as_advanced(libdc1394_INCLUDE_DIRS)
-
-foreach(PATH ${CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_LIBDIR}
-		${PATH}/libdc1394*/${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND libdc1394_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-list(
-	APPEND
-	libdc1394_LIBRARY_HINTS
-	$ENV{libdc1394_DIR}/${CMAKE_INSTALL_LIBDIR}
-)
-
-foreach(PATH $ENV{CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_LIBDIR}
-		${PATH}/libdc1394*/${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND libdc1394_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-foreach(PATH $ENV{PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/../${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND libdc1394_LIBRARY_HINTS ${HINTS})
-endforeach()
 
 find_library(
 	libdc1394_LIBRARY_RELEASE
 	NAMES
 	dc1394
-	HINTS
-	${libdc1394_LIBRARY_HINTS}
-	PATHS
-	$ENV{libdc1394_DIR}/lib
-	$ENV{HOME}/lib
-	/usr/local/lib
-	/opt/local/lib
-	/usr/lib
 )
 
 mark_as_advanced(libdc1394_LIBRARY_RELEASE)

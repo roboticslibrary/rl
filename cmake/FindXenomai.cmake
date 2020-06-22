@@ -1,128 +1,32 @@
 include(FindPackageHandleStandardArgs)
-include(GNUInstallDirs)
 include(SelectLibraryConfigurations)
-
-foreach(PATH ${CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/Xenomai*/${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND Xenomai_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-list(
-	APPEND
-	Xenomai_INCLUDE_HINTS
-	$ENV{Xenomai_DIR}/${CMAKE_INSTALL_INCLUDEDIR}
-)
-
-foreach(PATH $ENV{CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/Xenomai*/${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND Xenomai_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-foreach(PATH $ENV{PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/../${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND Xenomai_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-file(
-	GLOB
-	Xenomai_INCLUDE_PATHS
-	$ENV{HOME}/include
-	/usr/local/include
-	/opt/local/include
-	/usr/xenomai/include
-	/usr/include/xenomai
-	/usr/include
-)
 
 find_path(
 	Xenomai_INCLUDE_DIRS
 	NAMES
 	native/task.h
-	HINTS
-	${Xenomai_INCLUDE_HINTS}
 	PATHS
-	${Xenomai_INCLUDE_PATHS}
+	/usr/xenomai/include
+	PATH_SUFFIXES
+	xenomai
 )
 
 mark_as_advanced(Xenomai_INCLUDE_DIRS)
-
-foreach(PATH ${CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_LIBDIR}
-		${PATH}/Xenomai*/${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND Xenomai_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-list(
-	APPEND
-	Xenomai_LIBRARY_HINTS
-	$ENV{Xenomai_DIR}/${CMAKE_INSTALL_LIBDIR}
-)
-
-foreach(PATH $ENV{CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_LIBDIR}
-		${PATH}/Xenomai*/${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND Xenomai_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-foreach(PATH $ENV{PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/../${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND Xenomai_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-file(
-	GLOB
-	Xenomai_LIBRARY_PATHS
-	$ENV{HOME}/lib
-	/usr/local/lib
-	/opt/local/lib
-	/usr/xenomai/lib
-	/usr/lib
-)
 
 find_library(
 	Xenomai_NATIVE_LIBRARY_DEBUG
 	NAMES
 	natived
-	HINTS
-	${Xenomai_LIBRARY_HINTS}
 	PATHS
-	${Xenomai_LIBRARY_PATHS}
+	/usr/xenomai/lib
 )
 
 find_library(
 	Xenomai_NATIVE_LIBRARY_RELEASE
 	NAMES
 	native
-	HINTS
-	${Xenomai_LIBRARY_HINTS}
 	PATHS
-	${Xenomai_LIBRARY_PATHS}
+	/usr/xenomai/lib
 )
 
 select_library_configurations(Xenomai_NATIVE)
@@ -131,20 +35,16 @@ find_library(
 	Xenomai_XENOMAI_LIBRARY_DEBUG
 	NAMES
 	xenomaid
-	HINTS
-	${Xenomai_LIBRARY_HINTS}
 	PATHS
-	${Xenomai_LIBRARY_PATHS}
+	/usr/xenomai/lib
 )
 
 find_library(
 	Xenomai_XENOMAI_LIBRARY_RELEASE
 	NAMES
 	xenomai
-	HINTS
-	${Xenomai_LIBRARY_HINTS}
 	PATHS
-	${Xenomai_LIBRARY_PATHS}
+	/usr/xenomai/lib
 )
 
 select_library_configurations(Xenomai_XENOMAI)

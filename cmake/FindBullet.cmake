@@ -1,129 +1,28 @@
+include(CheckCXXSourceRuns)
+include(CMakePushCheckState)
 include(FindPackageHandleStandardArgs)
-include(GNUInstallDirs)
 include(SelectLibraryConfigurations)
-
-foreach(PATH ${CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/Bullet*/${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND BULLET_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-list(
-	APPEND
-	BULLET_INCLUDE_HINTS
-	$ENV{Bullet_DIR}/${CMAKE_INSTALL_INCLUDEDIR}
-)
-
-foreach(PATH $ENV{CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/Bullet*/${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND BULLET_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-foreach(PATH $ENV{PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/../${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND BULLET_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-file(
-	GLOB
-	BULLET_INCLUDE_PATHS
-	$ENV{BULLET_ROOT_DIR}/include
-	$ENV{HOME}/include
-	/usr/local/include
-	/opt/local/include
-	/usr/include
-)
 
 find_path(
 	BULLET_INCLUDE_DIRS
 	NAMES
 	btBulletCollisionCommon.h
-	HINTS
-	${BULLET_INCLUDE_HINTS}
-	PATHS
-	${BULLET_INCLUDE_PATHS}
 	PATH_SUFFIXES
 	bullet
 )
 
 mark_as_advanced(BULLET_INCLUDE_DIRS)
 
-foreach(PATH ${CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_LIBDIR}
-		${PATH}/Bullet*/${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND BULLET_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-list(
-	APPEND
-	BULLET_LIBRARY_HINTS
-	$ENV{Bullet_DIR}/${CMAKE_INSTALL_LIBDIR}
-)
-
-foreach(PATH $ENV{CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_LIBDIR}
-		${PATH}/Bullet*/${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND BULLET_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-foreach(PATH $ENV{PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/../${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND BULLET_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-file(
-	GLOB
-	BULLET_LIBRARY_PATHS
-	$ENV{BULLET_ROOT_DIR}/lib
-	$ENV{HOME}/lib
-	/usr/local/lib
-	/opt/local/lib
-	/usr/lib
-)
-
 find_library(
 	BULLET_BULLETCOLLISION_LIBRARY_DEBUG
 	NAMES
-	bulletcollisiond BulletCollisiond BulletCollision_debug BulletCollision_Debug
-	HINTS
-	${BULLET_LIBRARY_HINTS}
-	PATHS
-	${BULLET_LIBRARY_PATHS}
+	BulletCollision-float64_Debug BulletCollision_Debug
 )
 
 find_library(
 	BULLET_BULLETCOLLISION_LIBRARY_RELEASE
 	NAMES
-	bulletcollision BulletCollision BulletCollision_RelWithDebugInfo BulletCollision_MinsizeRel
-	HINTS
-	${BULLET_LIBRARY_HINTS}
-	PATHS
-	${BULLET_LIBRARY_PATHS}
+	BulletCollision-float64 BulletCollision
 )
 
 select_library_configurations(BULLET_BULLETCOLLISION)
@@ -131,21 +30,13 @@ select_library_configurations(BULLET_BULLETCOLLISION)
 find_library(
 	BULLET_BULLETDYNAMICS_LIBRARY_DEBUG
 	NAMES
-	bulletdynamicsd BulletDynamicsd BulletDynamics_debug BulletDynamics_Debug
-	HINTS
-	${BULLET_LIBRARY_HINTS}
-	PATHS
-	${BULLET_LIBRARY_PATHS}
+	BulletDynamics-float64_Debug BulletDynamics_Debug
 )
 
 find_library(
 	BULLET_BULLETDYNAMICS_LIBRARY_RELEASE
 	NAMES
-	bulletdynamics BulletDynamics BulletDynamics_RelWithDebugInfo BulletDynamics_MinsizeRel
-	HINTS
-	${BULLET_LIBRARY_HINTS}
-	PATHS
-	${BULLET_LIBRARY_PATHS}
+	BulletDynamics-float64 BulletDynamics
 )
 
 select_library_configurations(BULLET_BULLETDYNAMICS)
@@ -153,21 +44,13 @@ select_library_configurations(BULLET_BULLETDYNAMICS)
 find_library(
 	BULLET_BULLETSOFTBODY_LIBRARY_DEBUG
 	NAMES
-	bulletsoftbodyd BulletSoftBodyd BulletSoftBody_debug BulletSoftBody_Debug
-	HINTS
-	${BULLET_LIBRARY_HINTS}
-	PATHS
-	${BULLET_LIBRARY_PATHS}
+	BulletSoftBody-float64_Debug BulletSoftBody_Debug
 )
 
 find_library(
 	BULLET_BULLETSOFTBODY_LIBRARY_RELEASE
 	NAMES
-	bulletsoftbody BulletSoftBody BulletSoftBody_RelWithDebugInfo BulletSoftBody_MinsizeRel
-	HINTS
-	${BULLET_LIBRARY_HINTS}
-	PATHS
-	${BULLET_LIBRARY_PATHS}
+	BulletSoftBody-float64 BulletSoftBody
 )
 
 select_library_configurations(BULLET_BULLETSOFTBODY)
@@ -175,21 +58,13 @@ select_library_configurations(BULLET_BULLETSOFTBODY)
 find_library(
 	BULLET_CONVEXDECOMPOSITION_LIBRARY_DEBUG
 	NAMES
-	convexdecompositiond ConvexDecompositiond ConvexDecomposition_debug ConvexDecomposition_Debug
-	HINTS
-	${BULLET_LIBRARY_HINTS}
-	PATHS
-	${BULLET_LIBRARY_PATHS}
+	ConvexDecomposition-float64_Debug ConvexDecomposition_Debug
 )
 
 find_library(
 	BULLET_CONVEXDECOMPOSITION_LIBRARY_RELEASE
 	NAMES
-	convexdecomposition ConvexDecomposition ConvexDecomposition_RelWithDebugInfo ConvexDecomposition_MinsizeRel
-	HINTS
-	${BULLET_LIBRARY_HINTS}
-	PATHS
-	${BULLET_LIBRARY_PATHS}
+	ConvexDecomposition-float64 ConvexDecomposition
 )
 
 select_library_configurations(BULLET_CONVEXDECOMPOSITION)
@@ -197,21 +72,13 @@ select_library_configurations(BULLET_CONVEXDECOMPOSITION)
 find_library(
 	BULLET_LINEARMATH_LIBRARY_DEBUG
 	NAMES
-	bulletmathd LinearMathd LinearMath_debug LinearMath_Debug
-	HINTS
-	${BULLET_LIBRARY_HINTS}
-	PATHS
-	${BULLET_LIBRARY_PATHS}
+	LinearMath-float64_Debug LinearMath_Debug
 )
 
 find_library(
 	BULLET_LINEARMATH_LIBRARY_RELEASE
 	NAMES
-	bulletmath LinearMath LinearMath_RelWithDebugInfo LinearMath_MinsizeRel
-	HINTS
-	${BULLET_LIBRARY_HINTS}
-	PATHS
-	${BULLET_LIBRARY_PATHS}
+	LinearMath-float64 LinearMath
 )
 
 select_library_configurations(BULLET_LINEARMATH)
@@ -224,10 +91,49 @@ set(
 	${BULLET_LINEARMATH_LIBRARIES}
 )
 
+if(BULLET_INCLUDE_DIRS AND BULLET_LIBRARIES)
+	cmake_push_check_state(RESET)
+	set(CMAKE_REQUIRED_DEFINITIONS -DBT_USE_DOUBLE_PRECISION)
+	set(CMAKE_REQUIRED_INCLUDES ${BULLET_INCLUDE_DIRS})
+	set(CMAKE_REQUIRED_LIBRARIES ${BULLET_LIBRARIES})
+	check_cxx_source_runs("
+		#include <btBulletCollisionCommon.h>
+		int main()
+		{
+			btVector3 boxHalfExtents(1, -2, 3);
+			btBoxShape box(boxHalfExtents);
+			btVector3 boxHalfExtentsWithMargin = box.getHalfExtentsWithMargin();
+			return !btFuzzyZero(boxHalfExtents.distance(boxHalfExtentsWithMargin));
+		}
+	" _BULLET_DOUBLE_PRECISION)
+	
+	if(_BULLET_DOUBLE_PRECISION)
+		set(BULLET_DEFINITIONS -DBT_USE_DOUBLE_PRECISION)
+	endif()
+	
+	unset(_BULLET_DOUBLE_PRECISION)
+	cmake_pop_check_state()
+endif()
+
+mark_as_advanced(BULLET_DEFINITIONS)
+
+if(BULLET_INCLUDE_DIRS AND EXISTS "${BULLET_INCLUDE_DIRS}/LinearMath/btScalar.h")
+	file(STRINGS "${BULLET_INCLUDE_DIRS}/LinearMath/btScalar.h" _BULLET_VERSION_DEFINE REGEX "#define[\t ]+BT_BULLET_VERSION[\t ]+[0-9]+.*")
+	string(REGEX REPLACE "#define[\t ]+BT_BULLET_VERSION[\t ]+([0-9])[0-9][0-9].*" "\\1" BULLET_VERSION_MAJOR "${_BULLET_VERSION_DEFINE}")
+	string(REGEX REPLACE "#define[\t ]+BT_BULLET_VERSION[\t ]+[0-9]([0-9][0-9]).*" "\\1" BULLET_VERSION_MINOR "${_BULLET_VERSION_DEFINE}")
+	
+	if(NOT BULLET_VERSION_MAJOR STREQUAL "" AND NOT BULLET_VERSION_MINOR STREQUAL "")
+		set(BULLET_VERSION "${BULLET_VERSION_MAJOR}.${BULLET_VERSION_MINOR}")
+	endif()
+	
+	unset(_BULLET_VERSION_DEFINE)
+endif()
+
 find_package_handle_standard_args(
 	Bullet
 	FOUND_VAR BULLET_FOUND
 	REQUIRED_VARS BULLET_INCLUDE_DIRS BULLET_LIBRARIES
+	VERSION_VAR BULLET_VERSION
 )
 
 if((BULLET_BULLETCOLLISION_LIBRARY_RELEASE OR BULLET_BULLETCOLLISION_LIBRARY_DEBUG) AND BULLET_INCLUDE_DIRS)
@@ -265,6 +171,7 @@ if(BULLET_BULLETCOLLISION_LIBRARY_FOUND AND NOT TARGET Bullet::BulletCollision)
 	
 	set_target_properties(
 		Bullet::BulletCollision PROPERTIES
+		INTERFACE_COMPILE_DEFINITIONS "${BULLET_DEFINITIONS}"
 		INTERFACE_INCLUDE_DIRECTORIES "${BULLET_INCLUDE_DIRS}"
 	)
 endif()
@@ -284,6 +191,7 @@ if(BULLET_BULLETDYNAMICS_LIBRARY_FOUND AND NOT TARGET Bullet::BulletDynamics)
 	
 	set_target_properties(
 		Bullet::BulletDynamics PROPERTIES
+		INTERFACE_COMPILE_DEFINITIONS "${BULLET_DEFINITIONS}"
 		INTERFACE_INCLUDE_DIRECTORIES "${BULLET_INCLUDE_DIRS}"
 	)
 endif()
@@ -303,6 +211,7 @@ if(BULLET_BULLETSOFTBODY_LIBRARY_FOUND AND NOT TARGET Bullet::BulletSoftBody)
 	
 	set_target_properties(
 		Bullet::BulletSoftBody PROPERTIES
+		INTERFACE_COMPILE_DEFINITIONS "${BULLET_DEFINITIONS}"
 		INTERFACE_INCLUDE_DIRECTORIES "${BULLET_INCLUDE_DIRS}"
 	)
 endif()
@@ -322,6 +231,7 @@ if(BULLET_CONVEXDECOMPOSITION_LIBRARY_FOUND AND NOT TARGET Bullet::ConvexDecompo
 	
 	set_target_properties(
 		Bullet::ConvexDecomposition PROPERTIES
+		INTERFACE_COMPILE_DEFINITIONS "${BULLET_DEFINITIONS}"
 		INTERFACE_INCLUDE_DIRECTORIES "${BULLET_INCLUDE_DIRS}"
 	)
 endif()
@@ -341,6 +251,7 @@ if(BULLET_LINEARMATH_LIBRARY_FOUND AND NOT TARGET Bullet::LinearMath)
 	
 	set_target_properties(
 		Bullet::LinearMath PROPERTIES
+		INTERFACE_COMPILE_DEFINITIONS "${BULLET_DEFINITIONS}"
 		INTERFACE_INCLUDE_DIRECTORIES "${BULLET_INCLUDE_DIRS}"
 	)
 endif()

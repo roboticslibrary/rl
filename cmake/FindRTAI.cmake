@@ -1,130 +1,32 @@
 include(FindPackageHandleStandardArgs)
-include(GNUInstallDirs)
 include(SelectLibraryConfigurations)
-
-foreach(PATH ${CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/RTAI*/${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND RTAI_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-list(
-	APPEND
-	RTAI_INCLUDE_HINTS
-	$ENV{RTAI_DIR}/${CMAKE_INSTALL_INCLUDEDIR}
-)
-
-foreach(PATH $ENV{CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/RTAI*/${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND RTAI_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-foreach(PATH $ENV{PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/../${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND RTAI_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-file(
-	GLOB
-	RTAI_INCLUDE_PATHS
-	$ENV{RTAI_DIR}/include
-	$ENV{RTAIDIR}/include
-	$ENV{HOME}/include
-	/usr/local/include
-	/opt/local/include
-	/usr/realtime/include
-	/usr/include/rtai
-	/usr/include
-)
 
 find_path(
 	RTAI_INCLUDE_DIRS
 	NAMES
 	rtai_lxrt.h
-	HINTS
-	${RTAI_INCLUDE_HINTS}
 	PATHS
-	${RTAI_INCLUDE_PATHS}
+	/usr/realtime/include
+	PATH_SUFFIXES
+	rtai
 )
 
 mark_as_advanced(RTAI_INCLUDE_DIRS)
-
-foreach(PATH ${CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_LIBDIR}
-		${PATH}/RTAI*/${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND RTAI_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-list(
-	APPEND
-	RTAI_LIBRARY_HINTS
-	$ENV{RTAI_DIR}/${CMAKE_INSTALL_LIBDIR}
-)
-
-foreach(PATH $ENV{CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_LIBDIR}
-		${PATH}/RTAI*/${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND RTAI_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-foreach(PATH $ENV{PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/../${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND RTAI_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-file(
-	GLOB
-	RTAI_LIBRARY_PATHS
-	$ENV{HOME}/lib
-	/usr/local/lib
-	/opt/local/lib
-	/usr/realtime/lib
-	/usr/lib
-)
 
 find_library(
 	RTAI_LIBRARY_DEBUG
 	NAMES
 	lxrtd
-	HINTS
-	${RTAI_LIBRARY_HINTS}
 	PATHS
-	${RTAI_LIBRARY_PATHS}
+	/usr/realtime/lib
 )
 
 find_library(
 	RTAI_LIBRARY_RELEASE
 	NAMES
 	lxrt
-	HINTS
-	${RTAI_LIBRARY_HINTS}
 	PATHS
-	${RTAI_LIBRARY_PATHS}
+	/usr/realtime/lib
 )
 
 select_library_configurations(RTAI)

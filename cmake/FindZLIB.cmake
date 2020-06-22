@@ -1,138 +1,39 @@
 include(FindPackageHandleStandardArgs)
-include(GNUInstallDirs)
 include(SelectLibraryConfigurations)
-
-foreach(PATH ${CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/zlib*/${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND ZLIB_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-list(
-	APPEND
-	ZLIB_INCLUDE_HINTS
-	$ENV{ZLIB_DIR}/${CMAKE_INSTALL_INCLUDEDIR}
-)
-
-foreach(PATH $ENV{CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/zlib*/${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND ZLIB_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-foreach(PATH $ENV{PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/../${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND ZLIB_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-file(
-	GLOB
-	ZLIB_INCLUDE_PATHS
-	$ENV{HOME}/include
-	/usr/local/include
-	/opt/local/include
-	/usr/include
-	$ENV{ProgramW6432}/GnuWin32/include
-	$ENV{ProgramFiles}/GnuWin32/include
-	${CMAKE_OSX_SYSROOT}/usr/include
-)
 
 find_path(
 	ZLIB_INCLUDE_DIRS
 	NAMES
 	zlib.h
-	HINTS
-	${ZLIB_INCLUDE_HINTS}
-	PATHS
-	${ZLIB_INCLUDE_PATHS}
 )
 
 mark_as_advanced(ZLIB_INCLUDE_DIRS)
-
-foreach(PATH ${CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_LIBDIR}
-		${PATH}/zlib*/${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND ZLIB_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-list(
-	APPEND
-	ZLIB_LIBRARY_HINTS
-	$ENV{ZLIB_DIR}/${CMAKE_INSTALL_LIBDIR}
-)
-
-foreach(PATH $ENV{CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_LIBDIR}
-		${PATH}/zlib*/${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND ZLIB_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-foreach(PATH $ENV{PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/../${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND ZLIB_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-file(
-	GLOB
-	ZLIB_LIBRARY_PATHS
-	$ENV{HOME}/lib
-	/usr/local/lib
-	/opt/local/lib
-	/usr/lib
-	$ENV{ProgramW6432}/GnuWin32/lib
-	$ENV{ProgramFiles}/GnuWin32/lib
-)
 
 find_library(
 	ZLIB_LIBRARY_DEBUG
 	NAMES
 	zd zlibd zlib_ad zlibstaticd zlibwapid zdlld
-	HINTS
-	${ZLIB_LIBRARY_HINTS}
-	PATHS
-	${ZLIB_LIBRARY_PATHS}
 )
 
 find_library(
 	ZLIB_LIBRARY_RELEASE
 	NAMES
 	z zlib zlib_a zlibstatic zlibwapi zdll
-	HINTS
-	${ZLIB_LIBRARY_HINTS}
-	PATHS
-	${ZLIB_LIBRARY_PATHS}
 )
 
 select_library_configurations(ZLIB)
+
+if(ZLIB_INCLUDE_DIRS AND EXISTS "${ZLIB_INCLUDE_DIRS}/zlib.h")
+	file(STRINGS "${ZLIB_INCLUDE_DIRS}/zlib.h" _ZLIB_VERSION_DEFINE REGEX "#define[\t ]+ZLIB_VERSION[\t ]+\"[^\"]*\".*")
+	string(REGEX REPLACE "#define[\t ]+ZLIB_VERSION[\t ]+\"([^\"]*)\".*" "\\1" ZLIB_VERSION "${_ZLIB_VERSION_DEFINE}")
+	unset(_ZLIB_VERSION_DEFINE)
+endif()
 
 find_package_handle_standard_args(
 	ZLIB
 	FOUND_VAR ZLIB_FOUND
 	REQUIRED_VARS ZLIB_INCLUDE_DIRS ZLIB_LIBRARIES
+	VERSION_VAR ZLIB_VERSION
 )
 
 if(ZLIB_FOUND AND NOT TARGET ZLIB::ZLIB)

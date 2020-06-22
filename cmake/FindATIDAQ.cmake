@@ -1,121 +1,24 @@
 include(FindPackageHandleStandardArgs)
-include(GNUInstallDirs)
 include(SelectLibraryConfigurations)
-
-foreach(PATH ${CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/ATIDAQ*/${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND ATIDAQ_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-list(
-	APPEND
-	ATIDAQ_INCLUDE_HINTS
-	$ENV{ATIDAQ_DIR}/${CMAKE_INSTALL_INCLUDEDIR}
-)
-
-foreach(PATH $ENV{CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_INCLUDEDIR}
-		${PATH}/ATIDAQ*/${CMAKE_INSTALL_INCLUDEDIR}
-	)
-	list(APPEND ATIDAQ_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-foreach(PATH $ENV{PATH})
-	file(GLOB HINTS ${PATH}/../${CMAKE_INSTALL_INCLUDEDIR})
-	list(APPEND ATIDAQ_INCLUDE_HINTS ${HINTS})
-endforeach()
-
-file(
-	GLOB
-	ATIDAQ_INCLUDE_PATHS
-	$ENV{HOME}/include
-	/usr/local/include
-	/opt/local/include
-	/usr/include
-)
 
 find_path(
 	ATIDAQ_INCLUDE_DIRS
 	NAMES
 	atidaq/ftconfig.h
-	HINTS
-	${ATIDAQ_INCLUDE_HINTS}
-	HINTS
-	${ATIDAQ_INCLUDE_PATHS}
 )
 
 mark_as_advanced(ATIDAQ_INCLUDE_DIRS)
-
-foreach(PATH ${CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_LIBDIR}
-		${PATH}/ATIDAQ*/${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND ATIDAQ_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-list(
-	APPEND
-	ATIDAQ_LIBRARY_HINTS
-	$ENV{ATIDAQ_DIR}/${CMAKE_INSTALL_LIBDIR}
-)
-
-foreach(PATH $ENV{CMAKE_PREFIX_PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/${CMAKE_INSTALL_LIBDIR}
-		${PATH}/ATIDAQ*/${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND ATIDAQ_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-foreach(PATH $ENV{PATH})
-	file(
-		GLOB
-		HINTS
-		${PATH}/../${CMAKE_INSTALL_LIBDIR}
-	)
-	list(APPEND ATIDAQ_LIBRARY_HINTS ${HINTS})
-endforeach()
-
-file(
-	GLOB
-	ATIDAQ_LIBRARY_PATHS
-	$ENV{HOME}/lib
-	/usr/local/lib
-	/opt/local/lib
-	/usr/lib
-)
 
 find_library(
 	ATIDAQ_LIBRARY_DEBUG
 	NAMES
 	atidaqd
-	HINTS
-	${ATIDAQ_LIBRARY_HINTS}
-	PATHS
-	${ATIDAQ_LIBRARY_PATHS}
 )
 
 find_library(
 	ATIDAQ_LIBRARY_RELEASE
 	NAMES
 	atidaq
-	HINTS
-	${ATIDAQ_LIBRARY_HINTS}
-	PATHS
-	${ATIDAQ_LIBRARY_PATHS}
 )
 
 select_library_configurations(ATIDAQ)
