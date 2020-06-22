@@ -57,7 +57,7 @@ main(int argc, char** argv)
 		
 		rl::math::Vector measurement(3);
 		
-		for (std::size_t i = 0; i < measurement.size(); ++i)
+		for (std::ptrdiff_t i = 0; i < measurement.size(); ++i)
 		{
 			stream >> measurement(i);
 		}
@@ -66,7 +66,7 @@ main(int argc, char** argv)
 		
 		filtered << time;
 		
-		for (std::size_t i = 0; i < estimation.size(); ++i)
+		for (std::ptrdiff_t i = 0; i < estimation.size(); ++i)
 		{
 			filtered << "\t" << estimation(i);
 		}

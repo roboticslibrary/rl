@@ -65,7 +65,7 @@ namespace rl
 		void
 		Joint::clamp(::rl::math::VectorRef q) const
 		{
-			for (::std::size_t i = 0; i < q.size(); ++i)
+			for (::std::ptrdiff_t i = 0; i < q.size(); ++i)
 			{
 				if (this->wraparound(i))
 				{
@@ -151,7 +151,7 @@ namespace rl
 		void
 		Joint::generatePositionGaussian(const ::rl::math::ConstVectorRef& rand, const ::rl::math::ConstVectorRef& mean, const ::rl::math::ConstVectorRef& sigma, ::rl::math::VectorRef q) const
 		{
-			for (::std::size_t i = 0; i < q.size(); ++i)
+			for (::std::ptrdiff_t i = 0; i < q.size(); ++i)
 			{
 				q(i) = mean(i) + rand(i) * sigma(i);
 			}
@@ -162,7 +162,7 @@ namespace rl
 		void
 		Joint::generatePositionUniform(const ::rl::math::ConstVectorRef& rand, ::rl::math::VectorRef q) const
 		{
-			for (::std::size_t i = 0; i < q.size(); ++i)
+			for (::std::ptrdiff_t i = 0; i < q.size(); ++i)
 			{
 				q(i) = this->min(i) + rand(i) * (this->max(i) - this->min(i));
 			}
@@ -171,7 +171,7 @@ namespace rl
 		void
 		Joint::generatePositionUniform(const ::rl::math::ConstVectorRef& rand, const ::rl::math::ConstVectorRef& min, const ::rl::math::ConstVectorRef& max, ::rl::math::VectorRef q) const
 		{
-			for (::std::size_t i = 0; i < q.size(); ++i)
+			for (::std::ptrdiff_t i = 0; i < q.size(); ++i)
 			{
 				q(i) = min(i) + rand(i) * (max(i) - min(i));
 			}
@@ -280,7 +280,7 @@ namespace rl
 		bool
 		Joint::isValid(const ::rl::math::ConstVectorRef& q) const
 		{
-			for (::std::size_t i = 0; i < q.size(); ++i)
+			for (::std::ptrdiff_t i = 0; i < q.size(); ++i)
 			{
 				if (q(i) < this->min(i) || q(i) > this->max(i))
 				{

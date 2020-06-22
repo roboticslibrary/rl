@@ -396,7 +396,7 @@ namespace rl
 		{
 			::rl::math::Vector i(this->getDof());
 			
-			for (::std::size_t j = 0; j < 6; ++j)
+			for (::std::ptrdiff_t j = 0; j < 6; ++j)
 			{
 				i(j) = this->output.actualCurrent[j];
 			}
@@ -416,7 +416,7 @@ namespace rl
 		{
 			::rl::math::Vector q(this->getDof());
 			
-			for (::std::size_t i = 0; i < 6; ++i)
+			for (::std::ptrdiff_t i = 0; i < 6; ++i)
 			{
 				q(i) = this->output.actualQ[i];
 			}
@@ -429,7 +429,7 @@ namespace rl
 		{
 			::rl::math::Vector temperature(this->getDof());
 			
-			for (::std::size_t i = 0; i < 6; ++i)
+			for (::std::ptrdiff_t i = 0; i < 6; ++i)
 			{
 				temperature(i) = this->output.jointTemperatures[i];
 			}
@@ -442,7 +442,7 @@ namespace rl
 		{
 			::rl::math::Vector qd(this->getDof());
 			
-			for (::std::size_t i = 0; i < 6; ++i)
+			for (::std::ptrdiff_t i = 0; i < 6; ++i)
 			{
 				qd(i) = this->output.actualQd[i];
 			}

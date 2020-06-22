@@ -182,7 +182,7 @@ Socket::readClient()
 					rl::math::Vector q(MainWindow::instance()->kinematicModels[i]->getDof());
 					MainWindow::instance()->kinematicModels[i]->getPosition(q);
 					
-					for (std::size_t i = 0; i < q.size(); ++i)
+					for (std::ptrdiff_t i = 0; i < q.size(); ++i)
 					{
 						textStream << " " << q(i);
 					}
