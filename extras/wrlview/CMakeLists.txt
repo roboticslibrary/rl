@@ -6,6 +6,8 @@ set(VERSION_PATCH 14)
 set(VERSION_TWEAK 0)
 set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
 
+include(CMakePushCheckState)
+
 find_package(SoQt)
 
 if(RL_USE_QT5 AND SoQt5_FOUND)
@@ -49,6 +51,7 @@ if(Coin_FOUND AND OPENGL_FOUND AND QT_FOUND AND SoQt_FOUND)
 		${SoQt_DEFINITIONS}
 	)
 	
+	cmake_push_check_state(RESET)
 	set(CMAKE_REQUIRED_DEFINITIONS ${Coin_DEFINITIONS})
 	set(CMAKE_REQUIRED_INCLUDES ${Coin_INCLUDE_DIRS})
 	set(CMAKE_REQUIRED_LIBRARIES ${Coin_LIBRARIES})
@@ -63,9 +66,7 @@ if(Coin_FOUND AND OPENGL_FOUND AND QT_FOUND AND SoQt_FOUND)
 			target_compile_definitions(wrlview PRIVATE HAVE_SOSTLFILEKIT_CONVERT)
 		endif()
 	endif()
-	unset(CMAKE_REQUIRED_DEFINITIONS)
-	unset(CMAKE_REQUIRED_INCLUDES)
-	unset(CMAKE_REQUIRED_LIBRARIES)
+	cmake_pop_check_state()
 	
 	target_include_directories(
 		wrlview

@@ -1,5 +1,6 @@
 include(CheckCSourceRuns)
 include(CheckSymbolExists)
+include(CMakePushCheckState)
 include(FindPackageHandleStandardArgs)
 include(GNUInstallDirs)
 include(SelectLibraryConfigurations)
@@ -128,6 +129,7 @@ find_library(
 select_library_configurations(ODE)
 
 if(ODE_INCLUDE_DIRS AND ODE_LIBRARIES)
+	cmake_push_check_state(RESET)
 	set(CMAKE_REQUIRED_INCLUDES ${ODE_INCLUDE_DIRS})
 	
 	check_symbol_exists(dDOUBLE "ode/precision.h" ODE_HAVE_DOUBLE)
@@ -160,6 +162,8 @@ if(ODE_INCLUDE_DIRS AND ODE_LIBRARIES)
 			endif()
 		endif()
 	endif()
+	
+	cmake_pop_check_state()
 endif()
 
 mark_as_advanced(ODE_DEFINITIONS)
