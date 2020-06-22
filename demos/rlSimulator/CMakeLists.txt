@@ -84,7 +84,7 @@ if(QT_FOUND AND SoQt_FOUND)
 		VERSION ${VERSION}
 	)
 	
-	if(WIN32)
+	if(MSVC)
 		set_target_properties(
 			rlSimulator
 			PROPERTIES

@@ -125,7 +125,7 @@ if(NOT CMAKE_VERSION VERSION_LESS 2.8.12)
 	)
 endif()
 
-if(WIN32)
+if(MSVC)
 	if(BUILD_SHARED_LIBS)
 		set_target_properties(
 			mdl

@@ -96,7 +96,7 @@ if(QT_FOUND AND SoQt_FOUND AND (Bullet_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE
 		VERSION ${VERSION}
 	)
 	
-	if(WIN32)
+	if(MSVC)
 		set_target_properties(
 			rlPlanDemo
 			PROPERTIES

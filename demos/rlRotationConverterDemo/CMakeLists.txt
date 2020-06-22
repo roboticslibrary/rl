@@ -60,7 +60,7 @@ if(QT_FOUND)
 		VERSION ${VERSION}
 	)
 	
-	if(WIN32)
+	if(MSVC)
 		set_target_properties(
 			rlRotationConverterDemo
 			PROPERTIES

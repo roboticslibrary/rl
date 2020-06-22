@@ -97,7 +97,7 @@ if(CMAKE_VERSION VERSION_LESS 3.0)
 		VERSION ${VERSION}
 	)
 	
-	if(WIN32)
+	if(MSVC)
 		set_target_properties(
 			util
 			PROPERTIES

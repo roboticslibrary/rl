@@ -89,7 +89,7 @@ if(Coin_FOUND AND OPENGL_FOUND AND QT_FOUND AND SoQt_FOUND)
 		VERSION ${VERSION}
 	)
 	
-	if(WIN32)
+	if(MSVC)
 		set_target_properties(
 			wrlview
 			PROPERTIES
