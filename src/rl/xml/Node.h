@@ -67,9 +67,9 @@ namespace rl
 			
 			~Node()
 			{
-				if (nullptr != this->node && nullptr == this->node->doc)
+				if (nullptr != this->node && nullptr == this->node->doc && nullptr == this->node->parent)
 				{
-					::xmlFree(this->node);
+					::xmlFreeNode(this->node);
 				}
 			}
 			
