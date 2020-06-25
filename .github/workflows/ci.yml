@@ -53,6 +53,7 @@ jobs:
           cmake
           coin
           eigen
+          fcl
           ninja
           nlopt
           ode
@@ -73,6 +74,7 @@ jobs:
           libcomedi-dev
           libdc1394-22-dev
           libeigen3-dev
+          libfcl-dev
           libnlopt-dev
           libode-dev
           libsimage-dev
