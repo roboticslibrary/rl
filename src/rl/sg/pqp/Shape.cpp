@@ -44,7 +44,7 @@ namespace rl
 		namespace pqp
 		{
 			Shape::Shape(::SoVRMLShape* shape, Body* body) :
-				::rl::sg::Shape(shape, body),
+				::rl::sg::Shape(body),
 				model(),
 				frame(::rl::math::Transform::Identity()),
 				transform(::rl::math::Transform::Identity())

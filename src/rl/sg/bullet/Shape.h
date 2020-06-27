@@ -30,6 +30,7 @@
 #include <memory>
 #include <btBulletCollisionCommon.h>
 #include <Inventor/actions/SoCallbackAction.h>
+#include <Inventor/VRMLnodes/SoVRMLShape.h>
 
 #include "../Shape.h"
 

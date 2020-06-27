@@ -72,7 +72,7 @@ namespace rl
 #endif
 			
 			Shape::Shape(SoVRMLShape* shape, ::rl::sg::Body* body) :
-				::rl::sg::Shape(shape, body),
+				::rl::sg::Shape(body),
 				base(::rl::math::Transform::Identity()),
 #if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 6
 				distances(),

@@ -46,7 +46,7 @@ namespace rl
 		namespace ode
 		{
 			Shape::Shape(::SoVRMLShape* shape, Body* body) :
-				::rl::sg::Shape(shape, body),
+				::rl::sg::Shape(body),
 				geom(nullptr),
 				baseTransform(::rl::math::Transform::Identity()),
 				indices(),

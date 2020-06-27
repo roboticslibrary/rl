@@ -47,7 +47,7 @@ namespace rl
 		namespace bullet
 		{
 			Shape::Shape(::SoVRMLShape* shape, Body* body) :
-				::rl::sg::Shape(shape, body),
+				::rl::sg::Shape(body),
 				shape(),
 				transform(),
 				indices(),

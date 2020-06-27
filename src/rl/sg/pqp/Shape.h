@@ -32,6 +32,7 @@
 #include <Inventor/actions/SoCallbackAction.h>
 #include <Inventor/fields/SoMFInt32.h>
 #include <Inventor/fields/SoMFVec3f.h>
+#include <Inventor/VRMLnodes/SoVRMLShape.h>
 
 #include "../Shape.h"
 

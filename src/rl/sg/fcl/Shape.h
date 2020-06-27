@@ -30,6 +30,7 @@
 #include <memory>
 #include <fcl/config.h>
 #include <Inventor/actions/SoCallbackAction.h>
+#include <Inventor/VRMLnodes/SoVRMLShape.h>
 
 #if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 6
 #include <fcl/collision.h>

@@ -28,7 +28,6 @@
 #define RL_SG_SHAPE_H
 
 #include <string>
-#include <Inventor/VRMLnodes/SoVRMLShape.h>
 #include <rl/math/Transform.h>
 
 #include "Base.h"
@@ -42,7 +41,7 @@ namespace rl
 		class RL_SG_EXPORT Shape : public Base
 		{
 		public:
-			Shape(::SoVRMLShape* shape, Body* body);
+			Shape(Body* body);
 			
 			virtual ~Shape();
 			

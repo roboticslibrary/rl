@@ -28,6 +28,7 @@
 #define RL_SG_ODE_SHAPE_H
 
 #include <Inventor/actions/SoCallbackAction.h>
+#include <Inventor/VRMLnodes/SoVRMLShape.h>
 #include <ode/ode.h>
 
 #include "../Shape.h"

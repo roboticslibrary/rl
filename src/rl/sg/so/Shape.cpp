@@ -39,7 +39,7 @@ namespace rl
 		namespace so
 		{
 			Shape::Shape(::SoVRMLShape* shape, Body* body) :
-				::rl::sg::Shape(shape, body),
+				::rl::sg::Shape(body),
 				root(new ::SoVRMLTransform()),
 				shape(shape)
 			{

@@ -27,6 +27,7 @@
 #ifndef RL_SG_SO_SHAPE_H
 #define RL_SG_SO_SHAPE_H
 
+#include <Inventor/VRMLnodes/SoVRMLShape.h>
 #include <Inventor/VRMLnodes/SoVRMLTransform.h>
 
 #include "../Shape.h"
