@@ -135,7 +135,7 @@ namespace rl
 				
 				CollisionRequest request;
 				CollisionResult result;
-				::fcl::collide(shape1->collisionObject.get(), shape2->collisionObject.get(), request, result);
+				::fcl::collide(shape1->getCollisionObject(), shape2->getCollisionObject(), request, result);
 				
 				return result.isCollision();
 			}
@@ -215,7 +215,7 @@ namespace rl
 				
 				CollisionRequest request(1, true);
 				CollisionResult result;
-				::fcl::collide(shape1->collisionObject.get(), shape2->collisionObject.get(), request, result);
+				::fcl::collide(shape1->getCollisionObject(), shape2->getCollisionObject(), request, result);
 				
 				if (0 == result.numContacts())
 				{
@@ -303,11 +303,11 @@ namespace rl
 				
 				DistanceRequest request(true);
 				DistanceResult result;
-				::fcl::distance(shape1->collisionObject.get(), shape2->collisionObject.get(), request, result);
+				::fcl::distance(shape1->getCollisionObject(), shape2->getCollisionObject(), request, result);
 				
 #if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 6
-				Vector3 nearestPoint1 = shape1->collisionObject->getTransform().transform(result.nearest_points[0]);
-				Vector3 nearestPoint2 = shape2->collisionObject->getTransform().transform(result.nearest_points[1]);
+				Vector3 nearestPoint1 = shape1->getCollisionObject()->getTransform().transform(result.nearest_points[0]);
+				Vector3 nearestPoint2 = shape2->getCollisionObject()->getTransform().transform(result.nearest_points[1]);
 				
 				for (::std::size_t i = 0; i < 3; ++i)
 				{
@@ -343,10 +343,10 @@ namespace rl
 				
 				DistanceRequest request;
 				DistanceResult result;
-				::fcl::distance(static_cast<Shape*>(shape)->collisionObject.get(), collisionObject.get(), request, result);
+				::fcl::distance(static_cast<Shape*>(shape)->getCollisionObject(), collisionObject.get(), request, result);
 				
 #if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 6
-				Vector3 nearestPoint1 = static_cast<Shape*>(shape)->collisionObject->getTransform().transform(result.nearest_points[0]);
+				Vector3 nearestPoint1 = static_cast<Shape*>(shape)->getCollisionObject()->getTransform().transform(result.nearest_points[0]);
 				Vector3 nearestPoint2 = collisionObject->getTransform().transform(result.nearest_points[1]);
 				
 				for (::std::size_t i = 0; i < 3; ++i)

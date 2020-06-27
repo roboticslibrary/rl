@@ -60,8 +60,8 @@ namespace rl
 				Shape* fcl = static_cast<Shape*>(shape);
 				this->shapes.push_back(fcl);
 				fcl->update(this->frame);
-				this->manager.registerObject(fcl->collisionObject.get());
-				static_cast<Model*>(getModel())->addCollisionObject(fcl->collisionObject.get(), this);
+				this->manager.registerObject(fcl->getCollisionObject());
+				static_cast<Model*>(getModel())->addCollisionObject(fcl->getCollisionObject(), this);
 			}
 			
 			::rl::sg::Shape*
@@ -85,8 +85,8 @@ namespace rl
 				{
 					Shape* fcl = static_cast<Shape*>(shape);
 					this->shapes.erase(found);
-					this->manager.unregisterObject(fcl->collisionObject.get());
-					static_cast<Model*>(this->getModel())->removeCollisionObject(fcl->collisionObject.get());
+					this->manager.unregisterObject(fcl->getCollisionObject());
+					static_cast<Model*>(this->getModel())->removeCollisionObject(fcl->getCollisionObject());
 				}
 			}
 			

@@ -83,6 +83,7 @@ namespace rl
 #if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 6
 				normals(),
 #endif
+				object(),
 				polygons(),
 				transform(::rl::math::Transform::Identity()),
 				vertices()
@@ -232,7 +233,7 @@ namespace rl
 #endif
 				}
 				
-				this->collisionObject = ::std::make_shared<CollisionObject>(this->geometry, Transform3());
+				this->object = ::std::make_shared<CollisionObject>(this->geometry, Transform3());
 				
 				this->getBody()->add(this);
 				this->setTransform(::rl::math::Transform::Identity());
@@ -241,6 +242,12 @@ namespace rl
 			Shape::~Shape()
 			{
 				static_cast<Body*>(this->getBody())->remove(this);
+			}
+			
+			CollisionObject*
+			Shape::getCollisionObject() const
+			{
+				return this->object.get();
 			}
 			
 			void
@@ -293,12 +300,12 @@ namespace rl
 					transform(2, 0), transform(2, 1), transform(2, 2)
 				);
 				Vector3 translation(transform(0, 3), transform(1, 3), transform(2, 3));
-				this->collisionObject->setTransform(rotation, translation);
+				this->object->setTransform(rotation, translation);
 #else
-				this->collisionObject->setTransform(transform.linear(), transform.translation());
+				this->object->setTransform(transform.linear(), transform.translation());
 #endif
 				
-				this->collisionObject->computeAABB();
+				this->object->computeAABB();
 			}
 		}
 	}

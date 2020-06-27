@@ -65,13 +65,13 @@ namespace rl
 				
 				virtual ~Shape();
 				
+				CollisionObject* getCollisionObject() const;
+				
 				void getTransform(::rl::math::Transform& transform);
 				
 				void setTransform(const ::rl::math::Transform& transform);
 				
 				void update(const ::rl::math::Transform& frame);
-				
-				::std::shared_ptr<CollisionObject> collisionObject;
 				
 			protected:
 				
@@ -97,6 +97,8 @@ namespace rl
 #if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 6
 				::std::vector<Vector3> normals;
 #endif
+				
+				::std::shared_ptr<CollisionObject> object;
 				
 				::std::vector<int> polygons;
 				
