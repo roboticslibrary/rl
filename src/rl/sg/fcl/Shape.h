@@ -63,6 +63,12 @@ namespace rl
 			public:
 				Shape(SoVRMLShape* shape, ::rl::sg::Body* body);
 				
+#if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 5
+				Shape(const ::boost::shared_ptr<CollisionGeometry>& geometry, ::rl::sg::Body* body);
+#else
+				Shape(const ::std::shared_ptr<CollisionGeometry>& geometry, ::rl::sg::Body* body);
+#endif
+				
 				virtual ~Shape();
 				
 				CollisionObject* getCollisionObject() const;

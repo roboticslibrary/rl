@@ -239,6 +239,33 @@ namespace rl
 				this->setTransform(::rl::math::Transform::Identity());
 			}
 			
+#if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 5
+			Shape::Shape(const ::boost::shared_ptr<CollisionGeometry>& geometry, ::rl::sg::Body* body) :
+#else
+			Shape::Shape(const ::std::shared_ptr<CollisionGeometry>& geometry, ::rl::sg::Body* body) :
+#endif
+				::rl::sg::Shape(body),
+				base(::rl::math::Transform::Identity()),
+#if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 6
+				distances(),
+#endif
+				frame(::rl::math::Transform::Identity()),
+				geometry(geometry),
+				indices(),
+#if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 6
+				normals(),
+#endif
+				object(),
+				polygons(),
+				transform(::rl::math::Transform::Identity()),
+				vertices()
+			{
+				this->object = ::std::make_shared<CollisionObject>(this->geometry, Transform3());
+				
+				this->getBody()->add(this);
+				this->setTransform(::rl::math::Transform::Identity());
+			}
+			
 			Shape::~Shape()
 			{
 				static_cast<Body*>(this->getBody())->remove(this);
