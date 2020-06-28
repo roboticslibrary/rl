@@ -133,7 +133,7 @@ namespace rl
 				{
 					if (document.getRootElement().hasNamespace() && "http://www.w3.org/1999/XSL/Transform" == document.getRootElement().getNamespace().getHref())
 					{
-						rl::xml::Stylesheet stylesheet(document);
+						::rl::xml::Stylesheet stylesheet(document);
 						document = stylesheet.apply();
 					}
 				}

@@ -79,7 +79,7 @@ namespace rl
 				{
 					if (document.getRootElement().hasNamespace() && "http://www.w3.org/1999/XSL/Transform" == document.getRootElement().getNamespace().getHref())
 					{
-						rl::xml::Stylesheet stylesheet(document);
+						::rl::xml::Stylesheet stylesheet(document);
 						document = stylesheet.apply();
 					}
 				}
@@ -480,7 +480,7 @@ namespace rl
 						
 						for (int l = 0; l < cols.size(); ++l)
 						{
-							G(k, l) = boost::lexical_cast<::rl::math::Real>(cols[l].getContent().c_str());
+							G(k, l) = ::boost::lexical_cast<::rl::math::Real>(cols[l].getContent().c_str());
 						}
 					}
 					
@@ -518,7 +518,7 @@ namespace rl
 						
 						for (int l = 0; l < cols.size(); ++l)
 						{
-							G(k, l) = boost::lexical_cast<::rl::math::Real>(cols[l].getContent().c_str());
+							G(k, l) = ::boost::lexical_cast<::rl::math::Real>(cols[l].getContent().c_str());
 						}
 					}
 					

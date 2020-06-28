@@ -60,7 +60,7 @@ namespace rl
 				
 				void add(::rl::sg::Shape* shape);
 				
-				::rl::sg::Shape* create(SoVRMLShape* shape);
+				::rl::sg::Shape* create(::SoVRMLShape* shape);
 				
 				void getFrame(::rl::math::Transform& frame);
 				

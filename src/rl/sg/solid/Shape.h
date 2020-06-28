@@ -49,7 +49,7 @@ namespace rl
 			public:
 				EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 				
-				Shape(SoVRMLShape* shape, Body* body);
+				Shape(::SoVRMLShape* shape, Body* body);
 				
 				virtual ~Shape();
 				
@@ -65,26 +65,26 @@ namespace rl
 				
 				::std::unordered_set<Shape*> encounters;
 				
-				DT_ObjectHandle object;
+				::DT_ObjectHandle object;
 				
-				BP_ProxyHandle proxy;
+				::BP_ProxyHandle proxy;
 				
 			protected:
 				
 			private:
-				DT_ShapeHandle create(SoVRMLShape* shape);
+				::DT_ShapeHandle create(::SoVRMLShape* shape);
 				
-				DT_ShapeHandle create(const SoMFVec3f& point);
+				::DT_ShapeHandle create(const ::SoMFVec3f& point);
 				
-				DT_ShapeHandle create(const SoMFVec3f& point, const SoMFInt32& coordIndex);
+				::DT_ShapeHandle create(const ::SoMFVec3f& point, const ::SoMFInt32& coordIndex);
 				
 				::Eigen::Transform<::rl::math::Real, 3, ::Eigen::Affine, ::Eigen::ColMajor> frame;
 				
-				DT_Vector3 max;
+				::DT_Vector3 max;
 				
-				DT_Vector3 min;
+				::DT_Vector3 min;
 				
-				DT_ShapeHandle shape;
+				::DT_ShapeHandle shape;
 				
 				::rl::math::Transform transform;
 			};

@@ -1229,7 +1229,7 @@ namespace rl
 			program << '\t' << '\t' << "q[3] = read_input_float_register(3)" << '\n';
 			program << '\t' << '\t' << "q[4] = read_input_float_register(4)" << '\n';
 			program << '\t' << '\t' << "q[5] = read_input_float_register(5)" << '\n';
-			program << '\t' << '\t' << "servoj(q, 0, 0, " << ::std::chrono::duration_cast<::std::chrono::duration<rl::math::Real>>(this->getUpdateRate()).count() << ", 0.03, 2000)" << '\n';
+			program << '\t' << '\t' << "servoj(q, 0, 0, " << ::std::chrono::duration_cast<::std::chrono::duration<::rl::math::Real>>(this->getUpdateRate()).count() << ", 0.03, 2000)" << '\n';
 #else
 			program << '\t' << '\t' << "qd[0] = read_input_float_register(6)" << '\n';
 			program << '\t' << '\t' << "qd[1] = read_input_float_register(7)" << '\n';
@@ -1238,7 +1238,7 @@ namespace rl
 			program << '\t' << '\t' << "qd[4] = read_input_float_register(10)" << '\n';
 			program << '\t' << '\t' << "qd[5] = read_input_float_register(11)" << '\n';
 			program << '\t' << '\t' << "qdd = read_input_float_register(12)" << '\n';
-			program << '\t' << '\t' << "speedj(qd, qdd, " << ::std::chrono::duration_cast<::std::chrono::duration<rl::math::Real>>(this->getUpdateRate()).count() << ")" << '\n';
+			program << '\t' << '\t' << "speedj(qd, qdd, " << ::std::chrono::duration_cast<::std::chrono::duration<::rl::math::Real>>(this->getUpdateRate()).count() << ")" << '\n';
 #endif
 			program << '\t' << "end" << '\n';
 			program << "end" << '\n';

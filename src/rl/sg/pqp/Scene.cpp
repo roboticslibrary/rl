@@ -65,7 +65,7 @@ namespace rl
 					shape2->rotation,
 					shape2->translation,
 					&shape2->model,
-					PQP_FIRST_CONTACT
+					::PQP_FIRST_CONTACT
 				);
 				
 				return (result.Colliding() == 1 ? true : false);
@@ -124,13 +124,13 @@ namespace rl
 				model.AddTri(&p[0], &p[0], &p[0], 0);
 				model.EndModel();
 				
-				PQP_REAL rotation[3][3] = {
+				::PQP_REAL rotation[3][3] = {
 					{1, 0, 0},
 					{0, 1, 0},
 					{0, 0, 1}
 				};
 				
-				PQP_REAL translation[3] = {point(0), point(1), point(2)};
+				::PQP_REAL translation[3] = {point(0), point(1), point(2)};
 				
 				::PQP_DistanceResult result;
 				

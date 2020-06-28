@@ -61,7 +61,7 @@ namespace rl
 			class RL_SG_EXPORT Shape : public ::rl::sg::Shape
 			{
 			public:
-				Shape(SoVRMLShape* shape, ::rl::sg::Body* body);
+				Shape(::SoVRMLShape* shape, ::rl::sg::Body* body);
 				
 #if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 5
 				Shape(const ::boost::shared_ptr<CollisionGeometry>& geometry, ::rl::sg::Body* body);
@@ -82,7 +82,7 @@ namespace rl
 			protected:
 				
 			private:
-				static void triangleCallback(void* userData, SoCallbackAction* action, const SoPrimitiveVertex* v1, const SoPrimitiveVertex* v2, const SoPrimitiveVertex* v3);
+				static void triangleCallback(void* userData, ::SoCallbackAction* action, const ::SoPrimitiveVertex* v1, const ::SoPrimitiveVertex* v2, const ::SoPrimitiveVertex* v3);
 				
 				::rl::math::Transform base;
 				

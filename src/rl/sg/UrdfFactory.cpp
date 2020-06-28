@@ -348,7 +348,7 @@ namespace rl
 									
 									if (vrmlShape->geometry.getValue()->isOfType(::SoVRMLIndexedFaceSet::getClassTypeId()))
 									{
-										SoVRMLIndexedFaceSet* vrmlIndexedFaceSet = static_cast<SoVRMLIndexedFaceSet*>(vrmlShape->geometry.getValue());
+										::SoVRMLIndexedFaceSet* vrmlIndexedFaceSet = static_cast<::SoVRMLIndexedFaceSet*>(vrmlShape->geometry.getValue());
 										vrmlIndexedFaceSet->convex.setValue(false);
 									}
 								}

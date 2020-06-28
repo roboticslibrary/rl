@@ -52,7 +52,7 @@ namespace rl
 			}
 			
 			::rl::sg::Shape*
-			Body::create(SoVRMLShape* shape)
+			Body::create(::SoVRMLShape* shape)
 			{
 				return new Shape(shape, this);
 			}

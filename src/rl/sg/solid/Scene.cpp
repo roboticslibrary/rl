@@ -43,7 +43,7 @@ namespace rl
 				::rl::sg::DistanceScene(),
 				::rl::sg::RaycastScene(),
 				::rl::sg::SimpleScene(),
-				scene(DT_CreateScene())
+				scene(::DT_CreateScene())
 			{
 				this->broad = BP_CreateScene(this, Scene::beginOverlap, Scene::endOverlap);
 			}
@@ -62,7 +62,7 @@ namespace rl
 				
 				if (nullptr != this->scene)
 				{
-					DT_DestroyScene(this->scene);
+					::DT_DestroyScene(this->scene);
 				}
 			}
 			
@@ -74,9 +74,9 @@ namespace rl
 				
 				if (shape1->encounters.find(shape2) != shape1->encounters.end() || shape2->encounters.find(shape1) != shape2->encounters.end())
 				{
-					DT_Vector3 point;
+					::DT_Vector3 point;
 					
-					return (DT_TRUE == DT_GetCommonPoint(
+					return (DT_TRUE == ::DT_GetCommonPoint(
 						shape1->complex ? shape1->object : shape2->object,
 						shape1->complex ? shape2->object : shape1->object,
 						point
@@ -110,10 +110,10 @@ namespace rl
 				Shape* shape1 = static_cast<Shape*>(first);
 				Shape* shape2 = static_cast<Shape*>(second);
 				
-				DT_Vector3 vector1;
-				DT_Vector3 vector2;
+				::DT_Vector3 vector1;
+				::DT_Vector3 vector2;
 				
-				DT_Bool intersect = DT_GetPenDepth(
+				::DT_Bool intersect = ::DT_GetPenDepth(
 					shape1->complex ? shape1->object : shape2->object,
 					shape1->complex ? shape2->object : shape1->object,
 					shape1->complex ? vector1 : vector2,
@@ -137,10 +137,10 @@ namespace rl
 				Shape* shape1 = static_cast<Shape*>(first);
 				Shape* shape2 = static_cast<Shape*>(second);
 				
-				DT_Vector3 vector1;
-				DT_Vector3 vector2;
+				::DT_Vector3 vector1;
+				::DT_Vector3 vector2;
 				
-				DT_Scalar distance = DT_GetClosestPair(
+				::DT_Scalar distance = ::DT_GetClosestPair(
 					shape1->complex ? shape1->object : shape2->object,
 					shape1->complex ? shape2->object : shape1->object,
 					shape1->complex ? vector1 : vector2,
@@ -161,19 +161,19 @@ namespace rl
 			::rl::math::Real
 			Scene::distance(::rl::sg::Shape* shape, const ::rl::math::Vector3& point, ::rl::math::Vector3& point1, ::rl::math::Vector3& point2)
 			{
-				DT_Vector3 position = {
-					static_cast<DT_Scalar>(point(0)),
-					static_cast<DT_Scalar>(point(1)),
-					static_cast<DT_Scalar>(point(2))
+				::DT_Vector3 position = {
+					static_cast<::DT_Scalar>(point(0)),
+					static_cast<::DT_Scalar>(point(1)),
+					static_cast<::DT_Scalar>(point(2))
 				};
 				
-				DT_ShapeHandle shapeHandle = DT_NewPoint(position);
-				DT_ObjectHandle objectHandle = DT_CreateObject(nullptr, shapeHandle);
+				::DT_ShapeHandle shapeHandle = ::DT_NewPoint(position);
+				::DT_ObjectHandle objectHandle = ::DT_CreateObject(nullptr, shapeHandle);
 				
-				DT_Vector3 vector1;
-				DT_Vector3 vector2;
+				::DT_Vector3 vector1;
+				::DT_Vector3 vector2;
 				
-				DT_Scalar distance = DT_GetClosestPair(
+				::DT_Scalar distance = ::DT_GetClosestPair(
 					static_cast<Shape*>(shape)->object,
 					objectHandle,
 					vector1,
@@ -188,8 +188,8 @@ namespace rl
 				point2(1) = vector2[1];
 				point2(2) = vector2[2];
 				
-				DT_DestroyObject(objectHandle);
-				DT_DeleteShape(shapeHandle);
+				::DT_DestroyObject(objectHandle);
+				::DT_DeleteShape(shapeHandle);
 				
 				return distance;
 			}
@@ -207,30 +207,30 @@ namespace rl
 			::rl::sg::Shape*
 			Scene::raycast(const ::rl::math::Vector3& source, const ::rl::math::Vector3& target, ::rl::math::Real& distance)
 			{
-				DT_Vector3 vector1;
-				vector1[0] = static_cast<DT_Scalar>(source(0));
-				vector1[1] = static_cast<DT_Scalar>(source(1));
-				vector1[2] = static_cast<DT_Scalar>(source(2));
+				::DT_Vector3 vector1;
+				vector1[0] = static_cast<::DT_Scalar>(source(0));
+				vector1[1] = static_cast<::DT_Scalar>(source(1));
+				vector1[2] = static_cast<::DT_Scalar>(source(2));
 				
-				DT_Vector3 vector2;
-				vector2[0] = static_cast<DT_Scalar>(target(0));
-				vector2[1] = static_cast<DT_Scalar>(target(1));
-				vector2[2] = static_cast<DT_Scalar>(target(2));
+				::DT_Vector3 vector2;
+				vector2[0] = static_cast<::DT_Scalar>(target(0));
+				vector2[1] = static_cast<::DT_Scalar>(target(1));
+				vector2[2] = static_cast<::DT_Scalar>(target(2));
 				
-				DT_Scalar param;
-				DT_Vector3 normal;
+				::DT_Scalar param;
+				::DT_Vector3 normal;
 				
-				void* object = DT_RayCast(
+				void* object = ::DT_RayCast(
 					this->scene,
 					nullptr,
 					vector1,
 					vector2,
-					::std::numeric_limits<DT_Scalar>::max(),
+					::std::numeric_limits<::DT_Scalar>::max(),
 					&param,
 					normal
 				);
 				
-				DT_Vector3 hit;
+				::DT_Vector3 hit;
 				hit[0] = vector1[0] + (vector2[0] - vector1[0]) * param;
 				hit[1] = vector1[1] + (vector2[1] - vector1[1]) * param;
 				hit[2] = vector1[2] + (vector2[2] - vector1[2]) * param;
@@ -243,29 +243,29 @@ namespace rl
 			bool
 			Scene::raycast(::rl::sg::Shape* shape, const ::rl::math::Vector3& source, const ::rl::math::Vector3& target, ::rl::math::Real& distance)
 			{
-				DT_Vector3 vector1;
-				vector1[0] = static_cast<DT_Scalar>(source(0));
-				vector1[1] = static_cast<DT_Scalar>(source(1));
-				vector1[2] = static_cast<DT_Scalar>(source(2));
+				::DT_Vector3 vector1;
+				vector1[0] = static_cast<::DT_Scalar>(source(0));
+				vector1[1] = static_cast<::DT_Scalar>(source(1));
+				vector1[2] = static_cast<::DT_Scalar>(source(2));
 				
-				DT_Vector3 vector2;
-				vector2[0] = static_cast<DT_Scalar>(target(0));
-				vector2[1] = static_cast<DT_Scalar>(target(1));
-				vector2[2] = static_cast<DT_Scalar>(target(2));
+				::DT_Vector3 vector2;
+				vector2[0] = static_cast<::DT_Scalar>(target(0));
+				vector2[1] = static_cast<::DT_Scalar>(target(1));
+				vector2[2] = static_cast<::DT_Scalar>(target(2));
 				
-				DT_Scalar param;
-				DT_Vector3 normal;
+				::DT_Scalar param;
+				::DT_Vector3 normal;
 				
-				DT_Bool object = DT_ObjectRayCast(
+				::DT_Bool object = ::DT_ObjectRayCast(
 					static_cast<Shape*>(shape)->object,
 					vector1,
 					vector2,
-					::std::numeric_limits<DT_Scalar>::max(),
+					::std::numeric_limits<::DT_Scalar>::max(),
 					&param,
 					normal
 				);
 				
-				DT_Vector3 hit;
+				::DT_Vector3 hit;
 				hit[0] = vector1[0] + (vector2[0] - vector1[0]) * param;
 				hit[1] = vector1[1] + (vector2[1] - vector1[1]) * param;
 				hit[2] = vector1[2] + (vector2[2] - vector1[2]) * param;

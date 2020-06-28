@@ -62,7 +62,7 @@ namespace rl
 				}
 				else if (geometry->isOfType(::SoVRMLCone::getClassTypeId()))
 				{
-					throw Exception("::rl::sg::ode::Shape - SoVRMLCone not supported");
+					throw Exception("rl::sg::ode::Shape - SoVRMLCone not supported");
 				}
 				else if (geometry->isOfType(::SoVRMLCylinder::getClassTypeId()))
 				{
@@ -103,7 +103,7 @@ namespace rl
 				}
 				else
 				{
-					throw Exception("::rl::sg::ode::Shape() - geometry not supported");
+					throw Exception("rl::sg::ode::Shape() - geometry not supported");
 				}
 				
 				if (nullptr != this->geom)
@@ -130,7 +130,7 @@ namespace rl
 			}
 			
 			void
-			Shape::triangleCallback(void* userData, SoCallbackAction* action, const SoPrimitiveVertex* v1, const SoPrimitiveVertex* v2, const SoPrimitiveVertex* v3)
+			Shape::triangleCallback(void* userData, ::SoCallbackAction* action, const ::SoPrimitiveVertex* v1, const ::SoPrimitiveVertex* v2, const ::SoPrimitiveVertex* v3)
 			{
 				Shape* shape = static_cast<Shape*>(userData);
 				

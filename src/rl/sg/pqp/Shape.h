@@ -61,16 +61,16 @@ namespace rl
 				
 				::PQP_Model model;
 				
-				PQP_REAL rotation[3][3];
+				::PQP_REAL rotation[3][3];
 				
-				PQP_REAL translation[3];
+				::PQP_REAL translation[3];
 				
 			protected:
 				
 			private:
 				typedef ::std::pair<::PQP_Model*, ::std::size_t> Model;
 				
-				static void triangleCallback(void* userData, ::SoCallbackAction* action, const ::SoPrimitiveVertex* v1, const SoPrimitiveVertex* v2, const ::SoPrimitiveVertex* v3);
+				static void triangleCallback(void* userData, ::SoCallbackAction* action, const ::SoPrimitiveVertex* v1, const ::SoPrimitiveVertex* v2, const ::SoPrimitiveVertex* v3);
 				
 				::rl::math::Transform frame;
 				

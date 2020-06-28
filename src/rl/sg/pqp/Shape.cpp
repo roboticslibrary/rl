@@ -53,13 +53,13 @@ namespace rl
 				{
 					for (::std::size_t j = 0; j < 3; ++j)
 					{
-						this->rotation[i][j] = static_cast<PQP_REAL>(this->frame(i, j));
+						this->rotation[i][j] = static_cast<::PQP_REAL>(this->frame(i, j));
 					}
 				}
 				
 				for (::std::size_t i = 0; i < 3; ++i)
 				{
-					this->translation[i] = static_cast<PQP_REAL>(this->frame(i, 3));
+					this->translation[i] = static_cast<::PQP_REAL>(this->frame(i, 3));
 				}
 				
 				::SoVRMLGeometry* geometry = static_cast<::SoVRMLGeometry*>(shape->geometry.getValue());
@@ -108,7 +108,7 @@ namespace rl
 			void
 			Shape::triangleCallback(void* userData, ::SoCallbackAction* action, const ::SoPrimitiveVertex* v1, const ::SoPrimitiveVertex* v2, const ::SoPrimitiveVertex* v3)
 			{
-				PQP_REAL p[3][3] = {
+				::PQP_REAL p[3][3] = {
 					{v1->getPoint()[0], v1->getPoint()[1], v1->getPoint()[2]},
 					{v2->getPoint()[0], v2->getPoint()[1], v2->getPoint()[2]},
 					{v3->getPoint()[0], v3->getPoint()[1], v3->getPoint()[2]}
@@ -130,13 +130,13 @@ namespace rl
 				{
 					for (::std::size_t j = 0; j < 3; ++j)
 					{
-						this->rotation[i][j] = static_cast<PQP_REAL>(this->frame(i, j));
+						this->rotation[i][j] = static_cast<::PQP_REAL>(this->frame(i, j));
 					}
 				}
 				
 				for (::std::size_t i = 0; i < 3; ++i)
 				{
-					this->translation[i] = static_cast<PQP_REAL>(this->frame(i, 3));
+					this->translation[i] = static_cast<::PQP_REAL>(this->frame(i, 3));
 				}
 			}
 		}

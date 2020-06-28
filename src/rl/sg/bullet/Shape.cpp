@@ -109,7 +109,7 @@ namespace rl
 				}
 				else
 				{
-					throw Exception("::rl::sg::bullet::Shape() - geometry not supported");
+					throw Exception("rl::sg::bullet::Shape() - geometry not supported");
 				}
 				
 				this->getBody()->add(this);

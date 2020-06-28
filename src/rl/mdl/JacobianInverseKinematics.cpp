@@ -44,7 +44,7 @@ namespace rl
 		{
 		}
 		
-		const math::Real&
+		const ::rl::math::Real&
 		JacobianInverseKinematics::getDelta() const
 		{
 			return this->delta;

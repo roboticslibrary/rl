@@ -89,7 +89,7 @@ namespace rl
 					throw Exception("rl::sg::XmlFactory::load() - Failed to open file '" + filename + "'");
 				}
 				
-				::SoVRMLGroup* root = SoDB::readAllVRML(&input);
+				::SoVRMLGroup* root = ::SoDB::readAllVRML(&input);
 				
 				if (nullptr == root)
 				{
@@ -280,7 +280,7 @@ namespace rl
 		}
 		
 		void
-		XmlFactory::triangleCallback(void* userData, SoCallbackAction* action, const SoPrimitiveVertex* v1, const SoPrimitiveVertex* v2, const SoPrimitiveVertex* v3)
+		XmlFactory::triangleCallback(void* userData, ::SoCallbackAction* action, const ::SoPrimitiveVertex* v1, const ::SoPrimitiveVertex* v2, const ::SoPrimitiveVertex* v3)
 		{
 			::std::vector<::rl::math::Vector3>* points = static_cast<::std::vector<::rl::math::Vector3>*>(userData);
 			

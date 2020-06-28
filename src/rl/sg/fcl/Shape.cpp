@@ -71,7 +71,7 @@ namespace rl
 			typedef ::fcl::Transform3<::rl::math::Real> Transform3;
 #endif
 			
-			Shape::Shape(SoVRMLShape* shape, ::rl::sg::Body* body) :
+			Shape::Shape(::SoVRMLShape* shape, ::rl::sg::Body* body) :
 				::rl::sg::Shape(body),
 				base(::rl::math::Transform::Identity()),
 #if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 6
@@ -88,20 +88,20 @@ namespace rl
 				transform(::rl::math::Transform::Identity()),
 				vertices()
 			{
-				SoVRMLGeometry* vrmlGeometry = static_cast<SoVRMLGeometry*>(shape->geometry.getValue());
+				::SoVRMLGeometry* vrmlGeometry = static_cast<::SoVRMLGeometry*>(shape->geometry.getValue());
 				
-				if (vrmlGeometry->isOfType(SoVRMLBox::getClassTypeId()))
+				if (vrmlGeometry->isOfType(::SoVRMLBox::getClassTypeId()))
 				{
-					SoVRMLBox* box = static_cast<SoVRMLBox*>(vrmlGeometry);
+					::SoVRMLBox* box = static_cast<::SoVRMLBox*>(vrmlGeometry);
 #if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 5
 					this->geometry = ::boost::make_shared<Box>(box->size.getValue()[0], box->size.getValue()[1], box->size.getValue()[2]);
 #else
 					this->geometry = ::std::make_shared<Box>(box->size.getValue()[0], box->size.getValue()[1], box->size.getValue()[2]);
 #endif
 				}
-				else if (vrmlGeometry->isOfType(SoVRMLCone::getClassTypeId()))
+				else if (vrmlGeometry->isOfType(::SoVRMLCone::getClassTypeId()))
 				{
-					SoVRMLCone* cone = static_cast<SoVRMLCone*>(vrmlGeometry);
+					::SoVRMLCone* cone = static_cast<::SoVRMLCone*>(vrmlGeometry);
 #if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 5
 					this->geometry = ::boost::make_shared<Cone>(cone->bottomRadius.getValue(), cone->height.getValue());
 #else
@@ -125,9 +125,9 @@ namespace rl
 					this->base(3, 2) = 0;
 					this->base(3, 3) = 1;
 				}
-				else if (vrmlGeometry->isOfType(SoVRMLCylinder::getClassTypeId()))
+				else if (vrmlGeometry->isOfType(::SoVRMLCylinder::getClassTypeId()))
 				{
-					SoVRMLCylinder* cylinder = static_cast<SoVRMLCylinder*>(vrmlGeometry);
+					::SoVRMLCylinder* cylinder = static_cast<::SoVRMLCylinder*>(vrmlGeometry);
 #if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 5
 					this->geometry = ::boost::make_shared<Cylinder>(cylinder->radius.getValue(), cylinder->height.getValue());
 #else
@@ -151,11 +151,11 @@ namespace rl
 					this->base(3, 2) = 0;
 					this->base(3, 3) = 1;
 				}
-				else if (vrmlGeometry->isOfType(SoVRMLIndexedFaceSet::getClassTypeId()))
+				else if (vrmlGeometry->isOfType(::SoVRMLIndexedFaceSet::getClassTypeId()))
 				{
-					SoVRMLIndexedFaceSet* indexedFaceSet = static_cast<SoVRMLIndexedFaceSet*>(vrmlGeometry);
+					::SoVRMLIndexedFaceSet* indexedFaceSet = static_cast<::SoVRMLIndexedFaceSet*>(vrmlGeometry);
 					
-					SoCallbackAction callbackAction;
+					::SoCallbackAction callbackAction;
 					callbackAction.addTriangleCallback(vrmlGeometry->getTypeId(), Shape::triangleCallback, this);
 					callbackAction.apply(vrmlGeometry);
 					
@@ -223,9 +223,9 @@ namespace rl
 						this->geometry = mesh;
 					}
 				}
-				else if (vrmlGeometry->isOfType(SoVRMLSphere::getClassTypeId()))
+				else if (vrmlGeometry->isOfType(::SoVRMLSphere::getClassTypeId()))
 				{
-					SoVRMLSphere* sphere = static_cast<SoVRMLSphere*>(vrmlGeometry);
+					::SoVRMLSphere* sphere = static_cast<::SoVRMLSphere*>(vrmlGeometry);
 #if FCL_MAJOR_VERSION < 1 && FCL_MINOR_VERSION < 5
 					this->geometry = ::boost::make_shared<Sphere>(sphere->radius.getValue());
 #else
@@ -291,7 +291,7 @@ namespace rl
 			}
 			
 			void
-			Shape::triangleCallback(void* userData, SoCallbackAction* action, const SoPrimitiveVertex* v1, const SoPrimitiveVertex* v2, const SoPrimitiveVertex* v3)
+			Shape::triangleCallback(void* userData, ::SoCallbackAction* action, const ::SoPrimitiveVertex* v1, const ::SoPrimitiveVertex* v2, const ::SoPrimitiveVertex* v3)
 			{
 				Shape* shape = static_cast<Shape*>(userData);
 				

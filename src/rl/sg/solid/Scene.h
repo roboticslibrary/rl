@@ -77,9 +77,9 @@ namespace rl
 				
 				void setMargin(const ::rl::math::Real& margin);
 				
-				BP_SceneHandle broad;
+				::BP_SceneHandle broad;
 				
-				DT_SceneHandle scene;
+				::DT_SceneHandle scene;
 				
 			protected:
 				

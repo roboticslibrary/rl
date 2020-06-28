@@ -77,7 +77,7 @@ namespace rl
 			bool
 			Scene::areColliding(::rl::sg::Shape* first, ::rl::sg::Shape* second)
 			{
-				throw Exception("::rl::sg::bullet::Scene::areColliding(::rl::sg::Shape* first, ::rl::sg::Shape* second) - not supported");
+				throw Exception("rl::sg::bullet::Scene::areColliding(rl::sg::Shape* first, rl::sg::Shape* second) - not supported");
 			}
 			
 			::rl::sg::Model*
@@ -109,7 +109,7 @@ namespace rl
 			::rl::math::Real
 			Scene::depth(::rl::sg::Shape* first, ::rl::sg::Shape* second, ::rl::math::Vector3& point1, ::rl::math::Vector3& point2)
 			{
-				throw Exception("::rl::sg::bullet::Scene::depth(::rl::sg::Shape* first, ::rl::sg::Shape* second, ::rl::math::Vector3& point1, ::rl::math::Vector3& point2) - not supported");
+				throw Exception("rl::sg::bullet::Scene::depth(rl::sg::Shape* first, rl::sg::Shape* second, rl::math::Vector3& point1, rl::math::Vector3& point2) - not supported");
 			}
 			
 			::rl::math::Real
@@ -120,7 +120,7 @@ namespace rl
 				
 				if (!shape1->shape->isConvex() || !shape2->shape->isConvex())
 				{
-					throw Exception("::rl::sg::bullet::Scene::distance() - distance calculation only supported between convex shapes");
+					throw Exception("rl::sg::bullet::Scene::distance() - distance calculation only supported between convex shapes");
 				}
 				
 				Body* body1 = static_cast<Body*>(shape1->getBody());

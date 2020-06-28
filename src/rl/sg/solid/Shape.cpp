@@ -44,7 +44,7 @@ namespace rl
 	{
 		namespace solid
 		{
-			Shape::Shape(SoVRMLShape* shape, Body* body) :
+			Shape::Shape(::SoVRMLShape* shape, Body* body) :
 				::rl::sg::Shape(body),
 				complex(false),
 				encounters(),
@@ -56,11 +56,11 @@ namespace rl
 				shape(Shape::create(shape)),
 				transform(::rl::math::Transform::Identity())
 			{
-				this->object = DT_CreateObject(this, this->shape);
-				DT_AddObject(dynamic_cast<Scene*>(this->getBody()->getModel()->getScene())->scene, this->object);
+				this->object = ::DT_CreateObject(this, this->shape);
+				::DT_AddObject(dynamic_cast<Scene*>(this->getBody()->getModel()->getScene())->scene, this->object);
 				
-				DT_GetBBox(this->object, this->min, this->max);
-				this->proxy = BP_CreateProxy(dynamic_cast<Scene*>(this->getBody()->getModel()->getScene())->broad, this, this->min, this->max);
+				::DT_GetBBox(this->object, this->min, this->max);
+				this->proxy = ::BP_CreateProxy(dynamic_cast<Scene*>(this->getBody()->getModel()->getScene())->broad, this, this->min, this->max);
 				
 				this->getBody()->add(this);
 			}
@@ -76,75 +76,75 @@ namespace rl
 				
 				if (nullptr != this->proxy)
 				{
-					BP_DestroyProxy(dynamic_cast<Scene*>(this->getBody()->getModel()->getScene())->broad, this->proxy);
+					::BP_DestroyProxy(dynamic_cast<Scene*>(this->getBody()->getModel()->getScene())->broad, this->proxy);
 				}
 				
 				if (nullptr != this->object)
 				{
-					DT_RemoveObject(dynamic_cast<Scene*>(this->getBody()->getModel()->getScene())->scene, this->object);
-					DT_DestroyObject(this->object);
+					::DT_RemoveObject(dynamic_cast<Scene*>(this->getBody()->getModel()->getScene())->scene, this->object);
+					::DT_DestroyObject(this->object);
 				}
 				
 				if (nullptr != this->shape)
 				{
-					DT_DeleteShape(this->shape);
+					::DT_DeleteShape(this->shape);
 				}
 			}
 			
-			DT_ShapeHandle
-			Shape::create(SoVRMLShape* shape)
+			::DT_ShapeHandle
+			Shape::create(::SoVRMLShape* shape)
 			{
-				SoVRMLGeometry* geometry = static_cast<SoVRMLGeometry*>(shape->geometry.getValue());
+				::SoVRMLGeometry* geometry = static_cast<::SoVRMLGeometry*>(shape->geometry.getValue());
 				
-				if (geometry->isOfType(SoVRMLBox::getClassTypeId()))
+				if (geometry->isOfType(::SoVRMLBox::getClassTypeId()))
 				{
-					SoVRMLBox* box = static_cast<SoVRMLBox*>(geometry);
-					return DT_NewBox(box->size.getValue()[0], box->size.getValue()[1], box->size.getValue()[2]);
+					::SoVRMLBox* box = static_cast<::SoVRMLBox*>(geometry);
+					return ::DT_NewBox(box->size.getValue()[0], box->size.getValue()[1], box->size.getValue()[2]);
 				}
-				else if (geometry->isOfType(SoVRMLCone::getClassTypeId()))
+				else if (geometry->isOfType(::SoVRMLCone::getClassTypeId()))
 				{
-					SoVRMLCone* cone = static_cast<SoVRMLCone*>(geometry);
-					return DT_NewCone(cone->bottomRadius.getValue(), cone->height.getValue());
+					::SoVRMLCone* cone = static_cast<::SoVRMLCone*>(geometry);
+					return ::DT_NewCone(cone->bottomRadius.getValue(), cone->height.getValue());
 				}
-				else if (geometry->isOfType(SoVRMLCylinder::getClassTypeId()))
+				else if (geometry->isOfType(::SoVRMLCylinder::getClassTypeId()))
 				{
-					SoVRMLCylinder* cylinder = static_cast<SoVRMLCylinder*>(geometry);
-					return DT_NewCylinder(cylinder->radius.getValue(), cylinder->height.getValue());
+					::SoVRMLCylinder* cylinder = static_cast<::SoVRMLCylinder*>(geometry);
+					return ::DT_NewCylinder(cylinder->radius.getValue(), cylinder->height.getValue());
 				}
-				else if (geometry->isOfType(SoVRMLIndexedFaceSet::getClassTypeId()))
+				else if (geometry->isOfType(::SoVRMLIndexedFaceSet::getClassTypeId()))
 				{
-					SoVRMLIndexedFaceSet* indexedFaceSet = static_cast<SoVRMLIndexedFaceSet*>(geometry);
+					::SoVRMLIndexedFaceSet* indexedFaceSet = static_cast<::SoVRMLIndexedFaceSet*>(geometry);
 					
 					if (indexedFaceSet->convex.getValue())
 					{
-						return Shape::create(static_cast<SoVRMLCoordinate*>(indexedFaceSet->coord.getValue())->point);
+						return Shape::create(static_cast<::SoVRMLCoordinate*>(indexedFaceSet->coord.getValue())->point);
 					}
 					else
 					{
 						this->complex = true;
 						
-						return Shape::create(static_cast<SoVRMLCoordinate*>(indexedFaceSet->coord.getValue())->point, indexedFaceSet->coordIndex);
+						return Shape::create(static_cast<::SoVRMLCoordinate*>(indexedFaceSet->coord.getValue())->point, indexedFaceSet->coordIndex);
 					}
 				}
-				else if (geometry->isOfType(SoVRMLSphere::getClassTypeId()))
+				else if (geometry->isOfType(::SoVRMLSphere::getClassTypeId()))
 				{
-					SoVRMLSphere* sphere = static_cast<SoVRMLSphere*>(geometry);
-					return DT_NewSphere(sphere->radius.getValue());
+					::SoVRMLSphere* sphere = static_cast<::SoVRMLSphere*>(geometry);
+					return ::DT_NewSphere(sphere->radius.getValue());
 				}
 				else
 				{
-					throw Exception("::rl::sg::solid::Shape::create(SoVRMLShape* shape) - geometry not supported");
+					throw Exception("rl::sg::solid::Shape::create(SoVRMLShape* shape) - geometry not supported");
 				}
 				
 				return nullptr;
 			}
 			
-			DT_ShapeHandle
-			Shape::create(const SoMFVec3f& point)
+			::DT_ShapeHandle
+			Shape::create(const ::SoMFVec3f& point)
 			{
-				DT_ShapeHandle shape = DT_NewPolytope(nullptr);
+				::DT_ShapeHandle shape = ::DT_NewPolytope(nullptr);
 				
-				DT_Vector3 vertex;
+				::DT_Vector3 vertex;
 				
 				for (int i = 0; i < point.getNum(); ++i)
 				{
@@ -152,35 +152,35 @@ namespace rl
 					vertex[1] = point[i][1];
 					vertex[2] = point[i][2];
 					
-					DT_Vertex(vertex);
+					::DT_Vertex(vertex);
 				}
 				
-				DT_EndPolytope();
+				::DT_EndPolytope();
 				
 				return shape;
 			}
 			
-			DT_ShapeHandle
-			Shape::create(const SoMFVec3f& point, const SoMFInt32& coordIndex)
+			::DT_ShapeHandle
+			Shape::create(const ::SoMFVec3f& point, const ::SoMFInt32& coordIndex)
 			{
-				DT_ShapeHandle shape = DT_NewComplexShape(nullptr);
+				::DT_ShapeHandle shape = ::DT_NewComplexShape(nullptr);
 				
-				DT_Vector3 vertex;
+				::DT_Vector3 vertex;
 				
 				if (coordIndex.getNum() > 0)
 				{
-					DT_Begin();
+					::DT_Begin();
 				}
 				
 				for (int i = 0; i < coordIndex.getNum(); ++i)
 				{
 					if (SO_END_FACE_INDEX == coordIndex[i])
 					{
-						DT_End();
+						::DT_End();
 						
 						if (i < coordIndex.getNum() - 1)
 						{
-							DT_Begin();
+							::DT_Begin();
 						}
 					}
 					else
@@ -189,11 +189,11 @@ namespace rl
 						vertex[1] = point[coordIndex[i]][1];
 						vertex[2] = point[coordIndex[i]][2];
 						
-						DT_Vertex(vertex);
+						::DT_Vertex(vertex);
 					}
 				}
 				
-				DT_EndComplexShape();
+				::DT_EndComplexShape();
 				
 				return shape;
 			}
@@ -201,7 +201,7 @@ namespace rl
 			void
 			Shape::getTransform(::rl::math::Transform& transform)
 			{
-				DT_GetMatrixd(this->object, this->frame.data());
+				::DT_GetMatrixd(this->object, this->frame.data());
 
 				this->transform = static_cast<Body*>(this->getBody())->frame.inverse() * this->frame;
 				transform = this->transform;
@@ -210,7 +210,7 @@ namespace rl
 			void
 			Shape::setMargin(const ::rl::math::Real& margin)
 			{
-				DT_SetMargin(this->object, static_cast<DT_Scalar>(margin));
+				::DT_SetMargin(this->object, static_cast<::DT_Scalar>(margin));
 			}
 			
 			void
@@ -226,9 +226,9 @@ namespace rl
 			{
 				this->frame = static_cast<Body*>(this->getBody())->frame * this->transform;
 				
-				DT_SetMatrixd(this->object, this->frame.data());
-				DT_GetBBox(this->object, this->min, this->max);
-				BP_SetBBox(this->proxy, this->min, this->max);
+				::DT_SetMatrixd(this->object, this->frame.data());
+				::DT_GetBBox(this->object, this->min, this->max);
+				::BP_SetBBox(this->proxy, this->min, this->max);
 			}
 		}
 	}

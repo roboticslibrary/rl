@@ -187,7 +187,7 @@ namespace rl
 		void
 		Ati::resetBias()
 		{
-			std::array<float, 6> voltages;
+			::std::array<float, 6> voltages;
 			voltages.fill(0.0f);
 			Bias(this->cal, voltages.data());
 		}
