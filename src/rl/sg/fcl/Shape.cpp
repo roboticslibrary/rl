@@ -44,6 +44,7 @@
 #include <boost/make_shared.hpp>
 #endif
 
+#include "../Exception.h"
 #include "Body.h"
 #include "Shape.h"
 
@@ -231,6 +232,10 @@ namespace rl
 #else
 					this->geometry = ::std::make_shared<Sphere>(sphere->radius.getValue());
 #endif
+				}
+				else
+				{
+					throw Exception("rl::sg::fcl::Shape::() - geometry not supported");
 				}
 				
 				this->object = ::std::make_shared<CollisionObject>(this->geometry, Transform3());
