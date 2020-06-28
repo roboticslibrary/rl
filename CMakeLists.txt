@@ -99,11 +99,6 @@ foreach(TARGET ${TARGETS})
 	list(APPEND RL_LIBRARIES "rl::${TARGET}")
 endforeach(TARGET)
 
-configure_package_config_file(
-	rl-config.cmake.in rl-config.cmake
-	INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/rl-${VERSION}
-)
-
 export(
 	TARGETS ${TARGETS}
 	NAMESPACE rl::
@@ -111,14 +106,13 @@ export(
 )
 
 configure_package_config_file(
-	rl-config.cmake.in rl-config-install.cmake
+	rl-config.cmake.in rl-config.cmake
 	INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/rl-${VERSION}
 )
 
 install(
-	FILES ${CMAKE_CURRENT_BINARY_DIR}/rl-config-install.cmake
+	FILES ${CMAKE_CURRENT_BINARY_DIR}/rl-config.cmake
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/rl-${VERSION}
-	RENAME rl-config.cmake
 	COMPONENT development
 )
 
