@@ -57,10 +57,10 @@ namespace rl
 				return new Shape(shape, this);
 			}
 			
-			void
-			Body::getFrame(::rl::math::Transform& frame)
+			::rl::math::Transform
+			Body::getFrame() const
 			{
-				frame = this->frame;
+				return this->frame;
 			}
 			
 			void

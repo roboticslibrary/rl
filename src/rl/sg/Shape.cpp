@@ -55,6 +55,12 @@ namespace rl
 		}
 		
 		void
+		Shape::getTransform(::rl::math::Transform& transform)
+		{
+			transform = this->getTransform();
+		}
+		
+		void
 		Shape::setName(const ::std::string& name)
 		{
 			this->name = name;

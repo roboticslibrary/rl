@@ -62,6 +62,10 @@ namespace rl
 			
 			void getBoundingBoxPoints(const ::rl::math::Transform& frame, ::std::vector<::rl::math::Vector3>& p) const;
 			
+			RL_SG_DEPRECATED virtual void getFrame(::rl::math::Transform& frame);
+			
+			virtual ::rl::math::Transform getFrame() const = 0;
+			
 			Model* getModel() const;
 			
 			virtual ::std::string getName() const;
@@ -71,8 +75,6 @@ namespace rl
 			void getPoints(const ::rl::math::Transform& frame, ::std::vector<::rl::math::Vector3>& p) const;
 			
 			Shape* getShape(const ::std::size_t& i) const;
-			
-			virtual void getFrame(::rl::math::Transform& frame) = 0;
 			
 			virtual void remove(Shape* shape);
 			

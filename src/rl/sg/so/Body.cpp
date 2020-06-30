@@ -75,8 +75,8 @@ namespace rl
 				return new Shape(shape, this);
 			}
 			
-			void
-			Body::getFrame(::rl::math::Transform& frame)
+			::rl::math::Transform
+			Body::getFrame() const
 			{
 				::SoSearchAction searchAction;
 				searchAction.setNode(this->root);
@@ -87,6 +87,8 @@ namespace rl
 				getMatrixAction.apply(searchAction.getPath());
 				::SbMatrix matrix = getMatrixAction.getMatrix();
 				
+				::rl::math::Transform frame;
+				
 				for (int i = 0; i < 4; ++i)
 				{
 					for (int j = 0; j < 4; ++j)
@@ -94,6 +96,8 @@ namespace rl
 						frame(i, j) = matrix[j][i];
 					}
 				}
+				
+				return frame;
 			}
 			
 			::std::string

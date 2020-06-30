@@ -66,9 +66,11 @@ namespace rl
 				return new Shape(shape, this);
 			}
 			
-			void
-			Body::getFrame(::rl::math::Transform& frame)
+			::rl::math::Transform
+			Body::getFrame() const
 			{
+				::rl::math::Transform frame;
+				
 				for (int i = 0; i < 3; ++i)
 				{
 					frame(0, i) = this->object.getWorldTransform().getBasis().getRow(i).getX();
@@ -84,6 +86,8 @@ namespace rl
 				frame(3, 1) = 0;
 				frame(3, 2) = 0;
 				frame(3, 3) = 1;
+				
+				return frame;
 			}
 			
 			void

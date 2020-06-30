@@ -133,10 +133,12 @@ namespace rl
 				this->getBody()->remove(this);
 			}
 			
-			void
-			Shape::getTransform(::rl::math::Transform& transform)
+			::rl::math::Transform
+			Shape::getTransform() const
 			{
 				Body* body = static_cast<Body*>(this->getBody());
+				
+				::rl::math::Transform transform;
 				
 				for (int i = 0; i < body->shape.getNumChildShapes(); ++i)
 				{
@@ -161,6 +163,8 @@ namespace rl
 						break;
 					}
 				}
+				
+				return transform;
 			}
 			
 			void

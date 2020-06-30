@@ -62,7 +62,9 @@ namespace rl
 				
 				::rl::sg::Shape* create(::SoVRMLShape* shape);
 				
-				void getFrame(::rl::math::Transform& frame);
+				using ::rl::sg::Body::getFrame;
+				
+				::rl::math::Transform getFrame() const;
 				
 				void remove(::rl::sg::Shape* shape);
 				

@@ -49,7 +49,9 @@ namespace rl
 			
 			virtual ::std::string getName() const;
 			
-			virtual void getTransform(::rl::math::Transform& transform) = 0;
+			RL_SG_DEPRECATED virtual void getTransform(::rl::math::Transform& transform);
+			
+			virtual ::rl::math::Transform getTransform() const = 0;
 			
 			virtual void setName(const ::std::string& name);
 			

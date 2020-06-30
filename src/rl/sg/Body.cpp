@@ -92,6 +92,12 @@ namespace rl
 			}
 		}
 		
+		void
+		Body::getFrame(::rl::math::Transform& frame)
+		{
+			frame = this->getFrame();
+		}
+		
 		Model*
 		Body::getModel() const
 		{

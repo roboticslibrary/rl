@@ -49,7 +49,9 @@ namespace rl
 				
 				::std::string getName() const;
 				
-				void getTransform(::rl::math::Transform& transform);
+				using ::rl::sg::Shape::getTransform;
+				
+				::rl::math::Transform getTransform() const;
 				
 				void setName(const ::std::string& name);
 				

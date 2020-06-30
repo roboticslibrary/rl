@@ -62,9 +62,11 @@ namespace rl
 				return new Shape(shape, this);
 			}
 			
-			void
-			Body::getFrame(::rl::math::Transform& frame)
+			::rl::math::Transform
+			Body::getFrame() const
 			{
+				::rl::math::Transform frame;
+				
 				const ::dReal* position = ::dBodyGetPosition(this->body);
 				
 				frame(0, 3) = position[0];
@@ -80,6 +82,8 @@ namespace rl
 						frame(i, j) = rotation[i * 4 + j];
 					}
 				}
+				
+				return frame;
 			}
 			
 			void

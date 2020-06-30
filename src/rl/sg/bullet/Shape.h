@@ -47,7 +47,9 @@ namespace rl
 				
 				virtual ~Shape();
 				
-				void getTransform(::rl::math::Transform& transform);
+				using ::rl::sg::Shape::getTransform;
+				
+				::rl::math::Transform getTransform() const;
 				
 				void setTransform(const ::rl::math::Transform& transform);
 				

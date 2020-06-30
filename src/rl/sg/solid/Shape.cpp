@@ -198,13 +198,12 @@ namespace rl
 				return shape;
 			}
 			
-			void
-			Shape::getTransform(::rl::math::Transform& transform)
+			::rl::math::Transform
+			Shape::getTransform() const
 			{
-				::DT_GetMatrixd(this->object, this->frame.data());
-
-				this->transform = static_cast<Body*>(this->getBody())->frame.inverse() * this->frame;
-				transform = this->transform;
+				::Eigen::Transform<::rl::math::Real, 3, ::Eigen::Affine, ::Eigen::ColMajor> frame;
+				::DT_GetMatrixd(this->object, frame.data());
+				return static_cast<Body*>(this->getBody())->frame.inverse() * frame;
 			}
 			
 			void

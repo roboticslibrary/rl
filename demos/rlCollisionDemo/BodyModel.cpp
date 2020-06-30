@@ -60,8 +60,7 @@ BodyModel::data(const QModelIndex& index, int role) const
 		return QVariant();
 	}
 	
-	rl::math::Transform transform;
-	this->collision->getFrame(transform);
+	rl::math::Transform transform = this->collision->getFrame();
 	rl::math::Transform::TranslationPart position = transform.translation();
 	rl::math::Vector3 orientation = transform.rotation().eulerAngles(2, 1, 0).reverse();
 	
@@ -190,8 +189,7 @@ BodyModel::setData(const QModelIndex& index, const QVariant& value, int role)
 	
 	if (index.isValid() && Qt::EditRole == role)
 	{
-		rl::math::Transform transform;
-		this->collision->getFrame(transform);
+		rl::math::Transform transform = this->collision->getFrame();
 		rl::math::Transform::TranslationPart position = transform.translation();
 		rl::math::Vector3 orientation = transform.linear().eulerAngles(2, 1, 0).reverse();
 		

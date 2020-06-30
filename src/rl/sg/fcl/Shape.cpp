@@ -282,10 +282,10 @@ namespace rl
 				return this->object.get();
 			}
 			
-			void
-			Shape::getTransform(::rl::math::Transform& transform)
+			::rl::math::Transform
+			Shape::getTransform() const
 			{
-				transform = this->transform;
+				return this->transform;
 			}
 			
 			void

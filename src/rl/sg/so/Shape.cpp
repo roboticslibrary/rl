@@ -65,8 +65,8 @@ namespace rl
 				return this->root->getName().getString();
 			}
 			
-			void
-			Shape::getTransform(::rl::math::Transform& transform)
+			::rl::math::Transform
+			Shape::getTransform() const
 			{
 				::SoSearchAction searchAction;
 				searchAction.setNode(this->shape);
@@ -77,6 +77,8 @@ namespace rl
 				getMatrixAction.apply(searchAction.getPath());
 				::SbMatrix matrix = getMatrixAction.getMatrix();
 				
+				::rl::math::Transform transform;
+				
 				for (int i = 0; i < 4; ++i)
 				{
 					for (int j = 0; j < 4; ++j)
@@ -84,6 +86,8 @@ namespace rl
 						transform(i, j) = matrix[j][i];
 					}
 				}
+				
+				return transform;
 			}
 			
 			void

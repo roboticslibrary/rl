@@ -85,10 +85,10 @@ namespace rl
 				this->getBody()->remove(this);
 			}
 			
-			void
-			Shape::getTransform(::rl::math::Transform& transform)
+			::rl::math::Transform
+			Shape::getTransform() const
 			{
-				transform = this->transform;
+				return this->transform;
 			}
 			
 			void
