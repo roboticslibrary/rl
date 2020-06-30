@@ -146,6 +146,8 @@ namespace rl
 			 */
 			void calculateOperationalMassMatrixInverse(const ::rl::math::Matrix& J, const ::rl::math::Matrix& invM, ::rl::math::Matrix& invMx) const;
 			
+			RL_MDL_DEPRECATED void eulerCauchy(const ::rl::math::Real& dt);
+			
 			/**
 			 * Forward dynamics via articulated-body algorithm.
 			 *
@@ -225,6 +227,8 @@ namespace rl
 			void inverseDynamics();
 			
 			void inverseForce();
+			
+			RL_MDL_DEPRECATED void rungeKuttaNystrom(const ::rl::math::Real& dt);
 			
 			virtual void update();
 			

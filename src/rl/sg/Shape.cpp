@@ -38,6 +38,13 @@ namespace rl
 		{
 		}
 		
+		Shape::Shape(::SoVRMLShape* shape, Body* body) :
+			Base(),
+			body(body),
+			name()
+		{
+		}
+		
 		Shape::~Shape()
 		{
 		}

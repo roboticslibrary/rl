@@ -32,10 +32,12 @@
 #include <rl/math/Spatial.h>
 #include <rl/math/Unit.h>
 
+#include "EulerCauchyIntegrator.h"
 #include "Exception.h"
 #include "Dynamic.h"
 #include "Prismatic.h"
 #include "Revolute.h"
+#include "RungeKuttaNystromIntegrator.h"
 #include "World.h"
 
 namespace rl
@@ -173,6 +175,13 @@ namespace rl
 		}
 		
 		void
+		Dynamic::eulerCauchy(const ::rl::math::Real& dt)
+		{
+			EulerCauchyIntegrator integrator(this);
+			integrator.integrate(dt);
+		}
+		
+		void
 		Dynamic::forwardDynamics()
 		{
 			for (::std::vector<Element*>::iterator i = this->elements.begin(); i != this->elements.end(); ++i)
@@ -242,6 +251,13 @@ namespace rl
 			{
 				(*i)->inverseForce();
 			}
+		}
+		
+		void
+		Dynamic::rungeKuttaNystrom(const ::rl::math::Real& dt)
+		{
+			RungeKuttaNystromIntegrator integrator(this);
+			integrator.integrate(dt);
 		}
 		
 		void

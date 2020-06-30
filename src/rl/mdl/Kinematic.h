@@ -44,6 +44,14 @@ namespace rl
 			
 			virtual ~Kinematic();
 			
+			RL_MDL_DEPRECATED bool calculateInversePosition(
+				const ::rl::math::Transform& x,
+				const ::std::size_t& leaf = 0,
+				const ::rl::math::Real& delta = ::std::numeric_limits<::rl::math::Real>::infinity(),
+				const ::rl::math::Real& epsilon = static_cast<::rl::math::Real>(1.0e-6),
+				const ::std::size_t& iterations = 10000
+			);
+			
 			/**
 			 * Calculate Jacobian matrix.
 			 *

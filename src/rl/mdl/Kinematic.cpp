@@ -33,6 +33,7 @@
 #include <rl/math/Unit.h>
 
 #include "Exception.h"
+#include "JacobianInverseKinematics.h"
 #include "Kinematic.h"
 #include "Prismatic.h"
 #include "Revolute.h"
@@ -51,6 +52,17 @@ namespace rl
 		
 		Kinematic::~Kinematic()
 		{
+		}
+		
+		bool
+		Kinematic::calculateInversePosition(const ::rl::math::Transform& x, const ::std::size_t& leaf, const ::rl::math::Real& delta, const ::rl::math::Real& epsilon, const ::std::size_t& iterations)
+		{
+			JacobianInverseKinematics ik(this);
+			ik.setDelta(delta);
+			ik.setEpsilon(epsilon);
+			ik.setIterations(iterations);
+			ik.addGoal(x, leaf);
+			return ik.solve();
 		}
 		
 		void

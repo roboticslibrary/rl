@@ -28,6 +28,7 @@
 #define RL_SG_SHAPE_H
 
 #include <string>
+#include <Inventor/VRMLnodes/SoVRMLShape.h>
 #include <rl/math/Transform.h>
 
 #include "Base.h"
@@ -42,6 +43,8 @@ namespace rl
 		{
 		public:
 			Shape(Body* body);
+			
+			RL_SG_DEPRECATED Shape(::SoVRMLShape* shape, Body* body);
 			
 			virtual ~Shape();
 			
