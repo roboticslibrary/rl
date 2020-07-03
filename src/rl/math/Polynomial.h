@@ -42,6 +42,7 @@
 #include <Eigen/Eigenvalues>
 #endif // HAVE_EIGEN_UNSUPPORTED
 
+#include "Constants.h"
 #include "Function.h"
 #include "Matrix.h"
 #include "TypeTraits.h"
@@ -600,8 +601,8 @@ namespace rl
 							Real tmp2 = ::std::acos((3 * q) / (2 * p) * ::std::sqrt(-3 / p)) / 3;
 							::std::vector<Real> roots(3);
 							roots[0] = tmp1 * ::std::cos(tmp2) - back;
-							roots[1] = tmp1 * ::std::cos(tmp2 - 2 * TypeTraits<Real>::pi / 3) - back;
-							roots[2] = tmp1 * ::std::cos(tmp2 - 4 * TypeTraits<Real>::pi / 3) - back;
+							roots[1] = tmp1 * ::std::cos(tmp2 - 2 * Constants<Real>::pi / 3) - back;
+							roots[2] = tmp1 * ::std::cos(tmp2 - 4 * Constants<Real>::pi / 3) - back;
 							return roots;
 						}
 						else

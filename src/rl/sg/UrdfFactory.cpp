@@ -43,9 +43,9 @@
 #include <Inventor/VRMLnodes/SoVRMLIndexedFaceSet.h>
 #include <Inventor/VRMLnodes/SoVRMLMaterial.h>
 #include <Inventor/VRMLnodes/SoVRMLSphere.h>
+#include <rl/math/Constants.h>
 #include <rl/math/Quaternion.h>
 #include <rl/math/Rotation.h>
-#include <rl/math/Unit.h>
 #include <rl/xml/Attribute.h>
 #include <rl/xml/Document.h>
 #include <rl/xml/DomParser.h>
@@ -402,7 +402,7 @@ namespace rl
 						
 						if (vrmlShape->geometry.getValue()->isOfType(::SoVRMLCylinder::getClassTypeId()))
 						{
-							origin *= ::rl::math::AngleAxis(90 * ::rl::math::DEG2RAD, ::rl::math::Vector3::UnitX());
+							origin *= ::rl::math::AngleAxis(90 * ::rl::math::constants::deg2rad, ::rl::math::Vector3::UnitX());
 						}
 						
 						if (path.eval("count(origin/@xyz) > 0").getValue<bool>())

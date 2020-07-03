@@ -27,7 +27,7 @@
 #include <cassert>
 #include <cerrno>
 #include <cstdio>
-#include <rl/math/Unit.h>
+#include <rl/math/Constants.h>
 
 #include "ComException.h"
 #include "Gnuplot.h"
@@ -121,7 +121,7 @@ namespace rl
 			this->ymin = ymin;
 			this->ymax =  ymax;
 			
-			fprintf(this->fp, "set yrange [%f:%f]\n", this->ymin * ::rl::math::RAD2DEG, this->ymax * ::rl::math::RAD2DEG);
+			fprintf(this->fp, "set yrange [%f:%f]\n", this->ymin * ::rl::math::constants::rad2deg, this->ymax * ::rl::math::constants::rad2deg);
 		}
 		
 		void
@@ -157,9 +157,9 @@ namespace rl
 					for (::std::list<::rl::math::Vector>::iterator j = this->history.begin(); j != this->history.end(); ++j)
 					{
 #ifdef WIN32
-						fprintf(this->fp, "%Iu %f\n", t, (*j)(i) * ::rl::math::RAD2DEG);
+						fprintf(this->fp, "%Iu %f\n", t, (*j)(i) * ::rl::math::constants::rad2deg);
 #else // WIN32
-						fprintf(this->fp, "%zu %f\n", t, (*j)(i) * ::rl::math::RAD2DEG);
+						fprintf(this->fp, "%zu %f\n", t, (*j)(i) * ::rl::math::constants::rad2deg);
 #endif // WIN32
 						++t;
 					}

@@ -25,7 +25,7 @@
 //
 
 #include <cstring>
-#include <rl/math/Unit.h>
+#include <rl/math/Constants.h>
 
 #include "Dc1394Camera.h"
 
@@ -479,7 +479,7 @@ namespace rl
 			}
 			
 			return ::std::chrono::duration_cast<::std::chrono::nanoseconds>(
-				::std::chrono::duration<double>(1.0 / framerate * ::rl::math::UNIT2NANO)
+				::std::chrono::duration<double>(1.0 / framerate * ::rl::math::constants::unit2nano)
 			);
 		}
 		

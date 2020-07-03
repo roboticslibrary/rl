@@ -24,7 +24,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <rl/math/Unit.h>
+#include <rl/math/Constants.h>
 #include <rl/mdl/Kinematic.h>
 #include <rl/mdl/Revolute.h>
 #include <rl/sg/Body.h>
@@ -114,7 +114,7 @@ ConfigurationModel::setData(const QModelIndex& index, const QVariant& value, int
 				
 				if (rl::math::UNIT_RADIAN == qUnits(index.row()))
 				{
-					q(index.row()) = value.value<rl::math::Real>() * rl::math::DEG2RAD;
+					q(index.row()) = value.value<rl::math::Real>() * rl::math::constants::deg2rad;
 				}
 				else
 				{
@@ -136,7 +136,7 @@ ConfigurationModel::setData(const QModelIndex& index, const QVariant& value, int
 				
 				if (rl::math::UNIT_RADIAN == qdUnits(index.row()))
 				{
-					qd(index.row()) = value.value<rl::math::Real>() * rl::math::DEG2RAD;
+					qd(index.row()) = value.value<rl::math::Real>() * rl::math::constants::deg2rad;
 				}
 				else
 				{
@@ -152,7 +152,7 @@ ConfigurationModel::setData(const QModelIndex& index, const QVariant& value, int
 				
 				if (rl::math::UNIT_RADIAN == qddUnits(index.row()))
 				{
-					qdd(index.row()) = value.value<rl::math::Real>() * rl::math::DEG2RAD;
+					qdd(index.row()) = value.value<rl::math::Real>() * rl::math::constants::deg2rad;
 				}
 				else
 				{
@@ -286,7 +286,7 @@ PositionModel::data(const QModelIndex& index, int role) const
 						
 			if (rl::math::UNIT_RADIAN == units(index.row()))
 			{
-				return values(index.row()) * rl::math::RAD2DEG;
+				return values(index.row()) * rl::math::constants::rad2deg;
 			}
 			else
 			{
@@ -327,7 +327,7 @@ VelocityModel::data(const QModelIndex& index, int role) const
 			
 			if (rl::math::UNIT_RADIAN == units(index.row()))
 			{
-				return values(index.row()) * rl::math::RAD2DEG;
+				return values(index.row()) * rl::math::constants::rad2deg;
 			}
 			else
 			{
@@ -368,7 +368,7 @@ AccelerationModel::data(const QModelIndex& index, int role) const
 			
 			if (rl::math::UNIT_RADIAN == units(index.row()))
 			{
-				return values(index.row()) * rl::math::RAD2DEG;
+				return values(index.row()) * rl::math::constants::rad2deg;
 			}
 			else
 			{

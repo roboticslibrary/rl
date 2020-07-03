@@ -25,7 +25,7 @@
 //
 
 #include <QTableView>
-#include <rl/math/Unit.h>
+#include <rl/math/Constants.h>
 
 #include "AngleAxisModel.h"
 #include "MainWindow.h"
@@ -72,7 +72,7 @@ AngleAxisModel::data(const QModelIndex& index, int role) const
 			return this->angleAxis->axis()(index.column());
 			break;
 		case 3:
-			return *this->angleRadians ? this->angleAxis->angle() : this->angleAxis->angle() * rl::math::RAD2DEG;
+			return *this->angleRadians ? this->angleAxis->angle() : this->angleAxis->angle() * rl::math::constants::rad2deg;
 			break;
 		default:
 			break;
@@ -162,7 +162,7 @@ AngleAxisModel::setData(const QModelIndex& index, const QVariant& value, int rol
 			this->angleAxis->axis()(index.column()) = value.value<rl::math::Real>();
 			break;
 		case 3:
-			this->angleAxis->angle() = *this->angleRadians ? value.value<rl::math::Real>() : value.value<rl::math::Real>() * rl::math::DEG2RAD;
+			this->angleAxis->angle() = *this->angleRadians ? value.value<rl::math::Real>() : value.value<rl::math::Real>() * rl::math::constants::deg2rad;
 			break;
 		default:
 			break;

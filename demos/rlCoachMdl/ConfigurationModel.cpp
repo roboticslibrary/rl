@@ -24,7 +24,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <rl/math/Unit.h>
+#include <rl/math/Constants.h>
 #include <rl/mdl/Kinematic.h>
 #include <rl/mdl/Revolute.h>
 #include <rl/sg/Body.h>
@@ -75,7 +75,7 @@ ConfigurationModel::data(const QModelIndex& index, int role) const
 			return QString::number(q(index.row()), 'f', 4) + QString(" m");
 			break;
 		case rl::math::UNIT_RADIAN:
-			return QString::number(q(index.row()) * rl::math::RAD2DEG, 'f', 2) + QChar(176);
+			return QString::number(q(index.row()) * rl::math::constants::rad2deg, 'f', 2) + QChar(176);
 			break;
 		default:
 			return q(index.row());
@@ -85,7 +85,7 @@ ConfigurationModel::data(const QModelIndex& index, int role) const
 	case Qt::EditRole:
 		if (rl::math::UNIT_RADIAN == qUnits(index.row()))
 		{
-			return q(index.row()) * rl::math::RAD2DEG;
+			return q(index.row()) * rl::math::constants::rad2deg;
 		}
 		else
 		{
@@ -184,7 +184,7 @@ ConfigurationModel::setData(const QModelIndex& index, const QVariant& value, int
 			
 			if (rl::math::UNIT_RADIAN == qUnits(index.row()))
 			{
-				q(index.row()) = value.value<rl::math::Real>() * rl::math::DEG2RAD;
+				q(index.row()) = value.value<rl::math::Real>() * rl::math::constants::deg2rad;
 			}
 			else
 			{

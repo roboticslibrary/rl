@@ -27,7 +27,7 @@
 #include <cassert>
 #include <iostream>
 #include <thread>
-#include <rl/math/Unit.h>
+#include <rl/math/Constants.h>
 
 #include "Endian.h"
 #include "DeviceException.h"
@@ -214,7 +214,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			return this->stepSize * static_cast<::rl::math::Real>(0.36) * ::rl::math::DEG2RAD;
+			return this->stepSize * static_cast<::rl::math::Real>(0.36) * ::rl::math::constants::deg2rad;
 		}
 		
 		::rl::math::Real
@@ -222,7 +222,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			return (-5 + this->startIndex * static_cast<::rl::math::Real>(0.36)) * ::rl::math::DEG2RAD;
+			return (-5 + this->startIndex * static_cast<::rl::math::Real>(0.36)) * ::rl::math::constants::deg2rad;
 		}
 		
 		::rl::math::Real
@@ -230,7 +230,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			return (185 - (528 - this->stopIndex) * static_cast<::rl::math::Real>(0.36)) * ::rl::math::DEG2RAD;
+			return (185 - (528 - this->stopIndex) * static_cast<::rl::math::Real>(0.36)) * ::rl::math::constants::deg2rad;
 		}
 		
 		void

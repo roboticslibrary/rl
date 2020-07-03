@@ -30,7 +30,6 @@
 #include <rl/math/Quaternion.h>
 #include <rl/math/Rotation.h>
 #include <rl/math/Spatial.h>
-#include <rl/math/Unit.h>
 
 #include "Exception.h"
 #include "JacobianInverseKinematics.h"

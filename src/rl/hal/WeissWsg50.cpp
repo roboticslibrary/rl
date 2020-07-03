@@ -28,7 +28,7 @@
 #include <cassert>
 #include <cstring>
 #include <iostream>
-#include <rl/math/Unit.h>
+#include <rl/math/Constants.h>
 
 //#define DEBUG_TCP_DATA
 
@@ -214,7 +214,7 @@ namespace rl
 			
 			::std::memcpy(&this->acceleration, &buf[this->HEADER_SIZE + 2], sizeof(this->acceleration));
 			
-			this->acceleration *= static_cast<float>(::rl::math::MILLI2UNIT);
+			this->acceleration *= ::rl::math::Constants<float>::milli2unit;
 		}
 		
 		void
@@ -313,8 +313,8 @@ namespace rl
 			::std::memcpy(&this->limitMinus, &buf[this->HEADER_SIZE + 2], sizeof(this->limitMinus));
 			::std::memcpy(&this->limitPlus, &buf[this->HEADER_SIZE + 2 + 4], sizeof(this->limitPlus));
 			
-			this->limitMinus *= static_cast<float>(::rl::math::MILLI2UNIT);
-			this->limitPlus *= static_cast<float>(::rl::math::MILLI2UNIT);
+			this->limitMinus *= ::rl::math::Constants<float>::milli2unit;
+			this->limitPlus *= ::rl::math::Constants<float>::milli2unit;
 		}
 		
 		void
@@ -372,11 +372,11 @@ namespace rl
 			::std::memcpy(&this->forceNominal, &buf[32], sizeof(this->forceNominal));
 			::std::memcpy(&this->forceOverdrive, &buf[36], sizeof(this->forceOverdrive));
 			
-			this->stroke *= static_cast<float>(::rl::math::MILLI2UNIT);
-			this->speedMinimum *= static_cast<float>(::rl::math::MILLI2UNIT);
-			this->speedMaximum *= static_cast<float>(::rl::math::MILLI2UNIT);
-			this->accelerationMinimum *= static_cast<float>(::rl::math::MILLI2UNIT);
-			this->accelerationMaximum *= static_cast<float>(::rl::math::MILLI2UNIT);
+			this->stroke *= ::rl::math::Constants<float>::milli2unit;
+			this->speedMinimum *= ::rl::math::Constants<float>::milli2unit;
+			this->speedMaximum *= ::rl::math::Constants<float>::milli2unit;
+			this->accelerationMinimum *= ::rl::math::Constants<float>::milli2unit;
+			this->accelerationMaximum *= ::rl::math::Constants<float>::milli2unit;
 		}
 		
 		void
@@ -426,8 +426,8 @@ namespace rl
 			assert(width >= 0.0f && width <= 0.11f);
 			assert(speed >= 0.0f && speed <= 0.4f);
 			
-			float widthMilli = width * static_cast<float>(::rl::math::UNIT2MILLI);
-			float speedMilli = speed * static_cast<float>(::rl::math::UNIT2MILLI);
+			float widthMilli = width * ::rl::math::Constants<float>::unit2milli;
+			float speedMilli = speed * ::rl::math::Constants<float>::unit2milli;
 			
 			::std::array<::std::uint8_t, 64> buf;
 			
@@ -483,8 +483,8 @@ namespace rl
 			assert(width >= 0.0f && width <= 0.11f);
 			assert(speed >= 0.0f && speed <= 0.4f);
 			
-			float widthMilli = width * static_cast<float>(::rl::math::UNIT2MILLI);
-			float speedMilli = speed * static_cast<float>(::rl::math::UNIT2MILLI);
+			float widthMilli = width * ::rl::math::Constants<float>::unit2milli;
+			float speedMilli = speed * ::rl::math::Constants<float>::unit2milli;
 			
 			::std::array<::std::uint8_t, 64> buf;
 			
@@ -516,8 +516,8 @@ namespace rl
 			assert(width >= 0.0f && width <= 0.11f);
 			assert(speed >= 0.005f && speed <= 0.4f);
 			
-			float widthMilli = width * static_cast<float>(::rl::math::UNIT2MILLI);
-			float speedMilli = speed * static_cast<float>(::rl::math::UNIT2MILLI);
+			float widthMilli = width * ::rl::math::Constants<float>::unit2milli;
+			float speedMilli = speed * ::rl::math::Constants<float>::unit2milli;
 			
 			::std::array<::std::uint8_t, 64> buf;
 			
@@ -535,7 +535,7 @@ namespace rl
 			assert(this->isConnected());
 			assert(acceleration >= 0.1f && acceleration <= 5.0f);
 			
-			float accelerationMilli = acceleration * static_cast<float>(::rl::math::UNIT2MILLI);
+			float accelerationMilli = acceleration * ::rl::math::Constants<float>::unit2milli;
 			
 			::std::array<::std::uint8_t, 64> buf;
 			
@@ -570,8 +570,8 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			float limitMinusMilli = limitMinus * static_cast<float>(::rl::math::UNIT2MILLI);
-			float limitPlusMilli = limitPlus * static_cast<float>(::rl::math::UNIT2MILLI);
+			float limitMinusMilli = limitMinus * ::rl::math::Constants<float>::unit2milli;
+			float limitPlusMilli = limitPlus * ::rl::math::Constants<float>::unit2milli;
 			
 			::std::array<::std::uint8_t, 64> buf;
 			
@@ -790,11 +790,11 @@ namespace rl
 				break;
 			case 0x43:
 				::std::memcpy(&this->openingWidth, &buf[8], sizeof(this->openingWidth));
-				this->openingWidth *= static_cast<float>(::rl::math::MILLI2UNIT);
+				this->openingWidth *= ::rl::math::Constants<float>::milli2unit;
 				break;
 			case 0x44:
 				::std::memcpy(&this->speed, &buf[8], sizeof(this->speed));
-				this->speed *= static_cast<float>(::rl::math::MILLI2UNIT);
+				this->speed *= ::rl::math::Constants<float>::milli2unit;
 				break;
 			case 0x45:
 				this->force = *reinterpret_cast<float*>(&buf[8]);

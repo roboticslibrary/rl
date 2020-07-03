@@ -30,11 +30,11 @@
 #include <stdexcept>
 #include <boost/lexical_cast.hpp>
 #include <rl/hal/Coach.h>
+#include <rl/math/Constants.h>
 #include <rl/mdl/Kinematic.h>
 #include <rl/mdl/JacobianInverseKinematics.h>
 #include <rl/mdl/UrdfFactory.h>
 #include <rl/mdl/XmlFactory.h>
-#include <rl/math/Unit.h>
 
 #ifdef RL_MDL_NLOPT
 #include <rl/mdl/NloptInverseKinematics.h>
@@ -79,7 +79,7 @@ main(int argc, char** argv)
 		kinematic->forwardPosition();
 		rl::math::Vector3 position = kinematic->getOperationalPosition(0).translation();
 		rl::math::Vector3 orientation = kinematic->getOperationalPosition(0).rotation().eulerAngles(2, 1, 0).reverse();
-		std::cout << "x: " << position.x() << " m, y: " << position.y() << " m, z: " << position.z() << " m, a: " << orientation.x() * rl::math::RAD2DEG << " deg, b: " << orientation.y() * rl::math::RAD2DEG << " deg, c: " << orientation.z() * rl::math::RAD2DEG << " deg" << std::endl;
+		std::cout << "x: " << position.x() << " m, y: " << position.y() << " m, z: " << position.z() << " m, a: " << orientation.x() * rl::math::constants::rad2deg << " deg, b: " << orientation.y() * rl::math::constants::rad2deg << " deg, c: " << orientation.z() * rl::math::constants::rad2deg << " deg" << std::endl;
 		
 #ifdef RL_MDL_NLOPT
 		rl::mdl::NloptInverseKinematics ik(kinematic.get());
@@ -103,7 +103,7 @@ main(int argc, char** argv)
 		kinematic->forwardPosition();
 		position = kinematic->getOperationalPosition(0).translation();
 		orientation = kinematic->getOperationalPosition(0).rotation().eulerAngles(2, 1, 0).reverse();
-		std::cout << "x: " << position.x() << " m, y: " << position.y() << " m, z: " << position.z() << " m, a: " << orientation.x() * rl::math::RAD2DEG << " deg, b: " << orientation.y() * rl::math::RAD2DEG << " deg, c: " << orientation.z() * rl::math::RAD2DEG << " deg" << std::endl;
+		std::cout << "x: " << position.x() << " m, y: " << position.y() << " m, z: " << position.z() << " m, a: " << orientation.x() * rl::math::constants::rad2deg << " deg, b: " << orientation.y() * rl::math::constants::rad2deg << " deg, c: " << orientation.z() * rl::math::constants::rad2deg << " deg" << std::endl;
 		
 		std::cout << "q: " << kinematic->getPosition().transpose() << std::endl;
 		

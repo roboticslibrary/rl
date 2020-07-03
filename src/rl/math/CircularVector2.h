@@ -38,9 +38,9 @@
 #include <Eigen/LU>
 
 #include "Circular.h"
+#include "Constants.h"
 #include "Function.h"
 #include "Matrix.h"
-#include "TypeTraits.h"
 #include "Vector.h"
 
 namespace rl
@@ -101,7 +101,7 @@ namespace rl
 				
 				if (f.angle < 0)
 				{
-					f.angle += 2 * TypeTraits<Real>::pi;
+					f.angle += 2 * Constants<Real>::pi;
 				}
 				
 				f.x1 = x1;

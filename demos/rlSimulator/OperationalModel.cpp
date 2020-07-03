@@ -23,8 +23,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
+#include <rl/math/Constants.h>
 #include <rl/math/Rotation.h>
-#include <rl/math/Unit.h>
 #include <rl/mdl/Kinematic.h>
 #include <rl/sg/Body.h>
 
@@ -93,13 +93,13 @@ OperationalModel::data(const QModelIndex& index, int role) const
 				return position.z();
 				break;
 			case 3:
-				return orientation.x() * rl::math::RAD2DEG;
+				return orientation.x() * rl::math::constants::rad2deg;
 				break;
 			case 4:
-				return orientation.y() * rl::math::RAD2DEG;
+				return orientation.y() * rl::math::constants::rad2deg;
 				break;
 			case 5:
-				return orientation.z() * rl::math::RAD2DEG;
+				return orientation.z() * rl::math::constants::rad2deg;
 				break;
 			default:
 				break;
@@ -212,19 +212,19 @@ OperationalModel::setData(const QModelIndex& index, const QVariant& value, int r
 				x.linear() = (
 					rl::math::AngleAxis(orientation.z(), rl::math::Vector3::UnitZ()) *
 					rl::math::AngleAxis(orientation.y(), rl::math::Vector3::UnitY()) *
-					rl::math::AngleAxis(value.value<rl::math::Real>() * rl::math::DEG2RAD, rl::math::Vector3::UnitX())
+					rl::math::AngleAxis(value.value<rl::math::Real>() * rl::math::constants::deg2rad, rl::math::Vector3::UnitX())
 				).toRotationMatrix();
 				break;
 			case 4:
 				x.linear() = (
 					rl::math::AngleAxis(orientation.z(), rl::math::Vector3::UnitZ()) *
-					rl::math::AngleAxis(value.value<rl::math::Real>() * rl::math::DEG2RAD, rl::math::Vector3::UnitY()) *
+					rl::math::AngleAxis(value.value<rl::math::Real>() * rl::math::constants::deg2rad, rl::math::Vector3::UnitY()) *
 					rl::math::AngleAxis(orientation.x(), rl::math::Vector3::UnitX())
 				).toRotationMatrix();
 				break;
 			case 5:
 				x.linear() = (
-					rl::math::AngleAxis(value.value<rl::math::Real>() * rl::math::DEG2RAD, rl::math::Vector3::UnitZ()) *
+					rl::math::AngleAxis(value.value<rl::math::Real>() * rl::math::constants::deg2rad, rl::math::Vector3::UnitZ()) *
 					rl::math::AngleAxis(orientation.y(), rl::math::Vector3::UnitY()) *
 					rl::math::AngleAxis(orientation.x(), rl::math::Vector3::UnitX())
 				).toRotationMatrix();

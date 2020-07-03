@@ -25,7 +25,6 @@
 //
 
 #include <array>
-#include <rl/math/Unit.h>
 
 #include "DeviceException.h"
 #include "UniversalRobotsRealtime.h"

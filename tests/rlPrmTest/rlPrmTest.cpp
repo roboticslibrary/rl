@@ -28,7 +28,7 @@
 #include <memory>
 #include <stdexcept>
 #include <boost/lexical_cast.hpp>
-#include <rl/math/Unit.h>
+#include <rl/math/Constants.h>
 #include <rl/mdl/Kinematic.h>
 #include <rl/mdl/XmlFactory.h>
 #include <rl/plan/KdtreeNearestNeighbors.h>
@@ -109,13 +109,13 @@ main(int argc, char** argv)
 		rl::math::Transform world = rl::math::Transform::Identity();
 		
 		world = rl::math::AngleAxis(
-			boost::lexical_cast<rl::math::Real>(argv[11]) * ::rl::math::DEG2RAD,
+			boost::lexical_cast<rl::math::Real>(argv[11]) * ::rl::math::constants::deg2rad,
 			::rl::math::Vector3::UnitZ()
 		) * ::rl::math::AngleAxis(
-			boost::lexical_cast<rl::math::Real>(argv[10]) * ::rl::math::DEG2RAD,
+			boost::lexical_cast<rl::math::Real>(argv[10]) * ::rl::math::constants::deg2rad,
 			::rl::math::Vector3::UnitY()
 		) * ::rl::math::AngleAxis(
-			boost::lexical_cast<rl::math::Real>(argv[9]) * ::rl::math::DEG2RAD,
+			boost::lexical_cast<rl::math::Real>(argv[9]) * ::rl::math::constants::deg2rad,
 			::rl::math::Vector3::UnitX()
 		);
 		
@@ -144,14 +144,14 @@ main(int argc, char** argv)
 		
 		sampler.model = &model;
 		
-		verifier.delta = 1 * rl::math::DEG2RAD;
+		verifier.delta = 1 * rl::math::constants::deg2rad;
 		verifier.model = &model;
 		
 		rl::math::Vector start(kinematic->getDofPosition());
 		
 		for (std::ptrdiff_t i = 0; i < start.size(); ++i)
 		{
-			start(i) = boost::lexical_cast<rl::math::Real>(argv[i + 12]) * rl::math::DEG2RAD;
+			start(i) = boost::lexical_cast<rl::math::Real>(argv[i + 12]) * rl::math::constants::deg2rad;
 		}
 		
 		planner.start = &start;
@@ -160,7 +160,7 @@ main(int argc, char** argv)
 		
 		for (std::ptrdiff_t i = 0; i < goal.size(); ++i)
 		{
-			goal(i) = boost::lexical_cast<rl::math::Real>(argv[start.size() + i + 12]) * rl::math::DEG2RAD;
+			goal(i) = boost::lexical_cast<rl::math::Real>(argv[start.size() + i + 12]) * rl::math::constants::deg2rad;
 		}
 		
 		planner.goal = &goal;

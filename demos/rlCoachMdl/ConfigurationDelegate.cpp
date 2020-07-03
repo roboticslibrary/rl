@@ -26,7 +26,7 @@
 
 #include <QDoubleSpinBox>
 #include <QModelIndex>
-#include <rl/math/Unit.h>
+#include <rl/math/Constants.h>
 #include <rl/mdl/Kinematic.h>
 #include <rl/mdl/Revolute.h>
 
@@ -56,8 +56,8 @@ ConfigurationDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem&
 	if (rl::math::UNIT_RADIAN == qUnits(index.row()))
 	{
 		editor->setDecimals(2);
-		editor->setMinimum(minimum(index.row()) * rl::math::RAD2DEG);
-		editor->setMaximum(maximum(index.row()) * rl::math::RAD2DEG);
+		editor->setMinimum(minimum(index.row()) * rl::math::constants::rad2deg);
+		editor->setMaximum(maximum(index.row()) * rl::math::constants::rad2deg);
 		editor->setSingleStep(1.0);
 	}
 	else

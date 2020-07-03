@@ -28,7 +28,7 @@
 #include <memory>
 #include <stdexcept>
 #include <boost/lexical_cast.hpp>
-#include <rl/math/Unit.h>
+#include <rl/math/Constants.h>
 #include <rl/mdl/Kinematic.h>
 #include <rl/mdl/XmlFactory.h>
 #include <rl/plan/DistanceModel.h>
@@ -106,7 +106,7 @@ main(int argc, char** argv)
 			
 			if (rl::math::UNIT_RADIAN == qUnits(i))
 			{
-				start(i) *= rl::math::DEG2RAD;
+				start(i) *= rl::math::constants::deg2rad;
 			}
 		}
 		
@@ -118,7 +118,7 @@ main(int argc, char** argv)
 			
 			if (rl::math::UNIT_RADIAN == qUnits(i))
 			{
-				goal(i) *= rl::math::DEG2RAD;
+				goal(i) *= rl::math::constants::deg2rad;
 			}
 		}
 		
@@ -156,7 +156,7 @@ main(int argc, char** argv)
 		planner.alpha = static_cast<rl::math::Real>(0.01);
 		planner.alternativeDistanceComputation = false;
 		planner.beta = 0;
-		planner.delta = 1 * rl::math::DEG2RAD;
+		planner.delta = 1 * rl::math::constants::deg2rad;
 		planner.distanceWeight = static_cast<rl::math::Real>(0.1);
 		planner.epsilon = static_cast<rl::math::Real>(1.0e-9);
 		planner.explorers.push_back(&explorer);

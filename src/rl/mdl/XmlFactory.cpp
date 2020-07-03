@@ -26,9 +26,9 @@
 
 #include <unordered_map>
 #include <boost/lexical_cast.hpp>
+#include <rl/math/Constants.h>
 #include <rl/math/Quaternion.h>
 #include <rl/math/Rotation.h>
-#include <rl/math/Unit.h>
 #include <rl/xml/Attribute.h>
 #include <rl/xml/Document.h>
 #include <rl/xml/DomParser.h>
@@ -160,13 +160,13 @@ namespace rl
 						model->add(w);
 						
 						w->x.linear() = ::rl::math::AngleAxis(
-							path.eval("number(rotation/z)").getValue<::rl::math::Real>(0) * ::rl::math::DEG2RAD,
+							path.eval("number(rotation/z)").getValue<::rl::math::Real>(0) * ::rl::math::constants::deg2rad,
 							::rl::math::Vector3::UnitZ()
 						) * ::rl::math::AngleAxis(
-							path.eval("number(rotation/y)").getValue<::rl::math::Real>(0) * ::rl::math::DEG2RAD,
+							path.eval("number(rotation/y)").getValue<::rl::math::Real>(0) * ::rl::math::constants::deg2rad,
 							::rl::math::Vector3::UnitY()
 						) * ::rl::math::AngleAxis(
-							path.eval("number(rotation/x)").getValue<::rl::math::Real>(0) * ::rl::math::DEG2RAD,
+							path.eval("number(rotation/x)").getValue<::rl::math::Real>(0) * ::rl::math::constants::deg2rad,
 							::rl::math::Vector3::UnitX()
 						).toRotationMatrix();
 						
@@ -306,13 +306,13 @@ namespace rl
 						model->add(f, a, b);
 						
 						f->x.linear() = ::rl::math::AngleAxis(
-							path.eval("number(rotation/z)").getValue<::rl::math::Real>(0) * ::rl::math::DEG2RAD,
+							path.eval("number(rotation/z)").getValue<::rl::math::Real>(0) * ::rl::math::constants::deg2rad,
 							::rl::math::Vector3::UnitZ()
 						) * ::rl::math::AngleAxis(
-							path.eval("number(rotation/y)").getValue<::rl::math::Real>(0) * ::rl::math::DEG2RAD,
+							path.eval("number(rotation/y)").getValue<::rl::math::Real>(0) * ::rl::math::constants::deg2rad,
 							::rl::math::Vector3::UnitY()
 						) * ::rl::math::AngleAxis(
-							path.eval("number(rotation/x)").getValue<::rl::math::Real>(0) * ::rl::math::DEG2RAD,
+							path.eval("number(rotation/x)").getValue<::rl::math::Real>(0) * ::rl::math::constants::deg2rad,
 							::rl::math::Vector3::UnitX()
 						).toRotationMatrix();
 						
@@ -380,10 +380,10 @@ namespace rl
 						r->S(1, 0) = path.eval("number(axis/y)").getValue<::rl::math::Real>(0);
 						r->S(2, 0) = path.eval("number(axis/z)").getValue<::rl::math::Real>(1);
 						
-						r->max *= ::rl::math::DEG2RAD;
-						r->min *= ::rl::math::DEG2RAD;
-						r->offset *= ::rl::math::DEG2RAD;
-						r->speed *= ::rl::math::DEG2RAD;
+						r->max *= ::rl::math::constants::deg2rad;
+						r->min *= ::rl::math::constants::deg2rad;
+						r->offset *= ::rl::math::constants::deg2rad;
+						r->speed *= ::rl::math::constants::deg2rad;
 						
 						transform = r;
 					}
@@ -442,7 +442,7 @@ namespace rl
 						
 						if ("deg" == home[j].getProperty("unit"))
 						{
-							q(j) *= ::rl::math::DEG2RAD;
+							q(j) *= ::rl::math::constants::deg2rad;
 						}
 					}
 					

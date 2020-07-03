@@ -41,6 +41,7 @@
 #include <QLabel>
 #include <Inventor/actions/SoWriteAction.h>
 #include <Inventor/Qt/SoQt.h>
+#include <rl/math/Constants.h>
 #include <rl/mdl/Dynamic.h>
 #include <rl/mdl/XmlFactory.h>
 #include <rl/sg/Body.h>
@@ -82,7 +83,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	simulationDampingValue(static_cast<rl::math::Real>(0.001)),
 	simulationDockWidget(new QDockWidget(this)),
 	simulationGravity(nullptr),
-	simulationGravityValue(rl::math::GRAVITY),
+	simulationGravityValue(rl::math::constants::gravity),
 	simulationIsRunning(true),
 	simulationPause(nullptr),
 	simulationReset(nullptr),

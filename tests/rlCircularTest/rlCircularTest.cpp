@@ -30,7 +30,6 @@
 #include <stdexcept>
 #include <rl/math/CircularVector2.h>
 #include <rl/math/CircularVector3.h>
-#include <rl/math/Unit.h>
 #include <rl/math/Vector.h>
 
 template<typename T>

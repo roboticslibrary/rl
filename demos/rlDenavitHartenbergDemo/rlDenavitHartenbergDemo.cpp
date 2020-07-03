@@ -25,19 +25,19 @@
 //
 
 #include <iostream>
+#include <rl/math/Constants.h>
 #include <rl/math/Matrix.h>
 #include <rl/math/Rotation.h>
 #include <rl/math/Transform.h>
-#include <rl/math/Unit.h>
 #include <rl/math/Vector.h>
 
 int
 main(int argc, char** argv)
 {
 	rl::math::Real a = 31;
-	rl::math::Real alpha = 271 * rl::math::DEG2RAD;
+	rl::math::Real alpha = 271 * rl::math::constants::deg2rad;
 	rl::math::Real d = 101;
-	rl::math::Real theta = 181 * rl::math::DEG2RAD;
+	rl::math::Real theta = 181 * rl::math::constants::deg2rad;
 	
 	rl::math::Transform t_d(rl::math::Translation(0, 0, d));
 	
@@ -75,9 +75,9 @@ main(int argc, char** argv)
 	dh.toDenavitHartenbergPaul(d, theta, a, alpha);
 	
 	std::cout << "a = " << a << std::endl;
-	std::cout << "alpha = " << alpha * rl::math::RAD2DEG << std::endl;
+	std::cout << "alpha = " << alpha * rl::math::constants::rad2deg << std::endl;
 	std::cout << "d = " << d << std::endl;
-	std::cout << "theta = " << theta * rl::math::RAD2DEG << std::endl;
+	std::cout << "theta = " << theta * rl::math::constants::rad2deg << std::endl;
 	
 	return EXIT_SUCCESS;
 }

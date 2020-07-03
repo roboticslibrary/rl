@@ -27,7 +27,6 @@
 #include <chrono>
 #include <rl/math/Quaternion.h>
 #include <rl/math/Rotation.h>
-#include <rl/math/Unit.h>
 
 #include "DistanceModel.h"
 #include "Eet.h"

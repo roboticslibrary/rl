@@ -25,7 +25,7 @@
 //
 
 #include <QTableView>
-#include <rl/math/Unit.h>
+#include <rl/math/Constants.h>
 
 #include "EulerAnglesModel.h"
 #include "MainWindow.h"
@@ -65,7 +65,7 @@ EulerAnglesModel::data(const QModelIndex& index, int role) const
 	{
 	case Qt::DisplayRole:
 	case Qt::EditRole:
-		return *this->eulerAnglesRadians ? (*this->eulerAngles)(index.column()) : (*this->eulerAngles)(index.column()) * rl::math::RAD2DEG;
+		return *this->eulerAnglesRadians ? (*this->eulerAngles)(index.column()) : (*this->eulerAngles)(index.column()) * rl::math::constants::rad2deg;
 		break;
 	case Qt::TextAlignmentRole:
 		return QVariant(Qt::AlignRight | Qt::AlignVCenter);
@@ -140,7 +140,7 @@ EulerAnglesModel::setData(const QModelIndex& index, const QVariant& value, int r
 	
 	if (index.isValid() && Qt::EditRole == role)
 	{
-		(*this->eulerAngles)(index.column()) = *this->eulerAnglesRadians ? value.value<rl::math::Real>() : value.value<rl::math::Real>() * rl::math::DEG2RAD;
+		(*this->eulerAngles)(index.column()) = *this->eulerAnglesRadians ? value.value<rl::math::Real>() : value.value<rl::math::Real>() * rl::math::constants::deg2rad;
 		emit dataChanged(this->createIndex(index.row(), index.column()), this->createIndex(index.row(), index.column()));
 		return true;
 	}

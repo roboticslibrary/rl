@@ -44,8 +44,8 @@
 #include <Inventor/nodes/SoOrthographicCamera.h>
 #include <Inventor/nodes/SoPerspectiveCamera.h>
 #include <Inventor/Qt/SoQt.h>
+#include <rl/math/Constants.h>
 #include <rl/math/Rotation.h>
-#include <rl/math/Unit.h>
 #include <rl/mdl/XmlFactory.h>
 #include <rl/plan/AddRrtConCon.h>
 #include <rl/plan/AdvancedOptimizer.h>
@@ -956,13 +956,13 @@ MainWindow::load(const QString& filename)
 		if (path.eval("count((/rl/plan|/rlplan)//model/kinematics/world) > 0").getValue<bool>())
 		{
 			this->mdl->world() = rl::math::AngleAxis(
-				path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/rotation/z)").getValue<rl::math::Real>(0) * rl::math::DEG2RAD,
+				path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/rotation/z)").getValue<rl::math::Real>(0) * rl::math::constants::deg2rad,
 				rl::math::Vector3::UnitZ()
 			) * rl::math::AngleAxis(
-				path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/rotation/y)").getValue<rl::math::Real>(0) * rl::math::DEG2RAD,
+				path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/rotation/y)").getValue<rl::math::Real>(0) * rl::math::constants::deg2rad,
 				rl::math::Vector3::UnitY()
 			) * rl::math::AngleAxis(
-				path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/rotation/x)").getValue<rl::math::Real>(0) * rl::math::DEG2RAD,
+				path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/rotation/x)").getValue<rl::math::Real>(0) * rl::math::constants::deg2rad,
 				rl::math::Vector3::UnitX()
 			);
 			
@@ -981,13 +981,13 @@ MainWindow::load(const QString& filename)
 		if (path.eval("count((/rl/plan|/rlplan)//model/kinematics/world) > 0").getValue<bool>())
 		{
 			this->kin->world() = rl::math::AngleAxis(
-				path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/rotation/z)").getValue<rl::math::Real>(0) * rl::math::DEG2RAD,
+				path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/rotation/z)").getValue<rl::math::Real>(0) * rl::math::constants::deg2rad,
 				rl::math::Vector3::UnitZ()
 			) * rl::math::AngleAxis(
-				path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/rotation/y)").getValue<rl::math::Real>(0) * rl::math::DEG2RAD,
+				path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/rotation/y)").getValue<rl::math::Real>(0) * rl::math::constants::deg2rad,
 				rl::math::Vector3::UnitY()
 			) * rl::math::AngleAxis(
-				path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/rotation/x)").getValue<rl::math::Real>(0) * rl::math::DEG2RAD,
+				path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/rotation/x)").getValue<rl::math::Real>(0) * rl::math::constants::deg2rad,
 				rl::math::Vector3::UnitX()
 			);
 			
@@ -1047,13 +1047,13 @@ MainWindow::load(const QString& filename)
 		if (path.eval("count((/rl/plan|/rlplan)//viewer/model/kinematics/world) > 0").getValue<bool>())
 		{
 			this->mdl2->world() = rl::math::AngleAxis(
-				path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/rotation/z)").getValue<rl::math::Real>(0) * rl::math::DEG2RAD,
+				path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/rotation/z)").getValue<rl::math::Real>(0) * rl::math::constants::deg2rad,
 				rl::math::Vector3::UnitZ()
 			) * rl::math::AngleAxis(
-				path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/rotation/y)").getValue<rl::math::Real>(0) * rl::math::DEG2RAD,
+				path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/rotation/y)").getValue<rl::math::Real>(0) * rl::math::constants::deg2rad,
 				rl::math::Vector3::UnitY()
 			) * rl::math::AngleAxis(
-				path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/rotation/x)").getValue<rl::math::Real>(0) * rl::math::DEG2RAD,
+				path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/rotation/x)").getValue<rl::math::Real>(0) * rl::math::constants::deg2rad,
 				rl::math::Vector3::UnitX()
 			);
 			
@@ -1072,13 +1072,13 @@ MainWindow::load(const QString& filename)
 		if (path.eval("count((/rl/plan|/rlplan)//viewer/model/kinematics/world) > 0").getValue<bool>())
 		{
 			this->kin2->world() = rl::math::AngleAxis(
-				path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/rotation/z)").getValue<rl::math::Real>(0) * rl::math::DEG2RAD,
+				path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/rotation/z)").getValue<rl::math::Real>(0) * rl::math::constants::deg2rad,
 				rl::math::Vector3::UnitZ()
 			) * rl::math::AngleAxis(
-				path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/rotation/y)").getValue<rl::math::Real>(0) * rl::math::DEG2RAD,
+				path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/rotation/y)").getValue<rl::math::Real>(0) * rl::math::constants::deg2rad,
 				rl::math::Vector3::UnitY()
 			) * rl::math::AngleAxis(
-				path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/rotation/x)").getValue<rl::math::Real>(0) * rl::math::DEG2RAD,
+				path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/rotation/x)").getValue<rl::math::Real>(0) * rl::math::constants::deg2rad,
 				rl::math::Vector3::UnitX()
 			);
 			
@@ -1111,7 +1111,7 @@ MainWindow::load(const QString& filename)
 		
 		if ("deg" == start[i].getProperty("unit"))
 		{
-			(*this->start)(i) *= rl::math::DEG2RAD;
+			(*this->start)(i) *= rl::math::constants::deg2rad;
 		}
 	}
 	
@@ -1126,7 +1126,7 @@ MainWindow::load(const QString& filename)
 		
 		if ("deg" == goal[i].getProperty("unit"))
 		{
-			(*this->goal)(i) *= rl::math::DEG2RAD;
+			(*this->goal)(i) *= rl::math::constants::deg2rad;
 		}
 	}
 	
@@ -1141,7 +1141,7 @@ MainWindow::load(const QString& filename)
 			
 			if ("deg" == sigma[i].getProperty("unit"))
 			{
-				(*this->sigma)(i) *= rl::math::DEG2RAD;
+				(*this->sigma)(i) *= rl::math::constants::deg2rad;
 			}
 		}
 	}
@@ -1215,7 +1215,7 @@ MainWindow::load(const QString& filename)
 		
 		if ("deg" == path.eval("string((/rl/plan|/rlplan)//recursiveVerifier/delta/@unit)").getValue<std::string>())
 		{
-			this->verifier->delta *= rl::math::DEG2RAD;
+			this->verifier->delta *= rl::math::constants::deg2rad;
 		}
 	}
 	else if (path.eval("count((/rl/plan|/rlplan)//sequentialVerifier) > 0").getValue<bool>())
@@ -1225,7 +1225,7 @@ MainWindow::load(const QString& filename)
 		
 		if ("deg" == path.eval("string((/rl/plan|/rlplan)//sequentialVerifier/delta/@unit)").getValue<std::string>())
 		{
-			this->verifier->delta *= rl::math::DEG2RAD;
+			this->verifier->delta *= rl::math::constants::deg2rad;
 		}
 	}
 	
@@ -1241,7 +1241,7 @@ MainWindow::load(const QString& filename)
 		
 		if ("deg" == path.eval("string((/rl/plan|/rlplan)//simpleOptimizer/recursiveVerifier/delta/@unit)").getValue<std::string>())
 		{
-			this->verifier2->delta *= rl::math::DEG2RAD;
+			this->verifier2->delta *= rl::math::constants::deg2rad;
 		}
 	}
 	else if (path.eval("count((/rl/plan|/rlplan)//advancedOptimizer/recursiveVerifier) > 0").getValue<bool>())
@@ -1251,7 +1251,7 @@ MainWindow::load(const QString& filename)
 		
 		if ("deg" == path.eval("string((/rl/plan|/rlplan)//advancedOptimizer/recursiveVerifier/delta/@unit)").getValue<std::string>())
 		{
-			this->verifier2->delta *= rl::math::DEG2RAD;
+			this->verifier2->delta *= rl::math::constants::deg2rad;
 		}
 	}
 	
@@ -1274,7 +1274,7 @@ MainWindow::load(const QString& filename)
 		
 		if ("deg" == path.eval("string((/rl/plan|/rlplan)//advancedOptimizer/length/@unit)").getValue<std::string>())
 		{
-			advancedOptimizer->length *= rl::math::DEG2RAD;
+			advancedOptimizer->length *= rl::math::constants::deg2rad;
 		}
 		
 		advancedOptimizer->ratio = path.eval("number((/rl/plan|/rlplan)//advancedOptimizer/ratio)").getValue<rl::math::Real>(static_cast<rl::math::Real>(0.1));
@@ -1301,28 +1301,28 @@ MainWindow::load(const QString& filename)
 			
 			if ("deg" == path.eval("string(delta/@unit)").getValue<std::string>())
 			{
-				addRrtConCon->delta *= rl::math::DEG2RAD;
+				addRrtConCon->delta *= rl::math::constants::deg2rad;
 			}
 			
 			addRrtConCon->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1.0e-3));
 			
 			if ("deg" == path.eval("string(epsilon/@unit)").getValue<std::string>())
 			{
-				addRrtConCon->epsilon *= rl::math::DEG2RAD;
+				addRrtConCon->epsilon *= rl::math::constants::deg2rad;
 			}
 			
 			addRrtConCon->lower = path.eval("number(lower)").getValue<rl::math::Real>(2);
 			
 			if ("deg" == path.eval("string(lower/@unit)").getValue<std::string>())
 			{
-				addRrtConCon->lower *= rl::math::DEG2RAD;
+				addRrtConCon->lower *= rl::math::constants::deg2rad;
 			}
 			
 			addRrtConCon->radius = path.eval("number(radius)").getValue<rl::math::Real>(20);
 			
 			if ("deg" == path.eval("string(radius/@unit)").getValue<std::string>())
 			{
-				addRrtConCon->radius *= rl::math::DEG2RAD;
+				addRrtConCon->radius *= rl::math::constants::deg2rad;
 			}
 			
 			addRrtConCon->sampler = this->sampler.get();
@@ -1338,7 +1338,7 @@ MainWindow::load(const QString& filename)
 			
 			if ("deg" == path.eval("string(delta/@unit)").getValue<std::string>())
 			{
-				eet->delta *= rl::math::DEG2RAD;
+				eet->delta *= rl::math::constants::deg2rad;
 			}
 			
 			eet->distanceWeight = path.eval("number(distanceWeight)").getValue<rl::math::Real>(static_cast<rl::math::Real>(0.1));
@@ -1346,7 +1346,7 @@ MainWindow::load(const QString& filename)
 			
 			if ("deg" == path.eval("string(epsilon/@unit)").getValue<std::string>())
 			{
-				eet->epsilon *= rl::math::DEG2RAD;
+				eet->epsilon *= rl::math::constants::deg2rad;
 			}
 			
 			eet->gamma = path.eval("number(gamma)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1) / static_cast<rl::math::Real>(3));
@@ -1515,7 +1515,7 @@ MainWindow::load(const QString& filename)
 			
 			if ("deg" == path.eval("string(radius/@unit)").getValue<std::string>())
 			{
-				prm->radius *= rl::math::DEG2RAD;
+				prm->radius *= rl::math::constants::deg2rad;
 			}
 			
 			prm->sampler = this->sampler.get();
@@ -1537,7 +1537,7 @@ MainWindow::load(const QString& filename)
 			
 			if ("deg" == path.eval("string(radius/@unit)").getValue<std::string>())
 			{
-				prmUtilityGuided->radius *= rl::math::DEG2RAD;
+				prmUtilityGuided->radius *= rl::math::constants::deg2rad;
 			}
 			
 			if (path.eval("count(seed) > 0").getValue<bool>())
@@ -1562,14 +1562,14 @@ MainWindow::load(const QString& filename)
 			
 			if ("deg" == path.eval("string(delta/@unit)").getValue<std::string>())
 			{
-				rrt->delta *= rl::math::DEG2RAD;
+				rrt->delta *= rl::math::constants::deg2rad;
 			}
 			
 			rrt->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1.0e-3));
 			
 			if ("deg" == path.eval("string(epsilon/@unit)").getValue<std::string>())
 			{
-				rrt->epsilon *= rl::math::DEG2RAD;
+				rrt->epsilon *= rl::math::constants::deg2rad;
 			}
 			
 			rrt->sampler = this->sampler.get();
@@ -1582,14 +1582,14 @@ MainWindow::load(const QString& filename)
 			
 			if ("deg" == path.eval("string(delta/@unit)").getValue<std::string>())
 			{
-				rrtCon->delta *= rl::math::DEG2RAD;
+				rrtCon->delta *= rl::math::constants::deg2rad;
 			}
 			
 			rrtCon->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1.0e-3));
 			
 			if ("deg" == path.eval("string(epsilon/@unit)").getValue<std::string>())
 			{
-				rrtCon->epsilon *= rl::math::DEG2RAD;
+				rrtCon->epsilon *= rl::math::constants::deg2rad;
 			}
 			
 			rrtCon->probability = path.eval("number(probability)").getValue<rl::math::Real>(static_cast<rl::math::Real>(0.05));
@@ -1614,14 +1614,14 @@ MainWindow::load(const QString& filename)
 			
 			if ("deg" == path.eval("string(delta/@unit)").getValue<std::string>())
 			{
-				rrtConCon->delta *= rl::math::DEG2RAD;
+				rrtConCon->delta *= rl::math::constants::deg2rad;
 			}
 			
 			rrtConCon->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1.0e-3));
 			
 			if ("deg" == path.eval("string(epsilon/@unit)").getValue<std::string>())
 			{
-				rrtConCon->epsilon *= rl::math::DEG2RAD;
+				rrtConCon->epsilon *= rl::math::constants::deg2rad;
 			}
 			
 			rrtConCon->sampler = this->sampler.get();
@@ -1634,14 +1634,14 @@ MainWindow::load(const QString& filename)
 			
 			if ("deg" == path.eval("string(delta/@unit)").getValue<std::string>())
 			{
-				rrtDual->delta *= rl::math::DEG2RAD;
+				rrtDual->delta *= rl::math::constants::deg2rad;
 			}
 			
 			rrtDual->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1.0e-3));
 			
 			if ("deg" == path.eval("string(epsilon/@unit)").getValue<std::string>())
 			{
-				rrtDual->epsilon *= rl::math::DEG2RAD;
+				rrtDual->epsilon *= rl::math::constants::deg2rad;
 			}
 			
 			rrtDual->sampler = this->sampler.get();
@@ -1654,14 +1654,14 @@ MainWindow::load(const QString& filename)
 			
 			if ("deg" == path.eval("string(delta/@unit)").getValue<std::string>())
 			{
-				rrtExtCon->delta *= rl::math::DEG2RAD;
+				rrtExtCon->delta *= rl::math::constants::deg2rad;
 			}
 			
 			rrtExtCon->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1.0e-3));
 			
 			if ("deg" == path.eval("string(epsilon/@unit)").getValue<std::string>())
 			{
-				rrtExtCon->epsilon *= rl::math::DEG2RAD;
+				rrtExtCon->epsilon *= rl::math::constants::deg2rad;
 			}
 			
 			rrtExtCon->sampler = this->sampler.get();
@@ -1674,14 +1674,14 @@ MainWindow::load(const QString& filename)
 			
 			if ("deg" == path.eval("string(delta/@unit)").getValue<std::string>())
 			{
-				rrtExtExt->delta *= rl::math::DEG2RAD;
+				rrtExtExt->delta *= rl::math::constants::deg2rad;
 			}
 			
 			rrtExtExt->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1.0e-3));
 			
 			if ("deg" == path.eval("string(epsilon/@unit)").getValue<std::string>())
 			{
-				rrtExtExt->epsilon *= rl::math::DEG2RAD;
+				rrtExtExt->epsilon *= rl::math::constants::deg2rad;
 			}
 			
 			rrtExtExt->sampler = this->sampler.get();
@@ -1694,14 +1694,14 @@ MainWindow::load(const QString& filename)
 			
 			if ("deg" == path.eval("string(delta/@unit)").getValue<std::string>())
 			{
-				rrtGoalBias->delta *= rl::math::DEG2RAD;
+				rrtGoalBias->delta *= rl::math::constants::deg2rad;
 			}
 			
 			rrtGoalBias->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1.0e-3));
 			
 			if ("deg" == path.eval("string(epsilon/@unit)").getValue<std::string>())
 			{
-				rrtGoalBias->epsilon *= rl::math::DEG2RAD;
+				rrtGoalBias->epsilon *= rl::math::constants::deg2rad;
 			}
 			
 			rrtGoalBias->probability = path.eval("number(probability)").getValue<rl::math::Real>(static_cast<rl::math::Real>(0.05));
@@ -1855,14 +1855,14 @@ MainWindow::load(const QString& filename)
 	
 	if ("deg" == path.eval("string((/rl/plan|/rlplan)//viewer/delta/@unit)").getValue<std::string>())
 	{
-		this->viewer->delta *= rl::math::DEG2RAD;
+		this->viewer->delta *= rl::math::constants::deg2rad;
 	}
 	
 	this->viewer->deltaSwept = path.eval("number((/rl/plan|/rlplan)//viewer/swept)").getValue<rl::math::Real>(this->viewer->delta * 100);
 	
 	if ("deg" == path.eval("string((/rl/plan|/rlplan)//viewer/swept/@unit)").getValue<std::string>())
 	{
-		this->viewer->deltaSwept *= rl::math::DEG2RAD;
+		this->viewer->deltaSwept *= rl::math::constants::deg2rad;
 	}
 	
 	this->viewer->sceneGroup->addChild(this->scene2->root);

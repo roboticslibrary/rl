@@ -24,7 +24,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <rl/math/TypeTraits.h>
+#include <rl/math/Constants.h>
 #include <rl/math/Vector.h>
 
 #include "Link.h"
@@ -80,15 +80,15 @@ namespace rl
 		void
 		Revolute::normalize(::rl::math::Real& q)
 		{
-			q = ::std::remainder(q, 2 * ::rl::math::TypeTraits<::rl::math::Real>::pi);
+			q = ::std::remainder(q, 2 * ::rl::math::constants::pi);
 			
 			if (q < this->min)
 			{
-				q += 2 * ::rl::math::TypeTraits<::rl::math::Real>::pi;
+				q += 2 * ::rl::math::constants::pi;
 			}
 			else if (q > this->max)
 			{
-				q -= 2 * ::rl::math::TypeTraits<::rl::math::Real>::pi;
+				q -= 2 * ::rl::math::constants::pi;
 			}
 		}
 		

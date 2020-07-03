@@ -26,7 +26,7 @@
 
 #include <cassert>
 #include <iostream>
-#include <rl/math/Unit.h>
+#include <rl/math/Constants.h>
 #include <rl/util/io/Hex.h>
 
 #include "DeviceException.h"
@@ -537,15 +537,15 @@ namespace rl
 			switch (this->variant)
 			{
 			case VARIANT_100_25:
-				return static_cast<::rl::math::Real>(0.25) * ::rl::math::DEG2RAD;
+				return static_cast<::rl::math::Real>(0.25) * ::rl::math::constants::deg2rad;
 				break;
 			case VARIANT_100_50:
 			case VARIANT_180_50:
-				return static_cast<::rl::math::Real>(0.5) * ::rl::math::DEG2RAD;
+				return static_cast<::rl::math::Real>(0.5) * ::rl::math::constants::deg2rad;
 				break;
 			case VARIANT_100_100:
 			case VARIANT_180_100:
-				return 1 * ::rl::math::DEG2RAD;
+				return 1 * ::rl::math::constants::deg2rad;
 				break;
 			default:
 				break;
@@ -564,7 +564,7 @@ namespace rl
 			case VARIANT_100_25:
 			case VARIANT_100_50:
 			case VARIANT_100_100:
-				return 40 * ::rl::math::DEG2RAD;
+				return 40 * ::rl::math::constants::deg2rad;
 				break;
 			case VARIANT_180_50:
 			case VARIANT_180_100:
@@ -587,11 +587,11 @@ namespace rl
 			case VARIANT_100_25:
 			case VARIANT_100_50:
 			case VARIANT_100_100:
-				return 140 * ::rl::math::DEG2RAD;
+				return 140 * ::rl::math::constants::deg2rad;
 				break;
 			case VARIANT_180_50:
 			case VARIANT_180_100:
-				return 180 * ::rl::math::DEG2RAD;
+				return 180 * ::rl::math::constants::deg2rad;
 				break;
 			default:
 				break;

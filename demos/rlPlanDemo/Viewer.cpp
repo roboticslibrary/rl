@@ -31,7 +31,6 @@
 #include <Inventor/actions/SoWriteAction.h>
 #include <Inventor/VRMLnodes/SoVRMLIndexedFaceSet.h>
 #include <Inventor/VRMLnodes/SoVRMLSphere.h>
-#include <rl/math/Unit.h>
 #include <rl/sg/Body.h>
 #include <rl/sg/so/Body.h>
 #include <rl/sg/so/Model.h>

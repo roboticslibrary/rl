@@ -25,8 +25,8 @@
 //
 
 #include <cassert>
+#include <rl/math/Constants.h>
 #include <rl/math/Rotation.h>
-#include <rl/math/TypeTraits.h>
 
 #include "Frame.h"
 #include "Joint.h"
@@ -83,12 +83,12 @@ namespace rl
 				&& this->joints[4]->a == 0
 				&& this->joints[5]->a == 0
 				&& this->joints[4]->d == 0);
-			assert(::std::abs(this->joints[0]->alpha - (-::rl::math::TypeTraits<::rl::math::Real>::pi * 0.5)) < 1e-3
-				&& ::std::abs(this->joints[1]->alpha                                                        ) < 1e-3
-				&& ::std::abs(this->joints[2]->alpha - (-::rl::math::TypeTraits<::rl::math::Real>::pi * 0.5)) < 1e-3
-				&& ::std::abs(this->joints[3]->alpha - ( ::rl::math::TypeTraits<::rl::math::Real>::pi * 0.5)) < 1e-3
-				&& ::std::abs(this->joints[4]->alpha - ( ::rl::math::TypeTraits<::rl::math::Real>::pi * 0.5)) < 1e-3
-				&& ::std::abs(this->joints[5]->alpha                                                        ) < 1e-3);
+			assert(::std::abs(this->joints[0]->alpha - (-::rl::math::constants::pi * 0.5)) < 1e-3
+				&& ::std::abs(this->joints[1]->alpha                                     ) < 1e-3
+				&& ::std::abs(this->joints[2]->alpha - (-::rl::math::constants::pi * 0.5)) < 1e-3
+				&& ::std::abs(this->joints[3]->alpha - ( ::rl::math::constants::pi * 0.5)) < 1e-3
+				&& ::std::abs(this->joints[4]->alpha - ( ::rl::math::constants::pi * 0.5)) < 1e-3
+				&& ::std::abs(this->joints[5]->alpha                                     ) < 1e-3);
 			
 			::rl::math::Real a1 = this->joints[0]->a;
 			::rl::math::Real a2 = this->joints[1]->a;
@@ -195,10 +195,10 @@ namespace rl
 			::rl::math::Real theta3plusbeta = ::std::acos(costheta3plusbeta);
 			
 			// elbow
-			::rl::math::Real theta3  = K * theta3plusbeta - beta - ::rl::math::TypeTraits<::rl::math::Real>::pi;
+			::rl::math::Real theta3  = K * theta3plusbeta - beta - ::rl::math::constants::pi;
 			
-			::rl::math::Real c23 = this->cos(theta2 + theta3 + ::rl::math::TypeTraits<::rl::math::Real>::pi);
-			::rl::math::Real s23 = this->sin(theta2 + theta3 + ::rl::math::TypeTraits<::rl::math::Real>::pi);
+			::rl::math::Real c23 = this->cos(theta2 + theta3 + ::rl::math::constants::pi);
+			::rl::math::Real s23 = this->sin(theta2 + theta3 + ::rl::math::constants::pi);
 			
 			// forearm
 			
@@ -226,7 +226,7 @@ namespace rl
 				 c1 * s23                 * a(0) +
 				 s1 * s23                 * a(1) +
 					  c23                 * a(2)
-			) + ::rl::math::TypeTraits<::rl::math::Real>::pi;
+			) + ::rl::math::constants::pi;
 			
 			// flange
 			
@@ -275,9 +275,9 @@ namespace rl
 			{
 				myq(i) = q(i) + this->joints[i]->theta + this->joints[i]->offset;
 				myq(i) = ::std::fmod(
-					myq(i) + ::rl::math::TypeTraits<::rl::math::Real>::pi,
-					2 * ::rl::math::TypeTraits<::rl::math::Real>::pi
-				) - ::rl::math::TypeTraits<::rl::math::Real>::pi;
+					myq(i) + ::rl::math::constants::pi,
+					2 * ::rl::math::constants::pi
+				) - ::rl::math::constants::pi;
 			}
 			
 			if (myq(4) < 0)

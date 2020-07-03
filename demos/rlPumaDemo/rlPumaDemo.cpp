@@ -34,8 +34,8 @@
 #include <boost/lexical_cast.hpp>
 #include <rl/kin/Kinematics.h>
 #include <rl/kin/Puma.h>
+#include <rl/math/Constants.h>
 #include <rl/math/Rotation.h>
-#include <rl/math/Unit.h>
 
 int
 main(int argc, char** argv)
@@ -56,7 +56,7 @@ main(int argc, char** argv)
 			
 			for (std::ptrdiff_t i = 0; i < q.size(); ++i)
 			{
-				q(i) = boost::lexical_cast<rl::math::Real>(argv[i + 2]) * rl::math::DEG2RAD;
+				q(i) = boost::lexical_cast<rl::math::Real>(argv[i + 2]) * rl::math::constants::deg2rad;
 			}
 			
 			rl::kin::Puma::Arm arm;
@@ -75,7 +75,7 @@ main(int argc, char** argv)
 				<< ", Wrist: " << (wrist == rl::kin::Puma::WRIST_FLIP ? "FLIP" : "NONFLIP")
 				<< std::endl;
 			
-			std::cout << "q: " << q.transpose() * rl::math::RAD2DEG << std::endl;
+			std::cout << "q: " << q.transpose() * rl::math::constants::rad2deg << std::endl;
 			
 			puma->setPosition(q);
 			puma->updateFrames();
@@ -83,10 +83,10 @@ main(int argc, char** argv)
 			rl::math::Vector3 position = puma->forwardPosition().translation();
 			rl::math::Vector3 orientation = puma->forwardPosition().rotation().eulerAngles(2, 1, 0).reverse();
 			
-			std::cout << "x: " << position.x() << " m, y: " << position.y() << " m, z: " << position.z() << " m, a: " << orientation.x() * rl::math::RAD2DEG << " deg, b: " << orientation.y() * rl::math::RAD2DEG << " deg, c: " << orientation.z() * rl::math::RAD2DEG << " deg" << std::endl;
+			std::cout << "x: " << position.x() << " m, y: " << position.y() << " m, z: " << position.z() << " m, a: " << orientation.x() * rl::math::constants::rad2deg << " deg, b: " << orientation.y() * rl::math::constants::rad2deg << " deg, c: " << orientation.z() * rl::math::constants::rad2deg << " deg" << std::endl;
 			
 			rl::math::Vector q2(puma->getDof());
-			q2.setConstant(1.0 * rl::math::DEG2RAD);
+			q2.setConstant(1.0 * rl::math::constants::deg2rad);
 			
 			rl::math::Transform x = puma->forwardPosition();
 			
@@ -96,7 +96,7 @@ main(int argc, char** argv)
 				return EXIT_FAILURE;
 			}
 			
-			std::cout << "q: " << q2.transpose() * rl::math::RAD2DEG << std::endl;
+			std::cout << "q: " << q2.transpose() * rl::math::constants::rad2deg << std::endl;
 			
 			puma->setPosition(q2);
 			puma->updateFrames();
@@ -104,7 +104,7 @@ main(int argc, char** argv)
 			position = puma->forwardPosition().translation();
 			orientation = puma->forwardPosition().rotation().eulerAngles(2, 1, 0).reverse();
 			
-			std::cout << "x: " << position.x() << " m, y: " << position.y() << " m, z: " << position.z() << " m, a: " << orientation.x() * rl::math::RAD2DEG << " deg, b: " << orientation.y() * rl::math::RAD2DEG << " deg, c: " << orientation.z() * rl::math::RAD2DEG << " deg" << std::endl;
+			std::cout << "x: " << position.x() << " m, y: " << position.y() << " m, z: " << position.z() << " m, a: " << orientation.x() * rl::math::constants::rad2deg << " deg, b: " << orientation.y() * rl::math::constants::rad2deg << " deg, c: " << orientation.z() * rl::math::constants::rad2deg << " deg" << std::endl;
 		}
 		else
 		{

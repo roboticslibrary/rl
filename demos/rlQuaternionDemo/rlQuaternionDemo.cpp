@@ -28,12 +28,12 @@
 #include <functional>
 #include <iostream>
 #include <random>
+#include <rl/math/Constants.h>
 #include <rl/math/Matrix.h>
 #include <rl/math/Quaternion.h>
 #include <rl/math/Rotation.h>
 #include <rl/math/SplineQuaternion.h>
 #include <rl/math/Transform.h>
-#include <rl/math/Unit.h>
 #include <rl/math/Vector.h>
 
 int
@@ -41,9 +41,9 @@ main(int argc, char** argv)
 {
 	{
 		rl::math::Matrix33 r1(
-			rl::math::AngleAxis(90 * rl::math::DEG2RAD, rl::math::Vector3::UnitZ()) *
-			rl::math::AngleAxis(0 * rl::math::DEG2RAD, rl::math::Vector3::UnitY()) *
-			rl::math::AngleAxis(0 * rl::math::DEG2RAD, rl::math::Vector3::UnitX())
+			rl::math::AngleAxis(90 * rl::math::constants::deg2rad, rl::math::Vector3::UnitZ()) *
+			rl::math::AngleAxis(0 * rl::math::constants::deg2rad, rl::math::Vector3::UnitY()) *
+			rl::math::AngleAxis(0 * rl::math::constants::deg2rad, rl::math::Vector3::UnitX())
 		);
 		std::cout << "r1 = " << std::endl << r1 << std::endl;
 		
@@ -54,9 +54,9 @@ main(int argc, char** argv)
 		std::cout << "r1 = " << std::endl << r1 << std::endl;
 		
 		rl::math::Matrix33 r2(
-			rl::math::AngleAxis(-90 * rl::math::DEG2RAD, rl::math::Vector3::UnitZ()) *
-			rl::math::AngleAxis(0 * rl::math::DEG2RAD, rl::math::Vector3::UnitY()) *
-			rl::math::AngleAxis(0 * rl::math::DEG2RAD, rl::math::Vector3::UnitX())
+			rl::math::AngleAxis(-90 * rl::math::constants::deg2rad, rl::math::Vector3::UnitZ()) *
+			rl::math::AngleAxis(0 * rl::math::constants::deg2rad, rl::math::Vector3::UnitY()) *
+			rl::math::AngleAxis(0 * rl::math::constants::deg2rad, rl::math::Vector3::UnitX())
 		);
 		std::cout << "r2 = " << std::endl << r2 << std::endl;
 		
@@ -82,52 +82,52 @@ main(int argc, char** argv)
 		std::cout << "(q1^2)^0.5 = " << q1.pow(2).pow(0.5).coeffs().transpose() << std::endl;
 		
 		rl::math::Vector3 omega(
-			45 * rl::math::DEG2RAD,
-			90 * rl::math::DEG2RAD,
-			135 * rl::math::DEG2RAD
+			45 * rl::math::constants::deg2rad,
+			90 * rl::math::constants::deg2rad,
+			135 * rl::math::constants::deg2rad
 		);
-		std::cout << "omega = " << omega.transpose() * rl::math::RAD2DEG << std::endl;
+		std::cout << "omega = " << omega.transpose() * rl::math::constants::rad2deg << std::endl;
 		
 		rl::math::Quaternion qd = q1.firstDerivative(omega);
 		std::cout << "qd = " << qd.coeffs().transpose() << std::endl;
 		
 		omega = q1.angularVelocity(qd);
-		std::cout << "omega = " << omega.transpose() * rl::math::RAD2DEG << std::endl;
+		std::cout << "omega = " << omega.transpose() * rl::math::constants::rad2deg << std::endl;
 		
 		rl::math::Vector3 omegad(
-			450 * rl::math::DEG2RAD,
-			900 * rl::math::DEG2RAD,
-			1350 * rl::math::DEG2RAD
+			450 * rl::math::constants::deg2rad,
+			900 * rl::math::constants::deg2rad,
+			1350 * rl::math::constants::deg2rad
 		);
-		std::cout << "omegad = " << omegad.transpose() * rl::math::RAD2DEG << std::endl;
+		std::cout << "omegad = " << omegad.transpose() * rl::math::constants::rad2deg << std::endl;
 		
 		rl::math::Quaternion qdd = q1.secondDerivative(qd, omega, omegad);
 		std::cout << "qdd = " << qdd.coeffs().transpose() << std::endl;
 		
 		omegad = q1.angularAcceleration(qd, qdd);
-		std::cout << "omegad = " << omegad.transpose() * rl::math::RAD2DEG << std::endl;
+		std::cout << "omegad = " << omegad.transpose() * rl::math::constants::rad2deg << std::endl;
 	}
 	
 	{
 		rl::math::Quaternion q0(
-			rl::math::AngleAxis(90 * rl::math::DEG2RAD, rl::math::Vector3::UnitZ()) *
-			rl::math::AngleAxis(0 * rl::math::DEG2RAD, rl::math::Vector3::UnitY()) *
-			rl::math::AngleAxis(0 * rl::math::DEG2RAD, rl::math::Vector3::UnitX())
+			rl::math::AngleAxis(90 * rl::math::constants::deg2rad, rl::math::Vector3::UnitZ()) *
+			rl::math::AngleAxis(0 * rl::math::constants::deg2rad, rl::math::Vector3::UnitY()) *
+			rl::math::AngleAxis(0 * rl::math::constants::deg2rad, rl::math::Vector3::UnitX())
 		);
 		rl::math::Quaternion q1(
-			rl::math::AngleAxis(45 * rl::math::DEG2RAD, rl::math::Vector3::UnitZ()) *
-			rl::math::AngleAxis(60 * rl::math::DEG2RAD, rl::math::Vector3::UnitY()) *
-			rl::math::AngleAxis(45 * rl::math::DEG2RAD, rl::math::Vector3::UnitX())
+			rl::math::AngleAxis(45 * rl::math::constants::deg2rad, rl::math::Vector3::UnitZ()) *
+			rl::math::AngleAxis(60 * rl::math::constants::deg2rad, rl::math::Vector3::UnitY()) *
+			rl::math::AngleAxis(45 * rl::math::constants::deg2rad, rl::math::Vector3::UnitX())
 		);
 		rl::math::Quaternion q2(
-			rl::math::AngleAxis(45 * rl::math::DEG2RAD, rl::math::Vector3::UnitZ()) *
-			rl::math::AngleAxis(10 * rl::math::DEG2RAD, rl::math::Vector3::UnitY()) *
-			rl::math::AngleAxis(30 * rl::math::DEG2RAD, rl::math::Vector3::UnitX())
+			rl::math::AngleAxis(45 * rl::math::constants::deg2rad, rl::math::Vector3::UnitZ()) *
+			rl::math::AngleAxis(10 * rl::math::constants::deg2rad, rl::math::Vector3::UnitY()) *
+			rl::math::AngleAxis(30 * rl::math::constants::deg2rad, rl::math::Vector3::UnitX())
 		);
 		rl::math::Quaternion q3(
-			rl::math::AngleAxis(90 * rl::math::DEG2RAD, rl::math::Vector3::UnitZ()) *
-			rl::math::AngleAxis(10 * rl::math::DEG2RAD, rl::math::Vector3::UnitY()) *
-			rl::math::AngleAxis(0 * rl::math::DEG2RAD, rl::math::Vector3::UnitX())
+			rl::math::AngleAxis(90 * rl::math::constants::deg2rad, rl::math::Vector3::UnitZ()) *
+			rl::math::AngleAxis(10 * rl::math::constants::deg2rad, rl::math::Vector3::UnitY()) *
+			rl::math::AngleAxis(0 * rl::math::constants::deg2rad, rl::math::Vector3::UnitX())
 		);
 		
 		rl::math::Vector3 p(1, 0, 0);
@@ -151,7 +151,7 @@ main(int argc, char** argv)
 			
 			rl::math::Quaternion qd = q0.slerpFirstDerivative(t, q1);
 			rl::math::Vector3 omega = q.angularVelocity(qd);
-			slerpFirstDerivative << i << "\t" << omega.transpose() * rl::math::RAD2DEG << std::endl;
+			slerpFirstDerivative << i << "\t" << omega.transpose() * rl::math::constants::rad2deg << std::endl;
 		}
 		
 		for (std::size_t i = 0; i < steps; ++i)
@@ -163,7 +163,7 @@ main(int argc, char** argv)
 			
 			rl::math::Quaternion qd = q1.slerpFirstDerivative(t, q2);
 			rl::math::Vector3 omega = q.angularVelocity(qd);
-			slerpFirstDerivative << steps + i << "\t" << omega.transpose() * rl::math::RAD2DEG << std::endl;
+			slerpFirstDerivative << steps + i << "\t" << omega.transpose() * rl::math::constants::rad2deg << std::endl;
 		}
 		
 		for (std::size_t i = 0; i < steps; ++i)
@@ -175,7 +175,7 @@ main(int argc, char** argv)
 			
 			rl::math::Quaternion qd = q2.slerpFirstDerivative(t, q3);
 			rl::math::Vector3 omega = q.angularVelocity(qd);
-			slerpFirstDerivative << 2 * steps + i << "\t" << omega.transpose() * rl::math::RAD2DEG << std::endl;
+			slerpFirstDerivative << 2 * steps + i << "\t" << omega.transpose() * rl::math::constants::rad2deg << std::endl;
 		}
 		
 		slerp.close();
@@ -200,7 +200,7 @@ main(int argc, char** argv)
 			
 			rl::math::Quaternion qd = q0.squadFirstDerivative(t, a, b, q1);
 			rl::math::Vector3 omega = q.angularVelocity(qd);
-			squadFirstDerivative << i << "\t" << omega.transpose() * rl::math::RAD2DEG << std::endl;
+			squadFirstDerivative << i << "\t" << omega.transpose() * rl::math::constants::rad2deg << std::endl;
 		}
 		
 		for (std::size_t i = 0; i < steps; ++i)
@@ -214,7 +214,7 @@ main(int argc, char** argv)
 			
 			rl::math::Quaternion qd = q1.squadFirstDerivative(t, a, b, q2);
 			rl::math::Vector3 omega = q.angularVelocity(qd);
-			squadFirstDerivative << steps + i << "\t" << omega.transpose() * rl::math::RAD2DEG << std::endl;
+			squadFirstDerivative << steps + i << "\t" << omega.transpose() * rl::math::constants::rad2deg << std::endl;
 		}
 		
 		for (std::size_t i = 0; i < steps; ++i)
@@ -228,7 +228,7 @@ main(int argc, char** argv)
 			
 			rl::math::Quaternion qd = q2.squadFirstDerivative(t, a, b, q3);
 			rl::math::Vector3 omega = q.angularVelocity(qd);
-			squadFirstDerivative << 2 * steps + i << "\t" << omega.transpose() * rl::math::RAD2DEG << std::endl;
+			squadFirstDerivative << 2 * steps + i << "\t" << omega.transpose() * rl::math::constants::rad2deg << std::endl;
 		}
 		
 		squad.close();
@@ -251,9 +251,9 @@ main(int argc, char** argv)
 		x.push_back(360);
 		
 		rl::math::Vector3 yd0;
-		yd0 << 0, 1 * rl::math::DEG2RAD, 0;
+		yd0 << 0, 1 * rl::math::constants::deg2rad, 0;
 		rl::math::Vector3 yd1;
-		yd1 << 0, 1 * rl::math::DEG2RAD, 0;
+		yd1 << 0, 1 * rl::math::constants::deg2rad, 0;
 		
 		rl::math::Spline<rl::math::Quaternion> f = rl::math::Spline<rl::math::Quaternion>::CubicFirst(x, y, yd0, yd1);
 		
@@ -280,11 +280,11 @@ main(int argc, char** argv)
 			
 			rl::math::Quaternion qd = f(t, 1);
 			rl::math::Vector3 omega = q.angularVelocity(qd);
-			cubicFirstDerivative << t << "\t" << omega.transpose() * rl::math::RAD2DEG << std::endl;
+			cubicFirstDerivative << t << "\t" << omega.transpose() * rl::math::constants::rad2deg << std::endl;
 			
 			rl::math::Quaternion qdd = f(t, 2);
 			rl::math::Vector3 omegad = q.angularAcceleration(qd, qdd);
-			cubicSecondDerivative << t << "\t" << omegad.transpose() * rl::math::RAD2DEG << std::endl;
+			cubicSecondDerivative << t << "\t" << omegad.transpose() * rl::math::constants::rad2deg << std::endl;
 		}
 		
 		cubic.close();

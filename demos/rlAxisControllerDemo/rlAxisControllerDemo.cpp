@@ -30,8 +30,8 @@
 #include <rl/hal/Gnuplot.h>
 #include <rl/hal/MitsubishiH7.h>
 #include <rl/hal/UniversalRobotsRtde.h>
+#include <rl/math/Constants.h>
 #include <rl/math/Polynomial.h>
-#include <rl/math/Unit.h>
 
 #define COACH
 //#define GNUPLOT
@@ -50,7 +50,7 @@ main(int argc, char** argv)
 		rl::hal::Coach controller(6, std::chrono::microseconds(7110), 0, "localhost");
 #endif // COACH
 #ifdef GNUPLOT
-		rl::hal::Gnuplot controller(6, std::chrono::microseconds(7110), -10 * rl::math::DEG2RAD, 10 * rl::math::DEG2RAD);
+		rl::hal::Gnuplot controller(6, std::chrono::microseconds(7110), -10 * rl::math::constants::deg2rad, 10 * rl::math::constants::deg2rad);
 #endif // GNUPLOT
 #ifdef MITSUBISHI
 		rl::hal::MitsubishiH7 controller(6, "left", "lefthost");
@@ -67,7 +67,7 @@ main(int argc, char** argv)
 		controller.step();
 		
 		rl::math::Vector q0 = controller.getJointPosition();
-		rl::math::Vector q1 = q0 + rl::math::Vector::Constant(controller.getDof(), 5 * rl::math::DEG2RAD);
+		rl::math::Vector q1 = q0 + rl::math::Vector::Constant(controller.getDof(), 5 * rl::math::constants::deg2rad);
 		
 		rl::math::Real te = updateRate * 300.0f;
 		

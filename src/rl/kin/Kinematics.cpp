@@ -25,8 +25,8 @@
 //
 
 #include <algorithm>
+#include <rl/math/Constants.h>
 #include <rl/math/Rotation.h>
-#include <rl/math/Unit.h>
 #include <rl/std/algorithm.h>
 #include <rl/xml/Attribute.h>
 #include <rl/xml/Document.h>
@@ -198,13 +198,13 @@ namespace rl
 						f->frame.setIdentity();
 						
 						f->frame = ::rl::math::AngleAxis(
-							path.eval("number(rotation/z)").getValue<::rl::math::Real>(0) * ::rl::math::DEG2RAD,
+							path.eval("number(rotation/z)").getValue<::rl::math::Real>(0) * ::rl::math::constants::deg2rad,
 							::rl::math::Vector3::UnitZ()
 						) * ::rl::math::AngleAxis(
-							path.eval("number(rotation/y)").getValue<::rl::math::Real>(0) * ::rl::math::DEG2RAD,
+							path.eval("number(rotation/y)").getValue<::rl::math::Real>(0) * ::rl::math::constants::deg2rad,
 							::rl::math::Vector3::UnitY()
 						) * ::rl::math::AngleAxis(
-							path.eval("number(rotation/x)").getValue<::rl::math::Real>(0) * ::rl::math::DEG2RAD,
+							path.eval("number(rotation/x)").getValue<::rl::math::Real>(0) * ::rl::math::constants::deg2rad,
 							::rl::math::Vector3::UnitX()
 						);
 						
@@ -231,13 +231,13 @@ namespace rl
 						f->frame.setIdentity();
 						
 						f->frame = ::rl::math::AngleAxis(
-							path.eval("number(rotation/z)").getValue<::rl::math::Real>(0) * ::rl::math::DEG2RAD,
+							path.eval("number(rotation/z)").getValue<::rl::math::Real>(0) * ::rl::math::constants::deg2rad,
 							::rl::math::Vector3::UnitZ()
 						) * ::rl::math::AngleAxis(
-							path.eval("number(rotation/y)").getValue<::rl::math::Real>(0) * ::rl::math::DEG2RAD,
+							path.eval("number(rotation/y)").getValue<::rl::math::Real>(0) * ::rl::math::constants::deg2rad,
 							::rl::math::Vector3::UnitY()
 						) * ::rl::math::AngleAxis(
-							path.eval("number(rotation/x)").getValue<::rl::math::Real>(0) * ::rl::math::DEG2RAD,
+							path.eval("number(rotation/x)").getValue<::rl::math::Real>(0) * ::rl::math::constants::deg2rad,
 							::rl::math::Vector3::UnitX()
 						);
 						
@@ -349,8 +349,8 @@ namespace rl
 						p->theta = path.eval("number(dh/theta)").getValue<::rl::math::Real>(0);
 						p->wraparound = path.eval("count(wraparound) > 0").getValue<bool>();
 						
-						p->alpha *= ::rl::math::DEG2RAD;
-						p->theta *= ::rl::math::DEG2RAD;
+						p->alpha *= ::rl::math::constants::deg2rad;
+						p->theta *= ::rl::math::constants::deg2rad;
 						
 						kinematics->tree[e].reset(p);
 					}
@@ -370,12 +370,12 @@ namespace rl
 						r->theta = path.eval("number(dh/theta)").getValue<::rl::math::Real>(0);
 						r->wraparound = path.eval("count(wraparound) > 0").getValue<bool>();
 						
-						r->alpha *= ::rl::math::DEG2RAD;
-						r->max *= ::rl::math::DEG2RAD;
-						r->min *= ::rl::math::DEG2RAD;
-						r->offset *= ::rl::math::DEG2RAD;
-						r->speed *= ::rl::math::DEG2RAD;
-						r->theta *= ::rl::math::DEG2RAD;
+						r->alpha *= ::rl::math::constants::deg2rad;
+						r->max *= ::rl::math::constants::deg2rad;
+						r->min *= ::rl::math::constants::deg2rad;
+						r->offset *= ::rl::math::constants::deg2rad;
+						r->speed *= ::rl::math::constants::deg2rad;
+						r->theta *= ::rl::math::constants::deg2rad;
 						
 						kinematics->tree[e].reset(r);
 					}
@@ -388,13 +388,13 @@ namespace rl
 						t->transform.setIdentity();
 						
 						t->transform = ::rl::math::AngleAxis(
-							path.eval("number(rotation/z)").getValue<::rl::math::Real>(0) * ::rl::math::DEG2RAD,
+							path.eval("number(rotation/z)").getValue<::rl::math::Real>(0) * ::rl::math::constants::deg2rad,
 							::rl::math::Vector3::UnitZ()
 						) * ::rl::math::AngleAxis(
-							path.eval("number(rotation/y)").getValue<::rl::math::Real>(0) * ::rl::math::DEG2RAD,
+							path.eval("number(rotation/y)").getValue<::rl::math::Real>(0) * ::rl::math::constants::deg2rad,
 							::rl::math::Vector3::UnitY()
 						) * ::rl::math::AngleAxis(
-							path.eval("number(rotation/x)").getValue<::rl::math::Real>(0) * ::rl::math::DEG2RAD,
+							path.eval("number(rotation/x)").getValue<::rl::math::Real>(0) * ::rl::math::constants::deg2rad,
 							::rl::math::Vector3::UnitX()
 						);
 						

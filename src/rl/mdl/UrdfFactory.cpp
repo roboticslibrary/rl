@@ -28,9 +28,9 @@
 #include <unordered_map>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
+#include <rl/math/Constants.h>
 #include <rl/math/Quaternion.h>
 #include <rl/math/Rotation.h>
-#include <rl/math/Unit.h>
 #include <rl/xml/Attribute.h>
 #include <rl/xml/Document.h>
 #include <rl/xml/DomParser.h>
@@ -211,7 +211,7 @@ namespace rl
 					fixed->x.translation().z() = ::boost::lexical_cast<::rl::math::Real>(xyz[2]);
 				}
 ::std::cout << "\torigin.translation: " << fixed->x.translation().transpose() << ::std::endl;
-::std::cout << "\torigin.rotation: " << fixed->x.linear().eulerAngles(2, 1, 0).reverse().transpose() * ::rl::math::RAD2DEG << ::std::endl;
+::std::cout << "\torigin.rotation: " << fixed->x.linear().eulerAngles(2, 1, 0).reverse().transpose() * ::rl::math::constants::rad2deg << ::std::endl;
 				
 				// joint
 				
@@ -284,8 +284,8 @@ namespace rl
 					
 					if ("continuous" == path.eval("string(@type)").getValue<::std::string>())
 					{
-						r->max(0) = 180 * ::rl::math::DEG2RAD;
-						r->min(0) = -180 * ::rl::math::DEG2RAD;
+						r->max(0) = 180 * ::rl::math::constants::deg2rad;
+						r->min(0) = -180 * ::rl::math::constants::deg2rad;
 						r->wraparound(0) = true;
 					}
 					else
@@ -294,12 +294,12 @@ namespace rl
 						r->min(0) = path.eval("number(limit/@lower)").getValue<::rl::math::Real>(-::std::numeric_limits<::rl::math::Real>::max());
 						r->wraparound(0) = false;
 					}
-::std::cout << "\tmax: " << r->max(0) * ::rl::math::RAD2DEG << ::std::endl;
-::std::cout << "\tmin: " << r->min(0) * ::rl::math::RAD2DEG << ::std::endl;
+::std::cout << "\tmax: " << r->max(0) * ::rl::math::constants::rad2deg << ::std::endl;
+::std::cout << "\tmin: " << r->min(0) * ::rl::math::constants::rad2deg << ::std::endl;
 					
 					r->offset(0) = 0;
 					r->speed(0) = path.eval("number(limit/@velocity)").getValue<::rl::math::Real>(0);
-::std::cout << "\tspeed: " << r->speed(0) * ::rl::math::RAD2DEG << ::std::endl;
+::std::cout << "\tspeed: " << r->speed(0) * ::rl::math::constants::rad2deg << ::std::endl;
 					
 					if (path.eval("count(axis/@xyz) > 0").getValue<bool>())
 					{

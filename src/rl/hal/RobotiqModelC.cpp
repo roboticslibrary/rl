@@ -25,7 +25,7 @@
 //
 
 #include <cassert>
-#include <rl/math/Unit.h>
+#include <rl/math/Constants.h>
 
 #include "Endian.h"
 #include "RobotiqModelC.h"
@@ -106,7 +106,7 @@ namespace rl
 		::rl::math::Real
 		RobotiqModelC::getCurrent() const
 		{
-			return this->in[8] * ::rl::math::MILLI2UNIT;
+			return this->in[8] * ::rl::math::constants::milli2unit;
 		}
 		
 		RobotiqModelC::FaultStatus

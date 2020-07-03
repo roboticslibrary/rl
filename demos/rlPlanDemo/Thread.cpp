@@ -29,7 +29,6 @@
 #include <QDateTime>
 #include <QMutexLocker>
 #include <rl/math/Quaternion.h>
-#include <rl/math/Unit.h>
 #include <rl/plan/Eet.h>
 #include <rl/plan/GnatNearestNeighbors.h>
 #include <rl/plan/KdtreeBoundingBoxNearestNeighbors.h>

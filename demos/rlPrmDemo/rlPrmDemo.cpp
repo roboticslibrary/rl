@@ -28,7 +28,7 @@
 #include <memory>
 #include <stdexcept>
 #include <boost/lexical_cast.hpp>
-#include <rl/math/Unit.h>
+#include <rl/math/Constants.h>
 #include <rl/mdl/Kinematic.h>
 #include <rl/mdl/UrdfFactory.h>
 #include <rl/mdl/XmlFactory.h>
@@ -113,14 +113,14 @@ main(int argc, char** argv)
 		
 		sampler.model = &model;
 		
-		verifier.delta = 1 * rl::math::DEG2RAD;
+		verifier.delta = 1 * rl::math::constants::deg2rad;
 		verifier.model = &model;
 		
 		rl::math::Vector start(kinematic->getDofPosition());
 		
 		for (std::ptrdiff_t i = 0; i < start.size(); ++i)
 		{
-			start(i) = boost::lexical_cast<rl::math::Real>(argv[i + 3]) * rl::math::DEG2RAD;
+			start(i) = boost::lexical_cast<rl::math::Real>(argv[i + 3]) * rl::math::constants::deg2rad;
 		}
 		
 		planner.start = &start;
@@ -129,13 +129,13 @@ main(int argc, char** argv)
 		
 		for (std::ptrdiff_t i = 0; i < goal.size(); ++i)
 		{
-			goal(i) = boost::lexical_cast<rl::math::Real>(argv[start.size() + i + 3]) * rl::math::DEG2RAD;
+			goal(i) = boost::lexical_cast<rl::math::Real>(argv[start.size() + i + 3]) * rl::math::constants::deg2rad;
 		}
 		
 		planner.goal = &goal;
 		
-		std::cout << "start: " << start.transpose() * rl::math::RAD2DEG << std::endl;;
-		std::cout << "goal: " << goal.transpose() * rl::math::RAD2DEG << std::endl;;
+		std::cout << "start: " << start.transpose() * rl::math::constants::rad2deg << std::endl;;
+		std::cout << "goal: " << goal.transpose() * rl::math::constants::rad2deg << std::endl;;
 		
 		std::cout << "construct() ... " << std::endl;;
 		std::chrono::steady_clock::time_point startTime = std::chrono::steady_clock::now();

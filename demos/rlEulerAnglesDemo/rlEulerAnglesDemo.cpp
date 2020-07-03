@@ -26,9 +26,9 @@
 
 #include <iostream>
 #include <boost/lexical_cast.hpp>
+#include <rl/math/Constants.h>
 #include <rl/math/Quaternion.h>
 #include <rl/math/Rotation.h>
-#include <rl/math/Unit.h>
 #include <rl/math/Vector.h>
 
 int
@@ -44,7 +44,7 @@ main(int argc, char** argv)
 	
 	for (std::size_t i = 0; i < 3; ++i)
 	{
-		rl::math::Real angle = boost::lexical_cast<rl::math::Real>(argv[i + 4]) * rl::math::DEG2RAD;
+		rl::math::Real angle = boost::lexical_cast<rl::math::Real>(argv[i + 4]) * rl::math::constants::deg2rad;
 		
 		rl::math::Vector3 axis(
 			0 == boost::lexical_cast<int>(argv[i + 1]) ? 1 : 0,
@@ -65,7 +65,7 @@ main(int argc, char** argv)
 	std::cout << "angle: " << angleAxis.angle() << " rad - axis: " << angleAxis.axis().transpose() << std::endl;
 	
 	rl::math::Vector3 orientation = rotation.eulerAngles(2, 1, 0).reverse();
-	std::cout << "x: " << orientation.x() * rl::math::RAD2DEG << " deg - y: " << orientation.y() * rl::math::RAD2DEG << " deg - z: " << orientation.z() * rl::math::RAD2DEG << " deg" << std::endl;
+	std::cout << "x: " << orientation.x() * rl::math::constants::rad2deg << " deg - y: " << orientation.y() * rl::math::constants::rad2deg << " deg - z: " << orientation.z() * rl::math::constants::rad2deg << " deg" << std::endl;
 	
 	return EXIT_SUCCESS;
 }

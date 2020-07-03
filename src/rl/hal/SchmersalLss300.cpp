@@ -26,7 +26,7 @@
 
 #include <cassert>
 #include <iostream>
-#include <rl/math/Unit.h>
+#include <rl/math/Constants.h>
 
 #include "DeviceException.h"
 #include "Endian.h"
@@ -177,7 +177,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			return static_cast<::rl::math::Real>(0.36) * ::rl::math::DEG2RAD;
+			return static_cast<::rl::math::Real>(0.36) * ::rl::math::constants::deg2rad;
 		}
 		
 		::rl::math::Real
@@ -193,7 +193,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			return 180 * ::rl::math::DEG2RAD;
+			return 180 * ::rl::math::constants::deg2rad;
 		}
 		
 		::std::string

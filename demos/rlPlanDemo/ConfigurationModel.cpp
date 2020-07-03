@@ -24,6 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include <rl/math/Constants.h>
+
 #include "ConfigurationModel.h"
 #include "MainWindow.h"
 #include "Thread.h"
@@ -66,7 +68,7 @@ ConfigurationModel::data(const QModelIndex& index, int role) const
 			
 			if (rl::math::UNIT_RADIAN == qUnits(index.row()))
 			{
-				return (*MainWindow::instance()->q)(index.row()) * rl::math::RAD2DEG;
+				return (*MainWindow::instance()->q)(index.row()) * rl::math::constants::rad2deg;
 			}
 			else
 			{
@@ -142,7 +144,7 @@ ConfigurationModel::setData(const QModelIndex& index, const QVariant& value, int
 		
 		if (rl::math::UNIT_RADIAN == qUnits(index.row()))
 		{
-			(*MainWindow::instance()->q)(index.row()) = value.value<rl::math::Real>() * rl::math::DEG2RAD;
+			(*MainWindow::instance()->q)(index.row()) = value.value<rl::math::Real>() * rl::math::constants::deg2rad;
 		}
 		else
 		{

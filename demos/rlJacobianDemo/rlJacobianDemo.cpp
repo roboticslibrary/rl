@@ -28,7 +28,6 @@
 #include <memory>
 #include <stdexcept>
 #include <boost/lexical_cast.hpp>
-#include <rl/math/Unit.h>
 #include <rl/mdl/Kinematic.h>
 #include <rl/mdl/UrdfFactory.h>
 #include <rl/mdl/XmlFactory.h>

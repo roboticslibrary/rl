@@ -27,8 +27,14 @@
 #ifndef RL_MATH_UNIT_H
 #define RL_MATH_UNIT_H
 
+#include "Constants.h"
 #include "Real.h"
-#include "TypeTraits.h"
+
+#if defined(__GNUC__) || defined(__clang__)
+#define RL_MATH_DEPRECATED __attribute__ ((__deprecated__))
+#elif defined(_MSC_VER)
+#define RL_MATH_DEPRECATED __declspec(deprecated)
+#endif
 
 namespace rl
 {
@@ -330,57 +336,35 @@ namespace rl
 			UNIT_NEWTON_METER_SECOND
 		};
 		
-		/**
-		 * Constant for converting an angular value in
-		 * [degree](https://en.wikipedia.org/wiki/Degree_(angle)) to
-		 * [radian](https://en.wikipedia.org/wiki/Radian).
-		 *
-		 * This is equal to a multiplication by &pi; and a division by 180.
-		 */
-		static const Real DEG2RAD = TypeTraits<Real>::pi / static_cast<Real>(180);
+		RL_MATH_DEPRECATED constexpr Real DEG2RAD = constants::deg2rad;
 		
-		static const Real GIGA2UNIT = static_cast<Real>(1.0e+9);
+		RL_MATH_DEPRECATED constexpr Real GIGA2UNIT = constants::giga2unit;
 		
-		/**
-		 * Standard acceleration due to gravity.
-		 *
-		 * [Standard gravity](https://en.wikipedia.org/wiki/Standard_gravity) is the nominal
-		 * [gravitational acceleration](https://en.wikipedia.org/wiki/Gravitational_acceleration)
-		 * of an object in a vacuum near the surface of the earth. It is defined as 9.80665 m &middot; s<sup>-2</sup>
-		 * by [ISO 80000-3](https://en.wikipedia.org/wiki/ISO_80000-3).
-		 */
-		static const Real GRAVITY = static_cast<Real>(9.80665);
+		RL_MATH_DEPRECATED constexpr Real GRAVITY = constants::gravity;
 		
-		static const Real KILO2UNIT = static_cast<Real>(1.0e+3);
+		RL_MATH_DEPRECATED constexpr Real KILO2UNIT = constants::kilo2unit;
 		
-		static const Real MEGA2UNIT = static_cast<Real>(1.0e+6);
+		RL_MATH_DEPRECATED constexpr Real MEGA2UNIT = constants::mega2unit;
 		
-		static const Real MICRO2UNIT = static_cast<Real>(1.0e-6);
+		RL_MATH_DEPRECATED constexpr Real MICRO2UNIT = constants::micro2unit;
 		
-		static const Real MILLI2UNIT = static_cast<Real>(1.0e-3);
+		RL_MATH_DEPRECATED constexpr Real MILLI2UNIT = constants::milli2unit;
 		
-		static const Real NANO2UNIT = static_cast<Real>(1.0e-9);
+		RL_MATH_DEPRECATED constexpr Real NANO2UNIT = constants::nano2unit;
 		
-		/**
-		 * Constant for converting an angular value in
-		 * [radian](https://en.wikipedia.org/wiki/Radian) to
-		 * [degree](https://en.wikipedia.org/wiki/Degree_(angle)).
-		 *
-		 * This is equal to a multiplication by 180 and a division by &pi;.
-		 */
-		static const Real RAD2DEG = static_cast<Real>(180) / TypeTraits<Real>::pi;
+		RL_MATH_DEPRECATED constexpr Real RAD2DEG = constants::rad2deg;
 		
-		static const Real UNIT2GIGA = static_cast<Real>(1.0e-9);
+		RL_MATH_DEPRECATED constexpr Real UNIT2GIGA = constants::unit2giga;
 		
-		static const Real UNIT2KILO = static_cast<Real>(1.0e-3);
+		RL_MATH_DEPRECATED constexpr Real UNIT2KILO = constants::unit2kilo;
 		
-		static const Real UNIT2MEGA = static_cast<Real>(1.0e-6);
+		RL_MATH_DEPRECATED constexpr Real UNIT2MEGA = constants::unit2mega;
 		
-		static const Real UNIT2MICRO = static_cast<Real>(1.0e+6);
+		RL_MATH_DEPRECATED constexpr Real UNIT2MICRO = constants::unit2micro;
 		
-		static const Real UNIT2MILLI = static_cast<Real>(1.0e+3);
+		RL_MATH_DEPRECATED constexpr Real UNIT2MILLI = constants::unit2milli;
 		
-		static const Real UNIT2NANO = static_cast<Real>(1.0e+9);
+		RL_MATH_DEPRECATED constexpr Real UNIT2NANO = constants::unit2nano;
 	}
 }
 

@@ -26,7 +26,7 @@
 
 #include <cassert>
 #include <iostream>
-#include <rl/math/Unit.h>
+#include <rl/math/Constants.h>
 #include <rl/util/io/Hex.h>
 
 #include "DeviceException.h"
@@ -197,7 +197,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			return -45 * ::rl::math::DEG2RAD;
+			return -45 * ::rl::math::constants::deg2rad;
 		}
 		
 		::rl::math::Real
@@ -205,7 +205,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			return 225 * ::rl::math::DEG2RAD;
+			return 225 * ::rl::math::constants::deg2rad;
 		}
 		
 		::std::size_t

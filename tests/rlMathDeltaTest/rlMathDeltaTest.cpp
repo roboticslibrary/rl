@@ -27,10 +27,9 @@
 #include <cstdlib>
 #include <iostream>
 #include <stdexcept>
+#include <rl/math/Constants.h>
 #include <rl/math/Rotation.h>
 #include <rl/math/Transform.h>
-#include <rl/math/Unit.h>
-#include <rl/math/TypeTraits.h>
 #include <rl/math/Vector.h>
 
 int
@@ -50,16 +49,16 @@ main(int argc, char** argv)
 			rotation = 0.1;
 			break;
 		case 2:
-			rotation = rl::math::TypeTraits<rl::math::Real>::pi * 0.5;
+			rotation = rl::math::constants::pi * 0.5;
 			break;
 		case 3:
-			rotation = rl::math::TypeTraits<rl::math::Real>::pi;
+			rotation = rl::math::constants::pi;
 			break;
 		case 4:
-			rotation = 2 * rl::math::TypeTraits<rl::math::Real>::pi;
+			rotation = 2 * rl::math::constants::pi;
 			break;
 		default:
-			rotation = -rl::math::TypeTraits<rl::math::Real>::pi * 0.5;
+			rotation = -rl::math::constants::pi * 0.5;
 			break;
 		}
 		

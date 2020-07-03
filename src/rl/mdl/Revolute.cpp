@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include <rl/math/Constants.h>
 #include <rl/math/Rotation.h>
-#include <rl/math/TypeTraits.h>
 
 #include "Revolute.h"
 
@@ -107,15 +107,15 @@ namespace rl
 		void
 		Revolute::normalize(::rl::math::VectorRef q) const
 		{
-			q(0) = ::std::remainder(q(0), 2 * ::rl::math::TypeTraits<::rl::math::Real>::pi);
+			q(0) = ::std::remainder(q(0), 2 * ::rl::math::constants::pi);
 			
 			if (q(0) < this->min(0))
 			{
-				q(0) += 2 * ::rl::math::TypeTraits<::rl::math::Real>::pi;
+				q(0) += 2 * ::rl::math::constants::pi;
 			}
 			else if (q(0) > this->max(0))
 			{
-				q(0) -= 2 * ::rl::math::TypeTraits<::rl::math::Real>::pi;
+				q(0) -= 2 * ::rl::math::constants::pi;
 			}
 		}
 		

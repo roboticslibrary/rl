@@ -30,6 +30,7 @@
 #include <stdexcept>
 #include <boost/lexical_cast.hpp>
 
+#include <rl/math/Constants.h>
 #include <rl/mdl/Kinematic.h>
 #include <rl/mdl/XmlFactory.h>
 #include <rl/sg/Body.h>
@@ -113,7 +114,7 @@ main(int argc, char** argv)
 
 	for (std::size_t i = 0; i < kinematics->getDof(); ++i)
 	{
-		q(i) = boost::lexical_cast<rl::math::Real>(argv[i + 3]) * rl::math::DEG2RAD;
+		q(i) = boost::lexical_cast<rl::math::Real>(argv[i + 3]) * rl::math::constants::deg2rad;
 	}
 	
 	std::cout << "Set joint angle [rad] " << q.transpose() << std::endl;
@@ -167,7 +168,7 @@ main(int argc, char** argv)
 	}
 	
 	std::mt19937 randomGenerator(0);
-	std::uniform_real_distribution<rl::math::Real> randomDistribution(-180 * rl::math::DEG2RAD, 180 * rl::math::DEG2RAD);
+	std::uniform_real_distribution<rl::math::Real> randomDistribution(-180 * rl::math::constants::deg2rad, 180 * rl::math::constants::deg2rad);
 		
 	std::size_t j;
 	for (j = 0; j < 10; ++j)
@@ -196,7 +197,7 @@ main(int argc, char** argv)
 		if ((results.array() == false).any() && (results.array() == true).any())
 		{
 			std::cerr << "Error: Counterexample " << j << ": SimpleScene::isColliding() Joint angle [rad] " << q.transpose();
-			std::cerr << " [deg] " << q.transpose() * rl::math::RAD2DEG << " ";
+			std::cerr << " [deg] " << q.transpose() * rl::math::constants::rad2deg << " ";
 			for (std::size_t i = 0; i < scenes.size(); ++i)
 			{
 				std::cerr << "  " << sceneNames[i] << "=" << results[i];

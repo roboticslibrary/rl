@@ -26,6 +26,7 @@
 
 #include <array>
 #include <iostream>
+#include <rl/math/Constants.h>
 #include <rl/math/Unit.h>
 
 #include "DeviceException.h"
@@ -116,10 +117,10 @@ namespace rl
 			switch (i)
 			{
 			case 0:
-				return 0 == (this->output.analogIoTypes & 1) ? 20 * ::rl::math::MILLI2UNIT : 10;
+				return 0 == (this->output.analogIoTypes & 1) ? 20 * ::rl::math::constants::milli2unit : 10;
 				break;
 			case 1:
-				return 0 == (this->output.analogIoTypes & 2) ? 20 * ::rl::math::MILLI2UNIT : 10;
+				return 0 == (this->output.analogIoTypes & 2) ? 20 * ::rl::math::constants::milli2unit : 10;
 				break;
 			case 2:
 				return 0 == (this->output.toolAnalogInputTypes & 1) ? 1 : 24;
@@ -209,10 +210,10 @@ namespace rl
 			switch (i)
 			{
 			case 0:
-				return 0 == (this->output.analogIoTypes & 4) ? 20 * ::rl::math::MILLI2UNIT : 10;
+				return 0 == (this->output.analogIoTypes & 4) ? 20 * ::rl::math::constants::milli2unit : 10;
 				break;
 			case 1:
-				return 0 == (this->output.analogIoTypes & 8) ? 20 * ::rl::math::MILLI2UNIT : 10;
+				return 0 == (this->output.analogIoTypes & 8) ? 20 * ::rl::math::constants::milli2unit : 10;
 				break;
 			case 2:
 				return 24;
