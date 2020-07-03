@@ -212,10 +212,10 @@ namespace rl
 			return this->invGammaVelocity * qdd;
 		}
 		
-		::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1>
+		::Eigen::Matrix<::rl::math::Units, ::Eigen::Dynamic, 1>
 		Model::getAccelerationUnits() const
 		{
-			::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1> units(this->getDof());
+			::Eigen::Matrix<::rl::math::Units, ::Eigen::Dynamic, 1> units(this->getDof());
 			
 			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDof(), ++i)
 			{
@@ -420,10 +420,10 @@ namespace rl
 			return this->invGammaPosition * q;
 		}
 		
-		::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1>
+		::Eigen::Matrix<::rl::math::Units, ::Eigen::Dynamic, 1>
 		Model::getPositionUnits() const
 		{
-			::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1> units(this->getDofPosition());
+			::Eigen::Matrix<::rl::math::Units, ::Eigen::Dynamic, 1> units(this->getDofPosition());
 			
 			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDofPosition(), ++i)
 			{
@@ -446,10 +446,10 @@ namespace rl
 			return speed;
 		}
 		
-		::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1>
+		::Eigen::Matrix<::rl::math::Units, ::Eigen::Dynamic, 1>
 		Model::getSpeedUnits() const
 		{
-			::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1> units(this->getDof());
+			::Eigen::Matrix<::rl::math::Units, ::Eigen::Dynamic, 1> units(this->getDof());
 			
 			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDof(), ++i)
 			{
@@ -472,10 +472,10 @@ namespace rl
 			return tau;
 		}
 		
-		::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1>
+		::Eigen::Matrix<::rl::math::Units, ::Eigen::Dynamic, 1>
 		Model::getTorqueUnits() const
 		{
-			::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1> units(this->getDof());
+			::Eigen::Matrix<::rl::math::Units, ::Eigen::Dynamic, 1> units(this->getDof());
 			
 			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDof(), ++i)
 			{
@@ -512,10 +512,10 @@ namespace rl
 			return this->invGammaVelocity * qd;
 		}
 		
-		::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1>
+		::Eigen::Matrix<::rl::math::Units, ::Eigen::Dynamic, 1>
 		Model::getVelocityUnits() const
 		{
-			::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1> units(this->getDof());
+			::Eigen::Matrix<::rl::math::Units, ::Eigen::Dynamic, 1> units(this->getDof());
 			
 			for (::std::size_t i = 0, j = 0; i < this->joints.size(); j += this->joints[i]->getDof(), ++i)
 			{

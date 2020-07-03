@@ -40,16 +40,16 @@ namespace rl
 		{
 		}
 		
-		::rl::math::Unit
+		::rl::math::Units
 		Prismatic::getPositionUnit() const
 		{
-			return ::rl::math::UNIT_METER;
+			return ::rl::math::Units::meter;
 		}
 		
-		::rl::math::Unit
+		::rl::math::Units
 		Prismatic::getSpeedUnit() const
 		{
-			return ::rl::math::UNIT_METER_PER_SECOND;
+			return ::rl::math::Units::meterPerSecond;
 		}
 		
 		void

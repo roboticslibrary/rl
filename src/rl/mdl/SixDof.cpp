@@ -38,41 +38,41 @@ namespace rl
 		{
 			this->max.tail<4>().setConstant(1); // TODO
 			this->min.tail<4>().setConstant(-1); // TODO
-			this->qUnits(0) = ::rl::math::UNIT_METER;
-			this->qUnits(1) = ::rl::math::UNIT_METER;
-			this->qUnits(2) = ::rl::math::UNIT_METER;
-			this->qUnits(3) = ::rl::math::UNIT_NONE; // TODO
-			this->qUnits(4) = ::rl::math::UNIT_NONE; // TODO
-			this->qUnits(5) = ::rl::math::UNIT_NONE; // TODO
-			this->qUnits(6) = ::rl::math::UNIT_NONE; // TODO
-			this->qdUnits(0) = ::rl::math::UNIT_METER_PER_SECOND;
-			this->qdUnits(1) = ::rl::math::UNIT_METER_PER_SECOND;
-			this->qdUnits(2) = ::rl::math::UNIT_METER_PER_SECOND;
-			this->qdUnits(3) = ::rl::math::UNIT_RADIAN_PER_SECOND;
-			this->qdUnits(4) = ::rl::math::UNIT_RADIAN_PER_SECOND;
-			this->qdUnits(5) = ::rl::math::UNIT_RADIAN_PER_SECOND;
-			this->qddUnits(0) = ::rl::math::UNIT_METER_PER_SECOND_SQUARED;
-			this->qddUnits(1) = ::rl::math::UNIT_METER_PER_SECOND_SQUARED;
-			this->qddUnits(2) = ::rl::math::UNIT_METER_PER_SECOND_SQUARED;
-			this->qddUnits(3) = ::rl::math::UNIT_RADIAN_PER_SECOND_SQUARED;
-			this->qddUnits(4) = ::rl::math::UNIT_RADIAN_PER_SECOND_SQUARED;
-			this->qddUnits(5) = ::rl::math::UNIT_RADIAN_PER_SECOND_SQUARED;
+			this->qUnits(0) = ::rl::math::Units::meter;
+			this->qUnits(1) = ::rl::math::Units::meter;
+			this->qUnits(2) = ::rl::math::Units::meter;
+			this->qUnits(3) = ::rl::math::Units::none;
+			this->qUnits(4) = ::rl::math::Units::none;
+			this->qUnits(5) = ::rl::math::Units::none;
+			this->qUnits(6) = ::rl::math::Units::none;
+			this->qdUnits(0) = ::rl::math::Units::meterPerSecond;
+			this->qdUnits(1) = ::rl::math::Units::meterPerSecond;
+			this->qdUnits(2) = ::rl::math::Units::meterPerSecond;
+			this->qdUnits(3) = ::rl::math::Units::radianPerSecond;
+			this->qdUnits(4) = ::rl::math::Units::radianPerSecond;
+			this->qdUnits(5) = ::rl::math::Units::radianPerSecond;
+			this->qddUnits(0) = ::rl::math::Units::meterPerSecondSquared;
+			this->qddUnits(1) = ::rl::math::Units::meterPerSecondSquared;
+			this->qddUnits(2) = ::rl::math::Units::meterPerSecondSquared;
+			this->qddUnits(3) = ::rl::math::Units::radianPerSecondSquared;
+			this->qddUnits(4) = ::rl::math::Units::radianPerSecondSquared;
+			this->qddUnits(5) = ::rl::math::Units::radianPerSecondSquared;
 			this->S.topLeftCorner<3, 3>().setZero();
 			this->S.topRightCorner<3, 3>().setIdentity();
 			this->S.bottomLeftCorner<3, 3>().setIdentity();
 			this->S.bottomRightCorner<3, 3>().setZero();
-			this->speedUnits(0) = ::rl::math::UNIT_METER_PER_SECOND;
-			this->speedUnits(1) = ::rl::math::UNIT_METER_PER_SECOND;
-			this->speedUnits(2) = ::rl::math::UNIT_METER_PER_SECOND;
-			this->speedUnits(3) = ::rl::math::UNIT_RADIAN_PER_SECOND;
-			this->speedUnits(4) = ::rl::math::UNIT_RADIAN_PER_SECOND;
-			this->speedUnits(5) = ::rl::math::UNIT_RADIAN_PER_SECOND;
-			this->tauUnits(0) = ::rl::math::UNIT_NEWTON;
-			this->tauUnits(1) = ::rl::math::UNIT_NEWTON;
-			this->tauUnits(2) = ::rl::math::UNIT_NEWTON;
-			this->tauUnits(3) = ::rl::math::UNIT_NEWTON_METER;
-			this->tauUnits(4) = ::rl::math::UNIT_NEWTON_METER;
-			this->tauUnits(5) = ::rl::math::UNIT_NEWTON_METER;
+			this->speedUnits(0) = ::rl::math::Units::meterPerSecond;
+			this->speedUnits(1) = ::rl::math::Units::meterPerSecond;
+			this->speedUnits(2) = ::rl::math::Units::meterPerSecond;
+			this->speedUnits(3) = ::rl::math::Units::radianPerSecond;
+			this->speedUnits(4) = ::rl::math::Units::radianPerSecond;
+			this->speedUnits(5) = ::rl::math::Units::radianPerSecond;
+			this->tauUnits(0) = ::rl::math::Units::newton;
+			this->tauUnits(1) = ::rl::math::Units::newton;
+			this->tauUnits(2) = ::rl::math::Units::newton;
+			this->tauUnits(3) = ::rl::math::Units::newtonMeter;
+			this->tauUnits(4) = ::rl::math::Units::newtonMeter;
+			this->tauUnits(5) = ::rl::math::Units::newtonMeter;
 		}
 		
 		SixDof::~SixDof()

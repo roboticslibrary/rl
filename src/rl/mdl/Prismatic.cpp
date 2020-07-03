@@ -33,12 +33,12 @@ namespace rl
 		Prismatic::Prismatic() :
 			Joint(1, 1)
 		{
-			this->qUnits(0) = ::rl::math::UNIT_METER;
-			this->qdUnits(0) = ::rl::math::UNIT_METER_PER_SECOND;
-			this->qddUnits(0) = ::rl::math::UNIT_METER_PER_SECOND_SQUARED;
+			this->qUnits(0) = ::rl::math::Units::meter;
+			this->qdUnits(0) = ::rl::math::Units::meterPerSecond;
+			this->qddUnits(0) = ::rl::math::Units::meterPerSecondSquared;
 			this->S(5, 0) = 1;
-			this->speedUnits(0) = ::rl::math::UNIT_METER_PER_SECOND;
-			this->tauUnits(0) = ::rl::math::UNIT_NEWTON;
+			this->speedUnits(0) = ::rl::math::Units::meterPerSecond;
+			this->tauUnits(0) = ::rl::math::Units::newton;
 		}
 		
 		Prismatic::~Prismatic()

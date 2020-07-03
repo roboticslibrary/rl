@@ -35,6 +35,7 @@ set(
 	TrapezoidalVelocity.h
 	TypeTraits.h
 	Unit.h
+	Units.h
 	Vector.h
 )
 list(APPEND HDRS ${BASE_HDRS})

@@ -35,18 +35,18 @@ namespace rl
 		Cylindrical::Cylindrical() :
 			Joint(2, 2)
 		{
-			this->qUnits(0) = ::rl::math::UNIT_RADIAN;
-			this->qUnits(1) = ::rl::math::UNIT_METER;
-			this->qdUnits(0) = ::rl::math::UNIT_RADIAN_PER_SECOND;
-			this->qdUnits(1) = ::rl::math::UNIT_METER_PER_SECOND;
-			this->qddUnits(0) = ::rl::math::UNIT_RADIAN_PER_SECOND_SQUARED;
-			this->qddUnits(1) = ::rl::math::UNIT_METER_PER_SECOND_SQUARED;
+			this->qUnits(0) = ::rl::math::Units::radian;
+			this->qUnits(1) = ::rl::math::Units::meter;
+			this->qdUnits(0) = ::rl::math::Units::radianPerSecond;
+			this->qdUnits(1) = ::rl::math::Units::meterPerSecond;
+			this->qddUnits(0) = ::rl::math::Units::radianPerSecondSquared;
+			this->qddUnits(1) = ::rl::math::Units::meterPerSecondSquared;
 			this->S(2, 0) = 1;
 			this->S(5, 1) = 1;
-			this->speedUnits(0) = ::rl::math::UNIT_RADIAN_PER_SECOND;
-			this->speedUnits(1) = ::rl::math::UNIT_METER_PER_SECOND;
-			this->tauUnits(0) = ::rl::math::UNIT_NEWTON_METER;
-			this->tauUnits(1) = ::rl::math::UNIT_NEWTON;
+			this->speedUnits(0) = ::rl::math::Units::radianPerSecond;
+			this->speedUnits(1) = ::rl::math::Units::meterPerSecond;
+			this->tauUnits(0) = ::rl::math::Units::newtonMeter;
+			this->tauUnits(1) = ::rl::math::Units::newton;
 		}
 		
 		Cylindrical::~Cylindrical()

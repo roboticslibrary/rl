@@ -657,7 +657,7 @@ namespace rl
 		}
 		
 		void
-		Kinematics::getPositionUnits(::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1>& units) const
+		Kinematics::getPositionUnits(::Eigen::Matrix<::rl::math::Units, ::Eigen::Dynamic, 1>& units) const
 		{
 			for (::std::size_t i = 0; i < this->joints.size(); ++i)
 			{
@@ -675,7 +675,7 @@ namespace rl
 		}
 		
 		void
-		Kinematics::getSpeedUnits(::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1>& units) const
+		Kinematics::getSpeedUnits(::Eigen::Matrix<::rl::math::Units, ::Eigen::Dynamic, 1>& units) const
 		{
 			for (::std::size_t i = 0; i < this->joints.size(); ++i)
 			{

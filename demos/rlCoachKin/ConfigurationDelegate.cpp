@@ -50,12 +50,12 @@ ConfigurationDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem&
 	MainWindow::instance()->kinematicModels[this->id]->getMaximum(maximum);
 	rl::math::Vector minimum(MainWindow::instance()->kinematicModels[this->id]->getDof());
 	MainWindow::instance()->kinematicModels[this->id]->getMinimum(minimum);
-	Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> qUnits(MainWindow::instance()->kinematicModels[this->id]->getDof());
+	Eigen::Matrix<rl::math::Units, Eigen::Dynamic, 1> qUnits(MainWindow::instance()->kinematicModels[this->id]->getDof());
 	MainWindow::instance()->kinematicModels[this->id]->getPositionUnits(qUnits);
 	Eigen::Matrix<bool, Eigen::Dynamic, 1> wraparounds(MainWindow::instance()->kinematicModels[this->id]->getDof());
 	MainWindow::instance()->kinematicModels[this->id]->getWraparounds(wraparounds);
 	
-	if (rl::math::UNIT_RADIAN == qUnits(index.row()))
+	if (rl::math::Units::radian == qUnits(index.row()))
 	{
 		editor->setDecimals(2);
 		editor->setMinimum(minimum(index.row()) * rl::math::constants::rad2deg);

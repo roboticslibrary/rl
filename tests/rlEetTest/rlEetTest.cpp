@@ -96,7 +96,7 @@ main(int argc, char** argv)
 		rl::mdl::XmlFactory factory2;
 		std::shared_ptr<rl::mdl::Kinematic> kinematic = std::dynamic_pointer_cast<rl::mdl::Kinematic>(factory2.create(argv[3]));
 		
-		Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> qUnits = kinematic->getPositionUnits();
+		Eigen::Matrix<rl::math::Units, Eigen::Dynamic, 1> qUnits = kinematic->getPositionUnits();
 		
 		rl::math::Vector start(kinematic->getDofPosition());
 		
@@ -104,7 +104,7 @@ main(int argc, char** argv)
 		{
 			start(i) = boost::lexical_cast<rl::math::Real>(argv[i + 6]);
 			
-			if (rl::math::UNIT_RADIAN == qUnits(i))
+			if (rl::math::Units::radian == qUnits(i))
 			{
 				start(i) *= rl::math::constants::deg2rad;
 			}
@@ -116,7 +116,7 @@ main(int argc, char** argv)
 		{
 			goal(i) = boost::lexical_cast<rl::math::Real>(argv[start.size() + i + 6]);
 			
-			if (rl::math::UNIT_RADIAN == qUnits(i))
+			if (rl::math::Units::radian == qUnits(i))
 			{
 				goal(i) *= rl::math::constants::deg2rad;
 			}

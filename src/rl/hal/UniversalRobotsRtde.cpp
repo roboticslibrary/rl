@@ -27,7 +27,7 @@
 #include <array>
 #include <iostream>
 #include <rl/math/Constants.h>
-#include <rl/math/Unit.h>
+#include <rl/math/Units.h>
 
 #include "DeviceException.h"
 #include "UniversalRobotsRtde.h"
@@ -140,10 +140,10 @@ namespace rl
 			return 0;
 		}
 		
-		::std::vector<::rl::math::Unit>
+		::std::vector<::rl::math::Units>
 		UniversalRobotsRtde::getAnalogInputUnit() const
 		{
-			::std::vector<::rl::math::Unit> values;
+			::std::vector<::rl::math::Units> values;
 			
 			for (::std::size_t i = 0; i < this->getAnalogInputCount(); ++i)
 			{
@@ -153,25 +153,25 @@ namespace rl
 			return values;
 		}
 		
-		::rl::math::Unit
+		::rl::math::Units
 		UniversalRobotsRtde::getAnalogInputUnit(const ::std::size_t& i) const
 		{
 			switch (i)
 			{
 			case 0:
-				return 0 == (this->output.analogIoTypes & 1) ? ::rl::math::UNIT_AMPERE : ::rl::math::UNIT_VOLT;
+				return 0 == (this->output.analogIoTypes & 1) ? ::rl::math::Units::ampere : ::rl::math::Units::volt;
 				break;
 			case 1:
-				return 0 == (this->output.analogIoTypes & 2) ? ::rl::math::UNIT_AMPERE : ::rl::math::UNIT_VOLT;
+				return 0 == (this->output.analogIoTypes & 2) ? ::rl::math::Units::ampere : ::rl::math::Units::volt;
 				break;
 			case 2:
-				return 0 == (this->output.toolAnalogInputTypes & 1) ? ::rl::math::UNIT_AMPERE : ::rl::math::UNIT_VOLT;
+				return 0 == (this->output.toolAnalogInputTypes & 1) ? ::rl::math::Units::ampere : ::rl::math::Units::volt;
 				break;
 			case 3:
-				return 0 == (this->output.toolAnalogInputTypes & 2) ? ::rl::math::UNIT_AMPERE : ::rl::math::UNIT_VOLT;
+				return 0 == (this->output.toolAnalogInputTypes & 2) ? ::rl::math::Units::ampere : ::rl::math::Units::volt;
 				break;
 			default:
-				return ::rl::math::UNIT_NONE;
+				return ::rl::math::Units::none;
 				break;
 			}
 		}
@@ -233,10 +233,10 @@ namespace rl
 			return 0;
 		}
 		
-		::std::vector<::rl::math::Unit>
+		::std::vector<::rl::math::Units>
 		UniversalRobotsRtde::getAnalogOutputUnit() const
 		{
-			::std::vector<::rl::math::Unit> values;
+			::std::vector<::rl::math::Units> values;
 			
 			for (::std::size_t i = 0; i < this->getAnalogOutputCount(); ++i)
 			{
@@ -246,25 +246,25 @@ namespace rl
 			return values;
 		}
 		
-		::rl::math::Unit
+		::rl::math::Units
 		UniversalRobotsRtde::getAnalogOutputUnit(const ::std::size_t& i) const
 		{
 			switch (i)
 			{
 			case 0:
-				return 0 == (this->output.analogIoTypes & 4) ? ::rl::math::UNIT_AMPERE : ::rl::math::UNIT_VOLT;
+				return 0 == (this->output.analogIoTypes & 4) ? ::rl::math::Units::ampere : ::rl::math::Units::volt;
 				break;
 			case 1:
-				return 0 == (this->output.analogIoTypes & 8) ? ::rl::math::UNIT_AMPERE : ::rl::math::UNIT_VOLT;
+				return 0 == (this->output.analogIoTypes & 8) ? ::rl::math::Units::ampere : ::rl::math::Units::volt;
 				break;
 			case 2:
-				return ::rl::math::UNIT_VOLT;
+				return ::rl::math::Units::volt;
 				break;
 			case 3:
-				return ::rl::math::UNIT_AMPERE;
+				return ::rl::math::Units::ampere;
 				break;
 			default:
-				return ::rl::math::UNIT_NONE;
+				return ::rl::math::Units::none;
 				break;
 			}
 		}
@@ -1079,7 +1079,7 @@ namespace rl
 		}
 		
 		void
-		UniversalRobotsRtde::setAnalogOutputUnit(const ::std::vector<::rl::math::Unit>& values)
+		UniversalRobotsRtde::setAnalogOutputUnit(const ::std::vector<::rl::math::Units>& values)
 		{
 			for (::std::size_t i = 0; i < this->getAnalogOutputCount(); ++i)
 			{
@@ -1088,14 +1088,14 @@ namespace rl
 		}
 		
 		void
-		UniversalRobotsRtde::setAnalogOutputUnit(const ::std::size_t& i, const ::rl::math::Unit& value)
+		UniversalRobotsRtde::setAnalogOutputUnit(const ::std::size_t& i, const ::rl::math::Units& value)
 		{
 			switch (value)
 			{
-			case ::rl::math::UNIT_AMPERE:
+			case ::rl::math::Units::ampere:
 				this->input.standardAnalogOutputType &= ~(1 << i);
 				break;
-			case ::rl::math::UNIT_VOLT:
+			case ::rl::math::Units::volt:
 				this->input.standardAnalogOutputType |= 1 << i;
 				break;
 			default:

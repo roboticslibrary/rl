@@ -183,7 +183,7 @@ namespace rl
 			return this->qdd;
 		}
 		
-		const ::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1>&
+		const ::Eigen::Matrix<::rl::math::Units, ::Eigen::Dynamic, 1>&
 		Joint::getAccelerationUnits() const
 		{
 			return this->qddUnits;
@@ -219,7 +219,7 @@ namespace rl
 			return this->q;
 		}
 		
-		const ::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1>&
+		const ::Eigen::Matrix<::rl::math::Units, ::Eigen::Dynamic, 1>&
 		Joint::getPositionUnits() const
 		{
 			return this->qUnits;
@@ -231,7 +231,7 @@ namespace rl
 			return this->tau;
 		}
 		
-		const ::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1>&
+		const ::Eigen::Matrix<::rl::math::Units, ::Eigen::Dynamic, 1>&
 		Joint::getTorqueUnits() const
 		{
 			return this->tauUnits;
@@ -243,7 +243,7 @@ namespace rl
 			return this->speed;
 		}
 		
-		const ::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1>&
+		const ::Eigen::Matrix<::rl::math::Units, ::Eigen::Dynamic, 1>&
 		Joint::getSpeedUnits() const
 		{
 			return this->speedUnits;
@@ -255,7 +255,7 @@ namespace rl
 			return this->qd;
 		}
 		
-		const ::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1>&
+		const ::Eigen::Matrix<::rl::math::Units, ::Eigen::Dynamic, 1>&
 		Joint::getVelocityUnits() const
 		{
 			return this->qdUnits;

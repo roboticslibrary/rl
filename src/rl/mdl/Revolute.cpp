@@ -36,12 +36,12 @@ namespace rl
 		Revolute::Revolute() :
 			Joint(1, 1)
 		{
-			this->qUnits(0) = ::rl::math::UNIT_RADIAN;
-			this->qdUnits(0) = ::rl::math::UNIT_RADIAN_PER_SECOND;
-			this->qddUnits(0) = ::rl::math::UNIT_RADIAN_PER_SECOND_SQUARED;
+			this->qUnits(0) = ::rl::math::Units::radian;
+			this->qdUnits(0) = ::rl::math::Units::radianPerSecond;
+			this->qddUnits(0) = ::rl::math::Units::radianPerSecondSquared;
 			this->S(2, 0) = 1;
-			this->speedUnits(0) = ::rl::math::UNIT_RADIAN_PER_SECOND;
-			this->tauUnits(0) = ::rl::math::UNIT_NEWTON_METER;
+			this->speedUnits(0) = ::rl::math::Units::radianPerSecond;
+			this->tauUnits(0) = ::rl::math::Units::newtonMeter;
 		}
 		
 		Revolute::~Revolute()

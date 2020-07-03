@@ -47,10 +47,10 @@ ConfigurationDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem&
 	
 	rl::math::Vector maximum = MainWindow::instance()->model->getMaximum();
 	rl::math::Vector minimum = MainWindow::instance()->model->getMinimum();
-	Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> qUnits = MainWindow::instance()->model->getPositionUnits();
+	Eigen::Matrix<rl::math::Units, Eigen::Dynamic, 1> qUnits = MainWindow::instance()->model->getPositionUnits();
 	Eigen::Matrix<bool, Eigen::Dynamic, 1> wraparounds = MainWindow::instance()->model->getWraparounds();
 	
-	if (rl::math::UNIT_RADIAN == qUnits(index.row()))
+	if (rl::math::Units::radian == qUnits(index.row()))
 	{
 		editor->setDecimals(2);
 		editor->setMinimum(minimum(index.row()) * rl::math::constants::rad2deg);

@@ -61,7 +61,7 @@ ConfigurationModel::data(const QModelIndex& index, int role) const
 	
 	rl::math::Vector q(MainWindow::instance()->kinematicModels[this->id]->getDof());
 	MainWindow::instance()->kinematicModels[this->id]->getPosition(q);
-	Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> qUnits(MainWindow::instance()->kinematicModels[this->id]->getDof());
+	Eigen::Matrix<rl::math::Units, Eigen::Dynamic, 1> qUnits(MainWindow::instance()->kinematicModels[this->id]->getDof());
 	MainWindow::instance()->kinematicModels[this->id]->getPositionUnits(qUnits);
 	
 	switch (role)
@@ -69,10 +69,10 @@ ConfigurationModel::data(const QModelIndex& index, int role) const
 	case Qt::DisplayRole:
 		switch (qUnits(index.row()))
 		{
-		case rl::math::UNIT_METER:
+		case rl::math::Units::meter:
 			return QString::number(q(index.row()), 'f', 4) + QString(" m");
 			break;
-		case rl::math::UNIT_RADIAN:
+		case rl::math::Units::radian:
 			return QString::number(q(index.row()) * rl::math::constants::rad2deg, 'f', 2) + QChar(176);
 			break;
 		default:
@@ -81,7 +81,7 @@ ConfigurationModel::data(const QModelIndex& index, int role) const
 		}
 		break;
 	case Qt::EditRole:
-		if (rl::math::UNIT_RADIAN == qUnits(index.row()))
+		if (rl::math::Units::radian == qUnits(index.row()))
 		{
 			return q(index.row()) * rl::math::constants::rad2deg;
 		}
@@ -152,10 +152,10 @@ ConfigurationModel::setData(const QModelIndex& index, const QVariant& value, int
 	{
 		rl::math::Vector q(MainWindow::instance()->kinematicModels[this->id]->getDof());
 		MainWindow::instance()->kinematicModels[this->id]->getPosition(q);
-		Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> qUnits(MainWindow::instance()->kinematicModels[this->id]->getDof());
+		Eigen::Matrix<rl::math::Units, Eigen::Dynamic, 1> qUnits(MainWindow::instance()->kinematicModels[this->id]->getDof());
 		MainWindow::instance()->kinematicModels[this->id]->getPositionUnits(qUnits);
 		
-		if (rl::math::UNIT_RADIAN == qUnits(index.row()))
+		if (rl::math::Units::radian == qUnits(index.row()))
 		{
 			q(index.row()) = value.value<rl::math::Real>() * rl::math::constants::deg2rad;
 		}

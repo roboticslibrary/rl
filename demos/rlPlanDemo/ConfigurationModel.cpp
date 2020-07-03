@@ -64,9 +64,9 @@ ConfigurationModel::data(const QModelIndex& index, int role) const
 	case Qt::DisplayRole:
 	case Qt::EditRole:
 		{
-			Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> qUnits = MainWindow::instance()->model->getPositionUnits();
+			Eigen::Matrix<rl::math::Units, Eigen::Dynamic, 1> qUnits = MainWindow::instance()->model->getPositionUnits();
 			
-			if (rl::math::UNIT_RADIAN == qUnits(index.row()))
+			if (rl::math::Units::radian == qUnits(index.row()))
 			{
 				return (*MainWindow::instance()->q)(index.row()) * rl::math::constants::rad2deg;
 			}
@@ -140,9 +140,9 @@ ConfigurationModel::setData(const QModelIndex& index, const QVariant& value, int
 	
 	if (index.isValid() && Qt::EditRole == role)
 	{
-		Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> qUnits = MainWindow::instance()->model->getPositionUnits();
+		Eigen::Matrix<rl::math::Units, Eigen::Dynamic, 1> qUnits = MainWindow::instance()->model->getPositionUnits();
 		
-		if (rl::math::UNIT_RADIAN == qUnits(index.row()))
+		if (rl::math::Units::radian == qUnits(index.row()))
 		{
 			(*MainWindow::instance()->q)(index.row()) = value.value<rl::math::Real>() * rl::math::constants::deg2rad;
 		}

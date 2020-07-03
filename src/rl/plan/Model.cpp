@@ -307,12 +307,12 @@ namespace rl
 			}
 		}
 		
-		::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1>
+		::Eigen::Matrix<::rl::math::Units, ::Eigen::Dynamic, 1>
 		Model::getPositionUnits() const
 		{
 			if (nullptr != this->kin)
 			{
-				::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1> units(this->getDofPosition());;
+				::Eigen::Matrix<::rl::math::Units, ::Eigen::Dynamic, 1> units(this->getDofPosition());;
 				this->kin->getPositionUnits(units);
 				return units;
 			}

@@ -40,9 +40,9 @@ namespace rl
 			
 			virtual ~Revolute();
 			
-			::rl::math::Unit getPositionUnit() const;
+			::rl::math::Units getPositionUnit() const;
 			
-			::rl::math::Unit getSpeedUnit() const;
+			::rl::math::Units getSpeedUnit() const;
 			
 			/**
 			 * \f[ {^{0}J_{i}(q)} = \begin{pmatrix}z_{i - 1} \times {^{i - 1}p_{n}}\\z_{i - 1}\end{pmatrix} \f]

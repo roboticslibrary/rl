@@ -36,13 +36,13 @@ namespace rl
 			Joint(1, 1),
 			h(1)
 		{
-			this->qUnits(0) = ::rl::math::UNIT_NONE; // TODO
-			this->qdUnits(0) = ::rl::math::UNIT_NONE; // TODO
-			this->qddUnits(0) = ::rl::math::UNIT_NONE; // TODO
+			this->qUnits(0) = ::rl::math::Units::none; // TODO
+			this->qdUnits(0) = ::rl::math::Units::none; // TODO
+			this->qddUnits(0) = ::rl::math::Units::none; // TODO
 			this->S(2, 0) = 1;
 			this->S(5, 0) = this->h;
-			this->speedUnits(0) = ::rl::math::UNIT_NONE; // TODO
-			this->tauUnits(0) = ::rl::math::UNIT_NONE; // TODO
+			this->speedUnits(0) = ::rl::math::Units::none; // TODO
+			this->tauUnits(0) = ::rl::math::Units::none; // TODO
 		}
 		
 		Helical::~Helical()

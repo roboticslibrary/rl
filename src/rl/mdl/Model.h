@@ -33,7 +33,7 @@
 #include <vector>
 #include <boost/graph/adjacency_list.hpp>
 #include <rl/math/Transform.h>
-#include <rl/math/Unit.h>
+#include <rl/math/Units.h>
 #include <rl/math/Vector.h>
 
 #include "Frame.h"
@@ -83,7 +83,7 @@ namespace rl
 			
 			::rl::math::Vector getAcceleration() const;
 			
-			::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1> getAccelerationUnits() const;
+			::Eigen::Matrix<::rl::math::Units, ::Eigen::Dynamic, 1> getAccelerationUnits() const;
 			
 			::std::size_t getBodies() const;
 			
@@ -133,7 +133,7 @@ namespace rl
 			
 			::rl::math::Vector getPosition() const;
 			
-			::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1> getPositionUnits() const;
+			::Eigen::Matrix<::rl::math::Units, ::Eigen::Dynamic, 1> getPositionUnits() const;
 			
 			Transform* getTransform(const ::std::size_t& i) const;
 			
@@ -141,15 +141,15 @@ namespace rl
 			
 			::rl::math::Vector getSpeed() const;
 			
-			::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1> getSpeedUnits() const;
+			::Eigen::Matrix<::rl::math::Units, ::Eigen::Dynamic, 1> getSpeedUnits() const;
 			
 			::rl::math::Vector getTorque() const;
 			
-			::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1> getTorqueUnits() const;
+			::Eigen::Matrix<::rl::math::Units, ::Eigen::Dynamic, 1> getTorqueUnits() const;
 			
 			::rl::math::Vector getVelocity() const;
 			
-			::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1> getVelocityUnits() const;
+			::Eigen::Matrix<::rl::math::Units, ::Eigen::Dynamic, 1> getVelocityUnits() const;
 			
 			World* getWorld() const;
 			

@@ -110,9 +110,9 @@ ConfigurationModel::setData(const QModelIndex& index, const QVariant& value, int
 			if (dynamic_cast<PositionModel*>(this))
 			{
 				rl::math::Vector q = kinematic->getPosition();
-				Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> qUnits = kinematic->getPositionUnits();
+				Eigen::Matrix<rl::math::Units, Eigen::Dynamic, 1> qUnits = kinematic->getPositionUnits();
 				
-				if (rl::math::UNIT_RADIAN == qUnits(index.row()))
+				if (rl::math::Units::radian == qUnits(index.row()))
 				{
 					q(index.row()) = value.value<rl::math::Real>() * rl::math::constants::deg2rad;
 				}
@@ -132,9 +132,9 @@ ConfigurationModel::setData(const QModelIndex& index, const QVariant& value, int
 			else if (dynamic_cast<VelocityModel*>(this))
 			{
 				rl::math::Vector qd = kinematic->getVelocity();
-				Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> qdUnits = kinematic->getVelocityUnits();
+				Eigen::Matrix<rl::math::Units, Eigen::Dynamic, 1> qdUnits = kinematic->getVelocityUnits();
 				
-				if (rl::math::UNIT_RADIAN == qdUnits(index.row()))
+				if (rl::math::Units::radian == qdUnits(index.row()))
 				{
 					qd(index.row()) = value.value<rl::math::Real>() * rl::math::constants::deg2rad;
 				}
@@ -148,9 +148,9 @@ ConfigurationModel::setData(const QModelIndex& index, const QVariant& value, int
 			else if (dynamic_cast<AccelerationModel*>(this))
 			{
 				rl::math::Vector qdd = kinematic->getAcceleration();
-				Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> qddUnits = kinematic->getAccelerationUnits();
+				Eigen::Matrix<rl::math::Units, Eigen::Dynamic, 1> qddUnits = kinematic->getAccelerationUnits();
 				
-				if (rl::math::UNIT_RADIAN == qddUnits(index.row()))
+				if (rl::math::Units::radian == qddUnits(index.row()))
 				{
 					qdd(index.row()) = value.value<rl::math::Real>() * rl::math::constants::deg2rad;
 				}
@@ -282,9 +282,9 @@ PositionModel::data(const QModelIndex& index, int role) const
 	case Qt::EditRole:
 		{
 			rl::math::Vector values = MainWindow::instance()->dynamicModel->getPosition();
-			Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> units = MainWindow::instance()->dynamicModel->getPositionUnits();
+			Eigen::Matrix<rl::math::Units, Eigen::Dynamic, 1> units = MainWindow::instance()->dynamicModel->getPositionUnits();
 						
-			if (rl::math::UNIT_RADIAN == units(index.row()))
+			if (rl::math::Units::radian == units(index.row()))
 			{
 				return values(index.row()) * rl::math::constants::rad2deg;
 			}
@@ -323,9 +323,9 @@ VelocityModel::data(const QModelIndex& index, int role) const
 	case Qt::EditRole:
 		{
 			rl::math::Vector values = MainWindow::instance()->dynamicModel->getVelocity();
-			Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> units = MainWindow::instance()->dynamicModel->getVelocityUnits();
+			Eigen::Matrix<rl::math::Units, Eigen::Dynamic, 1> units = MainWindow::instance()->dynamicModel->getVelocityUnits();
 			
-			if (rl::math::UNIT_RADIAN == units(index.row()))
+			if (rl::math::Units::radian == units(index.row()))
 			{
 				return values(index.row()) * rl::math::constants::rad2deg;
 			}
@@ -364,9 +364,9 @@ AccelerationModel::data(const QModelIndex& index, int role) const
 	case Qt::EditRole:
 		{
 			rl::math::Vector values = MainWindow::instance()->dynamicModel->getAcceleration();
-			Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> units = MainWindow::instance()->dynamicModel->getAccelerationUnits();
+			Eigen::Matrix<rl::math::Units, Eigen::Dynamic, 1> units = MainWindow::instance()->dynamicModel->getAccelerationUnits();
 			
-			if (rl::math::UNIT_RADIAN == units(index.row()))
+			if (rl::math::Units::radian == units(index.row()))
 			{
 				return values(index.row()) * rl::math::constants::rad2deg;
 			}

@@ -28,7 +28,7 @@
 #define RL_KIN_JOINT_H
 
 #include <unordered_set>
-#include <rl/math/Unit.h>
+#include <rl/math/Units.h>
 
 #include "Transform.h"
 
@@ -45,9 +45,9 @@ namespace rl
 			
 			::rl::math::Real getPosition() const;
 			
-			virtual ::rl::math::Unit getPositionUnit() const = 0;
+			virtual ::rl::math::Units getPositionUnit() const = 0;
 			
-			virtual ::rl::math::Unit getSpeedUnit() const = 0;
+			virtual ::rl::math::Units getSpeedUnit() const = 0;
 			
 			virtual void jacobian(const ::rl::math::Transform& tcp, ::rl::math::MatrixBlock& j) = 0;
 			

@@ -35,7 +35,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <rl/kin/export.h>
 #include <rl/math/Transform.h>
-#include <rl/math/Unit.h>
+#include <rl/math/Units.h>
 #include <rl/math/Vector.h>
 
 namespace rl
@@ -188,11 +188,11 @@ namespace rl
 			 */
 			void getPosition(::rl::math::Vector& q) const;
 			
-			void getPositionUnits(::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1>& units) const;
+			void getPositionUnits(::Eigen::Matrix<::rl::math::Units, ::Eigen::Dynamic, 1>& units) const;
 			
 			void getSpeed(::rl::math::Vector& speed) const;
 			
-			void getSpeedUnits(::Eigen::Matrix<::rl::math::Unit, ::Eigen::Dynamic, 1>& units) const;
+			void getSpeedUnits(::Eigen::Matrix<::rl::math::Units, ::Eigen::Dynamic, 1>& units) const;
 			
 			void getWraparounds(::Eigen::Matrix<bool, ::Eigen::Dynamic, 1>& wraparounds) const;
 			

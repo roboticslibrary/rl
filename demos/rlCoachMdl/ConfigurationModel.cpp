@@ -64,17 +64,17 @@ ConfigurationModel::data(const QModelIndex& index, int role) const
 	rl::math::Vector q = MainWindow::instance()->kinematicModels[this->id]->getPosition();
 	rl::math::Vector maximum = MainWindow::instance()->kinematicModels[this->id]->getMaximum();
 	rl::math::Vector minimum = MainWindow::instance()->kinematicModels[this->id]->getMinimum();
-	Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> qUnits = MainWindow::instance()->kinematicModels[this->id]->getPositionUnits();
+	Eigen::Matrix<rl::math::Units, Eigen::Dynamic, 1> qUnits = MainWindow::instance()->kinematicModels[this->id]->getPositionUnits();
 	
 	switch (role)
 	{
 	case Qt::DisplayRole:
 		switch (qUnits(index.row()))
 		{
-		case rl::math::UNIT_METER:
+		case rl::math::Units::meter:
 			return QString::number(q(index.row()), 'f', 4) + QString(" m");
 			break;
-		case rl::math::UNIT_RADIAN:
+		case rl::math::Units::radian:
 			return QString::number(q(index.row()) * rl::math::constants::rad2deg, 'f', 2) + QChar(176);
 			break;
 		default:
@@ -83,7 +83,7 @@ ConfigurationModel::data(const QModelIndex& index, int role) const
 		}
 		break;
 	case Qt::EditRole:
-		if (rl::math::UNIT_RADIAN == qUnits(index.row()))
+		if (rl::math::Units::radian == qUnits(index.row()))
 		{
 			return q(index.row()) * rl::math::constants::rad2deg;
 		}
@@ -180,9 +180,9 @@ ConfigurationModel::setData(const QModelIndex& index, const QVariant& value, int
 		if (rl::mdl::Kinematic* kinematic = dynamic_cast<rl::mdl::Kinematic*>(MainWindow::instance()->kinematicModels[this->id].get()))
 		{
 			rl::math::Vector q = kinematic->getPosition();
-			Eigen::Matrix<rl::math::Unit, Eigen::Dynamic, 1> qUnits = kinematic->getPositionUnits();
+			Eigen::Matrix<rl::math::Units, Eigen::Dynamic, 1> qUnits = kinematic->getPositionUnits();
 			
-			if (rl::math::UNIT_RADIAN == qUnits(index.row()))
+			if (rl::math::Units::radian == qUnits(index.row()))
 			{
 				q(index.row()) = value.value<rl::math::Real>() * rl::math::constants::deg2rad;
 			}

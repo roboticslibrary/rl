@@ -28,7 +28,7 @@
 #define RL_HAL_ANALOGOUTPUT_H
 
 #include <rl/math/Real.h>
-#include <rl/math/Unit.h>
+#include <rl/math/Units.h>
 
 #include "Device.h"
 
@@ -49,9 +49,9 @@ namespace rl
 			
 			virtual ::rl::math::Real getAnalogOutputMinimum(const ::std::size_t& i) const = 0;
 			
-			virtual ::std::vector<::rl::math::Unit> getAnalogOutputUnit() const = 0;
+			virtual ::std::vector<::rl::math::Units> getAnalogOutputUnit() const = 0;
 			
-			virtual ::rl::math::Unit getAnalogOutputUnit(const ::std::size_t& i) const = 0;
+			virtual ::rl::math::Units getAnalogOutputUnit(const ::std::size_t& i) const = 0;
 			
 		protected:
 			

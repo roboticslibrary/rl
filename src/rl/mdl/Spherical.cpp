@@ -37,25 +37,25 @@ namespace rl
 		{
 			this->max.setConstant(1); // TODO
 			this->min.setConstant(-1); // TODO
-			this->qUnits(0) = ::rl::math::UNIT_NONE; // TODO
-			this->qUnits(1) = ::rl::math::UNIT_NONE; // TODO
-			this->qUnits(2) = ::rl::math::UNIT_NONE; // TODO
-			this->qUnits(3) = ::rl::math::UNIT_NONE; // TODO
-			this->qdUnits(0) = ::rl::math::UNIT_RADIAN_PER_SECOND;
-			this->qdUnits(1) = ::rl::math::UNIT_RADIAN_PER_SECOND;
-			this->qdUnits(2) = ::rl::math::UNIT_RADIAN_PER_SECOND;
-			this->qddUnits(0) = ::rl::math::UNIT_RADIAN_PER_SECOND_SQUARED;
-			this->qddUnits(1) = ::rl::math::UNIT_RADIAN_PER_SECOND_SQUARED;
-			this->qddUnits(2) = ::rl::math::UNIT_RADIAN_PER_SECOND_SQUARED;
+			this->qUnits(0) = ::rl::math::Units::none;
+			this->qUnits(1) = ::rl::math::Units::none;
+			this->qUnits(2) = ::rl::math::Units::none;
+			this->qUnits(3) = ::rl::math::Units::none;
+			this->qdUnits(0) = ::rl::math::Units::radianPerSecond;
+			this->qdUnits(1) = ::rl::math::Units::radianPerSecond;
+			this->qdUnits(2) = ::rl::math::Units::radianPerSecond;
+			this->qddUnits(0) = ::rl::math::Units::radianPerSecondSquared;
+			this->qddUnits(1) = ::rl::math::Units::radianPerSecondSquared;
+			this->qddUnits(2) = ::rl::math::Units::radianPerSecondSquared;
 			this->S(0, 0) = 1;
 			this->S(1, 1) = 1;
 			this->S(2, 2) = 1;
-			this->speedUnits(0) = ::rl::math::UNIT_RADIAN_PER_SECOND;
-			this->speedUnits(1) = ::rl::math::UNIT_RADIAN_PER_SECOND;
-			this->speedUnits(2) = ::rl::math::UNIT_RADIAN_PER_SECOND;
-			this->tauUnits(0) = ::rl::math::UNIT_NEWTON_METER;
-			this->tauUnits(1) = ::rl::math::UNIT_NEWTON_METER;
-			this->tauUnits(2) = ::rl::math::UNIT_NEWTON_METER;
+			this->speedUnits(0) = ::rl::math::Units::radianPerSecond;
+			this->speedUnits(1) = ::rl::math::Units::radianPerSecond;
+			this->speedUnits(2) = ::rl::math::Units::radianPerSecond;
+			this->tauUnits(0) = ::rl::math::Units::newtonMeter;
+			this->tauUnits(1) = ::rl::math::Units::newtonMeter;
+			this->tauUnits(2) = ::rl::math::Units::newtonMeter;
 		}
 		
 		Spherical::~Spherical()

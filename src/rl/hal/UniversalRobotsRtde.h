@@ -169,9 +169,9 @@ namespace rl
 			
 			::rl::math::Real getAnalogInputMinimum(const ::std::size_t& i) const;
 			
-			::std::vector<::rl::math::Unit> getAnalogInputUnit() const;
+			::std::vector<::rl::math::Units> getAnalogInputUnit() const;
 			
-			::rl::math::Unit getAnalogInputUnit(const ::std::size_t& i) const;
+			::rl::math::Units getAnalogInputUnit(const ::std::size_t& i) const;
 			
 			using AnalogOutputReader::getAnalogOutput;
 			
@@ -183,9 +183,9 @@ namespace rl
 			
 			::rl::math::Real getAnalogOutputMinimum(const ::std::size_t& i) const;
 			
-			::std::vector<::rl::math::Unit> getAnalogOutputUnit() const;
+			::std::vector<::rl::math::Units> getAnalogOutputUnit() const;
 			
-			::rl::math::Unit getAnalogOutputUnit(const ::std::size_t& i) const;
+			::rl::math::Units getAnalogOutputUnit(const ::std::size_t& i) const;
 			
 			::rl::math::ForceVector getCartesianForce() const;
 			
@@ -235,9 +235,9 @@ namespace rl
 			
 			void setAnalogOutput(const ::std::size_t& i, const ::rl::math::Real& value);
 			
-			void setAnalogOutputUnit(const ::std::vector<::rl::math::Unit>& values);
+			void setAnalogOutputUnit(const ::std::vector<::rl::math::Units>& values);
 			
-			void setAnalogOutputUnit(const ::std::size_t& i, const ::rl::math::Unit& value);
+			void setAnalogOutputUnit(const ::std::size_t& i, const ::rl::math::Units& value);
 			
 			using DigitalOutputWriter::setDigitalOutput;
 			
