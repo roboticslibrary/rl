@@ -82,6 +82,8 @@ namespace rl
 			
 			for (int i = 0; i < ::std::min(1, scenes.size()); ++i)
 			{
+				::rl::xml::Path path(document, scenes[i]);
+				
 				::SoInput input;
 				
 				if (!input.openFile(scenes[i].getLocalPath(scenes[i].getProperty("href")).c_str() ,true))
@@ -102,7 +104,7 @@ namespace rl
 				
 				// model
 				
-				::rl::xml::NodeSet models = ::rl::xml::Path(document, scenes[i]).eval("model").getValue<::rl::xml::NodeSet>();
+				::rl::xml::NodeSet models = path.eval("model").getValue<::rl::xml::NodeSet>();
 				
 				for (int j = 0; j < models.size(); ++j)
 				{
@@ -127,6 +129,8 @@ namespace rl
 					
 					for (int k = 0; k < bodies.size(); ++k)
 					{
+						::rl::xml::Path path(document, bodies[k]);
+						
 						::SoSearchAction bodySearchAction;
 						bodySearchAction.setName(bodies[k].getProperty("name").c_str());
 						bodySearchAction.apply(static_cast<::SoFullPath*>(modelSearchAction.getPath())->getTail());
@@ -199,17 +203,17 @@ namespace rl
 						
 						for (int l = 0; l < shapeSearchAction.getPaths().getLength(); ++l)
 						{
-							::SoFullPath* path = static_cast<::SoFullPath*>(shapeSearchAction.getPaths()[l]);
+							::SoFullPath* fullPath = static_cast<::SoFullPath*>(shapeSearchAction.getPaths()[l]);
 							
-							if (path->getLength() > 1)
+							if (fullPath->getLength() > 1)
 							{
-								path = static_cast<::SoFullPath*>(shapeSearchAction.getPaths()[l]->copy(1, static_cast<::SoFullPath*>(shapeSearchAction.getPaths()[l])->getLength() - 1));
+								fullPath = static_cast<::SoFullPath*>(shapeSearchAction.getPaths()[l]->copy(1, static_cast<::SoFullPath*>(shapeSearchAction.getPaths()[l])->getLength() - 1));
 							}
 							
-							pathList.append(path);
+							pathList.append(fullPath);
 							
 							::SoGetMatrixAction shapeGetMatrixAction(viewportRegion);
-							shapeGetMatrixAction.apply(path);
+							shapeGetMatrixAction.apply(fullPath);
 							::SbMatrix shapeMatrix = shapeGetMatrixAction.getMatrix();
 							
 							if (!scene->isScalingSupported())
