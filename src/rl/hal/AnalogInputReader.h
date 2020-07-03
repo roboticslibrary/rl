@@ -28,7 +28,6 @@
 #define RL_HAL_ANALOGINPUTREADER_H
 
 #include <vector>
-#include <rl/math/Real.h>
 
 #include "AnalogInput.h"
 

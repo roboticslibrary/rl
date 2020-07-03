@@ -27,6 +27,7 @@
 #ifndef RL_HAL_ANALOGINPUT_H
 #define RL_HAL_ANALOGINPUT_H
 
+#include <rl/math/Real.h>
 #include <rl/math/Unit.h>
 
 #include "Device.h"
@@ -47,6 +48,10 @@ namespace rl
 			virtual ::rl::math::Real getAnalogInputMaximum(const ::std::size_t& i) const = 0;
 			
 			virtual ::rl::math::Real getAnalogInputMinimum(const ::std::size_t& i) const = 0;
+			
+			virtual ::std::vector<::rl::math::Unit> getAnalogInputUnit() const = 0;
+			
+			virtual ::rl::math::Unit getAnalogInputUnit(const ::std::size_t& i) const = 0;
 			
 		protected:
 			

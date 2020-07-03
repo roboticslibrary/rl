@@ -28,7 +28,6 @@
 #define RL_HAL_ANALOGOUTPUTWRITER_H
 
 #include <vector>
-#include <rl/math/Real.h>
 
 #include "AnalogOutput.h"
 
