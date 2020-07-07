@@ -83,16 +83,16 @@ namespace rl
 				::std::unique_ptr<Impl> impl;
 			};
 			
-			enum Option
+			enum class Option
 			{
-				OPTION_KEEPALIVE,
-				OPTION_MULTICAST_LOOP,
-				OPTION_MULTICAST_TTL,
+				keepalive,
+				multicastLoop,
+				multicastTtl,
 #if defined(__APPLE__) || defined(__QNX__) || defined(WIN32) || defined(__CYGWIN__)
-				OPTION_NODELAY
+				nodelay
 #else // __APPLE__ || __QNX__ || WIN32 || __CYGWIN__
-				OPTION_NODELAY,
-				OPTION_QUICKACK
+				nodelay,
+				quickack
 #endif // __APPLE__ || __QNX__ || WIN32 || __CYGWIN__
 			};
 			

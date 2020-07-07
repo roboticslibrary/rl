@@ -47,7 +47,7 @@ namespace rl
 		public:
 			SickS300(
 				const ::std::string& device = "/dev/ttyS0",
-				const Serial::BaudRate& baudRate = Serial::BAUDRATE_9600BPS
+				const Serial::BaudRate& baudRate = Serial::BaudRate::b9600
 			);
 			
 			virtual ~SickS300();

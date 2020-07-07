@@ -372,15 +372,15 @@ namespace rl
 				
 				if ("START" == tokens[16])
 				{
-					state.taskCond = TASKCOND_START;
+					state.taskCond = TaskCond::start;
 				}
 				else if ("ALWAYS" == tokens[16])
 				{
-					state.taskCond = TASKCOND_ALWAYS;
+					state.taskCond = TaskCond::always;
 				}
 				else if ("ERROR" == tokens[16])
 				{
-					state.taskCond = TASKCOND_ERROR;
+					state.taskCond = TaskCond::error;
 				}
 				
 				state.taskPri = ::std::stoi(tokens[17]);

@@ -477,46 +477,46 @@ namespace rl
 #ifdef WIN32
 			switch (baudRate)
 			{
-			case BAUDRATE_110BPS:
+			case BaudRate::b110:
 				this->impl->current.BaudRate = CBR_110;
 				break;
-			case BAUDRATE_300BPS:
+			case BaudRate::b300:
 				this->impl->current.BaudRate = CBR_300;
 				break;
-			case BAUDRATE_600BPS:
+			case BaudRate::b600:
 				this->impl->current.BaudRate = CBR_600;
 				break;
-			case BAUDRATE_1200BPS:
+			case BaudRate::b1200:
 				this->impl->current.BaudRate = CBR_1200;
 				break;
-			case BAUDRATE_2400BPS:
+			case BaudRate::b2400:
 				this->impl->current.BaudRate = CBR_2400;
 				break;
-			case BAUDRATE_4800BPS:
+			case BaudRate::b4800:
 				this->impl->current.BaudRate = CBR_4800;
 				break;
-			case BAUDRATE_9600BPS:
+			case BaudRate::b9600:
 				this->impl->current.BaudRate = CBR_9600;
 				break;
-			case BAUDRATE_14400BPS:
+			case BaudRate::b14400:
 				this->impl->current.BaudRate = CBR_14400;
 				break;
-			case BAUDRATE_19200BPS:
+			case BaudRate::b19200:
 				this->impl->current.BaudRate = CBR_19200;
 				break;
-			case BAUDRATE_38400BPS:
+			case BaudRate::b38400:
 				this->impl->current.BaudRate = CBR_38400;
 				break;
-			case BAUDRATE_57600BPS:
+			case BaudRate::b57600:
 				this->impl->current.BaudRate = CBR_57600;
 				break;
-			case BAUDRATE_115200BPS:
+			case BaudRate::b115200:
 				this->impl->current.BaudRate = CBR_115200;
 				break;
-			case BAUDRATE_128000BPS:
+			case BaudRate::b128000:
 				this->impl->current.BaudRate = CBR_128000;
 				break;
-			case BAUDRATE_256000BPS:
+			case BaudRate::b256000:
 				this->impl->current.BaudRate = CBR_256000;
 				break;
 			default:
@@ -527,79 +527,79 @@ namespace rl
 			
 			switch (baudRate)
 			{
-			case BAUDRATE_110BPS:
+			case BaudRate::b110:
 				speed = B110;
 				break;
-			case BAUDRATE_300BPS:
+			case BaudRate::b300:
 				speed = B300;
 				break;
-			case BAUDRATE_600BPS:
+			case BaudRate::b600:
 				speed = B600;
 				break;
-			case BAUDRATE_1200BPS:
+			case BaudRate::b1200:
 				speed = B1200;
 				break;
-			case BAUDRATE_2400BPS:
+			case BaudRate::b2400:
 				speed = B2400;
 				break;
-			case BAUDRATE_4800BPS:
+			case BaudRate::b4800:
 				speed = B4800;
 				break;
-			case BAUDRATE_9600BPS:
+			case BaudRate::b9600:
 				speed = B9600;
 				break;
-			case BAUDRATE_19200BPS:
+			case BaudRate::b19200:
 				speed = B19200;
 				break;
-			case BAUDRATE_38400BPS:
+			case BaudRate::b38400:
 				speed = B38400;
 				break;
-			case BAUDRATE_57600BPS:
+			case BaudRate::b57600:
 				speed = B57600;
 				break;
-			case BAUDRATE_115200BPS:
+			case BaudRate::b115200:
 				speed = B115200;
 				break;
 #ifndef __QNX__
-			case BAUDRATE_230400BPS:
+			case BaudRate::b230400:
 				speed = B230400;
 				break;
 #ifndef __APPLE__
-			case BAUDRATE_460800BPS:
+			case BaudRate::b460800:
 				speed = B460800;
 				break;
-			case BAUDRATE_500000BPS:
+			case BaudRate::b500000:
 				speed = B500000;
 				break;
-			case BAUDRATE_576000BPS:
+			case BaudRate::b576000:
 				speed = B576000;
 				break;
-			case BAUDRATE_921600BPS:
+			case BaudRate::b921600:
 				speed = B921600;
 				break;
-			case BAUDRATE_1000000BPS:
+			case BaudRate::b1000000:
 				speed = B1000000;
 				break;
-			case BAUDRATE_1152000BPS:
+			case BaudRate::b1152000:
 				speed = B1152000;
 				break;
-			case BAUDRATE_1500000BPS:
+			case BaudRate::b1500000:
 				speed = B1500000;
 				break;
-			case BAUDRATE_2000000BPS:
+			case BaudRate::b2000000:
 				speed = B2000000;
 				break;
-			case BAUDRATE_2500000BPS:
+			case BaudRate::b2500000:
 				speed = B2500000;
 				break;
-			case BAUDRATE_3000000BPS:
+			case BaudRate::b3000000:
 				speed = B3000000;
 				break;
 #ifndef __CYGWIN__
-			case BAUDRATE_3500000BPS:
+			case BaudRate::b3500000:
 				speed = B3500000;
 				break;
-			case BAUDRATE_4000000BPS:
+			case BaudRate::b4000000:
 				speed = B4000000;
 				break;
 #endif // __CYGWIN__
@@ -629,16 +629,16 @@ namespace rl
 #ifdef WIN32
 			switch (dataBits)
 			{
-			case DATABITS_5BITS:
+			case DataBits::d5:
 				this->impl->current.ByteSize = 5;
 				break;
-			case DATABITS_6BITS:
+			case DataBits::d6:
 				this->impl->current.ByteSize = 6;
 				break;
-			case DATABITS_7BITS:
+			case DataBits::d7:
 				this->impl->current.ByteSize = 7;
 				break;
-			case DATABITS_8BITS:
+			case DataBits::d8:
 				this->impl->current.ByteSize = 8;
 				break;
 			default:
@@ -647,22 +647,22 @@ namespace rl
 #else // WIN32
 			switch (dataBits)
 			{
-			case DATABITS_5BITS:
+			case DataBits::d5:
 				this->impl->current.c_cflag &= ~(CS6 | CS7 | CS8);
 				this->impl->current.c_cflag |= CS5;
 				this->impl->current.c_iflag |= ISTRIP;
 				break;
-			case DATABITS_6BITS:
+			case DataBits::d6:
 				this->impl->current.c_cflag &= ~(CS5 | CS7 | CS8);
 				this->impl->current.c_cflag |= CS6;
 				this->impl->current.c_iflag |= ISTRIP;
 				break;
-			case DATABITS_7BITS:
+			case DataBits::d7:
 				this->impl->current.c_cflag &= ~(CS5 | CS6 | CS8);
 				this->impl->current.c_cflag |= CS7;
 				this->impl->current.c_iflag |= ISTRIP;
 				break;
-			case DATABITS_8BITS:
+			case DataBits::d8:
 				this->impl->current.c_cflag &= ~(CS5 | CS6 | CS7);
 				this->impl->current.c_cflag |= CS8;
 				this->impl->current.c_iflag &= ~ISTRIP;
@@ -687,7 +687,7 @@ namespace rl
 #ifdef WIN32
 			switch (flowControl)
 			{
-			case FLOWCONTROL_OFF:
+			case FlowControl::off:
 				this->impl->current.fOutxCtsFlow = false;
 				this->impl->current.fOutxDsrFlow = false;
 				this->impl->current.fDtrControl = DTR_CONTROL_DISABLE;
@@ -697,7 +697,7 @@ namespace rl
 				this->impl->current.XoffChar = 0x00;
 				this->impl->current.XonChar = 0x00;
 				break;
-			case FLOWCONTROL_RTSCTS:
+			case FlowControl::rtscts:
 				this->impl->current.fOutxCtsFlow = true;
 				this->impl->current.fOutxDsrFlow = true;
 				this->impl->current.fDtrControl = DTR_CONTROL_HANDSHAKE;
@@ -707,7 +707,7 @@ namespace rl
 				this->impl->current.XoffChar = 0x00;
 				this->impl->current.XonChar = 0x00;
 				break;
-			case FLOWCONTROL_XONXOFF:
+			case FlowControl::xonxoff:
 				this->impl->current.fOutxCtsFlow = false;
 				this->impl->current.fOutxDsrFlow = false;
 				this->impl->current.fDtrControl = DTR_CONTROL_DISABLE;
@@ -723,19 +723,19 @@ namespace rl
 #else // WIN32
 			switch (flowControl)
 			{
-			case FLOWCONTROL_OFF:
+			case FlowControl::off:
 				this->impl->current.c_cflag &= ~CRTSCTS;
 				this->impl->current.c_iflag &= ~(IXANY | IXOFF | IXON);
 				this->impl->current.c_cc[VSTART] = 0x00;
 				this->impl->current.c_cc[VSTOP] = 0x00;
 				break;
-			case FLOWCONTROL_RTSCTS:
+			case FlowControl::rtscts:
 				this->impl->current.c_cflag |= CRTSCTS;
 				this->impl->current.c_iflag &= ~(IXANY | IXOFF | IXON);
 				this->impl->current.c_cc[VSTART] = 0x00;
 				this->impl->current.c_cc[VSTOP] = 0x00;
 				break;
-			case FLOWCONTROL_XONXOFF:
+			case FlowControl::xonxoff:
 				this->impl->current.c_cflag &= ~CRTSCTS;
 				this->impl->current.c_iflag |= IXANY | IXOFF | IXON;
 				this->impl->current.c_cc[VSTART] = 0x11;
@@ -755,13 +755,13 @@ namespace rl
 #ifdef WIN32
 			switch (parity)
 			{
-			case PARITY_EVENPARITY:
+			case Parity::even:
 				this->impl->current.Parity = EVENPARITY;
 				break;
-			case PARITY_NOPARITY:
+			case Parity::none:
 				this->impl->current.Parity = NOPARITY;
 				break;
-			case PARITY_ODDPARITY:
+			case Parity::odd:
 				this->impl->current.Parity = ODDPARITY;
 				break;
 			default:
@@ -770,18 +770,18 @@ namespace rl
 #else // WIN32
 			switch (parity)
 			{
-			case PARITY_EVENPARITY:
+			case Parity::even:
 				this->impl->current.c_cflag &= ~PARODD;
 				this->impl->current.c_cflag |= PARENB;
 				this->impl->current.c_iflag &= ~IGNPAR;
 				this->impl->current.c_iflag |= INPCK;
 				break;
-			case PARITY_NOPARITY:
+			case Parity::none:
 				this->impl->current.c_cflag &= ~(PARENB | PARODD);
 				this->impl->current.c_iflag &= ~INPCK;
 				this->impl->current.c_iflag |= IGNPAR;
 				break;
-			case PARITY_ODDPARITY:
+			case Parity::odd:
 				this->impl->current.c_cflag |= PARENB | PARODD;
 				this->impl->current.c_iflag &= ~IGNPAR;
 				this->impl->current.c_iflag |= INPCK;
@@ -800,10 +800,10 @@ namespace rl
 #ifdef WIN32
 			switch (stopBits)
 			{
-			case STOPBITS_1BIT:
+			case StopBits::s1:
 				this->impl->current.StopBits = ONESTOPBIT;
 				break;
-			case STOPBITS_2BITS:
+			case StopBits::s2:
 				this->impl->current.StopBits = TWOSTOPBITS;
 				break;
 			default:
@@ -812,10 +812,10 @@ namespace rl
 #else // WIN32
 			switch (stopBits)
 			{
-			case STOPBITS_1BIT:
+			case StopBits::s1:
 				this->impl->current.c_cflag &= ~CSTOPB;
 				break;
-			case STOPBITS_2BITS:
+			case StopBits::s2:
 				this->impl->current.c_cflag |= CSTOPB;
 				break;
 			default:

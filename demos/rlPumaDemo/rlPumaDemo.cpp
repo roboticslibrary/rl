@@ -70,9 +70,9 @@ main(int argc, char** argv)
 			puma->setWrist(wrist);
 			
 			std::cout
-				<< "Arm: " << (arm == rl::kin::Puma::ARM_LEFT ? "LEFT" : "RIGHT")
-				<< ", Elbow: " << (elbow == rl::kin::Puma::ELBOW_ABOVE ? "ABOVE" : "BELOW")
-				<< ", Wrist: " << (wrist == rl::kin::Puma::WRIST_FLIP ? "FLIP" : "NONFLIP")
+				<< "Arm: " << (arm == rl::kin::Puma::Arm::left ? "LEFT" : "RIGHT")
+				<< ", Elbow: " << (elbow == rl::kin::Puma::Elbow::above ? "ABOVE" : "BELOW")
+				<< ", Wrist: " << (wrist == rl::kin::Puma::Wrist::flip ? "FLIP" : "NONFLIP")
 				<< std::endl;
 			
 			std::cout << "q: " << q.transpose() * rl::math::constants::rad2deg << std::endl;

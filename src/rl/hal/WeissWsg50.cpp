@@ -40,7 +40,7 @@
 #include "WeissException.h"
 #include "WeissWsg50.h"
 
-static const ::std::uint16_t CRC_TABLE_CCITT16[256] = {
+static constexpr ::std::uint16_t crcTableCcitt16[256] = {
 	0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50A5, 0x60C6, 0x70E7,
 	0x8108, 0x9129, 0xA14A, 0xB16B, 0xC18C, 0xD1AD, 0xE1CE, 0xF1EF,
 	0x1231, 0x0210, 0x3273, 0x2252, 0x52B5, 0x4294, 0x72F7, 0x62D6,
@@ -96,7 +96,7 @@ namespace rl
 			forceMinimum(0),
 			forceNominal(0),
 			forceOverdrive(0),
-			graspingState(GRASPING_STATE_IDLE),
+			graspingState(static_cast<::std::uint8_t>(GraspingState::idle)),
 			limitMinus(0),
 			limitPlus(0),
 			openingWidth(0),
@@ -106,7 +106,7 @@ namespace rl
 			speedMaximum(0),
 			speedMinimum(0),
 			stroke(0),
-			systemState(SYSTEM_STATE_REFERENCED)
+			systemState(static_cast<::std::uint32_t>(SystemState::referenced))
 		{
 			
 		}
@@ -136,7 +136,7 @@ namespace rl
 			for (::std::size_t i = 0; i < len; ++i)
 			{
 				::std::uint8_t index = checksum ^ buf[i];
-				checksum = CRC_TABLE_CCITT16[index] ^ (checksum >> 8);
+				checksum = crcTableCcitt16[index] ^ (checksum >> 8);
 			}
 			
 			return checksum;
@@ -150,12 +150,12 @@ namespace rl
 			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x24;
-			buf[this->HEADER_SIZE] = 0x61;
-			buf[this->HEADER_SIZE + 1] = 0x63;
-			buf[this->HEADER_SIZE + 2] = 0x6B;
+			buf[this->headerSize] = 0x61;
+			buf[this->headerSize + 1] = 0x63;
+			buf[this->headerSize + 2] = 0x6B;
 			
-			this->send(buf.data(), this->HEADER_SIZE + 3 + 2);
-			this->recv(buf.data(), this->HEADER_SIZE + 2 + 0 + 2, 0x24);
+			this->send(buf.data(), this->headerSize + 3 + 2);
+			this->recv(buf.data(), this->headerSize + 2 + 0 + 2, 0x24);
 		}
 		
 		void
@@ -167,8 +167,8 @@ namespace rl
 			
 			buf[3] = 0x36;
 			
-			this->send(buf.data(), this->HEADER_SIZE + 0 + 2);
-			this->recv(buf.data(), this->HEADER_SIZE + 2 + 0 + 2, 0x36);
+			this->send(buf.data(), this->headerSize + 0 + 2);
+			this->recv(buf.data(), this->headerSize + 2 + 0 + 2, 0x36);
 			
 			this->limitMinus = 0;
 			this->limitPlus = 0;
@@ -183,8 +183,8 @@ namespace rl
 			
 			buf[3] = 0x07;
 			
-			this->send(buf.data(), this->HEADER_SIZE + 0 + 2);
-			this->recv(buf.data(), this->HEADER_SIZE + 2 + 0 + 2, 0x07);
+			this->send(buf.data(), this->headerSize + 0 + 2);
+			this->recv(buf.data(), this->headerSize + 2 + 0 + 2, 0x07);
 		}
 		
 		void
@@ -196,8 +196,8 @@ namespace rl
 			
 			buf[3] = 0x23;
 			
-			this->send(buf.data(), this->HEADER_SIZE + 0 + 2);
-			this->recv(buf.data(), this->HEADER_SIZE + 2 + 0 + 2, 0x23);
+			this->send(buf.data(), this->headerSize + 0 + 2);
+			this->recv(buf.data(), this->headerSize + 2 + 0 + 2, 0x23);
 		}
 		
 		void
@@ -209,10 +209,10 @@ namespace rl
 			
 			buf[3] = 0x31;
 			
-			this->send(buf.data(), this->HEADER_SIZE + 0 + 2);
-			this->recv(buf.data(), this->HEADER_SIZE + 2 + 4 + 2, 0x31);
+			this->send(buf.data(), this->headerSize + 0 + 2);
+			this->recv(buf.data(), this->headerSize + 2 + 4 + 2, 0x31);
 			
-			::std::memcpy(&this->acceleration, &buf[this->HEADER_SIZE + 2], sizeof(this->acceleration));
+			::std::memcpy(&this->acceleration, &buf[this->headerSize + 2], sizeof(this->acceleration));
 			
 			this->acceleration *= ::rl::math::Constants<float>::milli2unit;
 		}
@@ -225,12 +225,12 @@ namespace rl
 			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x45;
-			buf[this->HEADER_SIZE] = 0x00 | (doAutomaticUpdate << 0) | (doAutomaticUpdate << 1);
-			buf[this->HEADER_SIZE + 1] = Endian::hostLowByte(period);
-			buf[this->HEADER_SIZE + 2] = Endian::hostHighByte(period);
+			buf[this->headerSize] = 0x00 | (doAutomaticUpdate << 0) | (doAutomaticUpdate << 1);
+			buf[this->headerSize + 1] = Endian::hostLowByte(period);
+			buf[this->headerSize + 2] = Endian::hostHighByte(period);
 			
-			this->send(buf.data(), this->HEADER_SIZE + 3 + 2);
-			this->recv(buf.data(), this->HEADER_SIZE + 2 + 4 + 2, 0x45);
+			this->send(buf.data(), this->headerSize + 3 + 2);
+			this->recv(buf.data(), this->headerSize + 2 + 4 + 2, 0x45);
 		}
 		
 		void
@@ -242,10 +242,10 @@ namespace rl
 			
 			buf[3] = 0x33;
 			
-			this->send(buf.data(), this->HEADER_SIZE + 0 + 2);
-			this->recv(buf.data(), this->HEADER_SIZE + 2 + 4 + 2, 0x33);
+			this->send(buf.data(), this->headerSize + 0 + 2);
+			this->recv(buf.data(), this->headerSize + 2 + 4 + 2, 0x33);
 			
-			::std::memcpy(&this->forceLimit, &buf[this->HEADER_SIZE + 2], sizeof(this->forceLimit));
+			::std::memcpy(&this->forceLimit, &buf[this->headerSize + 2], sizeof(this->forceLimit));
 		}
 		
 		void
@@ -256,12 +256,12 @@ namespace rl
 			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x41;
-			buf[this->HEADER_SIZE] = 0x00 | (doAutomaticUpdate << 0) | (doUpdateOnChange << 1);
-			buf[this->HEADER_SIZE + 1] = Endian::hostLowByte(period);
-			buf[this->HEADER_SIZE + 2] = Endian::hostHighByte(period);
+			buf[this->headerSize] = 0x00 | (doAutomaticUpdate << 0) | (doUpdateOnChange << 1);
+			buf[this->headerSize + 1] = Endian::hostLowByte(period);
+			buf[this->headerSize + 2] = Endian::hostHighByte(period);
 			
-			this->send(buf.data(), this->HEADER_SIZE + 3 + 2);
-			this->recv(buf.data(), this->HEADER_SIZE + 2 + 1 + 2, 0x41);
+			this->send(buf.data(), this->headerSize + 3 + 2);
+			this->recv(buf.data(), this->headerSize + 2 + 1 + 2, 0x41);
 		}
 		
 		void
@@ -272,10 +272,10 @@ namespace rl
 			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x42;
-			buf[this->HEADER_SIZE] = 0x00 | doReset;
+			buf[this->headerSize] = 0x00 | doReset;
 			
-			this->send(buf.data(), this->HEADER_SIZE + 1 + 2);
-			this->recv(buf.data(), this->HEADER_SIZE + 2 + 8 + 2, 0x42);
+			this->send(buf.data(), this->headerSize + 1 + 2);
+			this->recv(buf.data(), this->headerSize + 2 + 8 + 2, 0x42);
 			
 			numberGraspsTotal = Endian::hostDoubleWord(Endian::hostWord(buf[11], buf[10]), Endian::hostWord(buf[9], buf[8]));
 			numberGraspsNoPart = Endian::hostWord(buf[13], buf[12]);
@@ -290,12 +290,12 @@ namespace rl
 			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x43;
-			buf[this->HEADER_SIZE] = 0x00 | (doAutomaticUpdate << 0) | (doUpdateOnChange << 1);
-			buf[this->HEADER_SIZE + 1] = Endian::hostLowByte(period);
-			buf[this->HEADER_SIZE + 2] = Endian::hostHighByte(period);
+			buf[this->headerSize] = 0x00 | (doAutomaticUpdate << 0) | (doUpdateOnChange << 1);
+			buf[this->headerSize + 1] = Endian::hostLowByte(period);
+			buf[this->headerSize + 2] = Endian::hostHighByte(period);
 			
-			this->send(buf.data(), this->HEADER_SIZE + 3 + 2);
-			this->recv(buf.data(), this->HEADER_SIZE + 2 + 4 + 2, 0x43);
+			this->send(buf.data(), this->headerSize + 3 + 2);
+			this->recv(buf.data(), this->headerSize + 2 + 4 + 2, 0x43);
 		}
 		
 		void
@@ -307,11 +307,11 @@ namespace rl
 			
 			buf[3] = 0x35;
 			
-			this->send(buf.data(), this->HEADER_SIZE + 0 + 2);
-			this->recv(buf.data(), this->HEADER_SIZE + 2 + 8 + 2, 0x35);
+			this->send(buf.data(), this->headerSize + 0 + 2);
+			this->recv(buf.data(), this->headerSize + 2 + 8 + 2, 0x35);
 			
-			::std::memcpy(&this->limitMinus, &buf[this->HEADER_SIZE + 2], sizeof(this->limitMinus));
-			::std::memcpy(&this->limitPlus, &buf[this->HEADER_SIZE + 2 + 4], sizeof(this->limitPlus));
+			::std::memcpy(&this->limitMinus, &buf[this->headerSize + 2], sizeof(this->limitMinus));
+			::std::memcpy(&this->limitPlus, &buf[this->headerSize + 2 + 4], sizeof(this->limitPlus));
 			
 			this->limitMinus *= ::rl::math::Constants<float>::milli2unit;
 			this->limitPlus *= ::rl::math::Constants<float>::milli2unit;
@@ -325,12 +325,12 @@ namespace rl
 			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x44;
-			buf[this->HEADER_SIZE] = 0x00 | (doAutomaticUpdate << 0) | (doUpdateOnChange << 1);
-			buf[this->HEADER_SIZE + 1] = Endian::hostLowByte(period);
-			buf[this->HEADER_SIZE + 2] = Endian::hostHighByte(period);
+			buf[this->headerSize] = 0x00 | (doAutomaticUpdate << 0) | (doUpdateOnChange << 1);
+			buf[this->headerSize + 1] = Endian::hostLowByte(period);
+			buf[this->headerSize + 2] = Endian::hostHighByte(period);
 			
-			this->send(buf.data(), this->HEADER_SIZE + 3 + 2);
-			this->recv(buf.data(), this->HEADER_SIZE + 2 + 4 + 2, 0x44);
+			this->send(buf.data(), this->headerSize + 3 + 2);
+			this->recv(buf.data(), this->headerSize + 2 + 4 + 2, 0x44);
 		}
 		
 		void
@@ -342,8 +342,8 @@ namespace rl
 			
 			buf[3] = 0x50;
 			
-			this->send(buf.data(), this->HEADER_SIZE + 0 + 2);
-			this->recv(buf.data(), this->HEADER_SIZE + 2 + 8 + 2, 0x50);
+			this->send(buf.data(), this->headerSize + 0 + 2);
+			this->recv(buf.data(), this->headerSize + 2 + 8 + 2, 0x50);
 			
 			isWsg50 = (1 == buf[8]) ? true : false;
 			hardwareRevision = buf[9];
@@ -360,8 +360,8 @@ namespace rl
 			
 			buf[3] = 0x53;
 			
-			this->send(buf.data(), this->HEADER_SIZE + 0 + 2);
-			this->recv(buf.data(), this->HEADER_SIZE + 2 + 32 + 2, 0x53);
+			this->send(buf.data(), this->headerSize + 0 + 2);
+			this->recv(buf.data(), this->headerSize + 2 + 32 + 2, 0x53);
 			
 			::std::memcpy(&this->stroke, &buf[8], sizeof(this->stroke));
 			::std::memcpy(&this->speedMinimum, &buf[12], sizeof(this->speedMinimum));
@@ -387,18 +387,16 @@ namespace rl
 			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x40;
-			buf[this->HEADER_SIZE] = 0x00 | (doAutomaticUpdate << 0) | (doUpdateOnChange << 1);
-			buf[this->HEADER_SIZE + 1] = Endian::hostLowByte(period);
-			buf[this->HEADER_SIZE + 2] = Endian::hostHighByte(period);
+			buf[this->headerSize] = 0x00 | (doAutomaticUpdate << 0) | (doUpdateOnChange << 1);
+			buf[this->headerSize + 1] = Endian::hostLowByte(period);
+			buf[this->headerSize + 2] = Endian::hostHighByte(period);
 			
-			this->send(buf.data(), this->HEADER_SIZE + 3 + 2);
-			this->recv(buf.data(), this->HEADER_SIZE + 2 + 4 + 2, 0x40);
+			this->send(buf.data(), this->headerSize + 3 + 2);
+			this->recv(buf.data(), this->headerSize + 2 + 4 + 2, 0x40);
 			
-			this->systemState = static_cast<SystemState>(
-				Endian::hostDoubleWord(
-					Endian::hostWord(buf[this->HEADER_SIZE + 5], buf[this->HEADER_SIZE + 4]),
-					Endian::hostWord(buf[this->HEADER_SIZE + 3], buf[this->HEADER_SIZE + 2])
-				)
+			this->systemState = Endian::hostDoubleWord(
+				Endian::hostWord(buf[this->headerSize + 5], buf[this->headerSize + 4]),
+				Endian::hostWord(buf[this->headerSize + 3], buf[this->headerSize + 2])
 			);
 		}
 		
@@ -411,8 +409,8 @@ namespace rl
 			
 			buf[3] = 0x46;
 			
-			this->send(buf.data(), this->HEADER_SIZE + 0 + 2);
-			this->recv(buf.data(), this->HEADER_SIZE + 2 + 2 + 2, 0x46);
+			this->send(buf.data(), this->headerSize + 0 + 2);
+			this->recv(buf.data(), this->headerSize + 2 + 2 + 2, 0x46);
 			
 			::std::int16_t temperature = Endian::hostWord(buf[9], buf[8]);
 			
@@ -432,11 +430,11 @@ namespace rl
 			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x25;
-			::std::memcpy(&buf[this->HEADER_SIZE], &widthMilli, sizeof(widthMilli));
-			::std::memcpy(&buf[this->HEADER_SIZE + 4], &speedMilli, sizeof(speedMilli));
+			::std::memcpy(&buf[this->headerSize], &widthMilli, sizeof(widthMilli));
+			::std::memcpy(&buf[this->headerSize + 4], &speedMilli, sizeof(speedMilli));
 			
-			this->send(buf.data(), this->HEADER_SIZE + 8 + 2);
-			this->recv(buf.data(), this->HEADER_SIZE + 2 + 0 + 2, 0x25);
+			this->send(buf.data(), this->headerSize + 8 + 2);
+			this->recv(buf.data(), this->headerSize + 2 + 0 + 2, 0x25);
 		}
 		
 		// Perform necessary homing motion for calibration.
@@ -450,11 +448,11 @@ namespace rl
 			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x20;
-			buf[this->HEADER_SIZE] = direction;
+			buf[this->headerSize] = direction;
 			
-			this->send(buf.data(), this->HEADER_SIZE + 1 + 2);
-			this->recv(buf.data(), this->HEADER_SIZE + 2 + 0 + 2, 0x20);
-			this->recv(buf.data(), this->HEADER_SIZE + 2 + 0 + 2, 0x20); // wait for completion message
+			this->send(buf.data(), this->headerSize + 1 + 2);
+			this->recv(buf.data(), this->headerSize + 2 + 0 + 2, 0x20);
+			this->recv(buf.data(), this->headerSize + 2 + 0 + 2, 0x20); // wait for completion message
 		}
 		
 		void
@@ -472,8 +470,8 @@ namespace rl
 				buf[4] |= 1;
 			}
 			
-			this->send(buf.data(), this->HEADER_SIZE + 1 + 2);
-			this->recv(buf.data(), this->HEADER_SIZE + 2 + 0 + 2, 0x37);
+			this->send(buf.data(), this->headerSize + 1 + 2);
+			this->recv(buf.data(), this->headerSize + 2 + 0 + 2, 0x37);
 		}
 		
 		void
@@ -489,24 +487,24 @@ namespace rl
 			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x21;
-			buf[this->HEADER_SIZE] = 0x00;
+			buf[this->headerSize] = 0x00;
 			
 			if (doRelativeMovement)
 			{
-				buf[this->HEADER_SIZE] |= 1;
+				buf[this->headerSize] |= 1;
 			}
 			
 			if (doStopOnBlock)
 			{
-				buf[this->HEADER_SIZE] |= 2;
+				buf[this->headerSize] |= 2;
 			}
 			
-			::std::memcpy(&buf[this->HEADER_SIZE + 1], &widthMilli, sizeof(widthMilli));
-			::std::memcpy(&buf[this->HEADER_SIZE + 4 + 1], &speedMilli, sizeof(speedMilli));
+			::std::memcpy(&buf[this->headerSize + 1], &widthMilli, sizeof(widthMilli));
+			::std::memcpy(&buf[this->headerSize + 4 + 1], &speedMilli, sizeof(speedMilli));
 			
-			this->send(buf.data(), this->HEADER_SIZE + 9 + 2);
-			this->recv(buf.data(), this->HEADER_SIZE + 2 + 0 + 2, 0x21);
-			this->recv(buf.data(), this->HEADER_SIZE + 2 + 0 + 2, 0x21); // wait for completion
+			this->send(buf.data(), this->headerSize + 9 + 2);
+			this->recv(buf.data(), this->headerSize + 2 + 0 + 2, 0x21);
+			this->recv(buf.data(), this->headerSize + 2 + 0 + 2, 0x21); // wait for completion
 		}
 		
 		void
@@ -522,11 +520,11 @@ namespace rl
 			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x26;
-			::std::memcpy(&buf[this->HEADER_SIZE], &widthMilli, sizeof(widthMilli));
-			::std::memcpy(&buf[this->HEADER_SIZE + 4], &speedMilli, sizeof(speedMilli));
+			::std::memcpy(&buf[this->headerSize], &widthMilli, sizeof(widthMilli));
+			::std::memcpy(&buf[this->headerSize + 4], &speedMilli, sizeof(speedMilli));
 			
-			this->send(buf.data(), this->HEADER_SIZE + 8 + 2);
-			this->recv(buf.data(), this->HEADER_SIZE + 2 + 0 + 2, 0x26);
+			this->send(buf.data(), this->headerSize + 8 + 2);
+			this->recv(buf.data(), this->headerSize + 2 + 0 + 2, 0x26);
 		}
 		
 		void
@@ -540,10 +538,10 @@ namespace rl
 			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x30;
-			::std::memcpy(&buf[this->HEADER_SIZE], &accelerationMilli, sizeof(accelerationMilli));
+			::std::memcpy(&buf[this->headerSize], &accelerationMilli, sizeof(accelerationMilli));
 			
-			this->send(buf.data(), this->HEADER_SIZE + 4 + 2);
-			this->recv(buf.data(), this->HEADER_SIZE + 2 + 0 + 2, 0x30);
+			this->send(buf.data(), this->headerSize + 4 + 2);
+			this->recv(buf.data(), this->headerSize + 2 + 0 + 2, 0x30);
 			
 			this->acceleration = acceleration;
 		}
@@ -557,10 +555,10 @@ namespace rl
 			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x32;
-			::std::memcpy(&buf[this->HEADER_SIZE], &force, sizeof(force));
+			::std::memcpy(&buf[this->headerSize], &force, sizeof(force));
 			
-			this->send(buf.data(), this->HEADER_SIZE + 4 + 2);
-			this->recv(buf.data(), this->HEADER_SIZE + 2 + 0 + 2, 0x32);
+			this->send(buf.data(), this->headerSize + 4 + 2);
+			this->recv(buf.data(), this->headerSize + 2 + 0 + 2, 0x32);
 			
 			this->forceLimit = force;
 		}
@@ -576,11 +574,11 @@ namespace rl
 			::std::array<::std::uint8_t, 64> buf;
 			
 			buf[3] = 0x34;
-			::std::memcpy(&buf[this->HEADER_SIZE], &limitMinusMilli, sizeof(limitMinusMilli));
-			::std::memcpy(&buf[this->HEADER_SIZE] + 4, &limitPlusMilli, sizeof(limitPlusMilli));
+			::std::memcpy(&buf[this->headerSize], &limitMinusMilli, sizeof(limitMinusMilli));
+			::std::memcpy(&buf[this->headerSize] + 4, &limitPlusMilli, sizeof(limitPlusMilli));
 			
-			this->send(buf.data(), this->HEADER_SIZE + 8 + 2);
-			this->recv(buf.data(), this->HEADER_SIZE + 2 + 0 + 2, 0x34);
+			this->send(buf.data(), this->headerSize + 8 + 2);
+			this->recv(buf.data(), this->headerSize + 2 + 0 + 2, 0x34);
 			
 			this->limitMinus = limitMinus;
 			this->limitPlus = limitPlus;
@@ -595,8 +593,8 @@ namespace rl
 			
 			buf[3] = 0x22;
 			
-			this->send(buf.data(), this->HEADER_SIZE + 0 + 2);
-			this->recv(buf.data(), this->HEADER_SIZE + 2 + 0 + 2, 0x22);
+			this->send(buf.data(), this->headerSize + 0 + 2);
+			this->recv(buf.data(), this->headerSize + 2 + 0 + 2, 0x22);
 		}
 		
 		void
@@ -608,8 +606,8 @@ namespace rl
 			
 			buf[3] = 0x38;
 			
-			this->send(buf.data(), this->HEADER_SIZE + 0 + 2);
-			this->recv(buf.data(), this->HEADER_SIZE + 2 + 0 + 2, 0x38);
+			this->send(buf.data(), this->headerSize + 0 + 2);
+			this->recv(buf.data(), this->headerSize + 2 + 0 + 2, 0x38);
 		}
 		
 		float
@@ -630,8 +628,8 @@ namespace rl
 			return this->forceLimit;
 		}
 		
-		WeissWsg50::GraspingState
-		WeissWsg50::getGraspingState() const
+		::std::uint8_t
+		WeissWsg50::getGraspingStateBits() const
 		{
 			return this->graspingState;
 		}
@@ -648,8 +646,8 @@ namespace rl
 			return this->speed;
 		}
 		
-		WeissWsg50::SystemState
-		WeissWsg50::getSystemState() const
+		::std::uint32_t
+		WeissWsg50::getSystemStateBits() const
 		{
 			return this->systemState;
 		}
@@ -740,11 +738,11 @@ namespace rl
 			
 			switch (code)
 			{
-			case WeissException::CODE_SUCCESS:
+			case WeissException::Code::success:
 				break;
-			case WeissException::CODE_COMMAND_PENDING:
+			case WeissException::Code::commandPending:
 				break;
-			case WeissException::CODE_AXIS_BLOCKED:
+			case WeissException::Code::axisBlocked:
 				break;
 			default:
 //				::std::cerr << "Debug: error: " << error << ::std::endl;
@@ -778,15 +776,13 @@ namespace rl
 			switch (buf[3])
 			{
 			case 0x40:
-				this->systemState = static_cast<SystemState>(
-					Endian::hostDoubleWord(
-						Endian::hostWord(buf[11], buf[10]),
-						Endian::hostWord(buf[9], buf[8])
-					)
+				this->systemState = Endian::hostDoubleWord(
+					Endian::hostWord(buf[11], buf[10]),
+					Endian::hostWord(buf[9], buf[8])
 				);
 				break;
 			case 0x41:
-				this->graspingState = static_cast<GraspingState>(buf[8]);
+				this->graspingState = buf[8];
 				break;
 			case 0x43:
 				::std::memcpy(&this->openingWidth, &buf[8], sizeof(this->openingWidth));
@@ -846,7 +842,7 @@ namespace rl
 			buf[1] = 0xAA;
 			buf[2] = 0xAA;
 			
-			::std::uint16_t length = len - this->HEADER_SIZE - 2;
+			::std::uint16_t length = len - this->headerSize - 2;
 			
 			buf[4] = Endian::hostLowByte(length);
 			buf[5] = Endian::hostHighByte(length);

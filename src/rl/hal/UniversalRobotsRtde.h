@@ -75,80 +75,80 @@ namespace rl
 			public JointVelocitySensor
 		{
 		public:
-			enum JointMode
+			enum class JointMode
 			{
-				JOINT_MODE_SHUTTING_DOWN = 236,
-				JOINT_MODE_PART_D_CALIBRATION = 237,
-				JOINT_MODE_BACKDRIVE = 238,
-				JOINT_MODE_POWER_OFF = 239,
-				JOINT_MODE_NOT_RESPONDING = 245,
-				JOINT_MODE_MOTOR_INITIALISATION = 246,
-				JOINT_MODE_BOOTING = 247,
-				JOINT_MODE_PART_D_CALIBRATION_ERROR = 248,
-				JOINT_MODE_BOOTLOADER = 249,
-				JOINT_MODE_CALIBRATION = 250,
-				JOINT_MODE_FAULT = 252,
-				JOINT_MODE_RUNNING = 253,
-				JOINT_MODE_IDLE_MODE = 255
+				shuttingDown = 236,
+				partDCalibration = 237,
+				backdrive = 238,
+				powerOff = 239,
+				notResponding = 245,
+				motorInitialisation = 246,
+				booting = 247,
+				partDCalibrationError = 248,
+				bootloader = 249,
+				calibration = 250,
+				fault = 252,
+				running = 253,
+				idleMode = 255
 			};
 			
-			enum RobotMode
+			enum class RobotMode
 			{
-				ROBOT_MODE_DISCONNECTED = 0,
-				ROBOT_MODE_CONFIRM_SAFETY = 1,
-				ROBOT_MODE_BOOTING = 2,
-				ROBOT_MODE_POWER_OFF = 3,
-				ROBOT_MODE_POWER_ON = 4,
-				ROBOT_MODE_IDLE = 5,
-				ROBOT_MODE_BACKDRIVE = 6,
-				ROBOT_MODE_RUNNING = 7,
-				ROBOT_MODE_UPDATING_FIRMWARE = 8
+				disconnected = 0,
+				confirmSafety = 1,
+				booting = 2,
+				powerOff = 3,
+				powerOn = 4,
+				idle = 5,
+				backdrive = 6,
+				running = 7,
+				updatingFirmware = 8
 			};
 			
-			enum RobotStatus
+			enum class RobotStatus
 			{
-				ROBOT_STATUS_POWER_ON = 1,
-				ROBOT_STATUS_PROGRAM_RUNNING = 2,
-				ROBOT_STATUS_TEACH_BUTTON_PRESSED = 4,
-				ROBOT_STATUS_POWER_BUTTON_PRESSED = 8
+				powerOn = 1,
+				programRunning = 2,
+				teachButtonPressed = 4,
+				powerButtonPressed = 8
 			};
 			
-			enum RuntimeState
+			enum class RuntimeState
 			{
-				RUNTIME_STATE_STOPPING = 0,
-				RUNTIME_STATE_STOPPED = 1,
-				RUNTIME_STATE_PLAYING = 2,
-				RUNTIME_STATE_PAUSING = 3,
-				RUNTIME_STATE_PAUSED = 4,
-				RUNTIME_STATE_RESUMING = 5
+				stopping = 0,
+				stopped = 1,
+				playing = 2,
+				pausing = 3,
+				paused = 4,
+				resuming = 5
 			};
 			
-			enum SafetyMode
+			enum class SafetyMode
 			{
-				SAFETY_MODE_NORMAL = 1,
-				SAFETY_MODE_REDUCED = 2,
-				SAFETY_MODE_PROTECTIVE_STOP = 3,
-				SAFETY_MODE_RECOVERY = 4,
-				SAFETY_MODE_SAFEGUARD_STOP = 5,
-				SAFETY_MODE_SYSTEM_EMERGENCY_STOP = 6,
-				SAFETY_MODE_ROBOT_EMERGENCY_STOP = 7,
-				SAFETY_MODE_VIOLATION = 8,
-				SAFETY_MODE_FAULT = 9
+				normal = 1,
+				reduced = 2,
+				protectiveStop = 3,
+				recovery = 4,
+				safeguardStop = 5,
+				systemEmergencyStop = 6,
+				robotEmergencyStop = 7,
+				violation = 8,
+				fault = 9
 			};
 			
-			enum SafetyStatus
+			enum class SafetyStatus
 			{
-				SAFETY_STATUS_NORMAL_MODE = 1,
-				SAFETY_STATUS_REDUCED_MODE = 2,
-				SAFETY_STATUS_PROTECTIVE_STOPPED = 4,
-				SAFETY_STATUS_RECOVERY_MODE = 8,
-				SAFETY_STATUS_SAFEGUARD_STOPPED = 16,
-				SAFETY_STATUS_SYSTEM_EMERGENCY_STOPPED = 32,
-				SAFETY_STATUS_ROBOT_EMERGENCY_STOPPED = 64,
-				SAFETY_STATUS_EMERGENCY_STOPPED = 128,
-				SAFETY_STATUS_VIOLATION = 256,
-				SAFETY_STATUS_FAULT = 512,
-				SAFETY_STATUS_STOPPED_DUE_TO_SAFETY = 1024
+				normalMode = 1,
+				reducedMode = 2,
+				protectiveStopped = 4,
+				recoveryMode = 8,
+				safeguardStopped = 16,
+				systemEmergencyStopped = 32,
+				robotEmergencyStopped = 64,
+				emergencyStopped = 128,
+				violation = 256,
+				fault = 512,
+				stoppedDueToSafety = 1024
 			};
 			
 			UniversalRobotsRtde(const ::std::string& address, const ::std::chrono::nanoseconds& updateRate = ::std::chrono::milliseconds(8));
@@ -258,16 +258,16 @@ namespace rl
 		protected:
 			
 		private:
-			enum Command
+			enum class Command : ::std::uint8_t
 			{
-				COMMAND_CONTROL_PACKAGE_PAUSE = 80,
-				COMMAND_CONTROL_PACKAGE_SETUP_INPUTS = 73,
-				COMMAND_CONTROL_PACKAGE_SETUP_OUTPUTS = 79,
-				COMMAND_CONTROL_PACKAGE_START = 83,
-				COMMAND_DATA_PACKAGE = 85,
-				COMMAND_GET_URCONTROL_VERSION = 118,
-				COMMAND_REQUEST_PROTOCOL_VERSION = 86,
-				COMMAND_TEXT_MESSAGE = 77
+				controlPackagePause = 80,
+				controlPackageSetupInputs = 73,
+				controlPackageSetupOutputs = 79,
+				controlPackageStart = 83,
+				dataPackage = 85,
+				getUrcontrolVersion = 118,
+				requestProtocolVersion = 86,
+				textMessage = 77
 			};
 			
 			struct Input
@@ -391,11 +391,11 @@ namespace rl
 			
 			void send(::std::uint8_t* buffer, const ::std::size_t& size);
 			
-			void send(const ::std::uint8_t& command);
+			void send(const Command& command);
 			
-			void send(const ::std::uint8_t& command, const ::std::vector<::std::string>& strings);
+			void send(const Command& command, const ::std::vector<::std::string>& strings);
 			
-			void send(const ::std::uint8_t& command, const ::std::uint16_t& word);
+			void send(const Command& command, const ::std::uint16_t& word);
 			
 			void sendAnalogOutputs();
 			

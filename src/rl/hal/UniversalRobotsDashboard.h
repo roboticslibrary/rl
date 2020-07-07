@@ -43,37 +43,37 @@ namespace rl
 		class RL_HAL_EXPORT UniversalRobotsDashboard : public Com
 		{
 		public:
-			enum ProgramState
+			enum class ProgramState
 			{
-				PROGRAM_STATE_STOPPED,
-				PROGRAM_STATE_PLAYING,
-				PROGRAM_STATE_PAUSED
+				stopped,
+				playing,
+				paused
 			};
 			
-			enum RobotMode
+			enum class RobotMode
 			{
-				ROBOT_MODE_NO_CONTROLLER,
-				ROBOT_MODE_DISCONNECTED,
-				ROBOT_MODE_CONFIRM_SAFETY,
-				ROBOT_MODE_BOOTING,
-				ROBOT_MODE_POWER_OFF,
-				ROBOT_MODE_POWER_ON,
-				ROBOT_MODE_IDLE,
-				ROBOT_MODE_BACKDRIVE,
-				ROBOT_MODE_RUNNING
+				noController,
+				disconnected,
+				confirmSafety,
+				booting,
+				powerOff,
+				powerOn,
+				idle,
+				backdrive,
+				running
 			};
 			
-			enum SafetyMode
+			enum class SafetyMode
 			{
-				SAFETY_MODE_NORMAL,
-				SAFETY_MODE_REDUCED,
-				SAFETY_MODE_PROTECTIVE_STOP,
-				SAFETY_MODE_RECOVERY,
-				SAFETY_MODE_SAFEGUARD_STOP,
-				SAFETY_MODE_SYSTEM_EMERGENCY_STOP,
-				SAFETY_MODE_ROBOT_EMERGENCY_STOP,
-				SAFETY_MODE_VIOLATION,
-				SAFETY_MODE_FAULT
+				normal,
+				reduced,
+				protectiveStop,
+				recovery,
+				safeguardStop,
+				systemEmergencyStop,
+				robotEmergencyStop,
+				violation,
+				fault
 			};
 			
 			UniversalRobotsDashboard(const ::std::string& address);

@@ -41,11 +41,11 @@ namespace rl
 			out(),
 			serial(
 				filename,
-				Serial::BAUDRATE_115200BPS,
-				Serial::DATABITS_8BITS,
-				Serial::FLOWCONTROL_OFF,
-				Serial::PARITY_NOPARITY,
-				Serial::STOPBITS_1BIT
+				Serial::BaudRate::b115200,
+				Serial::DataBits::d8,
+				Serial::FlowControl::off,
+				Serial::Parity::none,
+				Serial::StopBits::s1
 			)
 		{
 			this->in.fill(0x00);
@@ -229,7 +229,7 @@ namespace rl
 		{
 			this->step();
 			
-			if (ACTIVATION_STATUS_READY != this->getActivationStatus() || GRIPPER_STATUS_READY != this->getGripperStatus())
+			if (ActivationStatus::ready != this->getActivationStatus() || GripperStatus::ready != this->getGripperStatus())
 			{
 				this->out[1] = 0x10; // function code
 				
@@ -306,12 +306,12 @@ namespace rl
 			this->send(this->out.data(), 1 + 1 + 2 + 2 + 2);
 			this->recv(this->in.data(), 1 + 1 + 1 + 6 + 2);
 			
-			if (this->getFaultStatus() >= 0x0A)
+			if (static_cast<int>(this->getFaultStatus()) >= 0x0A)
 			{
 				throw Exception(this->getFaultStatus());
 			}
 			
-			if (ACTIVATION_STATUS_READY == this->getActivationStatus() && GRIPPER_STATUS_READY == this->getGripperStatus())
+			if (ActivationStatus::ready == this->getActivationStatus() && GripperStatus::ready == this->getGripperStatus())
 			{
 				this->setRunning(true);
 			}
@@ -348,34 +348,34 @@ namespace rl
 		{
 			switch (this->faultStatus)
 			{
-			case FAULT_STATUS_NONE:
+			case FaultStatus::none:
 				return "No fault.";
 				break;
-			case FAULT_STATUS_NOTICE_ACTIVATION_NEEDED:
+			case FaultStatus::noticeActivationNeeded:
 				return "The activation bit must be set prior to action";
 				break;
-			case FAULT_STATUS_WARNING_TEMPERATURE:
+			case FaultStatus::warningTemperature:
 				return "Maximum operating temperature exceeded, wait for cool-down";
 				break;
-			case FAULT_STATUS_WARNING_COMM_NOT_READY:
+			case FaultStatus::warningCommNotReady:
 				return "The communication chip is not ready (may be booting).";
 				break;
-			case FAULT_STATUS_WARNING_VOLTAGE:
+			case FaultStatus::warningVoltage:
 				return "Under minimum operating voltage.";
 				break;
-			case FAULT_STATUS_WARNING_AUTOMATIC_RELEASE:
+			case FaultStatus::warningAutomaticRelease:
 				return "Automatic release in progress.";
 				break;
-			case FAULT_STATUS_ERROR_INTERNAL:
+			case FaultStatus::errorInternal:
 				return "Internal fault.";
 				break;
-			case FAULT_STATUS_ERROR_ACTIVATION_FAULT:
+			case FaultStatus::errorActivationFault:
 				return "Activation fault, verify that no interference or other error occurred.";
 				break;
-			case FAULT_STATUS_ERROR_MODE_FAULT:
+			case FaultStatus::errorModeFault:
 				return "Overcurrent triggered.";
 				break;
-			case FAULT_STATUS_ERROR_AUTOMATIC_RELEASE_COMPLETE:
+			case FaultStatus::errorAutomaticReleaseComplete:
 				return "Automatic release completed.";
 				break;
 			default:

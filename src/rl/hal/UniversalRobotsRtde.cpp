@@ -486,19 +486,19 @@ namespace rl
 		{
 			this->socket2.open();
 			this->socket2.connect();
-			this->socket2.setOption(::rl::hal::Socket::OPTION_NODELAY, 1);
+			this->socket2.setOption(Socket::Option::nodelay, 1);
 			this->socket4.open();
 			this->socket4.connect();
-			this->socket4.setOption(::rl::hal::Socket::OPTION_NODELAY, 1);
+			this->socket4.setOption(Socket::Option::nodelay, 1);
 			this->setConnected(true);
 			
-			this->send(COMMAND_REQUEST_PROTOCOL_VERSION, 1);
+			this->send(Command::requestProtocolVersion, 1);
 			this->recv();
 			
-			this->send(COMMAND_GET_URCONTROL_VERSION);
+			this->send(Command::getUrcontrolVersion);
 			this->recv();
 			
-			static const ::std::string outputsArray[] = {
+			static constexpr const char* outputsArray[] = {
 				"timestamp",
 				"target_q",
 				"target_qd",
@@ -585,17 +585,17 @@ namespace rl
 				"output_double_register_23"
 			};
 			static const ::std::vector<::std::string> outputs(::std::begin(outputsArray), ::std::end(outputsArray));
-			this->send(COMMAND_CONTROL_PACKAGE_SETUP_OUTPUTS, outputs);
+			this->send(Command::controlPackageSetupOutputs, outputs);
 			this->recv();
 			
-			static const ::std::string inputs1Array[] = {
+			static constexpr const char* inputs1Array[] = {
 				"input_int_register_0"
 			};
 			static const ::std::vector<::std::string> inputs1(::std::begin(inputs1Array), ::std::end(inputs1Array));
-			this->send(COMMAND_CONTROL_PACKAGE_SETUP_INPUTS, inputs1);
+			this->send(Command::controlPackageSetupInputs, inputs1);
 			this->recv();
 			
-			static const ::std::string inputs2Array[] = {
+			static constexpr const char* inputs2Array[] = {
 				"input_double_register_0",
 				"input_double_register_1",
 				"input_double_register_2",
@@ -611,35 +611,35 @@ namespace rl
 				"input_double_register_12"
 			};
 			static const ::std::vector<::std::string> inputs2(::std::begin(inputs2Array), ::std::end(inputs2Array));
-			this->send(COMMAND_CONTROL_PACKAGE_SETUP_INPUTS, inputs2);
+			this->send(Command::controlPackageSetupInputs, inputs2);
 			this->recv();
 			
-			static const ::std::string inputs3Array[] = {
+			static constexpr const char* inputs3Array[] = {
 				"standard_digital_output_mask",
 				"configurable_digital_output_mask",
 				"standard_digital_output",
 				"configurable_digital_output"
 			};
 			static const ::std::vector<::std::string> inputs3(::std::begin(inputs3Array), ::std::end(inputs3Array));
-			this->send(COMMAND_CONTROL_PACKAGE_SETUP_INPUTS, inputs3);
+			this->send(Command::controlPackageSetupInputs, inputs3);
 			this->recv();
 			
-			static const ::std::string inputs4Array[] = {
+			static constexpr const char* inputs4Array[] = {
 				"standard_analog_output_mask",
 				"standard_analog_output_type",
 				"standard_analog_output_0",
 				"standard_analog_output_1"
 			};
 			static const ::std::vector<::std::string> inputs4(::std::begin(inputs4Array), ::std::end(inputs4Array));
-			this->send(COMMAND_CONTROL_PACKAGE_SETUP_INPUTS, inputs4);
+			this->send(Command::controlPackageSetupInputs, inputs4);
 			this->recv();
 			
-			static const ::std::string inputs5Array[] = {
+			static constexpr const char* inputs5Array[] = {
 				"input_bit_registers0_to_31",
 				"input_bit_registers32_to_63"
 			};
 			static const ::std::vector<::std::string> inputs5(::std::begin(inputs5Array), ::std::end(inputs5Array));
-			this->send(COMMAND_CONTROL_PACKAGE_SETUP_INPUTS, inputs5);
+			this->send(Command::controlPackageSetupInputs, inputs5);
 			this->recv();
 		}
 		
@@ -649,7 +649,7 @@ namespace rl
 			::std::array<::std::uint8_t, 4096> buffer;
 			::std::size_t size = this->socket4.recv(buffer.data(), buffer.size());
 #if !defined(__APPLE__) && !defined(__QNX__) && !defined(WIN32) && !defined(__CYGWIN__)
-			this->socket4.setOption(::rl::hal::Socket::OPTION_QUICKACK, 1);
+			this->socket4.setOption(Socket::Option::quickack, 1);
 #endif // !__APPLE__ && !__QNX__ && !WIN32 && !__CYGWIN__
 //			::std::cout << "size: " << size << ::std::endl;
 			
@@ -665,9 +665,9 @@ namespace rl
 				this->unserialize(ptr, packageType);
 //				::std::cout << "packageType: " << packageType << ::std::endl;
 				
-				switch (packageType)
+				switch (static_cast<Command>(packageType))
 				{
-				case COMMAND_CONTROL_PACKAGE_PAUSE:
+				case Command::controlPackagePause:
 					::std::uint8_t pauseAccepted;
 					this->unserialize(ptr, pauseAccepted);
 //					::std::cout << "accepted: " << static_cast<bool>(pauseAccepted & 0x01) << ::std::endl;
@@ -678,7 +678,7 @@ namespace rl
 					}
 					
 					break;
-				case COMMAND_CONTROL_PACKAGE_SETUP_INPUTS:
+				case Command::controlPackageSetupInputs:
 				{
 					::std::uint8_t recipeId;
 					this->unserialize(ptr, recipeId);
@@ -694,7 +694,7 @@ namespace rl
 					ptr += packageSize - 4;
 				}
 					break;
-				case COMMAND_CONTROL_PACKAGE_SETUP_OUTPUTS:
+				case Command::controlPackageSetupOutputs:
 				{
 					::std::string variableTypes(reinterpret_cast<char*>(ptr), packageSize - 3);
 //					::std::cout << "variableTypes: " << variableTypes << ::std::endl;
@@ -706,7 +706,7 @@ namespace rl
 					}
 				}
 					break;
-				case COMMAND_CONTROL_PACKAGE_START:
+				case Command::controlPackageStart:
 					::std::uint8_t startAccepted;
 					this->unserialize(ptr, startAccepted);
 //					::std::cout << "accepted: " << static_cast<bool>(startAccepted & 0x01) << ::std::endl;
@@ -717,7 +717,7 @@ namespace rl
 					}
 					
 					break;
-				case COMMAND_DATA_PACKAGE:
+				case Command::dataPackage:
 					this->unserialize(ptr, this->output.timestamp);
 					this->unserialize(ptr, this->output.targetQ);
 					this->unserialize(ptr, this->output.targetQd);
@@ -769,35 +769,35 @@ namespace rl
 					
 					switch (this->getSafetyMode())
 					{
-					case SAFETY_MODE_NORMAL:
+					case SafetyMode::normal:
 						break;
-					case SAFETY_MODE_REDUCED:
+					case SafetyMode::reduced:
 						break;
-					case SAFETY_MODE_PROTECTIVE_STOP:
+					case SafetyMode::protectiveStop:
 						throw DeviceException("Protective stop");
 						break;
-					case SAFETY_MODE_RECOVERY:
+					case SafetyMode::recovery:
 						break;
-					case SAFETY_MODE_SAFEGUARD_STOP:
+					case SafetyMode::safeguardStop:
 						throw DeviceException("Safeguard stop");
 						break;
-					case SAFETY_MODE_SYSTEM_EMERGENCY_STOP:
+					case SafetyMode::systemEmergencyStop:
 						throw DeviceException("System emergency stop");
 						break;
-					case SAFETY_MODE_ROBOT_EMERGENCY_STOP:
+					case SafetyMode::robotEmergencyStop:
 						throw DeviceException("Robot emergency stop");
 						break;
-					case SAFETY_MODE_VIOLATION:
+					case SafetyMode::violation:
 						throw DeviceException("Mode violation");
 						break;
-					case SAFETY_MODE_FAULT:
+					case SafetyMode::fault:
 						throw DeviceException("Fault");
 						break;
 					default:
 						break;
 					}
 					break;
-				case COMMAND_GET_URCONTROL_VERSION:
+				case Command::getUrcontrolVersion:
 					this->unserialize(ptr, this->version.major);
 //					::std::cout << "major: " << this->version.major << ::std::endl;
 					this->unserialize(ptr, this->version.minor);
@@ -807,7 +807,7 @@ namespace rl
 					this->unserialize(ptr, this->version.build);
 //					::std::cout << "build: " << this->version.build << ::std::endl;
 					break;
-				case COMMAND_REQUEST_PROTOCOL_VERSION:
+				case Command::requestProtocolVersion:
 					::std::uint8_t protocolAccepted;
 					this->unserialize(ptr, protocolAccepted);
 //					::std::cout << "accepted: " << static_cast<bool>(protocolAccepted & 0x01) << ::std::endl;
@@ -818,7 +818,7 @@ namespace rl
 					}
 					
 					break;
-				case COMMAND_TEXT_MESSAGE:
+				case Command::textMessage:
 				{
 					::std::uint8_t level;
 					this->unserialize(ptr, level);
@@ -859,7 +859,7 @@ namespace rl
 		}
 		
 		void
-		UniversalRobotsRtde::send(const ::std::uint8_t& command)
+		UniversalRobotsRtde::send(const Command& command)
 		{
 			::std::vector<::std::uint8_t> buffer;
 			
@@ -867,13 +867,13 @@ namespace rl
 			
 			buffer.push_back(0);
 			buffer.push_back(0);
-			buffer.push_back(command);
+			buffer.push_back(static_cast<::std::uint8_t>(command));
 			
 			this->send(buffer.data(), buffer.size());
 		}
 		
 		void
-		UniversalRobotsRtde::send(const ::std::uint8_t& command, const ::std::vector<::std::string>& strings)
+		UniversalRobotsRtde::send(const Command& command, const ::std::vector<::std::string>& strings)
 		{
 			::std::vector<::std::uint8_t> buffer;
 			
@@ -881,7 +881,7 @@ namespace rl
 			
 			buffer.push_back(0);
 			buffer.push_back(0);
-			buffer.push_back(command);
+			buffer.push_back(static_cast<::std::uint8_t>(command));
 			
 			for (::std::size_t i = 0; i < strings.size(); ++i)
 			{
@@ -905,7 +905,7 @@ namespace rl
 		}
 		
 		void
-		UniversalRobotsRtde::send(const ::std::uint8_t& command, const ::std::uint16_t& word)
+		UniversalRobotsRtde::send(const Command& command, const ::std::uint16_t& word)
 		{
 			::std::vector<::std::uint8_t> buffer;
 			
@@ -913,7 +913,7 @@ namespace rl
 			
 			buffer.push_back(0);
 			buffer.push_back(0);
-			buffer.push_back(command);
+			buffer.push_back(static_cast<::std::uint8_t>(command));
 			buffer.push_back(Endian::hostHighByte(word));
 			buffer.push_back(Endian::hostLowByte(word));
 			
@@ -929,7 +929,7 @@ namespace rl
 			
 			buffer.push_back(0);
 			buffer.push_back(0);
-			buffer.push_back(COMMAND_DATA_PACKAGE);
+			buffer.push_back(static_cast<::std::uint8_t>(Command::dataPackage));
 			buffer.push_back(4);
 			
 			buffer.resize(buffer.size() + 2 + 2 * sizeof(double));
@@ -953,7 +953,7 @@ namespace rl
 			
 			buffer.push_back(0);
 			buffer.push_back(0);
-			buffer.push_back(COMMAND_DATA_PACKAGE);
+			buffer.push_back(static_cast<::std::uint8_t>(Command::dataPackage));
 			buffer.push_back(5);
 			
 			::std::uint8_t* ptr = &buffer[4];
@@ -982,7 +982,7 @@ namespace rl
 			
 			buffer.push_back(0);
 			buffer.push_back(0);
-			buffer.push_back(COMMAND_DATA_PACKAGE);
+			buffer.push_back(static_cast<::std::uint8_t>(Command::dataPackage));
 			buffer.push_back(3);
 			
 			buffer.resize(buffer.size() + 4);
@@ -1006,7 +1006,7 @@ namespace rl
 			
 			buffer.push_back(0);
 			buffer.push_back(0);
-			buffer.push_back(COMMAND_DATA_PACKAGE);
+			buffer.push_back(static_cast<::std::uint8_t>(Command::dataPackage));
 			buffer.push_back(2);
 			
 			buffer.resize(buffer.size() + this->input.inputDoubleRegister.size() * sizeof(double));
@@ -1030,7 +1030,7 @@ namespace rl
 			
 			buffer.push_back(0);
 			buffer.push_back(0);
-			buffer.push_back(COMMAND_DATA_PACKAGE);
+			buffer.push_back(static_cast<::std::uint8_t>(Command::dataPackage));
 			buffer.push_back(1);
 			
 			buffer.resize(buffer.size() + this->input.inputIntRegister.size() * sizeof(::std::int32_t));
@@ -1210,7 +1210,7 @@ namespace rl
 		void
 		UniversalRobotsRtde::start()
 		{
-			this->send(COMMAND_CONTROL_PACKAGE_START);
+			this->send(Command::controlPackageStart);
 			this->recv();
 			
 			this->input.inputIntRegister.push_back(1);
@@ -1249,7 +1249,7 @@ namespace rl
 			{
 				this->recv();
 			}
-			while (ROBOT_MODE_RUNNING != this->getRobotMode() || RUNTIME_STATE_PLAYING != this->getRuntimeState());
+			while (RobotMode::running != this->getRobotMode() || RuntimeState::playing != this->getRuntimeState());
 			
 			this->setRunning(true);
 		}
@@ -1303,9 +1303,9 @@ namespace rl
 			{
 				this->recv();
 			}
-			while (RUNTIME_STATE_STOPPED != this->getRuntimeState());
+			while (RuntimeState::stopped != this->getRuntimeState());
 			
-			this->send(COMMAND_CONTROL_PACKAGE_PAUSE);
+			this->send(Command::controlPackagePause);
 			this->recv();
 			
 			this->setRunning(false);

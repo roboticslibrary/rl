@@ -39,8 +39,8 @@ namespace rl
 	{
 		Rhino::Rhino() :
 			Kinematics(),
-			arm(ARM_LEFT),
-			elbow(ELBOW_ABOVE)
+			arm(Arm::left),
+			elbow(Elbow::above)
 		{
 		}
 		
@@ -65,8 +65,8 @@ namespace rl
 		{
 			assert(q.size() == this->getDof());
 			
-			int arm = this->arm;
-			int elbow = this->elbow;
+			int arm = static_cast<int>(this->arm);
+			int elbow = static_cast<int>(this->elbow);
 			
 			::rl::math::Real a1 = this->joints[0]->a;
 			::rl::math::Real a2 = this->joints[1]->a;
@@ -203,28 +203,28 @@ namespace rl
 			
 			if (tmp < 0)
 			{
-				arm = ARM_RIGHT;
+				arm = Arm::right;
 				
 				if (tmp2 < 0)
 				{
-					elbow = ELBOW_ABOVE;
+					elbow = Elbow::above;
 				}
 				else
 				{
-					elbow = ELBOW_BELOW;
+					elbow = Elbow::below;
 				}
 			}
 			else
 			{
-				arm = ARM_LEFT;
+				arm = Arm::left;
 				
 				if (tmp2 < 0)
 				{
-					elbow = ELBOW_BELOW;
+					elbow = Elbow::below;
 				}
 				else
 				{
-					elbow = ELBOW_ABOVE;
+					elbow = Elbow::above;
 				}
 			}
 		}

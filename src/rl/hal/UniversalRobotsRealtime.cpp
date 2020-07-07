@@ -238,7 +238,7 @@ namespace rl
 		{
 			this->socket.open();
 			this->socket.connect();
-			this->socket.setOption(::rl::hal::Socket::OPTION_NODELAY, 1);
+			this->socket.setOption(Socket::Option::nodelay, 1);
 			this->setConnected(true);
 		}
 		
@@ -255,7 +255,7 @@ namespace rl
 			
 			this->socket.recv(buffer.data(), sizeof(this->in.messageSize));
 #if !defined(__APPLE__) && !defined(__QNX__) && !defined(WIN32) && !defined(__CYGWIN__)
-			this->socket.setOption(::rl::hal::Socket::OPTION_QUICKACK, 1);
+			this->socket.setOption(Socket::Option::quickack, 1);
 #endif // !__APPLE__ && !__QNX__ && !WIN32 && !__CYGWIN__
 			
 			::std::uint8_t* ptr = buffer.data();
@@ -272,7 +272,7 @@ namespace rl
 			case 1116:
 				this->socket.recv(ptr, this->in.messageSize - sizeof(this->in.messageSize));
 #if !defined(__APPLE__) && !defined(__QNX__) && !defined(WIN32) && !defined(__CYGWIN__)
-				this->socket.setOption(::rl::hal::Socket::OPTION_QUICKACK, 1);
+				this->socket.setOption(Socket::Option::quickack, 1);
 #endif // !__APPLE__ && !__QNX__ && !WIN32 && !__CYGWIN__
 				this->in.unserialize(ptr);
 				break;

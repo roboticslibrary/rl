@@ -45,32 +45,32 @@ namespace rl
 		class RL_HAL_EXPORT MitsubishiR3 : public Com
 		{
 		public:
-			enum HandSts
+			enum class HandSts
 			{
-				HANDSTS_NOTUSED = -1,
+				notused = -1,
 				/** Hand open. */
-				HANDSTS_OPEN = 1,
+				open = 1,
 				/** Hand closed. */
-				HANDSTS_CLOSED = 2
+				closed = 2
 			};
 			
-			enum HandType
+			enum class HandType
 			{
-				HANDTYPE_NOTUSED = -1,
+				notUsed = -1,
 				/** Single-solenoid. */
-				HANDTYPE_SINGLE = 0,
+				singleSolenoid = 0,
 				/** Double-solenoid. */
-				HANDTYPE_DOUBLE = 1
+				doubleSolenoid = 1
 			};
 			
-			enum TaskCond
+			enum class TaskCond
 			{
 				/** START. */
-				TASKCOND_START,
+				start,
 				/** ALWAYS. */
-				TASKCOND_ALWAYS,
+				always,
 				/** ERROR. */
-				TASKCOND_ERROR
+				error
 			};
 			
 			struct EditSts

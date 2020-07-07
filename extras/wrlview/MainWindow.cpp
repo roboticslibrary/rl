@@ -300,52 +300,52 @@ MainWindow::init()
 	QObject::connect(viewActionGroup, SIGNAL(triggered(QAction*)), this, SLOT(selectView(QAction*)));
 	
 	QAction* viewTopAction = new QAction("Top", this);
-	viewTopAction->setData(VIEW_TOP);
+	viewTopAction->setData(static_cast<int>(View::top));
 	viewActionGroup->addAction(viewTopAction);
 	this->viewMenu->addAction(viewTopAction);
 	
 	QAction* viewBottomAction = new QAction("Bottom", this);
-	viewBottomAction->setData(VIEW_BOTTOM);
+	viewBottomAction->setData(static_cast<int>(View::bottom));
 	viewActionGroup->addAction(viewBottomAction);
 	this->viewMenu->addAction(viewBottomAction);
 	
 	QAction* viewFrontAction = new QAction("Front", this);
-	viewFrontAction->setData(VIEW_FRONT);
+	viewFrontAction->setData(static_cast<int>(View::front));
 	viewActionGroup->addAction(viewFrontAction);
 	this->viewMenu->addAction(viewFrontAction);
 	
 	QAction* viewBackAction = new QAction("Back", this);
-	viewBackAction->setData(VIEW_BACK);
+	viewBackAction->setData(static_cast<int>(View::back));
 	viewActionGroup->addAction(viewBackAction);
 	this->viewMenu->addAction(viewBackAction);
 	
 	QAction* viewLeftAction = new QAction("Left", this);
-	viewLeftAction->setData(VIEW_LEFT);
+	viewLeftAction->setData(static_cast<int>(View::left));
 	viewActionGroup->addAction(viewLeftAction);
 	this->viewMenu->addAction(viewLeftAction);
 	
 	QAction* viewRightAction = new QAction("Right", this);
-	viewRightAction->setData(VIEW_RIGHT);
+	viewRightAction->setData(static_cast<int>(View::right));
 	viewActionGroup->addAction(viewRightAction);
 	this->viewMenu->addAction(viewRightAction);
 	
 	QAction* viewTopBackLeftAction = new QAction("Top Back Left", this);
-	viewTopBackLeftAction->setData(VIEW_TOP_BACK_LEFT);
+	viewTopBackLeftAction->setData(static_cast<int>(View::topBackLeft));
 	viewActionGroup->addAction(viewTopBackLeftAction);
 	this->viewMenu->addAction(viewTopBackLeftAction);
 	
 	QAction* viewTopBackRightAction = new QAction("Top Back Right", this);
-	viewTopBackRightAction->setData(VIEW_TOP_BACK_RIGHT);
+	viewTopBackRightAction->setData(static_cast<int>(View::topBackRight));
 	viewActionGroup->addAction(viewTopBackRightAction);
 	this->viewMenu->addAction(viewTopBackRightAction);
 	
 	QAction* viewTopFrontLeftAction = new QAction("Top Front Left", this);
-	viewTopFrontLeftAction->setData(VIEW_TOP_FRONT_LEFT);
+	viewTopFrontLeftAction->setData(static_cast<int>(View::topFrontLeft));
 	viewActionGroup->addAction(viewTopFrontLeftAction);
 	this->viewMenu->addAction(viewTopFrontLeftAction);
 	
 	QAction* viewTopFrontRightAction = new QAction("Top Front Right", this);
-	viewTopFrontRightAction->setData(VIEW_TOP_FRONT_RIGHT);
+	viewTopFrontRightAction->setData(static_cast<int>(View::topFrontRight));
 	viewActionGroup->addAction(viewTopFrontRightAction);
 	this->viewMenu->addAction(viewTopFrontRightAction);
 	
@@ -372,19 +372,19 @@ MainWindow::init()
 	QAction* originNoneAction = new QAction("Hide Origin", this);
 	originNoneAction->setCheckable(true);
 	originNoneAction->setChecked(true);
-	originNoneAction->setData(ORIGIN_NONE);
+	originNoneAction->setData(static_cast<int>(Origin::none));
 	originUnitActionGroup->addAction(originNoneAction);
 	this->displayMenu->addAction(originNoneAction);
 	
 	QAction* origin1Action = new QAction("Show Origin (Scale 1)", this);
 	origin1Action->setCheckable(true);
-	origin1Action->setData(ORIGIN_1);
+	origin1Action->setData(static_cast<int>(Origin::o1));
 	originUnitActionGroup->addAction(origin1Action);
 	this->displayMenu->addAction(origin1Action);
 	
 	QAction* origin1000Action = new QAction("Show Origin (Scale 1000)", this);
 	origin1000Action->setCheckable(true);
-	origin1000Action->setData(ORIGIN_1000);
+	origin1000Action->setData(static_cast<int>(Origin::o1000));
 	originUnitActionGroup->addAction(origin1000Action);
 	this->displayMenu->addAction(origin1000Action);
 	
@@ -404,14 +404,14 @@ MainWindow::init()
 	
 	QAction* cameraOrthogonalAction = new QAction("Orthogonal Camera", this);
 	cameraOrthogonalAction->setCheckable(true);
-	cameraOrthogonalAction->setData(CAMERA_ORTHOGONAL);
+	cameraOrthogonalAction->setData(static_cast<int>(Camera::orthogonal));
 	cameraActionGroup->addAction(cameraOrthogonalAction);
 	this->displayMenu->addAction(cameraOrthogonalAction);
 	
 	QAction* cameraPerspectiveAction = new QAction("Perspective Camera", this);
 	cameraPerspectiveAction->setCheckable(true);
 	cameraPerspectiveAction->setChecked(true);
-	cameraPerspectiveAction->setData(CAMERA_PERSPECTIVE);
+	cameraPerspectiveAction->setData(static_cast<int>(Camera::perspective));
 	cameraActionGroup->addAction(cameraPerspectiveAction);
 	this->displayMenu->addAction(cameraPerspectiveAction);
 	
@@ -423,20 +423,20 @@ MainWindow::init()
 	
 	QAction* backgroundBlackAction = new QAction("Black Background", this);
 	backgroundBlackAction->setCheckable(true);
-	backgroundBlackAction->setData(BACKGROUND_BLACK);
+	backgroundBlackAction->setData(static_cast<int>(Background::black));
 	backgroundActionGroup->addAction(backgroundBlackAction);
 	this->displayMenu->addAction(backgroundBlackAction);
 	
 	QAction* backgroundGradientAction = new QAction("Gradient Background", this);
 	backgroundGradientAction->setCheckable(true);
 	backgroundGradientAction->setChecked(true);
-	backgroundGradientAction->setData(BACKGROUND_GRADIENT);
+	backgroundGradientAction->setData(static_cast<int>(Background::gradient));
 	backgroundActionGroup->addAction(backgroundGradientAction);
 	this->displayMenu->addAction(backgroundGradientAction);
 	
 	QAction* backgroundWhiteAction = new QAction("White Background", this);
 	backgroundWhiteAction->setCheckable(true);
-	backgroundWhiteAction->setData(BACKGROUND_WHITE);
+	backgroundWhiteAction->setData(static_cast<int>(Background::white));
 	backgroundActionGroup->addAction(backgroundWhiteAction);
 	this->displayMenu->addAction(backgroundWhiteAction);
 	
@@ -447,52 +447,52 @@ MainWindow::init()
 	QObject::connect(sizeActionGroup, SIGNAL(triggered(QAction*)), this, SLOT(selectSize(QAction*)));
 	
 	QAction* size640x480Action = new QAction("640x480", this);
-	size640x480Action->setData(SIZE_640x480);
+	size640x480Action->setData(static_cast<int>(Size::s640x480));
 	sizeActionGroup->addAction(size640x480Action);
 	this->displayMenu->addAction(size640x480Action);
 	
 	QAction* size800x600Action = new QAction("800x600", this);
-	size800x600Action->setData(SIZE_800x600);
+	size800x600Action->setData(static_cast<int>(Size::s800x600));
 	sizeActionGroup->addAction(size800x600Action);
 	this->displayMenu->addAction(size800x600Action);
 	
 	QAction* size1024x768Action = new QAction("1024x768", this);
-	size1024x768Action->setData(SIZE_1024x768);
+	size1024x768Action->setData(static_cast<int>(Size::s1024x768));
 	sizeActionGroup->addAction(size1024x768Action);
 	this->displayMenu->addAction(size1024x768Action);
 	
 	QAction* size1024x1024Action = new QAction("1024x1024", this);
-	size1024x1024Action->setData(SIZE_1024x1024);
+	size1024x1024Action->setData(static_cast<int>(Size::s1024x1024));
 	sizeActionGroup->addAction(size1024x1024Action);
 	this->displayMenu->addAction(size1024x1024Action);
 	
 	QAction* size1280x720Action = new QAction("1280x720", this);
-	size1280x720Action->setData(SIZE_1280x720);
+	size1280x720Action->setData(static_cast<int>(Size::s1280x720));
 	sizeActionGroup->addAction(size1280x720Action);
 	this->displayMenu->addAction(size1280x720Action);
 	
 	QAction* size1280x960Action = new QAction("1280x960", this);
-	size1280x960Action->setData(SIZE_1280x960);
+	size1280x960Action->setData(static_cast<int>(Size::s1280x960));
 	sizeActionGroup->addAction(size1280x960Action);
 	this->displayMenu->addAction(size1280x960Action);
 	
 	QAction* size1200x1200Action = new QAction("1200x1200", this);
-	size1200x1200Action->setData(SIZE_1200x1200);
+	size1200x1200Action->setData(static_cast<int>(Size::s1200x1200));
 	sizeActionGroup->addAction(size1200x1200Action);
 	this->displayMenu->addAction(size1200x1200Action);
 	
 	QAction* size1600x1200Action = new QAction("1600x1200", this);
-	size1600x1200Action->setData(SIZE_1600x1200);
+	size1600x1200Action->setData(static_cast<int>(Size::s1600x1200));
 	sizeActionGroup->addAction(size1600x1200Action);
 	this->displayMenu->addAction(size1600x1200Action);
 	
 	QAction* size1920x1080Action = new QAction("1920x1080", this);
-	size1920x1080Action->setData(SIZE_1920x1080);
+	size1920x1080Action->setData(static_cast<int>(Size::s1920x1080));
 	sizeActionGroup->addAction(size1920x1080Action);
 	this->displayMenu->addAction(size1920x1080Action);
 	
 	QAction* size2400x2400Action = new QAction("2400x2400", this);
-	size2400x2400Action->setData(SIZE_2400x2400);
+	size2400x2400Action->setData(static_cast<int>(Size::s2400x2400));
 	sizeActionGroup->addAction(size2400x2400Action);
 	this->displayMenu->addAction(size2400x2400Action);
 }
@@ -740,16 +740,16 @@ MainWindow::saveImageWithoutAlpha()
 void
 MainWindow::selectBackground(QAction* action)
 {
-	switch (action->data().toInt())
+	switch (static_cast<Background>(action->data().toInt()))
 	{
-	case BACKGROUND_BLACK:
+	case Background::black:
 		this->backgroundSwitch->whichChild = SO_SWITCH_NONE;
 		this->viewer->setBackgroundColor(SbColor(0, 0, 0));
 		break;
-	case BACKGROUND_GRADIENT:
+	case Background::gradient:
 		this->backgroundSwitch->whichChild = SO_SWITCH_ALL;
 		break;
-	case BACKGROUND_WHITE:
+	case Background::white:
 		this->backgroundSwitch->whichChild = SO_SWITCH_NONE;
 		this->viewer->setBackgroundColor(SbColor(255, 255, 255));
 		break;
@@ -761,12 +761,12 @@ MainWindow::selectBackground(QAction* action)
 void
 MainWindow::selectCamera(QAction* action)
 {
-	switch (action->data().toInt())
+	switch (static_cast<Camera>(action->data().toInt()))
 	{
-	case CAMERA_ORTHOGONAL:
+	case Camera::orthogonal:
 		this->viewer->setCameraType(SoOrthographicCamera::getClassTypeId());
 		break;
-	case CAMERA_PERSPECTIVE:
+	case Camera::perspective:
 		this->viewer->setCameraType(SoPerspectiveCamera::getClassTypeId());
 		break;
 	default:
@@ -780,17 +780,17 @@ MainWindow::selectCamera(QAction* action)
 void
 MainWindow::selectOrigin(QAction* action)
 {
-	switch (action->data().toInt())
+	switch (static_cast<Origin>(action->data().toInt()))
 	{
-	case ORIGIN_NONE:
+	case Origin::none:
 		this->origin1Switch->whichChild = SO_SWITCH_NONE;
 		this->origin1000Switch->whichChild = SO_SWITCH_NONE;
 		break;
-	case ORIGIN_1:
+	case Origin::o1:
 		this->origin1000Switch->whichChild = SO_SWITCH_NONE;
 		this->origin1Switch->whichChild = SO_SWITCH_ALL;
 		break;
-	case ORIGIN_1000:
+	case Origin::o1000:
 		this->origin1Switch->whichChild = SO_SWITCH_NONE;
 		this->origin1000Switch->whichChild = SO_SWITCH_ALL;
 		break;
@@ -802,36 +802,36 @@ MainWindow::selectOrigin(QAction* action)
 void
 MainWindow::selectSize(QAction* action)
 {
-	switch (action->data().toInt())
+	switch (static_cast<Size>(action->data().toInt()))
 	{
-	case SIZE_640x480:
+	case Size::s640x480:
 		this->widget->setFixedSize(640, 480);
 		break;
-	case SIZE_800x600:
+	case Size::s800x600:
 		this->widget->setFixedSize(800, 600);
 		break;
-	case SIZE_1024x768:
+	case Size::s1024x768:
 		this->widget->setFixedSize(1024, 768);
 		break;
-	case SIZE_1024x1024:
+	case Size::s1024x1024:
 		this->widget->setFixedSize(1024, 1024);
 		break;
-	case SIZE_1280x720:
+	case Size::s1280x720:
 		this->widget->setFixedSize(1280, 720);
 		break;
-	case SIZE_1280x960:
+	case Size::s1280x960:
 		this->widget->setFixedSize(1280, 960);
 		break;
-	case SIZE_1200x1200:
+	case Size::s1200x1200:
 		this->widget->setFixedSize(1200, 1200);
 		break;
-	case SIZE_1600x1200:
+	case Size::s1600x1200:
 		this->widget->setFixedSize(1600, 1200);
 		break;
-	case SIZE_1920x1080:
+	case Size::s1920x1080:
 		this->widget->setFixedSize(1920, 1080);
 		break;
-	case SIZE_2400x2400:
+	case Size::s2400x2400:
 		this->widget->setFixedSize(2400, 2400);
 		break;
 	default:
@@ -851,38 +851,38 @@ MainWindow::selectView(QAction* action)
 	SbVec3f position;
 	SbVec3f upvector(0, 0, 1);
 	
-	switch (action->data().toInt())
+	switch (static_cast<View>(action->data().toInt()))
 	{
-	case VIEW_BACK:
+	case View::back:
 		position.setValue(0, -1, 0);
 		break;
-	case VIEW_BOTTOM:
+	case View::bottom:
 		position.setValue(0, 0, -1);
 		upvector.setValue(0, -1, 0);
 		break;
-	case VIEW_FRONT:
+	case View::front:
 		position.setValue(0, 1, 0);
 		break;
-	case VIEW_LEFT:
+	case View::left:
 		position.setValue(-1, 0, 0);
 		break;
-	case VIEW_RIGHT:
+	case View::right:
 		position.setValue(1, 0, 0);
 		break;
-	case VIEW_TOP:
+	case View::top:
 		position.setValue(0, 0, 1);
 		upvector.setValue(0, 1, 0);
 		break;
-	case VIEW_TOP_BACK_LEFT:
+	case View::topBackLeft:
 		position.setValue(-1, -1, 1);
 		break;
-	case VIEW_TOP_BACK_RIGHT:
+	case View::topBackRight:
 		position.setValue(1, -1, 1);
 		break;
-	case VIEW_TOP_FRONT_LEFT:
+	case View::topFrontLeft:
 		position.setValue(-1, 1, 1);
 		break;
-	case VIEW_TOP_FRONT_RIGHT:
+	case View::topFrontRight:
 		position.setValue(1, 1, 1);
 		break;
 	default:

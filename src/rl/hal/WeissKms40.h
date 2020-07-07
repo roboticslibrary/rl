@@ -50,27 +50,27 @@ namespace rl
 		class RL_HAL_EXPORT WeissKms40 : public CyclicDevice, public SixAxisForceTorqueSensor
 		{
 		public:
-			enum SystemState
+			enum class SystemState
 			{
-				SYSTEM_STATE_SCRIPT_FAILURE = 1073741824,
-				SYSTEM_STATE_CMD_FAILURE = 536870912,
-				SYSTEM_STATE_POWER_FAULT = 268435456,
-				SYSTEM_STATE_TEMP_FAULT = 134217728,
-				SYSTEM_STATE_CALIBRATION_FAULT = 67108864,
-				SYSTEM_STATE_OVERRUN_MZ = 33554432,
-				SYSTEM_STATE_OVERRUN_MY = 16777216,
-				SYSTEM_STATE_OVERRUN_MX = 8388608,
-				SYSTEM_STATE_OVERRUN_FZ = 4194304,
-				SYSTEM_STATE_OVERRUN_FY = 2097152,
-				SYSTEM_STATE_OVERRUN_FX = 1048576,
-				SYSTEM_STATE_TEMP_WARNING = 2048,
-				SYSTEM_STATE_CALIBRATION_EXPIRED = 1024,
-				SYSTEM_STATE_SCRIPT_RUNNING = 32,
-				SYSTEM_STATE_DAQ_RUNNING = 16,
-				SYSTEM_STATE_FILTER_ENABLED = 8,
-				SYSTEM_STATE_TARA = 4,
-				SYSTEM_STATE_STABLE = 2,
-				SYSTEM_STATE_CALIBRATION_VALID = 1
+				calibrationValid = 1,
+				stable = 2,
+				tara = 4,
+				filterEnabled = 8,
+				daqRunning = 16,
+				scriptRunning = 32,
+				calibrationExpired = 1024,
+				tempWarning = 2048,
+				overrunFx = 1048576,
+				overrunFy = 2097152,
+				overrunFz = 4194304,
+				overrunMx = 8388608,
+				overrunMy = 16777216,
+				overrunMz = 33554432,
+				calibrationFault = 67108864,
+				tempFault = 134217728,
+				powerFault = 268435456,
+				cmdFailure = 536870912,
+				scriptFailure = 1073741824
 			};
 			
 			/**
@@ -108,7 +108,7 @@ namespace rl
 			
 			::std::size_t doGetSerialNumber();
 			
-			SystemState doGetSystemFlags();
+			int doGetSystemFlags();
 			
 			::std::string doGetSystemType();
 			

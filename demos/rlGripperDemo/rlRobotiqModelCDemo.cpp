@@ -45,7 +45,7 @@ main(int argc, char** argv)
 		do
 		{
 			gripper.step();
-			std::cout << "activationStatus: " << gripper.getActivationStatus() << " - gripperStatus: " << gripper.getGripperStatus() << std::endl;
+			std::cout << "activationStatus: " << static_cast<int>(gripper.getActivationStatus()) << " - gripperStatus: " << static_cast<int>(gripper.getGripperStatus()) << std::endl;
 		}
 		while (!gripper.isRunning());
 		
@@ -58,7 +58,7 @@ main(int argc, char** argv)
 			gripper.step();
 			std::cout << "position: " << gripper.getPositionPercentage() << " - current: " << gripper.getCurrent() << std::endl;
 		}
-		while (rl::hal::RobotiqModelC::OBJECT_STATUS_MOTION == gripper.getObjectStatus());
+		while (rl::hal::RobotiqModelC::ObjectStatus::motion == gripper.getObjectStatus());
 		
 		for (std::size_t i = 0; i < 100; ++i)
 		{
@@ -75,7 +75,7 @@ main(int argc, char** argv)
 			gripper.step();
 			std::cout << "position: " << gripper.getPositionPercentage() << " - current: " << gripper.getCurrent() << std::endl;
 		}
-		while (rl::hal::RobotiqModelC::OBJECT_STATUS_MOTION == gripper.getObjectStatus());
+		while (rl::hal::RobotiqModelC::ObjectStatus::motion == gripper.getObjectStatus());
 		
 		gripper.stop();
 		gripper.close();

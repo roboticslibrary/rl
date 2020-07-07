@@ -251,15 +251,15 @@ OperationalModel::setData(const QModelIndex& index, const QVariant& value, int r
 				
 				if ("DLS" == MainWindow::instance()->ikJacobianComboBox->currentText())
 				{
-					jacobianIk->setMethod(rl::mdl::JacobianInverseKinematics::METHOD_DLS);
+					jacobianIk->setMethod(rl::mdl::JacobianInverseKinematics::Method::dls);
 				}
 				else if ("SVD" == MainWindow::instance()->ikJacobianComboBox->currentText())
 				{
-					jacobianIk->setMethod(rl::mdl::JacobianInverseKinematics::METHOD_SVD);
+					jacobianIk->setMethod(rl::mdl::JacobianInverseKinematics::Method::svd);
 				}
 				else if ("Transpose" == MainWindow::instance()->ikJacobianComboBox->currentText())
 				{
-					jacobianIk->setMethod(rl::mdl::JacobianInverseKinematics::METHOD_TRANSPOSE);
+					jacobianIk->setMethod(rl::mdl::JacobianInverseKinematics::Method::transpose);
 				}
 			}
 #ifdef RL_MDL_NLOPT

@@ -141,7 +141,7 @@ main(int argc, char** argv)
 		sampler.seed(0);
 		
 		explorer.goal = &explorerGoal;
-		explorer.greedy = rl::plan::WorkspaceSphereExplorer::GREEDY_SPACE;
+		explorer.greedy = rl::plan::WorkspaceSphereExplorer::Greedy::space;
 		explorer.model = &model;
 		explorer.radius = 0.025;
 		explorer.range = 45;

@@ -361,15 +361,15 @@ namespace rl
 			
 			if ("STOPPED" == reply.substr(0, 7))
 			{
-				return ::std::make_pair(PROGRAM_STATE_STOPPED, reply.substr(8, reply.size() - 9));
+				return ::std::make_pair(ProgramState::stopped, reply.substr(8, reply.size() - 9));
 			}
 			else if ("PLAYING" == reply.substr(0, 7))
 			{
-				return ::std::make_pair(PROGRAM_STATE_PLAYING, reply.substr(8, reply.size() - 9));
+				return ::std::make_pair(ProgramState::playing, reply.substr(8, reply.size() - 9));
 			}
 			else if ("PAUSED" == reply.substr(0, 6))
 			{
-				return ::std::make_pair(PROGRAM_STATE_PAUSED, reply.substr(7, reply.size() - 8));
+				return ::std::make_pair(ProgramState::paused, reply.substr(7, reply.size() - 8));
 			}
 			else
 			{
@@ -388,39 +388,39 @@ namespace rl
 			
 			if ("Robotmode: NO_CONTROLLER\n" == reply)
 			{
-				return ROBOT_MODE_NO_CONTROLLER;
+				return RobotMode::noController;
 			}
 			else if ("Robotmode: DISCONNECTED\n" == reply)
 			{
-				return ROBOT_MODE_DISCONNECTED;
+				return RobotMode::disconnected;
 			}
 			else if ("Robotmode: CONFIRM_SAFETY\n" == reply)
 			{
-				return ROBOT_MODE_CONFIRM_SAFETY;
+				return RobotMode::confirmSafety;
 			}
 			else if ("Robotmode: BOOTING\n" == reply)
 			{
-				return ROBOT_MODE_BOOTING;
+				return RobotMode::booting;
 			}
 			else if ("Robotmode: POWER_OFF\n" == reply)
 			{
-				return ROBOT_MODE_POWER_OFF;
+				return RobotMode::powerOff;
 			}
 			else if ("Robotmode: POWER_ON\n" == reply)
 			{
-				return ROBOT_MODE_POWER_ON;
+				return RobotMode::powerOn;
 			}
 			else if ("Robotmode: IDLE\n" == reply)
 			{
-				return ROBOT_MODE_IDLE;
+				return RobotMode::idle;
 			}
 			else if ("Robotmode: BACKDRIVE\n" == reply)
 			{
-				return ROBOT_MODE_BACKDRIVE;
+				return RobotMode::backdrive;
 			}
 			else if ("Robotmode: RUNNING\n" == reply)
 			{
-				return ROBOT_MODE_RUNNING;
+				return RobotMode::running;
 			}
 			else
 			{
@@ -462,39 +462,39 @@ namespace rl
 			
 			if ("Safetymode: NORMAL\n" == reply)
 			{
-				return SAFETY_MODE_NORMAL;
+				return SafetyMode::normal;
 			}
 			else if ("Safetymode: REDUCED\n" == reply)
 			{
-				return SAFETY_MODE_REDUCED;
+				return SafetyMode::reduced;
 			}
 			else if ("Safetymode: PROTECTIVE_STOP\n" == reply)
 			{
-				return SAFETY_MODE_PROTECTIVE_STOP;
+				return SafetyMode::protectiveStop;
 			}
 			else if ("Safetymode: RECOVERY\n" == reply)
 			{
-				return SAFETY_MODE_RECOVERY;
+				return SafetyMode::recovery;
 			}
 			else if ("Safetymode: SAFEGUARD_STOP\n" == reply)
 			{
-				return SAFETY_MODE_SAFEGUARD_STOP;
+				return SafetyMode::safeguardStop;
 			}
 			else if ("Safetymode: SYSTEM_EMERGENCY_STOP\n" == reply)
 			{
-				return SAFETY_MODE_SYSTEM_EMERGENCY_STOP;
+				return SafetyMode::systemEmergencyStop;
 			}
 			else if ("Safetymode: ROBOT_EMERGENCY_STOP\n" == reply)
 			{
-				return SAFETY_MODE_ROBOT_EMERGENCY_STOP;
+				return SafetyMode::robotEmergencyStop;
 			}
 			else if ("Safetymode: VIOLATION\n" == reply)
 			{
-				return SAFETY_MODE_VIOLATION;
+				return SafetyMode::violation;
 			}
 			else if ("Safetymode: FAULT\n" == reply)
 			{
-				return SAFETY_MODE_FAULT;
+				return SafetyMode::fault;
 			}
 			else
 			{
@@ -587,7 +587,7 @@ namespace rl
 		{
 			this->socket.open();
 			this->socket.connect();
-			this->socket.setOption(::rl::hal::Socket::OPTION_NODELAY, 1);
+			this->socket.setOption(Socket::Option::nodelay, 1);
 			this->setConnected(true);
 			
 			::std::array<::std::uint8_t, 4096> buffer;

@@ -48,7 +48,7 @@ namespace rl
 		) :
 			CyclicDevice(::std::chrono::nanoseconds::zero()),
 			Lidar(),
-			baudRate(BAUDRATE_9600BPS),
+			baudRate(BaudRate::b9600),
 			configuration(0x00),
 			data(),
 			desired(baudRate),
@@ -57,11 +57,11 @@ namespace rl
 			password(password),
 			serial(
 				filename,
-				Serial::BAUDRATE_9600BPS,
-				Serial::DATABITS_8BITS,
-				Serial::FLOWCONTROL_OFF,
-				Serial::PARITY_NOPARITY,
-				Serial::STOPBITS_1BIT
+				Serial::BaudRate::b9600,
+				Serial::DataBits::d8,
+				Serial::FlowControl::off,
+				Serial::Parity::none,
+				Serial::StopBits::s1
 			),
 			variant(variant)
 		{
@@ -77,24 +77,24 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			if (MEASURING_8M != this->measuring)
+			if (Measuring::m8 != this->measuring)
 			{
-				this->setMeasuring(MEASURING_8M);
+				this->setMeasuring(Measuring::m8);
 			}
 			
-			if (VARIANT_180_50 != this->variant)
+			if (Variant::v180_50 != this->variant)
 			{
-				this->setVariant(VARIANT_180_50);
+				this->setVariant(Variant::v180_50);
 			}
 			
-			if (MONITORING_SINGLE != this->monitoring)
+			if (Monitoring::single != this->monitoring)
 			{
-				this->setMonitoring(MONITORING_SINGLE);
+				this->setMonitoring(Monitoring::single);
 			}
 			
-			if (BAUDRATE_9600BPS != this->baudRate)
+			if (BaudRate::b9600 != this->baudRate)
 			{
-				this->setBaudRate(BAUDRATE_9600BPS);
+				this->setBaudRate(BaudRate::b9600);
 			}
 			
 			this->serial.close();
@@ -449,19 +449,19 @@ namespace rl
 			
 			switch (this->variant)
 			{
-			case VARIANT_100_25:
+			case Variant::v100_25:
 				return 401;
 				break;
-			case VARIANT_100_50:
+			case Variant::v100_50:
 				return 201;
 				break;
-			case VARIANT_100_100:
+			case Variant::v100_100:
 				return 101;
 				break;
-			case VARIANT_180_50:
+			case Variant::v180_50:
 				return 361;
 				break;
-			case VARIANT_180_100:
+			case Variant::v180_100:
 				return 181;
 				break;
 			default:
@@ -479,23 +479,23 @@ namespace rl
 			
 			switch (this->measuring)
 			{
-			case MEASURING_8M:
-				return 8.182f;
+			case Measuring::m8:
+				return static_cast<::rl::math::Real>(8.182);
 				break;
-			case MEASURING_16M:
-				return 16.374f;
+			case Measuring::m16:
+				return static_cast<::rl::math::Real>(16.374);
 				break;
-			case MEASURING_32M:
-				return 32.758f;
+			case Measuring::m32:
+				return static_cast<::rl::math::Real>(32.758);
 				break;
-			case MEASURING_80M:
-				return 81.82f;
+			case Measuring::m80:
+				return static_cast<::rl::math::Real>(81.82);
 				break;
-			case MEASURING_160M:
-				return 163.74f;
+			case Measuring::m160:
+				return static_cast<::rl::math::Real>(163.74);
 				break;
-			case MEASURING_320M:
-				return 327.58f;
+			case Measuring::m320:
+				return static_cast<::rl::math::Real>(327.58);
 				break;
 			default:
 				break;
@@ -536,15 +536,15 @@ namespace rl
 			
 			switch (this->variant)
 			{
-			case VARIANT_100_25:
+			case Variant::v100_25:
 				return static_cast<::rl::math::Real>(0.25) * ::rl::math::constants::deg2rad;
 				break;
-			case VARIANT_100_50:
-			case VARIANT_180_50:
+			case Variant::v100_50:
+			case Variant::v180_50:
 				return static_cast<::rl::math::Real>(0.5) * ::rl::math::constants::deg2rad;
 				break;
-			case VARIANT_100_100:
-			case VARIANT_180_100:
+			case Variant::v100_100:
+			case Variant::v180_100:
 				return 1 * ::rl::math::constants::deg2rad;
 				break;
 			default:
@@ -561,13 +561,13 @@ namespace rl
 			
 			switch (this->variant)
 			{
-			case VARIANT_100_25:
-			case VARIANT_100_50:
-			case VARIANT_100_100:
+			case Variant::v100_25:
+			case Variant::v100_50:
+			case Variant::v100_100:
 				return 40 * ::rl::math::constants::deg2rad;
 				break;
-			case VARIANT_180_50:
-			case VARIANT_180_100:
+			case Variant::v180_50:
+			case Variant::v180_100:
 				return 0;
 				break;
 			default:
@@ -584,13 +584,13 @@ namespace rl
 			
 			switch (this->variant)
 			{
-			case VARIANT_100_25:
-			case VARIANT_100_50:
-			case VARIANT_100_100:
+			case Variant::v100_25:
+			case Variant::v100_50:
+			case Variant::v100_100:
 				return 140 * ::rl::math::constants::deg2rad;
 				break;
-			case VARIANT_180_50:
-			case VARIANT_180_100:
+			case Variant::v180_50:
+			case Variant::v180_100:
 				return 180 * ::rl::math::constants::deg2rad;
 				break;
 			default:
@@ -646,11 +646,11 @@ namespace rl
 			Serial::BaudRate baudRates[3] = {
 #else // defined(WIN32) || defined(__QNX__)
 			Serial::BaudRate baudRates[4] = {
-				Serial::BAUDRATE_500000BPS,
+				Serial::BaudRate::b500000,
 #endif // defined(WIN32) || defined(__QNX__)
-				Serial::BAUDRATE_38400BPS,
-				Serial::BAUDRATE_19200BPS,
-				Serial::BAUDRATE_9600BPS
+				Serial::BaudRate::b38400,
+				Serial::BaudRate::b19200,
+				Serial::BaudRate::b9600
 			};
 			
 #if defined(WIN32) || defined(__QNX__)
@@ -710,17 +710,17 @@ namespace rl
 			{
 #if !(defined(WIN32) || defined(__QNX__))
 			case 0x01:
-				this->baudRate = BAUDRATE_500000BPS;
+				this->baudRate = BaudRate::b500000;
 				break;
 #endif // !(defined(WIN32) || defined(__QNX__))
 			case 0x19:
-				this->baudRate = BAUDRATE_38400BPS;
+				this->baudRate = BaudRate::b38400;
 				break;
 			case 0x33:
-				this->baudRate = BAUDRATE_19200BPS;
+				this->baudRate = BaudRate::b19200;
 				break;
 			case 0x67:
-				this->baudRate = BAUDRATE_9600BPS;
+				this->baudRate = BaudRate::b9600;
 				break;
 			default:
 				break;
@@ -735,7 +735,7 @@ namespace rl
 			
 			if (0x25 != buf[12])
 			{
-				this->setMonitoring(MONITORING_SINGLE);
+				this->setMonitoring(Monitoring::single);
 			}
 			
 			// measuring
@@ -752,16 +752,16 @@ namespace rl
 			switch (resolution)
 			{
 			case 25:
-				variant = VARIANT_100_25;
+				variant = Variant::v100_25;
 				break;
 			case 50:
 				switch (angle)
 				{
 				case 100:
-					variant = VARIANT_100_50;
+					variant = Variant::v100_50;
 					break;
 				case 180:
-					variant = VARIANT_180_50;
+					variant = Variant::v180_50;
 					break;
 				default:
 					throw DeviceException("unknown variant");
@@ -772,10 +772,10 @@ namespace rl
 				switch (angle)
 				{
 				case 100:
-					variant = VARIANT_100_100;
+					variant = Variant::v100_100;
 					break;
 				case 180:
-					variant = VARIANT_180_100;
+					variant = Variant::v180_100;
 					break;
 				default:
 					throw DeviceException("unknown variant");
@@ -952,17 +952,17 @@ namespace rl
 			
 			switch (baudRate)
 			{
-			case BAUDRATE_9600BPS:
+			case BaudRate::b9600:
 				buf[5] = 0x42;
 				break;
-			case BAUDRATE_19200BPS:
+			case BaudRate::b19200:
 				buf[5] = 0x41;
 				break;
-			case BAUDRATE_38400BPS:
+			case BaudRate::b38400:
 				buf[5] = 0x40;
 				break;
 #if !(defined(WIN32) || defined(__QNX__))
-			case BAUDRATE_500000BPS:
+			case BaudRate::b500000:
 				buf[5] = 0x48;
 				break;
 #endif // !(defined(WIN32) || defined(__QNX__))
@@ -992,18 +992,18 @@ namespace rl
 			
 			switch (baudRate)
 			{
-			case BAUDRATE_9600BPS:
-				this->serial.setBaudRate(Serial::BAUDRATE_9600BPS);
+			case BaudRate::b9600:
+				this->serial.setBaudRate(Serial::BaudRate::b9600);
 				break;
-			case BAUDRATE_19200BPS:
-				this->serial.setBaudRate(Serial::BAUDRATE_19200BPS);
+			case BaudRate::b19200:
+				this->serial.setBaudRate(Serial::BaudRate::b19200);
 				break;
-			case BAUDRATE_38400BPS:
-				this->serial.setBaudRate(Serial::BAUDRATE_38400BPS);
+			case BaudRate::b38400:
+				this->serial.setBaudRate(Serial::BaudRate::b38400);
 				break;
 #if !(defined(WIN32) || defined(__QNX__))
-			case BAUDRATE_500000BPS:
-				this->serial.setBaudRate(Serial::BAUDRATE_500000BPS);
+			case BaudRate::b500000:
+				this->serial.setBaudRate(Serial::BaudRate::b500000);
 				break;
 #endif // !(defined(WIN32) || defined(__QNX__))
 			default:
@@ -1065,27 +1065,27 @@ namespace rl
 			
 			switch (measuring)
 			{
-			case MEASURING_8M:
+			case Measuring::m8:
 				buf[10] = 0x00;
 				buf[11] = 0x01;
 				break;
-			case MEASURING_16M:
+			case Measuring::m16:
 				buf[10] = 0x04;
 				buf[11] = 0x01;
 				break;
-			case MEASURING_32M:
+			case Measuring::m32:
 				buf[10] = 0x06;
 				buf[11] = 0x01;
 				break;
-			case MEASURING_80M:
+			case Measuring::m80:
 				buf[10] = 0x00;
 				buf[11] = 0x00;
 				break;
-			case MEASURING_160M:
+			case Measuring::m160:
 				buf[10] = 0x04;
 				buf[11] = 0x00;
 				break;
-			case MEASURING_320M:
+			case Measuring::m320:
 				buf[10] = 0x06;
 				buf[11] = 0x00;
 				break;
@@ -1124,10 +1124,10 @@ namespace rl
 			
 			switch (monitoring)
 			{
-			case MONITORING_CONTINUOUS:
+			case Monitoring::continuous:
 				buf[5] = 0x24;
 				break;
-			case MONITORING_SINGLE:
+			case Monitoring::single:
 				buf[5] = 0x25;
 				break;
 			default:
@@ -1168,31 +1168,31 @@ namespace rl
 			
 			switch (variant)
 			{
-			case VARIANT_100_25:
+			case Variant::v100_25:
 				buf[5] = 0x64;
 				buf[6] = 0x0;
 				buf[7] = 0x19;
 				buf[8] = 0x0;
 				break;
-			case VARIANT_100_50:
+			case Variant::v100_50:
 				buf[5] = 0x64;
 				buf[6] = 0x0;
 				buf[7] = 0x32;
 				buf[8] = 0x0;
 				break;
-			case VARIANT_100_100:
+			case Variant::v100_100:
 				buf[5] = 0x64;
 				buf[6] = 0x0;
 				buf[7] = 0x64;
 				buf[8] = 0x0;
 				break;
-			case VARIANT_180_50:
+			case Variant::v180_50:
 				buf[5] = 0xB4;
 				buf[6] = 0x0;
 				buf[7] = 0x32;
 				buf[8] = 0x0;
 				break;
-			case VARIANT_180_100:
+			case Variant::v180_100:
 				buf[5] = 0xB4;
 				buf[6] = 0x0;
 				buf[7] = 0x64;
@@ -1223,7 +1223,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			if (MONITORING_SINGLE != this->monitoring)
+			if (Monitoring::single != this->monitoring)
 			{
 				this->setMonitoring(this->monitoring);
 			}
@@ -1234,7 +1234,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			if (MONITORING_SINGLE == this->monitoring)
+			if (Monitoring::single == this->monitoring)
 			{
 				this->data[4] = 0x30;
 				this->data[5] = 0x01;
@@ -1248,19 +1248,19 @@ namespace rl
 			
 			switch (this->variant)
 			{
-			case VARIANT_100_25:
+			case Variant::v100_25:
 				this->recv(this->data.data(), 1 + 1 + 2 + 1 + 1 + 1 + 802 + 1 + 2, 0xB0);
 				break;
-			case VARIANT_100_50:
+			case Variant::v100_50:
 				this->recv(this->data.data(), 1 + 1 + 2 + 1 + 1 + 1 + 402 + 1 + 2, 0xB0);
 				break;
-			case VARIANT_100_100:
+			case Variant::v100_100:
 				this->recv(this->data.data(), 1 + 1 + 2 + 1 + 1 + 1 + 202 + 1 + 2, 0xB0);
 				break;
-			case VARIANT_180_50:
+			case Variant::v180_50:
 				this->recv(this->data.data(), 1 + 1 + 2 + 1 + 1 + 1 + 722 + 1 + 2, 0xB0);
 				break;
-			case VARIANT_180_100:
+			case Variant::v180_100:
 				this->recv(this->data.data(), 1 + 1 + 2 + 1 + 1 + 1 + 362 + 1 + 2, 0xB0);
 				break;
 			default:
@@ -1273,9 +1273,9 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			if (MONITORING_SINGLE != this->monitoring)
+			if (Monitoring::single != this->monitoring)
 			{
-				this->setMonitoring(MONITORING_SINGLE);
+				this->setMonitoring(Monitoring::single);
 			}
 		}
 		

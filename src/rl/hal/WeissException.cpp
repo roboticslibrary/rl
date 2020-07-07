@@ -51,97 +51,97 @@ namespace rl
 		{
 			switch (this->code)
 			{
-			case CODE_SUCCESS:
+			case Code::success:
 				return "No error.";
 				break;
-			case CODE_NOT_AVAILABLE:
+			case Code::notAvailable:
 				return "Device, service or data is not available.";
 				break;
-			case CODE_NO_SENSOR:
+			case Code::noSensor:
 				return "No sensor connected.";
 				break;
-			case CODE_NOT_INITIALIZED:
+			case Code::notInitialized:
 				return "The device is not initialized.";
 				break;
-			case CODE_ALREADY_RUNNING:
+			case Code::alreadyRunning:
 				return "Service is already running.";
 				break;
-			case CODE_FEATURE_NOT_SUPPORTED:
+			case Code::featureNotSupported:
 				return "The asked feature is not supported.";
 				break;
-			case CODE_INCONSISTENT_DATA:
+			case Code::inconsistentData:
 				return "One or more dependent parameters mismatch.";
 				break;
-			case CODE_TIMEOUT:
+			case Code::timeout:
 				return "Timeout error.";
 				break;
-			case CODE_READ_ERROR:
+			case Code::readError:
 				return "Error while reading from a device.";
 				break;
-			case CODE_WRITE_ERROR:
+			case Code::writeError:
 				return "Error while writing to a device.";
 				break;
-			case CODE_INSUFFICIENT_RESOURCES:
+			case Code::insufficientResources:
 				return "No memory available.";
 				break;
-			case CODE_CHECKSUM_ERROR:
+			case Code::checksumError:
 				return "Checksum error.";
 				break;
-			case CODE_NO_PARAM_EXPECTED:
+			case Code::noParamExpected:
 				return "No parameters expected.";
 				break;
-			case CODE_NOT_ENOUGH_PARAMS:
+			case Code::notEnoughParams:
 				return "Not enough parameters.";
 				break;
-			case CODE_COMMAND_UNKNOWN:
+			case Code::commandUnknown:
 				return "Unknown command.";
 				break;
-			case CODE_COMMAND_FORMAT_ERROR:
+			case Code::commandFormatError:
 				return "Command format error.";
 				break;
-			case CODE_ACCESS_DENIED:
+			case Code::accessDenied:
 				return "Access denied.";
 				break;
-			case CODE_ALREADY_OPEN:
+			case Code::alreadyOpen:
 				return "The interface is already open.";
 				break;
-			case CODE_COMMAND_FAILED:
+			case Code::commandFailed:
 				return "Command failed.";
 				break;
-			case CODE_COMMAND_ABORTED:
+			case Code::commandAborted:
 				return "Command aborted.";
 				break;
-			case CODE_INVALID_HANDLE:
+			case Code::invalidHandle:
 				return "invalid handle.";
 				break;
-			case CODE_NOT_FOUND:
+			case Code::notFound:
 				return "device not found.";
 				break;
-			case CODE_NOT_OPEN:
+			case Code::notOpen:
 				return "device not open.";
 				break;
-			case CODE_IO_ERROR:
+			case Code::ioError:
 				return "I/O error.";
 				break;
-			case CODE_INVALID_PARAMETER:
+			case Code::invalidParameter:
 				return "invalid parameter.";
 				break;
-			case CODE_INDEX_OUT_OF_BOUNDS:
+			case Code::indexOutOfBounds:
 				return "index out of bounds.";
 				break;
-			case CODE_COMMAND_PENDING:
+			case Code::commandPending:
 				return "Command was received correctly, but the execution needs more time. If the command was completely processed, another status message is returned indicating the command's result.";
 				break;
-			case CODE_OVERRUN:
+			case Code::overrun:
 				return "Data overrun.";
 				break;
-			case CODE_RANGE_ERROR:
+			case Code::rangeError:
 				return "Range error.";
 				break;
-			case CODE_AXIS_BLOCKED:
+			case Code::axisBlocked:
 				return "Axis is blocked.";
 				break;
-			case CODE_FILE_EXISTS:
+			case Code::fileExists:
 				return "File already exists.";
 				break;
 			default:

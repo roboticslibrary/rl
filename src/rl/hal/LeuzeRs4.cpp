@@ -44,7 +44,7 @@ namespace rl
 		) :
 			CyclicDevice(::std::chrono::nanoseconds::zero()),
 			Lidar(),
-			baudRate(BAUDRATE_57600BPS),
+			baudRate(BaudRate::b57600),
 			data(),
 			desired(baudRate),
 			far1(false),
@@ -55,11 +55,11 @@ namespace rl
 			password(password),
 			serial(
 				filename,
-				Serial::BAUDRATE_57600BPS,
-				Serial::DATABITS_8BITS,
-				Serial::FLOWCONTROL_OFF,
-				Serial::PARITY_NOPARITY,
-				Serial::STOPBITS_1BIT
+				Serial::BaudRate::b57600,
+				Serial::DataBits::d8,
+				Serial::FlowControl::off,
+				Serial::Parity::none,
+				Serial::StopBits::s1
 			),
 			startIndex(0xFFFF),
 			stepSize(0xFFFF),
@@ -78,14 +78,9 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-//			if (MONITORING_SINGLE != this->monitoring)
+//			if (BaudRate::b57600 != this->baudRate)
 //			{
-//				this->setMonitoring(MONITORING_SINGLE);
-//			}
-//			
-//			if (BAUDRATE_57600BPS != this->baudRate)
-//			{
-//				this->setBaudRate(BAUDRATE_57600BPS);
+//				this->setBaudRate(BaudRate::b57600);
 //			}
 			
 			this->serial.close();
@@ -249,14 +244,14 @@ namespace rl
 			buf[5] = 0x42;
 			
 			Serial::BaudRate baudRates[6] = {
-//				Serial::BAUDRATE_625000BPS,
-//				Serial::BAUDRATE_345600BPS,
-				Serial::BAUDRATE_115200BPS,
-				Serial::BAUDRATE_57600BPS,
-				Serial::BAUDRATE_38400BPS,
-				Serial::BAUDRATE_19200BPS,
-				Serial::BAUDRATE_9600BPS,
-				Serial::BAUDRATE_4800BPS
+//				Serial::BaudRate::b625000,
+//				Serial::BaudRate::b345600,
+				Serial::BaudRate::b115200,
+				Serial::BaudRate::b57600,
+				Serial::BaudRate::b38400,
+				Serial::BaudRate::b19200,
+				Serial::BaudRate::b9600,
+				Serial::BaudRate::b4800
 			};
 			
 			for (::std::size_t i = 0; i < 6; ++i)
@@ -308,17 +303,17 @@ namespace rl
 			{
 #ifndef WIN32
 			case 0x01:
-				this->baudRate = BAUDRATE_500000BPS;
+				this->baudRate = BaudRate::b500000;
 				break;
 #endif // WIN32
 			case 0x19:
-				this->baudRate = BAUDRATE_38400BPS;
+				this->baudRate = BaudRate::b38400;
 				break;
 			case 0x33:
-				this->baudRate = BAUDRATE_19200BPS;
+				this->baudRate = BaudRate::b19200;
 				break;
 			case 0x67:
-				this->baudRate = BAUDRATE_9600BPS;
+				this->baudRate = BaudRate::b9600;
 				break;
 			default:
 				break;
@@ -333,7 +328,7 @@ namespace rl
 			
 			if (0x25 != buf[12])
 			{
-				this->setMonitoring(MONITORING_SINGLE);
+				this->setMonitoring(Monitoring::single);
 			}
 #endif
 		}
@@ -555,42 +550,42 @@ namespace rl
 			
 			switch (baudRate)
 			{
-			case BAUDRATE_4800BPS:
+			case BaudRate::b4800:
 ::std::cout << "setting to 4,800 baud" << ::std::endl;
 				this->set(0x00, ptr, len);
 				this->set(0x00, ptr, len);
 				break;
-			case BAUDRATE_9600BPS:
+			case BaudRate::b9600:
 ::std::cout << "setting to 9,600 baud" << ::std::endl;
 				this->set(0x00, ptr, len);
 				this->set(0x01, ptr, len);
 				break;
-			case BAUDRATE_19200BPS:
+			case BaudRate::b19200:
 ::std::cout << "setting to 19,200 baud" << ::std::endl;
 				this->set(0x00, ptr, len);
 				this->set(0x02, ptr, len);
 				break;
-			case BAUDRATE_38400BPS:
+			case BaudRate::b38400:
 ::std::cout << "setting to 38,400 baud" << ::std::endl;
 				this->set(0x00, ptr, len);
 				this->set(0x03, ptr, len);
 				break;
-			case BAUDRATE_57600BPS:
+			case BaudRate::b57600:
 ::std::cout << "setting to 57,600 baud" << ::std::endl;
 				this->set(0x00, ptr, len);
 				this->set(0x04, ptr, len);
 				break;
-			case BAUDRATE_115200BPS:
+			case BaudRate::b115200:
 ::std::cout << "setting to 115,200 baud" << ::std::endl;
 				this->set(0x00, ptr, len);
 				this->set(0x05, ptr, len);
 				break;
-//			case BAUDRATE_345600BPS:
+//			case BaudRate::b345600:
 //::std::cout << "setting to 345,600 baud" << ::std::endl;
 //				this->set(0x00, ptr, len);
 //				this->set(0x06, ptr, len);
 //				break;
-//			case BAUDRATE_625000BPS:
+//			case BaudRate::b625000:
 //::std::cout << "setting to 625,000 baud" << ::std::endl;
 //				this->set(0x00, ptr, len);
 //				this->set(0xFF, ptr, len);
@@ -610,29 +605,29 @@ namespace rl
 			
 			switch (baudRate)
 			{
-			case BAUDRATE_4800BPS:
-				this->serial.setBaudRate(Serial::BAUDRATE_4800BPS);
+			case BaudRate::b4800:
+				this->serial.setBaudRate(Serial::BaudRate::b4800);
 				break;
-			case BAUDRATE_9600BPS:
-				this->serial.setBaudRate(Serial::BAUDRATE_9600BPS);
+			case BaudRate::b9600:
+				this->serial.setBaudRate(Serial::BaudRate::b9600);
 				break;
-			case BAUDRATE_19200BPS:
-				this->serial.setBaudRate(Serial::BAUDRATE_19200BPS);
+			case BaudRate::b19200:
+				this->serial.setBaudRate(Serial::BaudRate::b19200);
 				break;
-			case BAUDRATE_38400BPS:
-				this->serial.setBaudRate(Serial::BAUDRATE_38400BPS);
+			case BaudRate::b38400:
+				this->serial.setBaudRate(Serial::BaudRate::b38400);
 				break;
-			case BAUDRATE_57600BPS:
-				this->serial.setBaudRate(Serial::BAUDRATE_57600BPS);
+			case BaudRate::b57600:
+				this->serial.setBaudRate(Serial::BaudRate::b57600);
 				break;
-			case BAUDRATE_115200BPS:
-				this->serial.setBaudRate(Serial::BAUDRATE_115200BPS);
+			case BaudRate::b115200:
+				this->serial.setBaudRate(Serial::BaudRate::b115200);
 				break;
-//			case BAUDRATE_345600BPS:
-//				this->serial.setBaudRate(Serial::BAUDRATE_345600BPS);
+//			case BaudRate::b345600:
+//				this->serial.setBaudRate(Serial::BaudRate::b345600);
 //				break;
-//			case BAUDRATE_625000BPS:
-//				this->serial.setBaudRate(Serial::BAUDRATE_625000BPS);
+//			case BaudRate::b625000:
+//				this->serial.setBaudRate(Serial::BaudRate::b625000);
 //				break;
 			default:
 				break;

@@ -1461,15 +1461,15 @@ MainWindow::load(const QString& filename)
 				
 				if (path.eval("count(distance) > 0").getValue<bool>())
 				{
-					explorer->greedy = rl::plan::WorkspaceSphereExplorer::GREEDY_DISTANCE;
+					explorer->greedy = rl::plan::WorkspaceSphereExplorer::Greedy::distance;
 				}
 				else if (path.eval("count(sourceDistance) > 0").getValue<bool>())
 				{
-					explorer->greedy = rl::plan::WorkspaceSphereExplorer::GREEDY_SOURCE_DISTANCE;
+					explorer->greedy = rl::plan::WorkspaceSphereExplorer::Greedy::sourceDistance;
 				}
 				else if (path.eval("count(space) > 0").getValue<bool>())
 				{
-					explorer->greedy = rl::plan::WorkspaceSphereExplorer::GREEDY_SPACE;
+					explorer->greedy = rl::plan::WorkspaceSphereExplorer::Greedy::space;
 				}
 				
 				if (rl::plan::DistanceModel* model = dynamic_cast<rl::plan::DistanceModel*>(this->model.get()))

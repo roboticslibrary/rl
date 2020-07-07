@@ -253,8 +253,8 @@ namespace rl
 			this->out.dat.pos.w.y = static_cast<float>(x.translation().y() * 1000);
 			this->out.dat.pos.w.z = static_cast<float>(x.translation().z() * 1000);
 			
-			this->out.command = MXT_COMMAND_MOVE;
-			this->out.sendType = MXT_TYPE_POSE;
+			this->out.command = static_cast<::std::uint16_t>(MxtCommand::move);
+			this->out.sendType = static_cast<::std::uint16_t>(MxtType::pose);
 		}
 		
 		void
@@ -267,8 +267,8 @@ namespace rl
 		MitsubishiH7::setInput(const ::std::uint16_t& bitTop)
 		{
 			this->out.bitTop = bitTop;
-			this->out.recvIoType = MXT_IO_IN;
-			this->out.sendIoType = MXT_IO_NULL;
+			this->out.recvIoType = static_cast<::std::uint16_t>(MxtIo::in);
+			this->out.sendIoType = static_cast<::std::uint16_t>(MxtIo::null);
 		}
 		
 		void
@@ -307,8 +307,8 @@ namespace rl
 				break;
 			}
 			
-			this->out.command = MXT_COMMAND_MOVE;
-			this->out.sendType = MXT_TYPE_JOINT;
+			this->out.command = static_cast<::std::uint16_t>(MxtCommand::move);
+			this->out.sendType = static_cast<::std::uint16_t>(MxtType::joint);
 		}
 		
 		void
@@ -353,8 +353,8 @@ namespace rl
 				break;
 			}
 			
-			this->out.command = MXT_COMMAND_MOVE;
-			this->out.sendType = MXT_TYPE_PULSE;
+			this->out.command = static_cast<::std::uint16_t>(MxtCommand::move);
+			this->out.sendType = static_cast<::std::uint16_t>(MxtType::pulse);
 		}
 		
 		void
@@ -363,8 +363,8 @@ namespace rl
 			this->out.bitMask = bitMask;
 			this->out.bitTop = bitTop;
 			this->out.ioData = ioData;
-			this->out.recvIoType = MXT_IO_NULL;
-			this->out.sendIoType = MXT_IO_OUT;
+			this->out.recvIoType = static_cast<::std::uint16_t>(MxtIo::null);
+			this->out.sendIoType = static_cast<::std::uint16_t>(MxtIo::out);
 		}
 		
 		void
@@ -382,7 +382,7 @@ namespace rl
 			
 			::std::stringstream program;
 			program << "10 OPEN \"ENET:" << address.getNameInfo(true) << "\" AS #1" << "\v";
-			program << "20 MXT 1," << this->mode << "," << this->filter << "\v";
+			program << "20 MXT 1," << static_cast<int>(this->mode) << "," << this->filter << "\v";
 			program << "30 HLT" << "\v";
 			program << "40 END";
 			
@@ -417,10 +417,10 @@ namespace rl
 		void
 		MitsubishiH7::step()
 		{
-			this->out.recvType = MXT_TYPE_JOINT;
-			this->out.recvType1 = MXT_TYPE_POSE;
-			this->out.recvType2 = MXT_TYPE_PULSE;
-			this->out.recvType3 = MXT_TYPE_CURRENT_FEEDBACK;
+			this->out.recvType = static_cast<::std::uint16_t>(MxtType::joint);
+			this->out.recvType1 = static_cast<::std::uint16_t>(MxtType::pose);
+			this->out.recvType2 = static_cast<::std::uint16_t>(MxtType::pulse);
+			this->out.recvType3 = static_cast<::std::uint16_t>(MxtType::currentFeedback);
 			
 			this->socket.send(&this->out, sizeof(Command));
 			
@@ -439,15 +439,15 @@ namespace rl
 			
 			this->out.bitMask = 0;
 			this->out.bitTop = 0;
-			this->out.command = MXT_COMMAND_NULL;
+			this->out.command = static_cast<::std::uint16_t>(MxtCommand::null);
 			this->out.ioData = 0;
-			this->out.recvIoType = MXT_IO_NULL;
-			this->out.recvType = MXT_TYPE_NULL;
-			this->out.recvType1 = MXT_TYPE_NULL;
-			this->out.recvType2 = MXT_TYPE_NULL;
-			this->out.recvType3 = MXT_TYPE_NULL;
-			this->out.sendIoType = MXT_IO_NULL;
-			this->out.sendType = MXT_TYPE_NULL;
+			this->out.recvIoType = static_cast<::std::uint16_t>(MxtIo::null);
+			this->out.recvType = static_cast<::std::uint16_t>( MxtType::null);
+			this->out.recvType1 = static_cast<::std::uint16_t>(MxtType::null);
+			this->out.recvType2 = static_cast<::std::uint16_t>(MxtType::null);
+			this->out.recvType3 = static_cast<::std::uint16_t>(MxtType::null);
+			this->out.sendIoType = static_cast<::std::uint16_t>(MxtIo::null);
+			this->out.sendType = static_cast<::std::uint16_t>(MxtType::null);
 		}
 		
 		void
@@ -455,15 +455,15 @@ namespace rl
 		{
 			this->out.bitMask = 0;
 			this->out.bitTop = 0;
-			this->out.command = MXT_COMMAND_END;
+			this->out.command = static_cast<::std::uint16_t>(MxtCommand::end);
 			this->out.ioData = 0;
-			this->out.recvType = MXT_TYPE_NULL;
-			this->out.recvType1 = MXT_TYPE_NULL;
-			this->out.recvType2 = MXT_TYPE_NULL;
-			this->out.recvType3 = MXT_TYPE_NULL;
-			this->out.recvIoType = MXT_IO_NULL;
-			this->out.sendType = MXT_TYPE_NULL;
-			this->out.sendIoType = MXT_IO_NULL;
+			this->out.recvType = static_cast<::std::uint16_t>(MxtType::null);
+			this->out.recvType1 = static_cast<::std::uint16_t>(MxtType::null);
+			this->out.recvType2 = static_cast<::std::uint16_t>(MxtType::null);
+			this->out.recvType3 = static_cast<::std::uint16_t>(MxtType::null);
+			this->out.recvIoType = static_cast<::std::uint16_t>(MxtIo::null);
+			this->out.sendType = static_cast<::std::uint16_t>(MxtType::null);
+			this->out.sendIoType = static_cast<::std::uint16_t>(MxtIo::null);
 			
 			this->socket.send(&this->out, sizeof(Command));
 			

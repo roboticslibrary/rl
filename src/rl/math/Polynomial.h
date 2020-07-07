@@ -349,8 +349,8 @@ namespace rl
 				}
 				else
 				{
-					assert(x > this->lower() - FUNCTION_BOUNDARY);
-					assert(x < this->upper() + FUNCTION_BOUNDARY);
+					assert(x > this->lower() - this->functionBoundary);
+					assert(x < this->upper() + this->functionBoundary);
 					
 					T y = this->c[this->degree()];
 					

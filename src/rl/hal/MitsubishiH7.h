@@ -55,11 +55,11 @@ namespace rl
 			public JointPositionSensor
 		{
 		public:
-			enum Mode
+			enum class Mode
 			{
-				MODE_JOINT = 1,
-				MODE_POSE = 0,
-				MODE_PULSE = 2
+				joint = 1,
+				pose = 0,
+				pulse = 2
 			};
 			
 			MitsubishiH7(
@@ -68,7 +68,7 @@ namespace rl
 				const ::std::string& addressClient,
 				const unsigned short int& portTcp = 10001,
 				const unsigned short int& portUdp = 10000,
-				const Mode& mode = MODE_JOINT,
+				const Mode& mode = Mode::joint,
 				const ::std::uint16_t& haltIoData = 0x00AA,
 				const ::std::uint16_t& releaseIoData = 0x00A6,
 				const ::std::uint16_t& shutIoData = 0x000A9
@@ -127,6 +127,55 @@ namespace rl
 			void stopProgram();
 			
 		protected:
+			enum class MxtCommand
+			{
+				/** Real-time external command invalid. */
+				null = 0,
+				/** Real-time external command valid. */
+				move = 1,
+				/** Real-time external command end. */
+				end = 255
+			};
+			
+			enum class MxtIo
+			{
+				
+				/** No data. */
+				null = 0,
+				/** Output signal. */
+				out = 1,
+				/** Input signal. */
+				in = 2
+			};
+			
+			enum class MxtType
+			{
+				/** No data. */
+				null = 0,
+				/** XYZ data. */
+				pose = 1,
+				/** Joint data. */
+				joint = 2,
+				/** Motor pulse data. */
+				pulse = 3,
+				/** XYZ data (position after filter process). */
+				poseFilter = 4,
+				/** Joint data (position after filter process). */
+				jointFilter = 5,
+				/** Motor pulse data (position after filter process). */
+				pulseFilter = 6,
+				/** XYZ data (encoder feedback value). */
+				poseFeedback = 7,
+				/** Joint data (encoder feedback value). */
+				jointFeedback = 8,
+				/** Motor pulse data (encoder feedback value). */
+				pulseFeedback = 9,
+				/** Current command [\%]. */
+				currentCommand = 10,
+				/** Current feedback [\%]. */
+				currentFeedback = 11
+			};
+			
 			struct World
 			{
 				/** X axis coordinate value [mm]. */
@@ -252,45 +301,6 @@ namespace rl
 				/** Position data. */
 				Data dat3;
 			};
-			
-			/** Real-time external command invalid. */
-			const static ::std::uint16_t MXT_COMMAND_NULL = 0;
-			/** Real-time external command valid. */
-			const static ::std::uint16_t MXT_COMMAND_MOVE = 1;
-			/** Real-time external command end. */
-			const static ::std::uint16_t MXT_COMMAND_END = 255;
-			
-			/** No data. */
-			const static ::std::uint16_t MXT_IO_NULL = 0;
-			/** Output signal. */
-			const static ::std::uint16_t MXT_IO_OUT = 1;
-			/** Input signal. */
-			const static ::std::uint16_t MXT_IO_IN = 2;
-			
-			/** No data. */
-			const static ::std::uint16_t MXT_TYPE_NULL = 0;
-			/** XYZ data. */
-			const static ::std::uint16_t MXT_TYPE_POSE = 1;
-			/** Joint data. */
-			const static ::std::uint16_t MXT_TYPE_JOINT = 2;
-			/** Motor pulse data. */
-			const static ::std::uint16_t MXT_TYPE_PULSE = 3;
-			/** XYZ data (position after filter process). */
-			const static ::std::uint16_t MXT_TYPE_POSE_FILTER = 4;
-			/** Joint data (position after filter process). */
-			const static ::std::uint16_t MXT_TYPE_JOINT_FILTER = 5;
-			/** Motor pulse data (position after filter process). */
-			const static ::std::uint16_t MXT_TYPE_PULSE_FILTER = 6;
-			/** XYZ data (encoder feedback value). */
-			const static ::std::uint16_t MXT_TYPE_POSE_FEEDBACK = 7;
-			/** Joint data (encoder feedback value). */
-			const static ::std::uint16_t MXT_TYPE_JOINT_FEEDBACK = 8;
-			/** Motor pulse data (encoder feedback value). */
-			const static ::std::uint16_t MXT_TYPE_PULSE_FEEDBACK = 9;
-			/** Current command [\%]. */
-			const static ::std::uint16_t MXT_TYPE_CURRENT_COMMAND = 10;
-			/** Current feedback [\%]. */
-			const static ::std::uint16_t MXT_TYPE_CURRENT_FEEDBACK = 11;
 			
 		private:
 			/** Client ip address or hostname. */

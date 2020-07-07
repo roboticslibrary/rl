@@ -34,7 +34,7 @@ namespace rl
 		JacobianInverseKinematics::JacobianInverseKinematics(Kinematic* kinematic) :
 			IterativeInverseKinematics(kinematic),
 			delta(::std::numeric_limits<::rl::math::Real>::infinity()),
-			method(METHOD_SVD),
+			method(Method::svd),
 			randDistribution(0, 1),
 			randEngine(::std::random_device()())
 		{
@@ -116,15 +116,15 @@ namespace rl
 					
 					switch (this->method)
 					{
-					case METHOD_DLS:
+					case Method::dls:
 						this->kinematic->calculateJacobianInverse(0, false);
 						dq = this->kinematic->getJacobianInverse() * dx;
 						break;
-					case METHOD_SVD:
+					case Method::svd:
 						this->kinematic->calculateJacobianInverse(0, true);
 						dq = this->kinematic->getJacobianInverse() * dx;
 						break;
-					case METHOD_TRANSPOSE:
+					case Method::transpose:
 						{
 							::rl::math::Vector tmp = this->kinematic->getJacobian() * this->kinematic->getJacobian().transpose() * dx;
 							::rl::math::Real alpha = dx.dot(tmp) / tmp.dot(tmp);

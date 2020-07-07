@@ -44,116 +44,116 @@ namespace rl
 		class RL_HAL_EXPORT Dc1394Camera : public Camera, public CyclicDevice
 		{
 			public:
-				enum ColorCoding
+				enum class ColorCoding
 				{
-					  COLOR_CODING_MONO8 = ::DC1394_COLOR_CODING_MONO8,
-					  COLOR_CODING_YUV411,
-					  COLOR_CODING_YUV422,
-					  COLOR_CODING_YUV444,
-					  COLOR_CODING_RGB8,
-					  COLOR_CODING_MONO16,
-					  COLOR_CODING_RGB16,
-					  COLOR_CODING_MONO16S,
-					  COLOR_CODING_RGB16S,
-					  COLOR_CODING_RAW8,
-					  COLOR_CODING_RAW16
+					  mono8 = ::DC1394_COLOR_CODING_MONO8,
+					  yuv411,
+					  yuv422,
+					  yuv444,
+					  rgb8,
+					  mono16,
+					  rgb16,
+					  mono16s,
+					  rgb16s,
+					  raw8,
+					  raw16
 				};
 				
-				enum Feature
+				enum class Feature
 				{
-					FEATURE_BRIGHTNESS = ::DC1394_FEATURE_BRIGHTNESS,
-					FEATURE_EXPOSURE,
-					FEATURE_SHARPNESS,
-					FEATURE_WHITE_BALANCE,
-					FEATURE_HUE,
-					FEATURE_SATURATION,
-					FEATURE_GAMMA,
-					FEATURE_SHUTTER,
-					FEATURE_GAIN,
-					FEATURE_IRIS,
-					FEATURE_FOCUS,
-					FEATURE_TEMPERATURE,
-					FEATURE_TRIGGER,
-					FEATURE_TRIGGER_DELAY,
-					FEATURE_WHITE_SHADING,
-					FEATURE_FRAME_RATE,
-					FEATURE_ZOOM,
-					FEATURE_PAN,
-					FEATURE_TILT,
-					FEATURE_OPTICAL_FILTER,
-					FEATURE_CAPTURE_SIZE,
-					FEATURE_CAPTURE_QUALITY
+					brightness = ::DC1394_FEATURE_BRIGHTNESS,
+					exposure,
+					sharpness,
+					whiteBalance,
+					hue,
+					saturation,
+					gamma,
+					shutter,
+					gain,
+					iris,
+					focus,
+					temperature,
+					trigger,
+					triggerDelay,
+					whiteShading,
+					frameRate,
+					zoom,
+					pan,
+					tilt,
+					opticalFilter,
+					captureSize,
+					captureQuality
 				};
 				
-				enum FeatureMode
+				enum class FeatureMode
 				{
-					FEATURE_MODE_MANUAL = ::DC1394_FEATURE_MODE_MANUAL,
-					FEATURE_MODE_AUTO,
-					FEATURE_MODE_ONE_PUSH_AUTO
+					manual = ::DC1394_FEATURE_MODE_MANUAL,
+					automatic,
+					onePushAuto
 				};
 				
-				enum Framerate
+				enum class Framerate
 				{
-					FRAMERATE_1_875 = ::DC1394_FRAMERATE_1_875,
-					FRAMERATE_3_75,
-					FRAMERATE_7_5,
-					FRAMERATE_15,
-					FRAMERATE_30,
-					FRAMERATE_60,
-					FRAMERATE_120,
-					FRAMERATE_240
+					f1_875 = ::DC1394_FRAMERATE_1_875,
+					f3_75,
+					f7_5,
+					f15,
+					f30,
+					f60,
+					f120,
+					f240
 				};
 				
-				enum IsoSpeed
+				enum class IsoSpeed
 				{
-					ISO_SPEED_100 = ::DC1394_ISO_SPEED_100,
-					ISO_SPEED_200,
-					ISO_SPEED_400,
-					ISO_SPEED_800,
-					ISO_SPEED_1600,
-					ISO_SPEED_3200
+					i100 = ::DC1394_ISO_SPEED_100,
+					i200,
+					i400,
+					i800,
+					i1600,
+					i3200
 				};
 				
-				enum OperationMode
+				enum class OperationMode
 				{
-					OPERATION_MODE_LEGACY = ::DC1394_OPERATION_MODE_LEGACY,
-					OPERATION_MODE_1394B
+					legacy = ::DC1394_OPERATION_MODE_LEGACY,
+					o1394b
 				};
 				
-				enum VideoMode
+				enum class VideoMode
 				{
-					VIDEO_MODE_160x120_YUV444 = ::DC1394_VIDEO_MODE_160x120_YUV444,
-					VIDEO_MODE_320x240_YUV422,
-					VIDEO_MODE_640x480_YUV411,
-					VIDEO_MODE_640x480_YUV422,
-					VIDEO_MODE_640x480_RGB8,
-					VIDEO_MODE_640x480_MONO8,
-					VIDEO_MODE_640x480_MONO16,
-					VIDEO_MODE_800x600_YUV422,
-					VIDEO_MODE_800x600_RGB8,
-					VIDEO_MODE_800x600_MONO8,
-					VIDEO_MODE_1024x768_YUV422,
-					VIDEO_MODE_1024x768_RGB8,
-					VIDEO_MODE_1024x768_MONO8,
-					VIDEO_MODE_800x600_MONO16,
-					VIDEO_MODE_1024x768_MONO16,
-					VIDEO_MODE_1280x960_YUV422,
-					VIDEO_MODE_1280x960_RGB8,
-					VIDEO_MODE_1280x960_MONO8,
-					VIDEO_MODE_1600x1200_YUV422,
-					VIDEO_MODE_1600x1200_RGB8,
-					VIDEO_MODE_1600x1200_MONO8,
-					VIDEO_MODE_1280x960_MONO16,
-					VIDEO_MODE_1600x1200_MONO16,
-					VIDEO_MODE_EXIF,
-					VIDEO_MODE_FORMAT7_0,
-					VIDEO_MODE_FORMAT7_1,
-					VIDEO_MODE_FORMAT7_2,
-					VIDEO_MODE_FORMAT7_3,
-					VIDEO_MODE_FORMAT7_4,
-					VIDEO_MODE_FORMAT7_5,
-					VIDEO_MODE_FORMAT7_6,
-					VIDEO_MODE_FORMAT7_7
+					v160x120_yuv444 = ::DC1394_VIDEO_MODE_160x120_YUV444,
+					v320x240_yuv422,
+					v640x480_yuv411,
+					v640x480_yuv422,
+					v640x480_rgb8,
+					v640x480_mono8,
+					v640x480_mono16,
+					v800x600_yuv422,
+					v800x600_rgb8,
+					v800x600_mono8,
+					v1024x768_yuv422,
+					v1024x768_rgb8,
+					v1024x768_mono8,
+					v800x600_mono16,
+					v1024x768_mono16,
+					v1280x960_yuv422,
+					v1280x960_rgb8,
+					v1280x960_mono8,
+					v1600x1200_yuv422,
+					v1600x1200_rgb8,
+					v1600x1200_mono8,
+					v1280x960_mono16,
+					v1600x1200_mono16,
+					exif,
+					format7_0,
+					format7_1,
+					format7_2,
+					format7_3,
+					format7_4,
+					format7_5,
+					format7_6,
+					format7_7
 				};
 				
 				class Exception : public DeviceException
@@ -292,7 +292,7 @@ namespace rl
 				
 				unsigned int node;
 				
-				unsigned int speed;
+				IsoSpeed speed;
 				
 				unsigned int top;
 				

@@ -40,13 +40,13 @@ main(int argc, char** argv)
 		dc1394.open();
 		dc1394.start();
 		
-		dc1394.setFramerate(rl::hal::Dc1394Camera::FRAMERATE_7_5);
-		dc1394.setSpeed(rl::hal::Dc1394Camera::ISO_SPEED_400);
-		dc1394.setVideoMode(rl::hal::Dc1394Camera::VIDEO_MODE_1024x768_RGB8);
+		dc1394.setFramerate(rl::hal::Dc1394Camera::Framerate::f7_5);
+		dc1394.setSpeed(rl::hal::Dc1394Camera::IsoSpeed::i400);
+		dc1394.setVideoMode(rl::hal::Dc1394Camera::VideoMode::v1024x768_rgb8);
 		
-		dc1394.setFeatureMode(rl::hal::Dc1394Camera::FEATURE_GAIN, rl::hal::Dc1394Camera::FEATURE_MODE_AUTO);
-		dc1394.setFeatureMode(rl::hal::Dc1394Camera::FEATURE_SHUTTER, rl::hal::Dc1394Camera::FEATURE_MODE_AUTO);
-		dc1394.setFeatureMode(rl::hal::Dc1394Camera::FEATURE_WHITE_BALANCE, rl::hal::Dc1394Camera::FEATURE_MODE_AUTO);
+		dc1394.setFeatureMode(rl::hal::Dc1394Camera::Feature::gain, rl::hal::Dc1394Camera::FeatureMode::automatic);
+		dc1394.setFeatureMode(rl::hal::Dc1394Camera::Feature::shutter, rl::hal::Dc1394Camera::FeatureMode::automatic);
+		dc1394.setFeatureMode(rl::hal::Dc1394Camera::Feature::whiteBalance, rl::hal::Dc1394Camera::FeatureMode::automatic);
 		
 		unsigned char image[dc1394.getSize()];
 		

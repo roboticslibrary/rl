@@ -57,11 +57,11 @@ namespace rl
 		class RL_PLAN_EXPORT WorkspaceSphereExplorer
 		{
 		public:
-			enum Greedy
+			enum class Greedy
 			{
-				GREEDY_DISTANCE,
-				GREEDY_SOURCE_DISTANCE,
-				GREEDY_SPACE
+				distance,
+				sourceDistance,
+				space
 			};
 			
 			WorkspaceSphereExplorer();

@@ -42,52 +42,52 @@ namespace rl
 		class RL_HAL_EXPORT RobotiqModelC : public CyclicDevice, public Gripper
 		{
 		public:
-			enum ActionStatus
+			enum class ActionStatus
 			{
-				ACTION_STATUS_STOPPED = 0x00,
-				ACTION_STATUS_GOING = 0x01
+				stopped = 0x00,
+				going = 0x01
 			};
 			
-			enum ActivationStatus
+			enum class ActivationStatus
 			{
-				ACTIVATION_STATUS_RESET = 0x00,
-				ACTIVATION_STATUS_READY = 0x01
+				reset = 0x00,
+				ready = 0x01
 			};
 			
-			enum FaultStatus
+			enum class FaultStatus
 			{
-				FAULT_STATUS_NONE = 0x00,
-				FAULT_STATUS_UNKNOWN_1 = 0x01,
-				FAULT_STATUS_UNKNOWN_2 = 0x02,
-				FAULT_STATUS_UNKNOWN_3 = 0x03,
-				FAULT_STATUS_UNKNOWN_4 = 0x04,
-				FAULT_STATUS_NOTICE_ACTIVATION_DELAYED = 0x05,
-				FAULT_STATUS_NOTICE_MODE_DELAYED = 0x06,
-				FAULT_STATUS_NOTICE_ACTIVATION_NEEDED = 0x07,
-				FAULT_STATUS_WARNING_TEMPERATURE = 0x08,
-				FAULT_STATUS_WARNING_COMM_NOT_READY = 0x09,
-				FAULT_STATUS_WARNING_VOLTAGE = 0x0A,
-				FAULT_STATUS_WARNING_AUTOMATIC_RELEASE = 0x0B,
-				FAULT_STATUS_ERROR_INTERNAL = 0x0C,
-				FAULT_STATUS_ERROR_ACTIVATION_FAULT = 0x0D,
-				FAULT_STATUS_ERROR_MODE_FAULT = 0x0E,
-				FAULT_STATUS_ERROR_AUTOMATIC_RELEASE_COMPLETE = 0x0F
+				none = 0x00,
+				unknown1 = 0x01,
+				unknown2 = 0x02,
+				unknown3 = 0x03,
+				unknown4 = 0x04,
+				noticeActivationDelayed = 0x05,
+				noticeModeDelayed = 0x06,
+				noticeActivationNeeded = 0x07,
+				warningTemperature = 0x08,
+				warningCommNotReady = 0x09,
+				warningVoltage = 0x0a,
+				warningAutomaticRelease = 0x0b,
+				errorInternal = 0x0c,
+				errorActivationFault = 0x0d,
+				errorModeFault = 0x0e,
+				errorAutomaticReleaseComplete = 0x0f
 			};
 			
-			enum GripperStatus
+			enum class GripperStatus
 			{
-				GRIPPER_STATUS_RESET = 0x00,
-				GRIPPER_STATUS_ACTIVATING = 0x01,
-				GRIPPER_STATUS_UNUSED = 0x02,
-				GRIPPER_STATUS_READY = 0x03
+				reset = 0x00,
+				activating = 0x01,
+				unused = 0x02,
+				ready = 0x03
 			};
 			
-			enum ObjectStatus
+			enum class ObjectStatus
 			{
-				OBJECT_STATUS_MOTION = 0x00,
-				OBJECT_STATUS_CONTACT_OPEN = 0x01,
-				OBJECT_STATUS_CONTACT_CLOSE = 0x02,
-				OBJECT_STATUS_MOTION_COMPLETE = 0x03
+				motion = 0x00,
+				contactOpen = 0x01,
+				contactClose = 0x02,
+				motionComplete = 0x03
 			};
 			
 			class Exception : public DeviceException

@@ -160,8 +160,8 @@ namespace rl
 			 */
 			Vector2 operator()(const Real& x, const ::std::size_t& derivative = 0) const
 			{
-				assert(x >= this->lower() - FUNCTION_BOUNDARY);
-				assert(x <= this->upper() + FUNCTION_BOUNDARY);
+				assert(x >= this->lower() - this->functionBoundary);
+				assert(x <= this->upper() + this->functionBoundary);
 				assert(derivative <= 2 && "Circular: higher derivatives not implemented");
 				
 				Real c = this->angle / this->x1;

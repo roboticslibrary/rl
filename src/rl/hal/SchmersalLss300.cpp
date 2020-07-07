@@ -45,18 +45,18 @@ namespace rl
 		) :
 			CyclicDevice(::std::chrono::nanoseconds::zero()),
 			Lidar(),
-			baudRate(BAUDRATE_9600BPS),
+			baudRate(BaudRate::b9600),
 			data(),
 			desired(baudRate),
 			monitoring(monitoring),
 			password(password),
 			serial(
 				filename,
-				Serial::BAUDRATE_9600BPS,
-				Serial::DATABITS_8BITS,
-				Serial::FLOWCONTROL_OFF,
-				Serial::PARITY_NOPARITY,
-				Serial::STOPBITS_1BIT
+				Serial::BaudRate::b9600,
+				Serial::DataBits::d8,
+				Serial::FlowControl::off,
+				Serial::Parity::none,
+				Serial::StopBits::s1
 			)
 		{
 			assert(8 == password.length());
@@ -71,14 +71,14 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			if (MONITORING_SINGLE != this->monitoring)
+			if (Monitoring::single != this->monitoring)
 			{
-				this->setMonitoring(MONITORING_SINGLE);
+				this->setMonitoring(Monitoring::single);
 			}
 			
-			if (BAUDRATE_9600BPS != this->baudRate)
+			if (BaudRate::b9600 != this->baudRate)
 			{
-				this->setBaudRate(BAUDRATE_9600BPS);
+				this->setBaudRate(BaudRate::b9600);
 			}
 			
 			this->serial.close();
@@ -243,10 +243,10 @@ namespace rl
 			buf[5] = 0x00;
 			
 			Serial::BaudRate baudRates[4] = {
-				Serial::BAUDRATE_57600BPS,
-				Serial::BAUDRATE_38400BPS,
-				Serial::BAUDRATE_19200BPS,
-				Serial::BAUDRATE_9600BPS
+				Serial::BaudRate::b57600,
+				Serial::BaudRate::b38400,
+				Serial::BaudRate::b19200,
+				Serial::BaudRate::b9600
 			};
 			
 			for (::std::size_t i = 0; i < 4; ++i)
@@ -296,7 +296,7 @@ namespace rl
 			
 			if (0x25 != buf[5])
 			{
-				this->setMonitoring(MONITORING_SINGLE);
+				this->setMonitoring(Monitoring::single);
 			}
 		}
 		
@@ -422,16 +422,16 @@ namespace rl
 			
 			switch (baudRate)
 			{
-			case BAUDRATE_9600BPS:
+			case BaudRate::b9600:
 				buf[5] = 0x00;
 				break;
-			case BAUDRATE_19200BPS:
+			case BaudRate::b19200:
 				buf[5] = 0x01;
 				break;
-			case BAUDRATE_38400BPS:
+			case BaudRate::b38400:
 				buf[5] = 0x02;
 				break;
-			case BAUDRATE_57600BPS:
+			case BaudRate::b57600:
 				buf[5] = 0x03;
 				break;
 			default:
@@ -453,17 +453,17 @@ namespace rl
 			
 			switch (baudRate)
 			{
-			case BAUDRATE_9600BPS:
-				this->serial.setBaudRate(Serial::BAUDRATE_9600BPS);
+			case BaudRate::b9600:
+				this->serial.setBaudRate(Serial::BaudRate::b9600);
 				break;
-			case BAUDRATE_19200BPS:
-				this->serial.setBaudRate(Serial::BAUDRATE_19200BPS);
+			case BaudRate::b19200:
+				this->serial.setBaudRate(Serial::BaudRate::b19200);
 				break;
-			case BAUDRATE_38400BPS:
-				this->serial.setBaudRate(Serial::BAUDRATE_38400BPS);
+			case BaudRate::b38400:
+				this->serial.setBaudRate(Serial::BaudRate::b38400);
 				break;
-			case BAUDRATE_57600BPS:
-				this->serial.setBaudRate(Serial::BAUDRATE_57600BPS);
+			case BaudRate::b57600:
+				this->serial.setBaudRate(Serial::BaudRate::b57600);
 				break;
 			default:
 				break;
@@ -485,10 +485,10 @@ namespace rl
 			
 			switch (monitoring)
 			{
-			case MONITORING_CONTINUOUS:
+			case Monitoring::continuous:
 				buf[5] = 0x24;
 				break;
-			case MONITORING_SINGLE:
+			case Monitoring::single:
 				buf[5] = 0x25;
 				break;
 			default:
@@ -529,7 +529,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			if (MONITORING_SINGLE != this->monitoring)
+			if (Monitoring::single != this->monitoring)
 			{
 				this->setMonitoring(this->monitoring);
 			}
@@ -540,7 +540,7 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			if (MONITORING_SINGLE == this->monitoring)
+			if (Monitoring::single == this->monitoring)
 			{
 				this->data[4] = 0x30;
 				this->data[5] = 0x01;
@@ -560,9 +560,9 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			if (MONITORING_SINGLE != this->monitoring)
+			if (Monitoring::single != this->monitoring)
 			{
-				this->setMonitoring(MONITORING_SINGLE);
+				this->setMonitoring(Monitoring::single);
 			}
 		}
 		

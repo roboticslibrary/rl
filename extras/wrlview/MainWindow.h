@@ -57,52 +57,52 @@ protected:
 	void dropEvent(QDropEvent* event);
 	
 private:
-	enum BACKGROUND
+	enum class Background
 	{
-		BACKGROUND_BLACK,
-		BACKGROUND_GRADIENT,
-		BACKGROUND_WHITE
+		black,
+		gradient,
+		white
 	};
 	
-	enum CAMERA
+	enum class Camera
 	{
-		CAMERA_ORTHOGONAL,
-		CAMERA_PERSPECTIVE
+		orthogonal,
+		perspective
 	};
 	
-	enum ORIGIN
+	enum class Origin
 	{
-		ORIGIN_NONE,
-		ORIGIN_1,
-		ORIGIN_1000
+		none,
+		o1,
+		o1000
 	};
 	
-	enum SIZE
+	enum class Size
 	{
-		SIZE_640x480,
-		SIZE_800x600,
-		SIZE_1024x768,
-		SIZE_1024x1024,
-		SIZE_1280x720,
-		SIZE_1280x960,
-		SIZE_1200x1200,
-		SIZE_1600x1200,
-		SIZE_1920x1080,
-		SIZE_2400x2400
+		s640x480,
+		s800x600,
+		s1024x768,
+		s1024x1024,
+		s1280x720,
+		s1280x960,
+		s1200x1200,
+		s1600x1200,
+		s1920x1080,
+		s2400x2400
 	};
 	
-	enum VIEW
+	enum class View
 	{
-		VIEW_BACK,
-		VIEW_BOTTOM,
-		VIEW_FRONT,
-		VIEW_LEFT,
-		VIEW_RIGHT,
-		VIEW_TOP,
-		VIEW_TOP_BACK_LEFT,
-		VIEW_TOP_BACK_RIGHT,
-		VIEW_TOP_FRONT_LEFT,
-		VIEW_TOP_FRONT_RIGHT
+		back,
+		bottom,
+		front,
+		left,
+		right,
+		top,
+		topBackLeft,
+		topBackRight,
+		topFrontLeft,
+		topFrontRight
 	};
 	
 	void init();

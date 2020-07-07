@@ -63,79 +63,79 @@ namespace rl
 			public JointVelocitySensor
 		{
 		public:
-			enum JointMode
+			enum class JointMode
 			{
-				JOINT_MODE_RESET = 235,
-				JOINT_MODE_SHUTTING_DOWN = 236,
-				JOINT_MODE_PART_D_CALIBRATION = 237,
-				JOINT_MODE_BACKDRIVE = 238,
-				JOINT_MODE_POWER_OFF = 239,
-				JOINT_MODE_NOT_RESPONDING = 245,
-				JOINT_MODE_MOTOR_INITIALISATION = 246,
-				JOINT_MODE_BOOTING = 247,
-				JOINT_MODE_PART_D_CALIBRATION_ERROR = 248,
-				JOINT_MODE_BOOTLOADER = 249,
-				JOINT_MODE_CALIBRATION = 250,
-				JOINT_MODE_VIOLATION = 251,
-				JOINT_MODE_FAULT = 252,
-				JOINT_MODE_RUNNING = 253,
-				JOINT_MODE_IDLE = 255
+				reset = 235,
+				shuttingDown = 236,
+				partDCalibration = 237,
+				backdrive = 238,
+				powerOff = 239,
+				notResponding = 245,
+				motorInitialisation = 246,
+				booting = 247,
+				partDCalibrationError = 248,
+				bootloader = 249,
+				calibration = 250,
+				violation = 251,
+				fault = 252,
+				running = 253,
+				idle = 255
 			};
 			
-			enum ProgramState
+			enum class ProgramState
 			{
-				PROGRAM_STATE_STOPPING = 0,
-				PROGRAM_STATE_STOPPED = 1,
-				PROGRAM_STATE_PLAYING = 2,
-				PROGRAM_STATE_PAUSING = 3,
-				PROGRAM_STATE_PAUSED = 4,
-				PROGRAM_STATE_RESUMING = 5
+				stopping = 0,
+				stopped = 1,
+				playing = 2,
+				pausing = 3,
+				paused = 4,
+				resuming = 5
 			};
 			
-			enum RobotMode
+			enum class RobotMode
 			{
-				ROBOT_MODE_NO_CONTROLLER = -1,
-				ROBOT_MODE_DISCONNECTED = 0,
-				ROBOT_MODE_CONFIRM_SAFETY = 1,
-				ROBOT_MODE_BOOTING = 2,
-				ROBOT_MODE_POWER_OFF = 3,
-				ROBOT_MODE_POWER_ON = 4,
-				ROBOT_MODE_IDLE = 5,
-				ROBOT_MODE_BACKDRIVE = 6,
-				ROBOT_MODE_RUNNING = 7,
-				ROBOT_MODE_UPDATING_FIRMWARE = 8
+				noController = -1,
+				disconnected = 0,
+				confirmSafety = 1,
+				booting = 2,
+				powerOff = 3,
+				powerOn = 4,
+				idle = 5,
+				backdrive = 6,
+				running = 7,
+				updatingFirmware = 8
 			};
 			
-			enum SafetyMode
+			enum class SafetyMode
 			{
-				SAFETY_MODE_NORMAL = 1,
-				SAFETY_MODE_REDUCED = 2,
-				SAFETY_MODE_PROTECTIVE_STOP = 3,
-				SAFETY_MODE_RECOVERY = 4,
-				SAFETY_MODE_SAFEGUARD_STOP = 5,
-				SAFETY_MODE_SYSTEM_EMERGENCY_STOP = 6,
-				SAFETY_MODE_ROBOT_EMERGENCY_STOP = 7,
-				SAFETY_MODE_VIOLATION = 8,
-				SAFETY_MODE_FAULT = 9,
-				SAFETY_MODE_VALIDATE_JOINT_ID = 10,
-				SAFETY_MODE_UNDEFINED_SAFETY_MODE = 11
+				normal = 1,
+				reduced = 2,
+				protectiveStop = 3,
+				recovery = 4,
+				safeguardStop = 5,
+				systemEmergencyStop = 6,
+				robotEmergencyStop = 7,
+				violation = 8,
+				fault = 9,
+				validateJointId = 10,
+				undefinedSafetyMode = 11
 			};
 			
-			enum SafetyStatus
+			enum class SafetyStatus
 			{
-				SAFETY_STATUS_NORMAL = 1,
-				SAFETY_STATUS_REDUCED = 2,
-				SAFETY_STATUS_PROTECTIVE_STOP = 3,
-				SAFETY_STATUS_RECOVERY = 4,
-				SAFETY_STATUS_SAFEGUARD_STOP = 5,
-				SAFETY_STATUS_SYSTEM_EMERGENCY_STOP = 6,
-				SAFETY_STATUS_ROBOT_EMERGENCY_STOP = 7,
-				SAFETY_STATUS_VIOLATION = 8,
-				SAFETY_STATUS_FAULT = 9,
-				SAFETY_STATUS_VALIDATE_JOINT_ID = 10,
-				SAFETY_STATUS_UNDEFINED_SAFETY_MODE = 11,
-				SAFETY_STATUS_AUTOMATIC_MODE_SAFEGUARD_STOP = 12,
-				SAFETY_STATUS_SYSTEM_THREE_POSITION_ENABLING_STOP = 13
+				normal = 1,
+				reduced = 2,
+				protectiveStop = 3,
+				recovery = 4,
+				safeguardStop = 5,
+				systemEmergencyStop = 6,
+				robotEmergencyStop = 7,
+				violation = 8,
+				fault = 9,
+				validateJointId = 10,
+				undefinedSafetyMode = 11,
+				automaticModeSafeguardStop = 12,
+				systemThreePositionEnablingStop = 13
 			};
 			
 			UniversalRobotsRealtime(const ::std::string& address);

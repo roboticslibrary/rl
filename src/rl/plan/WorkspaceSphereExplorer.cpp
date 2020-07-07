@@ -42,7 +42,7 @@ namespace rl
 				::rl::math::Vector3::Constant(::std::numeric_limits<::rl::math::Real>::max())
 			),
 			goal(),
-			greedy(GREEDY_SPACE),
+			greedy(Greedy::space),
 			model(nullptr),
 			radius(0),
 			range(::std::numeric_limits<::rl::math::Real>::max()),
@@ -189,13 +189,13 @@ namespace rl
 								{
 									switch (this->greedy)
 									{
-									case GREEDY_DISTANCE:
+									case Greedy::distance:
 										sphere.priority = (*this->goal - *sphere.center).norm() - sphere.radius;
 										break;
-									case GREEDY_SOURCE_DISTANCE:
+									case Greedy::sourceDistance:
 										sphere.priority = (*this->goal - *sphere.center).norm() - sphere.radius + top.radiusSum;
 										break;
-									case GREEDY_SPACE:
+									case Greedy::space:
 										sphere.priority = 1 / sphere.radius;
 										break;
 									default:

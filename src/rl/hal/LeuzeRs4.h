@@ -45,24 +45,24 @@ namespace rl
 		class RL_HAL_EXPORT LeuzeRs4 : public CyclicDevice, public Lidar
 		{
 		public:
-			enum BaudRate
+			enum class BaudRate
 			{
 				/** 4,800 bps. */
-				BAUDRATE_4800BPS,
+				b4800,
 				/** 9,600 bps. */
-				BAUDRATE_9600BPS,
+				b9600,
 				/** 19,200 bps. */
-				BAUDRATE_19200BPS,
+				b19200,
 				/** 38,400 bps. */
-				BAUDRATE_38400BPS,
+				b38400,
 				/** 57,600 bps. */
-				BAUDRATE_57600BPS,
+				b57600,
 				/** 115,200 bps. */
-				BAUDRATE_115200BPS,
+				b115200,
 				/** 345,600 bps. */
-				BAUDRATE_345600BPS,
+				b345600,
 				/** 625,000 bps. */
-				BAUDRATE_625000BPS
+				b625000
 			};
 			
 			/**
@@ -70,7 +70,7 @@ namespace rl
 			 */
 			LeuzeRs4(
 				const ::std::string& device = "/dev/ttyS0",
-				const BaudRate& baudRate = BAUDRATE_57600BPS,
+				const BaudRate& baudRate = BaudRate::b57600,
 				const ::std::string& password = "ROD4LE"
 			);
 			

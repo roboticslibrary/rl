@@ -39,9 +39,9 @@ namespace rl
 	{
 		Puma::Puma() :
 			Kinematics(),
-			arm(ARM_LEFT),
-			elbow(ELBOW_ABOVE),
-			wrist(WRIST_NONFLIP)
+			arm(Arm::left),
+			elbow(Elbow::above),
+			wrist(Wrist::nonflip)
 		{
 		}
 		
@@ -72,9 +72,9 @@ namespace rl
 		{
 			assert(q.size() == this->getDof());
 			
-			int arm = this->arm;
-			int elbow = this->elbow;
-			int wrist = this->wrist;
+			int arm = static_cast<int>(this->arm);
+			int elbow = static_cast<int>(this->elbow);
+			int wrist = static_cast<int>(this->wrist);
 			
 			::rl::math::Real myeps = 1e-9;
 			
@@ -282,11 +282,11 @@ namespace rl
 			
 			if (myq(4) < 0)
 			{
-				wrist = WRIST_FLIP;
+				wrist = Wrist::flip;
 			}
 			else
 			{
-				wrist = WRIST_NONFLIP;
+				wrist = Wrist::nonflip;
 			}
 			
 			::rl::math::Real c2 = this->cos(myq(1));
@@ -307,28 +307,28 @@ namespace rl
 			
 			if (tmp < 0)
 			{
-				arm = ARM_LEFT;
+				arm = Arm::left;
 				
 				if (tmp2 < 0)
 				{
-					elbow = ELBOW_BELOW;
+					elbow = Elbow::below;
 				}
 				else
 				{
-					elbow = ELBOW_ABOVE;
+					elbow = Elbow::above;
 				}
 			}
 			else
 			{
-				arm = ARM_RIGHT;
+				arm = Arm::right;
 				
 				if (tmp2 < 0)
 				{
-					elbow = ELBOW_ABOVE;
+					elbow = Elbow::above;
 				}
 				else
 				{
-					elbow = ELBOW_BELOW;
+					elbow = Elbow::below;
 				}
 			}
 		}

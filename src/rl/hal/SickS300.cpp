@@ -33,7 +33,7 @@
 #include "Endian.h"
 #include "SickS300.h"
 
-static const ::std::uint16_t crcTable[256] = {
+static constexpr ::std::uint16_t crcTable[256] = {
 	0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50a5, 0x60c6, 0x70e7,
 	0x8108, 0x9129, 0xa14a, 0xb16b, 0xc18c, 0xd1ad, 0xe1ce, 0xf1ef,
 	0x1231, 0x0210, 0x3273, 0x2252, 0x52b5, 0x4294, 0x72f7, 0x62d6,
@@ -82,10 +82,10 @@ namespace rl
 			serial(
 				filename,
 				baudRate,
-				Serial::DATABITS_8BITS,
-				Serial::FLOWCONTROL_OFF,
-				Serial::PARITY_NOPARITY,
-				Serial::STOPBITS_1BIT
+				Serial::DataBits::d8,
+				Serial::FlowControl::off,
+				Serial::Parity::none,
+				Serial::StopBits::s1
 			)
 		{
 		}

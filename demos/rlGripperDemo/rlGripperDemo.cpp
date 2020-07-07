@@ -69,11 +69,11 @@ main(int argc, char** argv)
 			std::cout << "force: " << gripper.getForce() << std::endl;
 			std::cout << "speed: " << gripper.getSpeed() << std::endl;
 			
-			rl::hal::WeissWsg50::SystemState systemState = gripper.getSystemState();
+			std::uint32_t systemStateBits = gripper.getSystemStateBits();
 			
-			std::cout << "isReferenced: " << (rl::hal::WeissWsg50::SYSTEM_STATE_REFERENCED & systemState) << std::endl;
-			std::cout << "isMoving: " << (rl::hal::WeissWsg50::SYSTEM_STATE_MOVING & systemState) << std::endl;
-			std::cout << "isTargetPositionReached: " << (rl::hal::WeissWsg50::SYSTEM_STATE_TARGET_POSITION_REACHED & systemState) << std::endl;
+			std::cout << "isReferenced: " << (static_cast<std::uint32_t>(rl::hal::WeissWsg50::SystemState::referenced) & systemStateBits) << std::endl;
+			std::cout << "isMoving: " << (static_cast<std::uint32_t>(rl::hal::WeissWsg50::SystemState::moving) & systemStateBits) << std::endl;
+			std::cout << "isTargetPositionReached: " << (static_cast<std::uint32_t>(rl::hal::WeissWsg50::SystemState::targetPositionReached) & systemStateBits) << std::endl;
 			
 			if (0 == i % 100)
 			{

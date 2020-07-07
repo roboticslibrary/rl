@@ -45,50 +45,56 @@ namespace rl
 		class RL_HAL_EXPORT SickLms200 : public CyclicDevice, public Lidar
 		{
 		public:
-			enum BaudRate
+			enum class BaudRate
 			{
 				/** 9,600 bps. */
-				BAUDRATE_9600BPS,
+				b9600,
 				/** 19,200 bps. */
-				BAUDRATE_19200BPS,
+				b19200,
 				/** 38,400 bps. */
 #if defined(WIN32) || defined(__QNX__)
-				BAUDRATE_38400BPS
+				b38400
 #else // defined(WIN32) || defined(__QNX__)
-				BAUDRATE_38400BPS,
+				b38400,
 				/** 500,000 bps. */
-				BAUDRATE_500000BPS
+				b500000
 #endif // defined(WIN32) || defined(__QNX__)
 			};
 			
-			enum Measuring
+			enum class Measuring
 			{
-				MEASURING_8M,
-				MEASURING_16M,
-				MEASURING_32M,
-				MEASURING_80M,
-				MEASURING_160M,
-				MEASURING_320M
+				/** 8 meter. */
+				m8,
+				/** 16 meter. */
+				m16,
+				/** 32 meter. */
+				m32,
+				/** 80 meter. */
+				m80,
+				/** 160 meter. */
+				m160,
+				/** 320 meter. */
+				m320
 			};
 			
-			enum Monitoring
+			enum class Monitoring
 			{
-				MONITORING_CONTINUOUS,
-				MONITORING_SINGLE
+				continuous,
+				single
 			};
 			
-			enum Variant
+			enum class Variant
 			{
 				/** Angle = 100 degrees, resolution = 0.25 degrees. */
-				VARIANT_100_25,
+				v100_25,
 				/** Angle = 100 degrees, resolution = 0.5 degrees. */
-				VARIANT_100_50,
+				v100_50,
 				/** Angle = 100 degrees, resolution = 1 degree. */
-				VARIANT_100_100,
+				v100_100,
 				/** Angle = 180 degrees, resolution = 0.5 degrees. */
-				VARIANT_180_50,
+				v180_50,
 				/** Angle = 180 degrees, resolution = 1 degree. */
-				VARIANT_180_100
+				v180_100
 			};
 			
 			/**
@@ -96,10 +102,10 @@ namespace rl
 			 */
 			SickLms200(
 				const ::std::string& device = "/dev/ttyS0",
-				const BaudRate& baudRate = BAUDRATE_9600BPS,
-				const Monitoring& monitoring = MONITORING_SINGLE,
-				const Variant& variant = VARIANT_180_50,
-				const Measuring& measuring = MEASURING_8M,
+				const BaudRate& baudRate = BaudRate::b9600,
+				const Monitoring& monitoring = Monitoring::single,
+				const Variant& variant = Variant::v180_50,
+				const Measuring& measuring = Measuring::m8,
 				const ::std::string& password = "SICK_LMS"
 			);
 			

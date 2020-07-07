@@ -48,11 +48,11 @@ namespace rl
 		class RL_MDL_EXPORT JacobianInverseKinematics : public IterativeInverseKinematics
 		{
 		public:
-			enum Method
+			enum class Method
 			{
-				METHOD_DLS,
-				METHOD_SVD,
-				METHOD_TRANSPOSE
+				dls,
+				svd,
+				transpose
 			};
 			
 			JacobianInverseKinematics(Kinematic* kinematic);

@@ -233,8 +233,8 @@ namespace rl
 			
 			Vector3 eval(const Real& x) const
 			{
-				assert(x > this->lower() - FUNCTION_BOUNDARY);
-				assert(x < this->upper() + FUNCTION_BOUNDARY);
+				assert(x > this->lower() - this->functionBoundary);
+				assert(x < this->upper() + this->functionBoundary);
 				
 				Vector3 axis = Vector3::Zero();
 				

@@ -39,22 +39,22 @@ namespace rl
 		class RL_KIN_EXPORT Puma : public Kinematics
 		{
 		public:
-			enum Arm
+			enum class Arm
 			{
-				ARM_LEFT = -1,
-				ARM_RIGHT = 1
+				left = -1,
+				right = 1
 			};
 			
-			enum Elbow
+			enum class Elbow
 			{
-				ELBOW_ABOVE = 1,
-				ELBOW_BELOW = -1
+				above = 1,
+				below = -1
 			};
 			
-			enum Wrist
+			enum class Wrist
 			{
-				WRIST_FLIP = 1,
-				WRIST_NONFLIP = -1
+				flip = 1,
+				nonflip = -1
 			};
 			
 			Puma();

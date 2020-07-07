@@ -53,39 +53,39 @@ namespace rl
 		class RL_HAL_EXPORT WeissWsg50 : public CyclicDevice, public Gripper
 		{
 		public:
-			enum GraspingState
+			enum class GraspingState
 			{
-				GRASPING_STATE_IDLE = 0,
-				GRASPING_STATE_GRIPPING = 1,
-				GRASPING_STATE_NO_PART_FOUND = 2,
-				GRASPING_STATE_PART_LOST = 3,
-				GRASPING_STATE_HOLDING = 4,
-				GRASPING_STATE_RELEASING = 5,
-				GRASPING_STATE_POSITIONING = 6,
-				GRASPING_STATE_ERROR = 7
+				idle = 0,
+				gripping = 1,
+				noPartFound = 2,
+				partLost = 3,
+				holding = 4,
+				releasing = 5,
+				positioning = 6,
+				error = 7
 			};
 			
-			enum SystemState
+			enum class SystemState
 			{
-				SYSTEM_STATE_SCRIPT_FAILURE = 1048576,
-				SYSTEM_STATE_SCRIPT_RUNNING = 524288,
-				SYSTEM_STATE_COMMAND_FAILURE = 262144,
-				SYSTEM_STATE_FINGER_FAULT = 131072,
-				SYSTEM_STATE_CURRENT_FAULT = 65536,
-				SYSTEM_STATE_POWER_FAULT = 32768,
-				SYSTEM_STATE_TEMPERATURE_FAULT = 16384,
-				SYSTEM_STATE_TEMPERATURE_WARNING = 8192,
-				SYSTEM_STATE_FAST_STOP = 4096,
-				SYSTEM_STATE_FORCE_CONTROL_MODE = 512,
-				SYSTEM_STATE_OVERDRIVE_MODE = 256,
-				SYSTEM_STATE_TARGET_POSITION_REACHED = 128,
-				SYSTEM_STATE_AXIS_STOPPED = 64,
-				SYSTEM_STATE_SOFT_LIMIT_PLUS = 32,
-				SYSTEM_STATE_SOFT_LIMIT_MINUS = 16,
-				SYSTEM_STATE_AXIS_BLOCKED_PLUS = 8,
-				SYSTEM_STATE_AXIS_BLOCKED_MINUS = 4,
-				SYSTEM_STATE_MOVING = 2,
-				SYSTEM_STATE_REFERENCED = 1
+				referenced = 1,
+				moving = 2,
+				axisBlockedMinus = 4,
+				axisBlockedPlus = 8,
+				softLimitMinus = 16,
+				softLimitPlus = 32,
+				axisStopped = 64,
+				targetPositionReached = 128,
+				overdriveMode = 256,
+				forceControlMode = 512,
+				fastStop = 4096,
+				temperatureWarning = 8192,
+				temperatureFault = 16384,
+				powerFault = 32768,
+				currentFault = 65536,
+				fingerFault = 131072,
+				commandFailure = 262144,
+				scriptRunning = 524288,
+				scriptFailure = 1048576
 			};
 			
 			/**
@@ -206,7 +206,7 @@ namespace rl
 			 */
 			float getForceLimit() const;
 			
-			GraspingState getGraspingState() const;
+			::std::uint8_t getGraspingStateBits() const;
 			
 			/**
 			 * @return [m]
@@ -218,7 +218,7 @@ namespace rl
 			 */
 			float getSpeed() const;
 			
-			SystemState getSystemState() const;
+			::std::uint32_t getSystemStateBits() const;
 			
 			void halt();
 			
@@ -247,7 +247,7 @@ namespace rl
 			
 			void send(::std::uint8_t* buf, const ::std::size_t& len);
 			
-			static const ::std::size_t HEADER_SIZE = 6;
+			static constexpr ::std::size_t headerSize = 6;
 			
 			float acceleration;
 			
@@ -265,7 +265,7 @@ namespace rl
 			
 			float forceOverdrive;
 			
-			GraspingState graspingState;
+			::std::uint8_t graspingState;
 			
 			float limitMinus;
 			
@@ -285,7 +285,7 @@ namespace rl
 			
 			float stroke;
 			
-			SystemState systemState;
+			::std::uint32_t systemState;
 		};
 	}
 }

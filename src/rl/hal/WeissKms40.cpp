@@ -188,7 +188,7 @@ namespace rl
 			return ::std::stoi(reply.substr(3));
 		}
 		
-		WeissKms40::SystemState
+		int
 		WeissKms40::doGetSystemFlags()
 		{
 			::std::string command = "FLAGS()\n";
@@ -196,7 +196,7 @@ namespace rl
 			
 			::std::string reply = this->recv("FLAGS=");
 			
-			return static_cast<SystemState>(::std::stoi(reply.substr(6)));
+			return ::std::stoi(reply.substr(6));
 		}
 		
 		::std::string

@@ -84,27 +84,27 @@ main(int argc, char** argv)
 #ifdef LEUZE
 		rl::hal::LeuzeRs4 laser(
 			"/dev/ttyUSB0",
-			rl::hal::LeuzeRs4::BAUDRATE_57600BPS
+			rl::hal::LeuzeRs4::BaudRate::b57600
 		);
 #endif
 #ifdef SCHMERSAL
 		rl::hal::SchmersalLss300 laser(
 			"/dev/ttyUSB0",
-			rl::hal::SchmersalLss300::BAUDRATE_9600BPS,
-			rl::hal::SchmersalLss300::MONITORING_CONTINUOUS
+			rl::hal::SchmersalLss300::BaudRate::b9600,
+			rl::hal::SchmersalLss300::Monitoring::continuous
 		);
 #endif
 #ifdef SICKLMS200
 		rl::hal::SickLms200 laser(
 			"/dev/ttyUSB0",
-			rl::hal::SickLms200::BAUDRATE_9600BPS,
-			rl::hal::SickLms200::MONITORING_CONTINUOUS
+			rl::hal::SickLms200::BaudRate::b9600,
+			rl::hal::SickLms200::Monitoring::continuous
 		);
 #endif
 #ifdef SICKS300
 		rl::hal::SickS300 laser(
 			"/dev/ttyS1",
-			rl::hal::Serial::BAUDRATE_115200BPS
+			rl::hal::Serial::BaudRate::b115200
 		);
 #endif
 		

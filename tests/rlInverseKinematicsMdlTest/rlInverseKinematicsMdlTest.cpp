@@ -56,18 +56,18 @@ main(int argc, char** argv)
 		
 		std::shared_ptr<rl::mdl::JacobianInverseKinematics> jacobianSvd = std::make_shared<rl::mdl::JacobianInverseKinematics>(kinematics.get());
 		jacobianSvd->seed(0);
-		jacobianSvd->setMethod(rl::mdl::JacobianInverseKinematics::METHOD_SVD);
-		ik.push_back(std::make_pair(jacobianSvd, "rl::mdl::JacobianInverseKinematics::METHOD_SVD"));
+		jacobianSvd->setMethod(rl::mdl::JacobianInverseKinematics::Method::svd);
+		ik.push_back(std::make_pair(jacobianSvd, "rl::mdl::JacobianInverseKinematics::Method::svd"));
 		
 		std::shared_ptr<rl::mdl::JacobianInverseKinematics> jacobianDls = std::make_shared<rl::mdl::JacobianInverseKinematics>(kinematics.get());
 		jacobianDls->seed(0);
-		jacobianDls->setMethod(rl::mdl::JacobianInverseKinematics::METHOD_DLS);
-		ik.push_back(std::make_pair(jacobianDls, "rl::mdl::JacobianInverseKinematics::METHOD_DLS"));
+		jacobianDls->setMethod(rl::mdl::JacobianInverseKinematics::Method::dls);
+		ik.push_back(std::make_pair(jacobianDls, "rl::mdl::JacobianInverseKinematics::Method::dls"));
 		
 		std::shared_ptr<rl::mdl::JacobianInverseKinematics> jacobianTranspose = std::make_shared<rl::mdl::JacobianInverseKinematics>(kinematics.get());
 		jacobianTranspose->seed(0);
-		jacobianTranspose->setMethod(rl::mdl::JacobianInverseKinematics::METHOD_TRANSPOSE);
-		ik.push_back(std::make_pair(jacobianTranspose, "rl::mdl::JacobianInverseKinematics::METHOD_TRANSPOSE"));
+		jacobianTranspose->setMethod(rl::mdl::JacobianInverseKinematics::Method::transpose);
+		ik.push_back(std::make_pair(jacobianTranspose, "rl::mdl::JacobianInverseKinematics::Method::transpose"));
 		
 #ifdef RL_MDL_NLOPT
 		std::shared_ptr<rl::mdl::NloptInverseKinematics> nlopt = std::make_shared<rl::mdl::NloptInverseKinematics>(kinematics.get());

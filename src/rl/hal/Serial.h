@@ -41,126 +41,126 @@ namespace rl
 		class RL_HAL_EXPORT Serial : public Com
 		{
 		public:
-			enum BaudRate
+			enum class BaudRate
 			{
 				/** 110 bps. */
-				BAUDRATE_110BPS,
+				b110,
 				/** 300 bps. */
-				BAUDRATE_300BPS,
+				b300,
 				/** 600 bps. */
-				BAUDRATE_600BPS,
+				b600,
 				/** 1,200 bps. */
-				BAUDRATE_1200BPS,
+				b1200,
 				/** 2,400 bps. */
-				BAUDRATE_2400BPS,
+				b2400,
 				/** 4,800 bps. */
-				BAUDRATE_4800BPS,
+				b4800,
 				/** 9,600 bps. */
-				BAUDRATE_9600BPS,
+				b9600,
 #ifdef WIN32
 				/** 14,400 bps. */
-				BAUDRATE_14400BPS,
+				b14400,
 #endif // WIN32
 				/** 19,200 bps. */
-				BAUDRATE_19200BPS,
+				b19200,
 				/** 38,400 bps. */
-				BAUDRATE_38400BPS,
+				b38400,
 				/** 57,600 bps. */
-				BAUDRATE_57600BPS,
+				b57600,
 				/** 115,200 bps. */
 #ifdef __QNX__
-				BAUDRATE_115200BPS
+				b115200
 #else // __QNX__
-				BAUDRATE_115200BPS,
+				b115200,
 #endif // __QNX__
 #ifdef WIN32
 				/** 128,000 bps. */
-				BAUDRATE_128000BPS,
+				b128000,
 				/** 256,000 bps. */
-				BAUDRATE_256000BPS
+				b256000
 #else // WIN32
 #ifndef __QNX__
 				/** 230,400 bps. */
-				BAUDRATE_230400BPS,
+				b230400,
 				/** 460,800 bps. */
-				BAUDRATE_460800BPS,
+				b460800,
 				/** 500,000 bps. */
-				BAUDRATE_500000BPS,
+				b500000,
 				/** 576,000 bps. */
-				BAUDRATE_576000BPS,
+				b576000,
 				/** 921,600 bps. */
-				BAUDRATE_921600BPS,
+				b921600,
 				/** 1,000,000 bps. */
-				BAUDRATE_1000000BPS,
+				b1000000,
 				/** 1,152000 bps. */
-				BAUDRATE_1152000BPS,
+				b1152000,
 				/** 1,500,000 bps. */
-				BAUDRATE_1500000BPS,
+				b1500000,
 				/** 2,000,000 bps. */
-				BAUDRATE_2000000BPS,
+				b2000000,
 				/** 2,500,000 bps. */
-				BAUDRATE_2500000BPS,
+				b2500000,
 				/** 3,000,000 bps. */
 #ifdef __CYGWIN__
-				BAUDRATE_3000000BPS
+				b3000000
 #else // __CYGWIN__
-				BAUDRATE_3000000BPS,
+				b3000000,
 				/** 3,500,000 bps. */
-				BAUDRATE_3500000BPS,
+				b3500000,
 				/** 4,000,000 bps. */
-				BAUDRATE_4000000BPS
+				b4000000
 #endif // __CYGWIN__
 #endif // __QNX__
 #endif // WIN32
 			};
 			
-			enum DataBits
+			enum class DataBits
 			{
 				/** 5 data bits. */
-				DATABITS_5BITS,
+				d5,
 				/** 6 data bits. */
-				DATABITS_6BITS,
+				d6,
 				/** 7 data bits. */
-				DATABITS_7BITS,
+				d7,
 				/** 8 data bits. */
-				DATABITS_8BITS
+				d8
 			};
 			
-			enum FlowControl
+			enum class FlowControl
 			{
 				/** No flow control. */
-				FLOWCONTROL_OFF,
+				off,
 				/** Hardware flow control (RTS/CTS). */
-				FLOWCONTROL_RTSCTS,
+				rtscts,
 				/** Software flow control (XON/XOFF). */
-				FLOWCONTROL_XONXOFF
+				xonxoff
 			};
 			
-			enum Parity
+			enum class Parity
 			{
 				/** Even parity. */
-				PARITY_EVENPARITY,
+				even,
 				/** No parity. */
-				PARITY_NOPARITY,
+				none,
 				/** Odd parity. */
-				PARITY_ODDPARITY
+				odd
 			};
 			
-			enum StopBits
+			enum class StopBits
 			{
 				/** 1 stop bit. */
-				STOPBITS_1BIT,
+				s1,
 				/** 2 stop bits. */
-				STOPBITS_2BITS
+				s2
 			};
 			
 			Serial(
 				const ::std::string& filename,
-				const BaudRate& baudRate = BAUDRATE_9600BPS,
-				const DataBits& dataBits = DATABITS_8BITS,
-				const FlowControl& flowControl = FLOWCONTROL_OFF,
-				const Parity& parity = PARITY_NOPARITY,
-				const StopBits& stopBits = STOPBITS_1BIT
+				const BaudRate& baudRate = BaudRate::b9600,
+				const DataBits& dataBits = DataBits::d8,
+				const FlowControl& flowControl = FlowControl::off,
+				const Parity& parity = Parity::none,
+				const StopBits& stopBits = StopBits::s1
 			);
 			
 			Serial(

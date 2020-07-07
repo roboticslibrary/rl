@@ -61,14 +61,14 @@ main(int argc, char** argv)
 #ifdef LEUZE
 		rl::hal::LeuzeRs4 sensor(
 			"/dev/ttyUSB0",
-			rl::hal::LeuzeRs4::BAUDRATE_57600BPS
+			rl::hal::LeuzeRs4::BaudRate::b57600
 		);
 #endif
 #ifdef SCHMERSAL
 		rl::hal::SchmersalLss300 sensor(
 			"/dev/ttyUSB0",
-			rl::hal::SchmersalLss300::BAUDRATE_9600BPS,
-			rl::hal::SchmersalLss300::MONITORING_CONTINUOUS
+			rl::hal::SchmersalLss300::BaudRate::b9600,
+			rl::hal::SchmersalLss300::Monitoring::continuous
 		);
 #endif
 #ifdef SCHUNK
@@ -77,8 +77,8 @@ main(int argc, char** argv)
 #ifdef SICK
 		rl::hal::SickLms200 sensor(
 			"/dev/ttyUSB0",
-			rl::hal::SickLms200::BAUDRATE_9600BPS,
-			rl::hal::SickLms200::MONITORING_CONTINUOUS
+			rl::hal::SickLms200::BaudRate::b9600,
+			rl::hal::SickLms200::Monitoring::continuous
 		);
 #endif
 		

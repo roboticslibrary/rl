@@ -245,11 +245,11 @@ namespace rl
 			
 			switch (option)
 			{
-			case OPTION_KEEPALIVE:
+			case Option::keepalive:
 				level = SOL_SOCKET;
 				optname = SO_KEEPALIVE;
 				break;
-			case OPTION_MULTICAST_LOOP:
+			case Option::multicastLoop:
 				if (AF_INET6 == this->address.get()->addr.ss_family)
 				{
 					level = IPPROTO_IPV6;
@@ -261,7 +261,7 @@ namespace rl
 					optname = IP_MULTICAST_LOOP;
 				}
 				break;
-			case OPTION_MULTICAST_TTL:
+			case Option::multicastTtl:
 				if (AF_INET6 == this->address.get()->addr.ss_family)
 				{
 					level = IPPROTO_IPV6;
@@ -273,12 +273,12 @@ namespace rl
 					optname = IP_MULTICAST_TTL;
 				}
 				break;
-			case OPTION_NODELAY:
+			case Option::nodelay:
 				level = IPPROTO_TCP;
 				optname = TCP_NODELAY;
 				break;
 #if !defined(__APPLE__) && !defined(__QNX__) && !defined(WIN32) && !defined(__CYGWIN__)
-			case OPTION_QUICKACK:
+			case Option::quickack:
 				level = IPPROTO_TCP;
 				optname = TCP_QUICKACK;
 				break;
@@ -531,11 +531,11 @@ namespace rl
 			
 			switch (option)
 			{
-			case OPTION_KEEPALIVE:
+			case Option::keepalive:
 				level = SOL_SOCKET;
 				optname = SO_KEEPALIVE;
 				break;
-			case OPTION_MULTICAST_LOOP:
+			case Option::multicastLoop:
 				if (AF_INET6 == this->address.get()->addr.ss_family)
 				{
 					level = IPPROTO_IPV6;
@@ -547,7 +547,7 @@ namespace rl
 					optname = IP_MULTICAST_LOOP;
 				}
 				break;
-			case OPTION_MULTICAST_TTL:
+			case Option::multicastTtl:
 				if (AF_INET6 == this->address.get()->addr.ss_family)
 				{
 					level = IPPROTO_IPV6;
@@ -559,12 +559,12 @@ namespace rl
 					optname = IP_MULTICAST_TTL;
 				}
 				break;
-			case OPTION_NODELAY:
+			case Option::nodelay:
 				level = IPPROTO_TCP;
 				optname = TCP_NODELAY;
 				break;
 #if !defined(__APPLE__) && !defined(__QNX__) && !defined(WIN32) && !defined(__CYGWIN__)
-			case OPTION_QUICKACK:
+			case Option::quickack:
 				level = IPPROTO_TCP;
 				optname = TCP_QUICKACK;
 				break;

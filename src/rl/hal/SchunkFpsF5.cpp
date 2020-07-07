@@ -49,11 +49,11 @@ namespace rl
 			record(false),
 			serial(
 				filename,
-				Serial::BAUDRATE_9600BPS,
-				Serial::DATABITS_8BITS,
-				Serial::FLOWCONTROL_OFF,
-				Serial::PARITY_NOPARITY,
-				Serial::STOPBITS_1BIT
+				Serial::BaudRate::b9600,
+				Serial::DataBits::d8,
+				Serial::FlowControl::off,
+				Serial::Parity::none,
+				Serial::StopBits::s1
 			),
 			temperature(0),
 			update(false),

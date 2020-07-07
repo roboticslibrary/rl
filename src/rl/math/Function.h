@@ -86,7 +86,7 @@ namespace rl
 			 *
 			 * Some functions are only defined in the interval [lower(), upper()],
 			 * and fail to evaluate outside of
-			 * [lower() - FUNCTION_BOUNDARY, upper() + FUNCTION_BOUNDARY].
+			 * [lower() - functionBoundary, upper() + functionBoundary].
 			 * In Debug mode, this is signaled by failing asserts.
 			 * In Release mode, the function is evaluated if algebraically possible,
 			 * or will return an empty ArrayX otherwise.
@@ -99,6 +99,8 @@ namespace rl
 			virtual T operator()(const Real& x, const ::std::size_t& derivative = 0) const = 0;
 			
 		protected:
+			static constexpr Real functionBoundary = static_cast<Real>(1.0e-8);
+			
 			Real x0;
 			
 			Real x1;
@@ -106,8 +108,6 @@ namespace rl
 		private:
 			
 		};
-		
-		static const Real FUNCTION_BOUNDARY = static_cast<Real>(1.0e-8);
 	}
 }
 

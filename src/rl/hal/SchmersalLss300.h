@@ -45,30 +45,30 @@ namespace rl
 		class RL_HAL_EXPORT SchmersalLss300 : public CyclicDevice, public Lidar
 		{
 		public:
-			enum BaudRate
+			enum class BaudRate
 			{
 				/** 9,600 bps. */
-				BAUDRATE_9600BPS,
+				b9600,
 				/** 19,200 bps. */
-				BAUDRATE_19200BPS,
+				b19200,
 				/** 38,400 bps. */
-				BAUDRATE_38400BPS,
+				b38400,
 				/** 57,600 bps. */
-				BAUDRATE_57600BPS
+				b57600
 #if 0
 				/** 125,000 bps. */
-				BAUDRATE_125000BPS,
+				b125000,
 				/** 208,333 bps. */
-				BAUDRATE_208333BPS,
+				b208333,
 				/** 312,500 bps. */
-				BAUDRATE_312500BPS
+				b312500
 #endif
 			};
 			
-			enum Monitoring
+			enum class Monitoring
 			{
-				MONITORING_CONTINUOUS,
-				MONITORING_SINGLE
+				continuous,
+				single
 			};
 			
 			/**
@@ -76,8 +76,8 @@ namespace rl
 			 */
 			SchmersalLss300(
 				const ::std::string& device = "/dev/ttyS0",
-				const BaudRate& baudRate = BAUDRATE_9600BPS,
-				const Monitoring& monitoring = MONITORING_SINGLE,
+				const BaudRate& baudRate = BaudRate::b9600,
+				const Monitoring& monitoring = Monitoring::single,
 				const ::std::string& password = "PASS_LSS"
 			);
 			

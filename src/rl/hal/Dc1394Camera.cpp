@@ -39,16 +39,16 @@ namespace rl
 			buffer(8),
 			camera(nullptr),
 			cameras(0),
-			colorCoding(COLOR_CODING_RAW8),
+			colorCoding(ColorCoding::raw8),
 			dc1394(::dc1394_new()),
 			frame(),
 			framerate(static_cast<Framerate>(DC1394_FRAMERATE_MIN)),
 			height(DC1394_USE_MAX_AVAIL),
 			left(0),
 			node(node),
-			speed(ISO_SPEED_400),
+			speed(IsoSpeed::i400),
 			top(0),
-			videoMode(VIDEO_MODE_640x480_RGB8),
+			videoMode(VideoMode::v640x480_rgb8),
 			width(DC1394_USE_MAX_AVAIL)
 		{
 		}
@@ -75,66 +75,66 @@ namespace rl
 		{
 			switch (this->videoMode)
 			{
-			case VIDEO_MODE_640x480_MONO8:
-			case VIDEO_MODE_800x600_MONO8:
-			case VIDEO_MODE_1024x768_MONO8:
-			case VIDEO_MODE_1280x960_MONO8:
-			case VIDEO_MODE_1600x1200_MONO8:
+			case VideoMode::v640x480_mono8:
+			case VideoMode::v800x600_mono8:
+			case VideoMode::v1024x768_mono8:
+			case VideoMode::v1280x960_mono8:
+			case VideoMode::v1600x1200_mono8:
 				return 8;
 				break;
-			case VIDEO_MODE_640x480_YUV411:
+			case VideoMode::v640x480_yuv411:
 				return 12;
 				break;
-			case VIDEO_MODE_640x480_MONO16:
-			case VIDEO_MODE_800x600_MONO16:
-			case VIDEO_MODE_1024x768_MONO16:
-			case VIDEO_MODE_1280x960_MONO16:
-			case VIDEO_MODE_1600x1200_MONO16:
-			case VIDEO_MODE_320x240_YUV422:
-			case VIDEO_MODE_640x480_YUV422:
-			case VIDEO_MODE_800x600_YUV422:
-			case VIDEO_MODE_1024x768_YUV422:
-			case VIDEO_MODE_1280x960_YUV422:
-			case VIDEO_MODE_1600x1200_YUV422:
+			case VideoMode::v640x480_mono16:
+			case VideoMode::v800x600_mono16:
+			case VideoMode::v1024x768_mono16:
+			case VideoMode::v1280x960_mono16:
+			case VideoMode::v1600x1200_mono16:
+			case VideoMode::v320x240_yuv422:
+			case VideoMode::v640x480_yuv422:
+			case VideoMode::v800x600_yuv422:
+			case VideoMode::v1024x768_yuv422:
+			case VideoMode::v1280x960_yuv422:
+			case VideoMode::v1600x1200_yuv422:
 				return 16;
 				break;
-			case VIDEO_MODE_640x480_RGB8:
-			case VIDEO_MODE_800x600_RGB8:
-			case VIDEO_MODE_1024x768_RGB8:
-			case VIDEO_MODE_1280x960_RGB8:
-			case VIDEO_MODE_1600x1200_RGB8:
-			case VIDEO_MODE_160x120_YUV444:
+			case VideoMode::v640x480_rgb8:
+			case VideoMode::v800x600_rgb8:
+			case VideoMode::v1024x768_rgb8:
+			case VideoMode::v1280x960_rgb8:
+			case VideoMode::v1600x1200_rgb8:
+			case VideoMode::v160x120_yuv444:
 				return 24;
 				break;
-			case VIDEO_MODE_FORMAT7_0:
-			case VIDEO_MODE_FORMAT7_1:
-			case VIDEO_MODE_FORMAT7_2:
-			case VIDEO_MODE_FORMAT7_3:
-			case VIDEO_MODE_FORMAT7_4:
-			case VIDEO_MODE_FORMAT7_5:
-			case VIDEO_MODE_FORMAT7_6:
-			case VIDEO_MODE_FORMAT7_7:
+			case VideoMode::format7_0:
+			case VideoMode::format7_1:
+			case VideoMode::format7_2:
+			case VideoMode::format7_3:
+			case VideoMode::format7_4:
+			case VideoMode::format7_5:
+			case VideoMode::format7_6:
+			case VideoMode::format7_7:
 				switch (this->colorCoding)
 				{
-				case COLOR_CODING_MONO8:
-				case COLOR_CODING_RAW8:
+				case ColorCoding::mono8:
+				case ColorCoding::raw8:
 					return 8;
 					break;
-				case COLOR_CODING_YUV411:
+				case ColorCoding::yuv411:
 					return 12;
 					break;
-				case COLOR_CODING_MONO16:
-				case COLOR_CODING_MONO16S:
-				case COLOR_CODING_RAW16:
-				case COLOR_CODING_YUV422:
+				case ColorCoding::mono16:
+				case ColorCoding::mono16s:
+				case ColorCoding::raw16:
+				case ColorCoding::yuv422:
 					return 16;
 					break;
-				case COLOR_CODING_RGB8:
-				case COLOR_CODING_YUV444:
+				case ColorCoding::rgb8:
+				case ColorCoding::yuv444:
 					return 24;
 					break;
-				case COLOR_CODING_RGB16:
-				case COLOR_CODING_RGB16S:
+				case ColorCoding::rgb16:
+				case ColorCoding::rgb16s:
 					return 48;
 					break;
 				default:
@@ -153,56 +153,56 @@ namespace rl
 		{
 			switch (this->videoMode)
 			{
-			case VIDEO_MODE_640x480_MONO8:
-			case VIDEO_MODE_800x600_MONO8:
-			case VIDEO_MODE_1024x768_MONO8:
-			case VIDEO_MODE_1280x960_MONO8:
-			case VIDEO_MODE_1600x1200_MONO8:
-			case VIDEO_MODE_640x480_RGB8:
-			case VIDEO_MODE_800x600_RGB8:
-			case VIDEO_MODE_1024x768_RGB8:
-			case VIDEO_MODE_1280x960_RGB8:
-			case VIDEO_MODE_1600x1200_RGB8:
-			case VIDEO_MODE_640x480_YUV411:
-			case VIDEO_MODE_320x240_YUV422:
-			case VIDEO_MODE_640x480_YUV422:
-			case VIDEO_MODE_800x600_YUV422:
-			case VIDEO_MODE_1024x768_YUV422:
-			case VIDEO_MODE_1280x960_YUV422:
-			case VIDEO_MODE_1600x1200_YUV422:
-			case VIDEO_MODE_160x120_YUV444:
+			case VideoMode::v640x480_mono8:
+			case VideoMode::v800x600_mono8:
+			case VideoMode::v1024x768_mono8:
+			case VideoMode::v1280x960_mono8:
+			case VideoMode::v1600x1200_mono8:
+			case VideoMode::v640x480_rgb8:
+			case VideoMode::v800x600_rgb8:
+			case VideoMode::v1024x768_rgb8:
+			case VideoMode::v1280x960_rgb8:
+			case VideoMode::v1600x1200_rgb8:
+			case VideoMode::v640x480_yuv411:
+			case VideoMode::v320x240_yuv422:
+			case VideoMode::v640x480_yuv422:
+			case VideoMode::v800x600_yuv422:
+			case VideoMode::v1024x768_yuv422:
+			case VideoMode::v1280x960_yuv422:
+			case VideoMode::v1600x1200_yuv422:
+			case VideoMode::v160x120_yuv444:
 				return 8;
 				break;
-			case VIDEO_MODE_640x480_MONO16:
-			case VIDEO_MODE_800x600_MONO16:
-			case VIDEO_MODE_1024x768_MONO16:
-			case VIDEO_MODE_1280x960_MONO16:
-			case VIDEO_MODE_1600x1200_MONO16:
+			case VideoMode::v640x480_mono16:
+			case VideoMode::v800x600_mono16:
+			case VideoMode::v1024x768_mono16:
+			case VideoMode::v1280x960_mono16:
+			case VideoMode::v1600x1200_mono16:
 				return 16;
 				break;
-			case VIDEO_MODE_FORMAT7_0:
-			case VIDEO_MODE_FORMAT7_1:
-			case VIDEO_MODE_FORMAT7_2:
-			case VIDEO_MODE_FORMAT7_3:
-			case VIDEO_MODE_FORMAT7_4:
-			case VIDEO_MODE_FORMAT7_5:
-			case VIDEO_MODE_FORMAT7_6:
-			case VIDEO_MODE_FORMAT7_7:
+			case VideoMode::format7_0:
+			case VideoMode::format7_1:
+			case VideoMode::format7_2:
+			case VideoMode::format7_3:
+			case VideoMode::format7_4:
+			case VideoMode::format7_5:
+			case VideoMode::format7_6:
+			case VideoMode::format7_7:
 				switch (this->colorCoding)
 				{
-				case COLOR_CODING_MONO8:
-				case COLOR_CODING_RAW8:
-				case COLOR_CODING_RGB8:
-				case COLOR_CODING_YUV411:
-				case COLOR_CODING_YUV422:
-				case COLOR_CODING_YUV444:
+				case ColorCoding::mono8:
+				case ColorCoding::raw8:
+				case ColorCoding::rgb8:
+				case ColorCoding::yuv411:
+				case ColorCoding::yuv422:
+				case ColorCoding::yuv444:
 					return 8;
 					break;
-				case COLOR_CODING_MONO16:
-				case COLOR_CODING_MONO16S:
-				case COLOR_CODING_RAW16:
-				case COLOR_CODING_RGB16:
-				case COLOR_CODING_RGB16S:
+				case ColorCoding::mono16:
+				case ColorCoding::mono16s:
+				case ColorCoding::raw16:
+				case ColorCoding::rgb16:
+				case ColorCoding::rgb16s:
 					return 16;
 					break;
 				default:
@@ -449,28 +449,28 @@ namespace rl
 			
 			switch (this->framerate)
 			{
-			case FRAMERATE_1_875:
+			case Framerate::f1_875:
 				framerate = 1.875;
 				break;
-			case FRAMERATE_3_75:
+			case Framerate::f3_75:
 				framerate = 3.75;
 				break;
-			case FRAMERATE_7_5:
+			case Framerate::f7_5:
 				framerate = 7.5;
 				break;
-			case FRAMERATE_15:
+			case Framerate::f15:
 				framerate = 15.0;
 				break;
-			case FRAMERATE_30:
+			case Framerate::f30:
 				framerate = 30.0;
 				break;
-			case FRAMERATE_60:
+			case Framerate::f60:
 				framerate = 60.0;
 				break;
-			case FRAMERATE_120:
+			case Framerate::f120:
 				framerate = 120.0;
 				break;
-			case FRAMERATE_240:
+			case Framerate::f240:
 				framerate = 240.0;
 				break;
 			default:
