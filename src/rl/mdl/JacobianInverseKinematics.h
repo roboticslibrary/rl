@@ -55,6 +55,10 @@ namespace rl
 				transpose
 			};
 			
+			RL_MDL_DEPRECATED static constexpr Method METHOD_DLS = Method::dls;
+			RL_MDL_DEPRECATED static constexpr Method METHOD_SVD = Method::svd;
+			RL_MDL_DEPRECATED static constexpr Method METHOD_TRANSPOSE = Method::transpose;
+			
 			JacobianInverseKinematics(Kinematic* kinematic);
 			
 			virtual ~JacobianInverseKinematics();

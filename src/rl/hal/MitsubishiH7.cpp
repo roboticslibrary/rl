@@ -35,6 +35,10 @@ namespace rl
 {
 	namespace hal
 	{
+		constexpr MitsubishiH7::Mode MitsubishiH7::MODE_JOINT;
+		constexpr MitsubishiH7::Mode MitsubishiH7::MODE_POSE;
+		constexpr MitsubishiH7::Mode MitsubishiH7::MODE_PULSE;
+		
 		MitsubishiH7::MitsubishiH7(
 			const ::std::size_t& dof,
 			const ::std::string& addressServer,

@@ -54,6 +54,10 @@ namespace rl
 				closed = 2
 			};
 			
+			RL_HAL_DEPRECATED static constexpr HandSts HANDSTS_NOTUSED = HandSts::notused;
+			RL_HAL_DEPRECATED static constexpr HandSts HANDSTS_OPEN = HandSts::open;
+			RL_HAL_DEPRECATED static constexpr HandSts HANDSTS_CLOSED = HandSts::closed;
+			
 			enum class HandType
 			{
 				notUsed = -1,
@@ -62,6 +66,10 @@ namespace rl
 				/** Double-solenoid. */
 				doubleSolenoid = 1
 			};
+			
+			RL_HAL_DEPRECATED static constexpr HandType HANDTYPE_NOTUSED = HandType::notUsed;
+			RL_HAL_DEPRECATED static constexpr HandType HANDTYPE_SINGLE = HandType::singleSolenoid;
+			RL_HAL_DEPRECATED static constexpr HandType HANDTYPE_DOUBLE = HandType::doubleSolenoid;
 			
 			enum class TaskCond
 			{
@@ -72,6 +80,10 @@ namespace rl
 				/** ERROR. */
 				error
 			};
+			
+			RL_HAL_DEPRECATED static constexpr TaskCond TASKCOND_START = TaskCond::start;
+			RL_HAL_DEPRECATED static constexpr TaskCond TASKCOND_ALWAYS = TaskCond::always;
+			RL_HAL_DEPRECATED static constexpr TaskCond TASKCOND_ERROR = TaskCond::error;
 			
 			struct EditSts
 			{

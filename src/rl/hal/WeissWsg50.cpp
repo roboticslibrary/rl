@@ -79,6 +79,35 @@ namespace rl
 {
 	namespace hal
 	{
+		constexpr WeissWsg50::GraspingState WeissWsg50::GRASPING_STATE_IDLE;
+		constexpr WeissWsg50::GraspingState WeissWsg50::GRASPING_STATE_GRIPPING;
+		constexpr WeissWsg50::GraspingState WeissWsg50::GRASPING_STATE_NO_PART_FOUND;
+		constexpr WeissWsg50::GraspingState WeissWsg50::GRASPING_STATE_PART_LOST;
+		constexpr WeissWsg50::GraspingState WeissWsg50::GRASPING_STATE_HOLDING;
+		constexpr WeissWsg50::GraspingState WeissWsg50::GRASPING_STATE_RELEASING;
+		constexpr WeissWsg50::GraspingState WeissWsg50::GRASPING_STATE_POSITIONING;
+		constexpr WeissWsg50::GraspingState WeissWsg50::GRASPING_STATE_ERROR;
+		
+		constexpr WeissWsg50::SystemState WeissWsg50::SYSTEM_STATE_SCRIPT_FAILURE;
+		constexpr WeissWsg50::SystemState WeissWsg50::SYSTEM_STATE_SCRIPT_RUNNING;
+		constexpr WeissWsg50::SystemState WeissWsg50::SYSTEM_STATE_COMMAND_FAILURE;
+		constexpr WeissWsg50::SystemState WeissWsg50::SYSTEM_STATE_FINGER_FAULT;
+		constexpr WeissWsg50::SystemState WeissWsg50::SYSTEM_STATE_CURRENT_FAULT;
+		constexpr WeissWsg50::SystemState WeissWsg50::SYSTEM_STATE_POWER_FAULT;
+		constexpr WeissWsg50::SystemState WeissWsg50::SYSTEM_STATE_TEMPERATURE_FAULT;
+		constexpr WeissWsg50::SystemState WeissWsg50::SYSTEM_STATE_TEMPERATURE_WARNING;
+		constexpr WeissWsg50::SystemState WeissWsg50::SYSTEM_STATE_FAST_STOP;
+		constexpr WeissWsg50::SystemState WeissWsg50::SYSTEM_STATE_FORCE_CONTROL_MODE;
+		constexpr WeissWsg50::SystemState WeissWsg50::SYSTEM_STATE_OVERDRIVE_MODE;
+		constexpr WeissWsg50::SystemState WeissWsg50::SYSTEM_STATE_TARGET_POSITION_REACHED;
+		constexpr WeissWsg50::SystemState WeissWsg50::SYSTEM_STATE_AXIS_STOPPED;
+		constexpr WeissWsg50::SystemState WeissWsg50::SYSTEM_STATE_SOFT_LIMIT_PLUS;
+		constexpr WeissWsg50::SystemState WeissWsg50::SYSTEM_STATE_SOFT_LIMIT_MINUS;
+		constexpr WeissWsg50::SystemState WeissWsg50::SYSTEM_STATE_AXIS_BLOCKED_PLUS;
+		constexpr WeissWsg50::SystemState WeissWsg50::SYSTEM_STATE_AXIS_BLOCKED_MINUS;
+		constexpr WeissWsg50::SystemState WeissWsg50::SYSTEM_STATE_MOVING;
+		constexpr WeissWsg50::SystemState WeissWsg50::SYSTEM_STATE_REFERENCED;
+		
 		WeissWsg50::WeissWsg50(
 			const ::std::string& address,
 			const unsigned short int& port,

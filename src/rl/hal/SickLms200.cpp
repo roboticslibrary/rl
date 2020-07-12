@@ -38,6 +38,31 @@ namespace rl
 {
 	namespace hal
 	{
+		constexpr SickLms200::BaudRate SickLms200::BAUDRATE_9600BPS;
+		constexpr SickLms200::BaudRate SickLms200::BAUDRATE_19200BPS;
+#if defined(WIN32) || defined(__QNX__)
+		constexpr SickLms200::BaudRate SickLms200::BAUDRATE_38400BPS;
+#else // defined(WIN32) || defined(__QNX__)
+		constexpr SickLms200::BaudRate SickLms200::BAUDRATE_38400BPS;
+		constexpr SickLms200::BaudRate SickLms200::BAUDRATE_500000BPS;
+#endif // defined(WIN32) || defined(__QNX__)
+		
+		constexpr SickLms200::Measuring SickLms200::MEASURING_8M;
+		constexpr SickLms200::Measuring SickLms200::MEASURING_16M;
+		constexpr SickLms200::Measuring SickLms200::MEASURING_32M;
+		constexpr SickLms200::Measuring SickLms200::MEASURING_80M;
+		constexpr SickLms200::Measuring SickLms200::MEASURING_160M;
+		constexpr SickLms200::Measuring SickLms200::MEASURING_320M;
+		
+		constexpr SickLms200::Monitoring SickLms200::MONITORING_CONTINUOUS;
+		constexpr SickLms200::Monitoring SickLms200::MONITORING_SINGLE;
+		
+		constexpr SickLms200::Variant SickLms200::VARIANT_100_25;
+		constexpr SickLms200::Variant SickLms200::VARIANT_100_50;
+		constexpr SickLms200::Variant SickLms200::VARIANT_100_100;
+		constexpr SickLms200::Variant SickLms200::VARIANT_180_50;
+		constexpr SickLms200::Variant SickLms200::VARIANT_180_100;
+		
 		SickLms200::SickLms200(
 			const ::std::string& filename,
 			const BaudRate& baudRate,

@@ -33,6 +33,97 @@ namespace rl
 {
 	namespace hal
 	{
+		constexpr Dc1394Camera::ColorCoding Dc1394Camera::COLOR_CODING_MONO8;
+		constexpr Dc1394Camera::ColorCoding Dc1394Camera::COLOR_CODING_YUV411;
+		constexpr Dc1394Camera::ColorCoding Dc1394Camera::COLOR_CODING_YUV422;
+		constexpr Dc1394Camera::ColorCoding Dc1394Camera::COLOR_CODING_YUV444;
+		constexpr Dc1394Camera::ColorCoding Dc1394Camera::COLOR_CODING_RGB8;
+		constexpr Dc1394Camera::ColorCoding Dc1394Camera::COLOR_CODING_MONO16;
+		constexpr Dc1394Camera::ColorCoding Dc1394Camera::COLOR_CODING_RGB16;
+		constexpr Dc1394Camera::ColorCoding Dc1394Camera::COLOR_CODING_MONO16S;
+		constexpr Dc1394Camera::ColorCoding Dc1394Camera::COLOR_CODING_RGB16S;
+		constexpr Dc1394Camera::ColorCoding Dc1394Camera::COLOR_CODING_RAW8;
+		constexpr Dc1394Camera::ColorCoding Dc1394Camera::COLOR_CODING_RAW16;
+		
+		constexpr Dc1394Camera::Feature Dc1394Camera::FEATURE_BRIGHTNESS;
+		constexpr Dc1394Camera::Feature Dc1394Camera::FEATURE_EXPOSURE;
+		constexpr Dc1394Camera::Feature Dc1394Camera::FEATURE_SHARPNESS;
+		constexpr Dc1394Camera::Feature Dc1394Camera::FEATURE_WHITE_BALANCE;
+		constexpr Dc1394Camera::Feature Dc1394Camera::FEATURE_HUE;
+		constexpr Dc1394Camera::Feature Dc1394Camera::FEATURE_SATURATION;
+		constexpr Dc1394Camera::Feature Dc1394Camera::FEATURE_GAMMA;
+		constexpr Dc1394Camera::Feature Dc1394Camera::FEATURE_SHUTTER;
+		constexpr Dc1394Camera::Feature Dc1394Camera::FEATURE_GAIN;
+		constexpr Dc1394Camera::Feature Dc1394Camera::FEATURE_IRIS;
+		constexpr Dc1394Camera::Feature Dc1394Camera::FEATURE_FOCUS;
+		constexpr Dc1394Camera::Feature Dc1394Camera::FEATURE_TEMPERATURE;
+		constexpr Dc1394Camera::Feature Dc1394Camera::FEATURE_TRIGGER;
+		constexpr Dc1394Camera::Feature Dc1394Camera::FEATURE_TRIGGER_DELAY;
+		constexpr Dc1394Camera::Feature Dc1394Camera::FEATURE_WHITE_SHADING;
+		constexpr Dc1394Camera::Feature Dc1394Camera::FEATURE_FRAME_RATE;
+		constexpr Dc1394Camera::Feature Dc1394Camera::FEATURE_ZOOM;
+		constexpr Dc1394Camera::Feature Dc1394Camera::FEATURE_PAN;
+		constexpr Dc1394Camera::Feature Dc1394Camera::FEATURE_TILT;
+		constexpr Dc1394Camera::Feature Dc1394Camera::FEATURE_OPTICAL_FILTER;
+		constexpr Dc1394Camera::Feature Dc1394Camera::FEATURE_CAPTURE_SIZE;
+		constexpr Dc1394Camera::Feature Dc1394Camera::FEATURE_CAPTURE_QUALITY;
+		
+		constexpr Dc1394Camera::FeatureMode Dc1394Camera::FEATURE_MODE_MANUAL;
+		constexpr Dc1394Camera::FeatureMode Dc1394Camera::FEATURE_MODE_AUTO;
+		constexpr Dc1394Camera::FeatureMode Dc1394Camera::FEATURE_MODE_ONE_PUSH_AUTO;
+		
+		constexpr Dc1394Camera::Framerate Dc1394Camera::FRAMERATE_1_875;
+		constexpr Dc1394Camera::Framerate Dc1394Camera::FRAMERATE_3_75;
+		constexpr Dc1394Camera::Framerate Dc1394Camera::FRAMERATE_7_5;
+		constexpr Dc1394Camera::Framerate Dc1394Camera::FRAMERATE_15;
+		constexpr Dc1394Camera::Framerate Dc1394Camera::FRAMERATE_30;
+		constexpr Dc1394Camera::Framerate Dc1394Camera::FRAMERATE_60;
+		constexpr Dc1394Camera::Framerate Dc1394Camera::FRAMERATE_120;
+		constexpr Dc1394Camera::Framerate Dc1394Camera::FRAMERATE_240;
+		
+		constexpr Dc1394Camera::IsoSpeed Dc1394Camera::ISO_SPEED_100;
+		constexpr Dc1394Camera::IsoSpeed Dc1394Camera::ISO_SPEED_200;
+		constexpr Dc1394Camera::IsoSpeed Dc1394Camera::ISO_SPEED_400;
+		constexpr Dc1394Camera::IsoSpeed Dc1394Camera::ISO_SPEED_800;
+		constexpr Dc1394Camera::IsoSpeed Dc1394Camera::ISO_SPEED_1600;
+		constexpr Dc1394Camera::IsoSpeed Dc1394Camera::ISO_SPEED_3200;
+		
+		constexpr Dc1394Camera::OperationMode Dc1394Camera::OPERATION_MODE_LEGACY;
+		constexpr Dc1394Camera::OperationMode Dc1394Camera::OPERATION_MODE_1394B;
+		
+		constexpr Dc1394Camera::VideoMode Dc1394Camera::VIDEO_MODE_160x120_YUV444;
+		constexpr Dc1394Camera::VideoMode Dc1394Camera::VIDEO_MODE_320x240_YUV422;
+		constexpr Dc1394Camera::VideoMode Dc1394Camera::VIDEO_MODE_640x480_YUV411;
+		constexpr Dc1394Camera::VideoMode Dc1394Camera::VIDEO_MODE_640x480_YUV422;
+		constexpr Dc1394Camera::VideoMode Dc1394Camera::VIDEO_MODE_640x480_RGB8;
+		constexpr Dc1394Camera::VideoMode Dc1394Camera::VIDEO_MODE_640x480_MONO8;
+		constexpr Dc1394Camera::VideoMode Dc1394Camera::VIDEO_MODE_640x480_MONO16;
+		constexpr Dc1394Camera::VideoMode Dc1394Camera::VIDEO_MODE_800x600_YUV422;
+		constexpr Dc1394Camera::VideoMode Dc1394Camera::VIDEO_MODE_800x600_RGB8;
+		constexpr Dc1394Camera::VideoMode Dc1394Camera::VIDEO_MODE_800x600_MONO8;
+		constexpr Dc1394Camera::VideoMode Dc1394Camera::VIDEO_MODE_1024x768_YUV422;
+		constexpr Dc1394Camera::VideoMode Dc1394Camera::VIDEO_MODE_1024x768_RGB8;
+		constexpr Dc1394Camera::VideoMode Dc1394Camera::VIDEO_MODE_1024x768_MONO8;
+		constexpr Dc1394Camera::VideoMode Dc1394Camera::VIDEO_MODE_800x600_MONO16;
+		constexpr Dc1394Camera::VideoMode Dc1394Camera::VIDEO_MODE_1024x768_MONO16;
+		constexpr Dc1394Camera::VideoMode Dc1394Camera::VIDEO_MODE_1280x960_YUV422;
+		constexpr Dc1394Camera::VideoMode Dc1394Camera::VIDEO_MODE_1280x960_RGB8;
+		constexpr Dc1394Camera::VideoMode Dc1394Camera::VIDEO_MODE_1280x960_MONO8;
+		constexpr Dc1394Camera::VideoMode Dc1394Camera::VIDEO_MODE_1600x1200_YUV422;
+		constexpr Dc1394Camera::VideoMode Dc1394Camera::VIDEO_MODE_1600x1200_RGB8;
+		constexpr Dc1394Camera::VideoMode Dc1394Camera::VIDEO_MODE_1600x1200_MONO8;
+		constexpr Dc1394Camera::VideoMode Dc1394Camera::VIDEO_MODE_1280x960_MONO16;
+		constexpr Dc1394Camera::VideoMode Dc1394Camera::VIDEO_MODE_1600x1200_MONO16;
+		constexpr Dc1394Camera::VideoMode Dc1394Camera::VIDEO_MODE_EXIF;
+		constexpr Dc1394Camera::VideoMode Dc1394Camera::VIDEO_MODE_FORMAT7_0;
+		constexpr Dc1394Camera::VideoMode Dc1394Camera::VIDEO_MODE_FORMAT7_1;
+		constexpr Dc1394Camera::VideoMode Dc1394Camera::VIDEO_MODE_FORMAT7_2;
+		constexpr Dc1394Camera::VideoMode Dc1394Camera::VIDEO_MODE_FORMAT7_3;
+		constexpr Dc1394Camera::VideoMode Dc1394Camera::VIDEO_MODE_FORMAT7_4;
+		constexpr Dc1394Camera::VideoMode Dc1394Camera::VIDEO_MODE_FORMAT7_5;
+		constexpr Dc1394Camera::VideoMode Dc1394Camera::VIDEO_MODE_FORMAT7_6;
+		constexpr Dc1394Camera::VideoMode Dc1394Camera::VIDEO_MODE_FORMAT7_7;
+		
 		Dc1394Camera::Dc1394Camera(const unsigned int& node) :
 			Camera(),
 			CyclicDevice(::std::chrono::nanoseconds::zero()),

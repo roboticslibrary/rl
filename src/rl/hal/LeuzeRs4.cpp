@@ -37,6 +37,15 @@ namespace rl
 {
 	namespace hal
 	{
+		constexpr LeuzeRs4::BaudRate LeuzeRs4::BAUDRATE_4800BPS;
+		constexpr LeuzeRs4::BaudRate LeuzeRs4::BAUDRATE_9600BPS;
+		constexpr LeuzeRs4::BaudRate LeuzeRs4::BAUDRATE_19200BPS;
+		constexpr LeuzeRs4::BaudRate LeuzeRs4::BAUDRATE_38400BPS;
+		constexpr LeuzeRs4::BaudRate LeuzeRs4::BAUDRATE_57600BPS;
+		constexpr LeuzeRs4::BaudRate LeuzeRs4::BAUDRATE_115200BPS;
+		constexpr LeuzeRs4::BaudRate LeuzeRs4::BAUDRATE_345600BPS;
+		constexpr LeuzeRs4::BaudRate LeuzeRs4::BAUDRATE_625000BPS;
+		
 		LeuzeRs4::LeuzeRs4(
 			const ::std::string& filename,
 			const BaudRate& baudRate,

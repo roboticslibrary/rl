@@ -62,6 +62,10 @@ namespace rl
 				pulse = 2
 			};
 			
+			RL_HAL_DEPRECATED static constexpr Mode MODE_JOINT = Mode::joint;
+			RL_HAL_DEPRECATED static constexpr Mode MODE_POSE = Mode::pose;
+			RL_HAL_DEPRECATED static constexpr Mode MODE_PULSE = Mode::pulse;
+			
 			MitsubishiH7(
 				const ::std::size_t& dof,
 				const ::std::string& addressServer,

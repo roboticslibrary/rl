@@ -50,6 +50,10 @@ namespace rl
 				paused
 			};
 			
+			RL_HAL_DEPRECATED static constexpr ProgramState PROGRAM_STATE_STOPPED = ProgramState::stopped;
+			RL_HAL_DEPRECATED static constexpr ProgramState PROGRAM_STATE_PLAYING = ProgramState::playing;
+			RL_HAL_DEPRECATED static constexpr ProgramState PROGRAM_STATE_PAUSED = ProgramState::paused;
+			
 			enum class RobotMode
 			{
 				noController,
@@ -63,6 +67,16 @@ namespace rl
 				running
 			};
 			
+			RL_HAL_DEPRECATED static constexpr RobotMode ROBOT_MODE_NO_CONTROLLER = RobotMode::noController;
+			RL_HAL_DEPRECATED static constexpr RobotMode ROBOT_MODE_DISCONNECTED = RobotMode::disconnected;
+			RL_HAL_DEPRECATED static constexpr RobotMode ROBOT_MODE_CONFIRM_SAFETY = RobotMode::confirmSafety;
+			RL_HAL_DEPRECATED static constexpr RobotMode ROBOT_MODE_BOOTING = RobotMode::booting;
+			RL_HAL_DEPRECATED static constexpr RobotMode ROBOT_MODE_POWER_OFF = RobotMode::powerOff;
+			RL_HAL_DEPRECATED static constexpr RobotMode ROBOT_MODE_POWER_ON = RobotMode::powerOn;
+			RL_HAL_DEPRECATED static constexpr RobotMode ROBOT_MODE_IDLE = RobotMode::idle;
+			RL_HAL_DEPRECATED static constexpr RobotMode ROBOT_MODE_BACKDRIVE = RobotMode::backdrive;
+			RL_HAL_DEPRECATED static constexpr RobotMode ROBOT_MODE_RUNNING = RobotMode::running;
+			
 			enum class SafetyMode
 			{
 				normal,
@@ -75,6 +89,16 @@ namespace rl
 				violation,
 				fault
 			};
+			
+			RL_HAL_DEPRECATED static constexpr SafetyMode SAFETY_MODE_NORMAL = SafetyMode::normal;
+			RL_HAL_DEPRECATED static constexpr SafetyMode SAFETY_MODE_REDUCED = SafetyMode::reduced;
+			RL_HAL_DEPRECATED static constexpr SafetyMode SAFETY_MODE_PROTECTIVE_STOP = SafetyMode::protectiveStop;
+			RL_HAL_DEPRECATED static constexpr SafetyMode SAFETY_MODE_RECOVERY = SafetyMode::recovery;
+			RL_HAL_DEPRECATED static constexpr SafetyMode SAFETY_MODE_SAFEGUARD_STOP = SafetyMode::safeguardStop;
+			RL_HAL_DEPRECATED static constexpr SafetyMode SAFETY_MODE_SYSTEM_EMERGENCY_STOP = SafetyMode::systemEmergencyStop;
+			RL_HAL_DEPRECATED static constexpr SafetyMode SAFETY_MODE_ROBOT_EMERGENCY_STOP = SafetyMode::robotEmergencyStop;
+			RL_HAL_DEPRECATED static constexpr SafetyMode SAFETY_MODE_VIOLATION = SafetyMode::violation;
+			RL_HAL_DEPRECATED static constexpr SafetyMode SAFETY_MODE_FAULT = SafetyMode::fault;
 			
 			UniversalRobotsDashboard(const ::std::string& address);
 			

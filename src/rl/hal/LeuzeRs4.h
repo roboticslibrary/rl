@@ -65,6 +65,15 @@ namespace rl
 				b625000
 			};
 			
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_4800BPS = BaudRate::b4800;
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_9600BPS = BaudRate::b9600;
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_19200BPS = BaudRate::b19200;
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_38400BPS = BaudRate::b38400;
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_57600BPS = BaudRate::b57600;
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_115200BPS = BaudRate::b115200;
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_345600BPS = BaudRate::b345600;
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_625000BPS = BaudRate::b625000;
+			
 			/**
 			 * @param[in] password String with 8 characters.
 			 */

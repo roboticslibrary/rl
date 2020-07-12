@@ -35,6 +35,18 @@ namespace rl
 {
 	namespace hal
 	{
+		constexpr MitsubishiR3::HandSts MitsubishiR3::HANDSTS_NOTUSED;
+		constexpr MitsubishiR3::HandSts MitsubishiR3::HANDSTS_OPEN;
+		constexpr MitsubishiR3::HandSts MitsubishiR3::HANDSTS_CLOSED;
+		
+		constexpr MitsubishiR3::HandType MitsubishiR3::HANDTYPE_NOTUSED;
+		constexpr MitsubishiR3::HandType MitsubishiR3::HANDTYPE_SINGLE;
+		constexpr MitsubishiR3::HandType MitsubishiR3::HANDTYPE_DOUBLE;
+		
+		constexpr MitsubishiR3::TaskCond MitsubishiR3::TASKCOND_START;
+		constexpr MitsubishiR3::TaskCond MitsubishiR3::TASKCOND_ALWAYS;
+		constexpr MitsubishiR3::TaskCond MitsubishiR3::TASKCOND_ERROR;
+		
 		MitsubishiR3::MitsubishiR3(
 			const ::std::string& address,
 			const unsigned short int& port

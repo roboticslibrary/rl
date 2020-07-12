@@ -64,6 +64,10 @@ namespace rl
 				space
 			};
 			
+			RL_PLAN_DEPRECATED static constexpr Greedy GREEDY_DISTANCE = Greedy::distance;
+			RL_PLAN_DEPRECATED static constexpr Greedy GREEDY_SOURCE_DISTANCE = Greedy::sourceDistance;
+			RL_PLAN_DEPRECATED static constexpr Greedy GREEDY_SPACE = Greedy::space;
+			
 			WorkspaceSphereExplorer();
 			
 			virtual ~WorkspaceSphereExplorer();

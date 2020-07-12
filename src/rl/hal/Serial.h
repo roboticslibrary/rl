@@ -114,6 +114,49 @@ namespace rl
 #endif // WIN32
 			};
 			
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_110BPS = BaudRate::b110;
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_300BPS = BaudRate::b300;
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_600BPS = BaudRate::b600;
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_1200BPS = BaudRate::b1200;
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_2400BPS = BaudRate::b2400;
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_4800BPS = BaudRate::b4800;
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_9600BPS = BaudRate::b9600;
+#ifdef WIN32
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_14400BPS = BaudRate::b14400;
+#endif // WIN32
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_19200BPS = BaudRate::b19200;
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_38400BPS = BaudRate::b38400;
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_57600BPS = BaudRate::b57600;
+#ifdef __QNX__
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_115200BPS = BaudRate::b115200;
+#else // __QNX__
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_115200BPS = BaudRate::b115200;
+#endif // __QNX__
+#ifdef WIN32
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_128000BPS = BaudRate::b128000;
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_256000BPS = BaudRate::b256000;
+#else // WIN32
+#ifndef __QNX__
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_230400BPS = BaudRate::b230400;
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_460800BPS = BaudRate::b460800;
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_500000BPS = BaudRate::b500000;
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_576000BPS = BaudRate::b576000;
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_921600BPS = BaudRate::b921600;
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_1000000BPS = BaudRate::b1000000;
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_1152000BPS = BaudRate::b1152000;
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_1500000BPS = BaudRate::b1500000;
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_2000000BPS = BaudRate::b2000000;
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_2500000BPS = BaudRate::b2500000;
+#ifdef __CYGWIN__
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_3000000BPS = BaudRate::b3000000;
+#else // __CYGWIN__
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_3000000BPS = BaudRate::b3000000;
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_3500000BPS = BaudRate::b3500000;
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_4000000BPS = BaudRate::b4000000;
+#endif // __CYGWIN__
+#endif // __QNX__
+#endif // WIN32
+			
 			enum class DataBits
 			{
 				/** 5 data bits. */
@@ -126,6 +169,11 @@ namespace rl
 				d8
 			};
 			
+			RL_HAL_DEPRECATED static constexpr DataBits DATABITS_5BITS = DataBits::d5;
+			RL_HAL_DEPRECATED static constexpr DataBits DATABITS_6BITS = DataBits::d6;
+			RL_HAL_DEPRECATED static constexpr DataBits DATABITS_7BITS = DataBits::d7;
+			RL_HAL_DEPRECATED static constexpr DataBits DATABITS_8BITS = DataBits::d8;
+			
 			enum class FlowControl
 			{
 				/** No flow control. */
@@ -135,6 +183,10 @@ namespace rl
 				/** Software flow control (XON/XOFF). */
 				xonxoff
 			};
+			
+			RL_HAL_DEPRECATED static constexpr FlowControl FLOWCONTROL_OFF = FlowControl::off;
+			RL_HAL_DEPRECATED static constexpr FlowControl FLOWCONTROL_RTSCTS = FlowControl::rtscts;
+			RL_HAL_DEPRECATED static constexpr FlowControl FLOWCONTROL_XONXOFF = FlowControl::xonxoff;
 			
 			enum class Parity
 			{
@@ -146,6 +198,10 @@ namespace rl
 				odd
 			};
 			
+			RL_HAL_DEPRECATED static constexpr Parity PARITY_EVENPARITY = Parity::even;
+			RL_HAL_DEPRECATED static constexpr Parity PARITY_NOPARITY = Parity::none;
+			RL_HAL_DEPRECATED static constexpr Parity PARITY_ODDPARITY = Parity::odd;
+			
 			enum class StopBits
 			{
 				/** 1 stop bit. */
@@ -153,6 +209,9 @@ namespace rl
 				/** 2 stop bits. */
 				s2
 			};
+			
+			RL_HAL_DEPRECATED static constexpr StopBits STOPBITS_1BIT = StopBits::s1;
+			RL_HAL_DEPRECATED static constexpr StopBits STOPBITS_2BITS = StopBits::s2;
 			
 			Serial(
 				const ::std::string& filename,

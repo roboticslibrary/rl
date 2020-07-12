@@ -59,6 +59,18 @@ namespace rl
 					  raw16
 				};
 				
+				RL_HAL_DEPRECATED static constexpr ColorCoding COLOR_CODING_MONO8 = ColorCoding::mono8;
+				RL_HAL_DEPRECATED static constexpr ColorCoding COLOR_CODING_YUV411 = ColorCoding::yuv411;
+				RL_HAL_DEPRECATED static constexpr ColorCoding COLOR_CODING_YUV422 = ColorCoding::yuv422;
+				RL_HAL_DEPRECATED static constexpr ColorCoding COLOR_CODING_YUV444 = ColorCoding::yuv444;
+				RL_HAL_DEPRECATED static constexpr ColorCoding COLOR_CODING_RGB8 = ColorCoding::rgb8;
+				RL_HAL_DEPRECATED static constexpr ColorCoding COLOR_CODING_MONO16 = ColorCoding::mono16;
+				RL_HAL_DEPRECATED static constexpr ColorCoding COLOR_CODING_RGB16 = ColorCoding::rgb16;
+				RL_HAL_DEPRECATED static constexpr ColorCoding COLOR_CODING_MONO16S = ColorCoding::mono16;
+				RL_HAL_DEPRECATED static constexpr ColorCoding COLOR_CODING_RGB16S = ColorCoding::rgb16s;
+				RL_HAL_DEPRECATED static constexpr ColorCoding COLOR_CODING_RAW8 = ColorCoding::raw8;
+				RL_HAL_DEPRECATED static constexpr ColorCoding COLOR_CODING_RAW16 = ColorCoding::raw16;
+				
 				enum class Feature
 				{
 					brightness = ::DC1394_FEATURE_BRIGHTNESS,
@@ -85,12 +97,39 @@ namespace rl
 					captureQuality
 				};
 				
+				RL_HAL_DEPRECATED static constexpr Feature FEATURE_BRIGHTNESS = Feature::brightness;
+				RL_HAL_DEPRECATED static constexpr Feature FEATURE_EXPOSURE = Feature::exposure;
+				RL_HAL_DEPRECATED static constexpr Feature FEATURE_SHARPNESS = Feature::sharpness;
+				RL_HAL_DEPRECATED static constexpr Feature FEATURE_WHITE_BALANCE = Feature::whiteBalance;
+				RL_HAL_DEPRECATED static constexpr Feature FEATURE_HUE = Feature::hue;
+				RL_HAL_DEPRECATED static constexpr Feature FEATURE_SATURATION = Feature::saturation;
+				RL_HAL_DEPRECATED static constexpr Feature FEATURE_GAMMA = Feature::gamma;
+				RL_HAL_DEPRECATED static constexpr Feature FEATURE_SHUTTER = Feature::shutter;
+				RL_HAL_DEPRECATED static constexpr Feature FEATURE_GAIN = Feature::gain;
+				RL_HAL_DEPRECATED static constexpr Feature FEATURE_IRIS = Feature::iris;
+				RL_HAL_DEPRECATED static constexpr Feature FEATURE_FOCUS = Feature::focus;
+				RL_HAL_DEPRECATED static constexpr Feature FEATURE_TEMPERATURE = Feature::temperature;
+				RL_HAL_DEPRECATED static constexpr Feature FEATURE_TRIGGER = Feature::trigger;
+				RL_HAL_DEPRECATED static constexpr Feature FEATURE_TRIGGER_DELAY = Feature::triggerDelay;
+				RL_HAL_DEPRECATED static constexpr Feature FEATURE_WHITE_SHADING = Feature::whiteShading;
+				RL_HAL_DEPRECATED static constexpr Feature FEATURE_FRAME_RATE = Feature::frameRate;
+				RL_HAL_DEPRECATED static constexpr Feature FEATURE_ZOOM = Feature::zoom;
+				RL_HAL_DEPRECATED static constexpr Feature FEATURE_PAN = Feature::pan;
+				RL_HAL_DEPRECATED static constexpr Feature FEATURE_TILT = Feature::tilt;
+				RL_HAL_DEPRECATED static constexpr Feature FEATURE_OPTICAL_FILTER = Feature::opticalFilter;
+				RL_HAL_DEPRECATED static constexpr Feature FEATURE_CAPTURE_SIZE = Feature::captureSize;
+				RL_HAL_DEPRECATED static constexpr Feature FEATURE_CAPTURE_QUALITY = Feature::captureQuality;
+				
 				enum class FeatureMode
 				{
 					manual = ::DC1394_FEATURE_MODE_MANUAL,
 					automatic,
 					onePushAuto
 				};
+				
+				RL_HAL_DEPRECATED static constexpr FeatureMode FEATURE_MODE_MANUAL = FeatureMode::manual;
+				RL_HAL_DEPRECATED static constexpr FeatureMode FEATURE_MODE_AUTO = FeatureMode::automatic;
+				RL_HAL_DEPRECATED static constexpr FeatureMode FEATURE_MODE_ONE_PUSH_AUTO = FeatureMode::onePushAuto;
 				
 				enum class Framerate
 				{
@@ -104,6 +143,15 @@ namespace rl
 					f240
 				};
 				
+				RL_HAL_DEPRECATED static constexpr Framerate FRAMERATE_1_875 = Framerate::f1_875;
+				RL_HAL_DEPRECATED static constexpr Framerate FRAMERATE_3_75 = Framerate::f3_75;
+				RL_HAL_DEPRECATED static constexpr Framerate FRAMERATE_7_5 = Framerate::f7_5;
+				RL_HAL_DEPRECATED static constexpr Framerate FRAMERATE_15 = Framerate::f15;
+				RL_HAL_DEPRECATED static constexpr Framerate FRAMERATE_30 = Framerate::f30;
+				RL_HAL_DEPRECATED static constexpr Framerate FRAMERATE_60 = Framerate::f60;
+				RL_HAL_DEPRECATED static constexpr Framerate FRAMERATE_120 = Framerate::f120;
+				RL_HAL_DEPRECATED static constexpr Framerate FRAMERATE_240 = Framerate::f240;
+				
 				enum class IsoSpeed
 				{
 					i100 = ::DC1394_ISO_SPEED_100,
@@ -114,11 +162,21 @@ namespace rl
 					i3200
 				};
 				
+				RL_HAL_DEPRECATED static constexpr IsoSpeed ISO_SPEED_100 = IsoSpeed::i100;
+				RL_HAL_DEPRECATED static constexpr IsoSpeed ISO_SPEED_200 = IsoSpeed::i200;
+				RL_HAL_DEPRECATED static constexpr IsoSpeed ISO_SPEED_400 = IsoSpeed::i400;
+				RL_HAL_DEPRECATED static constexpr IsoSpeed ISO_SPEED_800 = IsoSpeed::i800;
+				RL_HAL_DEPRECATED static constexpr IsoSpeed ISO_SPEED_1600 = IsoSpeed::i1600;
+				RL_HAL_DEPRECATED static constexpr IsoSpeed ISO_SPEED_3200 = IsoSpeed::i3200;
+				
 				enum class OperationMode
 				{
 					legacy = ::DC1394_OPERATION_MODE_LEGACY,
 					o1394b
 				};
+				
+				RL_HAL_DEPRECATED static constexpr OperationMode OPERATION_MODE_LEGACY = OperationMode::legacy;
+				RL_HAL_DEPRECATED static constexpr OperationMode OPERATION_MODE_1394B = OperationMode::o1394b;
 				
 				enum class VideoMode
 				{
@@ -155,6 +213,39 @@ namespace rl
 					format7_6,
 					format7_7
 				};
+				
+				RL_HAL_DEPRECATED static constexpr VideoMode VIDEO_MODE_160x120_YUV444 = VideoMode::v160x120_yuv444;
+				RL_HAL_DEPRECATED static constexpr VideoMode VIDEO_MODE_320x240_YUV422 = VideoMode::v320x240_yuv422;
+				RL_HAL_DEPRECATED static constexpr VideoMode VIDEO_MODE_640x480_YUV411 = VideoMode::v640x480_yuv411;
+				RL_HAL_DEPRECATED static constexpr VideoMode VIDEO_MODE_640x480_YUV422 = VideoMode::v640x480_yuv422;
+				RL_HAL_DEPRECATED static constexpr VideoMode VIDEO_MODE_640x480_RGB8 = VideoMode::v640x480_rgb8;
+				RL_HAL_DEPRECATED static constexpr VideoMode VIDEO_MODE_640x480_MONO8 = VideoMode::v640x480_mono8;
+				RL_HAL_DEPRECATED static constexpr VideoMode VIDEO_MODE_640x480_MONO16 = VideoMode::v640x480_mono16;
+				RL_HAL_DEPRECATED static constexpr VideoMode VIDEO_MODE_800x600_YUV422 = VideoMode::v800x600_yuv422;
+				RL_HAL_DEPRECATED static constexpr VideoMode VIDEO_MODE_800x600_RGB8 = VideoMode::v800x600_rgb8;
+				RL_HAL_DEPRECATED static constexpr VideoMode VIDEO_MODE_800x600_MONO8 = VideoMode::v800x600_mono8;
+				RL_HAL_DEPRECATED static constexpr VideoMode VIDEO_MODE_1024x768_YUV422 = VideoMode::v1024x768_yuv422;
+				RL_HAL_DEPRECATED static constexpr VideoMode VIDEO_MODE_1024x768_RGB8 = VideoMode::v1024x768_rgb8;
+				RL_HAL_DEPRECATED static constexpr VideoMode VIDEO_MODE_1024x768_MONO8 = VideoMode::v1024x768_mono8;
+				RL_HAL_DEPRECATED static constexpr VideoMode VIDEO_MODE_800x600_MONO16 = VideoMode::v800x600_mono16;
+				RL_HAL_DEPRECATED static constexpr VideoMode VIDEO_MODE_1024x768_MONO16 = VideoMode::v1024x768_mono16;
+				RL_HAL_DEPRECATED static constexpr VideoMode VIDEO_MODE_1280x960_YUV422 = VideoMode::v1280x960_yuv422;
+				RL_HAL_DEPRECATED static constexpr VideoMode VIDEO_MODE_1280x960_RGB8 = VideoMode::v1280x960_rgb8;
+				RL_HAL_DEPRECATED static constexpr VideoMode VIDEO_MODE_1280x960_MONO8 = VideoMode::v1280x960_mono8;
+				RL_HAL_DEPRECATED static constexpr VideoMode VIDEO_MODE_1600x1200_YUV422 = VideoMode::v1600x1200_yuv422;
+				RL_HAL_DEPRECATED static constexpr VideoMode VIDEO_MODE_1600x1200_RGB8 = VideoMode::v1600x1200_rgb8;
+				RL_HAL_DEPRECATED static constexpr VideoMode VIDEO_MODE_1600x1200_MONO8 = VideoMode::v1600x1200_mono8;
+				RL_HAL_DEPRECATED static constexpr VideoMode VIDEO_MODE_1280x960_MONO16 = VideoMode::v1280x960_mono16;
+				RL_HAL_DEPRECATED static constexpr VideoMode VIDEO_MODE_1600x1200_MONO16 = VideoMode::v1600x1200_mono16;
+				RL_HAL_DEPRECATED static constexpr VideoMode VIDEO_MODE_EXIF = VideoMode::exif;
+				RL_HAL_DEPRECATED static constexpr VideoMode VIDEO_MODE_FORMAT7_0 = VideoMode::format7_0;
+				RL_HAL_DEPRECATED static constexpr VideoMode VIDEO_MODE_FORMAT7_1 = VideoMode::format7_1;
+				RL_HAL_DEPRECATED static constexpr VideoMode VIDEO_MODE_FORMAT7_2 = VideoMode::format7_2;
+				RL_HAL_DEPRECATED static constexpr VideoMode VIDEO_MODE_FORMAT7_3 = VideoMode::format7_3;
+				RL_HAL_DEPRECATED static constexpr VideoMode VIDEO_MODE_FORMAT7_4 = VideoMode::format7_4;
+				RL_HAL_DEPRECATED static constexpr VideoMode VIDEO_MODE_FORMAT7_5 = VideoMode::format7_5;
+				RL_HAL_DEPRECATED static constexpr VideoMode VIDEO_MODE_FORMAT7_6 = VideoMode::format7_6;
+				RL_HAL_DEPRECATED static constexpr VideoMode VIDEO_MODE_FORMAT7_7 = VideoMode::format7_7;
 				
 				class Exception : public DeviceException
 				{

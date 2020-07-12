@@ -45,17 +45,26 @@ namespace rl
 				right = 1
 			};
 			
+			RL_KIN_DEPRECATED static constexpr Arm ARM_LEFT = Arm::left;
+			RL_KIN_DEPRECATED static constexpr Arm ARM_RIGHT = Arm::right;
+			
 			enum class Elbow
 			{
 				above = 1,
 				below = -1
 			};
 			
+			RL_KIN_DEPRECATED static constexpr Elbow ELBOW_ABOVE = Elbow::above;
+			RL_KIN_DEPRECATED static constexpr Elbow ELBOW_BELOW = Elbow::below;
+			
 			enum class Wrist
 			{
 				flip = 1,
 				nonflip = -1
 			};
+			
+			RL_KIN_DEPRECATED static constexpr Wrist WRIST_FLIP = Wrist::flip;
+			RL_KIN_DEPRECATED static constexpr Wrist WRIST_NONFLIP = Wrist::nonflip;
 			
 			Puma();
 			

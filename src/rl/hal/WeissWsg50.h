@@ -65,6 +65,15 @@ namespace rl
 				error = 7
 			};
 			
+			RL_HAL_DEPRECATED static constexpr GraspingState GRASPING_STATE_IDLE = GraspingState::idle;
+			RL_HAL_DEPRECATED static constexpr GraspingState GRASPING_STATE_GRIPPING = GraspingState::gripping;
+			RL_HAL_DEPRECATED static constexpr GraspingState GRASPING_STATE_NO_PART_FOUND = GraspingState::noPartFound;
+			RL_HAL_DEPRECATED static constexpr GraspingState GRASPING_STATE_PART_LOST = GraspingState::partLost;
+			RL_HAL_DEPRECATED static constexpr GraspingState GRASPING_STATE_HOLDING = GraspingState::holding;
+			RL_HAL_DEPRECATED static constexpr GraspingState GRASPING_STATE_RELEASING = GraspingState::releasing;
+			RL_HAL_DEPRECATED static constexpr GraspingState GRASPING_STATE_POSITIONING = GraspingState::positioning;
+			RL_HAL_DEPRECATED static constexpr GraspingState GRASPING_STATE_ERROR = GraspingState::error;
+			
 			enum class SystemState
 			{
 				referenced = 1,
@@ -87,6 +96,26 @@ namespace rl
 				scriptRunning = 524288,
 				scriptFailure = 1048576
 			};
+			
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_SCRIPT_FAILURE = SystemState::scriptFailure;
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_SCRIPT_RUNNING = SystemState::scriptRunning;
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_COMMAND_FAILURE = SystemState::commandFailure;
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_FINGER_FAULT = SystemState::fingerFault;
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_CURRENT_FAULT = SystemState::currentFault;
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_POWER_FAULT = SystemState::powerFault;
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_TEMPERATURE_FAULT = SystemState::temperatureFault;
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_TEMPERATURE_WARNING = SystemState::temperatureWarning;
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_FAST_STOP = SystemState::fastStop;
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_FORCE_CONTROL_MODE = SystemState::forceControlMode;
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_OVERDRIVE_MODE = SystemState::overdriveMode;
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_TARGET_POSITION_REACHED = SystemState::targetPositionReached;
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_AXIS_STOPPED = SystemState::axisStopped;
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_SOFT_LIMIT_PLUS = SystemState::softLimitPlus;
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_SOFT_LIMIT_MINUS = SystemState::softLimitMinus;
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_AXIS_BLOCKED_PLUS = SystemState::axisBlockedPlus;
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_AXIS_BLOCKED_MINUS = SystemState::axisBlockedMinus;
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_MOVING = SystemState::moving;
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_REFERENCED = SystemState::referenced;
 			
 			/**
 			 * @param[in] address TCP hostname

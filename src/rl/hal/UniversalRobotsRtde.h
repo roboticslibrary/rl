@@ -92,6 +92,20 @@ namespace rl
 				idleMode = 255
 			};
 			
+			RL_HAL_DEPRECATED static constexpr JointMode JOINT_MODE_SHUTTING_DOWN = JointMode::shuttingDown;
+			RL_HAL_DEPRECATED static constexpr JointMode JOINT_MODE_PART_D_CALIBRATION = JointMode::partDCalibration;
+			RL_HAL_DEPRECATED static constexpr JointMode JOINT_MODE_BACKDRIVE = JointMode::backdrive;
+			RL_HAL_DEPRECATED static constexpr JointMode JOINT_MODE_POWER_OFF = JointMode::powerOff;
+			RL_HAL_DEPRECATED static constexpr JointMode JOINT_MODE_NOT_RESPONDING = JointMode::notResponding;
+			RL_HAL_DEPRECATED static constexpr JointMode JOINT_MODE_MOTOR_INITIALISATION = JointMode::motorInitialisation;
+			RL_HAL_DEPRECATED static constexpr JointMode JOINT_MODE_BOOTING = JointMode::booting;
+			RL_HAL_DEPRECATED static constexpr JointMode JOINT_MODE_PART_D_CALIBRATION_ERROR = JointMode::partDCalibrationError;
+			RL_HAL_DEPRECATED static constexpr JointMode JOINT_MODE_BOOTLOADER = JointMode::bootloader;
+			RL_HAL_DEPRECATED static constexpr JointMode JOINT_MODE_CALIBRATION = JointMode::calibration;
+			RL_HAL_DEPRECATED static constexpr JointMode JOINT_MODE_FAULT = JointMode::fault;
+			RL_HAL_DEPRECATED static constexpr JointMode JOINT_MODE_RUNNING = JointMode::running;
+			RL_HAL_DEPRECATED static constexpr JointMode JOINT_MODE_IDLE_MODE = JointMode::idleMode;
+			
 			enum class RobotMode
 			{
 				disconnected = 0,
@@ -105,6 +119,16 @@ namespace rl
 				updatingFirmware = 8
 			};
 			
+			RL_HAL_DEPRECATED static constexpr RobotMode ROBOT_MODE_DISCONNECTED = RobotMode::disconnected;
+			RL_HAL_DEPRECATED static constexpr RobotMode ROBOT_MODE_CONFIRM_SAFETY = RobotMode::confirmSafety;
+			RL_HAL_DEPRECATED static constexpr RobotMode ROBOT_MODE_BOOTING = RobotMode::booting;
+			RL_HAL_DEPRECATED static constexpr RobotMode ROBOT_MODE_POWER_OFF = RobotMode::powerOff;
+			RL_HAL_DEPRECATED static constexpr RobotMode ROBOT_MODE_POWER_ON = RobotMode::powerOn;
+			RL_HAL_DEPRECATED static constexpr RobotMode ROBOT_MODE_IDLE = RobotMode::idle;
+			RL_HAL_DEPRECATED static constexpr RobotMode ROBOT_MODE_BACKDRIVE = RobotMode::backdrive;
+			RL_HAL_DEPRECATED static constexpr RobotMode ROBOT_MODE_RUNNING = RobotMode::running;
+			RL_HAL_DEPRECATED static constexpr RobotMode ROBOT_MODE_UPDATING_FIRMWARE = RobotMode::updatingFirmware;
+			
 			enum class RobotStatus
 			{
 				powerOn = 1,
@@ -112,6 +136,11 @@ namespace rl
 				teachButtonPressed = 4,
 				powerButtonPressed = 8
 			};
+			
+			RL_HAL_DEPRECATED static constexpr RobotStatus ROBOT_STATUS_POWER_ON = RobotStatus::powerOn;
+			RL_HAL_DEPRECATED static constexpr RobotStatus ROBOT_STATUS_PROGRAM_RUNNING = RobotStatus::programRunning;
+			RL_HAL_DEPRECATED static constexpr RobotStatus ROBOT_STATUS_TEACH_BUTTON_PRESSED = RobotStatus::teachButtonPressed;
+			RL_HAL_DEPRECATED static constexpr RobotStatus ROBOT_STATUS_POWER_BUTTON_PRESSED = RobotStatus::powerButtonPressed;
 			
 			enum class RuntimeState
 			{
@@ -122,6 +151,13 @@ namespace rl
 				paused = 4,
 				resuming = 5
 			};
+			
+			RL_HAL_DEPRECATED static constexpr RuntimeState RUNTIME_STATE_STOPPING = RuntimeState::stopping;
+			RL_HAL_DEPRECATED static constexpr RuntimeState RUNTIME_STATE_STOPPED = RuntimeState::stopped;
+			RL_HAL_DEPRECATED static constexpr RuntimeState RUNTIME_STATE_PLAYING = RuntimeState::playing;
+			RL_HAL_DEPRECATED static constexpr RuntimeState RUNTIME_STATE_PAUSING = RuntimeState::pausing;
+			RL_HAL_DEPRECATED static constexpr RuntimeState RUNTIME_STATE_PAUSED = RuntimeState::paused;
+			RL_HAL_DEPRECATED static constexpr RuntimeState RUNTIME_STATE_RESUMING = RuntimeState::resuming;
 			
 			enum class SafetyMode
 			{
@@ -135,6 +171,16 @@ namespace rl
 				violation = 8,
 				fault = 9
 			};
+			
+			RL_HAL_DEPRECATED static constexpr SafetyMode SAFETY_MODE_NORMAL = SafetyMode::normal;
+			RL_HAL_DEPRECATED static constexpr SafetyMode SAFETY_MODE_REDUCED = SafetyMode::reduced;
+			RL_HAL_DEPRECATED static constexpr SafetyMode SAFETY_MODE_PROTECTIVE_STOP = SafetyMode::protectiveStop;
+			RL_HAL_DEPRECATED static constexpr SafetyMode SAFETY_MODE_RECOVERY = SafetyMode::recovery;
+			RL_HAL_DEPRECATED static constexpr SafetyMode SAFETY_MODE_SAFEGUARD_STOP = SafetyMode::safeguardStop;
+			RL_HAL_DEPRECATED static constexpr SafetyMode SAFETY_MODE_SYSTEM_EMERGENCY_STOP = SafetyMode::systemEmergencyStop;
+			RL_HAL_DEPRECATED static constexpr SafetyMode SAFETY_MODE_ROBOT_EMERGENCY_STOP = SafetyMode::robotEmergencyStop;
+			RL_HAL_DEPRECATED static constexpr SafetyMode SAFETY_MODE_VIOLATION = SafetyMode::violation;
+			RL_HAL_DEPRECATED static constexpr SafetyMode SAFETY_MODE_FAULT = SafetyMode::fault;
 			
 			enum class SafetyStatus
 			{
@@ -150,6 +196,18 @@ namespace rl
 				fault = 512,
 				stoppedDueToSafety = 1024
 			};
+			
+			RL_HAL_DEPRECATED static constexpr SafetyStatus SAFETY_STATUS_NORMAL_MODE = SafetyStatus::normalMode;
+			RL_HAL_DEPRECATED static constexpr SafetyStatus SAFETY_STATUS_REDUCED_MODE = SafetyStatus::reducedMode;
+			RL_HAL_DEPRECATED static constexpr SafetyStatus SAFETY_STATUS_PROTECTIVE_STOPPED = SafetyStatus::protectiveStopped;
+			RL_HAL_DEPRECATED static constexpr SafetyStatus SAFETY_STATUS_RECOVERY_MODE = SafetyStatus::recoveryMode;
+			RL_HAL_DEPRECATED static constexpr SafetyStatus SAFETY_STATUS_SAFEGUARD_STOPPED = SafetyStatus::safeguardStopped;
+			RL_HAL_DEPRECATED static constexpr SafetyStatus SAFETY_STATUS_SYSTEM_EMERGENCY_STOPPED = SafetyStatus::systemEmergencyStopped;
+			RL_HAL_DEPRECATED static constexpr SafetyStatus SAFETY_STATUS_ROBOT_EMERGENCY_STOPPED = SafetyStatus::robotEmergencyStopped;
+			RL_HAL_DEPRECATED static constexpr SafetyStatus SAFETY_STATUS_EMERGENCY_STOPPED = SafetyStatus::emergencyStopped;
+			RL_HAL_DEPRECATED static constexpr SafetyStatus SAFETY_STATUS_VIOLATION = SafetyStatus::violation;
+			RL_HAL_DEPRECATED static constexpr SafetyStatus SAFETY_STATUS_FAULT = SafetyStatus::fault;
+			RL_HAL_DEPRECATED static constexpr SafetyStatus SAFETY_STATUS_STOPPED_DUE_TO_SAFETY = SafetyStatus::stoppedDueToSafety;
 			
 			UniversalRobotsRtde(const ::std::string& address, const ::std::chrono::nanoseconds& updateRate = ::std::chrono::milliseconds(8));
 			

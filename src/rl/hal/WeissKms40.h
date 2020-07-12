@@ -73,6 +73,26 @@ namespace rl
 				scriptFailure = 1073741824
 			};
 			
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_SCRIPT_FAILURE = SystemState::scriptFailure;
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_CMD_FAILURE = SystemState::cmdFailure;
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_POWER_FAULT = SystemState::powerFault;
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_TEMP_FAULT = SystemState::tempFault;
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_CALIBRATION_FAULT = SystemState::calibrationFault;
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_OVERRUN_MZ = SystemState::overrunMx;
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_OVERRUN_MY = SystemState::overrunMy;
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_OVERRUN_MX = SystemState::overrunMz;
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_OVERRUN_FZ = SystemState::overrunFx;
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_OVERRUN_FY = SystemState::overrunFy;
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_OVERRUN_FX = SystemState::overrunFz;
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_TEMP_WARNING = SystemState::tempWarning;
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_CALIBRATION_EXPIRED = SystemState::calibrationExpired;
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_SCRIPT_RUNNING = SystemState::scriptRunning;
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_DAQ_RUNNING = SystemState::daqRunning;
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_FILTER_ENABLED = SystemState::filterEnabled;
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_TARA = SystemState::tara;
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_STABLE = SystemState::stable;
+			RL_HAL_DEPRECATED static constexpr SystemState SYSTEM_STATE_CALIBRATION_VALID = SystemState::calibrationValid;
+			
 			/**
 			 * @param[in] address TCP hostname
 			 * @param[in] port TCP port

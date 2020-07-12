@@ -56,6 +56,65 @@ namespace rl
 {
 	namespace hal
 	{
+		constexpr Serial::BaudRate Serial::BAUDRATE_110BPS;
+		constexpr Serial::BaudRate Serial::BAUDRATE_300BPS;
+		constexpr Serial::BaudRate Serial::BAUDRATE_600BPS;
+		constexpr Serial::BaudRate Serial::BAUDRATE_1200BPS;
+		constexpr Serial::BaudRate Serial::BAUDRATE_2400BPS;
+		constexpr Serial::BaudRate Serial::BAUDRATE_4800BPS;
+		constexpr Serial::BaudRate Serial::BAUDRATE_9600BPS;
+#ifdef WIN32
+		constexpr Serial::BaudRate Serial::BAUDRATE_14400BPS;
+#endif // WIN32
+		constexpr Serial::BaudRate Serial::BAUDRATE_19200BPS;
+		constexpr Serial::BaudRate Serial::BAUDRATE_38400BPS;
+		constexpr Serial::BaudRate Serial::BAUDRATE_57600BPS;
+#ifdef __QNX__
+		constexpr Serial::BaudRate Serial::BAUDRATE_115200BPS;
+#else // __QNX__
+		constexpr Serial::BaudRate Serial::BAUDRATE_115200BPS;
+#endif // __QNX__
+#ifdef WIN32
+		constexpr Serial::BaudRate Serial::BAUDRATE_128000BPS;
+		constexpr Serial::BaudRate Serial::BAUDRATE_256000BPS;
+#else // WIN32
+#ifndef __QNX__
+		constexpr Serial::BaudRate Serial::BAUDRATE_230400BPS;
+		constexpr Serial::BaudRate Serial::BAUDRATE_460800BPS;
+		constexpr Serial::BaudRate Serial::BAUDRATE_500000BPS;
+		constexpr Serial::BaudRate Serial::BAUDRATE_576000BPS;
+		constexpr Serial::BaudRate Serial::BAUDRATE_921600BPS;
+		constexpr Serial::BaudRate Serial::BAUDRATE_1000000BPS;
+		constexpr Serial::BaudRate Serial::BAUDRATE_1152000BPS;
+		constexpr Serial::BaudRate Serial::BAUDRATE_1500000BPS;
+		constexpr Serial::BaudRate Serial::BAUDRATE_2000000BPS;
+		constexpr Serial::BaudRate Serial::BAUDRATE_2500000BPS;
+#ifdef __CYGWIN__
+		constexpr Serial::BaudRate Serial::BAUDRATE_3000000BPS;
+#else // __CYGWIN__
+		constexpr Serial::BaudRate Serial::BAUDRATE_3000000BPS;
+		constexpr Serial::BaudRate Serial::BAUDRATE_3500000BPS;
+		constexpr Serial::BaudRate Serial::BAUDRATE_4000000BPS;
+#endif // __CYGWIN__
+#endif // __QNX__
+#endif // WIN32
+		
+		constexpr Serial::DataBits Serial::DATABITS_5BITS;
+		constexpr Serial::DataBits Serial::DATABITS_6BITS;
+		constexpr Serial::DataBits Serial::DATABITS_7BITS;
+		constexpr Serial::DataBits Serial::DATABITS_8BITS;
+		
+		constexpr Serial::FlowControl Serial::FLOWCONTROL_OFF;
+		constexpr Serial::FlowControl Serial::FLOWCONTROL_RTSCTS;
+		constexpr Serial::FlowControl Serial::FLOWCONTROL_XONXOFF;
+		
+		constexpr Serial::Parity Serial::PARITY_EVENPARITY;
+		constexpr Serial::Parity Serial::PARITY_NOPARITY;
+		constexpr Serial::Parity Serial::PARITY_ODDPARITY;
+		
+		constexpr Serial::StopBits Serial::STOPBITS_1BIT;
+		constexpr Serial::StopBits Serial::STOPBITS_2BITS;
+		
 		struct Serial::Impl
 		{
 #ifdef WIN32

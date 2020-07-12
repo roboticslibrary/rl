@@ -71,6 +71,38 @@ namespace rl
 				fileExists = 30
 			};
 			
+			RL_HAL_DEPRECATED static constexpr Code CODE_SUCCESS = Code::success;
+			RL_HAL_DEPRECATED static constexpr Code CODE_NOT_AVAILABLE = Code::notAvailable;
+			RL_HAL_DEPRECATED static constexpr Code CODE_NO_SENSOR = Code::noSensor;
+			RL_HAL_DEPRECATED static constexpr Code CODE_NOT_INITIALIZED = Code::notInitialized;
+			RL_HAL_DEPRECATED static constexpr Code CODE_ALREADY_RUNNING = Code::alreadyRunning;
+			RL_HAL_DEPRECATED static constexpr Code CODE_FEATURE_NOT_SUPPORTED = Code::featureNotSupported;
+			RL_HAL_DEPRECATED static constexpr Code CODE_INCONSISTENT_DATA = Code::inconsistentData;
+			RL_HAL_DEPRECATED static constexpr Code CODE_TIMEOUT = Code::timeout;
+			RL_HAL_DEPRECATED static constexpr Code CODE_READ_ERROR = Code::readError;
+			RL_HAL_DEPRECATED static constexpr Code CODE_WRITE_ERROR = Code::writeError;
+			RL_HAL_DEPRECATED static constexpr Code CODE_INSUFFICIENT_RESOURCES = Code::insufficientResources;
+			RL_HAL_DEPRECATED static constexpr Code CODE_CHECKSUM_ERROR = Code::checksumError;
+			RL_HAL_DEPRECATED static constexpr Code CODE_NO_PARAM_EXPECTED = Code::noParamExpected;
+			RL_HAL_DEPRECATED static constexpr Code CODE_NOT_ENOUGH_PARAMS = Code::notEnoughParams;
+			RL_HAL_DEPRECATED static constexpr Code CODE_COMMAND_UNKNOWN = Code::commandUnknown;
+			RL_HAL_DEPRECATED static constexpr Code CODE_COMMAND_FORMAT_ERROR = Code::commandFormatError;
+			RL_HAL_DEPRECATED static constexpr Code CODE_ACCESS_DENIED = Code::accessDenied;
+			RL_HAL_DEPRECATED static constexpr Code CODE_ALREADY_OPEN = Code::alreadyOpen;
+			RL_HAL_DEPRECATED static constexpr Code CODE_COMMAND_FAILED = Code::commandFailed;
+			RL_HAL_DEPRECATED static constexpr Code CODE_COMMAND_ABORTED = Code::commandAborted;
+			RL_HAL_DEPRECATED static constexpr Code CODE_INVALID_HANDLE = Code::invalidHandle;
+			RL_HAL_DEPRECATED static constexpr Code CODE_NOT_FOUND = Code::notFound;
+			RL_HAL_DEPRECATED static constexpr Code CODE_NOT_OPEN = Code::notOpen;
+			RL_HAL_DEPRECATED static constexpr Code CODE_IO_ERROR = Code::ioError;
+			RL_HAL_DEPRECATED static constexpr Code CODE_INVALID_PARAMETER = Code::invalidParameter;
+			RL_HAL_DEPRECATED static constexpr Code CODE_INDEX_OUT_OF_BOUNDS = Code::indexOutOfBounds;
+			RL_HAL_DEPRECATED static constexpr Code CODE_COMMAND_PENDING = Code::commandPending;
+			RL_HAL_DEPRECATED static constexpr Code CODE_OVERRUN = Code::overrun;
+			RL_HAL_DEPRECATED static constexpr Code CODE_RANGE_ERROR = Code::rangeError;
+			RL_HAL_DEPRECATED static constexpr Code CODE_AXIS_BLOCKED = Code::axisBlocked;
+			RL_HAL_DEPRECATED static constexpr Code CODE_FILE_EXISTS = Code::fileExists;
+			
 			WeissException(const Code& code);
 			
 			virtual ~WeissException() throw();

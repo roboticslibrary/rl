@@ -34,6 +34,30 @@ namespace rl
 {
 	namespace hal
 	{
+		constexpr UniversalRobotsDashboard::ProgramState UniversalRobotsDashboard::PROGRAM_STATE_STOPPED;
+		constexpr UniversalRobotsDashboard::ProgramState UniversalRobotsDashboard::PROGRAM_STATE_PLAYING;
+		constexpr UniversalRobotsDashboard::ProgramState UniversalRobotsDashboard::PROGRAM_STATE_PAUSED;
+		
+		constexpr UniversalRobotsDashboard::RobotMode UniversalRobotsDashboard::ROBOT_MODE_NO_CONTROLLER;
+		constexpr UniversalRobotsDashboard::RobotMode UniversalRobotsDashboard::ROBOT_MODE_DISCONNECTED;
+		constexpr UniversalRobotsDashboard::RobotMode UniversalRobotsDashboard::ROBOT_MODE_CONFIRM_SAFETY;
+		constexpr UniversalRobotsDashboard::RobotMode UniversalRobotsDashboard::ROBOT_MODE_BOOTING;
+		constexpr UniversalRobotsDashboard::RobotMode UniversalRobotsDashboard::ROBOT_MODE_POWER_OFF;
+		constexpr UniversalRobotsDashboard::RobotMode UniversalRobotsDashboard::ROBOT_MODE_POWER_ON;
+		constexpr UniversalRobotsDashboard::RobotMode UniversalRobotsDashboard::ROBOT_MODE_IDLE;
+		constexpr UniversalRobotsDashboard::RobotMode UniversalRobotsDashboard::ROBOT_MODE_BACKDRIVE;
+		constexpr UniversalRobotsDashboard::RobotMode UniversalRobotsDashboard::ROBOT_MODE_RUNNING;
+		
+		constexpr UniversalRobotsDashboard::SafetyMode UniversalRobotsDashboard::SAFETY_MODE_NORMAL;
+		constexpr UniversalRobotsDashboard::SafetyMode UniversalRobotsDashboard::SAFETY_MODE_REDUCED;
+		constexpr UniversalRobotsDashboard::SafetyMode UniversalRobotsDashboard::SAFETY_MODE_PROTECTIVE_STOP;
+		constexpr UniversalRobotsDashboard::SafetyMode UniversalRobotsDashboard::SAFETY_MODE_RECOVERY;
+		constexpr UniversalRobotsDashboard::SafetyMode UniversalRobotsDashboard::SAFETY_MODE_SAFEGUARD_STOP;
+		constexpr UniversalRobotsDashboard::SafetyMode UniversalRobotsDashboard::SAFETY_MODE_SYSTEM_EMERGENCY_STOP;
+		constexpr UniversalRobotsDashboard::SafetyMode UniversalRobotsDashboard::SAFETY_MODE_ROBOT_EMERGENCY_STOP;
+		constexpr UniversalRobotsDashboard::SafetyMode UniversalRobotsDashboard::SAFETY_MODE_VIOLATION;
+		constexpr UniversalRobotsDashboard::SafetyMode UniversalRobotsDashboard::SAFETY_MODE_FAULT;
+		
 		UniversalRobotsDashboard::UniversalRobotsDashboard(const ::std::string& address) :
 			Com(),
 			socket(Socket::Tcp(Socket::Address::Ipv4(address, 29999)))

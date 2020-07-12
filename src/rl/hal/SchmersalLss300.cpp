@@ -37,6 +37,14 @@ namespace rl
 {
 	namespace hal
 	{
+		constexpr SchmersalLss300::BaudRate SchmersalLss300::BAUDRATE_9600BPS;
+		constexpr SchmersalLss300::BaudRate SchmersalLss300::BAUDRATE_19200BPS;
+		constexpr SchmersalLss300::BaudRate SchmersalLss300::BAUDRATE_38400BPS;
+		constexpr SchmersalLss300::BaudRate SchmersalLss300::BAUDRATE_57600BP;
+		
+		constexpr SchmersalLss300::Monitoring SchmersalLss300::MONITORING_CONTINUOUS;
+		constexpr SchmersalLss300::Monitoring SchmersalLss300::MONITORING_SINGLE;
+		
 		SchmersalLss300::SchmersalLss300(
 			const ::std::string& filename,
 			const BaudRate& baudRate,

@@ -65,11 +65,19 @@ namespace rl
 #endif
 			};
 			
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_9600BPS = BaudRate::b9600;
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_19200BPS = BaudRate::b19200;
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_38400BPS = BaudRate::b38400;
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_57600BP = BaudRate::b57600;
+			
 			enum class Monitoring
 			{
 				continuous,
 				single
 			};
+			
+			RL_HAL_DEPRECATED static constexpr Monitoring MONITORING_CONTINUOUS = Monitoring::continuous;
+			RL_HAL_DEPRECATED static constexpr Monitoring MONITORING_SINGLE = Monitoring::single;
 			
 			/**
 			 * @param[in] password String with 8 characters comprising "0...9", "a...z", "A...Z", and "_".

@@ -61,6 +61,15 @@ namespace rl
 #endif // defined(WIN32) || defined(__QNX__)
 			};
 			
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_9600BPS = BaudRate::b9600;
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_19200BPS = BaudRate::b19200;
+#if defined(WIN32) || defined(__QNX__)
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_38400BPS = BaudRate::b38400;
+#else // defined(WIN32) || defined(__QNX__)
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_38400BPS = BaudRate::b38400;
+			RL_HAL_DEPRECATED static constexpr BaudRate BAUDRATE_500000BPS = BaudRate::b500000;
+#endif // defined(WIN32) || defined(__QNX__)
+			
 			enum class Measuring
 			{
 				/** 8 meter. */
@@ -77,11 +86,21 @@ namespace rl
 				m320
 			};
 			
+			RL_HAL_DEPRECATED static constexpr Measuring MEASURING_8M = Measuring::m8;
+			RL_HAL_DEPRECATED static constexpr Measuring MEASURING_16M = Measuring::m16;
+			RL_HAL_DEPRECATED static constexpr Measuring MEASURING_32M = Measuring::m32;
+			RL_HAL_DEPRECATED static constexpr Measuring MEASURING_80M = Measuring::m80;
+			RL_HAL_DEPRECATED static constexpr Measuring MEASURING_160M = Measuring::m160;
+			RL_HAL_DEPRECATED static constexpr Measuring MEASURING_320M = Measuring::m320;
+			
 			enum class Monitoring
 			{
 				continuous,
 				single
 			};
+			
+			RL_HAL_DEPRECATED static constexpr Monitoring MONITORING_CONTINUOUS = Monitoring::continuous;
+			RL_HAL_DEPRECATED static constexpr Monitoring MONITORING_SINGLE = Monitoring::single;
 			
 			enum class Variant
 			{
@@ -96,6 +115,12 @@ namespace rl
 				/** Angle = 180 degrees, resolution = 1 degree. */
 				v180_100
 			};
+			
+			RL_HAL_DEPRECATED static constexpr Variant VARIANT_100_25 = Variant::v100_25;
+			RL_HAL_DEPRECATED static constexpr Variant VARIANT_100_50 = Variant::v100_50;
+			RL_HAL_DEPRECATED static constexpr Variant VARIANT_100_100 = Variant::v100_100;
+			RL_HAL_DEPRECATED static constexpr Variant VARIANT_180_50 = Variant::v180_50;
+			RL_HAL_DEPRECATED static constexpr Variant VARIANT_180_100 = Variant::v180_100;
 			
 			/**
 			 * @param[in] password String with 8 characters comprising "0...9", "a...z", "A...Z", and "_".

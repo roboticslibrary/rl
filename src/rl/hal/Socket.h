@@ -96,6 +96,16 @@ namespace rl
 #endif // __APPLE__ || __QNX__ || WIN32 || __CYGWIN__
 			};
 			
+			RL_HAL_DEPRECATED static constexpr Option OPTION_KEEPALIVE = Option::keepalive;
+			RL_HAL_DEPRECATED static constexpr Option OPTION_MULTICAST_LOOP = Option::multicastLoop;
+			RL_HAL_DEPRECATED static constexpr Option OPTION_MULTICAST_TTL = Option::multicastTtl;
+#if defined(__APPLE__) || defined(__QNX__) || defined(WIN32) || defined(__CYGWIN__)
+			RL_HAL_DEPRECATED static constexpr Option OPTION_NODELAY = Option::nodelay;
+#else // __APPLE__ || __QNX__ || WIN32 || __CYGWIN__
+			RL_HAL_DEPRECATED static constexpr Option OPTION_NODELAY = Option::nodelay;
+			RL_HAL_DEPRECATED static constexpr Option OPTION_QUICKACK = Option::quickack;
+#endif // __APPLE__ || __QNX__ || WIN32 || __CYGWIN__
+			
 			Socket(const Socket& socket);
 			
 			virtual ~Socket();

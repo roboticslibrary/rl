@@ -31,6 +31,10 @@ namespace rl
 {
 	namespace mdl
 	{
+		constexpr JacobianInverseKinematics::Method JacobianInverseKinematics::METHOD_DLS;
+		constexpr JacobianInverseKinematics::Method JacobianInverseKinematics::METHOD_SVD;
+		constexpr JacobianInverseKinematics::Method JacobianInverseKinematics::METHOD_TRANSPOSE;
+		
 		JacobianInverseKinematics::JacobianInverseKinematics(Kinematic* kinematic) :
 			IterativeInverseKinematics(kinematic),
 			delta(::std::numeric_limits<::rl::math::Real>::infinity()),

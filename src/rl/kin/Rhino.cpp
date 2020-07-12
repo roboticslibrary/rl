@@ -37,6 +37,12 @@ namespace rl
 {
 	namespace kin
 	{
+		constexpr Rhino::Arm Rhino::ARM_LEFT;
+		constexpr Rhino::Arm Rhino::ARM_RIGHT;
+		
+		constexpr Rhino::Elbow Rhino::ELBOW_ABOVE;
+		constexpr Rhino::Elbow Rhino::ELBOW_BELOW;
+		
 		Rhino::Rhino() :
 			Kinematics(),
 			arm(Arm::left),

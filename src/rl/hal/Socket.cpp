@@ -55,6 +55,16 @@ namespace rl
 {
 	namespace hal
 	{
+		constexpr Socket::Option Socket::OPTION_KEEPALIVE;
+		constexpr Socket::Option Socket::OPTION_MULTICAST_LOOP;
+		constexpr Socket::Option Socket::OPTION_MULTICAST_TTL;
+#if defined(__APPLE__) || defined(__QNX__) || defined(WIN32) || defined(__CYGWIN__)
+		constexpr Socket::Option Socket::OPTION_NODELAY;
+#else // __APPLE__ || __QNX__ || WIN32 || __CYGWIN__
+		constexpr Socket::Option Socket::OPTION_NODELAY;
+		constexpr Socket::Option Socket::OPTION_QUICKACK;
+#endif // __APPLE__ || __QNX__ || WIN32 || __CYGWIN__
+		
 		struct Socket::Address::Impl
 		{
 			::sockaddr_storage addr;

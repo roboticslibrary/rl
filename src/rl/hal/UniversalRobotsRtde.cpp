@@ -36,6 +36,64 @@ namespace rl
 {
 	namespace hal
 	{
+		constexpr UniversalRobotsRtde::JointMode UniversalRobotsRtde::JOINT_MODE_SHUTTING_DOWN;
+		constexpr UniversalRobotsRtde::JointMode UniversalRobotsRtde::JOINT_MODE_PART_D_CALIBRATION;
+		constexpr UniversalRobotsRtde::JointMode UniversalRobotsRtde::JOINT_MODE_BACKDRIVE;
+		constexpr UniversalRobotsRtde::JointMode UniversalRobotsRtde::JOINT_MODE_POWER_OFF;
+		constexpr UniversalRobotsRtde::JointMode UniversalRobotsRtde::JOINT_MODE_NOT_RESPONDING;
+		constexpr UniversalRobotsRtde::JointMode UniversalRobotsRtde::JOINT_MODE_MOTOR_INITIALISATION;
+		constexpr UniversalRobotsRtde::JointMode UniversalRobotsRtde::JOINT_MODE_BOOTING;
+		constexpr UniversalRobotsRtde::JointMode UniversalRobotsRtde::JOINT_MODE_PART_D_CALIBRATION_ERROR;
+		constexpr UniversalRobotsRtde::JointMode UniversalRobotsRtde::JOINT_MODE_BOOTLOADER;
+		constexpr UniversalRobotsRtde::JointMode UniversalRobotsRtde::JOINT_MODE_CALIBRATION;
+		constexpr UniversalRobotsRtde::JointMode UniversalRobotsRtde::JOINT_MODE_FAULT;
+		constexpr UniversalRobotsRtde::JointMode UniversalRobotsRtde::JOINT_MODE_RUNNING;
+		constexpr UniversalRobotsRtde::JointMode UniversalRobotsRtde::JOINT_MODE_IDLE_MODE;
+		
+		constexpr UniversalRobotsRtde::RobotMode UniversalRobotsRtde::ROBOT_MODE_DISCONNECTED;
+		constexpr UniversalRobotsRtde::RobotMode UniversalRobotsRtde::ROBOT_MODE_CONFIRM_SAFETY;
+		constexpr UniversalRobotsRtde::RobotMode UniversalRobotsRtde::ROBOT_MODE_BOOTING;
+		constexpr UniversalRobotsRtde::RobotMode UniversalRobotsRtde::ROBOT_MODE_POWER_OFF;
+		constexpr UniversalRobotsRtde::RobotMode UniversalRobotsRtde::ROBOT_MODE_POWER_ON;
+		constexpr UniversalRobotsRtde::RobotMode UniversalRobotsRtde::ROBOT_MODE_IDLE;
+		constexpr UniversalRobotsRtde::RobotMode UniversalRobotsRtde::ROBOT_MODE_BACKDRIVE;
+		constexpr UniversalRobotsRtde::RobotMode UniversalRobotsRtde::ROBOT_MODE_RUNNING;
+		constexpr UniversalRobotsRtde::RobotMode UniversalRobotsRtde::ROBOT_MODE_UPDATING_FIRMWARE;
+		
+		constexpr UniversalRobotsRtde::RobotStatus UniversalRobotsRtde::ROBOT_STATUS_POWER_ON;
+		constexpr UniversalRobotsRtde::RobotStatus UniversalRobotsRtde::ROBOT_STATUS_PROGRAM_RUNNING;
+		constexpr UniversalRobotsRtde::RobotStatus UniversalRobotsRtde::ROBOT_STATUS_TEACH_BUTTON_PRESSED;
+		constexpr UniversalRobotsRtde::RobotStatus UniversalRobotsRtde::ROBOT_STATUS_POWER_BUTTON_PRESSED;
+		
+		constexpr UniversalRobotsRtde::RuntimeState UniversalRobotsRtde::RUNTIME_STATE_STOPPING;
+		constexpr UniversalRobotsRtde::RuntimeState UniversalRobotsRtde::RUNTIME_STATE_STOPPED;
+		constexpr UniversalRobotsRtde::RuntimeState UniversalRobotsRtde::RUNTIME_STATE_PLAYING;
+		constexpr UniversalRobotsRtde::RuntimeState UniversalRobotsRtde::RUNTIME_STATE_PAUSING;
+		constexpr UniversalRobotsRtde::RuntimeState UniversalRobotsRtde::RUNTIME_STATE_PAUSED;
+		constexpr UniversalRobotsRtde::RuntimeState UniversalRobotsRtde::RUNTIME_STATE_RESUMING;
+		
+		constexpr UniversalRobotsRtde::SafetyMode UniversalRobotsRtde::SAFETY_MODE_NORMAL;
+		constexpr UniversalRobotsRtde::SafetyMode UniversalRobotsRtde::SAFETY_MODE_REDUCED;
+		constexpr UniversalRobotsRtde::SafetyMode UniversalRobotsRtde::SAFETY_MODE_PROTECTIVE_STOP;
+		constexpr UniversalRobotsRtde::SafetyMode UniversalRobotsRtde::SAFETY_MODE_RECOVERY;
+		constexpr UniversalRobotsRtde::SafetyMode UniversalRobotsRtde::SAFETY_MODE_SAFEGUARD_STOP;
+		constexpr UniversalRobotsRtde::SafetyMode UniversalRobotsRtde::SAFETY_MODE_SYSTEM_EMERGENCY_STOP;
+		constexpr UniversalRobotsRtde::SafetyMode UniversalRobotsRtde::SAFETY_MODE_ROBOT_EMERGENCY_STOP;
+		constexpr UniversalRobotsRtde::SafetyMode UniversalRobotsRtde::SAFETY_MODE_VIOLATION;
+		constexpr UniversalRobotsRtde::SafetyMode UniversalRobotsRtde::SAFETY_MODE_FAULT;
+		
+		constexpr UniversalRobotsRtde::SafetyStatus UniversalRobotsRtde::SAFETY_STATUS_NORMAL_MODE;
+		constexpr UniversalRobotsRtde::SafetyStatus UniversalRobotsRtde::SAFETY_STATUS_REDUCED_MODE;
+		constexpr UniversalRobotsRtde::SafetyStatus UniversalRobotsRtde::SAFETY_STATUS_PROTECTIVE_STOPPED;
+		constexpr UniversalRobotsRtde::SafetyStatus UniversalRobotsRtde::SAFETY_STATUS_RECOVERY_MODE;
+		constexpr UniversalRobotsRtde::SafetyStatus UniversalRobotsRtde::SAFETY_STATUS_SAFEGUARD_STOPPED;
+		constexpr UniversalRobotsRtde::SafetyStatus UniversalRobotsRtde::SAFETY_STATUS_SYSTEM_EMERGENCY_STOPPED;
+		constexpr UniversalRobotsRtde::SafetyStatus UniversalRobotsRtde::SAFETY_STATUS_ROBOT_EMERGENCY_STOPPED;
+		constexpr UniversalRobotsRtde::SafetyStatus UniversalRobotsRtde::SAFETY_STATUS_EMERGENCY_STOPPED;
+		constexpr UniversalRobotsRtde::SafetyStatus UniversalRobotsRtde::SAFETY_STATUS_VIOLATION;
+		constexpr UniversalRobotsRtde::SafetyStatus UniversalRobotsRtde::SAFETY_STATUS_FAULT;
+		constexpr UniversalRobotsRtde::SafetyStatus UniversalRobotsRtde::SAFETY_STATUS_STOPPED_DUE_TO_SAFETY;
+		
 		UniversalRobotsRtde::UniversalRobotsRtde(const ::std::string& address, const ::std::chrono::nanoseconds& updateRate) :
 			AxisController(6),
 			CyclicDevice(updateRate),

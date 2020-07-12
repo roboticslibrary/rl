@@ -82,6 +82,22 @@ namespace rl
 				idle = 255
 			};
 			
+			RL_HAL_DEPRECATED static constexpr JointMode JOINT_MODE_RESET = JointMode::reset;
+			RL_HAL_DEPRECATED static constexpr JointMode JOINT_MODE_SHUTTING_DOWN = JointMode::shuttingDown;
+			RL_HAL_DEPRECATED static constexpr JointMode JOINT_MODE_PART_D_CALIBRATION = JointMode::partDCalibration;
+			RL_HAL_DEPRECATED static constexpr JointMode JOINT_MODE_BACKDRIVE = JointMode::backdrive;
+			RL_HAL_DEPRECATED static constexpr JointMode JOINT_MODE_POWER_OFF = JointMode::powerOff;
+			RL_HAL_DEPRECATED static constexpr JointMode JOINT_MODE_NOT_RESPONDING = JointMode::notResponding;
+			RL_HAL_DEPRECATED static constexpr JointMode JOINT_MODE_MOTOR_INITIALISATION = JointMode::motorInitialisation;
+			RL_HAL_DEPRECATED static constexpr JointMode JOINT_MODE_BOOTING = JointMode::booting;
+			RL_HAL_DEPRECATED static constexpr JointMode JOINT_MODE_PART_D_CALIBRATION_ERROR = JointMode::partDCalibrationError;
+			RL_HAL_DEPRECATED static constexpr JointMode JOINT_MODE_BOOTLOADER = JointMode::bootloader;
+			RL_HAL_DEPRECATED static constexpr JointMode JOINT_MODE_CALIBRATION = JointMode::calibration;
+			RL_HAL_DEPRECATED static constexpr JointMode JOINT_MODE_VIOLATION = JointMode::violation;
+			RL_HAL_DEPRECATED static constexpr JointMode JOINT_MODE_FAULT = JointMode::fault;
+			RL_HAL_DEPRECATED static constexpr JointMode JOINT_MODE_RUNNING = JointMode::running;
+			RL_HAL_DEPRECATED static constexpr JointMode JOINT_MODE_IDLE = JointMode::idle;
+			
 			enum class ProgramState
 			{
 				stopping = 0,
@@ -91,6 +107,13 @@ namespace rl
 				paused = 4,
 				resuming = 5
 			};
+			
+			RL_HAL_DEPRECATED static constexpr ProgramState PROGRAM_STATE_STOPPING = ProgramState::stopping;
+			RL_HAL_DEPRECATED static constexpr ProgramState PROGRAM_STATE_STOPPED = ProgramState::stopped;
+			RL_HAL_DEPRECATED static constexpr ProgramState PROGRAM_STATE_PLAYING = ProgramState::playing;
+			RL_HAL_DEPRECATED static constexpr ProgramState PROGRAM_STATE_PAUSING = ProgramState::pausing;
+			RL_HAL_DEPRECATED static constexpr ProgramState PROGRAM_STATE_PAUSED = ProgramState::paused;
+			RL_HAL_DEPRECATED static constexpr ProgramState PROGRAM_STATE_RESUMING = ProgramState::resuming;
 			
 			enum class RobotMode
 			{
@@ -106,6 +129,17 @@ namespace rl
 				updatingFirmware = 8
 			};
 			
+			RL_HAL_DEPRECATED static constexpr RobotMode ROBOT_MODE_NO_CONTROLLER = RobotMode::noController;
+			RL_HAL_DEPRECATED static constexpr RobotMode ROBOT_MODE_DISCONNECTED = RobotMode::disconnected;
+			RL_HAL_DEPRECATED static constexpr RobotMode ROBOT_MODE_CONFIRM_SAFETY = RobotMode::confirmSafety;
+			RL_HAL_DEPRECATED static constexpr RobotMode ROBOT_MODE_BOOTING = RobotMode::booting;
+			RL_HAL_DEPRECATED static constexpr RobotMode ROBOT_MODE_POWER_OFF = RobotMode::powerOff;
+			RL_HAL_DEPRECATED static constexpr RobotMode ROBOT_MODE_POWER_ON = RobotMode::powerOn;
+			RL_HAL_DEPRECATED static constexpr RobotMode ROBOT_MODE_IDLE = RobotMode::idle;
+			RL_HAL_DEPRECATED static constexpr RobotMode ROBOT_MODE_BACKDRIVE = RobotMode::backdrive;
+			RL_HAL_DEPRECATED static constexpr RobotMode ROBOT_MODE_RUNNING = RobotMode::running;
+			RL_HAL_DEPRECATED static constexpr RobotMode ROBOT_MODE_UPDATING_FIRMWARE = RobotMode::updatingFirmware;
+			
 			enum class SafetyMode
 			{
 				normal = 1,
@@ -120,6 +154,18 @@ namespace rl
 				validateJointId = 10,
 				undefinedSafetyMode = 11
 			};
+			
+			RL_HAL_DEPRECATED static constexpr SafetyMode SAFETY_MODE_NORMAL = SafetyMode::normal;
+			RL_HAL_DEPRECATED static constexpr SafetyMode SAFETY_MODE_REDUCED = SafetyMode::reduced;
+			RL_HAL_DEPRECATED static constexpr SafetyMode SAFETY_MODE_PROTECTIVE_STOP = SafetyMode::protectiveStop;
+			RL_HAL_DEPRECATED static constexpr SafetyMode SAFETY_MODE_RECOVERY = SafetyMode::recovery;
+			RL_HAL_DEPRECATED static constexpr SafetyMode SAFETY_MODE_SAFEGUARD_STOP = SafetyMode::safeguardStop;
+			RL_HAL_DEPRECATED static constexpr SafetyMode SAFETY_MODE_SYSTEM_EMERGENCY_STOP = SafetyMode::systemEmergencyStop;
+			RL_HAL_DEPRECATED static constexpr SafetyMode SAFETY_MODE_ROBOT_EMERGENCY_STOP = SafetyMode::robotEmergencyStop;
+			RL_HAL_DEPRECATED static constexpr SafetyMode SAFETY_MODE_VIOLATION = SafetyMode::violation;
+			RL_HAL_DEPRECATED static constexpr SafetyMode SAFETY_MODE_FAULT = SafetyMode::fault;
+			RL_HAL_DEPRECATED static constexpr SafetyMode SAFETY_MODE_VALIDATE_JOINT_ID = SafetyMode::validateJointId;
+			RL_HAL_DEPRECATED static constexpr SafetyMode SAFETY_MODE_UNDEFINED_SAFETY_MODE = SafetyMode::undefinedSafetyMode;
 			
 			enum class SafetyStatus
 			{
@@ -137,6 +183,20 @@ namespace rl
 				automaticModeSafeguardStop = 12,
 				systemThreePositionEnablingStop = 13
 			};
+			
+			RL_HAL_DEPRECATED static constexpr SafetyStatus SAFETY_STATUS_NORMAL = SafetyStatus::normal;
+			RL_HAL_DEPRECATED static constexpr SafetyStatus SAFETY_STATUS_REDUCED = SafetyStatus::reduced;
+			RL_HAL_DEPRECATED static constexpr SafetyStatus SAFETY_STATUS_PROTECTIVE_STOP = SafetyStatus::protectiveStop;
+			RL_HAL_DEPRECATED static constexpr SafetyStatus SAFETY_STATUS_RECOVERY = SafetyStatus::recovery;
+			RL_HAL_DEPRECATED static constexpr SafetyStatus SAFETY_STATUS_SAFEGUARD_STOP = SafetyStatus::safeguardStop;
+			RL_HAL_DEPRECATED static constexpr SafetyStatus SAFETY_STATUS_SYSTEM_EMERGENCY_STOP = SafetyStatus::systemEmergencyStop;
+			RL_HAL_DEPRECATED static constexpr SafetyStatus SAFETY_STATUS_ROBOT_EMERGENCY_STOP = SafetyStatus::robotEmergencyStop;
+			RL_HAL_DEPRECATED static constexpr SafetyStatus SAFETY_STATUS_VIOLATION = SafetyStatus::violation;
+			RL_HAL_DEPRECATED static constexpr SafetyStatus SAFETY_STATUS_FAULT = SafetyStatus::fault;
+			RL_HAL_DEPRECATED static constexpr SafetyStatus SAFETY_STATUS_VALIDATE_JOINT_ID = SafetyStatus::validateJointId;
+			RL_HAL_DEPRECATED static constexpr SafetyStatus SAFETY_STATUS_UNDEFINED_SAFETY_MODE = SafetyStatus::undefinedSafetyMode;
+			RL_HAL_DEPRECATED static constexpr SafetyStatus SAFETY_STATUS_AUTOMATIC_MODE_SAFEGUARD_STOP = SafetyStatus::automaticModeSafeguardStop;
+			RL_HAL_DEPRECATED static constexpr SafetyStatus SAFETY_STATUS_SYSTEM_THREE_POSITION_ENABLING_STOP = SafetyStatus::systemThreePositionEnablingStop;
 			
 			UniversalRobotsRealtime(const ::std::string& address);
 			

@@ -36,6 +36,10 @@ namespace rl
 {
 	namespace plan
 	{
+		constexpr WorkspaceSphereExplorer::Greedy WorkspaceSphereExplorer::GREEDY_DISTANCE;
+		constexpr WorkspaceSphereExplorer::Greedy WorkspaceSphereExplorer::GREEDY_SOURCE_DISTANCE;
+		constexpr WorkspaceSphereExplorer::Greedy WorkspaceSphereExplorer::GREEDY_SPACE;
+		
 		WorkspaceSphereExplorer::WorkspaceSphereExplorer() :
 			boundingBox(
 				::rl::math::Vector3::Constant(-::std::numeric_limits<::rl::math::Real>::max()),

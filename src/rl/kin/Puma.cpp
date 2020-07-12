@@ -37,6 +37,15 @@ namespace rl
 {
 	namespace kin
 	{
+		constexpr Puma::Arm Puma::ARM_LEFT;
+		constexpr Puma::Arm Puma::ARM_RIGHT;
+		
+		constexpr Puma::Elbow Puma::ELBOW_ABOVE;
+		constexpr Puma::Elbow Puma::ELBOW_BELOW;
+		
+		constexpr Puma::Wrist Puma::WRIST_FLIP;
+		constexpr Puma::Wrist Puma::WRIST_NONFLIP;
+		
 		Puma::Puma() :
 			Kinematics(),
 			arm(Arm::left),

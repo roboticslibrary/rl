@@ -34,6 +34,39 @@ namespace rl
 {
 	namespace hal
 	{
+		constexpr RobotiqModelC::ActionStatus RobotiqModelC::ACTION_STATUS_STOPPED;
+		constexpr RobotiqModelC::ActionStatus RobotiqModelC::ACTION_STATUS_GOING;
+		
+		constexpr RobotiqModelC::ActivationStatus RobotiqModelC::ACTIVATION_STATUS_RESET;
+		constexpr RobotiqModelC::ActivationStatus RobotiqModelC::ACTIVATION_STATUS_READY;
+		
+		constexpr RobotiqModelC::FaultStatus RobotiqModelC::FAULT_STATUS_NONE;
+		constexpr RobotiqModelC::FaultStatus RobotiqModelC::FAULT_STATUS_UNKNOWN_1;
+		constexpr RobotiqModelC::FaultStatus RobotiqModelC::FAULT_STATUS_UNKNOWN_2;
+		constexpr RobotiqModelC::FaultStatus RobotiqModelC::FAULT_STATUS_UNKNOWN_3;
+		constexpr RobotiqModelC::FaultStatus RobotiqModelC::FAULT_STATUS_UNKNOWN_4;
+		constexpr RobotiqModelC::FaultStatus RobotiqModelC::FAULT_STATUS_NOTICE_ACTIVATION_DELAYED;
+		constexpr RobotiqModelC::FaultStatus RobotiqModelC::FAULT_STATUS_NOTICE_MODE_DELAYED;
+		constexpr RobotiqModelC::FaultStatus RobotiqModelC::FAULT_STATUS_NOTICE_ACTIVATION_NEEDED;
+		constexpr RobotiqModelC::FaultStatus RobotiqModelC::FAULT_STATUS_WARNING_TEMPERATURE;
+		constexpr RobotiqModelC::FaultStatus RobotiqModelC::FAULT_STATUS_WARNING_COMM_NOT_READY;
+		constexpr RobotiqModelC::FaultStatus RobotiqModelC::FAULT_STATUS_WARNING_VOLTAGE;
+		constexpr RobotiqModelC::FaultStatus RobotiqModelC::FAULT_STATUS_WARNING_AUTOMATIC_RELEASE;
+		constexpr RobotiqModelC::FaultStatus RobotiqModelC::FAULT_STATUS_ERROR_INTERNAL;
+		constexpr RobotiqModelC::FaultStatus RobotiqModelC::FAULT_STATUS_ERROR_ACTIVATION_FAULT;
+		constexpr RobotiqModelC::FaultStatus RobotiqModelC::FAULT_STATUS_ERROR_MODE_FAULT;
+		constexpr RobotiqModelC::FaultStatus RobotiqModelC::FAULT_STATUS_ERROR_AUTOMATIC_RELEASE_COMPLETE;
+		
+		constexpr RobotiqModelC::GripperStatus RobotiqModelC::GRIPPER_STATUS_RESET;
+		constexpr RobotiqModelC::GripperStatus RobotiqModelC::GRIPPER_STATUS_ACTIVATING;
+		constexpr RobotiqModelC::GripperStatus RobotiqModelC::GRIPPER_STATUS_UNUSED;
+		constexpr RobotiqModelC::GripperStatus RobotiqModelC::GRIPPER_STATUS_READY;
+		
+		constexpr RobotiqModelC::ObjectStatus RobotiqModelC::OBJECT_STATUS_MOTION;
+		constexpr RobotiqModelC::ObjectStatus RobotiqModelC::OBJECT_STATUS_CONTACT_OPEN;
+		constexpr RobotiqModelC::ObjectStatus RobotiqModelC::OBJECT_STATUS_CONTACT_CLOSE;
+		constexpr RobotiqModelC::ObjectStatus RobotiqModelC::OBJECT_STATUS_MOTION_COMPLETE;
+		
 		RobotiqModelC::RobotiqModelC(const ::std::string& filename) :
 			CyclicDevice(::std::chrono::microseconds(5)),
 			Gripper(),

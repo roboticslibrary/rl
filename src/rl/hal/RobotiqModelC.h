@@ -48,11 +48,17 @@ namespace rl
 				going = 0x01
 			};
 			
+			RL_HAL_DEPRECATED static constexpr ActionStatus ACTION_STATUS_STOPPED = ActionStatus::stopped;
+			RL_HAL_DEPRECATED static constexpr ActionStatus ACTION_STATUS_GOING = ActionStatus::going;
+			
 			enum class ActivationStatus
 			{
 				reset = 0x00,
 				ready = 0x01
 			};
+			
+			RL_HAL_DEPRECATED static constexpr ActivationStatus ACTIVATION_STATUS_RESET = ActivationStatus::reset;
+			RL_HAL_DEPRECATED static constexpr ActivationStatus ACTIVATION_STATUS_READY = ActivationStatus::ready;
 			
 			enum class FaultStatus
 			{
@@ -74,6 +80,23 @@ namespace rl
 				errorAutomaticReleaseComplete = 0x0f
 			};
 			
+			RL_HAL_DEPRECATED static constexpr FaultStatus FAULT_STATUS_NONE = FaultStatus::none;
+			RL_HAL_DEPRECATED static constexpr FaultStatus FAULT_STATUS_UNKNOWN_1 = FaultStatus::unknown1;
+			RL_HAL_DEPRECATED static constexpr FaultStatus FAULT_STATUS_UNKNOWN_2 = FaultStatus::unknown2;
+			RL_HAL_DEPRECATED static constexpr FaultStatus FAULT_STATUS_UNKNOWN_3 = FaultStatus::unknown3;
+			RL_HAL_DEPRECATED static constexpr FaultStatus FAULT_STATUS_UNKNOWN_4 = FaultStatus::unknown4;
+			RL_HAL_DEPRECATED static constexpr FaultStatus FAULT_STATUS_NOTICE_ACTIVATION_DELAYED = FaultStatus::noticeActivationDelayed;
+			RL_HAL_DEPRECATED static constexpr FaultStatus FAULT_STATUS_NOTICE_MODE_DELAYED = FaultStatus::noticeModeDelayed;
+			RL_HAL_DEPRECATED static constexpr FaultStatus FAULT_STATUS_NOTICE_ACTIVATION_NEEDED = FaultStatus::noticeActivationNeeded;
+			RL_HAL_DEPRECATED static constexpr FaultStatus FAULT_STATUS_WARNING_TEMPERATURE = FaultStatus::warningTemperature;
+			RL_HAL_DEPRECATED static constexpr FaultStatus FAULT_STATUS_WARNING_COMM_NOT_READY = FaultStatus::warningCommNotReady;
+			RL_HAL_DEPRECATED static constexpr FaultStatus FAULT_STATUS_WARNING_VOLTAGE = FaultStatus::warningVoltage;
+			RL_HAL_DEPRECATED static constexpr FaultStatus FAULT_STATUS_WARNING_AUTOMATIC_RELEASE = FaultStatus::warningAutomaticRelease;
+			RL_HAL_DEPRECATED static constexpr FaultStatus FAULT_STATUS_ERROR_INTERNAL = FaultStatus::errorInternal;
+			RL_HAL_DEPRECATED static constexpr FaultStatus FAULT_STATUS_ERROR_ACTIVATION_FAULT = FaultStatus::errorActivationFault;
+			RL_HAL_DEPRECATED static constexpr FaultStatus FAULT_STATUS_ERROR_MODE_FAULT = FaultStatus::errorModeFault;
+			RL_HAL_DEPRECATED static constexpr FaultStatus FAULT_STATUS_ERROR_AUTOMATIC_RELEASE_COMPLETE = FaultStatus::errorAutomaticReleaseComplete;
+			
 			enum class GripperStatus
 			{
 				reset = 0x00,
@@ -82,6 +105,11 @@ namespace rl
 				ready = 0x03
 			};
 			
+			RL_HAL_DEPRECATED static constexpr GripperStatus GRIPPER_STATUS_RESET = GripperStatus::reset;
+			RL_HAL_DEPRECATED static constexpr GripperStatus GRIPPER_STATUS_ACTIVATING = GripperStatus::activating;
+			RL_HAL_DEPRECATED static constexpr GripperStatus GRIPPER_STATUS_UNUSED = GripperStatus::unused;
+			RL_HAL_DEPRECATED static constexpr GripperStatus GRIPPER_STATUS_READY = GripperStatus::ready;
+			
 			enum class ObjectStatus
 			{
 				motion = 0x00,
@@ -89,6 +117,11 @@ namespace rl
 				contactClose = 0x02,
 				motionComplete = 0x03
 			};
+			
+			RL_HAL_DEPRECATED static constexpr ObjectStatus OBJECT_STATUS_MOTION = ObjectStatus::motion;
+			RL_HAL_DEPRECATED static constexpr ObjectStatus OBJECT_STATUS_CONTACT_OPEN = ObjectStatus::contactOpen;
+			RL_HAL_DEPRECATED static constexpr ObjectStatus OBJECT_STATUS_CONTACT_CLOSE = ObjectStatus::contactClose;
+			RL_HAL_DEPRECATED static constexpr ObjectStatus OBJECT_STATUS_MOTION_COMPLETE = ObjectStatus::motionComplete;
 			
 			class Exception : public DeviceException
 			{

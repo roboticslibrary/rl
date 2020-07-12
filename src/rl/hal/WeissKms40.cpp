@@ -34,6 +34,26 @@ namespace rl
 {
 	namespace hal
 	{
+		constexpr WeissKms40::SystemState WeissKms40::SYSTEM_STATE_SCRIPT_FAILURE;
+		constexpr WeissKms40::SystemState WeissKms40::SYSTEM_STATE_CMD_FAILURE;
+		constexpr WeissKms40::SystemState WeissKms40::SYSTEM_STATE_POWER_FAULT;
+		constexpr WeissKms40::SystemState WeissKms40::SYSTEM_STATE_TEMP_FAULT;
+		constexpr WeissKms40::SystemState WeissKms40::SYSTEM_STATE_CALIBRATION_FAULT;
+		constexpr WeissKms40::SystemState WeissKms40::SYSTEM_STATE_OVERRUN_MZ;
+		constexpr WeissKms40::SystemState WeissKms40::SYSTEM_STATE_OVERRUN_MY;
+		constexpr WeissKms40::SystemState WeissKms40::SYSTEM_STATE_OVERRUN_MX;
+		constexpr WeissKms40::SystemState WeissKms40::SYSTEM_STATE_OVERRUN_FZ;
+		constexpr WeissKms40::SystemState WeissKms40::SYSTEM_STATE_OVERRUN_FY;
+		constexpr WeissKms40::SystemState WeissKms40::SYSTEM_STATE_OVERRUN_FX;
+		constexpr WeissKms40::SystemState WeissKms40::SYSTEM_STATE_TEMP_WARNING;
+		constexpr WeissKms40::SystemState WeissKms40::SYSTEM_STATE_CALIBRATION_EXPIRED;
+		constexpr WeissKms40::SystemState WeissKms40::SYSTEM_STATE_SCRIPT_RUNNING;
+		constexpr WeissKms40::SystemState WeissKms40::SYSTEM_STATE_DAQ_RUNNING;
+		constexpr WeissKms40::SystemState WeissKms40::SYSTEM_STATE_FILTER_ENABLED;
+		constexpr WeissKms40::SystemState WeissKms40::SYSTEM_STATE_TARA;
+		constexpr WeissKms40::SystemState WeissKms40::SYSTEM_STATE_STABLE;
+		constexpr WeissKms40::SystemState WeissKms40::SYSTEM_STATE_CALIBRATION_VALID;
+		
 		WeissKms40::WeissKms40(
 			const ::std::string& address,
 			const unsigned short int& port,

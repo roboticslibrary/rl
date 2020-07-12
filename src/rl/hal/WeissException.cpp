@@ -30,6 +30,38 @@ namespace rl
 {
 	namespace hal
 	{
+		constexpr WeissException::Code WeissException::CODE_SUCCESS;
+		constexpr WeissException::Code WeissException::CODE_NOT_AVAILABLE;
+		constexpr WeissException::Code WeissException::CODE_NO_SENSOR;
+		constexpr WeissException::Code WeissException::CODE_NOT_INITIALIZED;
+		constexpr WeissException::Code WeissException::CODE_ALREADY_RUNNING;
+		constexpr WeissException::Code WeissException::CODE_FEATURE_NOT_SUPPORTED;
+		constexpr WeissException::Code WeissException::CODE_INCONSISTENT_DATA;
+		constexpr WeissException::Code WeissException::CODE_TIMEOUT;
+		constexpr WeissException::Code WeissException::CODE_READ_ERROR;
+		constexpr WeissException::Code WeissException::CODE_WRITE_ERROR;
+		constexpr WeissException::Code WeissException::CODE_INSUFFICIENT_RESOURCES;
+		constexpr WeissException::Code WeissException::CODE_CHECKSUM_ERROR;
+		constexpr WeissException::Code WeissException::CODE_NO_PARAM_EXPECTED;
+		constexpr WeissException::Code WeissException::CODE_NOT_ENOUGH_PARAMS;
+		constexpr WeissException::Code WeissException::CODE_COMMAND_UNKNOWN;
+		constexpr WeissException::Code WeissException::CODE_COMMAND_FORMAT_ERROR;
+		constexpr WeissException::Code WeissException::CODE_ACCESS_DENIED;
+		constexpr WeissException::Code WeissException::CODE_ALREADY_OPEN;
+		constexpr WeissException::Code WeissException::CODE_COMMAND_FAILED;
+		constexpr WeissException::Code WeissException::CODE_COMMAND_ABORTED;
+		constexpr WeissException::Code WeissException::CODE_INVALID_HANDLE;
+		constexpr WeissException::Code WeissException::CODE_NOT_FOUND;
+		constexpr WeissException::Code WeissException::CODE_NOT_OPEN;
+		constexpr WeissException::Code WeissException::CODE_IO_ERROR;
+		constexpr WeissException::Code WeissException::CODE_INVALID_PARAMETER;
+		constexpr WeissException::Code WeissException::CODE_INDEX_OUT_OF_BOUNDS;
+		constexpr WeissException::Code WeissException::CODE_COMMAND_PENDING;
+		constexpr WeissException::Code WeissException::CODE_OVERRUN;
+		constexpr WeissException::Code WeissException::CODE_RANGE_ERROR;
+		constexpr WeissException::Code WeissException::CODE_AXIS_BLOCKED;
+		constexpr WeissException::Code WeissException::CODE_FILE_EXISTS;
+		
 		WeissException::WeissException(const Code& code) :
 			DeviceException(""),
 			code(code)
