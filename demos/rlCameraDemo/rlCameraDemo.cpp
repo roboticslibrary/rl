@@ -48,19 +48,19 @@ main(int argc, char** argv)
 		dc1394.setFeatureMode(rl::hal::Dc1394Camera::Feature::shutter, rl::hal::Dc1394Camera::FeatureMode::automatic);
 		dc1394.setFeatureMode(rl::hal::Dc1394Camera::Feature::whiteBalance, rl::hal::Dc1394Camera::FeatureMode::automatic);
 		
-		unsigned char image[dc1394.getSize()];
+		std::vector<unsigned char> image(dc1394.getSize());
 		
 		for (unsigned int i = 0; i < 1; ++i)
 		{
 			dc1394.step();
-			dc1394.grab(image);
+			dc1394.grab(image.data());
 			
 			std::stringstream filename;
 			filename << "image" << i << ".pgm";
 			
 			FILE* imagefile = fopen(filename.str().c_str(), "w");
 			fprintf(imagefile, "P6\n%u %u\n255\n", dc1394.getWidth(), dc1394.getHeight());
-			fwrite(image, 1, dc1394.getSize(), imagefile);
+			fwrite(image.data(), 1, image.size(), imagefile);
 			fclose(imagefile);
 		}
 		
