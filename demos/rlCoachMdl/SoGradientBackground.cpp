@@ -38,7 +38,7 @@
 
 #include "SoGradientBackground.h"
 
-SO_NODE_SOURCE(SoGradientBackground);
+SO_NODE_SOURCE(SoGradientBackground)
 
 SoGradientBackground::SoGradientBackground() :
 	SoNode(),

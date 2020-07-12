@@ -116,7 +116,7 @@ namespace rl
 		private:
 			Code code;
 		};
-	};
+	}
 }
 
 #endif // RL_HAL_WEISSEXCEPTION_H
