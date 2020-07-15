@@ -77,26 +77,26 @@ namespace rl
 			{
 				switch (this->object->type)
 				{
-				case XPATH_UNDEFINED:
+				case ::XPATH_UNDEFINED:
 					throw ::std::bad_typeid();
 					break;
-				case XPATH_NODESET:
+				case ::XPATH_NODESET:
 					return typeid(NodeSet);
 					break;
-				case XPATH_BOOLEAN:
+				case ::XPATH_BOOLEAN:
 					return typeid(this->object->boolval);
 					break;
-				case XPATH_NUMBER:
+				case ::XPATH_NUMBER:
 					return typeid(this->object->floatval);
 					break;
-				case XPATH_STRING:
+				case ::XPATH_STRING:
 					return typeid(this->object->stringval);
 					break;
-				case XPATH_POINT:
-				case XPATH_RANGE:
-				case XPATH_LOCATIONSET:
-				case XPATH_USERS:
-				case XPATH_XSLT_TREE:
+				case ::XPATH_POINT:
+				case ::XPATH_RANGE:
+				case ::XPATH_LOCATIONSET:
+				case ::XPATH_USERS:
+				case ::XPATH_XSLT_TREE:
 				default:
 					throw ::std::bad_typeid();
 					break;
