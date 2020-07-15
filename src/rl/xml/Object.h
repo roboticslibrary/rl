@@ -31,6 +31,7 @@
 #include <string>
 #include <boost/numeric/conversion/cast.hpp>
 #include <libxml/xpath.h>
+#include <libxml/xpointer.h>
 
 #include "Node.h"
 #include "NodeSet.h"
@@ -44,12 +45,23 @@ namespace rl
 		public:
 			explicit Object(::xmlXPathObjectPtr object) :
 				object(object, ::xmlXPathFreeNodeSetList),
-				nodeSet(object->nodesetval, ::xmlXPathFreeNodeSet)
+				nodeSet(nullptr != object ? object->nodesetval : nullptr, ::xmlXPathFreeNodeSet)
 			{
 			}
 			
 			~Object()
 			{
+				if (nullptr != this->object)
+				{
+					if (::XPATH_LOCATIONSET == this->object->type && nullptr != this->object->user)
+					{
+						::xmlXPtrFreeLocationSet(static_cast<::xmlLocationSetPtr>(this->object->user));
+					}
+					else if (::XPATH_STRING == this->object->type && nullptr != this->object->stringval)
+					{
+						::xmlFree(this->object->stringval);
+					}
+				}
 			}
 			
 			xmlXPathObjectPtr get() const
