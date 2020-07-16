@@ -113,7 +113,6 @@ namespace rl
 				assert(TypeTraits<T>::size(y[0]) == TypeTraits<T>::size(yd1));
 				
 				::std::size_t n = y.size();
-				::std::size_t dim = TypeTraits<T>::size(y[0]);
 				
 				const Container2& a = y;
 				Container1 h(n - 1);
@@ -355,7 +354,6 @@ namespace rl
 					parabolicIntervalNext = ::std::min(parabolicIntervalNext, parabolicIntervalNextNext);
 					Real deltaXPrev = x[i] - x[i - 1];
 					Real deltaXNext = x[i + 1] - x[i];
-					Real deltaXNextNext = x[i + 2] - x[i + 1];
 					Real linearInterval = deltaXNext - (parabolicIntervalPrev/2) - (parabolicIntervalNext/2);
 					assert(deltaXPrev > parabolicIntervalPrev && deltaXNext > parabolicIntervalNext);
 					T ydPrev = (y[i] - y[i - 1]) / deltaXPrev;
@@ -502,7 +500,6 @@ namespace rl
 					quarticIntervalNext = ::std::min(quarticIntervalNext, quarticIntervalNextNext);
 					Real deltaXPrev = x[i] - x[i - 1];
 					Real deltaXNext = x[i + 1] - x[i];
-					Real deltaXNextNext = x[i + 2] - x[i + 1];
 					Real linearInterval = deltaXNext - (quarticIntervalPrev/2) - (quarticIntervalNext/2);
 					assert(deltaXPrev > quarticIntervalPrev && deltaXNext > quarticIntervalNext);
 					T ydPrev = (y[i] - y[i - 1]) / deltaXPrev;
@@ -649,7 +646,6 @@ namespace rl
 					sexticIntervalNext = ::std::min(sexticIntervalNext, sexticIntervalNextNext);
 					Real deltaXPrev = x[i] - x[i - 1];
 					Real deltaXNext = x[i + 1] - x[i];
-					Real deltaXNextNext = x[i + 2] - x[i + 1];
 					Real linearInterval = deltaXNext - (sexticIntervalPrev/2) - (sexticIntervalNext/2);
 					assert(deltaXPrev > sexticIntervalPrev && deltaXNext > sexticIntervalNext);
 					T ydPrev = (y[i] - y[i - 1]) / deltaXPrev;
