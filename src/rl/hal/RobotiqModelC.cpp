@@ -107,7 +107,7 @@ namespace rl
 			{
 				checksum ^= buf[i];
 				
-				for (::std::size_t i = 8; i != 0; --i)
+				for (::std::size_t j = 0; j < 8; ++j)
 				{
 					if (checksum & 0x0001)
 					{
