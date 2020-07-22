@@ -48,7 +48,8 @@ For first time users, please have a look at our <a href="https://www.roboticslib
 
   - rl::sg - Scene graph abstraction for collision checking, distance queries, raycasts, and visualization
   	- Basic scene graph hierarchy of a rl::sg::Scene containing multiple rl::sg::Model containing multiple rigid rl::sg::Body
-  	- Scene loader for XML/VRML files rl::sg::Scene::load
+  	- XML loader for scene descriptions rl::sg::XmlFactory
+  	- URDF loader for scene descriptions rl::sg::UrdfFactory
   	- Abstract collision checking call rl::sg::SimpleScene::areColliding
   	- Transparent wrappers for several collision checking libraries, Bullet Physics rl::sg::bullet::Scene, FCL rl::sg::fcl::Scene, Open Dynamics Engine rl::sg::ode::Scene, Proximity Query Package rl::sg::pqp::Scene, SOLID rl::sg::solid::Scene
   	- Visualization with Coin3D data structure with the VRML scene node rl::sg::so::Scene::root
