@@ -38,6 +38,7 @@
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/VRMLnodes/SoVRMLAppearance.h>
 #include <Inventor/VRMLnodes/SoVRMLBox.h>
+#include <Inventor/VRMLnodes/SoVRMLCoordinate.h>
 #include <Inventor/VRMLnodes/SoVRMLCylinder.h>
 #include <Inventor/VRMLnodes/SoVRMLGeometry.h>
 #include <Inventor/VRMLnodes/SoVRMLIndexedFaceSet.h>
@@ -350,6 +351,29 @@ namespace rl
 									{
 										::SoVRMLIndexedFaceSet* vrmlIndexedFaceSet = static_cast<::SoVRMLIndexedFaceSet*>(vrmlShape->geometry.getValue());
 										vrmlIndexedFaceSet->convex.setValue(false);
+										
+										::SoVRMLCoordinate* vrmlCoordinate = static_cast<::SoVRMLCoordinate*>(vrmlIndexedFaceSet->coord.getValue());
+										
+										if (!shapes[k].getProperty("scale").empty())
+										{
+											::SbVec3f scale(1.0f, 1.0f, 1.0f);
+											
+											::std::vector<::std::string> scales;
+											::std::string scaleProperty = shapes[k].getProperty("scale");
+											::boost::split(scales, scaleProperty, ::boost::algorithm::is_space(), ::boost::algorithm::token_compress_on);
+::std::cout << "\tscale: " << scales[0] << " " << scales[1] << " " << scales[2] << ::std::endl;
+											scale.setValue(::std::stof(scales[0]), ::std::stof(scales[1]), ::std::stof(scales[2]));
+											
+											for (int m = 0; m < vrmlCoordinate->point.getNum(); ++m)
+											{
+												vrmlCoordinate->point.set1Value(
+													m,
+													vrmlCoordinate->point[m][0] * scale[0],
+													vrmlCoordinate->point[m][1] * scale[1],
+													vrmlCoordinate->point[m][2] * scale[2]
+												);
+											}
+										}
 									}
 								}
 								
