@@ -44,7 +44,11 @@ namespace rl
 			
 			virtual ::std::string getName() const;
 			
+			::rl::math::Real getProbability() const;
+			
 			virtual void seed(const ::std::mt19937::result_type& value);
+			
+			void setProbability(const ::rl::math::Real& probability);
 			
 			/** Probability of choosing goal configuration. */
 			::rl::math::Real probability;

@@ -217,6 +217,30 @@ namespace rl
 			return false;
 		}
 		
+		const ::rl::math::AlignedBox3&
+		WorkspaceSphereExplorer::getBoundingBox() const
+		{
+			return this->boundingBox;
+		}
+		
+		::rl::math::Vector3*
+		WorkspaceSphereExplorer::getGoal() const
+		{
+			return this->goal;
+		}
+		
+		WorkspaceSphereExplorer::Greedy
+		WorkspaceSphereExplorer::getGreedy() const
+		{
+			return this->greedy;
+		}
+		
+		DistanceModel*
+		WorkspaceSphereExplorer::getModel() const
+		{
+			return this->model;
+		}
+		
 		WorkspaceSphereList
 		WorkspaceSphereExplorer::getPath() const
 		{
@@ -250,6 +274,36 @@ namespace rl
 #endif
 			
 			return path;
+		}
+		
+		::rl::math::Real
+		WorkspaceSphereExplorer::getRadius() const
+		{
+			return this->radius;
+		}
+		
+		::rl::math::Real
+		WorkspaceSphereExplorer::getRange() const
+		{
+			return this->range;
+		}
+		
+		::std::size_t
+		WorkspaceSphereExplorer::getSamples() const
+		{
+			return this->samples;
+		}
+		
+		::rl::math::Vector3*
+		WorkspaceSphereExplorer::getStart() const
+		{
+			return this->start;
+		}
+		
+		Viewer*
+		WorkspaceSphereExplorer::getViewer() const
+		{
+			return this->viewer;
 		}
 		
 		bool
@@ -302,6 +356,60 @@ namespace rl
 		WorkspaceSphereExplorer::seed(const ::std::mt19937::result_type& value)
 		{
 			this->randEngine.seed(value);
+		}
+		
+		void
+		WorkspaceSphereExplorer::setBoundingBox(const ::rl::math::AlignedBox3& boundingBox)
+		{
+			this->boundingBox = boundingBox;
+		}
+		
+		void
+		WorkspaceSphereExplorer::setGoal(::rl::math::Vector3* goal)
+		{
+			this->goal = goal;
+		}
+		
+		void
+		WorkspaceSphereExplorer::setGreedy(const Greedy& greedy)
+		{
+			this->greedy = greedy;
+		}
+		
+		void
+		WorkspaceSphereExplorer::setModel(DistanceModel* model)
+		{
+			this->model = model;
+		}
+		
+		void
+		WorkspaceSphereExplorer::setRadius(const ::rl::math::Real& radius)
+		{
+			this->radius = radius;
+		}
+		
+		void
+		WorkspaceSphereExplorer::setRange(const ::rl::math::Real& range)
+		{
+			this->range = range;
+		}
+		
+		void
+		WorkspaceSphereExplorer::setSamples(const ::std::size_t& samples)
+		{
+			this->samples = samples;
+		}
+		
+		void
+		WorkspaceSphereExplorer::setStart(::rl::math::Vector3* start)
+		{
+			this->start = start;
+		}
+		
+		void
+		WorkspaceSphereExplorer::setViewer(Viewer* viewer)
+		{
+			this->viewer = viewer;
 		}
 	}
 }

@@ -71,7 +71,7 @@ PlannerModel::data(const QModelIndex& index, int role) const
 		{
 		case 0:
 			return std::chrono::duration_cast<std::chrono::duration<double>>(
-				MainWindow::instance()->planner->duration
+				MainWindow::instance()->planner->getDuration()
 			).count();
 			break;
 		default:
@@ -83,34 +83,34 @@ PlannerModel::data(const QModelIndex& index, int role) const
 			switch (index.row())
 			{
 			case 4:
-				return eet->alpha;
+				return eet->getAlpha();
 				break;
 			case 5:
-				return eet->beta;
+				return eet->getBeta();
 				break;
 			case 6:
-				return eet->distanceWeight;
+				return eet->getDistanceWeight();
 				break;
 			case 7:
-				return eet->gamma;
+				return eet->getGamma();
 				break;
 			case 8:
-				return eet->max.x();
+				return eet->getMax().x();
 				break;
 			case 9:
-				return eet->max.y();
+				return eet->getMax().y();
 				break;
 			case 10:
-				return eet->max.z();
+				return eet->getMax().z();
 				break;
 			case 11:
-				return eet->min.x();
+				return eet->getMin().x();
 				break;
 			case 12:
-				return eet->min.y();
+				return eet->getMin().y();
 				break;
 			case 13:
-				return eet->min.z();
+				return eet->getMin().z();
 				break;
 			default:
 				break;
@@ -122,16 +122,16 @@ PlannerModel::data(const QModelIndex& index, int role) const
 			switch (index.row())
 			{
 			case 1:
-				return static_cast<unsigned int>(prm->degree);
+				return static_cast<unsigned int>(prm->getMaxDegree());
 				break;
 			case 2:
-				return prm->verifier->delta;
+				return prm->getVerifier()->getDelta();
 				break;
 			case 3:
-				return static_cast<unsigned int>(prm->k);
+				return static_cast<unsigned int>(prm->getMaxNeighbors());
 				break;
 			case 4:
-				return prm->radius;
+				return prm->getMaxRadius();
 				break;
 			default:
 				break;
@@ -143,10 +143,10 @@ PlannerModel::data(const QModelIndex& index, int role) const
 			switch (index.row())
 			{
 			case 1:
-				return rrt->delta;
+				return rrt->getDelta();
 				break;
 			case 2:
-				return rrt->epsilon;
+				return rrt->getEpsilon();
 				break;
 			default:
 				break;
@@ -158,7 +158,7 @@ PlannerModel::data(const QModelIndex& index, int role) const
 			switch (index.row())
 			{
 			case 3:
-				return rrtGoalBias->probability;
+				return rrtGoalBias->getProbability();
 				break;
 			default:
 				break;
@@ -350,8 +350,10 @@ PlannerModel::setData(const QModelIndex& index, const QVariant& value, int role)
 		switch (index.row())
 		{
 		case 0:
-			MainWindow::instance()->planner->duration = std::chrono::duration_cast<std::chrono::steady_clock::duration>(
-				std::chrono::duration<double>(value.value<double>())
+			MainWindow::instance()->planner->setDuration(
+				std::chrono::duration_cast<std::chrono::steady_clock::duration>(
+					std::chrono::duration<double>(value.value<double>())
+				)
 			);
 			break;
 		default:
@@ -363,34 +365,34 @@ PlannerModel::setData(const QModelIndex& index, const QVariant& value, int role)
 			switch (index.row())
 			{
 			case 4:
-				eet->alpha = value.value<rl::math::Real>();
+				eet->setAlpha(value.value<rl::math::Real>());
 				break;
 			case 5:
-				eet->beta = value.value<rl::math::Real>();
+				eet->setBeta(value.value<rl::math::Real>());
 				break;
 			case 6:
-				eet->distanceWeight = value.value<rl::math::Real>();
+				eet->setDistanceWeight(value.value<rl::math::Real>());
 				break;
 			case 7:
-				eet->gamma = value.value<rl::math::Real>();
+				eet->setGamma(value.value<rl::math::Real>());
 				break;
 			case 8:
-				eet->max.x() = value.value<rl::math::Real>();
+				eet->setMax(rl::math::Vector3(value.value<rl::math::Real>(), eet->getMax().y(), eet->getMax().z()));
 				break;
 			case 9:
-				eet->max.y() = value.value<rl::math::Real>();
+				eet->setMax(rl::math::Vector3(eet->getMax().x(), value.value<rl::math::Real>(), eet->getMax().z()));
 				break;
 			case 10:
-				eet->max.z() = value.value<rl::math::Real>();
+				eet->setMax(rl::math::Vector3(eet->getMax().x(), eet->getMax().y(), value.value<rl::math::Real>()));
 				break;
 			case 11:
-				eet->min.x() = value.value<rl::math::Real>();
+				eet->setMin(rl::math::Vector3(value.value<rl::math::Real>(), eet->getMin().y(), eet->getMin().z()));
 				break;
 			case 12:
-				eet->min.y() = value.value<rl::math::Real>();
+				eet->setMin(rl::math::Vector3(eet->getMin().x(), value.value<rl::math::Real>(), eet->getMin().z()));
 				break;
 			case 13:
-				eet->min.z() = value.value<rl::math::Real>();
+				eet->setMin(rl::math::Vector3(eet->getMin().x(), eet->getMin().y(), value.value<rl::math::Real>()));
 				break;
 			default:
 				break;
@@ -402,16 +404,16 @@ PlannerModel::setData(const QModelIndex& index, const QVariant& value, int role)
 			switch (index.row())
 			{
 			case 1:
-				prm->degree = value.value<std::size_t>();
+				prm->setMaxDegree(value.value<std::size_t>());
 				break;
 			case 2:
-				prm->verifier->delta = value.value<rl::math::Real>();
+				prm->getVerifier()->setDelta(value.value<rl::math::Real>());
 				break;
 			case 3:
-				prm->k = value.value<std::size_t>();
+				prm->setMaxNeighbors(value.value<std::size_t>());
 				break;
 			case 4:
-				prm->radius = value.value<rl::math::Real>();
+				prm->setMaxRadius(value.value<rl::math::Real>());
 				break;
 			default:
 				break;
@@ -423,10 +425,10 @@ PlannerModel::setData(const QModelIndex& index, const QVariant& value, int role)
 			switch (index.row())
 			{
 			case 1:
-				rrt->delta = value.value<rl::math::Real>();
+				rrt->setDelta(value.value<rl::math::Real>());
 				break;
 			case 2:
-				rrt->epsilon = value.value<rl::math::Real>();
+				rrt->setEpsilon(value.value<rl::math::Real>());
 				break;
 			default:
 				break;
@@ -438,7 +440,7 @@ PlannerModel::setData(const QModelIndex& index, const QVariant& value, int role)
 			switch (index.row())
 			{
 			case 3:
-				rrtGoalBias->probability = value.value<rl::math::Real>();
+				rrtGoalBias->setProbability(value.value<rl::math::Real>());
 				break;
 			default:
 				break;

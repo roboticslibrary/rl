@@ -140,43 +140,39 @@ main(int argc, char** argv)
 		planner.seed(0);
 		sampler.seed(0);
 		
-		explorer.goal = &explorerGoal;
-		explorer.greedy = rl::plan::WorkspaceSphereExplorer::Greedy::space;
-		explorer.model = &model;
-		explorer.radius = 0.025;
-		explorer.range = 45;
-		explorer.samples = 100;
-		explorer.start = &explorerStart;
+		explorer.setGoal(&explorerGoal);
+		explorer.setGreedy(rl::plan::WorkspaceSphereExplorer::Greedy::space);
+		explorer.setModel(&model);
+		explorer.setRadius(0.025);
+		explorer.setRange(45);
+		explorer.setSamples(100);
+		explorer.setStart(&explorerStart);
 		
 		explorerSetup.goalConfiguration = &goal;
 		explorerSetup.goalFrame = -1;
 		explorerSetup.startConfiguration = &start;
 		explorerSetup.startFrame = -1;
 		
-		planner.alpha = static_cast<rl::math::Real>(0.01);
-		planner.alternativeDistanceComputation = false;
-		planner.beta = 0;
-		planner.delta = 1 * rl::math::constants::deg2rad;
-		planner.distanceWeight = static_cast<rl::math::Real>(0.1);
-		planner.epsilon = static_cast<rl::math::Real>(1.0e-9);
-		planner.explorers.push_back(&explorer);
-		planner.explorersSetup.push_back(explorerSetup);
-		planner.gamma = static_cast<rl::math::Real>(1) / static_cast<rl::math::Real>(3);
-		planner.goal = &goal;
-		planner.goalEpsilon = static_cast<rl::math::Real>(0.1);
-		planner.goalEpsilonUseOrientation = false;
-		planner.max.x() = 30;
-		planner.max.y() = 30;
-		planner.max.z() = 2;
-		planner.model = &model;
-		planner.min.x() = 0;
-		planner.min.y() = 0;
-		planner.min.z() = 0;
+		planner.setAlpha(static_cast<rl::math::Real>(0.01));
+		planner.setAlternativeDistanceComputation(false);
+		planner.setBeta(0);
+		planner.setDelta(1 * rl::math::constants::deg2rad);
+		planner.setDistanceWeight(static_cast<rl::math::Real>(0.1));
+		planner.setEpsilon(static_cast<rl::math::Real>(1.0e-9));
+		planner.addExplorer(&explorer);
+		planner.addExplorerSetup(explorerSetup);
+		planner.setGamma(static_cast<rl::math::Real>(1) / static_cast<rl::math::Real>(3));
+		planner.setGoal(&goal);
+		planner.setGoalEpsilon(static_cast<rl::math::Real>(0.1));
+		planner.setGoalEpsilonUseOrientation(false);
+		planner.setMax(rl::math::Vector3(30, 30, 2));
+		planner.setModel(&model);
+		planner.setMin(rl::math::Vector3(0, 0, 0));
 		planner.setNearestNeighbors(&nearestNeighbors, 0);
-		planner.sampler = &sampler;
-		planner.start = &start;
+		planner.setSampler(&sampler);
+		planner.setStart(&start);
 		
-		sampler.model = &model;
+		sampler.setModel(&model);
 		
 		std::cout << "verify() ... " << std::endl;;
 		bool verified = planner.verify();

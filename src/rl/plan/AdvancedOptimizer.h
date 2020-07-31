@@ -40,7 +40,15 @@ namespace rl
 			
 			virtual ~AdvancedOptimizer();
 			
+			::rl::math::Real getLength() const;
+			
+			::rl::math::Real getRatio() const;
+			
 			void process(VectorList& path);
+			
+			void setLength(const ::rl::math::Real& length);
+			
+			void setRatio(const ::rl::math::Real& ratio);
 			
 			::rl::math::Real length;
 			

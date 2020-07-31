@@ -47,14 +47,14 @@ namespace rl
 		::rl::math::Vector
 		UniformSampler::generate()
 		{
-			::rl::math::Vector rand(this->model->getDof());
+			::rl::math::Vector rand(this->getModel()->getDof());
 			
-			for (::std::size_t i = 0; i < this->model->getDof(); ++i)
+			for (::std::size_t i = 0; i < this->getModel()->getDof(); ++i)
 			{
 				rand(i) = this->rand();
 			}
 			
-			return this->model->generatePositionUniform(rand);
+			return this->getModel()->generatePositionUniform(rand);
 		}
 		
 		::std::uniform_real_distribution<::rl::math::Real>::result_type

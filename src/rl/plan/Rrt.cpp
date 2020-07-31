@@ -53,9 +53,9 @@ namespace rl
 		{
 			Edge e = ::boost::add_edge(u, v, tree).first;
 			
-			if (nullptr != this->viewer)
+			if (nullptr != this->getViewer())
 			{
-				this->viewer->drawConfigurationEdge(*get(tree, u)->q, *get(tree, v)->q);
+				this->getViewer()->drawConfigurationEdge(*get(tree, u)->q, *get(tree, v)->q);
 			}
 			
 			return e;
@@ -73,9 +73,9 @@ namespace rl
 			
 			tree[::boost::graph_bundle].nn->push(Metric::Value(q.get(), v));
 			
-			if (nullptr != this->viewer)
+			if (nullptr != this->getViewer())
 			{
-				this->viewer->drawConfigurationVertex(*get(tree, v)->q);
+				this->getViewer()->drawConfigurationVertex(*get(tree, v)->q);
 			}
 			
 			return v;
@@ -84,7 +84,7 @@ namespace rl
 		bool
 		Rrt::areEqual(const ::rl::math::Vector& lhs, const ::rl::math::Vector& rhs) const
 		{
-			if (this->model->distance(lhs, rhs) > this->epsilon)
+			if (this->getModel()->distance(lhs, rhs) > this->epsilon)
 			{
 				return false;
 			}
@@ -117,21 +117,21 @@ namespace rl
 				step = this->delta;
 			}
 			
-			VectorPtr last = ::std::make_shared<::rl::math::Vector>(this->model->getDofPosition());
+			VectorPtr last = ::std::make_shared<::rl::math::Vector>(this->getModel()->getDofPosition());
 			
-			this->model->interpolate(*get(tree, nearest.second)->q, chosen, step / distance, *last);
+			this->getModel()->interpolate(*get(tree, nearest.second)->q, chosen, step / distance, *last);
 			
-			if (nullptr != this->viewer)
+			if (nullptr != this->getViewer())
 			{
-//				this->viewer->drawConfiguration(*last);
+//				this->getViewer()->drawConfiguration(*last);
 			}
 			
-			if (this->model->isColliding(*last))
+			if (this->getModel()->isColliding(*last))
 			{
 				return nullptr;
 			}
 			
-			::rl::math::Vector next(this->model->getDofPosition());
+			::rl::math::Vector next(this->getModel()->getDofPosition());
 			
 			while (!reached)
 			{
@@ -143,14 +143,14 @@ namespace rl
 					step = distance;
 				}
 				
-				this->model->interpolate(*get(tree, nearest.second)->q, chosen, step / distance, next);
+				this->getModel()->interpolate(*get(tree, nearest.second)->q, chosen, step / distance, next);
 				
-				if (nullptr != this->viewer)
+				if (nullptr != this->getViewer())
 				{
-//					this->viewer->drawConfiguration(next);
+//					this->getViewer()->drawConfiguration(next);
 				}
 				
-				if (this->model->isColliding(next))
+				if (this->getModel()->isColliding(next))
 				{
 					break;
 				}
@@ -169,11 +169,11 @@ namespace rl
 			::rl::math::Real distance = nearest.first;
 			::rl::math::Real step = ::std::min(distance, this->delta);
 			
-			VectorPtr next = ::std::make_shared<::rl::math::Vector>(this->model->getDofPosition());
+			VectorPtr next = ::std::make_shared<::rl::math::Vector>(this->getModel()->getDofPosition());
 			
-			this->model->interpolate(*get(tree, nearest.second)->q, chosen, step / distance, *next);
+			this->getModel()->interpolate(*get(tree, nearest.second)->q, chosen, step / distance, *next);
 			
-			if (!this->model->isColliding(*next))
+			if (!this->getModel()->isColliding(*next))
 			{
 				Vertex extended = this->addVertex(tree, next);
 				this->addEdge(nearest.second, extended, tree);
@@ -187,6 +187,18 @@ namespace rl
 		Rrt::get(const Tree& tree, const Vertex& v)
 		{
 			return tree[v].get();
+		}
+		
+		::rl::math::Real
+		Rrt::getDelta() const
+		{
+			return this->delta;
+		}
+		
+		::rl::math::Real
+		Rrt::getEpsilon() const
+		{
+			return this->epsilon;
 		}
 		
 		::std::string
@@ -245,12 +257,18 @@ namespace rl
 			return path;
 		}
 		
+		Sampler*
+		Rrt::getSampler() const
+		{
+			return this->sampler;
+		}
+		
 		Rrt::Neighbor
 		Rrt::nearest(const Tree& tree, const ::rl::math::Vector& chosen)
 		{
 			::std::vector<NearestNeighbors::Neighbor> neighbors = tree[::boost::graph_bundle].nn->nearest(Metric::Value(&chosen, Vertex()), 1);
 			return Neighbor(
-				tree[::boost::graph_bundle].nn->isTransformedDistance() ? this->model->inverseOfTransformedDistance(neighbors.front().first) : neighbors.front().first,
+				tree[::boost::graph_bundle].nn->isTransformedDistance() ? this->getModel()->inverseOfTransformedDistance(neighbors.front().first) : neighbors.front().first,
 				neighbors.front().second.second
 			);
 		}
@@ -266,6 +284,17 @@ namespace rl
 				this->end[i] = nullptr;
 			}
 		}
+		void
+		Rrt::setDelta(const ::rl::math::Real& delta)
+		{
+			this->delta = delta;
+		}
+		
+		void
+		Rrt::setEpsilon(const ::rl::math::Real& epsilon)
+		{
+			this->epsilon = epsilon;
+		}
 		
 		void
 		Rrt::setNearestNeighbors(NearestNeighbors* nearestNeighbors, const ::std::size_t& i)
@@ -273,14 +302,20 @@ namespace rl
 			this->tree[i][::boost::graph_bundle].nn = nearestNeighbors;
 		}
 		
+		void
+		Rrt::setSampler(Sampler* sampler)
+		{
+			this->sampler = sampler;
+		}
+		
 		bool
 		Rrt::solve()
 		{
 			this->time = ::std::chrono::steady_clock::now();
 			
-			this->begin[0] = this->addVertex(this->tree[0], ::std::make_shared<::rl::math::Vector>(*this->start));
+			this->begin[0] = this->addVertex(this->tree[0], ::std::make_shared<::rl::math::Vector>(*this->getStart()));
 			
-			while ((::std::chrono::steady_clock::now() - this->time) < this->duration)
+			while ((::std::chrono::steady_clock::now() - this->time) < this->getDuration())
 			{
 				::rl::math::Vector chosen = this->choose();
 				Neighbor nearest = this->nearest(this->tree[0], chosen);
@@ -288,7 +323,7 @@ namespace rl
 				
 				if (nullptr != extended)
 				{
-					if (this->areEqual(*get(this->tree[0], extended)->q, *this->goal))
+					if (this->areEqual(*get(this->tree[0], extended)->q, *this->getGoal()))
 					{
 						this->end[0] = extended;
 						return true;

@@ -54,7 +54,7 @@ namespace rl
 			}
 			else
 			{
-				return *this->goal;
+				return *this->getGoal();
 			}
 		}
 		
@@ -62,6 +62,12 @@ namespace rl
 		RrtGoalBias::getName() const
 		{
 			return "RRT Goal Bias";
+		}
+		
+		::rl::math::Real
+		RrtGoalBias::getProbability() const
+		{
+			return this->probability;
 		}
 		
 		::std::uniform_real_distribution<::rl::math::Real>::result_type
@@ -74,6 +80,12 @@ namespace rl
 		RrtGoalBias::seed(const ::std::mt19937::result_type& value)
 		{
 			this->randEngine.seed(value);
+		}
+		
+		void
+		RrtGoalBias::setProbability(const ::rl::math::Real& probability)
+		{
+			this->probability = probability;
 		}
 	}
 }

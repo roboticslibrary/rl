@@ -50,27 +50,27 @@ namespace rl
 			}
 			else
 			{
-				::rl::math::Vector q(this->model->getDof());
-				::rl::math::Vector gauss(this->model->getDof());
+				::rl::math::Vector q(this->getModel()->getDof());
+				::rl::math::Vector gauss(this->getModel()->getDof());
 				
 				while (true)
 				{
 					::rl::math::Vector q2 = this->generate();
 					
-					if (this->model->isColliding(q2))
+					if (this->getModel()->isColliding(q2))
 					{
-						for (::std::size_t i = 0; i < this->model->getDof(); ++i)
+						for (::std::size_t i = 0; i < this->getModel()->getDof(); ++i)
 						{
 							gauss(i) = this->gauss();
 						}
 						
-						::rl::math::Vector q3 = this->model->generatePositionGaussian(gauss, q2, *this->sigma);
+						::rl::math::Vector q3 = this->getModel()->generatePositionGaussian(gauss, q2, *this->getSigma());
 						
-						if (this->model->isColliding(q3))
+						if (this->getModel()->isColliding(q3))
 						{
-							this->model->interpolate(q2, q3, static_cast<::rl::math::Real>(0.5), q);
+							this->getModel()->interpolate(q2, q3, static_cast<::rl::math::Real>(0.5), q);
 							
-							if (!this->model->isColliding(q))
+							if (!this->getModel()->isColliding(q))
 							{
 								return q;
 							}
@@ -78,6 +78,18 @@ namespace rl
 					}
 				}
 			}
+		}
+		
+		::rl::math::Real
+		BridgeSampler::getRatio() const
+		{
+			return this->ratio;
+		}
+		
+		void
+		BridgeSampler::setRatio(const ::rl::math::Real& ratio)
+		{
+			this->ratio = ratio;
 		}
 	}
 }

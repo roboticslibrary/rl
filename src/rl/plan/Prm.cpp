@@ -70,9 +70,9 @@ namespace rl
 			
 			this->ds.union_set(u, v);
 			
-			if (nullptr != this->viewer)
+			if (nullptr != this->getViewer())
 			{
-				this->viewer->drawConfigurationEdge(*this->graph[u].q, *this->graph[v].q);
+				this->getViewer()->drawConfigurationEdge(*this->graph[u].q, *this->graph[v].q);
 			}
 			
 			return e;
@@ -86,9 +86,9 @@ namespace rl
 			this->graph[v].q = q;
 			this->ds.make_set(v);
 			
-			if (nullptr != this->viewer)
+			if (nullptr != this->getViewer())
 			{
-				this->viewer->drawConfigurationVertex(*this->graph[v].q);
+				this->getViewer()->drawConfigurationVertex(*this->graph[v].q);
 			}
 			
 			return v;
@@ -99,11 +99,29 @@ namespace rl
 		{
 			for (::std::size_t i = 0; i < steps; ++i)
 			{
-				VectorPtr q = ::std::make_shared<::rl::math::Vector>(this->model->getDofPosition());
+				VectorPtr q = ::std::make_shared<::rl::math::Vector>(this->getModel()->getDofPosition());
 				*q = this->sampler->generateCollisionFree();
 				Vertex v = this->addVertex(q);
 				this->insert(v);
 			}
+		}
+		
+		::std::size_t
+		Prm::getMaxDegree() const
+		{
+			return this->degree;
+		}
+		
+		::std::size_t
+		Prm::getMaxNeighbors() const
+		{
+			return this->k;
+		}
+		
+		::rl::math::Real
+		Prm::getMaxRadius() const
+		{
+			return this->radius;
 		}
 		
 		::std::string
@@ -160,6 +178,24 @@ namespace rl
 			return path;
 		}
 		
+		Sampler*
+		Prm::getSampler() const
+		{
+			return this->sampler;
+		}
+		
+		Prm::Search
+		Prm::getSearch() const
+		{
+			return this->astar ? Search::astar : Search::dijkstra;
+		}
+		
+		Verifier*
+		Prm::getVerifier() const
+		{
+			return this->verifier;
+		}
+		
 		void
 		Prm::insert(const Vertex& v)
 		{
@@ -171,7 +207,7 @@ namespace rl
 				
 				if (::boost::degree(u, this->graph) < this->degree)
 				{
-					::rl::math::Real d = this->graph[::boost::graph_bundle].nn->isTransformedDistance() ? this->model->inverseOfTransformedDistance(neighbors[i].first) : neighbors[i].first;
+					::rl::math::Real d = this->graph[::boost::graph_bundle].nn->isTransformedDistance() ? this->getModel()->inverseOfTransformedDistance(neighbors[i].first) : neighbors[i].first;
 					
 					if (d < this->radius)
 					{
@@ -199,9 +235,45 @@ namespace rl
 		}
 		
 		void
+		Prm::setMaxDegree(const ::std::size_t& degree)
+		{
+			this->degree = degree;
+		}
+		
+		void
+		Prm::setMaxNeighbors(const ::std::size_t& k)
+		{
+			this->k = k;
+		}
+		
+		void
+		Prm::setMaxRadius(const ::rl::math::Real& radius)
+		{
+			this->radius = radius;
+		}
+		
+		void
 		Prm::setNearestNeighbors(NearestNeighbors* nearestNeighbors)
 		{
 			this->graph[::boost::graph_bundle].nn = nearestNeighbors;
+		}
+		
+		void
+		Prm::setSampler(Sampler* sampler)
+		{
+			this->sampler = sampler;
+		}
+		
+		void
+		Prm::setSearch(const Search& search)
+		{
+			this->astar = search == Search::astar ? true : false;
+		}
+		
+		void
+		Prm::setVerifier(Verifier* verifier)
+		{
+			this->verifier = verifier;
 		}
 		
 		bool
@@ -209,13 +281,13 @@ namespace rl
 		{
 			this->time = ::std::chrono::steady_clock::now();
 			
-			this->begin = this->addVertex(::std::make_shared<::rl::math::Vector>(*this->start));
+			this->begin = this->addVertex(::std::make_shared<::rl::math::Vector>(*this->getStart()));
 			this->insert(this->begin);
 			
-			this->end = this->addVertex(::std::make_shared<::rl::math::Vector>(*this->goal));
+			this->end = this->addVertex(::std::make_shared<::rl::math::Vector>(*this->getGoal()));
 			this->insert(this->end);
 			
-			while ((::std::chrono::steady_clock::now() - this->time) < this->duration && !::boost::same_component(this->begin, this->end, this->ds))
+			while ((::std::chrono::steady_clock::now() - this->time) < this->getDuration() && !::boost::same_component(this->begin, this->end, this->ds))
 			{
 				this->construct(1);
 			}
@@ -230,7 +302,7 @@ namespace rl
 				::boost::astar_search(
 					this->graph,
 					this->begin,
-					AStarHeuristic(this->model, this->graph, this->end),
+					AStarHeuristic(this->getModel(), this->graph, this->end),
 					::boost::default_astar_visitor(),
 					::boost::get(&VertexBundle::predecessor, this->graph),
 					::boost::get(&VertexBundle::cost, this->graph),

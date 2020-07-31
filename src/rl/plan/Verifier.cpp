@@ -40,10 +40,34 @@ namespace rl
 		{
 		}
 		
+		::rl::math::Real
+		Verifier::getDelta() const
+		{
+			return this->delta;
+		}
+		
+		SimpleModel*
+		Verifier::getModel() const
+		{
+			return this->model;
+		}
+		
 		::std::size_t
 		Verifier::getSteps(const ::rl::math::Real& d)
 		{
 			return static_cast<::std::size_t>(::std::ceil(d / this->delta));
+		}
+		
+		void
+		Verifier::setDelta(const ::rl::math::Real& delta)
+		{
+			this->delta = delta;
+		}
+		
+		void
+		Verifier::setModel(SimpleModel* model)
+		{
+			this->model = model;
 		}
 	}
 }

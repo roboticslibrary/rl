@@ -46,7 +46,19 @@ namespace rl
 			
 			virtual ~Optimizer();
 			
+			SimpleModel* getModel() const;
+			
+			Verifier* getVerifier() const;
+			
+			Viewer* getViewer() const;
+			
 			virtual void process(VectorList& path) = 0;
+			
+			void setModel(SimpleModel* model);
+			
+			void setVerifier(Verifier* verifier);
+			
+			void setViewer(Viewer* viewer);
 			
 			SimpleModel* model;
 			

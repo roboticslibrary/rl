@@ -169,19 +169,19 @@ Thread::run()
 	
 	this->running = true;
 	
-	if (nullptr != MainWindow::instance()->planner->viewer)
+	if (nullptr != MainWindow::instance()->planner->getViewer())
 	{
 		emit statusChanged("Showing start configuration.");
-		this->drawConfiguration(*MainWindow::instance()->planner->start);
+		this->drawConfiguration(*MainWindow::instance()->planner->getStart());
 		QThread::usleep(static_cast<std::size_t>(2.0 * 1000.0 * 1000.0));
 	}
 	
 	if (!this->running) return;
 	
-	if (nullptr != MainWindow::instance()->planner->viewer)
+	if (nullptr != MainWindow::instance()->planner->getViewer())
 	{
 		emit statusChanged("Showing goal configuration.");
-		this->drawConfiguration(*MainWindow::instance()->planner->goal);
+		this->drawConfiguration(*MainWindow::instance()->planner->getGoal());
 		QThread::usleep(static_cast<std::size_t>(2.0 * 1000.0 * 1000.0));
 	}
 	
@@ -343,7 +343,7 @@ Thread::run()
 	
 	if (solved)
 	{
-		if (nullptr != MainWindow::instance()->planner->viewer)
+		if (nullptr != MainWindow::instance()->planner->getViewer())
 		{
 			this->drawConfigurationPath(path);
 		}
@@ -352,7 +352,7 @@ Thread::run()
 		
 		if (nullptr != MainWindow::instance()->optimizer)
 		{
-			if (nullptr != MainWindow::instance()->planner->viewer)
+			if (nullptr != MainWindow::instance()->planner->getViewer())
 			{
 				QThread::usleep(static_cast<std::size_t>(2.0 * 1000.0 * 1000.0));
 			}
@@ -367,13 +367,13 @@ Thread::run()
 			
 			emit statusChanged("Planner " + QString(solved ? "succeeded" : "failed") + " in " + QString::number(plannerDuration) + " ms. Optimizer finished in " + QString::number(optimizerDuration) + " ms.");
 			
-			if (nullptr != MainWindow::instance()->planner->viewer)
+			if (nullptr != MainWindow::instance()->planner->getViewer())
 			{
 				this->drawConfigurationPath(path);
 			}
 		}
 		
-		if (nullptr == MainWindow::instance()->planner->viewer) return;
+		if (nullptr == MainWindow::instance()->planner->getViewer()) return;
 		
 		if (this->swept)
 		{

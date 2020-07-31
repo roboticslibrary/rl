@@ -74,13 +74,49 @@ namespace rl
 			
 			bool explore();
 			
+			const ::rl::math::AlignedBox3& getBoundingBox() const;
+			
+			::rl::math::Vector3* getGoal() const;
+			
+			Greedy getGreedy() const;
+			
+			DistanceModel* getModel() const;
+			
 			WorkspaceSphereList getPath() const;
+			
+			::rl::math::Real getRadius() const;
+			
+			::rl::math::Real getRange() const;
+			
+			::std::size_t getSamples() const;
+			
+			::rl::math::Vector3* getStart() const;
+			
+			Viewer* getViewer() const;
 			
 			bool isCovered(const ::rl::math::Vector3& point) const;
 			
 			void reset();
 			
 			void seed(const ::std::mt19937::result_type& value);
+			
+			void setBoundingBox(const ::rl::math::AlignedBox3& boundingBox);
+			
+			void setGoal(::rl::math::Vector3* goal);
+			
+			void setGreedy(const Greedy& greedy);
+			
+			void setModel(DistanceModel* model);
+			
+			void setRadius(const ::rl::math::Real& radius);
+			
+			void setRange(const ::rl::math::Real& range);
+			
+			void setSamples(const ::std::size_t& samples);
+			
+			void setStart(::rl::math::Vector3* start);
+			
+			void setViewer(Viewer* viewer);
 			
 			::rl::math::AlignedBox3 boundingBox;
 			

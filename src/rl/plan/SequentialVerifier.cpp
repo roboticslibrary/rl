@@ -43,8 +43,8 @@ namespace rl
 		bool
 		SequentialVerifier::isColliding(const ::rl::math::Vector& u, const ::rl::math::Vector& v, const ::rl::math::Real& d)
 		{
-			assert(u.size() == this->model->getDofPosition());
-			assert(v.size() == this->model->getDofPosition());
+			assert(u.size() == this->getModel()->getDofPosition());
+			assert(v.size() == this->getModel()->getDofPosition());
 			
 			::std::size_t steps = this->getSteps(d);;
 			
@@ -52,9 +52,9 @@ namespace rl
 			
 			for (::std::size_t i = 0; i < steps - 1; ++i)
 			{
-				this->model->interpolate(u, v, static_cast<::rl::math::Real>(i + 1) / static_cast<::rl::math::Real>(steps), inter);
+				this->getModel()->interpolate(u, v, static_cast<::rl::math::Real>(i + 1) / static_cast<::rl::math::Real>(steps), inter);
 				
-				if (this->model->isColliding(inter))
+				if (this->getModel()->isColliding(inter))
 				{
 					return true;
 				}

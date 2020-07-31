@@ -45,8 +45,8 @@ namespace rl
 		bool
 		RecursiveVerifier::isColliding(const ::rl::math::Vector& u, const ::rl::math::Vector& v, const ::rl::math::Real& d)
 		{
-			assert(u.size() == this->model->getDofPosition());
-			assert(v.size() == this->model->getDofPosition());
+			assert(u.size() == this->getModel()->getDofPosition());
+			assert(v.size() == this->getModel()->getDofPosition());
 			
 			::std::size_t steps = this->getSteps(d);
 			
@@ -62,9 +62,9 @@ namespace rl
 				{
 					::std::size_t midpoint = (queue.front().first + queue.front().second) / 2;
 					
-					this->model->interpolate(u, v, static_cast<::rl::math::Real>(midpoint) / static_cast<::rl::math::Real>(steps), inter);
+					this->getModel()->interpolate(u, v, static_cast<::rl::math::Real>(midpoint) / static_cast<::rl::math::Real>(steps), inter);
 					
-					if (this->model->isColliding(inter))
+					if (this->getModel()->isColliding(inter))
 					{
 						return true;
 					}

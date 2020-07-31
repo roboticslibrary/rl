@@ -51,9 +51,9 @@ namespace rl
 		{
 			this->time = ::std::chrono::steady_clock::now();
 			
-			this->begin[0] = this->addVertex(this->tree[0], ::std::make_shared<::rl::math::Vector>(*this->start));
+			this->begin[0] = this->addVertex(this->tree[0], ::std::make_shared<::rl::math::Vector>(*this->getStart()));
 			
-			while ((::std::chrono::steady_clock::now() - this->time) < this->duration)
+			while ((::std::chrono::steady_clock::now() - this->time) < this->getDuration())
 			{
 				::rl::math::Vector chosen = this->choose();
 				Neighbor nearest = this->nearest(this->tree[0], chosen);
@@ -61,7 +61,7 @@ namespace rl
 				
 				if (nullptr != connected)
 				{
-					if (this->areEqual(*get(this->tree[0], connected)->q, *this->goal))
+					if (this->areEqual(*get(this->tree[0], connected)->q, *this->getGoal()))
 					{
 						this->end[0] = connected;
 						return true;

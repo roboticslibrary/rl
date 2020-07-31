@@ -137,15 +137,15 @@ main(int argc, char** argv)
 		
 		sampler.seed(0);
 		
-		planner.model = &model;
+		planner.setModel(&model);
 		planner.setNearestNeighbors(&nearestNeighbors);
-		planner.sampler = &sampler;
-		planner.verifier = &verifier;
+		planner.setSampler(&sampler);
+		planner.setVerifier(&verifier);
 		
-		sampler.model = &model;
+		sampler.setModel(&model);
 		
-		verifier.delta = 1 * rl::math::constants::deg2rad;
-		verifier.model = &model;
+		verifier.setDelta(1 * rl::math::constants::deg2rad);
+		verifier.setModel(&model);
 		
 		rl::math::Vector start(kinematic->getDofPosition());
 		
@@ -154,7 +154,7 @@ main(int argc, char** argv)
 			start(i) = boost::lexical_cast<rl::math::Real>(argv[i + 12]) * rl::math::constants::deg2rad;
 		}
 		
-		planner.start = &start;
+		planner.setStart(&start);
 		
 		rl::math::Vector goal(kinematic->getDofPosition());
 		
@@ -163,9 +163,9 @@ main(int argc, char** argv)
 			goal(i) = boost::lexical_cast<rl::math::Real>(argv[start.size() + i + 12]) * rl::math::constants::deg2rad;
 		}
 		
-		planner.goal = &goal;
+		planner.setGoal(&goal);
 		
-		planner.duration = std::chrono::seconds(20);
+		planner.setDuration(std::chrono::seconds(20));
 		
 		std::cout << "verify() ... " << std::endl;;
 		bool verified = planner.verify();

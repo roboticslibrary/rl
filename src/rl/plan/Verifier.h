@@ -43,9 +43,17 @@ namespace rl
 			
 			virtual ~Verifier();
 			
+			::rl::math::Real getDelta() const;
+			
+			SimpleModel* getModel() const;
+			
 			virtual ::std::size_t getSteps(const ::rl::math::Real& d);
 			
 			virtual bool isColliding(const ::rl::math::Vector& u, const ::rl::math::Vector& v, const ::rl::math::Real& d) = 0;
+			
+			void setDelta(const ::rl::math::Real& delta);
+			
+			void setModel(SimpleModel* model);
 			
 			::rl::math::Real delta;
 			

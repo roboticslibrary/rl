@@ -52,7 +52,11 @@ namespace rl
 			
 			::rl::math::Vector generateCollisionFree();
 			
+			::rl::math::Vector* getSigma() const;
+			
 			virtual void seed(const ::std::mt19937::result_type& value);
+			
+			void setSigma(::rl::math::Vector* sigma);
 			
 			::rl::math::Vector* sigma;
 			

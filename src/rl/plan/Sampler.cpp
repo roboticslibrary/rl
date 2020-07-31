@@ -53,5 +53,17 @@ namespace rl
 			
 			return q;
 		}
+		
+		SimpleModel*
+		Sampler::getModel() const
+		{
+			return this->model;
+		}
+		
+		void
+		Sampler::setModel(SimpleModel* model)
+		{
+			this->model = model;
+		}
 	}
 }

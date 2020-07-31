@@ -54,29 +54,29 @@ namespace rl
 		::rl::math::Vector
 		GaussianSampler::generateCollisionFree()
 		{
-			::rl::math::Vector gauss(this->model->getDof());
+			::rl::math::Vector gauss(this->getModel()->getDof());
 			
 			while (true)
 			{
 				::rl::math::Vector q = this->generate();
 				
-				for (::std::size_t i = 0; i < this->model->getDof(); ++i)
+				for (::std::size_t i = 0; i < this->getModel()->getDof(); ++i)
 				{
 					gauss(i) = this->gauss();
 				}
 				
-				::rl::math::Vector q2 = this->model->generatePositionGaussian(gauss, q, *this->sigma);
+				::rl::math::Vector q2 = this->getModel()->generatePositionGaussian(gauss, q, *this->sigma);
 				
-				if (!this->model->isColliding(q))
+				if (!this->getModel()->isColliding(q))
 				{
-					if (this->model->isColliding(q2))
+					if (this->getModel()->isColliding(q2))
 					{
 						return q;
 					}
 				}
 				else
 				{
-					if (!this->model->isColliding(q2))
+					if (!this->getModel()->isColliding(q2))
 					{
 						return q2;
 					}
@@ -84,11 +84,23 @@ namespace rl
 			}
 		}
 		
+		::rl::math::Vector*
+		GaussianSampler::getSigma() const
+		{
+			return this->sigma;
+		}
+		
 		void
 		GaussianSampler::seed(const ::std::mt19937::result_type& value)
 		{
 			this->gaussEngine.seed(value);
 			this->randEngine.seed(value);
+		}
+		
+		void
+		GaussianSampler::setSigma(::rl::math::Vector* sigma)
+		{
+			this->sigma = sigma;
 		}
 	}
 }

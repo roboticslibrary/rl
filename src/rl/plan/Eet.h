@@ -71,7 +71,37 @@ namespace rl
 			
 			virtual ~Eet();
 			
+			void addExplorer(WorkspaceSphereExplorer* explorer);
+			
+			void addExplorerSetup(const ExplorerSetup& explorerSetup);
+			
+			void clearExplorers();
+			
+			void clearExplorersSetup();
+			
+			::rl::math::Real getAlpha() const;
+			
+			bool getAlternativeDistanceComputation() const;
+			
+			::rl::math::Real getBeta() const;
+			
+			::rl::math::Real getDistanceWeight() const;
+			
 			::std::chrono::steady_clock::duration getExplorationDuration() const;
+			
+			const ::std::vector<WorkspaceSphereExplorer*>& getExplorers() const;
+			
+			const ::std::vector<ExplorerSetup>& getExplorersSetup() const;
+			
+			::rl::math::Real getGamma() const;
+			
+			::rl::math::Real getGoalEpsilon() const;
+			
+			bool getGoalEpsilonUseOrientation() const;
+			
+			const ::rl::math::Vector3& getMax() const;
+			
+			const ::rl::math::Vector3& getMin() const;
 			
 			virtual ::std::string getName() const;
 			
@@ -84,6 +114,28 @@ namespace rl
 			void seed(const ::std::mt19937::result_type& value);
 			
 			void reset();
+			
+			void setAlpha(const ::rl::math::Real& alpha);
+			
+			void setAlternativeDistanceComputation(const bool& alternativeDistanceComputation);
+			
+			void setBeta(const ::rl::math::Real& beta);
+			
+			void setDistanceWeight(const ::rl::math::Real& distanceWeight);
+			
+			void setExplorers(const ::std::vector<WorkspaceSphereExplorer*>& explorers);
+			
+			void setExplorersSetup(const ::std::vector<ExplorerSetup>& explorersSetup);
+			
+			void setGamma(const ::rl::math::Real& gamma);
+			
+			void setGoalEpsilon(const ::rl::math::Real& goalEpsilon);
+			
+			void setGoalEpsilonUseOrientation(const bool& goalEpsilonUseOrientation);
+			
+			void setMax(const ::rl::math::Vector3& max);
+			
+			void setMin(const ::rl::math::Vector3& min);
 			
 			bool solve();
 			

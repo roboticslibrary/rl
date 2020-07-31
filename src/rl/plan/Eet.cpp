@@ -81,12 +81,24 @@ namespace rl
 		{
 			Edge e = ::boost::add_edge(u, v, tree).first;
 			
-			if (nullptr != this->viewer)
+			if (nullptr != this->getViewer())
 			{
-				this->viewer->drawConfigurationEdge(*get(tree, u)->q, *get(tree, v)->q);
+				this->getViewer()->drawConfigurationEdge(*get(tree, u)->q, *get(tree, v)->q);
 			}
 			
 			return e;
+		}
+		
+		void
+		Eet::addExplorer(WorkspaceSphereExplorer* explorer)
+		{
+			this->explorers.push_back(explorer);
+		}
+		
+		void
+		Eet::addExplorerSetup(const ExplorerSetup& explorerSetup)
+		{
+			this->explorersSetup.push_back(explorerSetup);
 		}
 		
 		Eet::Vertex
@@ -99,12 +111,24 @@ namespace rl
 			Vertex v = ::boost::add_vertex(tree);
 			tree[v] = bundle;
 			
-			if (nullptr != this->viewer)
+			if (nullptr != this->getViewer())
 			{
-				this->viewer->drawConfigurationVertex(*get(tree, v)->q);
+				this->getViewer()->drawConfigurationVertex(*get(tree, v)->q);
 			}
 			
 			return v;
+		}
+		
+		void
+		Eet::clearExplorers()
+		{
+			this->explorers.clear();
+		}
+		
+		void
+		Eet::clearExplorersSetup()
+		{
+			this->explorersSetup.clear();
 		}
 		
 		Rrt::Vertex
@@ -119,7 +143,7 @@ namespace rl
 			do
 			{
 				VertexBundle best;
-				best.q = ::std::make_shared<::rl::math::Vector>(this->model->getDofPosition());
+				best.q = ::std::make_shared<::rl::math::Vector>(this->getModel()->getDofPosition());
 				best.t = ::std::make_shared<::rl::math::Transform>();
 				
 				state = this->expand(get(tree, n), *get(tree, nearest.second)->t, chosen, distance, best); // TODO
@@ -176,53 +200,53 @@ namespace rl
 			
 			::rl::math::Vector6 tdot = nearest2.toDelta(chosen, true);
 			
-			this->model->setPosition(*nearest->q);
-			this->model->updateFrames();
-			this->model->updateJacobian();
-			this->model->updateJacobianInverse();
+			this->getModel()->setPosition(*nearest->q);
+			this->getModel()->updateFrames();
+			this->getModel()->updateJacobian();
+			this->getModel()->updateJacobianInverse();
 			
-			::rl::math::Vector qdot(this->model->getDof());
+			::rl::math::Vector qdot(this->getModel()->getDof());
 			qdot.setZero();
 			
-			::rl::math::Vector qdot2(this->model->getDof());
-			this->model->inverseVelocity(tdot, qdot2);
+			::rl::math::Vector qdot2(this->getModel()->getDof());
+			this->getModel()->inverseVelocity(tdot, qdot2);
 			qdot += qdot2;
 			
-			if (qdot.norm() <= this->delta)
+			if (qdot.norm() <= this->getDelta())
 			{
 				state = 0;
 			}
 			else
 			{
 				qdot.normalize();
-				qdot *= this->delta;
+				qdot *= this->getDelta();
 			}
 			
-			this->model->step(*nearest->q, qdot, *expanded.q);
+			this->getModel()->step(*nearest->q, qdot, *expanded.q);
 			
-			if (this->model->getManipulabilityMeasure() < static_cast<::rl::math::Real>(1.0e-3)) // within singularity
+			if (this->getModel()->getManipulabilityMeasure() < static_cast<::rl::math::Real>(1.0e-3)) // within singularity
 			{
-				*expanded.q = this->sampler->generate(); // uniform sampling for singularities
-				::rl::math::Real tmp = this->model->distance(*nearest->q, *expanded.q);
-				this->model->interpolate(*nearest->q, *expanded.q, this->delta / tmp, *expanded.q);
+				*expanded.q = this->getSampler()->generate(); // uniform sampling for singularities
+				::rl::math::Real tmp = this->getModel()->distance(*nearest->q, *expanded.q);
+				this->getModel()->interpolate(*nearest->q, *expanded.q, this->getDelta() / tmp, *expanded.q);
 			}
 			
-			if (!this->model->isValid(*expanded.q))
-			{
-				return -1;
-			}
-			
-			if (nullptr != this->viewer)
-			{
-				this->viewer->drawConfiguration(*expanded.q);
-			}
-			
-			if (this->model->isColliding(*expanded.q))
+			if (!this->getModel()->isValid(*expanded.q))
 			{
 				return -1;
 			}
 			
-			*expanded.t = this->model->forwardPosition();
+			if (nullptr != this->getViewer())
+			{
+				this->getViewer()->drawConfiguration(*expanded.q);
+			}
+			
+			if (this->getModel()->isColliding(*expanded.q))
+			{
+				return -1;
+			}
+			
+			*expanded.t = this->getModel()->forwardPosition();
 			
 			return state;
 		}
@@ -235,7 +259,7 @@ namespace rl
 			Vertex extended = nullptr;
 			
 			VertexBundle best;
-			best.q = ::std::make_shared<::rl::math::Vector>(this->model->getDofPosition());
+			best.q = ::std::make_shared<::rl::math::Vector>(this->getModel()->getDofPosition());
 			best.t = ::std::make_shared<::rl::math::Transform>();
 			
 			if (this->expand(get(tree, nearest.second), *get(tree, nearest.second)->t, chosen, distance, best) >= 0)
@@ -260,10 +284,76 @@ namespace rl
 			return static_cast<VertexBundle*>(tree[v].get());
 		}
 		
+		::rl::math::Real
+		Eet::getAlpha() const
+		{
+			return this->alpha;
+		}
+		
+		bool
+		Eet::getAlternativeDistanceComputation() const
+		{
+			return this->alternativeDistanceComputation;
+		}
+		
+		::rl::math::Real
+		Eet::getBeta() const
+		{
+			return this->beta;
+		}
+		
+		::rl::math::Real
+		Eet::getDistanceWeight() const
+		{
+			return this->distanceWeight;
+		}
+		
 		::std::chrono::steady_clock::duration
 		Eet::getExplorationDuration() const
 		{
 			return this->explorationTimeStop - this->explorationTimeStart;
+		}
+		
+		const ::std::vector<WorkspaceSphereExplorer*>&
+		Eet::getExplorers() const
+		{
+			return this->explorers;
+		}
+		
+		const ::std::vector<Eet::ExplorerSetup>&
+		Eet::getExplorersSetup() const
+		{
+			return this->explorersSetup;
+		}
+		
+		::rl::math::Real
+		Eet::getGamma() const
+		{
+			return this->gamma;
+		}
+		
+		::rl::math::Real
+		Eet::getGoalEpsilon() const
+		{
+			return this->goalEpsilon;
+		}
+		
+		bool
+		Eet::getGoalEpsilonUseOrientation() const
+		{
+			return this->goalEpsilonUseOrientation;
+		}
+		
+		const ::rl::math::Vector3&
+		Eet::getMax() const
+		{
+			return this->max;
+		}
+		
+		const ::rl::math::Vector3&
+		Eet::getMin() const
+		{
+			return this->min;
 		}
 		
 		::std::string
@@ -324,10 +414,76 @@ namespace rl
 			this->randEngine.seed(value);
 		}
 		
+		void
+		Eet::setAlpha(const ::rl::math::Real& alpha)
+		{
+			this->alpha = alpha;
+		}
+		
+		void
+		Eet::setAlternativeDistanceComputation(const bool& alternativeDistanceComputation)
+		{
+			this->alternativeDistanceComputation = alternativeDistanceComputation;
+		}
+		
+		void
+		Eet::setBeta(const ::rl::math::Real& beta)
+		{
+			this->beta = beta;
+		}
+		
+		void
+		Eet::setDistanceWeight(const ::rl::math::Real& distanceWeight)
+		{
+			this->distanceWeight = distanceWeight;
+		}
+		
+		void
+		Eet::setExplorers(const ::std::vector<WorkspaceSphereExplorer*>& explorers)
+		{
+			this->explorers = explorers;
+		}
+		
+		void
+		Eet::setExplorersSetup(const ::std::vector<ExplorerSetup>& explorersSetup)
+		{
+			this->explorersSetup = explorersSetup;
+		}
+		
+		void
+		Eet::setGamma(const ::rl::math::Real& gamma)
+		{
+			this->gamma = gamma;
+		}
+		
+		void
+		Eet::setGoalEpsilon(const ::rl::math::Real& goalEpsilon)
+		{
+			this->goalEpsilon = goalEpsilon;
+		}
+		
+		void
+		Eet::setGoalEpsilonUseOrientation(const bool& goalEpsilonUseOrientation)
+		{
+			this->goalEpsilonUseOrientation = goalEpsilonUseOrientation;
+		}
+		
+		void
+		Eet::setMax(const ::rl::math::Vector3& max)
+		{
+			this->max = max;
+		}
+		
+		void
+		Eet::setMin(const ::rl::math::Vector3& min)
+		{
+			this->min = min;
+		}
+		
 		bool
 		Eet::solve()
 		{
-			if (this->model->getOperationalDof() > 1)
+			if (this->getModel()->getOperationalDof() > 1)
 			{
 				throw("::rl::plan::Eet::solve() - branched kinematics not supported");
 			}
@@ -342,31 +498,31 @@ namespace rl
 			{
 				if (nullptr != this->explorersSetup[i].startConfiguration)
 				{
-					this->model->setPosition(*this->explorersSetup[i].startConfiguration);
-					this->model->updateFrames(false);
+					this->getModel()->setPosition(*this->explorersSetup[i].startConfiguration);
+					this->getModel()->updateFrames(false);
 					
 					if (-1 == this->explorersSetup[i].startFrame)
 					{
-						*this->explorers[i]->start = this->model->forwardPosition().translation();
+						*this->explorers[i]->getStart() = this->getModel()->forwardPosition().translation();
 					}
 					else
 					{
-						*this->explorers[i]->start = this->model->getFrame(this->explorersSetup[i].startFrame).translation();
+						*this->explorers[i]->getStart() = this->getModel()->getFrame(this->explorersSetup[i].startFrame).translation();
 					}
 				}
 				
 				if (nullptr != this->explorersSetup[i].goalConfiguration)
 				{
-					this->model->setPosition(*this->explorersSetup[i].goalConfiguration);
-					this->model->updateFrames(false);
+					this->getModel()->setPosition(*this->explorersSetup[i].goalConfiguration);
+					this->getModel()->updateFrames(false);
 					
 					if (-1 == this->explorersSetup[i].goalFrame)
 					{
-						*this->explorers[i]->goal = this->model->forwardPosition().translation();
+						*this->explorers[i]->getGoal() = this->getModel()->forwardPosition().translation();
 					}
 					else
 					{
-						*this->explorers[i]->goal = this->model->getFrame(this->explorersSetup[i].goalFrame).translation();
+						*this->explorers[i]->getGoal() = this->getModel()->getFrame(this->explorersSetup[i].goalFrame).translation();
 					}
 				}
 			}
@@ -390,23 +546,23 @@ namespace rl
 			
 			// tree initialization with start configuration
 			
-			this->begin[0] = this->addVertex(this->tree[0], ::std::make_shared<::rl::math::Vector>(*this->start));
-			this->model->setPosition(*this->start);
-			this->model->updateFrames();
-			get(this->tree[0], this->begin[0])->t = ::std::make_shared<::rl::math::Transform>(this->model->forwardPosition());
+			this->begin[0] = this->addVertex(this->tree[0], ::std::make_shared<::rl::math::Vector>(*this->getStart()));
+			this->getModel()->setPosition(*this->getStart());
+			this->getModel()->updateFrames();
+			get(this->tree[0], this->begin[0])->t = ::std::make_shared<::rl::math::Transform>(this->getModel()->forwardPosition());
 			this->nn.push(WorkspaceMetric::Value(get(this->tree[0], this->begin[0])->t.get(), begin[0]));
 			
 			::rl::math::Transform chosen;
 			chosen.setIdentity();
 			
-			this->model->setPosition(*this->goal);
-			this->model->updateFrames();
-			::rl::math::Transform goal = this->model->forwardPosition();
+			this->getModel()->setPosition(*this->getGoal());
+			this->getModel()->updateFrames();
+			::rl::math::Transform goal = this->getModel()->forwardPosition();
 			
 			WorkspaceSphereVector::iterator i = ++path.begin();
 			::rl::math::Real sigma = gamma; // initialize exploration/exploitation balance
 			
-			while ((::std::chrono::steady_clock::now() - this->time) < this->duration) // search until goal reached
+			while ((::std::chrono::steady_clock::now() - this->time) < this->getDuration()) // search until goal reached
 			{
 				if (sigma < 1) // sample is within current sphere
 				{
@@ -449,9 +605,9 @@ namespace rl
 						}
 					}
 					
-					if (nullptr != this->viewer)
+					if (nullptr != this->getViewer())
 					{
-						this->viewer->drawWork(chosen);
+						this->getViewer()->drawWork(chosen);
 					}
 					
 					Vertex connected = this->connect(this->tree[0], nearest, chosen);

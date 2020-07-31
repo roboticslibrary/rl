@@ -58,6 +58,10 @@ namespace rl
 			
 			virtual ~Rrt();
 			
+			::rl::math::Real getDelta() const;
+			
+			::rl::math::Real getEpsilon() const;
+			
 			virtual ::std::string getName() const;
 			
 			NearestNeighbors* getNearestNeighbors(const ::std::size_t& i) const;
@@ -68,9 +72,17 @@ namespace rl
 			
 			virtual VectorList getPath();
 			
+			Sampler* getSampler() const;
+			
 			virtual void reset();
 			
+			void setDelta(const ::rl::math::Real& delta);
+			
+			void setEpsilon(const ::rl::math::Real& epsilon);
+			
 			void setNearestNeighbors(NearestNeighbors* nearestNeighbors, const ::std::size_t& i);
+			
+			void setSampler(Sampler* sampler);
 			
 			virtual bool solve();
 			

@@ -51,6 +51,12 @@ namespace rl
 			
 			virtual ~Planner();
 			
+			::std::chrono::steady_clock::duration getDuration() const;
+			
+			::rl::math::Vector* getGoal() const;
+			
+			SimpleModel* getModel() const;
+			
 			virtual ::std::string getName() const = 0;
 			
 			/**
@@ -60,10 +66,24 @@ namespace rl
 			 */
 			virtual VectorList getPath() = 0;
 			
+			::rl::math::Vector* getStart() const;
+			
+			Viewer* getViewer() const;
+			
 			/**
 			 * Reset planner.
 			 */
 			virtual void reset() = 0;
+			
+			void setDuration(const ::std::chrono::steady_clock::duration& duration);
+			
+			void setGoal(::rl::math::Vector* goal);
+			
+			void setModel(SimpleModel* model);
+			
+			void setStart(::rl::math::Vector* start);
+			
+			void setViewer(Viewer* viewer);
 			
 			/**
 			 * Find collision free path.

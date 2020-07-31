@@ -33,17 +33,77 @@ namespace rl
 	namespace plan
 	{
 		Planner::Planner() :
+			time(),
 			duration(::std::chrono::steady_clock::duration::max()),
 			goal(nullptr),
 			model(nullptr),
 			start(nullptr),
-			viewer(nullptr),
-			time()
+			viewer(nullptr)
 		{
 		}
 		
 		Planner::~Planner()
 		{
+		}
+		
+		::std::chrono::steady_clock::duration
+		Planner::getDuration() const
+		{
+			return this->duration;
+		}
+		
+		::rl::math::Vector*
+		Planner::getGoal() const
+		{
+			return this->goal;
+		}
+		
+		SimpleModel*
+		Planner::getModel() const
+		{
+			return this->model;
+		}
+		
+		::rl::math::Vector*
+		Planner::getStart() const
+		{
+			return this->start;
+		}
+		
+		Viewer*
+		Planner::getViewer() const
+		{
+			return this->viewer;
+		}
+		
+		void
+		Planner::setDuration(const ::std::chrono::steady_clock::duration& duration)
+		{
+			this->duration = duration;
+		}
+		
+		void
+		Planner::setGoal(::rl::math::Vector* goal)
+		{
+			this->goal = goal;
+		}
+		
+		void
+		Planner::setModel(SimpleModel* model)
+		{
+			this->model = model;
+		}
+		
+		void
+		Planner::setStart(::rl::math::Vector* start)
+		{
+			this->start = start;
+		}
+		
+		void
+		Planner::setViewer(Viewer* viewer)
+		{
+			this->viewer = viewer;
 		}
 		
 		bool

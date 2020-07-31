@@ -57,18 +57,18 @@ namespace rl
 				
 				while (i != path.end() && j != path.end() && k != path.end())
 				{
-					::rl::math::Real ik = this->model->distance(*i, *k);
+					::rl::math::Real ik = this->getModel()->distance(*i, *k);
 					
-					if (!this->verifier->isColliding(*i, *k, ik))
+					if (!this->getVerifier()->isColliding(*i, *k, ik))
 					{
 						VectorList::iterator l = j;
 						++j;
 						++k;
 						path.erase(l);
 						
-						if (nullptr != this->viewer)
+						if (nullptr != this->getViewer())
 						{
-							this->viewer->drawConfigurationPath(path);
+							this->getViewer()->drawConfigurationPath(path);
 						}
 						
 						changed = true;

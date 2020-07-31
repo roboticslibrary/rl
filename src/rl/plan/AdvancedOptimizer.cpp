@@ -44,6 +44,18 @@ namespace rl
 		{
 		}
 		
+		::rl::math::Real
+		AdvancedOptimizer::getLength() const
+		{
+			return this->length;
+		}
+		
+		::rl::math::Real
+		AdvancedOptimizer::getRatio() const
+		{
+			return this->ratio;
+		}
+		
 		void
 		AdvancedOptimizer::process(VectorList& path)
 		{
@@ -53,7 +65,7 @@ namespace rl
 			VectorList::iterator j;
 			VectorList::iterator k;
 			
-			::rl::math::Vector inter(this->model->getDofPosition());
+			::rl::math::Vector inter(this->getModel()->getDofPosition());
 			
 			while (changed && path.size() > 2)
 			{
@@ -67,18 +79,18 @@ namespace rl
 					
 					while (i != path.end() && j != path.end() && k != path.end())
 					{
-						::rl::math::Real ik = this->model->distance(*i, *k);
+						::rl::math::Real ik = this->getModel()->distance(*i, *k);
 						
-						if (!this->verifier->isColliding(*i, *k, ik))
+						if (!this->getVerifier()->isColliding(*i, *k, ik))
 						{
-							::rl::math::Real ij = this->model->distance(*i, *j);
-							::rl::math::Real jk = this->model->distance(*j, *k);
+							::rl::math::Real ij = this->getModel()->distance(*i, *j);
+							::rl::math::Real jk = this->getModel()->distance(*j, *k);
 							
 							::rl::math::Real alpha = ij / (ij + jk);
 							
-							this->model->interpolate(*i, *k, alpha, inter);
+							this->getModel()->interpolate(*i, *k, alpha, inter);
 							
-							::rl::math::Real ratio = this->model->distance(*j, inter) / ik;
+							::rl::math::Real ratio = this->getModel()->distance(*j, inter) / ik;
 							
 							if (ratio > this->ratio)
 							{
@@ -87,9 +99,9 @@ namespace rl
 								++k;
 								path.erase(l);
 								
-								if (nullptr != this->viewer)
+								if (nullptr != this->getViewer())
 								{
-									this->viewer->drawConfigurationPath(path);
+									this->getViewer()->drawConfigurationPath(path);
 								}
 								
 								changed = true;
@@ -115,15 +127,15 @@ namespace rl
 				
 				while (i != path.end() && j != path.end())
 				{
-					if (this->model->distance(*i, *j) > this->length)
+					if (this->getModel()->distance(*i, *j) > this->length)
 					{
-						this->model->interpolate(*i, *j, static_cast<::rl::math::Real>(0.5), inter);
+						this->getModel()->interpolate(*i, *j, static_cast<::rl::math::Real>(0.5), inter);
 						
 						j = path.insert(j, inter);
 						
-						if (nullptr != this->viewer)
+						if (nullptr != this->getViewer())
 						{
-							this->viewer->drawConfigurationPath(path);
+							this->getViewer()->drawConfigurationPath(path);
 						}
 						
 						changed = true;
@@ -135,6 +147,18 @@ namespace rl
 					}
 				}
 			}
+		}
+		
+		void
+		AdvancedOptimizer::setLength(const ::rl::math::Real& length)
+		{
+			this->length = length;
+		}
+		
+		void
+		AdvancedOptimizer::setRatio(const ::rl::math::Real& ratio)
+		{
+			this->ratio = ratio;
 		}
 	}
 }

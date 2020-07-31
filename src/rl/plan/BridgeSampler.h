@@ -52,6 +52,10 @@ namespace rl
 			
 			::rl::math::Vector generateCollisionFree();
 			
+			::rl::math::Real getRatio() const;
+			
+			void setRatio(const ::rl::math::Real& ratio);
+			
 			/** Probability of choosing bridge sample. */
 			::rl::math::Real ratio;
 			

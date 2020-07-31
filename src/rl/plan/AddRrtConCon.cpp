@@ -57,9 +57,9 @@ namespace rl
 			
 			tree[::boost::graph_bundle].nn->push(Metric::Value(q.get(), v));
 			
-			if (nullptr != this->viewer)
+			if (nullptr != this->getViewer())
 			{
-				this->viewer->drawConfigurationVertex(*get(tree, v)->q);
+				this->getViewer()->drawConfigurationVertex(*get(tree, v)->q);
 			}
 			
 			return v;
@@ -71,10 +71,46 @@ namespace rl
 			return static_cast<VertexBundle*>(tree[v].get());
 		}
 		
+		::rl::math::Real
+		AddRrtConCon::getAlpha() const
+		{
+			return this->alpha;
+		}
+		
+		::rl::math::Real
+		AddRrtConCon::getLower() const
+		{
+			return this->lower;
+		}
+		
 		::std::string
 		AddRrtConCon::getName() const
 		{
 			return "Adaptive Dynamic Domain RRT Connect Connect";
+		}
+		
+		::rl::math::Real
+		AddRrtConCon::getRadius() const
+		{
+			return this->radius;
+		}
+		
+		void
+		AddRrtConCon::setAlpha(const ::rl::math::Real& alpha)
+		{
+			this->alpha = alpha;
+		}
+		
+		void
+		AddRrtConCon::setLower(const ::rl::math::Real& lower)
+		{
+			this->lower = lower;
+		}
+		
+		void
+		AddRrtConCon::setRadius(const ::rl::math::Real& radius)
+		{
+			this->radius = radius;
 		}
 		
 		bool
@@ -82,15 +118,15 @@ namespace rl
 		{
 			this->time = ::std::chrono::steady_clock::now();
 			
-			this->begin[0] = this->addVertex(this->tree[0], ::std::make_shared<::rl::math::Vector>(*this->start));
-			this->begin[1] = this->addVertex(this->tree[1], ::std::make_shared<::rl::math::Vector>(*this->goal));
+			this->begin[0] = this->addVertex(this->tree[0], ::std::make_shared<::rl::math::Vector>(*this->getStart()));
+			this->begin[1] = this->addVertex(this->tree[1], ::std::make_shared<::rl::math::Vector>(*this->getGoal()));
 			
 			Tree* a = &this->tree[0];
 			Tree* b = &this->tree[1];
 			
-			::rl::math::Vector chosen(this->model->getDofPosition());
+			::rl::math::Vector chosen(this->getModel()->getDofPosition());
 			
-			while ((::std::chrono::steady_clock::now() - this->time) < this->duration)
+			while ((::std::chrono::steady_clock::now() - this->time) < this->getDuration())
 			{
 				for (::std::size_t j = 0; j < 2; ++j)
 				{

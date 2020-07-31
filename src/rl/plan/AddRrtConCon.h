@@ -50,7 +50,19 @@ namespace rl
 			
 			virtual ~AddRrtConCon();
 			
+			::rl::math::Real getAlpha() const;
+			
+			::rl::math::Real getLower() const;
+			
 			virtual ::std::string getName() const;
+			
+			::rl::math::Real getRadius() const;
+			
+			void setAlpha(const ::rl::math::Real& alpha);
+			
+			void setLower(const ::rl::math::Real& lower);
+			
+			void setRadius(const ::rl::math::Real& radius);
 			
 			bool solve();
 			

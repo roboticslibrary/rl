@@ -108,13 +108,13 @@ main(int argc, char** argv)
 		
 		planner.model = &model;
 		planner.setNearestNeighbors(&nearestNeighbors);
-		planner.sampler = &sampler;
-		planner.verifier = &verifier;
+		planner.setSampler(&sampler);
+		planner.setVerifier(&verifier);
 		
-		sampler.model = &model;
+		sampler.setModel(&model);
 		
-		verifier.delta = 1 * rl::math::constants::deg2rad;
-		verifier.model = &model;
+		verifier.setDelta(1 * rl::math::constants::deg2rad);
+		verifier.setModel(&model);
 		
 		rl::math::Vector start(kinematic->getDofPosition());
 		
@@ -123,7 +123,7 @@ main(int argc, char** argv)
 			start(i) = boost::lexical_cast<rl::math::Real>(argv[i + 3]) * rl::math::constants::deg2rad;
 		}
 		
-		planner.start = &start;
+		planner.setStart(&start);
 		
 		rl::math::Vector goal(kinematic->getDofPosition());
 		
@@ -132,7 +132,7 @@ main(int argc, char** argv)
 			goal(i) = boost::lexical_cast<rl::math::Real>(argv[start.size() + i + 3]) * rl::math::constants::deg2rad;
 		}
 		
-		planner.goal = &goal;
+		planner.setGoal(&goal);
 		
 		std::cout << "start: " << start.transpose() * rl::math::constants::rad2deg << std::endl;;
 		std::cout << "goal: " << goal.transpose() * rl::math::constants::rad2deg << std::endl;;

@@ -59,8 +59,8 @@ namespace rl
 		{
 			for (::std::size_t i = 0; i < steps; ++i)
 			{
-				Sample sample(this->model->getDofPosition());
-				Sample bestSample(this->model->getDofPosition());
+				Sample sample(this->getModel()->getDofPosition());
+				Sample bestSample(this->getModel()->getDofPosition());
 				::rl::math::Real pBest = -1;
 				
 				// From numSamples samples, get the one with the best probability for being free.
@@ -90,7 +90,7 @@ namespace rl
 				}
 				
 				// now do collision check
-				if (!this->model->isColliding(bestSample.q))
+				if (!this->getModel()->isColliding(bestSample.q))
 				{
 					// store the sample in the graph
 					bestSample.isColliding = false;
@@ -160,7 +160,7 @@ namespace rl
 			// TODO use kd tree!!!
 			for (::std::size_t i = 0; i < this->samples.size(); ++i)
 			{
-				this->samples[i].d = this->model->transformedDistance(sample.q, this->samples[i].q);
+				this->samples[i].d = this->getModel()->transformedDistance(sample.q, this->samples[i].q);
 				queue.push(&this->samples[i]);
 			}
 			
@@ -201,14 +201,14 @@ namespace rl
 		PrmUtilityGuided::solve()
 		{
 			// Add the start and end configurations as samples
-			Sample first(this->model->getDofPosition());
+			Sample first(this->getModel()->getDofPosition());
 			first.isColliding = false;
-			first.q = *this->start;
+			first.q = *this->getStart();
 			this->samples.push_back(first);
 			
-			Sample last(this->model->getDofPosition());
+			Sample last(this->getModel()->getDofPosition());
 			last.isColliding = false;
-			last.q = *this->goal;
+			last.q = *this->getGoal();
 			this->samples.push_back(last);
 			
 			return Prm::solve();

@@ -79,10 +79,10 @@ namespace rl
 		{
 			this->time = ::std::chrono::steady_clock::now();
 			
-			this->begin[0] = this->addVertex(this->tree[0], ::std::make_shared<::rl::math::Vector>(*this->start));
-			this->begin[1] = this->addVertex(this->tree[1], ::std::make_shared<::rl::math::Vector>(*this->goal));
+			this->begin[0] = this->addVertex(this->tree[0], ::std::make_shared<::rl::math::Vector>(*this->getStart()));
+			this->begin[1] = this->addVertex(this->tree[1], ::std::make_shared<::rl::math::Vector>(*this->getGoal()));
 			
-			while ((::std::chrono::steady_clock::now() - this->time) < this->duration)
+			while ((::std::chrono::steady_clock::now() - this->time) < this->getDuration())
 			{
 				::rl::math::Vector chosen = this->choose();
 				Neighbor nearest = this->nearest(this->tree[0], chosen);

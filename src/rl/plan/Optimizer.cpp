@@ -40,5 +40,41 @@ namespace rl
 		Optimizer::~Optimizer()
 		{
 		}
+		
+		SimpleModel*
+		Optimizer::getModel() const
+		{
+			return this->model;
+		}
+		
+		Verifier*
+		Optimizer::getVerifier() const
+		{
+			return this->verifier;
+		}
+		
+		Viewer*
+		Optimizer::getViewer() const
+		{
+			return this->viewer;
+		}
+		
+		void
+		Optimizer::setModel(SimpleModel* model)
+		{
+			this->model = model;
+		}
+		
+		void
+		Optimizer::setVerifier(Verifier* verifier)
+		{
+			this->verifier = verifier;
+		}
+		
+		void
+		Optimizer::setViewer(Viewer* viewer)
+		{
+			this->viewer = viewer;
+		}
 	}
 }

@@ -1113,13 +1113,13 @@ MainWindow::load(const QString& filename)
 			gaussianSampler->seed(*this->seed);
 		}
 		
-		gaussianSampler->sigma = this->sigma.get();
+		gaussianSampler->setSigma(this->sigma.get());
 	}
 	else if (path.eval("count((/rl/plan|/rlplan)//bridgeSampler) > 0").getValue<bool>())
 	{
 		this->sampler = std::make_shared<rl::plan::BridgeSampler>();
 		rl::plan::BridgeSampler* bridgeSampler = static_cast<rl::plan::BridgeSampler*>(this->sampler.get());
-		bridgeSampler->ratio = path.eval("number((/rl/plan|/rlplan)//bridgeSampler/ratio)").getValue<rl::math::Real>(static_cast<rl::math::Real>(5) / static_cast<rl::math::Real>(6));
+		bridgeSampler->setRatio(path.eval("number((/rl/plan|/rlplan)//bridgeSampler/ratio)").getValue<rl::math::Real>(static_cast<rl::math::Real>(5) / static_cast<rl::math::Real>(6)));
 		
 		if (path.eval("count((/rl/plan|/rlplan)//bridgeSampler/seed) > 0").getValue<bool>())
 		{
@@ -1132,67 +1132,75 @@ MainWindow::load(const QString& filename)
 			bridgeSampler->seed(*this->seed);
 		}
 		
-		bridgeSampler->sigma = this->sigma.get();
+		bridgeSampler->setSigma(this->sigma.get());
 	}
 	
 	if (nullptr != this->sampler)
 	{
-		this->sampler->model = this->model.get();
+		this->sampler->setModel(this->model.get());
 	}
 	
 	this->sampler2 = std::make_shared<rl::plan::UniformSampler>();
-	this->sampler2->model = this->model.get();
+	this->sampler2->setModel(this->model.get());
 	
 	if (path.eval("count((/rl/plan|/rlplan)//recursiveVerifier) > 0").getValue<bool>())
 	{
 		this->verifier = std::make_shared<rl::plan::RecursiveVerifier>();
-		this->verifier->delta = path.eval("number((/rl/plan|/rlplan)//recursiveVerifier/delta)").getValue<rl::math::Real>(1);
+		rl::math::Real delta = path.eval("number((/rl/plan|/rlplan)//recursiveVerifier/delta)").getValue<rl::math::Real>(1);
 		
 		if ("deg" == path.eval("string((/rl/plan|/rlplan)//recursiveVerifier/delta/@unit)").getValue<std::string>())
 		{
-			this->verifier->delta *= rl::math::constants::deg2rad;
+			delta *= rl::math::constants::deg2rad;
 		}
+		
+		this->verifier->setDelta(delta);
 	}
 	else if (path.eval("count((/rl/plan|/rlplan)//sequentialVerifier) > 0").getValue<bool>())
 	{
 		this->verifier = std::make_shared<rl::plan::SequentialVerifier>();
-		this->verifier->delta = path.eval("number((/rl/plan|/rlplan)//sequentialVerifier/delta)").getValue<rl::math::Real>(1);
+		rl::math::Real delta = path.eval("number((/rl/plan|/rlplan)//sequentialVerifier/delta)").getValue<rl::math::Real>(1);
 		
 		if ("deg" == path.eval("string((/rl/plan|/rlplan)//sequentialVerifier/delta/@unit)").getValue<std::string>())
 		{
-			this->verifier->delta *= rl::math::constants::deg2rad;
+			delta *= rl::math::constants::deg2rad;
 		}
+		
+		this->verifier->setDelta(delta);
 	}
 	
 	if (nullptr != this->verifier)
 	{
-		this->verifier->model = this->model.get();
+		this->verifier->setModel(this->model.get());
 	}
 	
 	if (path.eval("count((/rl/plan|/rlplan)//simpleOptimizer/recursiveVerifier) > 0").getValue<bool>())
 	{
 		this->verifier2 = std::make_shared<rl::plan::RecursiveVerifier>();
-		this->verifier2->delta = path.eval("number((/rl/plan|/rlplan)//simpleOptimizer/recursiveVerifier/delta)").getValue<rl::math::Real>(1);
+		rl::math::Real delta = path.eval("number((/rl/plan|/rlplan)//simpleOptimizer/recursiveVerifier/delta)").getValue<rl::math::Real>(1);
 		
 		if ("deg" == path.eval("string((/rl/plan|/rlplan)//simpleOptimizer/recursiveVerifier/delta/@unit)").getValue<std::string>())
 		{
-			this->verifier2->delta *= rl::math::constants::deg2rad;
+			delta *= rl::math::constants::deg2rad;
 		}
+		
+		this->verifier2->setDelta(delta);
 	}
 	else if (path.eval("count((/rl/plan|/rlplan)//advancedOptimizer/recursiveVerifier) > 0").getValue<bool>())
 	{
 		this->verifier2 = std::make_shared<rl::plan::RecursiveVerifier>();
-		this->verifier2->delta = path.eval("number((/rl/plan|/rlplan)//advancedOptimizer/recursiveVerifier/delta)").getValue<rl::math::Real>(1);
+		rl::math::Real delta = path.eval("number((/rl/plan|/rlplan)//advancedOptimizer/recursiveVerifier/delta)").getValue<rl::math::Real>(1);
 		
 		if ("deg" == path.eval("string((/rl/plan|/rlplan)//advancedOptimizer/recursiveVerifier/delta/@unit)").getValue<std::string>())
 		{
-			this->verifier2->delta *= rl::math::constants::deg2rad;
+			delta *= rl::math::constants::deg2rad;
 		}
+		
+		this->verifier2->setDelta(delta);
 	}
 	
 	if (nullptr != this->verifier2)
 	{
-		this->verifier2->model = this->model.get();
+		this->verifier2->setModel(this->model.get());
 	}
 	
 	this->optimizer.reset();
@@ -1205,20 +1213,21 @@ MainWindow::load(const QString& filename)
 	{
 		this->optimizer = std::make_shared<rl::plan::AdvancedOptimizer>();
 		rl::plan::AdvancedOptimizer* advancedOptimizer = static_cast<rl::plan::AdvancedOptimizer*>(this->optimizer.get());
-		advancedOptimizer->length = path.eval("number((/rl/plan|/rlplan)//advancedOptimizer/length)").getValue<rl::math::Real>(1);
+		rl::math::Real length = path.eval("number((/rl/plan|/rlplan)//advancedOptimizer/length)").getValue<rl::math::Real>(1);
 		
 		if ("deg" == path.eval("string((/rl/plan|/rlplan)//advancedOptimizer/length/@unit)").getValue<std::string>())
 		{
-			advancedOptimizer->length *= rl::math::constants::deg2rad;
+			length *= rl::math::constants::deg2rad;
 		}
 		
-		advancedOptimizer->ratio = path.eval("number((/rl/plan|/rlplan)//advancedOptimizer/ratio)").getValue<rl::math::Real>(static_cast<rl::math::Real>(0.1));
+		advancedOptimizer->setLength(length);
+		advancedOptimizer->setRatio(path.eval("number((/rl/plan|/rlplan)//advancedOptimizer/ratio)").getValue<rl::math::Real>(static_cast<rl::math::Real>(0.1)));
 	}
 	
 	if (nullptr != this->optimizer)
 	{
-		this->optimizer->model = this->model.get();
-		this->optimizer->verifier = this->verifier2.get();
+		this->optimizer->setModel(this->model.get());
+		this->optimizer->setVerifier(this->verifier2.get());
 	}
 	
 	rl::xml::NodeSet planners = path.eval("(/rl/plan|/rlplan)//addRrtConCon|(/rl/plan|/rlplan)//eet|(/rl/plan|/rlplan)//prm|(/rl/plan|/rlplan)//prmUtilityGuided|(/rl/plan|/rlplan)//rrt|(/rl/plan|/rlplan)//rrtCon|(/rl/plan|/rlplan)//rrtConCon|(/rl/plan|/rlplan)//rrtConExt|(/rl/plan|/rlplan)//rrtDual|(/rl/plan|/rlplan)//rrtGoalBias|(/rl/plan|/rlplan)//rrtExtCon|(/rl/plan|/rlplan)//rrtExtExt").getValue<rl::xml::NodeSet>();
@@ -1231,78 +1240,92 @@ MainWindow::load(const QString& filename)
 		{
 			this->planner = std::make_shared<rl::plan::AddRrtConCon>();
 			rl::plan::AddRrtConCon* addRrtConCon = static_cast<rl::plan::AddRrtConCon*>(this->planner.get());
-			addRrtConCon->alpha = path.eval("number(alpha)").getValue<rl::math::Real>(static_cast<rl::math::Real>(0.05));
-			addRrtConCon->delta = path.eval("number(delta)").getValue<rl::math::Real>(1);
+			addRrtConCon->setAlpha(path.eval("number(alpha)").getValue<rl::math::Real>(static_cast<rl::math::Real>(0.05)));
+			rl::math::Real delta = path.eval("number(delta)").getValue<rl::math::Real>(1);
 			
 			if ("deg" == path.eval("string(delta/@unit)").getValue<std::string>())
 			{
-				addRrtConCon->delta *= rl::math::constants::deg2rad;
+				delta *= rl::math::constants::deg2rad;
 			}
 			
-			addRrtConCon->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1.0e-3));
+			addRrtConCon->setDelta(delta);
+			rl::math::Real epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1.0e-3));
 			
 			if ("deg" == path.eval("string(epsilon/@unit)").getValue<std::string>())
 			{
-				addRrtConCon->epsilon *= rl::math::constants::deg2rad;
+				epsilon *= rl::math::constants::deg2rad;
 			}
 			
-			addRrtConCon->lower = path.eval("number(lower)").getValue<rl::math::Real>(2);
+			addRrtConCon->setEpsilon(epsilon);
+			rl::math::Real lower = path.eval("number(lower)").getValue<rl::math::Real>(2);
 			
 			if ("deg" == path.eval("string(lower/@unit)").getValue<std::string>())
 			{
-				addRrtConCon->lower *= rl::math::constants::deg2rad;
+				lower *= rl::math::constants::deg2rad;
 			}
 			
-			addRrtConCon->radius = path.eval("number(radius)").getValue<rl::math::Real>(20);
+			addRrtConCon->setLower(lower);
+			rl::math::Real radius = path.eval("number(radius)").getValue<rl::math::Real>(20);
 			
 			if ("deg" == path.eval("string(radius/@unit)").getValue<std::string>())
 			{
-				addRrtConCon->radius *= rl::math::constants::deg2rad;
+				radius *= rl::math::constants::deg2rad;
 			}
 			
-			addRrtConCon->sampler = this->sampler.get();
+			addRrtConCon->setRadius(radius);
+			addRrtConCon->setSampler(this->sampler.get());
 		}
 		else if ("eet" == planners[i].getName())
 		{
 			this->planner = std::make_shared<rl::plan::Eet>();
 			rl::plan::Eet* eet = static_cast<rl::plan::Eet*>(this->planner.get());
-			eet->alpha = path.eval("number(alpha)").getValue<rl::math::Real>(static_cast<rl::math::Real>(0.01));
-			eet->alternativeDistanceComputation = path.eval("count(alternativeDistanceComputation) > 0").getValue<bool>() ? true : false;
-			eet->beta = path.eval("number(beta)").getValue<rl::math::Real>(0);
-			eet->delta = path.eval("number(delta)").getValue<rl::math::Real>(1);
+			eet->setAlpha(path.eval("number(alpha)").getValue<rl::math::Real>(static_cast<rl::math::Real>(0.01)));
+			eet->setAlternativeDistanceComputation(path.eval("count(alternativeDistanceComputation) > 0").getValue<bool>() ? true : false);
+			eet->setBeta(path.eval("number(beta)").getValue<rl::math::Real>(0));
+			rl::math::Real delta = path.eval("number(delta)").getValue<rl::math::Real>(1);
 			
 			if ("deg" == path.eval("string(delta/@unit)").getValue<std::string>())
 			{
-				eet->delta *= rl::math::constants::deg2rad;
+				delta *= rl::math::constants::deg2rad;
 			}
 			
-			eet->distanceWeight = path.eval("number(distanceWeight)").getValue<rl::math::Real>(static_cast<rl::math::Real>(0.1));
-			eet->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1.0e-3));
+			eet->setDelta(delta);
+			eet->setDistanceWeight(path.eval("number(distanceWeight)").getValue<rl::math::Real>(static_cast<rl::math::Real>(0.1)));
+			rl::math::Real epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1.0e-3));
 			
 			if ("deg" == path.eval("string(epsilon/@unit)").getValue<std::string>())
 			{
-				eet->epsilon *= rl::math::constants::deg2rad;
+				epsilon *= rl::math::constants::deg2rad;
 			}
 			
-			eet->gamma = path.eval("number(gamma)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1) / static_cast<rl::math::Real>(3));
-			eet->goalEpsilon = path.eval("number(goalEpsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(0.1));
+			eet->setEpsilon(epsilon);
+			eet->setGamma(path.eval("number(gamma)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1) / static_cast<rl::math::Real>(3)));
+			eet->setGoalEpsilon(path.eval("number(goalEpsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(0.1)));
 			
 			if (path.eval("translate(string(goalEpsilon/@orientation), 'TRUE', 'true') = 'true' or string(goalEpsilon/@orientation) = '1'").getValue<bool>())
 			{
-				eet->goalEpsilonUseOrientation = true;
+				eet->setGoalEpsilonUseOrientation(true);
 			}
 			else
 			{
-				eet->goalEpsilonUseOrientation = false;
+				eet->setGoalEpsilonUseOrientation(false);
 			}
 			
-			eet->max.x() = path.eval("number(max/x)").getValue<rl::math::Real>(0);
-			eet->max.y() = path.eval("number(max/y)").getValue<rl::math::Real>(0);
-			eet->max.z() = path.eval("number(max/z)").getValue<rl::math::Real>(0);
-			eet->min.x() = path.eval("number(min/x)").getValue<rl::math::Real>(0);
-			eet->min.y() = path.eval("number(min/y)").getValue<rl::math::Real>(0);
-			eet->min.z() = path.eval("number(min/z)").getValue<rl::math::Real>(0);
-			eet->sampler = this->sampler.get();
+			eet->setMax(
+				rl::math::Vector3(
+					path.eval("number(max/x)").getValue<rl::math::Real>(0),
+					path.eval("number(max/y)").getValue<rl::math::Real>(0),
+					path.eval("number(max/z)").getValue<rl::math::Real>(0)
+				)
+			);
+			eet->setMin(
+				rl::math::Vector3(
+					path.eval("number(min/x)").getValue<rl::math::Real>(0),
+					path.eval("number(min/y)").getValue<rl::math::Real>(0),
+					path.eval("number(min/z)").getValue<rl::math::Real>(0)
+				)
+			);
+			eet->setSampler(this->sampler.get());
 			
 			if (path.eval("count(seed) > 0").getValue<bool>())
 			{
@@ -1323,13 +1346,13 @@ MainWindow::load(const QString& filename)
 				
 				std::shared_ptr<rl::plan::WorkspaceSphereExplorer> explorer = std::make_shared<rl::plan::WorkspaceSphereExplorer>();
 				this->explorers.push_back(explorer);
-				eet->explorers.push_back(explorer.get());
+				eet->addExplorer(explorer.get());
 				
 				rl::plan::Eet::ExplorerSetup explorerSetup;
 				
 				std::shared_ptr<rl::math::Vector3> explorerStart = std::make_shared<rl::math::Vector3>();
 				this->explorerStarts.push_back(explorerStart);
-				explorer->start = explorerStart.get();
+				explorer->setStart(explorerStart.get());
 				
 				(*explorerStart).x() = path.eval("number(start/x)").getValue<rl::math::Real>(0);
 				(*explorerStart).y() = path.eval("number(start/y)").getValue<rl::math::Real>(0);
@@ -1359,7 +1382,7 @@ MainWindow::load(const QString& filename)
 				
 				std::shared_ptr<rl::math::Vector3> explorerGoal = std::make_shared<rl::math::Vector3>();
 				this->explorerGoals.push_back(explorerGoal);
-				explorer->goal = explorerGoal.get();
+				explorer->setGoal(explorerGoal.get());
 				
 				(*explorerGoal).x() = path.eval("number(goal/x)").getValue<rl::math::Real>(0);
 				(*explorerGoal).y() = path.eval("number(goal/y)").getValue<rl::math::Real>(0);
@@ -1387,38 +1410,46 @@ MainWindow::load(const QString& filename)
 					explorerSetup.goalFrame = -1;
 				}
 				
-				explorer->boundingBox.max().x() = path.eval("number(boundingBox/max/x)").getValue<rl::math::Real>(std::numeric_limits<rl::math::Real>::max());
-				explorer->boundingBox.max().y() = path.eval("number(boundingBox/max/y)").getValue<rl::math::Real>(std::numeric_limits<rl::math::Real>::max());
-				explorer->boundingBox.max().z() = path.eval("number(boundingBox/max/z)").getValue<rl::math::Real>(std::numeric_limits<rl::math::Real>::max());
-				explorer->boundingBox.min().x() = path.eval("number(boundingBox/min/x)").getValue<rl::math::Real>(-std::numeric_limits<rl::math::Real>::max());
-				explorer->boundingBox.min().y() = path.eval("number(boundingBox/min/y)").getValue<rl::math::Real>(-std::numeric_limits<rl::math::Real>::max());
-				explorer->boundingBox.min().z() = path.eval("number(boundingBox/min/z)").getValue<rl::math::Real>(-std::numeric_limits<rl::math::Real>::max());
+				explorer->setBoundingBox(
+					rl::math::AlignedBox3(
+						rl::math::Vector3(
+							path.eval("number(boundingBox/min/x)").getValue<rl::math::Real>(-std::numeric_limits<rl::math::Real>::max()),
+							path.eval("number(boundingBox/min/y)").getValue<rl::math::Real>(-std::numeric_limits<rl::math::Real>::max()),
+							path.eval("number(boundingBox/min/z)").getValue<rl::math::Real>(-std::numeric_limits<rl::math::Real>::max())
+						),
+						rl::math::Vector3(
+							path.eval("number(boundingBox/max/x)").getValue<rl::math::Real>(std::numeric_limits<rl::math::Real>::max()),
+							path.eval("number(boundingBox/max/y)").getValue<rl::math::Real>(std::numeric_limits<rl::math::Real>::max()),
+							path.eval("number(boundingBox/max/z)").getValue<rl::math::Real>(std::numeric_limits<rl::math::Real>::max())
+						)
+					)
+				);
 				
 				if (path.eval("count(distance) > 0").getValue<bool>())
 				{
-					explorer->greedy = rl::plan::WorkspaceSphereExplorer::Greedy::distance;
+					explorer->setGreedy(rl::plan::WorkspaceSphereExplorer::Greedy::distance);
 				}
 				else if (path.eval("count(sourceDistance) > 0").getValue<bool>())
 				{
-					explorer->greedy = rl::plan::WorkspaceSphereExplorer::Greedy::sourceDistance;
+					explorer->setGreedy(rl::plan::WorkspaceSphereExplorer::Greedy::sourceDistance);
 				}
 				else if (path.eval("count(space) > 0").getValue<bool>())
 				{
-					explorer->greedy = rl::plan::WorkspaceSphereExplorer::Greedy::space;
+					explorer->setGreedy(rl::plan::WorkspaceSphereExplorer::Greedy::space);
 				}
 				
 				if (rl::plan::DistanceModel* model = dynamic_cast<rl::plan::DistanceModel*>(this->model.get()))
 				{
-					explorer->model = model;
+					explorer->setModel(model);
 				}
 				else
 				{
 					throw std::runtime_error("selected engine does not support distance queries");
 				}
 				
-				explorer->radius = path.eval("number(radius)").getValue<rl::math::Real>(0);
-				explorer->range = path.eval("number(range)").getValue<rl::math::Real>(std::numeric_limits<rl::math::Real>::max());
-				explorer->samples = path.eval("number(samples)").getValue<std::size_t>(10);
+				explorer->setRadius(path.eval("number(radius)").getValue<rl::math::Real>(0));
+				explorer->setRange(path.eval("number(range)").getValue<rl::math::Real>(std::numeric_limits<rl::math::Real>::max()));
+				explorer->setSamples(path.eval("number(samples)").getValue<std::size_t>(10));
 				
 				if (path.eval("count(seed) > 0").getValue<bool>())
 				{
@@ -1431,49 +1462,52 @@ MainWindow::load(const QString& filename)
 					explorer->seed(*this->seed);
 				}
 				
-				eet->explorersSetup.push_back(explorerSetup);
+				eet->addExplorerSetup(explorerSetup);
 			}
 		}
 		else if ("prm" == planners[i].getName())
 		{
 			this->planner = std::make_shared<rl::plan::Prm>();
 			rl::plan::Prm* prm = static_cast<rl::plan::Prm*>(this->planner.get());
-			prm->degree = path.eval("number(degree)").getValue<std::size_t>(std::numeric_limits<std::size_t>::max());
+			prm->setMaxDegree(path.eval("number(degree)").getValue<std::size_t>(std::numeric_limits<std::size_t>::max()));
 			
 			if (path.eval("count(dijkstra) > 0").getValue<bool>())
 			{
-				prm->astar = false;
+				prm->setSearch(rl::plan::Prm::Search::dijkstra);
 			}
 			
-			prm->k = path.eval("number(k)").getValue<std::size_t>(30);
-			prm->radius = path.eval("number(radius)").getValue<rl::math::Real>(std::numeric_limits<rl::math::Real>::max());
+			prm->setMaxNeighbors(path.eval("number(k)").getValue<std::size_t>(30));
+			rl::math::Real radius = path.eval("number(radius)").getValue<rl::math::Real>(std::numeric_limits<rl::math::Real>::max());
 			
 			if ("deg" == path.eval("string(radius/@unit)").getValue<std::string>())
 			{
-				prm->radius *= rl::math::constants::deg2rad;
+				radius *= rl::math::constants::deg2rad;
 			}
 			
-			prm->sampler = this->sampler.get();
-			prm->verifier = this->verifier.get();
+			prm->setMaxRadius(radius);
+			prm->setSampler(this->sampler.get());
+			prm->setVerifier(this->verifier.get());
 		}
 		else if ("prmUtilityGuided" == planners[i].getName())
 		{
 			this->planner = std::make_shared<rl::plan::PrmUtilityGuided>();
 			rl::plan::PrmUtilityGuided* prmUtilityGuided = static_cast<rl::plan::PrmUtilityGuided*>(this->planner.get());
-			prmUtilityGuided->degree = path.eval("number(degree)").getValue<std::size_t>(std::numeric_limits<std::size_t>::max());
+			prmUtilityGuided->setMaxDegree(path.eval("number(degree)").getValue<std::size_t>(std::numeric_limits<std::size_t>::max()));
 			
 			if (path.eval("count(dijkstra) > 0").getValue<bool>())
 			{
-				prmUtilityGuided->astar = false;
+				prmUtilityGuided->setSearch(rl::plan::Prm::Search::dijkstra);
 			}
 			
-			prmUtilityGuided->k = path.eval("number(k)").getValue<std::size_t>(30);
-			prmUtilityGuided->radius = path.eval("number(radius)").getValue<rl::math::Real>(std::numeric_limits<rl::math::Real>::max());
+			prmUtilityGuided->setMaxNeighbors(path.eval("number(k)").getValue<std::size_t>(30));
+			rl::math::Real radius = path.eval("number(radius)").getValue<rl::math::Real>(std::numeric_limits<rl::math::Real>::max());
 			
 			if ("deg" == path.eval("string(radius/@unit)").getValue<std::string>())
 			{
-				prmUtilityGuided->radius *= rl::math::constants::deg2rad;
+				radius *= rl::math::constants::deg2rad;
 			}
+			
+			prmUtilityGuided->setMaxRadius(radius);
 			
 			if (path.eval("count(seed) > 0").getValue<bool>())
 			{
@@ -1486,49 +1520,53 @@ MainWindow::load(const QString& filename)
 				prmUtilityGuided->seed(*this->seed);
 			}
 			
-			prmUtilityGuided->sampler = this->sampler.get();
-			prmUtilityGuided->verifier = this->verifier.get();
+			prmUtilityGuided->setSampler(this->sampler.get());
+			prmUtilityGuided->setVerifier(this->verifier.get());
 		}
 		else if ("rrt" == planners[i].getName())
 		{
 			this->planner = std::make_shared<rl::plan::Rrt>();
 			rl::plan::Rrt* rrt = static_cast<rl::plan::Rrt*>(this->planner.get());
-			rrt->delta = path.eval("number(delta)").getValue<rl::math::Real>(1);
+			rl::math::Real delta = path.eval("number(delta)").getValue<rl::math::Real>(1);
 			
 			if ("deg" == path.eval("string(delta/@unit)").getValue<std::string>())
 			{
-				rrt->delta *= rl::math::constants::deg2rad;
+				delta *= rl::math::constants::deg2rad;
 			}
 			
-			rrt->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1.0e-3));
+			rrt->setDelta(delta);
+			rl::math::Real epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1.0e-3));
 			
 			if ("deg" == path.eval("string(epsilon/@unit)").getValue<std::string>())
 			{
-				rrt->epsilon *= rl::math::constants::deg2rad;
+				epsilon *= rl::math::constants::deg2rad;
 			}
 			
-			rrt->sampler = this->sampler.get();
+			rrt->setEpsilon(epsilon);
+			rrt->setSampler(this->sampler.get());
 		}
 		else if ("rrtCon" == planners[i].getName())
 		{
 			this->planner = std::make_shared<rl::plan::RrtCon>();
 			rl::plan::RrtCon* rrtCon = static_cast<rl::plan::RrtCon*>(this->planner.get());
-			rrtCon->delta = path.eval("number(delta)").getValue<rl::math::Real>(1);
+			rl::math::Real delta = path.eval("number(delta)").getValue<rl::math::Real>(1);
 			
 			if ("deg" == path.eval("string(delta/@unit)").getValue<std::string>())
 			{
-				rrtCon->delta *= rl::math::constants::deg2rad;
+				delta *= rl::math::constants::deg2rad;
 			}
 			
-			rrtCon->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1.0e-3));
+			rrtCon->setDelta(delta);
+			rl::math::Real epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1.0e-3));
 			
 			if ("deg" == path.eval("string(epsilon/@unit)").getValue<std::string>())
 			{
-				rrtCon->epsilon *= rl::math::constants::deg2rad;
+				epsilon *= rl::math::constants::deg2rad;
 			}
 			
-			rrtCon->probability = path.eval("number(probability)").getValue<rl::math::Real>(static_cast<rl::math::Real>(0.05));
-			rrtCon->sampler = this->sampler.get();
+			rrtCon->setEpsilon(epsilon);
+			rrtCon->setProbability(path.eval("number(probability)").getValue<rl::math::Real>(static_cast<rl::math::Real>(0.05)));
+			rrtCon->setSampler(this->sampler.get());
 			
 			if (path.eval("count(seed) > 0").getValue<bool>())
 			{
@@ -1545,102 +1583,112 @@ MainWindow::load(const QString& filename)
 		{
 			this->planner = std::make_shared<rl::plan::RrtConCon>();
 			rl::plan::RrtConCon* rrtConCon = static_cast<rl::plan::RrtConCon*>(this->planner.get());
-			rrtConCon->delta = path.eval("number(delta)").getValue<rl::math::Real>(1);
+			rl::math::Real delta = path.eval("number(delta)").getValue<rl::math::Real>(1);
 			
 			if ("deg" == path.eval("string(delta/@unit)").getValue<std::string>())
 			{
-				rrtConCon->delta *= rl::math::constants::deg2rad;
+				delta *= rl::math::constants::deg2rad;
 			}
 			
-			rrtConCon->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1.0e-3));
+			rrtConCon->setDelta(delta);
+			rl::math::Real epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1.0e-3));
 			
 			if ("deg" == path.eval("string(epsilon/@unit)").getValue<std::string>())
 			{
-				rrtConCon->epsilon *= rl::math::constants::deg2rad;
+				epsilon *= rl::math::constants::deg2rad;
 			}
 			
-			rrtConCon->sampler = this->sampler.get();
+			rrtConCon->setEpsilon(epsilon);
+			rrtConCon->setSampler(this->sampler.get());
 		}
 		else if ("rrtDual" == planners[i].getName())
 		{
 			this->planner = std::make_shared<rl::plan::RrtDual>();
 			rl::plan::RrtDual* rrtDual = static_cast<rl::plan::RrtDual*>(this->planner.get());
-			rrtDual->delta = path.eval("number(delta)").getValue<rl::math::Real>(1);
+			rl::math::Real delta = path.eval("number(delta)").getValue<rl::math::Real>(1);
 			
 			if ("deg" == path.eval("string(delta/@unit)").getValue<std::string>())
 			{
-				rrtDual->delta *= rl::math::constants::deg2rad;
+				delta *= rl::math::constants::deg2rad;
 			}
 			
-			rrtDual->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1.0e-3));
+			rrtDual->setDelta(delta);
+			rl::math::Real epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1.0e-3));
 			
 			if ("deg" == path.eval("string(epsilon/@unit)").getValue<std::string>())
 			{
-				rrtDual->epsilon *= rl::math::constants::deg2rad;
+				epsilon *= rl::math::constants::deg2rad;
 			}
 			
-			rrtDual->sampler = this->sampler.get();
+			rrtDual->setEpsilon(epsilon);
+			rrtDual->setSampler(this->sampler.get());
 		}
 		else if ("rrtExtCon" == planners[i].getName())
 		{
 			this->planner = std::make_shared<rl::plan::RrtExtCon>();
 			rl::plan::RrtExtCon* rrtExtCon = static_cast<rl::plan::RrtExtCon*>(this->planner.get());
-			rrtExtCon->delta = path.eval("number(delta)").getValue<rl::math::Real>(1);
+			rl::math::Real delta = path.eval("number(delta)").getValue<rl::math::Real>(1);
 			
 			if ("deg" == path.eval("string(delta/@unit)").getValue<std::string>())
 			{
-				rrtExtCon->delta *= rl::math::constants::deg2rad;
+				delta *= rl::math::constants::deg2rad;
 			}
 			
-			rrtExtCon->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1.0e-3));
+			rrtExtCon->setDelta(delta);
+			rl::math::Real epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1.0e-3));
 			
 			if ("deg" == path.eval("string(epsilon/@unit)").getValue<std::string>())
 			{
-				rrtExtCon->epsilon *= rl::math::constants::deg2rad;
+				epsilon *= rl::math::constants::deg2rad;
 			}
 			
-			rrtExtCon->sampler = this->sampler.get();
+			rrtExtCon->setEpsilon(epsilon);
+			rrtExtCon->setSampler(this->sampler.get());
 		}
 		else if ("rrtExtExt" == planners[i].getName())
 		{
 			this->planner = std::make_shared<rl::plan::RrtExtExt>();
 			rl::plan::RrtExtExt* rrtExtExt = static_cast<rl::plan::RrtExtExt*>(this->planner.get());
-			rrtExtExt->delta = path.eval("number(delta)").getValue<rl::math::Real>(1);
+			rl::math::Real delta = path.eval("number(delta)").getValue<rl::math::Real>(1);
 			
 			if ("deg" == path.eval("string(delta/@unit)").getValue<std::string>())
 			{
-				rrtExtExt->delta *= rl::math::constants::deg2rad;
+				delta *= rl::math::constants::deg2rad;
 			}
 			
-			rrtExtExt->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1.0e-3));
+			rrtExtExt->setDelta(delta);
+			rl::math::Real epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1.0e-3));
 			
 			if ("deg" == path.eval("string(epsilon/@unit)").getValue<std::string>())
 			{
-				rrtExtExt->epsilon *= rl::math::constants::deg2rad;
+				epsilon *= rl::math::constants::deg2rad;
 			}
 			
-			rrtExtExt->sampler = this->sampler.get();
+			rrtExtExt->setEpsilon(epsilon);
+			rrtExtExt->setSampler(this->sampler.get());
 		}
 		else if ("rrtGoalBias" == planners[i].getName())
 		{
 			this->planner = std::make_shared<rl::plan::RrtGoalBias>();
 			rl::plan::RrtGoalBias* rrtGoalBias = static_cast<rl::plan::RrtGoalBias*>(this->planner.get());
-			rrtGoalBias->delta = path.eval("number(delta)").getValue<rl::math::Real>(1);
+			rl::math::Real delta = path.eval("number(delta)").getValue<rl::math::Real>(1);
 			
 			if ("deg" == path.eval("string(delta/@unit)").getValue<std::string>())
 			{
-				rrtGoalBias->delta *= rl::math::constants::deg2rad;
+				delta *= rl::math::constants::deg2rad;
 			}
 			
-			rrtGoalBias->epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1.0e-3));
+			rrtGoalBias->setDelta(delta);
+			rl::math::Real epsilon = path.eval("number(epsilon)").getValue<rl::math::Real>(static_cast<rl::math::Real>(1.0e-3));
 			
 			if ("deg" == path.eval("string(epsilon/@unit)").getValue<std::string>())
 			{
-				rrtGoalBias->epsilon *= rl::math::constants::deg2rad;
+				epsilon *= rl::math::constants::deg2rad;
 			}
 			
-			rrtGoalBias->probability = path.eval("number(probability)").getValue<rl::math::Real>(static_cast<rl::math::Real>(0.05));
-			rrtGoalBias->sampler = this->sampler.get();
+			rrtGoalBias->setEpsilon(epsilon);
+			rrtGoalBias->setProbability(path.eval("number(probability)").getValue<rl::math::Real>(static_cast<rl::math::Real>(0.05)));
+			rrtGoalBias->setSampler(this->sampler.get());
 			
 			if (path.eval("count(seed) > 0").getValue<bool>())
 			{
@@ -1776,15 +1824,17 @@ MainWindow::load(const QString& filename)
 		}
 	}
 	
-	this->planner->duration = std::chrono::duration_cast<std::chrono::steady_clock::duration>(
-		std::chrono::duration<float>(
-			path.eval("number((/rl/plan|/rlplan)//duration)").getValue<rl::math::Real>(std::numeric_limits<float>::max())
+	this->planner->setDuration(
+		std::chrono::duration_cast<std::chrono::steady_clock::duration>(
+			std::chrono::duration<float>(
+				path.eval("number((/rl/plan|/rlplan)//duration)").getValue<rl::math::Real>(std::numeric_limits<float>::max())
+			)
 		)
 	);
 	
-	this->planner->goal = this->goal.get();
-	this->planner->model = this->model.get();
-	this->planner->start = this->start.get();
+	this->planner->setGoal(this->goal.get());
+	this->planner->setModel(this->model.get());
+	this->planner->setStart(this->start.get());
 	
 	this->viewer->delta = path.eval("number((/rl/plan|/rlplan)//viewer/delta)").getValue<rl::math::Real>();
 	
@@ -2111,13 +2161,13 @@ MainWindow::parseCommandLine()
 void
 MainWindow::reset()
 {
-	std::chrono::steady_clock::duration duration = this->planner->duration;
+	std::chrono::steady_clock::duration duration = this->planner->getDuration();
 	
 	this->thread->blockSignals(true);
 	QCoreApplication::processEvents();
-	this->planner->duration = std::chrono::steady_clock::duration::zero();
+	this->planner->setDuration(std::chrono::steady_clock::duration::zero());
 	this->thread->stop();
-	this->planner->duration = duration;
+	this->planner->setDuration(duration);
 	this->thread->blockSignals(false);
 	
 	this->planner->reset();
@@ -2342,16 +2392,16 @@ MainWindow::toggleViewActive(const bool& doOn)
 {
 	if (doOn)
 	{
-		this->planner->viewer = this->thread;
+		this->planner->setViewer(this->thread);
 		
 		if (nullptr != this->optimizer)
 		{
-			this->optimizer->viewer = this->thread;
+			this->optimizer->setViewer(this->thread);
 		}
 		
 		for (std::vector<std::shared_ptr<rl::plan::WorkspaceSphereExplorer>>::iterator i = this->explorers.begin(); i != this->explorers.end(); ++i)
 		{
-			(*i)->viewer = this->thread;
+			(*i)->setViewer(this->thread);
 		}
 		
 		this->connect(this->thread, this->viewer);
@@ -2360,16 +2410,16 @@ MainWindow::toggleViewActive(const bool& doOn)
 	{
 		this->disconnect(this->thread, this->viewer);
 		
-		this->planner->viewer = nullptr;
+		this->planner->setViewer(nullptr);
 		
 		if (nullptr != this->optimizer)
 		{
-			this->optimizer->viewer = nullptr;
+			this->optimizer->setViewer(nullptr);
 		}
 		
 		for (std::vector<std::shared_ptr<rl::plan::WorkspaceSphereExplorer>>::iterator i = this->explorers.begin(); i != this->explorers.end(); ++i)
 		{
-			(*i)->viewer = nullptr;
+			(*i)->setViewer(nullptr);
 		}
 	}
 }

@@ -47,6 +47,10 @@ namespace rl
 			
 			virtual ::rl::math::Vector generateCollisionFree();
 			
+			SimpleModel* getModel() const;
+			
+			void setModel(SimpleModel* model);
+			
 			SimpleModel* model;
 			
 		protected:

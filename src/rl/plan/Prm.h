@@ -64,11 +64,23 @@ namespace rl
 		class RL_PLAN_EXPORT Prm : public Planner
 		{
 		public:
+			enum class Search
+			{
+				astar,
+				dijkstra
+			};
+			
 			Prm();
 			
 			virtual ~Prm();
 			
 			virtual void construct(const ::std::size_t& steps);
+			
+			::std::size_t getMaxDegree() const;
+			
+			::std::size_t getMaxNeighbors() const;
+			
+			::rl::math::Real getMaxRadius() const;
 			
 			virtual ::std::string getName() const;
 			
@@ -80,9 +92,27 @@ namespace rl
 			
 			VectorList getPath();
 			
+			Sampler* getSampler() const;
+			
+			Search getSearch() const;
+			
+			Verifier* getVerifier() const;
+			
 			void reset();
 			
+			void setMaxDegree(const ::std::size_t& degree);
+			
+			void setMaxNeighbors(const ::std::size_t& k);
+			
+			void setMaxRadius(const ::rl::math::Real& radius);
+			
 			void setNearestNeighbors(NearestNeighbors* nearestNeighbors);
+			
+			void setSampler(Sampler* sampler);
+			
+			void setSearch(const Search& search);
+			
+			void setVerifier(Verifier* verifier);
 			
 			bool solve();
 			
