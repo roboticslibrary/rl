@@ -120,8 +120,8 @@ namespace rl
 					
 					for (::std::size_t i = 2; i < n - 1; ++i)
 					{
-						 b[i] -= c[i - 1] * a[i] / b[i - 1];
-						 d[i] -= (a[i] / b[i - 1]) * B(e[i - 1], dtheta[i - 1], d[i - 1]);
+						b[i] -= c[i - 1] * a[i] / b[i - 1];
+						d[i] -= (a[i] / b[i - 1]) * B(e[i - 1], dtheta[i - 1], d[i - 1]);
 					}
 					
 					if (n > 2)

@@ -41,7 +41,7 @@ namespace rl
 		}
 		
 		::std::chrono::nanoseconds
-		 CyclicDevice::getUpdateRate() const
+		CyclicDevice::getUpdateRate() const
 		{
 			return this->updateRate;
 		}

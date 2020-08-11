@@ -44,13 +44,13 @@ namespace rl
 		}
 		
 		::rl::math::Units
-		 Revolute::getPositionUnit() const
+		Revolute::getPositionUnit() const
 		{
 			return ::rl::math::Units::radian;
 		}
 		
 		::rl::math::Units
-		 Revolute::getSpeedUnit() const
+		Revolute::getSpeedUnit() const
 		{
 			return ::rl::math::Units::radianPerSecond;
 		}

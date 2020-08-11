@@ -190,7 +190,7 @@ namespace rl
 					
 					fixed->x.linear() = ::rl::math::AngleAxis(
 						::boost::lexical_cast<::rl::math::Real>(rpy[2]),
-						 ::rl::math::Vector3::UnitZ()
+						::rl::math::Vector3::UnitZ()
 					) * ::rl::math::AngleAxis(
 						::boost::lexical_cast<::rl::math::Real>(rpy[1]),
 						::rl::math::Vector3::UnitY()

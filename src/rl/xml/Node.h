@@ -112,7 +112,7 @@ namespace rl
 			{
 				::boost::shared_array<::xmlChar> content(
 					::xmlNodeGetContent(this->node),
-					 ::xmlFree
+					::xmlFree
 				);
 				
 				return nullptr != content.get() ? reinterpret_cast<char*>(content.get()) : ::std::string();

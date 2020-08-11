@@ -46,17 +46,17 @@ namespace rl
 			public:
 				enum class ColorCoding
 				{
-					  mono8 = ::DC1394_COLOR_CODING_MONO8,
-					  yuv411,
-					  yuv422,
-					  yuv444,
-					  rgb8,
-					  mono16,
-					  rgb16,
-					  mono16s,
-					  rgb16s,
-					  raw8,
-					  raw16
+					mono8 = ::DC1394_COLOR_CODING_MONO8,
+					yuv411,
+					yuv422,
+					yuv444,
+					rgb8,
+					mono16,
+					rgb16,
+					mono16s,
+					rgb16s,
+					raw8,
+					raw16
 				};
 				
 				RL_HAL_DEPRECATED static constexpr ColorCoding COLOR_CODING_MONO8 = ColorCoding::mono8;
