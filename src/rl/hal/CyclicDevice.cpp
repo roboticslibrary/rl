@@ -45,5 +45,11 @@ namespace rl
 		{
 			return this->updateRate;
 		}
+		
+		void
+		CyclicDevice::setUpdateRate(const ::std::chrono::nanoseconds& updateRate)
+		{
+			this->updateRate = updateRate;
+		}
 	}
 }

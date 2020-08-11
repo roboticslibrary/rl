@@ -50,6 +50,7 @@ namespace rl
 			virtual void step() = 0;
 			
 		protected:
+			void setUpdateRate(const ::std::chrono::nanoseconds& updateRate);
 			
 		private:
 			::std::chrono::nanoseconds updateRate;
