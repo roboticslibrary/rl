@@ -71,6 +71,8 @@ public:
 	
 	std::vector<std::shared_ptr<rl::mdl::Kinematic>> kinematicModels;
 	
+	std::vector<std::vector<bool>> operationalGoals;
+	
 	std::vector<OperationalModel*> operationalModels;
 	
 	std::shared_ptr<rl::sg::so::Scene> scene;

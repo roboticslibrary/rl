@@ -82,6 +82,16 @@ OperationalModel::data(const QModelIndex& index, int role) const
 	
 	switch (role)
 	{
+	case Qt::CheckStateRole:
+		switch (index.column())
+		{
+		case 0:
+			return MainWindow::instance()->operationalGoals[this->id][index.row()] ? Qt::Checked : Qt::Unchecked;
+			break;
+		default:
+			break;
+		}
+		break;
 	case Qt::DisplayRole:
 		switch (index.column())
 		{
@@ -132,6 +142,11 @@ OperationalModel::flags(const QModelIndex &index) const
 	if (!index.isValid())
 	{
 		return Qt::NoItemFlags;
+	}
+	
+	if (0 == index.column())
+	{
+		return QAbstractItemModel::flags(index) | Qt::ItemIsEditable | Qt::ItemIsUserCheckable;
 	}
 	
 	return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
@@ -199,7 +214,19 @@ OperationalModel::setData(const QModelIndex& index, const QVariant& value, int r
 		return false;
 	}
 	
-	if (index.isValid() && Qt::EditRole == role)
+	if (!index.isValid())
+	{
+		return false;
+	}
+	
+	if (Qt::CheckStateRole == role)
+	{
+		if (0 == index.column())
+		{
+			MainWindow::instance()->operationalGoals[this->id][index.row()] = value.value<bool>();
+		}
+	}
+	else if (Qt::EditRole == role)
 	{
 		if (rl::mdl::Kinematic* kinematic = dynamic_cast<rl::mdl::Kinematic*>(MainWindow::instance()->kinematicModels[this->id].get()))
 		{
@@ -272,14 +299,13 @@ OperationalModel::setData(const QModelIndex& index, const QVariant& value, int r
 			}
 #endif
 			
-#if 0
-			ik->addGoal(transform, index.row());
-#else
 			for (std::size_t i = 0; i < kinematic->getOperationalDof(); ++i)
 			{
-				ik->addGoal(i == index.row() ? transform : kinematic->getOperationalPosition(i), i);
+				if (MainWindow::instance()->operationalGoals[this->id][i])
+				{
+					ik->addGoal(i == index.row() ? transform : kinematic->getOperationalPosition(i), i);
+				}
 			}
-#endif
 			
 			std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 			bool solved = ik->solve();

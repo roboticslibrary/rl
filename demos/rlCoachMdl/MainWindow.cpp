@@ -53,6 +53,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	ikIterationsSpinBox(new QSpinBox(this)),
 	ikJacobianComboBox(new QComboBox(this)),
 	kinematicModels(),
+	operationalGoals(),
 	operationalModels(),
 	scene(),
 	configurationDelegates(),
@@ -116,6 +117,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	
 	for (std::size_t i = 0; i < this->kinematicModels.size(); ++i)
 	{
+		this->operationalGoals.push_back(std::vector<bool>(this->kinematicModels[i]->getOperationalDof(), true));
+		
 		ConfigurationDelegate* configurationDelegate = new ConfigurationDelegate(this);
 		configurationDelegate->id = i;
 		this->configurationDelegates.push_back(configurationDelegate);
