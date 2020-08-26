@@ -353,6 +353,14 @@ namespace rl
 			return this->tree[this->leaves[i]]->f;
 		}
 		
+		Frame*
+		Model::getOperationalFrame(const ::std::size_t& i) const
+		{
+			assert(i < this->getOperationalDof());
+			
+			return this->tree[this->leaves[i]].get();
+		}
+		
 		const ::rl::math::Transform&
 		Model::getOperationalPosition(const ::std::size_t& i) const
 		{

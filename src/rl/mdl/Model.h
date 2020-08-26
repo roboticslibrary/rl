@@ -119,6 +119,8 @@ namespace rl
 			
 			const ::rl::math::ForceVector& getOperationalForce(const ::std::size_t& i) const;
 			
+			Frame* getOperationalFrame(const ::std::size_t& i) const;
+			
 			const ::rl::math::Transform& getOperationalPosition(const ::std::size_t& i) const;
 			
 			const ::rl::math::MotionVector& getOperationalVelocity(const ::std::size_t& i) const;
