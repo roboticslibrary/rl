@@ -189,7 +189,7 @@ OperationalModel::headerData(int section, Qt::Orientation orientation, int role)
 	
 	if (Qt::DisplayRole == role && Qt::Vertical == orientation)
 	{
-		return section;
+		return QString::fromStdString(MainWindow::instance()->kinematicModels[this->id]->getOperationalFrame(section)->getName());
 	}
 	
 	return QVariant();
