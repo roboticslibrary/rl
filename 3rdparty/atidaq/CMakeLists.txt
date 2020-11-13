@@ -1,23 +1,22 @@
-cmake_minimum_required(VERSION 2.8.11)
-
-project(atidaq)
-
-include(ExternalProject)
-
-if(NOT WIN32)
-	set(PATCH_BINARY "--binary")
-endif()
-
 ExternalProject_Add(
 	atidaq
-	DEPENDS patch
-	URL http://www.ati-ia.com/library/software/daq_ft/ATIDAQ%20C%20Library.zip
-	#URL ${CMAKE_CURRENT_SOURCE_DIR}/ATIDAQ%20C%20Library.zip
-	URL_MD5 02c26650792927a09202196c574522cd
-	PATCH_COMMAND
-	${PATCH_EXECUTABLE} -p1 -t -N ${PATCH_BINARY} < ${CMAKE_CURRENT_SOURCE_DIR}/atidaq.patch &&
-	${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/atidaq-config.cmake.in <SOURCE_DIR>/atidaq-config.cmake.in &&
-	${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt.in <SOURCE_DIR>/CMakeLists.txt
-	CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_CFG_INTDIR=${CMAKE_CFG_INTDIR} -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH} -DCMAKE_TRY_COMPILE_CONFIGURATION=${CMAKE_TRY_COMPILE_CONFIGURATION}
+	#GIT_REPOSITORY https://github.com/roboticslibrary/atidaq.git
+	#GIT_TAG cmake-1.0.6
+	URL https://github.com/roboticslibrary/atidaq/archive/cmake-1.0.6.tar.gz
+	#URL ${CMAKE_CURRENT_SOURCE_DIR}/atidaq-cmake-1.0.6.tar.gz
+	URL_MD5 23efd8412e30a06e9c433ab5e7ed2e20
+	CMAKE_ARGS
+		-DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
+		-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+		-DCMAKE_CFG_INTDIR=${CMAKE_CFG_INTDIR}
+		-DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
+		-DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}
+		-DCMAKE_TRY_COMPILE_CONFIGURATION=${CMAKE_TRY_COMPILE_CONFIGURATION}
 	INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
+)
+
+ExternalProject_Add_Step(
+	atidaq license
+	DEPENDEES build
+	COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/readme.txt ${CMAKE_INSTALL_FULL_DATADIR}/atidaq/readme.txt
 )

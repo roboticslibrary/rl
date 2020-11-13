@@ -3,64 +3,41 @@ cmake_minimum_required(VERSION 2.8.11)
 project(3rdparty)
 
 include(ExternalProject)
+include(GNUInstallDirs)
 
-if(WIN32)
-	ExternalProject_Add(
-		patch
-		URL https://downloads.sourceforge.net/project/gnuwin32/patch/2.5.9-7/patch-2.5.9-7-bin.zip
-		#URL ${CMAKE_CURRENT_SOURCE_DIR}/patch-2.5.9-7-bin.zip
-		URL_MD5 b9c8b31d62f4b2e4f1887bbb63e8a905
-		CONFIGURE_COMMAND ""
-		BUILD_COMMAND ""
-		INSTALL_COMMAND
-		${CMAKE_COMMAND} -E copy <SOURCE_DIR>/bin/patch.exe ${CMAKE_CURRENT_BINARY_DIR}/patch.exe &&
-		${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/patch.exe.manifest ${CMAKE_CURRENT_BINARY_DIR}/patch.exe.manifest
-	)
-	set(PATCH_EXECUTABLE ${CMAKE_CURRENT_BINARY_DIR}/patch.exe)
-else()
-	ExternalProject_Add(
-		patch
-		SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-		CONFIGURE_COMMAND ""
-		BUILD_COMMAND ""
-		INSTALL_COMMAND ""
-	)
-	set(PATCH_EXECUTABLE patch)
-endif()
+option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 
-add_subdirectory(coin3d/cpack.d)
-add_subdirectory(coin3d/soanydata)
-add_subdirectory(coin3d/sogui)
+list(INSERT CMAKE_PREFIX_PATH 0 ${CMAKE_INSTALL_PREFIX})
 
 add_subdirectory(atidaq)
 add_subdirectory(boost)
-add_subdirectory(bullet)
-add_subdirectory(eigen)
+add_subdirectory(bullet3)
+add_subdirectory(coin)
+add_subdirectory(eigen3)
+add_subdirectory(gperf)
 add_subdirectory(libccd)
-add_subdirectory(libiconv)
 add_subdirectory(nlopt)
 add_subdirectory(ode)
 add_subdirectory(pqp)
-add_subdirectory(coin3d/simage)
-add_subdirectory(solid)
+add_subdirectory(simage)
+add_subdirectory(solid3)
 add_subdirectory(xz)
 add_subdirectory(zlib)
 
 add_subdirectory(fcl)
+add_subdirectory(libiconv)
+add_subdirectory(soqt)
+
 add_subdirectory(libxml2)
-add_subdirectory(coin3d/coin)
 
 add_subdirectory(libxslt)
-add_subdirectory(coin3d/soqt)
 
 set(
 	CPACK_INSTALL_CMAKE_PROJECTS
 	"${CMAKE_CURRENT_BINARY_DIR}/atidaq/atidaq-prefix/src/atidaq-build;atidaq;ALL;/"
-	"${CMAKE_CURRENT_BINARY_DIR}/bullet/bullet-prefix/src/bullet-build;bullet;ALL;/"
-	"${CMAKE_CURRENT_BINARY_DIR}/coin3d/coin/coin-prefix/src/coin-build;coin;ALL;/"
-	"${CMAKE_CURRENT_BINARY_DIR}/coin3d/simage/simage-prefix/src/simage-build;simage;ALL;/"
-	"${CMAKE_CURRENT_BINARY_DIR}/coin3d/soqt/soqt-prefix/src/soqt-build;soqt;ALL;/"
-	"${CMAKE_CURRENT_BINARY_DIR}/eigen/eigen-prefix/src/eigen-build;eigen;ALL;/"
+	"${CMAKE_CURRENT_BINARY_DIR}/bullet3/bullet3-prefix/src/bullet3-build;bullet3;ALL;/"
+	"${CMAKE_CURRENT_BINARY_DIR}/coin/coin-prefix/src/coin-build;coin;ALL;/"
+	"${CMAKE_CURRENT_BINARY_DIR}/eigen3/eigen3-prefix/src/eigen3-build;eigen3;ALL;/"
 	"${CMAKE_CURRENT_BINARY_DIR}/fcl/fcl-prefix/src/fcl-build;fcl;ALL;/"
 	"${CMAKE_CURRENT_BINARY_DIR}/libccd/libccd-prefix/src/libccd-build;libccd;ALL;/"
 	"${CMAKE_CURRENT_BINARY_DIR}/libiconv/libiconv-prefix/src/libiconv-build;libiconv;ALL;/"
@@ -69,7 +46,9 @@ set(
 	"${CMAKE_CURRENT_BINARY_DIR}/nlopt/nlopt-prefix/src/nlopt-build;nlopt;ALL;/"
 	"${CMAKE_CURRENT_BINARY_DIR}/ode/ode-prefix/src/ode-build;ode;ALL;/"
 	"${CMAKE_CURRENT_BINARY_DIR}/pqp/pqp-prefix/src/pqp-build;pqp;ALL;/"
-	"${CMAKE_CURRENT_BINARY_DIR}/solid/solid-prefix/src/solid-build;solid;ALL;/"
+	"${CMAKE_CURRENT_BINARY_DIR}/simage/simage-prefix/src/simage-build;simage;ALL;/"
+	"${CMAKE_CURRENT_BINARY_DIR}/solid3/solid3-prefix/src/solid3-build;solid3;ALL;/"
+	"${CMAKE_CURRENT_BINARY_DIR}/soqt/soqt-prefix/src/soqt-build;soqt;ALL;/"
 	"${CMAKE_CURRENT_BINARY_DIR}/xz/xz-prefix/src/xz-build;xz;ALL;/"
 	"${CMAKE_CURRENT_BINARY_DIR}/zlib/zlib-prefix/src/zlib-build;zlib;ALL;/"
 )
