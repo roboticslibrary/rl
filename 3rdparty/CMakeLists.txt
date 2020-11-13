@@ -36,6 +36,7 @@ add_subdirectory(atidaq)
 add_subdirectory(boost)
 add_subdirectory(bullet)
 add_subdirectory(eigen)
+add_subdirectory(libccd)
 add_subdirectory(libiconv)
 add_subdirectory(nlopt)
 add_subdirectory(ode)
@@ -45,6 +46,7 @@ add_subdirectory(solid)
 add_subdirectory(xz)
 add_subdirectory(zlib)
 
+add_subdirectory(fcl)
 add_subdirectory(libxml2)
 add_subdirectory(coin3d/coin)
 
@@ -59,6 +61,8 @@ set(
 	"${CMAKE_CURRENT_BINARY_DIR}/coin3d/simage/simage-prefix/src/simage-build;simage;ALL;/"
 	"${CMAKE_CURRENT_BINARY_DIR}/coin3d/soqt/soqt-prefix/src/soqt-build;soqt;ALL;/"
 	"${CMAKE_CURRENT_BINARY_DIR}/eigen/eigen-prefix/src/eigen-build;eigen;ALL;/"
+	"${CMAKE_CURRENT_BINARY_DIR}/fcl/fcl-prefix/src/fcl-build;fcl;ALL;/"
+	"${CMAKE_CURRENT_BINARY_DIR}/libccd/libccd-prefix/src/libccd-build;libccd;ALL;/"
 	"${CMAKE_CURRENT_BINARY_DIR}/libiconv/libiconv-prefix/src/libiconv-build;libiconv;ALL;/"
 	"${CMAKE_CURRENT_BINARY_DIR}/libxml2/libxml2-prefix/src/libxml2-build;libxml2;ALL;/"
 	"${CMAKE_CURRENT_BINARY_DIR}/libxslt/libxslt-prefix/src/libxslt-build;libxslt;ALL;/"
