@@ -92,7 +92,7 @@ jobs:
         run: |
           cmake -E make_directory ${{ runner.workspace }}/build
       - name: Update PATH
-        run: echo ::add-path::${{ matrix.path }}
+        run: echo "${{ matrix.path }}" >> $GITHUB_PATH
       - name: Configure CMake
         working-directory: ${{ runner.workspace }}/build
         run: |
