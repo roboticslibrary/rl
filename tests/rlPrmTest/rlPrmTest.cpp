@@ -167,6 +167,15 @@ main(int argc, char** argv)
 		
 		planner.duration = std::chrono::seconds(20);
 		
+		std::cout << "verify() ... " << std::endl;;
+		bool verified = planner.verify();
+		std::cout << "verify() " << (verified ? "true" : "false") << std::endl;
+		
+		if (!verified)
+		{
+			return EXIT_FAILURE;
+		}
+		
 		std::cout << "construct() ... " << std::endl;;
 		std::chrono::steady_clock::time_point startTime = std::chrono::steady_clock::now();
 		planner.construct(15);

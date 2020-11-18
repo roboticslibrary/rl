@@ -137,6 +137,15 @@ main(int argc, char** argv)
 		std::cout << "start: " << start.transpose() * rl::math::constants::rad2deg << std::endl;;
 		std::cout << "goal: " << goal.transpose() * rl::math::constants::rad2deg << std::endl;;
 		
+		std::cout << "verify() ... " << std::endl;;
+		bool verified = planner.verify();
+		std::cout << "verify() " << (verified ? "true" : "false") << std::endl;
+		
+		if (!verified)
+		{
+			return EXIT_FAILURE;
+		}
+		
 		std::cout << "construct() ... " << std::endl;;
 		std::chrono::steady_clock::time_point startTime = std::chrono::steady_clock::now();
 		planner.construct(15);

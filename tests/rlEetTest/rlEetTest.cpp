@@ -178,6 +178,15 @@ main(int argc, char** argv)
 		
 		sampler.model = &model;
 		
+		std::cout << "verify() ... " << std::endl;;
+		bool verified = planner.verify();
+		std::cout << "verify() " << (verified ? "true" : "false") << std::endl;
+		
+		if (!verified)
+		{
+			return EXIT_FAILURE;
+		}
+		
 		std::cout << "solve() ... " << std::endl;;
 		std::chrono::steady_clock::time_point startTime = std::chrono::steady_clock::now();
 		bool solved = planner.solve();
