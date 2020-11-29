@@ -21,7 +21,9 @@ set(
 	Stylesheet.h
 )
 
-if(NOT CMAKE_VERSION VERSION_LESS 3.0)
+if(NOT CMAKE_VERSION VERSION_LESS 3.19)
+	add_library(xml INTERFACE ${HDRS})
+elseif(NOT CMAKE_VERSION VERSION_LESS 3.0)
 	add_library(xml INTERFACE)
 	add_custom_target(xml_sources SOURCES ${HDRS})
 else()

@@ -62,7 +62,9 @@ set(
 )
 list(APPEND HDRS ${SPATIAL_HDRS})
 
-if(NOT CMAKE_VERSION VERSION_LESS 3.0)
+if(NOT CMAKE_VERSION VERSION_LESS 3.19)
+	add_library(math INTERFACE ${HDRS})
+elseif(NOT CMAKE_VERSION VERSION_LESS 3.0)
 	add_library(math INTERFACE)
 	add_custom_target(math_sources SOURCES ${HDRS})
 else()

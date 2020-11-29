@@ -5,7 +5,9 @@ set(
 	memory.h
 )
 
-if(NOT CMAKE_VERSION VERSION_LESS 3.0)
+if(NOT CMAKE_VERSION VERSION_LESS 3.19)
+	add_library(std INTERFACE ${HDRS})
+elseif(NOT CMAKE_VERSION VERSION_LESS 3.0)
 	add_library(std INTERFACE)
 	add_custom_target(std_sources SOURCES ${HDRS})
 else()
