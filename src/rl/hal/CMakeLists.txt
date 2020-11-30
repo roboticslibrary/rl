@@ -236,15 +236,13 @@ set_target_properties(
 	VERSION ${VERSION}
 )
 
-if(NOT CMAKE_VERSION VERSION_LESS 2.8.12)
-	set_target_properties(
-		hal
-		PROPERTIES
-		C_VISIBILITY_PRESET hidden
-		CXX_VISIBILITY_PRESET hidden
-		VISIBILITY_INLINES_HIDDEN ON
-	)
-endif()
+set_target_properties(
+	hal
+	PROPERTIES
+	C_VISIBILITY_PRESET hidden
+	CXX_VISIBILITY_PRESET hidden
+	VISIBILITY_INLINES_HIDDEN ON
+)
 
 if(MSVC)
 	if(BUILD_SHARED_LIBS)
