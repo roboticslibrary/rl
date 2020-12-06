@@ -8,6 +8,7 @@ on:
       - master
 jobs:
   build:
+    name: Build
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -33,7 +34,8 @@ jobs:
       CMAKE_PREFIX_PATH: ${{ matrix.cmake_prefix_path }}
       CXX: ${{ matrix.cxx }}
     steps:
-      - uses: actions/checkout@v1
+      - name: Checkout repository
+        uses: actions/checkout@v2
       - if: matrix.os == 'macos-latest'
         name: Set up Tap
         run: |
@@ -83,25 +85,26 @@ jobs:
           libxml2-dev
           libxslt1-dev
           ninja-build
+      - name: Update environment variables
+        run: |
+          echo "CCACHE_BASEDIR=${{ runner.workspace }}" >> $GITHUB_ENV
+          echo "CCACHE_DIR=${{ runner.workspace }}/.ccache" >> $GITHUB_ENV
+          echo "${{ matrix.path }}" >> $GITHUB_PATH
       - name: Cache compiler
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
-          path: ~/.ccache
-          key: ${{ runner.os }}-${{ matrix.cc }}-ccache
-      - name: Create build directory
-        run: |
-          cmake -E make_directory ${{ runner.workspace }}/build
-      - name: Update PATH
-        run: echo "${{ matrix.path }}" >> $GITHUB_PATH
+          path: ${{ runner.workspace }}/.ccache
+          key: ${{ matrix.name }}-ccache
       - name: Configure CMake
-        working-directory: ${{ runner.workspace }}/build
-        run: |
-          cmake -G Ninja -D CMAKE_BUILD_TYPE=RelWithDebInfo $GITHUB_WORKSPACE
+        run: >
+          cmake
+          -G Ninja
+          -D CMAKE_BUILD_TYPE=RelWithDebInfo
+          -S $GITHUB_WORKSPACE
+          -B $RUNNER_WORKSPACE/rl-build
       - name: Build
-        working-directory: ${{ runner.workspace }}/build
-        run: |
-          cmake --build .
+        working-directory: ${{ runner.workspace }}/rl-build
+        run: cmake --build .
       - name: Test
-        working-directory: ${{ runner.workspace }}/build
-        run: |
-          ctest --output-on-failure
+        working-directory: ${{ runner.workspace }}/rl-build
+        run: ctest --output-on-failure
