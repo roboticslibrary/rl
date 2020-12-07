@@ -13,24 +13,29 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        name: [macos-latest, ubuntu-latest-clang, ubuntu-latest-gcc]
+        name:
+          - macos-latest
+          - ubuntu-latest-clang
+          - ubuntu-latest-gcc
+          - windows-latest-msys2
         include:
           - name: macos-latest
             cmake_prefix_path: /usr/local/opt/qt/lib/cmake
             os: macos-latest
-            path: /usr/local/opt/ccache/libexec
           - name: ubuntu-latest-clang
             cc: clang
             cxx: clang++
             os: ubuntu-latest
-            path: /usr/lib/ccache
           - name: ubuntu-latest-gcc
             cc: gcc
             cxx: g++
             os: ubuntu-latest
-            path: /usr/lib/ccache
+          - name: windows-latest-msys2
+            os: windows-latest
     env:
       CC: ${{ matrix.cc }}
+      CMAKE_C_COMPILER_LAUNCHER: ccache
+      CMAKE_CXX_COMPILER_LAUNCHER: ccache
       CMAKE_PREFIX_PATH: ${{ matrix.cmake_prefix_path }}
       CXX: ${{ matrix.cxx }}
     steps:
@@ -38,8 +43,7 @@ jobs:
         uses: actions/checkout@v2
       - if: matrix.os == 'macos-latest'
         name: Set up Tap
-        run: |
-          brew tap roboticslibrary/rl
+        run: brew tap roboticslibrary/rl
       - if: matrix.os == 'ubuntu-latest'
         name: Set up PPA
         run: |
@@ -85,11 +89,39 @@ jobs:
           libxml2-dev
           libxslt1-dev
           ninja-build
-      - name: Update environment variables
+      - if: matrix.name == 'windows-latest-msys2'
+        name: Set up MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          install: >-
+            mingw-w64-x86_64-boost
+            mingw-w64-x86_64-bullet
+            mingw-w64-x86_64-ccache
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-coin
+            mingw-w64-x86_64-eigen3
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-libxml2
+            mingw-w64-x86_64-libxslt
+            mingw-w64-x86_64-ninja
+            mingw-w64-x86_64-nlopt
+            mingw-w64-x86_64-ode
+            mingw-w64-x86_64-pqp
+            mingw-w64-x86_64-qt5
+            mingw-w64-x86_64-solid3
+            mingw-w64-x86_64-soqt
+          update: true
+      - if: matrix.name != 'windows-latest-msys2'
+        name: Update environment variables
         run: |
           echo "CCACHE_BASEDIR=${{ runner.workspace }}" >> $GITHUB_ENV
           echo "CCACHE_DIR=${{ runner.workspace }}/.ccache" >> $GITHUB_ENV
-          echo "${{ matrix.path }}" >> $GITHUB_PATH
+      - if: matrix.name == 'windows-latest-msys2'
+        name: Update environment variables for MSYS2
+        run: |
+          Write-Output "CCACHE_BASEDIR=${{ runner.workspace }}" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+          Write-Output "CCACHE_DIR=${{ runner.workspace }}\.ccache" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+          Write-Output (msys2 -c "cygpath -w /mingw64/bin") | Out-File -FilePath $Env:GITHUB_PATH -Encoding utf8 -Append
       - name: Cache compiler
         uses: actions/cache@v2
         with:
@@ -100,8 +132,8 @@ jobs:
           cmake
           -G Ninja
           -D CMAKE_BUILD_TYPE=RelWithDebInfo
-          -S $GITHUB_WORKSPACE
-          -B $RUNNER_WORKSPACE/rl-build
+          -S ${{ github.workspace }}
+          -B ${{ runner.workspace }}/rl-build
       - name: Build
         working-directory: ${{ runner.workspace }}/rl-build
         run: cmake --build .
