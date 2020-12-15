@@ -35,6 +35,7 @@
 #ifdef HAVE_SOSTLFILEKIT_H
 #include <Inventor/annex/ForeignFiles/SoSTLFileKit.h>
 #endif
+#include <Inventor/nodekits/SoNodeKit.h>
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/VRMLnodes/SoVRMLAppearance.h>
 #include <Inventor/VRMLnodes/SoVRMLBox.h>
@@ -90,6 +91,9 @@ namespace rl
 			{
 				throw Exception("rl::sg::UrdfFactory::load() - URDF is missing robot node");
 			}
+			
+			::SoDB::init();
+			::SoNodeKit::init();
 			
 			for (int i = 0; i < robots.size(); ++i)
 			{

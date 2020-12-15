@@ -80,6 +80,8 @@ namespace rl
 				throw Exception("rl::sg::XmlFactory::load() - No scenes found in file '" + filename + "'");
 			}
 			
+			::SoDB::init();
+			
 			for (int i = 0; i < ::std::min(1, scenes.size()); ++i)
 			{
 				::rl::xml::Path path(document, scenes[i]);
