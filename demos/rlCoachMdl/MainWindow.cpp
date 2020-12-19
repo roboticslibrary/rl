@@ -26,7 +26,6 @@
 
 #include <QApplication>
 #include <QDateTime>
-#include <QGLWidget>
 #include <QHeaderView>
 #include <QStatusBar>
 #include <Inventor/actions/SoWriteAction.h>
@@ -35,6 +34,12 @@
 #include <rl/mdl/XmlFactory.h>
 #include <rl/sg/UrdfFactory.h>
 #include <rl/sg/XmlFactory.h>
+
+#if QT_VERSION >= 0x060000
+#include <QOpenGLWindow>
+#else
+#include <QGLWidget>
+#endif
 
 #include "ConfigurationDelegate.h"
 #include "ConfigurationModel.h"
@@ -77,10 +82,16 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	SoDB::init();
 	SoGradientBackground::initClass();
 	
+#if QT_VERSION >= 0x060000
+	QSurfaceFormat format;
+	format.setSamples(8);
+	QSurfaceFormat::setDefaultFormat(format);
+#else
 	QGLFormat format;
 	format.setAlpha(true);
 	format.setSampleBuffers(true);
 	QGLFormat::setDefaultFormat(format);
+#endif
 	
 	std::shared_ptr<rl::sg::Factory> geometryFactory;
 	std::string geometryFilename = QApplication::arguments()[1].toStdString();
@@ -317,7 +328,21 @@ MainWindow::saveImage(bool withAlpha)
 	}
 	
 	glReadBuffer(GL_FRONT);
+	
+#if QT_VERSION >= 0x060000
+	QOpenGLWindow* window = this->viewer->getGLWidget()->property("SoQtGLArea").value<QOpenGLWindow*>();
+	QSurfaceFormat surfaceFormat = window->format();
+	
+	if (withAlpha != surfaceFormat.hasAlpha())
+	{
+		surfaceFormat.setAlphaBufferSize(withAlpha ? 8 : 0);
+		window->setFormat(surfaceFormat);
+	}
+	
+	QImage image = window->grabFramebuffer();
+#else
 	QImage image = static_cast<QGLWidget*>(this->viewer->getGLWidget())->grabFrameBuffer(withAlpha);
+#endif
 	
 	if (withAlpha)
 	{

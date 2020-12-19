@@ -27,7 +27,6 @@
 #include <chrono>
 #include <QApplication>
 #include <QDateTime>
-#include <QGLWidget>
 #include <QHeaderView>
 #include <QGroupBox>
 #include <QDockWidget>
@@ -46,6 +45,12 @@
 #include <rl/mdl/XmlFactory.h>
 #include <rl/sg/Body.h>
 #include <rl/sg/XmlFactory.h>
+
+#if QT_VERSION >= 0x060000
+#include <QOpenGLWindow>
+#else
+#include <QGLWidget>
+#endif
 
 #include "ConfigurationDelegate.h"
 #include "ConfigurationModel.h"
@@ -112,10 +117,17 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	SoDB::init();
 	SoGradientBackground::initClass();
 	
+#if QT_VERSION >= 0x060000
+	QSurfaceFormat format;
+	format.setAlphaBufferSize(8);
+	format.setSamples(8);
+	QSurfaceFormat::setDefaultFormat(format);
+#else
 	QGLFormat format;
 	format.setAlpha(true);
 	format.setSampleBuffers(true);
 	QGLFormat::setDefaultFormat(format);
+#endif
 	
 	this->scene = std::make_shared<rl::sg::so::Scene>();
 	rl::sg::XmlFactory geometryFactory;
@@ -540,7 +552,11 @@ MainWindow::timerEvent(QTimerEvent *event)
 void
 MainWindow::saveImage()
 {
+#if QT_VERSION >= 0x060000
+	QImage image = this->viewer->getGLWidget()->property("SoQtGLArea").value<QOpenGLWindow*>()->grabFramebuffer();
+#else
 	QImage image = static_cast<QGLWidget*>(this->viewer->getGLWidget())->grabFrameBuffer(true);
+#endif
 	image.save("rlSimulator-" + QDateTime::currentDateTime().toString("yyyyMMdd-HHmmsszzz") + ".png", "PNG");
 }
 

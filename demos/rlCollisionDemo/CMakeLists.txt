@@ -1,13 +1,17 @@
 find_package(OpenGL REQUIRED)
 find_package(SoQt)
 
-if(RL_USE_QT5 AND SoQt_HAVE_QT5)
-	find_package(Qt5 COMPONENTS Core Gui OpenGL Widgets QUIET)
+if(RL_USE_QT6 AND SoQt_HAVE_QT6)
+	find_package(Qt6 COMPONENTS Core Gui OpenGL Widgets QUIET)
+	set(QT_FOUND ${Qt6_FOUND})
 endif()
 
-if(Qt5_FOUND)
-	set(QT_FOUND Qt5_FOUND)
-else()
+if(NOT Qt6_FOUND AND RL_USE_QT5 AND SoQt_HAVE_QT5)
+	find_package(Qt5 COMPONENTS Core Gui OpenGL Widgets QUIET)
+	set(QT_FOUND ${Qt5_FOUND})
+endif()
+
+if(NOT Qt6_FOUND AND NOT Qt5_FOUND)
 	set(QT_USE_IMPORTED_TARGETS ON)
 	find_package(Qt4 COMPONENTS QtCore QtGui QtOpenGL)
 endif()
@@ -54,7 +58,9 @@ if(QT_FOUND AND SoQt_FOUND AND (RL_BUILD_SG_BULLET OR RL_BUILD_SG_FCL OR RL_BUIL
 		target_link_libraries(rlCollisionDemo ${OPENGL_LIBRARIES})
 	endif()
 	
-	if(Qt5_FOUND)
+	if(Qt6_FOUND)
+		target_link_libraries(rlCollisionDemo Qt6::Core Qt6::Gui Qt6::OpenGL Qt6::Widgets)
+	elseif(Qt5_FOUND)
 		target_link_libraries(rlCollisionDemo Qt5::Core Qt5::Gui Qt5::OpenGL Qt5::Widgets)
 	elseif(Qt4_FOUND)
 		target_link_libraries(rlCollisionDemo Qt4::QtCore Qt4::QtGui Qt4::QtOpenGL)

@@ -29,7 +29,6 @@
 #include <QDateTime>
 #include <QDockWidget>
 #include <QFileDialog>
-#include <QGLWidget>
 #include <QGraphicsView>
 #include <QHeaderView>
 #include <QLayout>
@@ -83,6 +82,12 @@
 
 #if QT_VERSION >= 0x050200
 #include <QCommandLineParser>
+#endif
+
+#if QT_VERSION >= 0x060000
+#include <QSurfaceFormat>
+#else
+#include <QGLFormat>
 #endif
 
 #ifdef RL_SG_BULLET
@@ -196,10 +201,16 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	SoDB::init();
 	SoGradientBackground::initClass();
 	
+#if QT_VERSION >= 0x060000
+	QSurfaceFormat format;
+	format.setSamples(8);
+	QSurfaceFormat::setDefaultFormat(format);
+#else
 	QGLFormat format;
 	format.setAlpha(true);
 	format.setSampleBuffers(true);
 	QGLFormat::setDefaultFormat(format);
+#endif
 	
 	this->viewer = new Viewer(this);
 	this->setCentralWidget(this->viewer);

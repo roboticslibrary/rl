@@ -24,6 +24,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include <QActionGroup>
 #include <QApplication>
 #include <QClipboard>
 #include <QCoreApplication>
@@ -34,7 +35,6 @@
 #include <QDropEvent>
 #include <QFileDialog>
 #include <QFileInfo>
-#include <QGLWidget>
 #include <QMessageBox>
 #include <QMimeData>
 #include <QUrl>
@@ -52,6 +52,12 @@
 #include <Inventor/nodes/SoPerspectiveCamera.h>
 #include <Inventor/nodes/SoScale.h>
 #include <Inventor/Qt/SoQt.h>
+
+#if QT_VERSION >= 0x060000
+#include <QOpenGLWindow>
+#else
+#include <QGLWidget>
+#endif
 
 #include "MainWindow.h"
 #include "SoGradientBackground.h"
@@ -83,10 +89,16 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	
 	QObject::connect(this->manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
 	
+#if QT_VERSION >= 0x060000
+	QSurfaceFormat format;
+	format.setSamples(8);
+	QSurfaceFormat::setDefaultFormat(format);
+#else
 	QGLFormat format;
 	format.setAlpha(true);
 	format.setSampleBuffers(true);
 	QGLFormat::setDefaultFormat(format);
+#endif
 	
 	this->setAcceptDrops(true);
 	
@@ -662,7 +674,21 @@ MainWindow::saveImage(bool withAlpha)
 	QString filename = "wrlview-" + QDateTime::currentDateTime().toString("yyyyMMdd-HHmmsszzz") + ".png";
 	
 	glReadBuffer(GL_FRONT);
+	
+#if QT_VERSION >= 0x060000
+	QOpenGLWindow* window = this->viewer->getGLWidget()->property("SoQtGLArea").value<QOpenGLWindow*>();
+	QSurfaceFormat surfaceFormat = window->format();
+	
+	if (withAlpha != surfaceFormat.hasAlpha())
+	{
+		surfaceFormat.setAlphaBufferSize(withAlpha ? 8 : 0);
+		window->setFormat(surfaceFormat);
+	}
+	
+	QImage image = window->grabFramebuffer();
+#else
 	QImage image = static_cast<QGLWidget*>(this->viewer->getGLWidget())->grabFrameBuffer(withAlpha);
+#endif
 	
 	QString format = filename.right(filename.length() - filename.lastIndexOf('.') - 1).toUpper();
 	

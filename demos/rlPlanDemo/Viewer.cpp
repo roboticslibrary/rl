@@ -25,7 +25,6 @@
 //
 
 #include <QDateTime>
-#include <QGLWidget>
 #include <QMessageBox>
 #include <QStatusBar>
 #include <Inventor/actions/SoWriteAction.h>
@@ -35,6 +34,12 @@
 #include <rl/sg/so/Body.h>
 #include <rl/sg/so/Model.h>
 #include <rl/sg/so/Shape.h>
+
+#if QT_VERSION >= 0x060000
+#include <QOpenGLWindow>
+#else
+#include <QGLWidget>
+#endif
 
 #include "SoGradientBackground.h"
 #include "MainWindow.h"
@@ -981,7 +986,21 @@ Viewer::saveImage(bool withAlpha)
 	}
 	
 	glReadBuffer(GL_FRONT);
+	
+#if QT_VERSION >= 0x060000
+	QOpenGLWindow* window = this->viewer->getGLWidget()->property("SoQtGLArea").value<QOpenGLWindow*>();
+	QSurfaceFormat surfaceFormat = window->format();
+	
+	if (withAlpha != surfaceFormat.hasAlpha())
+	{
+		surfaceFormat.setAlphaBufferSize(withAlpha ? 8 : 0);
+		window->setFormat(surfaceFormat);
+	}
+	
+	QImage image = window->grabFramebuffer();
+#else
 	QImage image = static_cast<QGLWidget*>(this->viewer->getGLWidget())->grabFrameBuffer(withAlpha);
+#endif
 	
 	if (withAlpha)
 	{
