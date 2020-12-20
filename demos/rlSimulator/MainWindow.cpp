@@ -112,6 +112,11 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	SoDB::init();
 	SoGradientBackground::initClass();
 	
+	QGLFormat format;
+	format.setAlpha(true);
+	format.setSampleBuffers(true);
+	QGLFormat::setDefaultFormat(format);
+	
 	this->scene = std::make_shared<rl::sg::so::Scene>();
 	rl::sg::XmlFactory geometryFactory;
 	geometryFactory.load(QApplication::arguments()[1].toStdString(), this->scene.get());

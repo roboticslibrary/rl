@@ -76,6 +76,11 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	SoDB::init();
 	SoGradientBackground::initClass();
 	
+	QGLFormat format;
+	format.setAlpha(true);
+	format.setSampleBuffers(true);
+	QGLFormat::setDefaultFormat(format);
+	
 	std::shared_ptr<rl::sg::Factory> geometryFactory;
 	std::string geometryFilename = QApplication::arguments()[1].toStdString();
 	
