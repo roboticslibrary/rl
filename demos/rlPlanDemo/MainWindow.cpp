@@ -2147,8 +2147,13 @@ MainWindow::savePdf()
 	QPrinter printer;
 	printer.setOutputFileName(filename);
 	printer.setOutputFormat(QPrinter::PdfFormat);
+#if QT_VERSION >= 0x050E00
+	printer.setPageMargins(QMarginsF(0, 0, 0, 0), QPageLayout::Millimeter);
+	printer.setPageSize(QPageSize(this->configurationSpaceScene->sceneRect().size(), QPageSize::Millimeter));
+#else
 	printer.setPageMargins(0, 0, 0, 0, QPrinter::Millimeter);
 	printer.setPaperSize(this->configurationSpaceScene->sceneRect().size(), QPrinter::Millimeter);
+#endif
 	
 	QPainter painter(&printer);
 	
