@@ -58,6 +58,8 @@ protected:
 	MainWindow(QWidget* parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
 	
 private:
+	void parseCommandLine();
+	
 	std::size_t body;
 	
 	SoVRMLCoordinate* depthCoordinate;

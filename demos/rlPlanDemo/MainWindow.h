@@ -191,6 +191,8 @@ private:
 	
 	void load(const QString& filename);
 	
+	void parseCommandLine();
+	
 	ConfigurationDelegate* configurationDelegate;
 	
 	QDockWidget* configurationDockWidget;

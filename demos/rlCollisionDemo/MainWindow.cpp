@@ -44,6 +44,10 @@
 #include <rl/sg/SimpleScene.h>
 #include <rl/sg/XmlFactory.h>
 
+#if QT_VERSION >= 0x050200
+#include <QCommandLineParser>
+#endif
+
 #ifdef RL_SG_BULLET
 #include <rl/sg/bullet/Scene.h>
 #endif // RL_SG_BULLET
@@ -91,62 +95,16 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	SoDB::init();
 	SoGradientBackground::initClass();
 	
-	QStringList engines;
-#ifdef RL_SG_FCL
-	engines.push_back("fcl");
-	this->engine = "fcl";
-#endif // RL_SG_FCL
-#ifdef RL_SG_ODE
-	engines.push_back("ode");
-	this->engine = "ode";
-#endif // RL_SG_ODE
-#ifdef RL_SG_PQP
-	engines.push_back("pqp");
-	this->engine = "pqp";
-#endif // RL_SG_PQP
-#ifdef RL_SG_BULLET
-	engines.push_back("bullet");
-	this->engine = "bullet";
-#endif // RL_SG_BULLET
-#ifdef RL_SG_SOLID
-	engines.push_back("solid");
-	this->engine = "solid";
-#endif // RL_SG_SOLID
-	engines.sort();
+	this->parseCommandLine();
 	
-	QRegExp bodyRegExp("--body=(\\d*)");
-	QRegExp engineRegExp("--engine=(" + engines.join("|") + ")");
-	QRegExp helpRegExp("--help");
-	QRegExp modelRegExp("--model=(\\d*)");
-	
-	for (int i = 1; i < QApplication::arguments().size(); ++i)
-	{
-		if (-1 != bodyRegExp.indexIn(QApplication::arguments()[i]))
-		{
-			this->body = bodyRegExp.cap(1).toInt();
-		}
-		else if (-1 != engineRegExp.indexIn(QApplication::arguments()[i]))
-		{
-			this->engine = engineRegExp.cap(1);
-		}
-		else if (-1 != helpRegExp.indexIn(QApplication::arguments()[i]))
-		{
-			QMessageBox::information(this, "Usage", "rlCollisionDemo [SCENEFILE] [--engine=" + engines.join("|") + "] [--help] [--model=MODEL] [--body=BODY]");
-			exit(0);
-		}
-		else if (-1 != modelRegExp.indexIn(QApplication::arguments()[i]))
-		{
-			this->model = modelRegExp.cap(1).toInt();
-		}
-		else
-		{
-			this->filename = QApplication::arguments()[i];
-		}
-	}
-	
-	while (this->filename.isEmpty())
+	if (this->filename.isEmpty())
 	{
 		this->filename = QFileDialog::getOpenFileName(this, "", this->filename, "All Formats (*.xml)");
+		
+		if (this->filename.isEmpty())
+		{
+			exit(EXIT_FAILURE);
+		}
 	}
 	
 	this->resize(1024, 768);
@@ -313,6 +271,110 @@ MainWindow::instance()
 	}
 	
 	return MainWindow::singleton;
+}
+
+void
+MainWindow::parseCommandLine()
+{
+	QStringList engines;
+#ifdef RL_SG_FCL
+	engines.push_back("fcl");
+	this->engine = "fcl";
+#endif // RL_SG_FCL
+#ifdef RL_SG_ODE
+	engines.push_back("ode");
+	this->engine = "ode";
+#endif // RL_SG_ODE
+#ifdef RL_SG_PQP
+	engines.push_back("pqp");
+	this->engine = "pqp";
+#endif // RL_SG_PQP
+#ifdef RL_SG_BULLET
+	engines.push_back("bullet");
+	this->engine = "bullet";
+#endif // RL_SG_BULLET
+#ifdef RL_SG_SOLID
+	engines.push_back("solid");
+	this->engine = "solid";
+#endif // RL_SG_SOLID
+	engines.sort();
+	
+#if QT_VERSION >= 0x050200
+	QCommandLineOption bodyOption(QStringList("body"), "Sets active body.", "body");
+	QCommandLineOption engineOption(QStringList("engine"), "Sets collision engine.", engines.join("|"));
+	QCommandLineOption modelOption(QStringList("model"), "Sets model of active body.", "model");
+	
+	QCommandLineParser parser;
+	parser.addOption(bodyOption);
+	parser.addOption(engineOption);
+	const QCommandLineOption helpOption = parser.addHelpOption();
+	parser.addOption(modelOption);
+	parser.addPositionalArgument("filename", "", "[filename]");
+	
+	parser.process(QCoreApplication::arguments());
+	
+	if (parser.isSet(bodyOption))
+	{
+		bool ok;
+		this->body = parser.value(bodyOption).toUInt(&ok);
+		
+		if (!ok)
+		{
+			parser.showHelp();
+		}
+	}
+	
+	if (parser.isSet(modelOption))
+	{
+		bool ok;
+		this->model = parser.value(modelOption).toUInt(&ok);
+		
+		if (!ok)
+		{
+			parser.showHelp();
+		}
+	}
+	
+	if (parser.positionalArguments().size() > 1)
+	{
+		parser.showHelp();
+	}
+	
+	if (!parser.positionalArguments().empty())
+	{
+		this->filename = parser.positionalArguments()[0];
+	}
+#else
+	QRegExp bodyRegExp("--body=(\\d*)");
+	QRegExp engineRegExp("--engine=(" + engines.join("|") + ")");
+	QRegExp helpRegExp("--help");
+	QRegExp modelRegExp("--model=(\\d*)");
+	
+	for (int i = 1; i < QApplication::arguments().size(); ++i)
+	{
+		if (-1 != bodyRegExp.indexIn(QApplication::arguments()[i]))
+		{
+			this->body = bodyRegExp.cap(1).toUInt();
+		}
+		else if (-1 != engineRegExp.indexIn(QApplication::arguments()[i]))
+		{
+			this->engine = engineRegExp.cap(1);
+		}
+		else if (-1 != helpRegExp.indexIn(QApplication::arguments()[i]))
+		{
+			QMessageBox::information(this, "Usage", "rlCollisionDemo [--body=<body>] [--engine=<" + engines.join("|") + ">] [--help] [--model=<model>] [filename]");
+			exit(0);
+		}
+		else if (-1 != modelRegExp.indexIn(QApplication::arguments()[i]))
+		{
+			this->model = modelRegExp.cap(1).toUInt();
+		}
+		else
+		{
+			this->filename = QApplication::arguments()[i];
+		}
+	}
+#endif
 }
 
 void

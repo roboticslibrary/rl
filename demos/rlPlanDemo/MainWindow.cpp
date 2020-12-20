@@ -38,7 +38,6 @@
 #include <QMutexLocker>
 #include <QPainter>
 #include <QPrinter>
-#include <QRegExp>
 #include <QStatusBar>
 #include <Inventor/nodes/SoCamera.h>
 #include <Inventor/nodes/SoOrthographicCamera.h>
@@ -81,6 +80,10 @@
 #include <rl/xml/Object.h>
 #include <rl/xml/Path.h>
 #include <rl/xml/Stylesheet.h>
+
+#if QT_VERSION >= 0x050200
+#include <QCommandLineParser>
+#endif
 
 #ifdef RL_SG_BULLET
 #include <rl/sg/bullet/Scene.h>
@@ -262,103 +265,16 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	
 	QObject::connect(this->thread, SIGNAL(statusChanged(const QString&)), this->statusBar(), SLOT(showMessage(const QString&)));
 	
-	QStringList engines;
-#ifdef RL_SG_FCL
-	engines.push_back("fcl");
-	this->engine = "fcl";
-#endif // RL_SG_FCL
-#ifdef RL_SG_ODE
-	engines.push_back("ode");
-	this->engine = "ode";
-#endif // RL_SG_ODE
-#ifdef RL_SG_PQP
-	engines.push_back("pqp");
-	this->engine = "pqp";
-#endif // RL_SG_PQP
-#ifdef RL_SG_BULLET
-	engines.push_back("bullet");
-	this->engine = "bullet";
-#endif // RL_SG_BULLET
-#ifdef RL_SG_SOLID
-	engines.push_back("solid");
-	this->engine = "solid";
-#endif // RL_SG_SOLID
-	engines.sort();
-	
-	QRegExp backgroundRegExp("--background=(\\S*)");
-	QRegExp engineRegExp("--engine=(" + engines.join("|") + ")");
-	QRegExp helpRegExp("--help");
-	QRegExp heightRegExp("--height=(\\d*)");
-	QRegExp quitRegExp("--enable-quit");
-	QRegExp seedRegExp("--seed=(\\d*)");
-	QRegExp viewerRegExp("--disable-viewer");
-	QRegExp waitRegExp("--disable-wait");
-	QRegExp widthRegExp("--width=(\\d*)");
-	
-	int width = 1024;
-	int height = 768;
-	
-	bool doSetMinimumSize = false;
-	
-	for (int i = 1; i < QApplication::arguments().size(); ++i)
-	{
-		if (-1 != backgroundRegExp.indexIn(QApplication::arguments()[i]))
-		{
-			this->viewer->setBackgroundColor(backgroundRegExp.cap(1));
-		}
-		else if (-1 != engineRegExp.indexIn(QApplication::arguments()[i]))
-		{
-			this->engine = engineRegExp.cap(1);
-		}
-		else if (-1 != helpRegExp.indexIn(QApplication::arguments()[i]))
-		{
-			QMessageBox::information(this, "Usage", "rlPlanDemo [PLANFILE] [--background=COLOR] [--engine=" + engines.join("|") + "] [--help] [--disable-viewer] [--disable-wait] [--enable-quit] [--seed=SEED] [--width=WIDTH] [--height=HEIGHT]");
-			exit(EXIT_SUCCESS);
-		}
-		else if (-1 != heightRegExp.indexIn(QApplication::arguments()[i]))
-		{
-			height = heightRegExp.cap(1).toInt();
-			doSetMinimumSize = true;
-		}
-		else if (-1 != quitRegExp.indexIn(QApplication::arguments()[i]))
-		{
-			this->thread->quit = true;
-		}
-		else if (-1 != seedRegExp.indexIn(QApplication::arguments()[i]))
-		{
-			this->seed = seedRegExp.cap(1).toUInt();
-		}
-		else if (-1 != viewerRegExp.indexIn(QApplication::arguments()[i]))
-		{
-			QObject::disconnect(this->toggleViewActiveAction, SIGNAL(toggled(bool)), this, SLOT(toggleViewActive(bool)));
-			this->toggleViewActiveAction->setChecked(false);
-			QObject::connect(this->toggleViewActiveAction, SIGNAL(toggled(bool)), this, SLOT(toggleViewActive(bool)));
-		}
-		else if (-1 != waitRegExp.indexIn(QApplication::arguments()[i]))
-		{
-			this->wait = false;
-		}
-		else if (-1 != widthRegExp.indexIn(QApplication::arguments()[i]))
-		{
-			width = widthRegExp.cap(1).toInt();
-			doSetMinimumSize = true;
-		}
-		else
-		{
-			this->filename = QApplication::arguments()[i];
-		}
-	}
-	
-	this->resize(width, height);
-	
-	if (doSetMinimumSize)
-	{
-		this->viewer->setMinimumSize(width, height);
-	}
+	this->parseCommandLine();
 	
 	if (this->filename.isEmpty())
 	{
 		this->open();
+		
+		if (this->filename.isEmpty())
+		{
+			exit(EXIT_FAILURE);
+		}
 	}
 	else
 	{
@@ -1959,6 +1875,217 @@ MainWindow::open()
 	if (!filename.isEmpty())
 	{
 		this->load(filename);
+	}
+}
+
+void
+MainWindow::parseCommandLine()
+{
+	QStringList engines;
+#ifdef RL_SG_FCL
+	engines.push_back("fcl");
+	this->engine = "fcl";
+#endif // RL_SG_FCL
+#ifdef RL_SG_ODE
+	engines.push_back("ode");
+	this->engine = "ode";
+#endif // RL_SG_ODE
+#ifdef RL_SG_PQP
+	engines.push_back("pqp");
+	this->engine = "pqp";
+#endif // RL_SG_PQP
+#ifdef RL_SG_BULLET
+	engines.push_back("bullet");
+	this->engine = "bullet";
+#endif // RL_SG_BULLET
+#ifdef RL_SG_SOLID
+	engines.push_back("solid");
+	this->engine = "solid";
+#endif // RL_SG_SOLID
+	engines.sort();
+	
+	int width = 1024;
+	int height = 768;
+	
+	bool doSetMinimumSize = false;
+	
+#if QT_VERSION >= 0x050200
+	QCommandLineOption backgroundOption(QStringList("background"), "Sets background color of 3D viewer.", "color");
+	QCommandLineOption disableViewerOption(QStringList("disable-viewer"), "Disables viewer during planning.");
+	QCommandLineOption disableWaitOption(QStringList("disable-wait"), "Disables wait before planning.");
+	QCommandLineOption enableQuitOption(QStringList("enable-quit"), "Exits after planning.");
+	QCommandLineOption engineOption(QStringList("engine"), "Sets collision engine.", engines.join("|"));
+	QCommandLineOption heightOption(QStringList("height"), "Sets minimum height of 3D viewer.", "height");
+	QCommandLineOption seedOption(QStringList("seed"), "Sets seed value.", "seed");
+	QCommandLineOption widthOption(QStringList("width"), "Sets minimum width of 3D viewer.", "width");
+	
+	QCommandLineParser parser;
+	parser.addOption(backgroundOption);
+	parser.addOption(disableViewerOption);
+	parser.addOption(disableWaitOption);
+	parser.addOption(enableQuitOption);
+	parser.addOption(engineOption);
+	parser.addOption(heightOption);
+	QCommandLineOption helpOption = parser.addHelpOption();
+	parser.addOption(seedOption);
+	parser.addOption(widthOption);
+	parser.addPositionalArgument("filename", "", "[filename]");
+	
+	parser.process(QCoreApplication::arguments());
+	
+	if (parser.isSet(backgroundOption))
+	{
+		QString background = parser.value(backgroundOption);
+		
+		if (!QColor::isValidColor(background))
+		{
+			parser.showHelp();
+		}
+		
+		this->viewer->setBackgroundColor(QColor(background));
+	}
+	
+	if (parser.isSet(disableViewerOption))
+	{
+		QObject::disconnect(this->toggleViewActiveAction, SIGNAL(toggled(bool)), this, SLOT(toggleViewActive(bool)));
+		this->toggleViewActiveAction->setChecked(false);
+		QObject::connect(this->toggleViewActiveAction, SIGNAL(toggled(bool)), this, SLOT(toggleViewActive(bool)));
+	}
+	
+	if (parser.isSet(disableWaitOption))
+	{
+		this->wait = false;
+	}
+	
+	if (parser.isSet(enableQuitOption))
+	{
+		this->thread->quit = true;
+	}
+	
+	if (parser.isSet(engineOption))
+	{
+		QString engine = parser.value(engineOption);
+		
+		if (!engines.contains(engine, Qt::CaseInsensitive))
+		{
+			parser.showHelp();
+		}
+		
+		this->engine = engine;
+	}
+	
+	if (parser.isSet(heightOption))
+	{
+		bool ok;
+		height = parser.value(heightOption).toInt(&ok);
+		
+		if (!ok)
+		{
+			parser.showHelp();
+		}
+		
+		doSetMinimumSize = true;
+	}
+	
+	if (parser.isSet(seedOption))
+	{
+		bool ok;
+		this->seed = parser.value(seedOption).toUInt(&ok);
+		
+		if (!ok)
+		{
+			parser.showHelp();
+		}
+	}
+	
+	if (parser.isSet(widthOption))
+	{
+		bool ok;
+		width = parser.value(widthOption).toInt(&ok);
+		
+		if (!ok)
+		{
+			parser.showHelp();
+		}
+		
+		doSetMinimumSize = true;
+	}
+	
+	if (parser.positionalArguments().size() > 1)
+	{
+		parser.showHelp();
+	}
+	
+	if (!parser.positionalArguments().empty())
+	{
+		this->filename = parser.positionalArguments()[0];
+	}
+#else
+	QRegExp backgroundRegExp("--background=(\\S*)");
+	QRegExp engineRegExp("--engine=(" + engines.join("|") + ")");
+	QRegExp helpRegExp("--help");
+	QRegExp heightRegExp("--height=(\\d*)");
+	QRegExp quitRegExp("--enable-quit");
+	QRegExp seedRegExp("--seed=(\\d*)");
+	QRegExp viewerRegExp("--disable-viewer");
+	QRegExp waitRegExp("--disable-wait");
+	QRegExp widthRegExp("--width=(\\d*)");
+	
+	for (int i = 1; i < QApplication::arguments().size(); ++i)
+	{
+		if (-1 != backgroundRegExp.indexIn(QApplication::arguments()[i]))
+		{
+			this->viewer->setBackgroundColor(backgroundRegExp.cap(1));
+		}
+		else if (-1 != engineRegExp.indexIn(QApplication::arguments()[i]))
+		{
+			this->engine = engineRegExp.cap(1);
+		}
+		else if (-1 != helpRegExp.indexIn(QApplication::arguments()[i]))
+		{
+			QMessageBox::information(this, "Usage", "rlPlanDemo [--background=<color>] [--disable-viewer] [--disable-wait] [--enable-quit] [--engine=<" + engines.join("|") + ">] [--height=<height>] [--help] [--seed=<seed>] [--width=<width>] [filename]");
+			exit(EXIT_SUCCESS);
+		}
+		else if (-1 != heightRegExp.indexIn(QApplication::arguments()[i]))
+		{
+			height = heightRegExp.cap(1).toInt();
+			doSetMinimumSize = true;
+		}
+		else if (-1 != quitRegExp.indexIn(QApplication::arguments()[i]))
+		{
+			this->thread->quit = true;
+		}
+		else if (-1 != seedRegExp.indexIn(QApplication::arguments()[i]))
+		{
+			this->seed = seedRegExp.cap(1).toUInt();
+		}
+		else if (-1 != viewerRegExp.indexIn(QApplication::arguments()[i]))
+		{
+			QObject::disconnect(this->toggleViewActiveAction, SIGNAL(toggled(bool)), this, SLOT(toggleViewActive(bool)));
+			this->toggleViewActiveAction->setChecked(false);
+			QObject::connect(this->toggleViewActiveAction, SIGNAL(toggled(bool)), this, SLOT(toggleViewActive(bool)));
+		}
+		else if (-1 != waitRegExp.indexIn(QApplication::arguments()[i]))
+		{
+			this->wait = false;
+		}
+		else if (-1 != widthRegExp.indexIn(QApplication::arguments()[i]))
+		{
+			width = widthRegExp.cap(1).toInt();
+			doSetMinimumSize = true;
+		}
+		else
+		{
+			this->filename = QApplication::arguments()[i];
+		}
+	}
+#endif
+	
+	this->resize(width, height);
+	
+	if (doSetMinimumSize)
+	{
+		this->viewer->setMinimumSize(width, height);
 	}
 }
 
