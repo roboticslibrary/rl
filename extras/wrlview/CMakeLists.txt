@@ -13,13 +13,10 @@ if(RL_USE_QT5 AND SoQt_HAVE_QT5)
 endif()
 
 if(Qt5_FOUND)
-	set(QT_LIBRARIES ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5OpenGL_LIBRARIES} ${Qt5Network_LIBRARIES} ${Qt5Widgets_LIBRARIES})
 	set(QT_FOUND Qt5_FOUND)
 else()
 	set(QT_USE_IMPORTED_TARGETS ON)
 	find_package(Qt4 COMPONENTS QtCore QtGui QtNetwork QtOpenGL)
-	set(QT_USE_QTMAIN ON)
-	include(${QT_USE_FILE})
 endif()
 
 set(CMAKE_AUTOMOC ON)
@@ -42,17 +39,8 @@ if(Coin_FOUND AND OPENGL_FOUND AND QT_FOUND AND SoQt_FOUND)
 		${CMAKE_CURRENT_BINARY_DIR}/wrlview.rc
 	)
 	
-	target_compile_definitions(
-		wrlview
-		PRIVATE
-		${Coin_DEFINITIONS}
-		${SoQt_DEFINITIONS}
-	)
-	
 	cmake_push_check_state(RESET)
-	set(CMAKE_REQUIRED_DEFINITIONS ${Coin_DEFINITIONS})
-	set(CMAKE_REQUIRED_INCLUDES ${Coin_INCLUDE_DIRS})
-	set(CMAKE_REQUIRED_LIBRARIES ${Coin_LIBRARIES})
+	set(CMAKE_REQUIRED_LIBRARIES Coin::Coin)
 	check_include_file_cxx(ForeignFiles/SoSTLFileKit.h HAVE_SOSTLFILEKIT_H)
 	if(HAVE_SOSTLFILEKIT_H)
 		target_compile_definitions(wrlview PRIVATE HAVE_SOSTLFILEKIT_H)
@@ -66,21 +54,24 @@ if(Coin_FOUND AND OPENGL_FOUND AND QT_FOUND AND SoQt_FOUND)
 	endif()
 	cmake_pop_check_state()
 	
-	target_include_directories(
-		wrlview
-		PRIVATE
-		${Coin_INCLUDE_DIRS}
-		${OPENGL_INCLUDE_DIR}
-		${SoQt_INCLUDE_DIRS}
-	)
-	
 	target_link_libraries(
 		wrlview
-		${Coin_LIBRARIES}
-		${OPENGL_LIBRARIES}
-		${QT_LIBRARIES}
-		${SoQt_LIBRARIES}
+		Coin::Coin
+		SoQt::SoQt
 	)
+	
+	if(TARGET OpenGL::GL)
+		target_link_libraries(wrlview OpenGL::GL)
+	else()
+		target_include_directories(wrlview PRIVATE ${OPENGL_INCLUDE_DIRS})
+		target_link_libraries(wrlview ${OPENGL_LIBRARIES})
+	endif()
+	
+	if(Qt5_FOUND)
+		target_link_libraries(wrlview Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Widgets)
+	elseif(Qt4_FOUND)
+		target_link_libraries(wrlview Qt4::QtCore Qt4::QtGui Qt4::QtNetwork Qt4::QtOpenGL)
+	endif()
 	
 	set_target_properties(
 		wrlview

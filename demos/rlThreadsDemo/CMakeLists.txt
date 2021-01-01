@@ -8,5 +8,5 @@ add_executable(
 
 target_link_libraries(
 	rlThreadsDemo
-	${CMAKE_THREAD_LIBS_INIT}
+	Threads::Threads
 )

@@ -3,13 +3,10 @@ if(RL_USE_QT5)
 endif()
 
 if(Qt5_FOUND)
-	set(QT_LIBRARIES ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Widgets_LIBRARIES})
 	set(QT_FOUND Qt5_FOUND)
 else()
 	set(QT_USE_IMPORTED_TARGETS ON)
 	find_package(Qt4 COMPONENTS QtCore QtGui)
-	set(QT_USE_QTMAIN ON)
-	include(${QT_USE_FILE})
 endif()
 
 set(CMAKE_AUTOMOC ON)
@@ -51,8 +48,13 @@ if(QT_FOUND)
 	target_link_libraries(
 		rlRotationConverterDemo
 		math
-		${QT_LIBRARIES}
 	)
+	
+	if(Qt5_FOUND)
+		target_link_libraries(rlRotationConverterDemo Qt5::Core Qt5::Gui Qt5::Widgets)
+	elseif(Qt4_FOUND)
+		target_link_libraries(rlRotationConverterDemo Qt4::QtCore Qt4::QtGui)
+	endif()
 	
 	set_target_properties(
 		rlRotationConverterDemo

@@ -6,13 +6,10 @@ if(RL_USE_QT5 AND SoQt_HAVE_QT5)
 endif()
 
 if(Qt5_FOUND)
-	set(QT_LIBRARIES ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5OpenGL_LIBRARIES} ${Qt5Widgets_LIBRARIES})
 	set(QT_FOUND Qt5_FOUND)
 else()
 	set(QT_USE_IMPORTED_TARGETS ON)
 	find_package(Qt4 COMPONENTS QtCore QtGui QtOpenGL)
-	set(QT_USE_QTMAIN ON)
-	include(${QT_USE_FILE})
 endif()
 
 set(CMAKE_AUTOMOC ON)
@@ -44,26 +41,24 @@ if(QT_FOUND AND SoQt_FOUND AND (RL_BUILD_SG_BULLET OR RL_BUILD_SG_FCL OR RL_BUIL
 		${rl_BINARY_DIR}/robotics-library.rc
 	)
 	
-	target_compile_definitions(
-		rlCollisionDemo
-		PUBLIC
-		${SoQt_DEFINITIONS}
-	)
-	
-	target_include_directories(
-		rlCollisionDemo
-		PUBLIC
-		${OPENGL_INCLUDE_DIR}
-		${SoQt_INCLUDE_DIRS}
-	)
-	
 	target_link_libraries(
 		rlCollisionDemo
 		sg
-		${OPENGL_LIBRARIES}
-		${QT_LIBRARIES}
-		${SoQt_LIBRARIES}
+		SoQt::SoQt
 	)
+	
+	if(TARGET OpenGL::GL)
+		target_link_libraries(rlCollisionDemo OpenGL::GL)
+	else()
+		target_include_directories(rlCollisionDemo PRIVATE ${OPENGL_INCLUDE_DIRS})
+		target_link_libraries(rlCollisionDemo ${OPENGL_LIBRARIES})
+	endif()
+	
+	if(Qt5_FOUND)
+		target_link_libraries(rlCollisionDemo Qt5::Core Qt5::Gui Qt5::OpenGL Qt5::Widgets)
+	elseif(Qt4_FOUND)
+		target_link_libraries(rlCollisionDemo Qt4::QtCore Qt4::QtGui Qt4::QtOpenGL)
+	endif()
 	
 	set_target_properties(
 		rlCollisionDemo

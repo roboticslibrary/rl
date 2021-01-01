@@ -6,13 +6,8 @@ add_executable(
 	${rl_BINARY_DIR}/robotics-library.rc
 )
 
-target_include_directories(
-	rlDynamics2Demo
-	PUBLIC
-	${Boost_INCLUDE_DIRS}
-)
-
 target_link_libraries(
 	rlDynamics2Demo
 	mdl
+	Boost::headers
 )

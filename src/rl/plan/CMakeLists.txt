@@ -105,7 +105,6 @@ target_include_directories(
 	$<BUILD_INTERFACE:${rl_BINARY_DIR}/src>
 	$<BUILD_INTERFACE:${rl_SOURCE_DIR}/src>
 	$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}>
-	${Boost_INCLUDE_DIRS}
 )
 
 target_link_libraries(
@@ -116,6 +115,7 @@ target_link_libraries(
 	sg
 	util
 	xml
+	Boost::headers
 )
 
 set_target_properties(

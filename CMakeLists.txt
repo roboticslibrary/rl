@@ -88,33 +88,77 @@ foreach(target IN LISTS TARGETS)
 	if(NOT target STREQUAL "util_rtai" AND NOT target STREQUAL "util_xenomai")
 		list(APPEND RL_LIBRARIES "rl::${target}")
 	endif()
+	get_target_property(TARGET_INTERFACE_LINK_LIBRARIES ${target} INTERFACE_LINK_LIBRARIES)
+	if(TARGET_INTERFACE_LINK_LIBRARIES)
+		foreach(library IN LISTS TARGET_INTERFACE_LINK_LIBRARIES)
+			if(library MATCHES "([A-Za-z0-9_.+-]*)::([A-Za-z0-9_.+-]*)")
+				list(APPEND PACKAGES ${CMAKE_MATCH_1})
+			endif()
+		endforeach()
+	endif()
 endforeach()
+
+list(REMOVE_DUPLICATES PACKAGES)
+list(SORT PACKAGES)
+
+foreach(package IN LISTS PACKAGES)
+	list(APPEND FIND_DEPENDENCIES "find_dependency(${package})")
+	list(APPEND MODULES ${package})
+	if(package STREQUAL "fcl")
+		list(APPEND MODULES Boost ccd Eigen3 octomap)
+	elseif(package STREQUAL "LibXml2")
+		list(APPEND MODULES Iconv ICU LibLZMA Threads ZLIB)
+	elseif(package STREQUAL "LibXslt")
+		list(APPEND MODULES LibXml2)
+	elseif(package STREQUAL "ODE")
+		list(APPEND MODULES ccd Threads)
+	endif()
+endforeach()
+
+list(REMOVE_DUPLICATES MODULES)
+list(SORT MODULES)
+
+foreach(module IN LISTS MODULES)
+	if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Find${module}.cmake)
+		file(
+			COPY cmake/Find${module}.cmake
+			DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/lib/cmake/rl
+		)
+		install(
+			FILES cmake/Find${module}.cmake
+			DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/rl-${PROJECT_VERSION}
+			COMPONENT development
+		)
+	endif()
+endforeach()
+
+string(REPLACE ";" "\n" FIND_DEPENDENCIES "${FIND_DEPENDENCIES}")
 
 export(
 	TARGETS ${TARGETS}
 	NAMESPACE rl::
-	FILE ${CMAKE_CURRENT_BINARY_DIR}/rl-export.cmake
+	FILE ${CMAKE_CURRENT_BINARY_DIR}/lib/cmake/rl/rl-export.cmake
 )
 
 configure_package_config_file(
-	rl-config.cmake.in rl-config.cmake
+	rl-config.cmake.in lib/cmake/rl/rl-config.cmake
 	INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/rl-${PROJECT_VERSION}
 )
 
 install(
-	FILES ${CMAKE_CURRENT_BINARY_DIR}/rl-config.cmake
+	FILES ${CMAKE_CURRENT_BINARY_DIR}/lib/cmake/rl/rl-config.cmake
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/rl-${PROJECT_VERSION}
 	COMPONENT development
 )
 
 write_basic_package_version_file(
-	${CMAKE_CURRENT_BINARY_DIR}/rl-config-version.cmake
+	${CMAKE_CURRENT_BINARY_DIR}/lib/cmake/rl/rl-config-version.cmake
 	VERSION ${PROJECT_VERSION}
 	COMPATIBILITY ExactVersion
 )
 
 install(
-	FILES ${CMAKE_CURRENT_BINARY_DIR}/rl-config-version.cmake
+	FILES ${CMAKE_CURRENT_BINARY_DIR}/lib/cmake/rl/rl-config-version.cmake
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/rl-${PROJECT_VERSION}
 	COMPONENT development
 )

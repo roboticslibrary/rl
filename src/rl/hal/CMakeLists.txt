@@ -184,33 +184,29 @@ target_include_directories(
 	$<BUILD_INTERFACE:${rl_BINARY_DIR}/src>
 	$<BUILD_INTERFACE:${rl_SOURCE_DIR}/src>
 	$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}>
-	${Boost_INCLUDE_DIRS}
 )
 
 target_link_libraries(
 	hal
 	math
 	util
+	Boost::headers
 )
 
 if(RL_BUILD_HAL_ATIDAQ)
-	target_include_directories(hal PUBLIC ${ATIDAQ_INCLUDE_DIRS})
-	target_link_libraries(hal ${ATIDAQ_LIBRARIES})
+	target_link_libraries(hal ATIDAQ::ATIDAQ)
 endif()
 
 if(RL_BUILD_HAL_CIFX)
-	target_include_directories(hal PUBLIC ${CIFX_INCLUDE_DIRS})
-	target_link_libraries(hal ${CIFX_LIBRARIES})
+	target_link_libraries(hal cifX::cifX)
 endif()
 
 if(RL_BUILD_HAL_COMEDI)
-	target_include_directories(hal PUBLIC ${COMEDI_INCLUDE_DIRS})
-	target_link_libraries(hal ${COMEDI_LIBRARIES})
+	target_link_libraries(hal Comedi::Comedi)
 endif()
 
 if(RL_BUILD_HAL_LIBDC1394)
-	target_include_directories(hal PUBLIC ${LIBDC1394_INCLUDE_DIRS})
-	target_link_libraries(hal ${LIBDC1394_LIBRARIES})
+	target_link_libraries(hal libdc1394::libdc1394)
 endif()
 
 if(QNXNTO)

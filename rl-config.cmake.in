@@ -18,9 +18,12 @@ set(RL_XML_FOUND @RL_BUILD_XML@)
 
 include("${CMAKE_CURRENT_LIST_DIR}/rl-export.cmake")
 
-set(RL_DEFINITIONS "@RL_DEFINITIONS@")
-set(RL_INCLUDE_DIRS "@RL_INCLUDE_DIRS@")
-set(RL_LIBRARY_DIRS "@RL_LIBRARY_DIRS@")
+check_required_components(RL)
+
 set(RL_LIBRARIES "@RL_LIBRARIES@")
 
-check_required_components(RL)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
+
+include(CMakeFindDependencyMacro)
+
+@FIND_DEPENDENCIES@

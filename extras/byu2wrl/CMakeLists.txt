@@ -8,20 +8,8 @@ if(Coin_FOUND)
 		byu2wrl.cpp
 	)
 	
-	target_compile_definitions(
-		byu2wrl
-		PUBLIC
-		${Coin_DEFINITIONS}
-	)
-	
-	target_include_directories(
-		byu2wrl
-		PUBLIC
-		${Coin_INCLUDE_DIRS}
-	)
-	
 	target_link_libraries(
 		byu2wrl
-		${Coin_LIBRARIES}
+		Coin::Coin
 	)
 endif()

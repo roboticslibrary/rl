@@ -34,12 +34,9 @@ target_include_directories(
 	$<BUILD_INTERFACE:${rl_BINARY_DIR}/src>
 	$<BUILD_INTERFACE:${rl_SOURCE_DIR}/src>
 	$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}>
-	${Boost_INCLUDE_DIRS}
-	${LIBXML2_INCLUDE_DIRS}
-	${LIBXSLT_INCLUDE_DIRS}
 )
 
-target_link_libraries(xml INTERFACE ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES})
+target_link_libraries(xml INTERFACE Boost::headers LibXml2::LibXml2 LibXslt::LibXslt)
 
 if(NOT CMAKE_VERSION VERSION_LESS 3.19)
 	set_target_properties(

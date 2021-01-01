@@ -7,15 +7,10 @@ add_executable(
 	${rl_BINARY_DIR}/robotics-library.rc
 )
 
-target_include_directories(
-	rlNearestNeighborsTest
-	PUBLIC
-	${Boost_INCLUDE_DIRS}
-)
-
 target_link_libraries(
 	rlNearestNeighborsTest
 	math
+	Boost::headers
 )
 
 add_test(

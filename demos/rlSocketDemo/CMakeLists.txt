@@ -6,15 +6,10 @@ add_executable(
 	${rl_BINARY_DIR}/robotics-library.rc
 )
 
-target_include_directories(
-	rlSocketDemoClient
-	PUBLIC
-	${Boost_INCLUDE_DIRS}
-)
-
 target_link_libraries(
 	rlSocketDemoClient
 	hal
+	Boost::headers
 )
 
 add_executable(
@@ -23,13 +18,8 @@ add_executable(
 	${rl_BINARY_DIR}/robotics-library.rc
 )
 
-target_include_directories(
-	rlSocketDemoServer
-	PUBLIC
-	${Boost_INCLUDE_DIRS}
-)
-
 target_link_libraries(
 	rlSocketDemoServer
 	hal
+	Boost::headers
 )

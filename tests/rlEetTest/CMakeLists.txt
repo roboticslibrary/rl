@@ -7,17 +7,12 @@ if(RL_BUILD_SG_BULLET OR RL_BUILD_SG_FCL OR RL_BUILD_SG_PQP OR RL_BUILD_SG_SOLID
 		${rl_BINARY_DIR}/robotics-library.rc
 	)
 	
-	target_include_directories(
-		rlEetTest
-		PUBLIC
-		${Boost_INCLUDE_DIRS}
-	)
-	
 	target_link_libraries(
 		rlEetTest
 		plan
 		kin
 		sg
+		Boost::headers
 	)
 	
 	if(RL_BUILD_SG_BULLET)

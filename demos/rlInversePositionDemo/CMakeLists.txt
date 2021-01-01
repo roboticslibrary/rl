@@ -6,15 +6,10 @@ add_executable(
 	${rl_BINARY_DIR}/robotics-library.rc
 )
 
-target_include_directories(
-	rlInversePositionDemo
-	PUBLIC
-	${Boost_INCLUDE_DIRS}
-)
-
 target_link_libraries(
 	rlInversePositionDemo
 	hal
 	mdl
 	util
+	Boost::headers
 )

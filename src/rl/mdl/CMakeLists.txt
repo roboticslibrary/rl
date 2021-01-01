@@ -91,7 +91,6 @@ target_include_directories(
 	$<BUILD_INTERFACE:${rl_BINARY_DIR}/src>
 	$<BUILD_INTERFACE:${rl_SOURCE_DIR}/src>
 	$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}>
-	${Boost_INCLUDE_DIRS}
 )
 
 target_link_libraries(
@@ -99,12 +98,12 @@ target_link_libraries(
 	math
 	std
 	xml
+	Boost::headers
 )
 
 if(RL_BUILD_MDL_NLOPT)
 	target_compile_definitions(mdl INTERFACE RL_MDL_NLOPT)
-	target_include_directories(mdl PUBLIC ${NLOPT_INCLUDE_DIRS})
-	target_link_libraries(mdl ${NLOPT_LIBRARY})
+	target_link_libraries(mdl NLopt::nlopt)
 endif()
 
 set_target_properties(

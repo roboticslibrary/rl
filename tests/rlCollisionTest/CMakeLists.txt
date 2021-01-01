@@ -7,16 +7,11 @@ if(RL_BUILD_SG_BULLET OR RL_BUILD_SG_FCL OR RL_BUILD_SG_ODE OR RL_BUILD_SG_PQP O
 		${rl_BINARY_DIR}/robotics-library.rc
 	)
 	
-	target_include_directories(
-		rlCollisionTest
-		PUBLIC
-		${Boost_INCLUDE_DIRS}
-	)
-	
 	target_link_libraries(
 		rlCollisionTest
 		mdl
 		sg
+		Boost::headers
 	)
 	
 	add_test(

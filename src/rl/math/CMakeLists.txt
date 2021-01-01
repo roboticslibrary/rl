@@ -83,14 +83,14 @@ target_include_directories(
 	$<BUILD_INTERFACE:${rl_BINARY_DIR}/src>
 	$<BUILD_INTERFACE:${rl_SOURCE_DIR}/src>
 	$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}>
-	${Boost_INCLUDE_DIRS}
-	${EIGEN3_INCLUDE_DIRS}
 )
 
 target_link_libraries(
 	math
 	INTERFACE
 	std
+	Boost::headers
+	Eigen3::Eigen
 )
 
 if(NOT CMAKE_VERSION VERSION_LESS 3.19)
