@@ -1,13 +1,12 @@
 find_package(Boost REQUIRED)
 
 find_package(Bullet)
-find_package(ccd)
-find_package(FCL)
+find_package(fcl)
 find_package(ODE)
 find_package(PQP)
-find_package(SOLID3)
+find_package(solid3)
 
-if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE_FOUND OR PQP_FOUND OR SOLID3_FOUND)
+if(Bullet_FOUND OR fcl_FOUND OR ODE_FOUND OR PQP_FOUND OR solid3_FOUND)
 	add_executable(
 		rlCollisionTest
 		rlCollisionTest.cpp

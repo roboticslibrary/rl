@@ -1,10 +1,6 @@
 find_package(Boost REQUIRED)
-
-find_package(Iconv)
-find_package(LibLZMA)
 find_package(LibXml2 REQUIRED)
 find_package(LibXslt REQUIRED)
-find_package(ZLIB)
 
 set(
 	HDRS
@@ -44,21 +40,6 @@ target_include_directories(
 )
 
 target_link_libraries(xml INTERFACE ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES})
-
-if(Iconv_FOUND)
-	target_include_directories(xml INTERFACE ${Iconv_INCLUDE_DIRS})
-	target_link_libraries(xml INTERFACE ${Iconv_LIBRARIES})
-endif()
-
-if(LIBLZMA_FOUND)
-	target_include_directories(xml INTERFACE ${LIBLZMA_INCLUDE_DIRS})
-	target_link_libraries(xml INTERFACE ${LIBLZMA_LIBRARIES})
-endif()
-
-if(ZLIB_FOUND)
-	target_include_directories(xml INTERFACE ${ZLIB_INCLUDE_DIRS})
-	target_link_libraries(xml INTERFACE ${ZLIB_LIBRARIES})
-endif()
 
 if(NOT CMAKE_VERSION VERSION_LESS 3.19)
 	set_target_properties(

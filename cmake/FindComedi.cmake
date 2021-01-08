@@ -2,49 +2,47 @@ include(FindPackageHandleStandardArgs)
 include(SelectLibraryConfigurations)
 
 find_path(
-	Comedi_INCLUDE_DIRS
-	NAMES
-	comedilib.h
+	COMEDI_INCLUDE_DIR
+	NAMES comedilib.h
 )
-
-mark_as_advanced(Comedi_INCLUDE_DIRS)
-
 find_library(
-	Comedi_LIBRARY_DEBUG
-	NAMES
-	comedid
+	COMEDI_LIBRARY_RELEASE
+	NAMES comedi
 )
+select_library_configurations(COMEDI)
 
-find_library(
-	Comedi_LIBRARY_RELEASE
-	NAMES
-	comedi
-)
+if(COMEDI_INCLUDE_DIR AND EXISTS "${COMEDI_INCLUDE_DIR}/comedilib_version.h")
+	file(STRINGS "${COMEDI_INCLUDE_DIR}/comedilib_version.h" _COMEDI_VERSION_MAJOR_DEFINE REGEX "[\t ]*#define[\t ]+COMEDILIB_VERSION_MAJOR[\t ]+[0-9]+.*")
+	string(REGEX REPLACE "[\t ]*#define[\t ]+COMEDILIB_VERSION_MAJOR[\t ]+([0-9]+).*" "\\1" COMEDI_VERSION_MAJOR "${_COMEDI_VERSION_MAJOR_DEFINE}")
+	file(STRINGS "${COMEDI_INCLUDE_DIR}/comedilib_version.h" _COMEDI_VERSION_MINOR_DEFINE REGEX "[\t ]*#define[\t ]+COMEDILIB_VERSION_MINOR[\t ]+[0-9]+.*")
+	string(REGEX REPLACE "[\t ]*#define[\t ]+COMEDILIB_VERSION_MINOR[\t ]+([0-9]+).*" "\\1" COMEDI_VERSION_MINOR "${_COMEDI_VERSION_MINOR_DEFINE}")
+	file(STRINGS "${COMEDI_INCLUDE_DIR}/comedilib_version.h" _COMEDI_VERSION_MICRO_DEFINE REGEX "[\t ]*#define[\t ]+COMEDILIB_VERSION_MICRO[\t ]+[0-9]+.*")
+	string(REGEX REPLACE "[\t ]*#define[\t ]+COMEDILIB_VERSION_MICRO[\t ]+([0-9]+).*" "\\1" COMEDI_VERSION_MICRO "${_COMEDI_VERSION_MICRO_DEFINE}")
+	if(NOT COMEDI_VERSION_MAJOR STREQUAL "" AND NOT COMEDI_VERSION_MINOR STREQUAL "" AND NOT COMEDI_VERSION_MICRO STREQUAL "")
+		set(COMEDI_VERSION "${COMEDI_VERSION_MAJOR}.${COMEDI_VERSION_MINOR}.${COMEDI_VERSION_MICRO}")
+	endif()
+	unset(_COMEDI_VERSION_MAJOR_DEFINE)
+	unset(_COMEDI_VERSION_MINOR_DEFINE)
+	unset(_COMEDI_VERSION_MICRO_DEFINE)
+endif()
 
-select_library_configurations(Comedi)
+set(COMEDI_INCLUDE_DIRS ${COMEDI_INCLUDE_DIR})
+set(COMEDI_LIBRARIES ${COMEDI_LIBRARY})
 
 find_package_handle_standard_args(
 	Comedi
 	FOUND_VAR Comedi_FOUND
-	REQUIRED_VARS Comedi_INCLUDE_DIRS Comedi_LIBRARIES
+	REQUIRED_VARS COMEDI_INCLUDE_DIR COMEDI_LIBRARY
+	VERSION_VAR COMEDI_VERSION
 )
 
 if(Comedi_FOUND AND NOT TARGET Comedi::Comedi)
 	add_library(Comedi::Comedi UNKNOWN IMPORTED)
-	
-	if(Comedi_LIBRARY_RELEASE)
+	if(COMEDI_LIBRARY_RELEASE)
 		set_property(TARGET Comedi::Comedi APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
-		set_target_properties(Comedi::Comedi PROPERTIES IMPORTED_LOCATION_RELEASE "${Comedi_LIBRARY_RELEASE}")
+		set_target_properties(Comedi::Comedi PROPERTIES IMPORTED_LOCATION_RELEASE "${COMEDI_LIBRARY_RELEASE}")
 	endif()
-	
-	if(Comedi_LIBRARY_DEBUG)
-		set_property(TARGET Comedi::Comedi APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
-		set_target_properties(Comedi::Comedi PROPERTIES IMPORTED_LOCATION_DEBUG "${Comedi_LIBRARY_DEBUG}")
-	endif()
-	
-	set_target_properties(
-		Comedi::Comedi PROPERTIES
-		INTERFACE_COMPILE_DEFINITIONS "${Comedi_DEFINITIONS}"
-		INTERFACE_INCLUDE_DIRECTORIES "${Comedi_INCLUDE_DIRS}"
-	)
+	set_target_properties(Comedi::Comedi PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${COMEDI_INCLUDE_DIRS}")
 endif()
+
+mark_as_advanced(COMEDI_INCLUDE_DIR)

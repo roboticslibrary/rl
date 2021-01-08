@@ -3,19 +3,17 @@ include(CheckIncludeFileCXX)
 include(CMakePushCheckState)
 
 find_package(Bullet)
-find_package(ccd)
 find_package(Coin REQUIRED)
-find_package(FCL)
-find_package(OctoMap)
+find_package(fcl)
 find_package(ODE)
 find_package(PQP)
-find_package(SOLID3)
+find_package(solid3)
 
-cmake_dependent_option(RL_BUILD_SG_BULLET "Build Bullet support" ON "RL_BUILD_SG;BULLET_FOUND" OFF)
-cmake_dependent_option(RL_BUILD_SG_FCL "Build FCL support" ON "RL_BUILD_SG;CCD_FOUND;FCL_FOUND" OFF)
+cmake_dependent_option(RL_BUILD_SG_BULLET "Build Bullet support" ON "RL_BUILD_SG;Bullet_FOUND" OFF)
+cmake_dependent_option(RL_BUILD_SG_FCL "Build FCL support" ON "RL_BUILD_SG;fcl_FOUND" OFF)
 cmake_dependent_option(RL_BUILD_SG_ODE "Build ODE support" ON "RL_BUILD_SG;ODE_FOUND" OFF)
 cmake_dependent_option(RL_BUILD_SG_PQP "Build PQP support" ON "RL_BUILD_SG;PQP_FOUND" OFF)
-cmake_dependent_option(RL_BUILD_SG_SOLID "Build SOLID support" ON "RL_BUILD_SG;SOLID3_FOUND" OFF)
+cmake_dependent_option(RL_BUILD_SG_SOLID "Build SOLID support" ON "RL_BUILD_SG;solid3_FOUND" OFF)
 
 set(
 	BASE_HDRS
@@ -204,11 +202,6 @@ if(RL_BUILD_SG_BULLET)
 	install(FILES ${BULLET_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}/rl/sg/bullet COMPONENT development)
 endif()
 
-if(CCD_FOUND AND (RL_BUILD_SG_FCL OR RL_BUILD_SG_ODE))
-	target_include_directories(sg PUBLIC ${CCD_INCLUDE_DIRS})
-	target_link_libraries(sg ${CCD_LIBRARIES})
-endif()
-
 if(Coin_FOUND)
 	cmake_push_check_state(RESET)
 	set(CMAKE_REQUIRED_DEFINITIONS ${Coin_DEFINITIONS})
@@ -246,11 +239,6 @@ if(RL_BUILD_SG_ODE)
 	target_include_directories(sg PUBLIC ${ODE_INCLUDE_DIRS})
 	target_link_libraries(sg ${ODE_LIBRARIES})
 	install(FILES ${ODE_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}/rl/sg/ode COMPONENT development)
-endif()
-
-if(OCTOMAP_FOUND AND RL_BUILD_SG_FCL)
-	target_include_directories(sg PUBLIC ${OCTOMAP_INCLUDE_DIRS})
-	target_link_libraries(sg ${OCTOMAP_LIBRARIES})
 endif()
 
 if(RL_BUILD_SG_PQP)

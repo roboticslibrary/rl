@@ -1,7 +1,7 @@
 find_package(Boost REQUIRED)
 find_package(NLopt)
 
-cmake_dependent_option(RL_BUILD_MDL_NLOPT "Build NLopt support" ON "RL_BUILD_MDL;NLOPT_FOUND" OFF)
+cmake_dependent_option(RL_BUILD_MDL_NLOPT "Build NLopt support" ON "RL_BUILD_MDL;NLopt_FOUND" OFF)
 
 set(
 	HDRS

@@ -1,7 +1,7 @@
 find_package(OpenGL REQUIRED)
 find_package(SoQt)
 
-if(RL_USE_QT5 AND SoQt5_FOUND)
+if(RL_USE_QT5 AND SoQt_HAVE_QT5)
 	find_package(Qt5 COMPONENTS Core Gui OpenGL Widgets QUIET)
 endif()
 
@@ -19,14 +19,13 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Bullet)
-find_package(ccd)
-find_package(FCL)
+find_package(fcl)
 find_package(ODE)
 find_package(PQP)
-find_package(SOLID3)
+find_package(solid3)
 
 if(QT_FOUND AND SoQt_FOUND)
-	if(BULLET_FOUND OR (CCD_FOUND AND FCL_FOUND) OR ODE_FOUND OR PQP_FOUND OR SOLID3_FOUND)
+	if(Bullet_FOUND OR fcl_FOUND OR ODE_FOUND OR PQP_FOUND OR solid3_FOUND)
 		set(
 			HDRS
 			BodyDelegate.h

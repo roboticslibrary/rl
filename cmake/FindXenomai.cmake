@@ -1,104 +1,73 @@
 include(FindPackageHandleStandardArgs)
 include(SelectLibraryConfigurations)
 
+if(NOT Xenomai_FIND_COMPONENTS)
+	set(Xenomai_FIND_COMPONENTS native xenomai)
+	foreach(component IN LISTS Xenomai_FIND_COMPONENTS)
+		set(Xenomai_FIND_REQUIRED_${component} ON)
+	endforeach()
+endif()
+
 find_path(
-	Xenomai_INCLUDE_DIRS
-	NAMES
-	native/task.h
-	PATHS
-	/usr/xenomai/include
-	PATH_SUFFIXES
-	xenomai
+	XENOMAI_INCLUDE_DIR
+	NAMES xeno_config.h
+	PATHS /usr/xenomai/include
+	PATH_SUFFIXES xenomai
 )
 
-mark_as_advanced(Xenomai_INCLUDE_DIRS)
+foreach(component IN LISTS Xenomai_FIND_COMPONENTS)
+	string(TOUPPER ${component} COMPONENT)
+	find_library(
+		XENOMAI_${COMPONENT}_LIBRARY_RELEASE
+		NAMES ${component}
+		PATHS /usr/xenomai/lib
+	)
+	select_library_configurations(XENOMAI_${COMPONENT})
+endforeach()
 
-find_library(
-	Xenomai_NATIVE_LIBRARY_DEBUG
-	NAMES
-	natived
-	PATHS
-	/usr/xenomai/lib
-)
+if(XENOMAI_INCLUDE_DIR AND EXISTS "${XENOMAI_INCLUDE_DIR}/xeno_config.h")
+	file(STRINGS "${XENOMAI_INCLUDE_DIR}/xeno_config.h" _XENOMAI_VERSION_DEFINE REGEX "[\t ]*#define[\t ]+VERSION[\t ]+\"[^\"]*\".*")
+	string(REGEX REPLACE "[\t ]*#define[\t ]+VERSION[\t ]+\"([^\"]*)\".*" "\\1" XENOMAI_VERSION "${_XENOMAI_VERSION_DEFINE}")
+	unset(_XENOMAI_VERSION_DEFINE)
+endif()
 
-find_library(
-	Xenomai_NATIVE_LIBRARY_RELEASE
-	NAMES
-	native
-	PATHS
-	/usr/xenomai/lib
-)
+set(XENOMAI_DEFINITIONS -D__XENO__ -D_GNU_SOURCE -D_REENTRANT)
+set(XENOMAI_INCLUDE_DIRS ${XENOMAI_INCLUDE_DIR})
+set(XENOMAI_LIBRARIES pthread rt)
 
-select_library_configurations(Xenomai_NATIVE)
-
-find_library(
-	Xenomai_XENOMAI_LIBRARY_DEBUG
-	NAMES
-	xenomaid
-	PATHS
-	/usr/xenomai/lib
-)
-
-find_library(
-	Xenomai_XENOMAI_LIBRARY_RELEASE
-	NAMES
-	xenomai
-	PATHS
-	/usr/xenomai/lib
-)
-
-select_library_configurations(Xenomai_XENOMAI)
-
-set(Xenomai_LIBRARIES ${Xenomai_NATIVE_LIBRARIES} ${Xenomai_XENOMAI_LIBRARIES} pthread rt)
-
-set(Xenomai_DEFINITIONS -D__XENO__ -D_GNU_SOURCE -D_REENTRANT)
-
-mark_as_advanced(Xenomai_DEFINITIONS)
+foreach(component IN LISTS Xenomai_FIND_COMPONENTS)
+	string(TOUPPER ${component} COMPONENT)
+	if(XENOMAI_${COMPONENT}_LIBRARY)
+		set(Xenomai_${component}_FOUND ON)
+		list(APPEND XENOMAI_LIBRARIES ${XENOMAI_${COMPONENT}_LIBRARY})
+	endif()
+endforeach()
 
 find_package_handle_standard_args(
 	Xenomai
 	FOUND_VAR Xenomai_FOUND
-	REQUIRED_VARS Xenomai_INCLUDE_DIRS Xenomai_NATIVE_LIBRARY Xenomai_XENOMAI_LIBRARY
+	REQUIRED_VARS XENOMAI_INCLUDE_DIR
+	VERSION_VAR XENOMAI_VERSION
+	HANDLE_COMPONENTS
 )
 
-if(Xenomai_FOUND AND NOT TARGET Xenomai::native)
-	add_library(Xenomai::native UNKNOWN IMPORTED)
-	
-	if(Xenomai_NATIVE_LIBRARY_RELEASE)
-		set_property(TARGET Xenomai::native APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
-		set_target_properties(Xenomai::native PROPERTIES IMPORTED_LOCATION_RELEASE "${Xenomai_NATIVE_LIBRARY_RELEASE}")
+foreach(component IN LISTS Xenomai_FIND_COMPONENTS)
+	string(TOUPPER ${component} COMPONENT)
+	if(Xenomai_${component}_FOUND AND NOT TARGET Xenomai::${component})
+		add_library(Xenomai::${component} UNKNOWN IMPORTED)
+		if(XENOMAI_${COMPONENT}_LIBRARY_RELEASE)
+			set_property(TARGET Xenomai::${component} APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+			set_target_properties(Xenomai::${component} PROPERTIES IMPORTED_LOCATION_RELEASE "${XENOMAI_${COMPONENT}_LIBRARY_RELEASE}")
+		endif()
+		if(component STREQUAL "xenomai")
+			set_target_properties(Xenomai::${component} PROPERTIES INTERFACE_COMPILE_DEFINITIONS "__XENO__;_GNU_SOURCE;_REENTRANT")
+		endif()
+		set_target_properties(Xenomai::${component} PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${XENOMAI_INCLUDE_DIRS}")
+		if(component STREQUAL "xenomai")
+			set_target_properties(Xenomai::${component} PROPERTIES INTERFACE_LINK_LIBRARIES "pthread;rt")
+		endif()
 	endif()
-	
-	if(Xenomai_LIBRARY_DEBUG)
-		set_property(TARGET Xenomai::native APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
-		set_target_properties(Xenomai::native PROPERTIES IMPORTED_LOCATION_RELEASE "${Xenomai_NATIVE_LIBRARY_DEBUG}")
-	endif()
-	
-	set_target_properties(
-		Xenomai::native PROPERTIES
-		INTERFACE_COMPILE_DEFINITIONS "${Xenomai_DEFINITIONS}"
-		INTERFACE_INCLUDE_DIRECTORIES "${Xenomai_INCLUDE_DIRS}"
-	)
-endif()
+endforeach()
 
-if(Xenomai_FOUND AND NOT TARGET Xenomai::xenomai)
-	add_library(Xenomai::xenomai UNKNOWN IMPORTED)
-	
-	if(Xenomai_LIBRARY_RELEASE)
-		set_property(TARGET Xenomai::xenomai APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
-		set_target_properties(Xenomai::xenomai PROPERTIES IMPORTED_LOCATION_RELEASE "${Xenomai_XENOMAI_LIBRARY_RELEASE}")
-		set_target_properties(Xenomai::xenomai PROPERTIES IMPORTED_LINK_INTERFACE_LIBRARIES_RELEASE "Xenomai::native")
-	endif()
-	
-	if(Xenomai_LIBRARY_DEBUG)
-		set_property(TARGET Xenomai::xenomai APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
-		set_target_properties(Xenomai::xenomai PROPERTIES IMPORTED_LOCATION_DEBUG "${Xenomai_XENOMAI_LIBRARY_DEBUG}")
-		set_target_properties(Xenomai::xenomai PROPERTIES IMPORTED_LINK_INTERFACE_LIBRARIES_DEBUG "Xenomai::native")
-	endif()
-	
-	set_target_properties(
-		Xenomai::xenomai PROPERTIES
-		INTERFACE_COMPILE_DEFINITIONS "${Xenomai_DEFINITIONS}"
-		INTERFACE_INCLUDE_DIRECTORIES "${Xenomai_INCLUDE_DIRS}"
-	)
-endif()
+mark_as_advanced(XENOMAI_DEFINITIONS)
+mark_as_advanced(XENOMAI_INCLUDE_DIR)
