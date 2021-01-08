@@ -99,9 +99,9 @@ endif()
 
 add_subdirectory(doc)
 
-foreach(TARGET ${TARGETS})
+foreach(TARGET IN LISTS TARGETS)
 	list(APPEND RL_LIBRARIES "rl::${TARGET}")
-endforeach(TARGET)
+endforeach()
 
 export(
 	TARGETS ${TARGETS}

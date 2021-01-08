@@ -10,7 +10,7 @@ set(
 	rlTrapezoidalAccelerationTest
 )
 
-foreach(TEST ${TESTS})
+foreach(TEST IN LISTS TESTS)
 	add_executable(
 		${TEST}
 		${TEST}.cpp
