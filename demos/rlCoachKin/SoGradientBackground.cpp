@@ -24,17 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifdef WIN32
-#include <windows.h>
-#endif // WIN32
-
-#ifdef __APPLE__
-#include <OpenGL/gl.h>
-#else // __APPLE__
-#include <GL/gl.h>
-#endif // __APPLE__
-
 #include <Inventor/nodes/SoSubNode.h>
+#include <Inventor/system/gl.h>
 
 #include "SoGradientBackground.h"
 
