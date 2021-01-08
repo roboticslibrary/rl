@@ -28,6 +28,7 @@
 #define RL_UTIL_XENOMAI_THREAD
 
 #include <chrono>
+#include <functional>
 #include <memory>
 #include <system_error>
 #include <native/task.h>

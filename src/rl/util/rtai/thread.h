@@ -28,6 +28,7 @@
 #define RL_UTIL_RTAI_THREAD
 
 #include <chrono>
+#include <functional>
 #include <memory>
 #include <rtai_lxrt.h>
 #include <system_error>
