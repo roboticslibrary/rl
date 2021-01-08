@@ -251,13 +251,13 @@ namespace rl
 					}
 				}
 				
-				template <class Rep, class Period>
+				template<class Rep, class Period>
 				bool try_lock_for(const ::std::chrono::duration<Rep, Period>& rtime)
 				{
 					return this->M_try_lock_for(rtime);
 				}
 				
-				template <class Clock, class Duration>
+				template<class Clock, class Duration>
 				bool try_lock_until(const ::std::chrono::time_point<Clock, Duration>& atime)
 				{
 					return this->M_try_lock_until(atime);

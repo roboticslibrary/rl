@@ -40,21 +40,21 @@ namespace rl
 #ifdef __cpp_lib_make_unique
 		using ::std::make_unique;
 #else
-		template <typename T>
+		template<typename T>
 		typename ::std::enable_if<::std::is_array<T>::value, ::std::unique_ptr<T>>::type
 		make_unique(::std::size_t n)
 		{
 			return ::std::unique_ptr<T>(new typename ::std::remove_extent<T>::type[n]());
 		}
 		
-		template <typename T, typename... Args>
+		template<typename T, typename... Args>
 		typename ::std::enable_if<!::std::is_array<T>::value, ::std::unique_ptr<T>>::type
 		make_unique(Args&&... args)
 		{
 			return ::std::unique_ptr<T>(new T(::std::forward<Args>(args)...));
 		}
 		
-		template <typename T, typename... Args>
+		template<typename T, typename... Args>
 		typename ::std::enable_if<::std::extent<T>::value != 0, ::std::unique_ptr<T>>::type
 		make_unique(Args&&...) = delete;
 #endif
