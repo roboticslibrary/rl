@@ -7,11 +7,9 @@ set(
 
 if(NOT CMAKE_VERSION VERSION_LESS 3.19)
 	add_library(std INTERFACE ${HDRS})
-elseif(NOT CMAKE_VERSION VERSION_LESS 3.0)
+else()
 	add_library(std INTERFACE)
 	add_custom_target(std_sources SOURCES ${HDRS})
-else()
-	add_library(std STATIC ${HDRS} dummy.cpp)
 endif()
 
 if(NOT CMAKE_VERSION VERSION_LESS 3.8)
@@ -23,27 +21,17 @@ target_include_directories(
 	INTERFACE
 	$<BUILD_INTERFACE:${rl_BINARY_DIR}/src>
 	$<BUILD_INTERFACE:${rl_SOURCE_DIR}/src>
-	$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}>
+	$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}>
 )
 
-install(FILES ${HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/std COMPONENT development)
+install(FILES ${HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}/rl/std COMPONENT development)
 
-if(CMAKE_VERSION VERSION_LESS 3.0)
+if(NOT CMAKE_VERSION VERSION_LESS 3.19)
 	set_target_properties(
 		std
 		PROPERTIES
-		OUTPUT_NAME rlstd
-		POSITION_INDEPENDENT_CODE ON
-		VERSION ${VERSION}
+		VERSION ${PROJECT_VERSION}
 	)
-	
-	if(MSVC)
-		set_target_properties(
-			std
-			PROPERTIES
-			DEBUG_POSTFIX d
-		)
-	endif()
 endif()
 
 install(

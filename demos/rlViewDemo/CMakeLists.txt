@@ -47,7 +47,7 @@ if(QT_FOUND AND SoQt_FOUND)
 	set_target_properties(
 		rlViewDemo
 		PROPERTIES
-		VERSION ${VERSION}
+		VERSION ${PROJECT_VERSION}
 	)
 	
 	if(MSVC)
@@ -66,7 +66,7 @@ if(QT_FOUND AND SoQt_FOUND)
 		RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 	)
 	
-	if(MSVC AND BUILD_SHARED_LIBS AND NOT CMAKE_VERSION VERSION_LESS 3.1)
+	if(MSVC AND BUILD_SHARED_LIBS)
 		install(FILES $<TARGET_PDB_FILE:rlViewDemo> DESTINATION ${CMAKE_INSTALL_BINDIR} CONFIGURATIONS Debug RelWithDebInfo COMPONENT demos)
 	endif()
 	
@@ -82,7 +82,7 @@ if(QT_FOUND AND SoQt_FOUND)
 			\\\"$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\rlViewDemo.lnk\\\" \\\\
 			\\\"$INSTDIR\\\\${CMAKE_INSTALL_BINDIR}\\\\rlViewDemo.exe\\\" \\\\
 			\\\"\\\\
-				\\\$\\\\\\\"$INSTDIR\\\\${CMAKE_INSTALL_DATADIR}\\\\rl-${VERSION}\\\\examples\\\\rlsg\\\\unimation-puma560_boxes.xml\\\$\\\\\\\"\\\\
+				\\\$\\\\\\\"$INSTDIR\\\\${CMAKE_INSTALL_DATADIR}\\\\rl-${PROJECT_VERSION}\\\\examples\\\\rlsg\\\\unimation-puma560_boxes.xml\\\$\\\\\\\"\\\\
 			\\\" \\\\
 			\\\"\\\" \\\"\\\" \\\"\\\" \\\"\\\" \\\\
 			\\\"Visualization demo with Unimation Puma 560\\\""
@@ -94,7 +94,7 @@ if(QT_FOUND AND SoQt_FOUND)
 		WIX_SHORTCUTS
 		${WIX_SHORTCUTS}
 		"<Shortcut
-			Arguments=\"&quot;[INSTALL_ROOT]${CMAKE_INSTALL_DATADIR}\\rl-${VERSION}\\examples\\rlsg\\unimation-puma560_boxes.xml&quot;\"
+			Arguments=\"&quot;[INSTALL_ROOT]${CMAKE_INSTALL_DATADIR}\\rl-${PROJECT_VERSION}\\examples\\rlsg\\unimation-puma560_boxes.xml&quot;\"
 			Description=\"Visualization demo with Unimation Puma 560\"
 			Id=\"CM_SP_bin.rlViewDemo.exe\"
 			Name=\"rlViewDemo\"

@@ -186,14 +186,14 @@ target_link_libraries(
 	xml
 )
 
-install(FILES ${BASE_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/sg COMPONENT development)
+install(FILES ${BASE_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}/rl/sg COMPONENT development)
 
 target_include_directories(
 	sg
 	PUBLIC
 	$<BUILD_INTERFACE:${rl_BINARY_DIR}/src>
 	$<BUILD_INTERFACE:${rl_SOURCE_DIR}/src>
-	$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}>
+	$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}>
 )
 
 if(RL_BUILD_SG_BULLET)
@@ -201,7 +201,7 @@ if(RL_BUILD_SG_BULLET)
 	target_compile_definitions(sg PUBLIC ${BULLET_DEFINITIONS})
 	target_include_directories(sg PUBLIC ${BULLET_INCLUDE_DIRS})
 	target_link_libraries(sg ${BULLET_LIBRARIES})
-	install(FILES ${BULLET_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/sg/bullet COMPONENT development)
+	install(FILES ${BULLET_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}/rl/sg/bullet COMPONENT development)
 endif()
 
 if(CCD_FOUND AND (RL_BUILD_SG_FCL OR RL_BUILD_SG_ODE))
@@ -229,7 +229,7 @@ if(Coin_FOUND)
 	target_compile_definitions(sg PUBLIC ${Coin_DEFINITIONS})
 	target_include_directories(sg PUBLIC ${Coin_INCLUDE_DIRS})
 	target_link_libraries(sg ${Coin_LIBRARIES})
-	install(FILES ${COIN_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/sg/so COMPONENT development)
+	install(FILES ${COIN_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}/rl/sg/so COMPONENT development)
 endif()
 
 if(RL_BUILD_SG_FCL)
@@ -237,7 +237,7 @@ if(RL_BUILD_SG_FCL)
 	target_compile_definitions(sg PUBLIC ${FCL_DEFINITIONS})
 	target_include_directories(sg PUBLIC ${FCL_INCLUDE_DIRS})
 	target_link_libraries(sg ${FCL_LIBRARIES})
-	install(FILES ${FCL_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/sg/fcl COMPONENT development)
+	install(FILES ${FCL_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}/rl/sg/fcl COMPONENT development)
 endif()
 
 if(RL_BUILD_SG_ODE)
@@ -245,7 +245,7 @@ if(RL_BUILD_SG_ODE)
 	target_compile_definitions(sg PUBLIC ${ODE_DEFINITIONS})
 	target_include_directories(sg PUBLIC ${ODE_INCLUDE_DIRS})
 	target_link_libraries(sg ${ODE_LIBRARIES})
-	install(FILES ${ODE_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/sg/ode COMPONENT development)
+	install(FILES ${ODE_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}/rl/sg/ode COMPONENT development)
 endif()
 
 if(OCTOMAP_FOUND AND RL_BUILD_SG_FCL)
@@ -257,14 +257,14 @@ if(RL_BUILD_SG_PQP)
 	target_compile_definitions(sg INTERFACE RL_SG_PQP)
 	target_include_directories(sg PUBLIC ${PQP_INCLUDE_DIRS})
 	target_link_libraries(sg ${PQP_LIBRARIES})
-	install(FILES ${PQP_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/sg/pqp COMPONENT development)
+	install(FILES ${PQP_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}/rl/sg/pqp COMPONENT development)
 endif()
 
 if(RL_BUILD_SG_SOLID)
 	target_compile_definitions(sg INTERFACE RL_SG_SOLID)
 	target_include_directories(sg PUBLIC ${SOLID3_INCLUDE_DIRS})
 	target_link_libraries(sg ${SOLID3_LIBRARIES})
-	install(FILES ${SOLID_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/sg/solid COMPONENT development)
+	install(FILES ${SOLID_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}/rl/sg/solid COMPONENT development)
 endif()
 
 set_target_properties(
@@ -272,7 +272,7 @@ set_target_properties(
 	PROPERTIES
 	OUTPUT_NAME rlsg
 	POSITION_INDEPENDENT_CODE ON
-	VERSION ${VERSION}
+	VERSION ${PROJECT_VERSION}
 )
 
 set_target_properties(
@@ -327,7 +327,7 @@ else()
 	endif()
 endif()
 
-if(MSVC AND BUILD_SHARED_LIBS AND NOT CMAKE_VERSION VERSION_LESS 3.1)
+if(MSVC AND BUILD_SHARED_LIBS)
 	install(FILES $<TARGET_PDB_FILE:sg> DESTINATION ${CMAKE_INSTALL_BINDIR} CONFIGURATIONS Debug RelWithDebInfo COMPONENT debug)
 endif()
 
@@ -337,4 +337,4 @@ generate_export_header(
 	PREFIX_NAME RL_
 )
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/export.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/sg COMPONENT development)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/export.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}/rl/sg COMPONENT development)

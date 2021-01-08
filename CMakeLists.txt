@@ -1,8 +1,4 @@
-cmake_minimum_required(VERSION 2.8.12)
-
-if(POLICY CMP0042)
-	cmake_policy(SET CMP0042 NEW)
-endif()
+cmake_minimum_required(VERSION 3.1)
 
 if(POLICY CMP0072)
 	cmake_policy(SET CMP0072 NEW)
@@ -12,13 +8,11 @@ if(POLICY CMP0075)
 	cmake_policy(SET CMP0075 NEW)
 endif()
 
-project(rl)
+project(rl VERSION 0.7.0)
 
-set(VERSION_MAJOR 0)
-set(VERSION_MINOR 7)
-set(VERSION_PATCH 0)
-set(VERSION_TWEAK 0)
-set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
+if(NOT PROJECT_VERSION_TWEAK)
+	set(PROJECT_VERSION_TWEAK 0)
+endif()
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
@@ -31,22 +25,10 @@ include(Qt4AutomocMocOptionsBoost)
 
 set(Boost_ADDITIONAL_VERSIONS "1.73.0" "1.73" "1.72.0" "1.72" "1.71.0" "1.71" "1.70.0" "1.70" "1.69.0" "1.69" "1.68.0" "1.68" "1.67.0" "1.67" "1.66.0" "1.66" "1.65.1" "1.65.0" "1.65" "1.64.0" "1.64" "1.63.0" "1.63" "1.62.0" "1.62" "1.61.0" "1.61" "1.60.0" "1.60" "1.59.0" "1.59" "1.58.0" "1.58" "1.57.0" "1.57")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-
-if(NOT CMAKE_VERSION VERSION_LESS 3.1)
-	set(CMAKE_CXX_STANDARD 11)
-	set(CMAKE_CXX_STANDARD_REQUIRED ON)
-else()
-	check_cxx_compiler_flag("-std=c++0x" HAS_CXX_COMPILER_FLAG_STDCXX0X)
-	if(HAS_CXX_COMPILER_FLAG_STDCXX0X)
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
-	endif()
-	check_cxx_compiler_flag("-std=c++11" HAS_CXX_COMPILER_FLAG_STDCXX11)
-	if(HAS_CXX_COMPILER_FLAG_STDCXX11)
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-	endif()
-endif()
 
 if(MSVC)
 	add_definitions(
@@ -111,31 +93,31 @@ export(
 
 configure_package_config_file(
 	rl-config.cmake.in rl-config.cmake
-	INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/rl-${VERSION}
+	INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/rl-${PROJECT_VERSION}
 )
 
 install(
 	FILES ${CMAKE_CURRENT_BINARY_DIR}/rl-config.cmake
-	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/rl-${VERSION}
+	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/rl-${PROJECT_VERSION}
 	COMPONENT development
 )
 
 write_basic_package_version_file(
 	${CMAKE_CURRENT_BINARY_DIR}/rl-config-version.cmake
-	VERSION ${VERSION}
+	VERSION ${PROJECT_VERSION}
 	COMPATIBILITY ExactVersion
 )
 
 install(
 	FILES ${CMAKE_CURRENT_BINARY_DIR}/rl-config-version.cmake
-	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/rl-${VERSION}
+	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/rl-${PROJECT_VERSION}
 	COMPONENT development
 )
 
 if(DEFINED TARGETS)
 	install(
 		EXPORT rl
-		DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/rl-${VERSION}
+		DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/rl-${PROJECT_VERSION}
 		NAMESPACE rl::
 		FILE rl-export.cmake
 		COMPONENT development

@@ -76,7 +76,7 @@ if(QT_FOUND AND SoQt_FOUND)
 		set_target_properties(
 			rlCollisionDemo
 			PROPERTIES
-			VERSION ${VERSION}
+			VERSION ${PROJECT_VERSION}
 		)
 		
 		if(MSVC)
@@ -95,7 +95,7 @@ if(QT_FOUND AND SoQt_FOUND)
 			RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 		)
 		
-		if(MSVC AND BUILD_SHARED_LIBS AND NOT CMAKE_VERSION VERSION_LESS 3.1)
+		if(MSVC AND BUILD_SHARED_LIBS)
 			install(FILES $<TARGET_PDB_FILE:rlCollisionDemo> DESTINATION ${CMAKE_INSTALL_BINDIR} CONFIGURATIONS Debug RelWithDebInfo COMPONENT demos)
 		endif()
 		
@@ -111,7 +111,7 @@ if(QT_FOUND AND SoQt_FOUND)
 				\\\"$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\rlCollisionDemo.lnk\\\" \\\\
 				\\\"$INSTDIR\\\\${CMAKE_INSTALL_BINDIR}\\\\rlCollisionDemo.exe\\\" \\\\
 				\\\"\\\\
-					\\\$\\\\\\\"$INSTDIR\\\\${CMAKE_INSTALL_DATADIR}\\\\rl-${VERSION}\\\\examples\\\\rlsg\\\\scene.xml\\\$\\\\\\\"\\\\
+					\\\$\\\\\\\"$INSTDIR\\\\${CMAKE_INSTALL_DATADIR}\\\\rl-${PROJECT_VERSION}\\\\examples\\\\rlsg\\\\scene.xml\\\$\\\\\\\"\\\\
 				\\\" \\\\
 				\\\"\\\" \\\"\\\" \\\"\\\" \\\"\\\" \\\\
 				\\\"Collision detection and distance computation demo with basic scene\\\""
@@ -123,7 +123,7 @@ if(QT_FOUND AND SoQt_FOUND)
 			WIX_SHORTCUTS
 			${WIX_SHORTCUTS}
 			"<Shortcut
-				Arguments=\"&quot;[INSTALL_ROOT]${CMAKE_INSTALL_DATADIR}\\rl-${VERSION}\\examples\\rlsg\\scene.xml&quot;\"
+				Arguments=\"&quot;[INSTALL_ROOT]${CMAKE_INSTALL_DATADIR}\\rl-${PROJECT_VERSION}\\examples\\rlsg\\scene.xml&quot;\"
 				Description=\"Collision detection and distance computation demo with basic scene\"
 				Id=\"CM_SP_bin.rlCollisionDemo.exe\"
 				Name=\"rlCollisionDemo\"

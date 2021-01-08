@@ -23,11 +23,9 @@ set(
 
 if(NOT CMAKE_VERSION VERSION_LESS 3.19)
 	add_library(xml INTERFACE ${HDRS})
-elseif(NOT CMAKE_VERSION VERSION_LESS 3.0)
+else()
 	add_library(xml INTERFACE)
 	add_custom_target(xml_sources SOURCES ${HDRS})
-else()
-	add_library(xml STATIC ${HDRS} dummy.cpp)
 endif()
 
 if(NOT CMAKE_VERSION VERSION_LESS 3.8)
@@ -39,64 +37,38 @@ target_include_directories(
 	INTERFACE
 	$<BUILD_INTERFACE:${rl_BINARY_DIR}/src>
 	$<BUILD_INTERFACE:${rl_SOURCE_DIR}/src>
-	$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}>
+	$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}>
 	${Boost_INCLUDE_DIRS}
 	${LIBXML2_INCLUDE_DIRS}
 	${LIBXSLT_INCLUDE_DIRS}
 )
 
-if(NOT CMAKE_VERSION VERSION_LESS 3.0)
-	target_link_libraries(xml INTERFACE ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES})
-else()
-	target_link_libraries(xml ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES})
-endif()
+target_link_libraries(xml INTERFACE ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES})
 
 if(Iconv_FOUND)
 	target_include_directories(xml INTERFACE ${Iconv_INCLUDE_DIRS})
-	if(NOT CMAKE_VERSION VERSION_LESS 3.0)
-		target_link_libraries(xml INTERFACE ${Iconv_LIBRARIES})
-	else()
-		target_link_libraries(xml ${Iconv_LIBRARIES})
-	endif()
+	target_link_libraries(xml INTERFACE ${Iconv_LIBRARIES})
 endif()
 
 if(LIBLZMA_FOUND)
 	target_include_directories(xml INTERFACE ${LIBLZMA_INCLUDE_DIRS})
-	if(NOT CMAKE_VERSION VERSION_LESS 3.0)
-		target_link_libraries(xml INTERFACE ${LIBLZMA_LIBRARIES})
-	else()
-		target_link_libraries(xml ${LIBLZMA_LIBRARIES})
-	endif()
+	target_link_libraries(xml INTERFACE ${LIBLZMA_LIBRARIES})
 endif()
 
 if(ZLIB_FOUND)
 	target_include_directories(xml INTERFACE ${ZLIB_INCLUDE_DIRS})
-	if(NOT CMAKE_VERSION VERSION_LESS 3.0)
-		target_link_libraries(xml INTERFACE ${ZLIB_LIBRARIES})
-	else()
-		target_link_libraries(xml ${ZLIB_LIBRARIES})
-	endif()
+	target_link_libraries(xml INTERFACE ${ZLIB_LIBRARIES})
 endif()
 
-if(CMAKE_VERSION VERSION_LESS 3.0)
+if(NOT CMAKE_VERSION VERSION_LESS 3.19)
 	set_target_properties(
 		xml
 		PROPERTIES
-		OUTPUT_NAME rlxml
-		POSITION_INDEPENDENT_CODE ON
-		VERSION ${VERSION}
+		VERSION ${PROJECT_VERSION}
 	)
-	
-	if(MSVC)
-		set_target_properties(
-			xml
-			PROPERTIES
-			DEBUG_POSTFIX d
-		)
-	endif()
 endif()
 
-install(FILES ${HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/xml COMPONENT development)
+install(FILES ${HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}/rl/xml COMPONENT development)
 
 install(
 	TARGETS xml

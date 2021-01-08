@@ -64,11 +64,9 @@ list(APPEND HDRS ${SPATIAL_HDRS})
 
 if(NOT CMAKE_VERSION VERSION_LESS 3.19)
 	add_library(math INTERFACE ${HDRS})
-elseif(NOT CMAKE_VERSION VERSION_LESS 3.0)
+else()
 	add_library(math INTERFACE)
 	add_custom_target(math_sources SOURCES ${HDRS})
-else()
-	add_library(math STATIC ${HDRS} dummy.cpp)
 endif()
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 4)
@@ -84,7 +82,7 @@ target_include_directories(
 	INTERFACE
 	$<BUILD_INTERFACE:${rl_BINARY_DIR}/src>
 	$<BUILD_INTERFACE:${rl_SOURCE_DIR}/src>
-	$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}>
+	$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}>
 	${Boost_INCLUDE_DIRS}
 	${EIGEN3_INCLUDE_DIRS}
 )
@@ -95,27 +93,17 @@ target_link_libraries(
 	std
 )
 
-if(CMAKE_VERSION VERSION_LESS 3.0)
+if(NOT CMAKE_VERSION VERSION_LESS 3.19)
 	set_target_properties(
 		math
 		PROPERTIES
-		OUTPUT_NAME rlmath
-		POSITION_INDEPENDENT_CODE ON
-		VERSION ${VERSION}
+		VERSION ${PROJECT_VERSION}
 	)
-	
-	if(MSVC)
-		set_target_properties(
-			math
-			PROPERTIES
-			DEBUG_POSTFIX d
-		)
-	endif()
 endif()
 
-install(FILES ${BASE_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/math COMPONENT development)
-install(FILES ${METRICS_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/math/metrics COMPONENT development)
-install(FILES ${SPATIAL_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/math/spatial COMPONENT development)
+install(FILES ${BASE_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}/rl/math COMPONENT development)
+install(FILES ${METRICS_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}/rl/math/metrics COMPONENT development)
+install(FILES ${SPATIAL_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}/rl/math/spatial COMPONENT development)
 
 install(
 	TARGETS math

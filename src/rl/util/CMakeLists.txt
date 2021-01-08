@@ -41,71 +41,47 @@ endif()
 
 if(NOT CMAKE_VERSION VERSION_LESS 3.19)
 	add_library(util INTERFACE ${HDRS})
-elseif(NOT CMAKE_VERSION VERSION_LESS 3.0)
+else()
 	add_library(util INTERFACE)
 	add_custom_target(util_sources SOURCES ${HDRS})
-else()
-	add_library(util STATIC ${HDRS} dummy.cpp)
 endif()
 
 if(NOT CMAKE_VERSION VERSION_LESS 3.8)
 	target_compile_features(util INTERFACE cxx_std_11)
 endif()
 
-if(NOT CMAKE_VERSION VERSION_LESS 3.0)
-	target_link_libraries(util INTERFACE ${CMAKE_THREAD_LIBS_INIT})
-else()
-	target_link_libraries(util ${CMAKE_THREAD_LIBS_INIT})
-endif()
+target_link_libraries(util INTERFACE ${CMAKE_THREAD_LIBS_INIT})
 
 target_include_directories(
 	util
 	INTERFACE
 	$<BUILD_INTERFACE:${rl_BINARY_DIR}/src>
 	$<BUILD_INTERFACE:${rl_SOURCE_DIR}/src>
-	$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}>
+	$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}>
 )
 
-install(FILES ${BASE_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/util COMPONENT development)
-install(FILES ${IO_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/util/io COMPONENT development)
+install(FILES ${BASE_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}/rl/util COMPONENT development)
+install(FILES ${IO_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}/rl/util/io COMPONENT development)
 
 if(RL_BUILD_UTIL_RTAI)
 	target_include_directories(util INTERFACE ${RTAI_INCLUDE_DIRS})
-	if(NOT CMAKE_VERSION VERSION_LESS 3.0)
-		target_link_libraries(util INTERFACE ${RTAI_LIBRARIES})
-	else()
-		target_link_libraries(util ${RTAI_LIBRARIES})
-	endif()
-	install(FILES ${RTAI_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/util/rtai COMPONENT development)
+	target_link_libraries(util INTERFACE ${RTAI_LIBRARIES})
+	install(FILES ${RTAI_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}/rl/util/rtai COMPONENT development)
 endif()
 
 if(RL_BUILD_UTIL_XENOMAI)
 	target_compile_definitions(util INTERFACE ${Xenomai_DEFINITIONS})
 	target_include_directories(util INTERFACE ${Xenomai_INCLUDE_DIRS})
-	if(NOT CMAKE_VERSION VERSION_LESS 3.0)
-		target_link_libraries(util INTERFACE ${Xenomai_LIBRARIES})
-	else()
-		target_link_libraries(util ${Xenomai_LIBRARIES})
-	endif()
-	install(FILES ${XENOMAI_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${VERSION}/rl/util/xenomai COMPONENT development)
+	target_link_libraries(util INTERFACE ${Xenomai_LIBRARIES})
+	install(FILES ${XENOMAI_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}/rl/util/xenomai COMPONENT development)
 endif()
 
-if(CMAKE_VERSION VERSION_LESS 3.0)
+if(NOT CMAKE_VERSION VERSION_LESS 3.19)
 	set_target_properties(
 		util
 		PROPERTIES
-		OUTPUT_NAME rlutil
-		POSITION_INDEPENDENT_CODE ON
-		VERSION ${VERSION}
+		VERSION ${PROJECT_VERSION}
 	)
-	
-	if(MSVC)
-		set_target_properties(
-			util
-			PROPERTIES
-			DEBUG_POSTFIX d
-		)
-	endif()
 endif()
 
 install(

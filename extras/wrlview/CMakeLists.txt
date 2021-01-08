@@ -1,10 +1,8 @@
-project(wrlview)
+project(wrlview VERSION 0.1.14)
 
-set(VERSION_MAJOR 0)
-set(VERSION_MINOR 1)
-set(VERSION_PATCH 14)
-set(VERSION_TWEAK 0)
-set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
+if(NOT PROJECT_VERSION_TWEAK)
+	set(PROJECT_VERSION_TWEAK 0)
+endif()
 
 include(CMakePushCheckState)
 
@@ -87,7 +85,7 @@ if(Coin_FOUND AND OPENGL_FOUND AND QT_FOUND AND SoQt_FOUND)
 	set_target_properties(
 		wrlview
 		PROPERTIES
-		VERSION ${VERSION}
+		VERSION ${PROJECT_VERSION}
 	)
 	
 	if(MSVC)
