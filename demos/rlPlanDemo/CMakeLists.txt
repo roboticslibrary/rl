@@ -19,13 +19,7 @@ endif()
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-find_package(Bullet)
-find_package(fcl)
-find_package(ODE)
-find_package(PQP)
-find_package(solid3)
-
-if(QT_FOUND AND SoQt_FOUND AND (Bullet_FOUND OR fcl_FOUND OR ODE_FOUND OR PQP_FOUND OR solid3_FOUND))
+if(QT_FOUND AND SoQt_FOUND AND (RL_BUILD_SG_BULLET OR RL_BUILD_SG_FCL OR RL_BUILD_SG_ODE OR RL_BUILD_SG_PQP OR RL_BUILD_SG_SOLID))
 	set(
 		HDRS
 		ConfigurationDelegate.h

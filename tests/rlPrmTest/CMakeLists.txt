@@ -1,12 +1,6 @@
 find_package(Boost REQUIRED)
 
-find_package(Bullet)
-find_package(fcl)
-find_package(ODE)
-find_package(PQP)
-find_package(solid3)
-
-if(Bullet_FOUND OR fcl_FOUND OR ODE_FOUND OR PQP_FOUND OR solid3_FOUND)
+if(RL_BUILD_SG_BULLET OR RL_BUILD_SG_FCL OR RL_BUILD_SG_ODE OR RL_BUILD_SG_PQP OR RL_BUILD_SG_SOLID)
 	add_executable(
 		rlPrmTest
 		rlPrmTest.cpp
@@ -26,7 +20,7 @@ if(Bullet_FOUND OR fcl_FOUND OR ODE_FOUND OR PQP_FOUND OR solid3_FOUND)
 		sg
 	)
 	
-	if(Bullet_FOUND)
+	if(RL_BUILD_SG_BULLET)
 		add_test(
 			NAME rlPrmTestBulletUnimationPuma560Boxes1
 			COMMAND rlPrmTest
@@ -52,7 +46,7 @@ if(Bullet_FOUND OR fcl_FOUND OR ODE_FOUND OR PQP_FOUND OR solid3_FOUND)
 		)
 	endif()
 	
-	if(fcl_FOUND)
+	if(RL_BUILD_SG_FCL)
 		add_test(
 			NAME rlPrmTestFclUnimationPuma560Boxes1
 			COMMAND rlPrmTest
@@ -78,7 +72,7 @@ if(Bullet_FOUND OR fcl_FOUND OR ODE_FOUND OR PQP_FOUND OR solid3_FOUND)
 		)
 	endif()
 	
-	if(ODE_FOUND)
+	if(RL_BUILD_SG_ODE)
 		add_test(
 			NAME rlPrmTestOdeUnimationPuma560Boxes1
 			COMMAND rlPrmTest
@@ -104,7 +98,7 @@ if(Bullet_FOUND OR fcl_FOUND OR ODE_FOUND OR PQP_FOUND OR solid3_FOUND)
 		)
 	endif()
 	
-	if(PQP_FOUND)
+	if(RL_BUILD_SG_PQP)
 		add_test(
 			NAME rlPrmTestPqpUnimationPuma560Boxes1
 			COMMAND rlPrmTest
@@ -130,7 +124,7 @@ if(Bullet_FOUND OR fcl_FOUND OR ODE_FOUND OR PQP_FOUND OR solid3_FOUND)
 		)
 	endif()
 	
-	if(solid3_FOUND)
+	if(RL_BUILD_SG_SOLID)
 		add_test(
 			NAME rlPrmTestSolidUnimationPuma560Boxes1
 			COMMAND rlPrmTest

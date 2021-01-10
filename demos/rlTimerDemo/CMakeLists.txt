@@ -1,5 +1,3 @@
-project(rlTimerDemo)
-
 add_executable(
 	rlTimerDemo
 	rlTimerDemo.cpp

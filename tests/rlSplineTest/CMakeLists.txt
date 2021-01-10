@@ -10,12 +10,12 @@ set(
 	rlTrapezoidalAccelerationTest
 )
 
-foreach(TEST IN LISTS TESTS)
+foreach(test IN LISTS TESTS)
 	add_executable(
-		${TEST}
-		${TEST}.cpp
+		${test}
+		${test}.cpp
 		${rl_BINARY_DIR}/robotics-library.rc
 	)
-	target_link_libraries(${TEST} math)
-	add_test(NAME ${TEST} COMMAND ${TEST})
+	target_link_libraries(${test} math)
+	add_test(NAME ${test} COMMAND ${test})
 endforeach()

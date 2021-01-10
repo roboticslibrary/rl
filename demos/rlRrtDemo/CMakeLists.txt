@@ -1,10 +1,6 @@
 find_package(Boost REQUIRED)
 
-find_package(Bullet)
-find_package(ODE)
-find_package(solid3)
-
-if(Bullet_FOUND OR ODE_FOUND OR solid3_FOUND)
+if(RL_BUILD_SG_BULLET OR RL_BUILD_SG_ODE OR RL_BUILD_SG_SOLID)
 	add_executable(
 		rlRrtDemo
 		rlRrtDemo.cpp

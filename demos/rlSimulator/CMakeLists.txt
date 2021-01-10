@@ -61,8 +61,6 @@ if(QT_FOUND AND SoQt_FOUND)
 	target_include_directories(
 		rlSimulator
 		PUBLIC
-		${Boost_INCLUDE_DIRS}
-		${Coin_INCLUDE_DIRS}
 		${OPENGL_INCLUDE_DIR}
 		${SoQt_INCLUDE_DIRS}
 	)
@@ -72,7 +70,6 @@ if(QT_FOUND AND SoQt_FOUND)
 		math
 		mdl
 		sg
-		${Coin_LIBRARIES}
 		${OPENGL_LIBRARIES}
 		${QT_LIBRARIES}
 		${SoQt_LIBRARIES}

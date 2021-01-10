@@ -2,6 +2,7 @@ include(CheckCXXSourceCompiles)
 include(CheckIncludeFileCXX)
 include(CMakePushCheckState)
 
+find_package(Boost REQUIRED)
 find_package(Bullet)
 find_package(Coin REQUIRED)
 find_package(fcl)
@@ -176,6 +177,16 @@ if(NOT CMAKE_VERSION VERSION_LESS 3.8)
 	target_compile_features(sg PUBLIC cxx_std_11)
 endif()
 
+target_include_directories(
+	sg
+	PUBLIC
+	$<BUILD_INTERFACE:${rl_BINARY_DIR}/src>
+	$<BUILD_INTERFACE:${rl_SOURCE_DIR}/src>
+	$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}>
+	PRIVATE
+	${Boost_INCLUDE_DIRS}
+)
+
 target_link_libraries(
 	sg
 	math
@@ -184,22 +195,11 @@ target_link_libraries(
 	xml
 )
 
-install(FILES ${BASE_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}/rl/sg COMPONENT development)
-
-target_include_directories(
-	sg
-	PUBLIC
-	$<BUILD_INTERFACE:${rl_BINARY_DIR}/src>
-	$<BUILD_INTERFACE:${rl_SOURCE_DIR}/src>
-	$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}>
-)
-
 if(RL_BUILD_SG_BULLET)
 	target_compile_definitions(sg INTERFACE RL_SG_BULLET)
 	target_compile_definitions(sg PUBLIC ${BULLET_DEFINITIONS})
 	target_include_directories(sg PUBLIC ${BULLET_INCLUDE_DIRS})
 	target_link_libraries(sg ${BULLET_LIBRARIES})
-	install(FILES ${BULLET_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}/rl/sg/bullet COMPONENT development)
 endif()
 
 if(Coin_FOUND)
@@ -222,7 +222,6 @@ if(Coin_FOUND)
 	target_compile_definitions(sg PUBLIC ${Coin_DEFINITIONS})
 	target_include_directories(sg PUBLIC ${Coin_INCLUDE_DIRS})
 	target_link_libraries(sg ${Coin_LIBRARIES})
-	install(FILES ${COIN_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}/rl/sg/so COMPONENT development)
 endif()
 
 if(RL_BUILD_SG_FCL)
@@ -230,7 +229,6 @@ if(RL_BUILD_SG_FCL)
 	target_compile_definitions(sg PUBLIC ${FCL_DEFINITIONS})
 	target_include_directories(sg PUBLIC ${FCL_INCLUDE_DIRS})
 	target_link_libraries(sg ${FCL_LIBRARIES})
-	install(FILES ${FCL_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}/rl/sg/fcl COMPONENT development)
 endif()
 
 if(RL_BUILD_SG_ODE)
@@ -238,36 +236,28 @@ if(RL_BUILD_SG_ODE)
 	target_compile_definitions(sg PUBLIC ${ODE_DEFINITIONS})
 	target_include_directories(sg PUBLIC ${ODE_INCLUDE_DIRS})
 	target_link_libraries(sg ${ODE_LIBRARIES})
-	install(FILES ${ODE_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}/rl/sg/ode COMPONENT development)
 endif()
 
 if(RL_BUILD_SG_PQP)
 	target_compile_definitions(sg INTERFACE RL_SG_PQP)
 	target_include_directories(sg PUBLIC ${PQP_INCLUDE_DIRS})
 	target_link_libraries(sg ${PQP_LIBRARIES})
-	install(FILES ${PQP_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}/rl/sg/pqp COMPONENT development)
 endif()
 
 if(RL_BUILD_SG_SOLID)
 	target_compile_definitions(sg INTERFACE RL_SG_SOLID)
 	target_include_directories(sg PUBLIC ${SOLID3_INCLUDE_DIRS})
 	target_link_libraries(sg ${SOLID3_LIBRARIES})
-	install(FILES ${SOLID_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}/rl/sg/solid COMPONENT development)
 endif()
-
-set_target_properties(
-	sg
-	PROPERTIES
-	OUTPUT_NAME rlsg
-	POSITION_INDEPENDENT_CODE ON
-	VERSION ${PROJECT_VERSION}
-)
 
 set_target_properties(
 	sg
 	PROPERTIES
 	C_VISIBILITY_PRESET hidden
 	CXX_VISIBILITY_PRESET hidden
+	OUTPUT_NAME rlsg
+	POSITION_INDEPENDENT_CODE ON
+	VERSION ${PROJECT_VERSION}
 	VISIBILITY_INLINES_HIDDEN ON
 )
 
@@ -288,6 +278,32 @@ if(MSVC)
 			RELWITHDEBINFO_POSTFIX s
 		)
 	endif()
+endif()
+
+install(FILES ${BASE_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}/rl/sg COMPONENT development)
+
+if(RL_BUILD_SG_BULLET)
+	install(FILES ${BULLET_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}/rl/sg/bullet COMPONENT development)
+endif()
+
+if(Coin_FOUND)
+	install(FILES ${COIN_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}/rl/sg/so COMPONENT development)
+endif()
+
+if(RL_BUILD_SG_FCL)
+	install(FILES ${FCL_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}/rl/sg/fcl COMPONENT development)
+endif()
+
+if(RL_BUILD_SG_ODE)
+	install(FILES ${ODE_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}/rl/sg/ode COMPONENT development)
+endif()
+
+if(RL_BUILD_SG_PQP)
+	install(FILES ${PQP_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}/rl/sg/pqp COMPONENT development)
+endif()
+
+if(RL_BUILD_SG_SOLID)
+	install(FILES ${SOLID_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}/rl/sg/solid COMPONENT development)
 endif()
 
 if(NOT CMAKE_VERSION VERSION_LESS 3.12)

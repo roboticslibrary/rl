@@ -14,6 +14,16 @@ if(RL_BUILD_UTIL)
 	list(APPEND TARGETS util)
 endif()
 
+if(RL_BUILD_UTIL_RTAI)
+	add_subdirectory(rl/util/rtai)
+	list(APPEND TARGETS util_rtai)
+endif()
+
+if(RL_BUILD_UTIL_XENOMAI)
+	add_subdirectory(rl/util/xenomai)
+	list(APPEND TARGETS util_xenomai)
+endif()
+
 if(RL_BUILD_XML)
 	add_subdirectory(rl/xml)
 	list(APPEND TARGETS xml)

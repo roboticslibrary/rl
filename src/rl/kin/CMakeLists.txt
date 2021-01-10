@@ -60,16 +60,11 @@ target_link_libraries(
 set_target_properties(
 	kin
 	PROPERTIES
+	C_VISIBILITY_PRESET hidden
+	CXX_VISIBILITY_PRESET hidden
 	OUTPUT_NAME rlkin
 	POSITION_INDEPENDENT_CODE ON
 	VERSION ${PROJECT_VERSION}
-)
-
-set_target_properties(
-	kin
-	PROPERTIES
-	C_VISIBILITY_PRESET hidden
-	CXX_VISIBILITY_PRESET hidden
 	VISIBILITY_INLINES_HIDDEN ON
 )
 

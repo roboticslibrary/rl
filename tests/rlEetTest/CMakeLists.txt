@@ -1,11 +1,6 @@
 find_package(Boost REQUIRED)
 
-find_package(Bullet)
-find_package(fcl)
-find_package(PQP)
-find_package(solid3)
-
-if(Bullet_FOUND OR fcl_FOUND OR PQP_FOUND OR solid3_FOUND)
+if(RL_BUILD_SG_BULLET OR RL_BUILD_SG_FCL OR RL_BUILD_SG_PQP OR RL_BUILD_SG_SOLID)
 	add_executable(
 		rlEetTest
 		rlEetTest.cpp
@@ -25,7 +20,7 @@ if(Bullet_FOUND OR fcl_FOUND OR PQP_FOUND OR solid3_FOUND)
 		sg
 	)
 	
-	if(Bullet_FOUND)
+	if(RL_BUILD_SG_BULLET)
 		add_test(
 			NAME rlEetTestBulletBox6d300505Maze
 			COMMAND rlEetTest
@@ -38,7 +33,7 @@ if(Bullet_FOUND OR fcl_FOUND OR PQP_FOUND OR solid3_FOUND)
 		)
 	endif()
 	
-	if(fcl_FOUND)
+	if(RL_BUILD_SG_FCL)
 		add_test(
 			NAME rlEetTestFclBox6d300505Maze
 			COMMAND rlEetTest
@@ -51,7 +46,7 @@ if(Bullet_FOUND OR fcl_FOUND OR PQP_FOUND OR solid3_FOUND)
 		)
 	endif()
 	
-	if(PQP_FOUND)
+	if(RL_BUILD_SG_PQP)
 		add_test(
 			NAME rlEetTestPqpBox6d300505Maze
 			COMMAND rlEetTest
@@ -64,7 +59,7 @@ if(Bullet_FOUND OR fcl_FOUND OR PQP_FOUND OR solid3_FOUND)
 		)
 	endif()
 	
-	if(solid3_FOUND)
+	if(RL_BUILD_SG_SOLID)
 		add_test(
 			NAME rlEetTestSolidBox6d300505Maze
 			COMMAND rlEetTest

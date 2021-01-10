@@ -14,21 +14,22 @@ if(NOT PROJECT_VERSION_TWEAK)
 	set(PROJECT_VERSION_TWEAK 0)
 endif()
 
+set(Boost_ADDITIONAL_VERSIONS "1.73.0" "1.73" "1.72.0" "1.72" "1.71.0" "1.71" "1.70.0" "1.70" "1.69.0" "1.69" "1.68.0" "1.68" "1.67.0" "1.67" "1.66.0" "1.66" "1.65.1" "1.65.0" "1.65" "1.64.0" "1.64" "1.63.0" "1.63" "1.62.0" "1.62" "1.61.0" "1.61" "1.60.0" "1.60" "1.59.0" "1.59" "1.58.0" "1.58" "1.57.0" "1.57")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_INSTALL_SYSTEM_RUNTIME_COMPONENT system)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 
 include(CheckCXXCompilerFlag)
 include(CMakeDependentOption)
 include(CMakePackageConfigHelpers)
 include(GenerateExportHeader)
 include(GNUInstallDirs)
+include(InstallRequiredSystemLibraries)
 include(Qt4AutomocMocOptionsBoost)
-
-set(Boost_ADDITIONAL_VERSIONS "1.73.0" "1.73" "1.72.0" "1.72" "1.71.0" "1.71" "1.70.0" "1.70" "1.69.0" "1.69" "1.68.0" "1.68" "1.67.0" "1.67" "1.66.0" "1.66" "1.65.1" "1.65.0" "1.65" "1.64.0" "1.64" "1.63.0" "1.63" "1.62.0" "1.62" "1.61.0" "1.61" "1.60.0" "1.60" "1.59.0" "1.59" "1.58.0" "1.58" "1.57.0" "1.57")
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 if(MSVC)
 	add_definitions(
@@ -62,6 +63,8 @@ cmake_dependent_option(RL_BUILD_HAL "Build hardware abstraction layer component"
 cmake_dependent_option(RL_BUILD_KIN "Build Denavit-Hartenberg kinematics component" ON "RL_BUILD_MATH;RL_BUILD_XML" OFF)
 cmake_dependent_option(RL_BUILD_MDL "Build rigid body kinematics and dynamics component" ON "RL_BUILD_MATH;RL_BUILD_XML" OFF)
 cmake_dependent_option(RL_BUILD_SG "Build scene graph abstraction component" ON "RL_BUILD_MATH;RL_BUILD_UTIL;RL_BUILD_XML" OFF)
+cmake_dependent_option(RL_BUILD_UTIL_RTAI "Build RTAI support" OFF "RL_BUILD_UTIL" OFF)
+cmake_dependent_option(RL_BUILD_UTIL_XENOMAI "Build Xenomai support" OFF "RL_BUILD_UTIL" OFF)
 
 cmake_dependent_option(RL_BUILD_PLAN "Build path planning component" ON "RL_BUILD_KIN;RL_BUILD_MATH;RL_BUILD_MDL;RL_BUILD_SG;RL_BUILD_UTIL;RL_BUILD_XML" OFF)
 
@@ -81,8 +84,10 @@ endif()
 
 add_subdirectory(doc)
 
-foreach(TARGET IN LISTS TARGETS)
-	list(APPEND RL_LIBRARIES "rl::${TARGET}")
+foreach(target IN LISTS TARGETS)
+	if(NOT target STREQUAL "util_rtai" AND NOT target STREQUAL "util_xenomai")
+		list(APPEND RL_LIBRARIES "rl::${target}")
+	endif()
 endforeach()
 
 export(
@@ -127,9 +132,6 @@ endif()
 if(RL_BUILD_EXTRAS)
 	add_subdirectory(extras)
 endif()
-
-set(CMAKE_INSTALL_SYSTEM_RUNTIME_COMPONENT system)
-include(InstallRequiredSystemLibraries)
 
 include(CPackConfig)
 include(CPack)

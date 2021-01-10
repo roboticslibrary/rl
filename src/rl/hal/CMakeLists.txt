@@ -1,6 +1,7 @@
-find_package(Boost REQUIRED)
+include(TestBigEndian)
 
 find_package(ATIDAQ)
+find_package(Boost REQUIRED)
 find_package(cifX)
 find_package(Comedi)
 find_package(libdc1394)
@@ -9,8 +10,6 @@ cmake_dependent_option(RL_BUILD_HAL_ATIDAQ "Build ATIDAQ support" ON "RL_BUILD_H
 cmake_dependent_option(RL_BUILD_HAL_CIFX "Build cifX support" ON "RL_BUILD_HAL;cifX_FOUND" OFF)
 cmake_dependent_option(RL_BUILD_HAL_COMEDI "Build Comedi support" ON "RL_BUILD_HAL;Comedi_FOUND" OFF)
 cmake_dependent_option(RL_BUILD_HAL_LIBDC1394 "Build libdc1394 support" ON "RL_BUILD_HAL;libdc1394_FOUND" OFF)
-
-include(TestBigEndian)
 
 test_big_endian(BIG_ENDIAN)
 
@@ -169,12 +168,6 @@ add_library(
 	${rl_BINARY_DIR}/robotics-library.rc
 )
 
-target_compile_definitions(
-	hal
-	PUBLIC
-	BOOST_ALL_NO_LIB
-)
-
 if(BIG_ENDIAN)
 	target_compile_definitions(hal PRIVATE HAVE_BIG_ENDIAN)
 else()
@@ -185,12 +178,6 @@ if(NOT CMAKE_VERSION VERSION_LESS 3.8)
 	target_compile_features(hal PUBLIC cxx_std_11)
 endif()
 
-target_link_libraries(
-	hal
-	math
-	util
-)
-
 target_include_directories(
 	hal
 	PUBLIC
@@ -198,6 +185,12 @@ target_include_directories(
 	$<BUILD_INTERFACE:${rl_SOURCE_DIR}/src>
 	$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/rl-${PROJECT_VERSION}>
 	${Boost_INCLUDE_DIRS}
+)
+
+target_link_libraries(
+	hal
+	math
+	util
 )
 
 if(RL_BUILD_HAL_ATIDAQ)
@@ -231,16 +224,11 @@ endif()
 set_target_properties(
 	hal
 	PROPERTIES
+	C_VISIBILITY_PRESET hidden
+	CXX_VISIBILITY_PRESET hidden
 	OUTPUT_NAME rlhal
 	POSITION_INDEPENDENT_CODE ON
 	VERSION ${PROJECT_VERSION}
-)
-
-set_target_properties(
-	hal
-	PROPERTIES
-	C_VISIBILITY_PRESET hidden
-	CXX_VISIBILITY_PRESET hidden
 	VISIBILITY_INLINES_HIDDEN ON
 )
 

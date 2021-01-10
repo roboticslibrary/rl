@@ -1,3 +1,5 @@
+find_package(Threads REQUIRED)
+
 add_executable(
 	rlThreadsDemo
 	rlThreadsDemo.cpp
@@ -6,5 +8,5 @@ add_executable(
 
 target_link_libraries(
 	rlThreadsDemo
-	util
+	${CMAKE_THREAD_LIBS_INIT}
 )
