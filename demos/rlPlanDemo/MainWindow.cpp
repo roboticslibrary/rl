@@ -180,7 +180,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	toggleConfigurationSpaceSceneAction(new QAction(this)),
 	toggleConfigurationVerticesAction(new QAction(this)),
 	toggleLinesAction(new QAction(this)),
-	togglePathAction(new QAction(this)),
+	togglePathEdgesAction(new QAction(this)),
+	togglePathVerticesAction(new QAction(this)),
 	togglePlannerAction(new QAction(this)),
 	togglePointsAction(new QAction(this)),
 	toggleSpheresAction(new QAction(this)),
@@ -701,12 +702,19 @@ MainWindow::init()
 	
 	viewMenu->addSeparator();
 	
-	this->togglePathAction->setCheckable(true);
-	this->togglePathAction->setChecked(true);
-	this->togglePathAction->setText("Path");
-	QObject::connect(this->togglePathAction, SIGNAL(toggled(bool)), this->viewer, SLOT(togglePath(bool)));
-	this->addAction(this->togglePathAction);
-	viewMenu->addAction(this->togglePathAction);
+	this->togglePathEdgesAction->setCheckable(true);
+	this->togglePathEdgesAction->setChecked(true);
+	this->togglePathEdgesAction->setText("Path Edges");
+	QObject::connect(this->togglePathEdgesAction, SIGNAL(toggled(bool)), this->viewer, SLOT(togglePathEdges(bool)));
+	this->addAction(this->togglePathEdgesAction);
+	viewMenu->addAction(this->togglePathEdgesAction);
+	
+	this->togglePathVerticesAction->setCheckable(true);
+	this->togglePathVerticesAction->setChecked(false);
+	this->togglePathVerticesAction->setText("Path Vertices");
+	QObject::connect(this->togglePathVerticesAction, SIGNAL(toggled(bool)), this->viewer, SLOT(togglePathVertices(bool)));
+	this->addAction(this->togglePathVerticesAction);
+	viewMenu->addAction(this->togglePathVerticesAction);
 	
 	this->toggleAnimationAction->setCheckable(true);
 	this->toggleAnimationAction->setChecked(true);

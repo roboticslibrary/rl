@@ -98,6 +98,10 @@ public slots:
 	
 	void resetLines();
 	
+	void resetPath();
+	
+	void resetPath3();
+	
 	void resetPoints();
 	
 	void resetSpheres();
@@ -116,7 +120,9 @@ public slots:
 	
 	void toggleLines(const bool& doOn);
 	
-	void togglePath(const bool& doOn);
+	void togglePathEdges(const bool& doOn);
+	
+	void togglePathVertices(const bool& doOn);
 	
 	void togglePoints(const bool& doOn);
 	
@@ -195,17 +201,33 @@ private:
 	
 	SoVRMLSwitch* path;
 	
-	SoVRMLAppearance* pathAppearance;
+	SoVRMLSwitch* pathEdges;
 	
-	SoVRMLCoordinate* pathCoordinate;
+	SoVRMLAppearance* pathEdgesAppearance;
 	
-	SoDrawStyle* pathDrawStyle;
+	SoVRMLCoordinate* pathEdgesCoordinate;
 	
-	SoVRMLIndexedLineSet* pathIndexedLineSet;
+	SoDrawStyle* pathEdgesDrawStyle;
 	
-	SoVRMLMaterial* pathMaterial;
+	SoVRMLIndexedLineSet* pathEdgesIndexedLineSet;
 	
-	SoVRMLShape* pathShape;
+	SoVRMLMaterial* pathEdgesMaterial;
+	
+	SoVRMLShape* pathEdgesShape;
+	
+	SoVRMLSwitch* pathVertices;
+	
+	SoVRMLAppearance* pathVerticesAppearance;
+	
+	SoVRMLCoordinate* pathVerticesCoordinate;
+	
+	SoDrawStyle* pathVerticesDrawStyle;
+	
+	SoVRMLPointSet* pathVerticesPointSet;
+	
+	SoVRMLMaterial* pathVerticesMaterial;
+	
+	SoVRMLShape* pathVerticesShape;
 	
 	SoVRMLSwitch* path3;
 	

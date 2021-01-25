@@ -267,7 +267,9 @@ private:
 	
 	QAction* toggleLinesAction;
 	
-	QAction* togglePathAction;
+	QAction* togglePathEdgesAction;
+	
+	QAction* togglePathVerticesAction;
 	
 	QAction* togglePlannerAction;
 	

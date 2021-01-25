@@ -80,12 +80,20 @@ Viewer::Viewer(QWidget* parent, Qt::WindowFlags f) :
 	linesMaterial(new SoVRMLMaterial()),
 	linesShape(new SoVRMLShape()),
 	path(new SoVRMLSwitch()),
-	pathAppearance(new SoVRMLAppearance()),
-	pathCoordinate(new SoVRMLCoordinate()),
-	pathDrawStyle(new SoDrawStyle()),
-	pathIndexedLineSet(new SoVRMLIndexedLineSet()),
-	pathMaterial(new SoVRMLMaterial()),
-	pathShape(new SoVRMLShape()),
+	pathEdges(new SoVRMLSwitch()),
+	pathEdgesAppearance(new SoVRMLAppearance()),
+	pathEdgesCoordinate(new SoVRMLCoordinate()),
+	pathEdgesDrawStyle(new SoDrawStyle()),
+	pathEdgesIndexedLineSet(new SoVRMLIndexedLineSet()),
+	pathEdgesMaterial(new SoVRMLMaterial()),
+	pathEdgesShape(new SoVRMLShape()),
+	pathVertices(new SoVRMLSwitch()),
+	pathVerticesAppearance(new SoVRMLAppearance()),
+	pathVerticesCoordinate(new SoVRMLCoordinate()),
+	pathVerticesDrawStyle(new SoDrawStyle()),
+	pathVerticesPointSet(new SoVRMLPointSet()),
+	pathVerticesMaterial(new SoVRMLMaterial()),
+	pathVerticesShape(new SoVRMLShape()),
 	path3(new SoVRMLSwitch()),
 	path3Appearance(new SoVRMLAppearance()),
 	path3Coordinate(new SoVRMLCoordinate()),
@@ -270,20 +278,47 @@ Viewer::Viewer(QWidget* parent, Qt::WindowFlags f) :
 	this->path->setName("path");
 	this->path->whichChoice = SO_SWITCH_ALL;
 	
-	this->pathDrawStyle->lineWidth = 3.0f;
-	this->pathDrawStyle->pointSize = 0.0f;
-	this->path->addChild(this->pathDrawStyle);
-	
-	this->pathMaterial->diffuseColor.setValue(55.0f / 255.0f, 176.0f / 255.0f, 55.0f / 255.0f);
-	this->pathAppearance->material = this->pathMaterial;
-	this->pathShape->appearance = this->pathAppearance;
-	
-	this->pathIndexedLineSet->coord = this->pathCoordinate;
-	this->pathShape->geometry = this->pathIndexedLineSet;
-	
-	this->path->addChild(this->pathShape);
-	
 	this->root->addChild(this->path);
+	
+	// path edges
+	
+	this->pathEdges->setName("pathEdges");
+	this->pathEdges->whichChoice = SO_SWITCH_ALL;
+	
+	this->pathEdgesDrawStyle->lineWidth = 3.0f;
+	this->pathEdgesDrawStyle->pointSize = 0.0f;
+	this->pathEdges->addChild(this->pathEdgesDrawStyle);
+	
+	this->pathEdgesMaterial->diffuseColor.setValue(55.0f / 255.0f, 176.0f / 255.0f, 55.0f / 255.0f);
+	this->pathEdgesAppearance->material = this->pathEdgesMaterial;
+	this->pathEdgesShape->appearance = this->pathEdgesAppearance;
+	
+	this->pathEdgesIndexedLineSet->coord = this->pathEdgesCoordinate;
+	this->pathEdgesShape->geometry = this->pathEdgesIndexedLineSet;
+	
+	this->pathEdges->addChild(this->pathEdgesShape);
+	
+	this->path->addChild(this->pathEdges);
+	
+	// path vertices
+	
+	this->pathVertices->setName("pathVertices");
+	this->pathVertices->whichChoice = SO_SWITCH_NONE;
+	
+	this->pathVerticesDrawStyle->lineWidth = 0.0f;
+	this->pathVerticesDrawStyle->pointSize = 8.0f;
+	this->pathVertices->addChild(this->pathVerticesDrawStyle);
+	
+	this->pathVerticesMaterial->emissiveColor.setValue(55.0f / 255.0f, 176.0f / 255.0f, 55.0f / 255.0f);
+	this->pathVerticesAppearance->material = this->pathVerticesMaterial;
+	this->pathVerticesShape->appearance = this->pathVerticesAppearance;
+	
+	this->pathVerticesPointSet->coord = this->pathVerticesCoordinate;
+	this->pathVerticesShape->geometry = this->pathVerticesPointSet;
+	
+	this->pathVertices->addChild(this->pathVerticesShape);
+	
+	this->path->addChild(this->pathVertices);
 	
 	// path3
 	
@@ -505,8 +540,10 @@ Viewer::drawConfigurationPath(const rl::plan::VectorList& path)
 {
 	this->path->enableNotify(false);
 	
-	this->pathCoordinate->point.setNum(0);
-	this->pathIndexedLineSet->coordIndex.setNum(0);
+	this->pathEdgesCoordinate->point.setNum(0);
+	this->pathEdgesIndexedLineSet->coordIndex.setNum(0);
+	
+	this->pathVerticesCoordinate->point.setNum(0);
 	
 	rl::math::Vector inter(this->model->getDofPosition());
 	
@@ -520,16 +557,23 @@ Viewer::drawConfigurationPath(const rl::plan::VectorList& path)
 			this->model->setPosition(*i);
 			this->model->updateFrames();
 			
-			this->pathCoordinate->point.set1Value(
-				this->pathCoordinate->point.getNum(),
+			this->pathEdgesCoordinate->point.set1Value(
+				this->pathEdgesCoordinate->point.getNum(),
 				this->model->forwardPosition(l)(0, 3),
 				this->model->forwardPosition(l)(1, 3),
 				this->model->forwardPosition(l)(2, 3)
 			);
 			
-			this->pathIndexedLineSet->coordIndex.set1Value(
-				this->pathIndexedLineSet->coordIndex.getNum(),
-				this->pathCoordinate->point.getNum() - 1
+			this->pathEdgesIndexedLineSet->coordIndex.set1Value(
+				this->pathEdgesIndexedLineSet->coordIndex.getNum(),
+				this->pathEdgesCoordinate->point.getNum() - 1
+			);
+			
+			this->pathVerticesCoordinate->point.set1Value(
+				this->pathVerticesCoordinate->point.getNum(),
+				this->model->forwardPosition(l)(0, 3),
+				this->model->forwardPosition(l)(1, 3),
+				this->model->forwardPosition(l)(2, 3)
 			);
 		}
 		
@@ -544,22 +588,29 @@ Viewer::drawConfigurationPath(const rl::plan::VectorList& path)
 				this->model->setPosition(inter);
 				this->model->updateFrames(false);
 				
-				this->pathCoordinate->point.set1Value(
-					this->pathCoordinate->point.getNum(),
+				this->pathEdgesCoordinate->point.set1Value(
+					this->pathEdgesCoordinate->point.getNum(),
 					this->model->forwardPosition(l)(0, 3),
 					this->model->forwardPosition(l)(1, 3),
 					this->model->forwardPosition(l)(2, 3)
 				);
 				
-				this->pathIndexedLineSet->coordIndex.set1Value(
-					this->pathIndexedLineSet->coordIndex.getNum(),
-					this->pathCoordinate->point.getNum() - 1
+				this->pathEdgesIndexedLineSet->coordIndex.set1Value(
+					this->pathEdgesIndexedLineSet->coordIndex.getNum(),
+					this->pathEdgesCoordinate->point.getNum() - 1
 				);
 			}
+			
+			this->pathVerticesCoordinate->point.set1Value(
+				this->pathVerticesCoordinate->point.getNum(),
+				this->model->forwardPosition(l)(0, 3),
+				this->model->forwardPosition(l)(1, 3),
+				this->model->forwardPosition(l)(2, 3)
+			);
 		}
 		
-		this->pathIndexedLineSet->coordIndex.set1Value(
-			this->pathIndexedLineSet->coordIndex.getNum(),
+		this->pathEdgesIndexedLineSet->coordIndex.set1Value(
+			this->pathEdgesIndexedLineSet->coordIndex.getNum(),
 			SO_END_FACE_INDEX
 		);
 	}
@@ -855,13 +906,11 @@ Viewer::reset()
 {
 	this->resetEdges();
 	this->resetLines();
+	this->resetPath();
+	this->resetPath3();
 	this->resetPoints();
 	this->resetSpheres();
 	this->resetVertices();
-	this->pathCoordinate->point.setNum(0);
-	this->pathIndexedLineSet->coordIndex.setNum(0);
-	this->path3Coordinate->point.setNum(0);
-	this->path3IndexedLineSet->coordIndex.setNum(0);
 	this->sweptGroup->removeAllChildren();
 	this->workTransform->setMatrix(SbMatrix::identity());
 }
@@ -882,6 +931,21 @@ Viewer::resetLines()
 {
 	this->linesCoordinate->point.setNum(0);
 	this->linesIndexedLineSet->coordIndex.setNum(0);
+}
+
+void
+Viewer::resetPath()
+{
+	this->pathEdgesCoordinate->point.setNum(0);
+	this->pathEdgesIndexedLineSet->coordIndex.setNum(0);
+	this->pathVerticesCoordinate->point.setNum(0);
+}
+
+void
+Viewer::resetPath3()
+{
+	this->path3Coordinate->point.setNum(0);
+	this->path3IndexedLineSet->coordIndex.setNum(0);
 }
 
 void
@@ -1015,15 +1079,28 @@ Viewer::toggleLines(const bool& doOn)
 }
 
 void
-Viewer::togglePath(const bool& doOn)
+Viewer::togglePathEdges(const bool& doOn)
 {
 	if (doOn)
 	{
-		this->path->whichChoice = SO_SWITCH_ALL;
+		this->pathEdges->whichChoice = SO_SWITCH_ALL;
 	}
 	else
 	{
-		this->path->whichChoice = SO_SWITCH_NONE;
+		this->pathEdges->whichChoice = SO_SWITCH_NONE;
+	}
+}
+
+void
+Viewer::togglePathVertices(const bool& doOn)
+{
+	if (doOn)
+	{
+		this->pathVertices->whichChoice = SO_SWITCH_ALL;
+	}
+	else
+	{
+		this->pathVertices->whichChoice = SO_SWITCH_NONE;
 	}
 }
 
