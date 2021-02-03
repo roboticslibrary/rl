@@ -58,7 +58,7 @@ option(RL_BUILD_TESTS "Build tests" ON)
 option(RL_BUILD_UTIL "Build utility component" ON)
 option(RL_BUILD_XML "Build XML abstraction layer component" ON)
 option(RL_USE_QT5 "Prefer Qt5 over Qt4 if available" ON)
-option(RL_USE_QT6 "Prefer Qt6 over Qt6 if available" ON)
+option(RL_USE_QT6 "Prefer Qt6 over Qt5 if available" ON)
 
 cmake_dependent_option(RL_BUILD_HAL "Build hardware abstraction layer component" ON "RL_BUILD_MATH;RL_BUILD_UTIL" OFF)
 cmake_dependent_option(RL_BUILD_KIN "Build Denavit-Hartenberg kinematics component" ON "RL_BUILD_MATH;RL_BUILD_XML" OFF)
