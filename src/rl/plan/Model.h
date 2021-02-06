@@ -66,6 +66,8 @@ namespace rl
 			
 			virtual ::std::size_t getBodies() const;
 			
+			virtual void getBoundingBoxPoints(const ::std::size_t& i, const ::rl::math::Transform& frame, ::std::vector<::rl::math::Vector3>& p) const;
+			
 			virtual ::rl::math::Vector3& getCenter(const ::std::size_t& i) const;
 			
 			virtual ::std::size_t getDof() const;
@@ -107,6 +109,8 @@ namespace rl
 			virtual bool isValid(const ::rl::math::Vector& q) const;
 			
 			virtual void reset();
+			
+			virtual void setFrame(const ::std::size_t& i, const ::rl::math::Transform& frame);
 			
 			virtual void setPosition(const ::rl::math::Vector& q);
 			

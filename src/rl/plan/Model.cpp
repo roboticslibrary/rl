@@ -167,6 +167,12 @@ namespace rl
 			return this->model->getBody(i);
 		}
 		
+		void
+		Model::getBoundingBoxPoints(const ::std::size_t& i, const ::rl::math::Transform& frame, ::std::vector<::rl::math::Vector3>& p) const
+		{
+			this->model->getBody(i)->getBoundingBoxPoints(frame, p);
+		}
+		
 		::rl::math::Vector3&
 		Model::getCenter(const ::std::size_t& i) const
 		{
@@ -431,6 +437,12 @@ namespace rl
 		void
 		Model::reset()
 		{
+		}
+		
+		void
+		Model::setFrame(const ::std::size_t& i, const ::rl::math::Transform& frame)
+		{
+			this->model->getBody(i)->setFrame(frame);
 		}
 		
 		void
