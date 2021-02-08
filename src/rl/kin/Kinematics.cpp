@@ -409,57 +409,6 @@ namespace rl
 			
 			kinematics->update();
 			
-			if (::std::dynamic_pointer_cast<Puma>(kinematics))
-			{
-				if (kinematics->joints.size() != 6 || kinematics->links.size() != 7 || kinematics->transforms.size() != 8 || kinematics->frames.size() != 9)
-				{
-					if (kinematics->joints.size() != 6)
-					{
-						throw Exception("Puma kinematics with incorrect number of joints");
-					}
-					
-					if (kinematics->links.size() != 7)
-					{
-						throw Exception("Puma kinematics with incorrect number of links");
-					}
-					
-					if (kinematics->transforms.size() != 8)
-					{
-						throw Exception("Puma kinematics with incorrect number of transforms");
-					}
-					
-					if (kinematics->frames.size() != 9)
-					{
-						throw Exception("Puma kinematics with incorrect number of frames");
-					}
-				}
-			}
-			else if (::std::dynamic_pointer_cast<Rhino>(kinematics))
-			{
-				if (kinematics->joints.size() != 5 || kinematics->links.size() != 6 || kinematics->transforms.size() != 7 || kinematics->frames.size() != 8)
-				{
-					if (kinematics->joints.size() != 5)
-					{
-						throw Exception("Rhino kinematics with incorrect number of joints");
-					}
-					
-					if (kinematics->links.size() != 6)
-					{
-						throw Exception("Rhino kinematics with incorrect number of links");
-					}
-					
-					if (kinematics->transforms.size() != 7)
-					{
-						throw Exception("Rhino kinematics with incorrect number of transforms");
-					}
-					
-					if (kinematics->frames.size() != 8)
-					{
-						throw Exception("Rhino kinematics with incorrect number of frames");
-					}
-				}
-			}
-			
 			return kinematics;
 		}
 		

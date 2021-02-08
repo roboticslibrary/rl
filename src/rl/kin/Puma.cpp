@@ -28,6 +28,7 @@
 #include <rl/math/Constants.h>
 #include <rl/math/Rotation.h>
 
+#include "Exception.h"
 #include "Frame.h"
 #include "Joint.h"
 #include "Puma.h"
@@ -358,6 +359,32 @@ namespace rl
 		Puma::setWrist(const Wrist& wrist)
 		{
 			this->wrist = wrist;
+		}
+		
+		void
+		Puma::update()
+		{
+			Kinematics::update();
+			
+			if (this->joints.size() != 6)
+			{
+				throw Exception("Puma kinematics with incorrect number of joints");
+			}
+			
+			if (this->links.size() != 7)
+			{
+				throw Exception("Puma kinematics with incorrect number of links");
+			}
+			
+			if (this->transforms.size() != 8)
+			{
+				throw Exception("Puma kinematics with incorrect number of transforms");
+			}
+			
+			if (this->frames.size() != 9)
+			{
+				throw Exception("Puma kinematics with incorrect number of frames");
+			}
 		}
 	}
 }

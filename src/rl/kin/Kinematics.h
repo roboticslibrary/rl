@@ -353,7 +353,7 @@ namespace rl
 			
 			typedef ::std::pair<VertexIterator, VertexIterator> VertexIteratorPair;
 			
-			void update();
+			virtual void update();
 			
 			void update(Vertex& u);
 			

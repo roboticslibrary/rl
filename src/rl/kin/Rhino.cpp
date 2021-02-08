@@ -28,6 +28,7 @@
 #include <rl/math/Constants.h>
 #include <rl/math/Rotation.h>
 
+#include "Exception.h"
 #include "Frame.h"
 #include "Joint.h"
 #include "Rhino.h"
@@ -245,6 +246,32 @@ namespace rl
 		Rhino::setElbow(const Elbow& elbow)
 		{
 			this->elbow = elbow;
+		}
+		
+		void
+		Rhino::update()
+		{
+			Kinematics::update();
+			
+			if (this->joints.size() != 5)
+			{
+				throw Exception("Rhino kinematics with incorrect number of joints");
+			}
+			
+			if (this->links.size() != 6)
+			{
+				throw Exception("Rhino kinematics with incorrect number of links");
+			}
+			
+			if (this->transforms.size() != 7)
+			{
+				throw Exception("Rhino kinematics with incorrect number of transforms");
+			}
+			
+			if (this->frames.size() != 8)
+			{
+				throw Exception("Rhino kinematics with incorrect number of frames");
+			}
 		}
 	}
 }

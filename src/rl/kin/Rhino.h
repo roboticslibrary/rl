@@ -74,6 +74,7 @@ namespace rl
 			void setElbow(const Elbow& elbow);
 			
 		protected:
+			void update();
 			
 		private:
 			template<typename T> T atan2(const T& y, const T& x) const

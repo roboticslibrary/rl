@@ -89,6 +89,7 @@ namespace rl
 			void setWrist(const Wrist& wrist);
 			
 		protected:
+			void update();
 			
 		private:
 			template<typename T> T atan2(const T& y, const T& x) const
