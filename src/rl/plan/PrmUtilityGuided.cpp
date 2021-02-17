@@ -107,7 +107,7 @@ namespace rl
 		PrmUtilityGuided::generateEntropyGuidedSample(::rl::math::Vector& q)
 		{
 			// indices for two random vertices
-			// the first sample uses the start ot the end component
+			// the first sample uses the start or the end component
 #ifdef ORIGINAL_VERSION
 			::std::size_t randIndex1 = static_cast<::std::size_t>(::std::floor(this->rand() * this->getNumVertices()));
 #else

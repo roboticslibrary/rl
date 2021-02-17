@@ -325,7 +325,7 @@ namespace rl
 			void doExec(const ::std::string& instruction);
 			
 			/**
-			 * The hand is openend and closed.
+			 * The hand is opened and closed.
 			 *
 			 * @param[in] doOpen CLOSE / OPEN
 			 * @param[in] handNo Hand number (1 - 8) is specified
