@@ -17,6 +17,7 @@ jobs:
           - macos-latest
           - ubuntu-latest-clang
           - ubuntu-latest-gcc
+          - windows-latest-msvc
           - windows-latest-msys2
         include:
           - name: macos-latest
@@ -30,10 +31,14 @@ jobs:
             cc: gcc
             cxx: g++
             os: ubuntu-latest
+          - name: windows-latest-msvc
+            os: windows-latest
           - name: windows-latest-msys2
             os: windows-latest
     env:
       CC: ${{ matrix.cc }}
+      CCACHE_COMPRESS: true
+      CCACHE_MAXSIZE: 500M
       CMAKE_C_COMPILER_LAUNCHER: ccache
       CMAKE_CXX_COMPILER_LAUNCHER: ccache
       CMAKE_PREFIX_PATH: ${{ matrix.cmake_prefix_path }}
@@ -83,12 +88,31 @@ jobs:
           libfcl-dev
           libnlopt-dev
           libode-dev
+          libpqp-dev
           libsimage-dev
           libsolid3d-dev
           libsoqt-dev
           libxml2-dev
           libxslt1-dev
           ninja-build
+      - if: matrix.name == 'windows-latest-msvc'
+        name: Enable Developer Command Prompt
+        uses: ilammy/msvc-dev-cmd@v1.5.0
+      - if: matrix.name == 'windows-latest-msvc'
+        name: Install ccache for MSVC
+        working-directory: ${{ runner.workspace }}
+        run: |
+          curl -L https://github.com/cristianadam/ccache/releases/download/v4.2/Windows.tar.xz -o Windows.tar.xz
+          7z x Windows.tar.xz
+          7z x Windows.tar -occache
+          Write-Output "${{ runner.workspace }}\ccache\bin" | Out-File -FilePath $Env:GITHUB_PATH -Encoding utf8 -Append
+      - if: matrix.name == 'windows-latest-msvc'
+        name: Install dependencies for MSVC
+        working-directory: ${{ runner.workspace }}
+        run: |
+          curl -L https://github.com/roboticslibrary/rl-3rdparty/releases/download/latest/rl-3rdparty-msvc-14.2-x64.7z -o rl-3rdparty-msvc-14.2-x64.7z
+          7z x rl-3rdparty-msvc-14.2-x64.7z -orl-3rdparty-install
+          Write-Output "${{ runner.workspace }}\rl-3rdparty-install\bin" | Out-File -FilePath $Env:GITHUB_PATH -Encoding utf8 -Append
       - if: matrix.name == 'windows-latest-msys2'
         name: Set up MSYS2
         uses: msys2/setup-msys2@v2
@@ -111,32 +135,44 @@ jobs:
             mingw-w64-x86_64-solid3
             mingw-w64-x86_64-soqt
           update: true
-      - if: matrix.name != 'windows-latest-msys2'
+      - if: matrix.name == 'windows-latest-msys2'
+        name: Add MSYS2 to PATH
+        run: |
+          Write-Output (msys2 -c "cygpath -w /mingw64/bin") | Out-File -FilePath $Env:GITHUB_PATH -Encoding utf8 -Append
+      - if: matrix.os != 'windows-latest'
         name: Update environment variables
         run: |
           echo "CCACHE_BASEDIR=${{ runner.workspace }}" >> $GITHUB_ENV
           echo "CCACHE_DIR=${{ runner.workspace }}/.ccache" >> $GITHUB_ENV
-      - if: matrix.name == 'windows-latest-msys2'
-        name: Update environment variables for MSYS2
+      - if: matrix.os == 'windows-latest'
+        name: Update environment variables
         run: |
           Write-Output "CCACHE_BASEDIR=${{ runner.workspace }}" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
           Write-Output "CCACHE_DIR=${{ runner.workspace }}\.ccache" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
-          Write-Output (msys2 -c "cygpath -w /mingw64/bin") | Out-File -FilePath $Env:GITHUB_PATH -Encoding utf8 -Append
       - name: Cache compiler
         uses: actions/cache@v2
         with:
           path: ${{ runner.workspace }}/.ccache
-          key: ${{ matrix.name }}-ccache
+          key: ${{ matrix.name }}-ccache-${{ github.sha }}
+          restore-keys: ${{ matrix.name }}-ccache-
       - name: Configure CMake
         run: >
           cmake
-          -G Ninja
-          -D CMAKE_BUILD_TYPE=RelWithDebInfo
-          -S ${{ github.workspace }}
-          -B ${{ runner.workspace }}/rl-build
+          -GNinja
+          -DCMAKE_BUILD_TYPE=Release
+          -S"${{ github.workspace }}"
+          -B"${{ runner.workspace }}/rl-build"
       - name: Build
         working-directory: ${{ runner.workspace }}/rl-build
         run: cmake --build .
       - name: Test
         working-directory: ${{ runner.workspace }}/rl-build
         run: ctest --output-on-failure
+      - name: Create archive
+        working-directory: ${{ runner.workspace }}/rl-build
+        run: cpack -G 7Z
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.name }}
+          path: ${{ runner.workspace }}/rl-build/rl-*.7z
