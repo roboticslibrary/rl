@@ -19,6 +19,18 @@ foreach(component IN ITEMS octomath octomap)
 	select_library_configurations(OCTOMAP_${COMPONENT})
 endforeach()
 
+find_file(
+	OCTOMAP_PACKAGE_FILE
+	NAMES octomap/package.xml octomap/stack.xml
+	PATH_SUFFIXES share
+)
+
+if(OCTOMAP_PACKAGE_FILE)
+	file(STRINGS "${OCTOMAP_PACKAGE_FILE}" _OCTOMAP_VERSION_TAG REGEX ".*<version>[^<]*</version>.*")
+	string(REGEX REPLACE ".*<version>([^<]*)</version>.*" "\\1" OCTOMAP_VERSION "${_OCTOMAP_VERSION_TAG}")
+	unset(_OCTOMAP_VERSION_TAG)
+endif()
+
 set(OCTOMAP_INCLUDE_DIRS ${OCTOMAP_INCLUDE_DIR})
 set(OCTOMAP_LIBRARIES ${OCTOMAP_OCTOMATH_LIBRARY} ${OCTOMAP_OCTOMAP_LIBRARY})
 
@@ -56,3 +68,4 @@ foreach(component IN ITEMS octomath octomap)
 endforeach()
 
 mark_as_advanced(OCTOMAP_INCLUDE_DIR)
+mark_as_advanced(OCTOMAP_PACKAGE_FILE)
