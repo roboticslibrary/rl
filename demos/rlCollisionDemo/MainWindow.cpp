@@ -324,6 +324,18 @@ MainWindow::parseCommandLine()
 		}
 	}
 	
+	if (parser.isSet(engineOption))
+	{
+		QString engine = parser.value(engineOption);
+		
+		if (!engines.contains(engine, Qt::CaseInsensitive))
+		{
+			parser.showHelp();
+		}
+		
+		this->engine = engine;
+	}
+	
 	if (parser.isSet(modelOption))
 	{
 		bool ok;
