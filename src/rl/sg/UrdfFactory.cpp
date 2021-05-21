@@ -45,6 +45,7 @@
 #include <Inventor/VRMLnodes/SoVRMLIndexedFaceSet.h>
 #include <Inventor/VRMLnodes/SoVRMLMaterial.h>
 #include <Inventor/VRMLnodes/SoVRMLSphere.h>
+#include <Inventor/VRMLnodes/SoVRMLImageTexture.h>
 #include <rl/math/Constants.h>
 #include <rl/math/Quaternion.h>
 #include <rl/math/Rotation.h>
@@ -110,12 +111,23 @@ namespace rl
 				
 				::rl::xml::NodeSet materials = path.eval("material").getValue<::rl::xml::NodeSet>();
 				
-				::std::unordered_map<::std::string, ::SoVRMLMaterial*> name2material;
+				::std::unordered_map<::std::string, ::SoVRMLAppearance*> name2appearance;
 				
 				for (int j = 0; j < materials.size(); ++j)
 				{
 ::std::cout << "material: " << j << ::std::endl;
 					::rl::xml::Path path(document, materials[j]);
+					
+					::std::string name = path.eval("string(@name)").getValue<::std::string>();
+					
+					::SoVRMLAppearance* vrmlAppearance = new ::SoVRMLAppearance();
+					vrmlAppearance->ref();
+					
+					vrmlAppearance->setName(name.c_str());
+					name2appearance[name] = vrmlAppearance;
+::std::cout << "\tname: " << name << ::std::endl;
+					
+					::SoVRMLMaterial* vrmlMaterial = new ::SoVRMLMaterial();
 					
 					if (path.eval("count(color/@rgba) > 0").getValue<bool>())
 					{
@@ -123,9 +135,6 @@ namespace rl
 						::std::string tmp = path.eval("string(color/@rgba)").getValue<::std::string>();
 						::boost::split(rgba, tmp, ::boost::algorithm::is_space(), ::boost::algorithm::token_compress_on);
 ::std::cout << "\trgba: " << rgba[0] << " " << rgba[1] << " " << rgba[2] << " " << rgba[3] << ::std::endl;
-						
-						::SoVRMLMaterial* vrmlMaterial = new ::SoVRMLMaterial();
-						vrmlMaterial->ref();
 						
 						vrmlMaterial->diffuseColor.setValue(
 							::boost::lexical_cast<float>(rgba[0]),
@@ -135,10 +144,27 @@ namespace rl
 						vrmlMaterial->transparency.setValue(
 							1 - ::boost::lexical_cast<float>(rgba[3])
 						);
-						
-						name2material[path.eval("string(@name)").getValue<::std::string>()] = vrmlMaterial;
-::std::cout << "\tname: " << path.eval("string(@name)").getValue<::std::string>() << ::std::endl;
 					}
+					
+					vrmlAppearance->material = vrmlMaterial;
+					
+					SoVRMLImageTexture* vrmlImageTexture = new SoVRMLImageTexture();
+					
+					if (path.eval("count(texture/@filename) > 0").getValue<bool>())
+					{
+						::rl::xml::NodeSet texture = path.eval("texture").getValue<::rl::xml::NodeSet>();
+						::std::string textureFilename = texture[0].getLocalPath(texture[0].getProperty("filename"));
+::std::cout << "\tfilename: " << textureFilename << ::std::endl;
+						
+						SbImage image;
+						
+						if (image.readFile(textureFilename.c_str()))
+						{
+							vrmlImageTexture->setImage(image);
+						}
+					}
+					
+					vrmlAppearance->texture = vrmlImageTexture;
 				}
 				
 				// joints
@@ -231,38 +257,64 @@ namespace rl
 					::SoVRMLShape* vrmlShape = new ::SoVRMLShape();
 					vrmlShape->ref();
 					
-					::SoVRMLAppearance* vrmlAppearance = new ::SoVRMLAppearance();
-					vrmlShape->appearance = vrmlAppearance;
-					
-					if (path.eval("count(material/color/@rgba) > 0").getValue<bool>())
+					if (path.eval("count(material/@name) > 0 and count(material//*) = 0").getValue<bool>())
 					{
-						::std::vector<::std::string> rgba;
-						::std::string tmp = path.eval("string(material/color/@rgba)").getValue<::std::string>();
-						::boost::split(rgba, tmp, ::boost::algorithm::is_space(), ::boost::algorithm::token_compress_on);
-::std::cout << "\tmaterial rgba: " << rgba[0] << " " << rgba[1] << " " << rgba[2] << " " << rgba[3] << ::std::endl;
-						
-						::SoVRMLMaterial* vrmlMaterial = new ::SoVRMLMaterial();
-						
-						vrmlMaterial->diffuseColor.setValue(
-							::boost::lexical_cast<float>(rgba[0]),
-							::boost::lexical_cast<float>(rgba[1]),
-							::boost::lexical_cast<float>(rgba[2])
-						);
-						vrmlMaterial->transparency.setValue(
-							1 - ::boost::lexical_cast<float>(rgba[3])
-						);
-						
-						vrmlAppearance->material = vrmlMaterial;
-					}
-					else if (path.eval("count(material/@name) > 0").getValue<bool>())
-					{
-::std::cout << "\tmaterial name: " << path.eval("string(material/@name)").getValue<::std::string>() << ::std::endl;
-						vrmlAppearance->material = name2material[path.eval("string(material/@name)").getValue<::std::string>()];
+						::std::string name = path.eval("string(material/@name)").getValue<::std::string>();
+::std::cout << "\tmaterial: " << name << ::std::endl;
+						vrmlShape->appearance = name2appearance[name];
 					}
 					else
 					{
+						::std::string name = path.eval("string(material/@name)").getValue<::std::string>();
+						
+						::SoVRMLAppearance* vrmlAppearance = new ::SoVRMLAppearance();
+						
+						if (!name.empty())
+						{
+							vrmlAppearance->setName(name.c_str());
+::std::cout << "\tmaterial name: " << name << ::std::endl;
+						}
+						
 						::SoVRMLMaterial* vrmlMaterial = new ::SoVRMLMaterial();
+						
+						if (path.eval("count(material/color/@rgba) > 0").getValue<bool>())
+						{
+							::std::vector<::std::string> rgba;
+							::std::string tmp = path.eval("string(material/color/@rgba)").getValue<::std::string>();
+							::boost::split(rgba, tmp, ::boost::algorithm::is_space(), ::boost::algorithm::token_compress_on);
+::std::cout << "\tmaterial rgba: " << rgba[0] << " " << rgba[1] << " " << rgba[2] << " " << rgba[3] << ::std::endl;
+							
+							vrmlMaterial->diffuseColor.setValue(
+								::boost::lexical_cast<float>(rgba[0]),
+								::boost::lexical_cast<float>(rgba[1]),
+								::boost::lexical_cast<float>(rgba[2])
+							);
+							vrmlMaterial->transparency.setValue(
+								1 - ::boost::lexical_cast<float>(rgba[3])
+							);
+						}
+						
 						vrmlAppearance->material = vrmlMaterial;
+						
+						SoVRMLImageTexture* vrmlImageTexture = new SoVRMLImageTexture();
+						
+						if (path.eval("count(material/texture/@filename) > 0").getValue<bool>())
+						{
+							::rl::xml::NodeSet texture = path.eval("material/texture").getValue<::rl::xml::NodeSet>();
+							::std::string textureFilename = texture[0].getLocalPath(texture[0].getProperty("filename"));
+::std::cout << "\tmaterial filename: " << textureFilename << ::std::endl;
+							
+							SbImage image;
+							
+							if (image.readFile(textureFilename.c_str()))
+							{
+								vrmlImageTexture->setImage(image);
+							}
+						}
+						
+						vrmlAppearance->texture = vrmlImageTexture;
+						
+						vrmlShape->appearance = vrmlAppearance;
 					}
 					
 					::rl::xml::NodeSet shapes = path.eval("geometry/box|geometry/cylinder|geometry/mesh|geometry/sphere").getValue<::rl::xml::NodeSet>();
@@ -470,7 +522,7 @@ namespace rl
 					}
 				}
 				
-				for (::std::unordered_map<::std::string, ::SoVRMLMaterial*>::iterator j = name2material.begin(); j != name2material.end(); ++j)
+				for (::std::unordered_map<::std::string, ::SoVRMLAppearance*>::iterator j = name2appearance.begin(); j != name2appearance.end(); ++j)
 				{
 					j->second->unref();
 				}
