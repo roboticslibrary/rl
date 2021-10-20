@@ -40,6 +40,11 @@ namespace rl
 		class NodeSet
 		{
 		public:
+			NodeSet() :
+				nodeSet(nullptr)
+			{
+			}
+			
 			explicit NodeSet(::xmlNodeSetPtr nodeSet) :
 				nodeSet(nodeSet, ::xmlXPathFreeNodeSet)
 			{
