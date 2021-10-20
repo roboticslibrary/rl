@@ -36,8 +36,6 @@ namespace rl
 {
 	namespace mdl
 	{
-		class Compound;
-		
 		class RL_MDL_EXPORT Element
 		{
 		public:
@@ -66,8 +64,6 @@ namespace rl
 			virtual void inverseForce() = 0;
 			
 			void setName(const ::std::string& name);
-			
-			Compound* compound;
 			
 		protected:
 			

@@ -25,7 +25,6 @@
 //
 
 #include "Body.h"
-#include "Compound.h"
 #include "Exception.h"
 #include "Joint.h"
 #include "Model.h"
@@ -59,16 +58,6 @@ namespace rl
 		
 		Model::~Model()
 		{
-		}
-		
-		void
-		Model::add(Compound* compound, const Frame* a, const Frame* b)
-		{
-			compound->inTransform = new Transform();
-			this->add(compound->inTransform, a, compound->inFrame);
-			
-			compound->outTransform = new Transform();
-			this->add(compound->outTransform, compound->outFrame, b);
 		}
 		
 		void
@@ -570,27 +559,6 @@ namespace rl
 		Model::rand()
 		{
 			return this->randDistribution(this->randEngine);
-		}
-		
-		void
-		Model::replace(Compound* compound, Transform* transform)
-		{
-			this->add(transform, compound->inFrame, compound->outFrame);
-			this->remove(compound);
-		}
-		
-		void
-		Model::replace(Transform* transform, Compound* compound)
-		{
-			this->add(compound, transform->in, transform->out);
-			this->remove(transform);
-		}
-		
-		void
-		Model::remove(Compound* compound)
-		{
-			this->remove(compound->inTransform);
-			this->remove(compound->outTransform);
 		}
 		
 		void

@@ -7,7 +7,6 @@ set(
 	HDRS
 	AnalyticalInverseKinematics.h
 	Body.h
-	Compound.h
 	Cylindrical.h
 	Dynamic.h
 	Element.h
@@ -40,7 +39,6 @@ set(
 	SRCS
 	AnalyticalInverseKinematics.cpp
 	Body.cpp
-	Compound.cpp
 	Cylindrical.cpp
 	Dynamic.cpp
 	Element.cpp
