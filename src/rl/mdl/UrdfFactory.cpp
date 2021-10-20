@@ -102,7 +102,7 @@ namespace rl
 ::std::cout << "link: " << j << ::std::endl;
 				::rl::xml::Path path(document, links[j]);
 				
-				Body* b = new Body();
+				::std::shared_ptr<Body> b = ::std::make_shared<Body>();
 				
 				model->add(b);
 				
@@ -147,7 +147,7 @@ namespace rl
 				b->setName(path.eval("string(@name)").getValue<::std::string>());
 ::std::cout << "\tname: " << b->getName() << ::std::endl;
 				
-				name2frame[path.eval("string(@name)").getValue<::std::string>()] = b;
+				name2frame[path.eval("string(@name)").getValue<::std::string>()] = b.get();
 			}
 			
 			// joints
@@ -175,12 +175,12 @@ namespace rl
 				
 				// frame
 				
-				Frame* frame = new Frame();
+				::std::shared_ptr<Frame> frame = ::std::make_shared<Frame>();
 				model->add(frame);
 				
 				// fixed
 				
-				Fixed* fixed = new Fixed();
+				::std::shared_ptr<Fixed> fixed = ::std::make_shared<Fixed>();
 				
 				if (path.eval("count(origin/@rpy) > 0").getValue<bool>())
 				{
@@ -226,10 +226,10 @@ namespace rl
 				}
 				else if ("floating" == type)
 				{
-					SixDof* s = new SixDof();
+					::std::shared_ptr<SixDof> s = ::std::make_shared<SixDof>();
 					
-					model->add(fixed, parent, frame);
-					model->add(s, frame, child);
+					model->add(fixed, parent, frame.get());
+					model->add(s, frame.get(), child);
 					
 					s->setName(path.eval("string(@name)").getValue<::std::string>());
 ::std::cout << "\tname: " << s->getName() << ::std::endl;
@@ -240,10 +240,10 @@ namespace rl
 				}
 				else if ("prismatic" == type)
 				{
-					Prismatic* p = new Prismatic();
+					::std::shared_ptr<Prismatic> p = ::std::make_shared<Prismatic>();
 					
-					model->add(fixed, parent, frame);
-					model->add(p, frame, child);
+					model->add(fixed, parent, frame.get());
+					model->add(p, frame.get(), child);
 					
 					p->max(0) = path.eval("number(limit/@upper)").getValue<::rl::math::Real>(::std::numeric_limits<::rl::math::Real>::max());
 ::std::cout << "\tmax: " << p->max(0) << ::std::endl;
@@ -277,10 +277,10 @@ namespace rl
 				}
 				else if ("revolute" == type || "continuous" == type)
 				{
-					Revolute* r = new Revolute();
+					::std::shared_ptr<Revolute> r = ::std::make_shared<Revolute>();
 					
-					model->add(fixed, parent, frame);
-					model->add(r, frame, child);
+					model->add(fixed, parent, frame.get());
+					model->add(r, frame.get(), child);
 					
 					if ("continuous" == path.eval("string(@type)").getValue<::std::string>())
 					{
@@ -326,7 +326,7 @@ namespace rl
 			
 			// root
 			
-			World* world = new World();
+			::std::shared_ptr<World> world = ::std::make_shared<World>();
 			model->add(world);
 			world->setGravity(::rl::math::Vector3(0, 0, 9.80665));
 			
@@ -340,8 +340,8 @@ namespace rl
 					{
 						root = name2frame[frame->first];
 ::std::cout << "root: " << root->getName() << ::std::endl;
-						Fixed* fixed = new Fixed();
-						model->add(fixed, world, root);
+						::std::shared_ptr<Fixed> fixed = ::std::make_shared<Fixed>();
+						model->add(fixed, world.get(), root);
 					}
 					else
 					{

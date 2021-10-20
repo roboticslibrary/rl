@@ -191,7 +191,7 @@ namespace rl
 					
 					if ("frame" == frames[j].getName())
 					{
-						Frame* f = new Frame();
+						::std::shared_ptr<Frame> f = ::std::make_shared<Frame>();
 						
 						f->name = path.eval("string(@id)").getValue<::std::string>();
 						
@@ -212,19 +212,19 @@ namespace rl
 						f->frame.translation().y() = path.eval("number(translation/y)").getValue<::rl::math::Real>(0);
 						f->frame.translation().z() = path.eval("number(translation/z)").getValue<::rl::math::Real>(0);
 						
-						kinematics->tree[v].reset(f);
+						kinematics->tree[v] = f;
 					}
 					else if ("link" == frames[j].getName())
 					{
-						Link* l = new Link();
+						::std::shared_ptr<Link> l = ::std::make_shared<Link>();
 						
 						l->name = path.eval("string(@id)").getValue<::std::string>();
 						
-						kinematics->tree[v].reset(l);
+						kinematics->tree[v] = l;
 					}
 					else if ("world" == frames[j].getName())
 					{
-						Frame* f = new Frame();
+						::std::shared_ptr<Frame> f = ::std::make_shared<Frame>();
 						
 						f->name = path.eval("string(@id)").getValue<::std::string>();
 						
@@ -247,7 +247,7 @@ namespace rl
 						
 						kinematics->root = v;
 						
-						kinematics->tree[v].reset(f);
+						kinematics->tree[v] = f;
 					}
 					
 					::std::string id = path.eval("string(@id)").getValue<::std::string>();
@@ -335,7 +335,7 @@ namespace rl
 					
 					if ("prismatic" == transforms[j].getName())
 					{
-						Prismatic* p = new Prismatic();
+						::std::shared_ptr<Prismatic> p = ::std::make_shared<Prismatic>();
 						
 						p->name = name;
 						
@@ -352,11 +352,11 @@ namespace rl
 						p->alpha *= ::rl::math::constants::deg2rad;
 						p->theta *= ::rl::math::constants::deg2rad;
 						
-						kinematics->tree[e].reset(p);
+						kinematics->tree[e] = p;
 					}
 					else if ("revolute" == transforms[j].getName())
 					{
-						Revolute* r = new Revolute();
+						::std::shared_ptr<Revolute> r = ::std::make_shared<Revolute>();
 						
 						r->name = name;
 						
@@ -377,11 +377,11 @@ namespace rl
 						r->speed *= ::rl::math::constants::deg2rad;
 						r->theta *= ::rl::math::constants::deg2rad;
 						
-						kinematics->tree[e].reset(r);
+						kinematics->tree[e] = r;
 					}
 					else if ("transform" == transforms[j].getName())
 					{
-						Transform* t = new Transform();
+						::std::shared_ptr<Transform> t = ::std::make_shared<Transform>();
 						
 						t->name = name;
 						
@@ -402,7 +402,7 @@ namespace rl
 						t->transform.translation().y() = path.eval("number(translation/y)").getValue<::rl::math::Real>(0);
 						t->transform.translation().z() = path.eval("number(translation/z)").getValue<::rl::math::Real>(0);
 						
-						kinematics->tree[e].reset(t);
+						kinematics->tree[e] = t;
 					}
 				}
 			}

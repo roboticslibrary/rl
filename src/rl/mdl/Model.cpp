@@ -63,11 +63,17 @@ namespace rl
 		void
 		Model::add(Frame* frame)
 		{
+			this->add(::std::shared_ptr<Frame>(frame));
+		}
+		
+		void
+		Model::add(const ::std::shared_ptr<Frame>& frame)
+		{
 			Vertex vertex = ::boost::add_vertex(this->tree);
 			frame->setVertexDescriptor(vertex);
-			this->tree[vertex].reset(frame);
+			this->tree[vertex] = frame;
 			
-			if (dynamic_cast<World*>(frame))
+			if (::std::dynamic_pointer_cast<World>(frame))
 			{
 				this->root = vertex;
 			}
@@ -76,9 +82,15 @@ namespace rl
 		void
 		Model::add(Transform* transform, const Frame* a, const Frame* b)
 		{
+			this->add(::std::shared_ptr<Transform>(transform), a, b);
+		}
+		
+		void
+		Model::add(const ::std::shared_ptr<Transform>& transform, const Frame* a, const Frame* b)
+		{
 			Edge edge = ::boost::add_edge(a->getVertexDescriptor(), b->getVertexDescriptor(), this->tree).first;
 			transform->setEdgeDescriptor(edge);
-			this->tree[edge].reset(transform);
+			this->tree[edge] = transform;
 		}
 		
 		bool

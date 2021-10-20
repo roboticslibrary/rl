@@ -120,7 +120,7 @@ namespace rl
 					
 					if ("body" == frames[j].getName())
 					{
-						Body* b = new Body();
+						::std::shared_ptr<Body> b = ::std::make_shared<Body>();
 						
 						model->add(b);
 						
@@ -143,19 +143,19 @@ namespace rl
 							path.eval("number(m)").getValue<::rl::math::Real>(1)
 						);
 						
-						frame = b;
+						frame = b.get();
 					}
 					else if ("frame" == frames[j].getName())
 					{
-						Frame* f = new Frame();
+						::std::shared_ptr<Frame> f = ::std::make_shared<Frame>();
 						
 						model->add(f);
 						
-						frame = f;
+						frame = f.get();
 					}
 					else if ("world" == frames[j].getName())
 					{
-						World* w = new World();
+						::std::shared_ptr<World> w = ::std::make_shared<World>();
 						
 						model->add(w);
 						
@@ -182,7 +182,7 @@ namespace rl
 							)
 						);
 						
-						frame = w;
+						frame = w.get();
 					}
 					
 					if (nullptr != frame)
@@ -273,7 +273,7 @@ namespace rl
 					
 					if ("cylindrical" == transforms[j].getName())
 					{
-						Cylindrical* c = new Cylindrical();
+						::std::shared_ptr<Cylindrical> c = ::std::make_shared<Cylindrical>();
 						
 						model->add(c, a, b);
 						
@@ -297,11 +297,11 @@ namespace rl
 						c->S(4, 1) = path.eval("number(axis[2]/y)").getValue<::rl::math::Real>(0);
 						c->S(5, 1) = path.eval("number(axis[2]/z)").getValue<::rl::math::Real>(1);
 						
-						transform = c;
+						transform = c.get();
 					}
 					else if ("fixed" == transforms[j].getName())
 					{
-						Fixed* f = new Fixed();
+						::std::shared_ptr<Fixed> f = ::std::make_shared<Fixed>();
 						
 						model->add(f, a, b);
 						
@@ -320,11 +320,11 @@ namespace rl
 						f->x.translation().y() = path.eval("number(translation/y)").getValue<::rl::math::Real>(0);
 						f->x.translation().z() = path.eval("number(translation/z)").getValue<::rl::math::Real>(0);
 						
-						transform = f;
+						transform = f.get();
 					}
 					else if ("helical" == transforms[j].getName())
 					{
-						Helical* h = new Helical();
+						::std::shared_ptr<Helical> h = ::std::make_shared<Helical>();
 						
 						model->add(h, a, b);
 						
@@ -344,11 +344,11 @@ namespace rl
 						
 						h->setPitch(path.eval("number(pitch)").getValue<::rl::math::Real>(1));
 						
-						transform = h;
+						transform = h.get();
 					}
 					else if ("prismatic" == transforms[j].getName())
 					{
-						Prismatic* p = new Prismatic();
+						::std::shared_ptr<Prismatic> p = ::std::make_shared<Prismatic>();
 						
 						model->add(p, a, b);
 						
@@ -362,11 +362,11 @@ namespace rl
 						p->S(4, 0) = path.eval("number(axis/y)").getValue<::rl::math::Real>(0);
 						p->S(5, 0) = path.eval("number(axis/z)").getValue<::rl::math::Real>(1);
 						
-						transform = p;
+						transform = p.get();
 					}
 					else if ("revolute" == transforms[j].getName())
 					{
-						Revolute* r = new Revolute();
+						::std::shared_ptr<Revolute> r = ::std::make_shared<Revolute>();
 						
 						model->add(r, a, b);
 						
@@ -385,11 +385,11 @@ namespace rl
 						r->offset *= ::rl::math::constants::deg2rad;
 						r->speed *= ::rl::math::constants::deg2rad;
 						
-						transform = r;
+						transform = r.get();
 					}
 					else if ("sixDof" == transforms[j].getName())
 					{
-						SixDof* s = new SixDof();
+						::std::shared_ptr<SixDof> s = ::std::make_shared<SixDof>();
 						
 						model->add(s, a, b);
 						
@@ -406,15 +406,15 @@ namespace rl
 						s->speed(1) = path.eval("number(speed[2])").getValue<::rl::math::Real>(0);
 						s->speed(2) = path.eval("number(speed[3])").getValue<::rl::math::Real>(0);
 						
-						transform = s;
+						transform = s.get();
 					}
 					else if ("spherical" == transforms[j].getName())
 					{
-						Spherical* s = new Spherical();
+						::std::shared_ptr<Spherical> s = ::std::make_shared<Spherical>();
 						
 						model->add(s, a, b);
 						
-						transform = s;
+						transform = s.get();
 					}
 					
 					if (nullptr != transform)

@@ -60,9 +60,13 @@ namespace rl
 			
 			virtual ~Model();
 			
-			void add(Frame* frame);
+			RL_MDL_DEPRECATED void add(Frame* frame);
 			
-			void add(Transform* transform, const Frame* a, const Frame* b);
+			void add(const ::std::shared_ptr<Frame>& frame);
+			
+			RL_MDL_DEPRECATED void add(Transform* transform, const Frame* a, const Frame* b);
+			
+			void add(const ::std::shared_ptr<Transform>& transform, const Frame* a, const Frame* b);
 			
 			bool areColliding(const ::std::size_t& i, const ::std::size_t& j) const;
 			
