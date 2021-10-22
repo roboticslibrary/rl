@@ -232,7 +232,7 @@ toDenavitHartenbergPaul(OtherScalar1& d, OtherScalar2& theta, OtherScalar3& a, O
 
 
 #ifdef RL_EIGEN_TRANSFORM_PLUGIN
-# include RL_EIGEN_TRANSFORM_PLUGIN
+#include RL_EIGEN_TRANSFORM_PLUGIN
 #endif
 
 #endif // RL_MATH_TRANSFORMADDONS_H

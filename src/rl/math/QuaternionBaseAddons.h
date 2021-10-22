@@ -308,7 +308,7 @@ squadFirstDerivative(const Scalar& t, const QuaternionBase<OtherDerived1>& a, co
 #endif
 
 #ifdef RL_EIGEN_QUATERNIONBASE_PLUGIN
-# include RL_EIGEN_QUATERNIONBASE_PLUGIN
+#include RL_EIGEN_QUATERNIONBASE_PLUGIN
 #endif
 
 #endif // RL_MATH_QUATERNIONBASEADDONS_H
