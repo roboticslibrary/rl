@@ -332,4 +332,8 @@ voigt33() const
 } }
 #endif
 
+#ifdef RL_EIGEN_MATRIXBASE_PLUGIN
+#include RL_EIGEN_MATRIXBASE_PLUGIN
+#endif
+
 #endif // RL_MATH_MATRIXBASEADDONS_H
