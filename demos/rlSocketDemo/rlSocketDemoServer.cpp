@@ -40,14 +40,25 @@
 int
 main(int argc, char** argv)
 {
-	if (argc < 2)
+	if (argc < 3)
 	{
 		std::cout << "Usage: rlSocketDemoServer PORT BUFFERSIZE" << std::endl;
 		return EXIT_FAILURE;
 	}
 	
-	std::vector<char> buffer(boost::lexical_cast<std::size_t>(argv[2]) + 1);
-	buffer.back() = '\0';
+	std::size_t bufferSize = boost::lexical_cast<std::size_t>(argv[2]);
+	
+	if (0 == bufferSize)
+	{
+		std::cout << "Error: Buffer size is zero" << std::endl;
+		return EXIT_FAILURE;
+	}
+	
+	if (bufferSize > std::allocator_traits<std::allocator<char>>::max_size(std::allocator<char>()))
+	{
+		std::cout << "Error: Buffer size exceeds maximum" << std::endl;
+		return EXIT_FAILURE;
+	}
 	
 	try
 	{
@@ -70,20 +81,23 @@ main(int argc, char** argv)
 		socket.listen();
 #endif
 		
+		std::vector<char> buffer(bufferSize);
+		
 		while (true)
 		{
-			std::memset(buffer.data(), 0, buffer.size() - 1);
+			std::memset(buffer.data(), 0, buffer.size());
 			
 #ifdef TCP
 			rl::hal::Socket connection = socket.accept();
-			std::size_t numbytes = connection.recv(buffer.data(), buffer.size() - 1);
+			std::size_t numbytes = connection.recv(buffer.data(), buffer.size());
 #endif
 #ifdef UDP
 			rl::hal::Socket::Address address;
-			std::size_t numbytes = socket.recvfrom(buffer.data(), buffer.size() - 1, address);
+			std::size_t numbytes = socket.recvfrom(buffer.data(), buffer.size(), address);
 #endif
 			std::cout << numbytes << " characters received" << std::endl;
-			std::cout << buffer.data() << std::endl;
+			std::copy(buffer.begin(), buffer.begin() + numbytes, std::ostream_iterator<char>(std::cout));
+			std::cout << std::endl;
 			
 #ifdef TCP
 			numbytes = connection.send(buffer.data(), numbytes);
@@ -92,7 +106,8 @@ main(int argc, char** argv)
 			numbytes = socket.sendto(buffer.data(), numbytes, address);
 #endif
 			std::cout << numbytes << " characters sent" << std::endl;
-			std::cout << buffer.data() << std::endl;
+			std::copy(buffer.begin(), buffer.begin() + numbytes, std::ostream_iterator<char>(std::cout));
+			std::cout << std::endl;
 		}
 		
 		socket.close();

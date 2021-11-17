@@ -44,6 +44,20 @@ main(int argc, char** argv)
 		return EXIT_FAILURE;
 	}
 	
+	std::size_t bufferSize = boost::lexical_cast<std::size_t>(argv[4]);
+	
+	if (0 == bufferSize)
+	{
+		std::cout << "Error: Buffer size is zero" << std::endl;
+		return EXIT_FAILURE;
+	}
+	
+	if (bufferSize > std::allocator_traits<std::allocator<char>>::max_size(std::allocator<char>()))
+	{
+		std::cout << "Error: Buffer size exceeds maximum" << std::endl;
+		return EXIT_FAILURE;
+	}
+	
 	try
 	{
 #ifdef IPV4
@@ -63,15 +77,16 @@ main(int argc, char** argv)
 		socket.connect();
 		
 		std::string message = argv[3];
-		std::size_t numbytes = socket.send(message.c_str(), message.length());
+		std::size_t numbytes = socket.send(message.data(), message.size());
 		std::cout << numbytes << " characters sent" << std::endl;
-		std::cout << message.substr(0, numbytes) << std::endl;
+		std::copy(message.begin(), message.begin() + numbytes, std::ostream_iterator<char>(std::cout));
+		std::cout << std::endl;
 		
-		std::vector<char> buffer(boost::lexical_cast<std::size_t>(argv[4]) + 1);
-		buffer.back() = '\0';
-		numbytes = socket.recv(buffer.data(), buffer.size() - 1);
+		std::vector<char> buffer(bufferSize);
+		numbytes = socket.recv(buffer.data(), buffer.size());
 		std::cout << numbytes << " characters received" << std::endl;
-		std::cout << buffer.data() << std::endl;
+		std::copy(buffer.begin(), buffer.begin() + numbytes, std::ostream_iterator<char>(std::cout));
+		std::cout << std::endl;
 		
 		socket.close();
 	}
