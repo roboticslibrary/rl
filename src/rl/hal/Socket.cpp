@@ -388,8 +388,6 @@ namespace rl
 		::std::size_t
 		Socket::recv(void* buf, const ::std::size_t& count)
 		{
-			::std::memset(buf, 0, count);
-			
 #ifdef WIN32
 			int numbytes = ::recv(this->fd, static_cast<char*>(buf), count, 0);
 #else // WIN32
@@ -415,8 +413,6 @@ namespace rl
 		Socket::recvfrom(void* buf, const ::std::size_t& count, Address& address)
 		{
 			int addrlen = address.getLength();
-			
-			::std::memset(buf, 0, count);
 			
 #ifdef WIN32
 			int numbytes = ::recvfrom(this->fd, static_cast<char*>(buf), count, 0, reinterpret_cast<::sockaddr*>(&address.get()->addr), &addrlen);

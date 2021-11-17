@@ -475,8 +475,6 @@ namespace rl
 		{
 			assert(this->isConnected());
 			
-			::std::memset(buf, 0, count);
-			
 #ifdef WIN32
 			::DWORD numbytes;
 			
