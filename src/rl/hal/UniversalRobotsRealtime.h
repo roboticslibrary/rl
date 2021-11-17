@@ -49,7 +49,8 @@ namespace rl
 		 * Universal Robots realtime interface.
 		 *
 		 * Supports versions 1.5, 1.6, 1.7, 1.8, 3.0, 3.1, 3.2, 3.3, 3.4, 3.5, 3.6,
-		 * 3.7, 3.8, 3.9, 3.10, 3.11, 3.12, 5.0, 5.1, 5.2, 5.3, 5.4, 5.5, 5.6.
+		 * 3.7, 3.8, 3.9, 3.10, 3.11, 3.12, 3.13, 3.14, 3.15, 5.0, 5.1, 5.2, 5.3, 5.4,
+		 * 5.5, 5.6, 5.7, 5.8, 5.9, 5.10.
 		 */
 		class RL_HAL_EXPORT UniversalRobotsRealtime :
 			public CartesianForceSensor,
@@ -341,6 +342,12 @@ namespace rl
 				double elbowVelocity[3];
 				
 				double safetyStatus;
+				
+				double payloadMass;
+				
+				double payloadCog[3];
+				
+				double payloadInertia[6];
 			};
 			
 			Message in;

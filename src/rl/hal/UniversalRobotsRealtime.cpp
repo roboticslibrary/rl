@@ -311,7 +311,7 @@ namespace rl
 		void
 		UniversalRobotsRealtime::step()
 		{
-			::std::array<::std::uint8_t, 1116> buffer;
+			::std::array<::std::uint8_t, 1220> buffer;
 			
 			this->socket.recv(buffer.data(), sizeof(this->in.messageSize));
 #if !defined(__APPLE__) && !defined(__QNX__) && !defined(WIN32) && !defined(__CYGWIN__)
@@ -330,6 +330,8 @@ namespace rl
 			case 1060:
 			case 1108:
 			case 1116:
+			case 1140:
+			case 1220:
 				this->socket.recv(ptr, this->in.messageSize - sizeof(this->in.messageSize));
 #if !defined(__APPLE__) && !defined(__QNX__) && !defined(WIN32) && !defined(__CYGWIN__)
 				this->socket.setOption(Socket::Option::quickack, 1);
@@ -382,6 +384,8 @@ namespace rl
 			case 1060:
 			case 1108:
 			case 1116:
+			case 1140:
+			case 1220:
 				this->unserialize(ptr, this->iControl);
 				this->unserialize(ptr, this->toolVectorActual);
 				this->unserialize(ptr, this->tcpSpeedActual);
@@ -452,6 +456,22 @@ namespace rl
 			}
 			
 			this->unserialize(ptr, this->safetyStatus);
+			
+			if (this->messageSize < 1140)
+			{
+				return;
+			}
+			
+			ptr += 3 * sizeof(double);
+			
+			if (this->messageSize < 1220)
+			{
+				return;
+			}
+			
+			this->unserialize(ptr, this->payloadMass);
+			this->unserialize(ptr, this->payloadCog);
+			this->unserialize(ptr, this->payloadInertia);
 		}
 		
 		template<>
