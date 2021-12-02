@@ -54,7 +54,7 @@ namespace rl
 			{
 				::std::queue<::std::pair<::std::size_t, ::std::size_t>> queue;
 				
-				queue.emplace(::std::piecewise_construct, ::std::forward_as_tuple(1), ::std::forward_as_tuple(steps - 1));
+				queue.emplace(1, steps - 1);
 				
 				::rl::math::Vector inter(u.size());
 				
@@ -71,12 +71,12 @@ namespace rl
 					
 					if (queue.front().first < midpoint)
 					{
-						queue.emplace(::std::piecewise_construct, ::std::forward_as_tuple(queue.front().first), ::std::forward_as_tuple(midpoint - 1));
+						queue.emplace(queue.front().first, midpoint - 1);
 					}
 					
 					if (queue.front().second > midpoint)
 					{
-						queue.emplace(::std::piecewise_construct, ::std::forward_as_tuple(midpoint + 1), ::std::forward_as_tuple(queue.front().second));
+						queue.emplace(midpoint + 1, queue.front().second);
 					}
 					
 					queue.pop();

@@ -515,7 +515,7 @@ namespace rl
 									neighbors.pop_back();
 								}
 								
-								neighbors.emplace_back(::std::piecewise_construct, ::std::forward_as_tuple(distance), ::std::forward_as_tuple(node.data[i]));
+								neighbors.emplace_back(distance, node.data[i]);
 								::std::push_heap(neighbors.begin(), neighbors.end(), NeighborCompare());
 							}
 						}
@@ -549,7 +549,7 @@ namespace rl
 											neighbors.pop_back();
 										}
 										
-										neighbors.emplace_back(::std::piecewise_construct, ::std::forward_as_tuple(distances[i]), ::std::forward_as_tuple(node.children[i].pivot));
+										neighbors.emplace_back(distances[i], node.children[i].pivot);
 										::std::push_heap(neighbors.begin(), neighbors.end(), NeighborCompare());
 									}
 								}

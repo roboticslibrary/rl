@@ -584,7 +584,7 @@ namespace rl
 									neighbors.pop_back();
 								}
 								
-								neighbors.emplace_back(::std::piecewise_construct, ::std::forward_as_tuple(distance), ::std::forward_as_tuple(node.data[i]));
+								neighbors.emplace_back(distance, node.data[i]);
 								::std::push_heap(neighbors.begin(), neighbors.end(), NeighborCompare());
 							}
 						}
