@@ -44,6 +44,7 @@
 #include <Inventor/Qt/SoQt.h>
 #include <rl/math/Constants.h>
 #include <rl/math/Rotation.h>
+#include <rl/mdl/UrdfFactory.h>
 #include <rl/mdl/XmlFactory.h>
 #include <rl/plan/AddRrtConCon.h>
 #include <rl/plan/AdvancedOptimizer.h>
@@ -71,6 +72,7 @@
 #include <rl/plan/UniformSampler.h>
 #include <rl/plan/WorkspaceSphereExplorer.h>
 #include <rl/sg/Body.h>
+#include <rl/sg/UrdfFactory.h>
 #include <rl/sg/XmlFactory.h>
 #include <rl/xml/Attribute.h>
 #include <rl/xml/Document.h>
@@ -872,64 +874,71 @@ MainWindow::load(const QString& filename)
 	}
 #endif // RL_SG_SOLID
 	
-	rl::mdl::XmlFactory modelFactory;
-	rl::sg::XmlFactory sceneFactory;
-	
 	rl::xml::NodeSet modelScene = path.eval("(/rl/plan|/rlplan)//model/scene").getValue<rl::xml::NodeSet>();
-	sceneFactory.load(modelScene[0].getUri(modelScene[0].getProperty("href")), this->scene.get());
-	this->sceneModel = this->scene->getModel(
-		path.eval("number((/rl/plan|/rlplan)//model/model)").getValue<std::size_t>()
-	);
+	std::string modelSceneFilename = modelScene[0].getLocalPath(modelScene[0].getProperty("href"));
 	
-	if ("mdl" == path.eval("string((/rl/plan|/rlplan)//model/kinematics/@type)").getValue<std::string>())
+	if ("urdf" == modelSceneFilename.substr(modelSceneFilename.length() - 4, 4))
 	{
-		rl::xml::NodeSet mdl = path.eval("(/rl/plan|/rlplan)//model/kinematics").getValue<rl::xml::NodeSet>();
-		this->mdl = std::dynamic_pointer_cast<rl::mdl::Kinematic>(modelFactory.create(
-			mdl[0].getUri(mdl[0].getProperty("href"))
-		));
-		
-		if (path.eval("count((/rl/plan|/rlplan)//model/kinematics/world) > 0").getValue<bool>())
-		{
-			this->mdl->world() = rl::math::AngleAxis(
-				path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/rotation/z)").getValue<rl::math::Real>(0) * rl::math::constants::deg2rad,
-				rl::math::Vector3::UnitZ()
-			) * rl::math::AngleAxis(
-				path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/rotation/y)").getValue<rl::math::Real>(0) * rl::math::constants::deg2rad,
-				rl::math::Vector3::UnitY()
-			) * rl::math::AngleAxis(
-				path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/rotation/x)").getValue<rl::math::Real>(0) * rl::math::constants::deg2rad,
-				rl::math::Vector3::UnitX()
-			);
-			
-			this->mdl->world().translation().x() = path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/translation/x)").getValue<rl::math::Real>(0);
-			this->mdl->world().translation().y() = path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/translation/y)").getValue<rl::math::Real>(0);
-			this->mdl->world().translation().z() = path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/translation/z)").getValue<rl::math::Real>(0);
-		}
+		rl::sg::UrdfFactory sceneFactory;
+		sceneFactory.load(modelSceneFilename, this->scene.get());
+		this->sceneModel = this->scene->getModel(
+			path.eval("number((/rl/plan|/rlplan)//model/model)").getValue<std::size_t>()
+		);
 	}
 	else
 	{
-		rl::xml::NodeSet kin = path.eval("(/rl/plan|/rlplan)//model/kinematics").getValue<rl::xml::NodeSet>();
-		this->kin = rl::kin::Kinematics::create(
-			kin[0].getUri(kin[0].getProperty("href"))
+		rl::sg::XmlFactory sceneFactory;
+		sceneFactory.load(modelSceneFilename, this->scene.get());
+		this->sceneModel = this->scene->getModel(
+			path.eval("number((/rl/plan|/rlplan)//model/model)").getValue<std::size_t>()
 		);
+	}
+	
+	rl::xml::NodeSet modelKinematics = path.eval("(/rl/plan|/rlplan)//model/kinematics").getValue<rl::xml::NodeSet>();
+	std::string modelKinematicsFilename = modelKinematics[0].getLocalPath(modelKinematics[0].getProperty("href"));
+	
+	if ("urdf" == modelKinematicsFilename.substr(modelKinematicsFilename.length() - 4, 4))
+	{
+		rl::mdl::UrdfFactory modelFactory;
+		this->mdl = std::dynamic_pointer_cast<rl::mdl::Kinematic>(modelFactory.create(modelKinematicsFilename));
+	}
+	else if ("mdl" == modelKinematics[0].getProperty("type"))
+	{
+		rl::mdl::XmlFactory modelFactory;
+		this->mdl = std::dynamic_pointer_cast<rl::mdl::Kinematic>(modelFactory.create(modelKinematicsFilename));
+	}
+	else
+	{
+		this->kin = rl::kin::Kinematics::create(modelKinematicsFilename);
+	}
+	
+	if (path.eval("count((/rl/plan|/rlplan)//model/kinematics/world) > 0").getValue<bool>())
+	{
+		rl::math::Transform* world = nullptr;
 		
-		if (path.eval("count((/rl/plan|/rlplan)//model/kinematics/world) > 0").getValue<bool>())
+		if (nullptr != this->kin.get())
 		{
-			this->kin->world() = rl::math::AngleAxis(
-				path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/rotation/z)").getValue<rl::math::Real>(0) * rl::math::constants::deg2rad,
-				rl::math::Vector3::UnitZ()
-			) * rl::math::AngleAxis(
-				path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/rotation/y)").getValue<rl::math::Real>(0) * rl::math::constants::deg2rad,
-				rl::math::Vector3::UnitY()
-			) * rl::math::AngleAxis(
-				path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/rotation/x)").getValue<rl::math::Real>(0) * rl::math::constants::deg2rad,
-				rl::math::Vector3::UnitX()
-			);
-			
-			this->kin->world().translation().x() = path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/translation/x)").getValue<rl::math::Real>(0);
-			this->kin->world().translation().y() = path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/translation/y)").getValue<rl::math::Real>(0);
-			this->kin->world().translation().z() = path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/translation/z)").getValue<rl::math::Real>(0);
+			world = &this->kin->world();
 		}
+		else if (nullptr != this->mdl.get())
+		{
+			world = &this->mdl->world();
+		}
+		
+		world->linear() = rl::math::AngleAxis(
+			path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/rotation/z)").getValue<rl::math::Real>(0) * rl::math::constants::deg2rad,
+			rl::math::Vector3::UnitZ()
+		) * rl::math::AngleAxis(
+			path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/rotation/y)").getValue<rl::math::Real>(0) * rl::math::constants::deg2rad,
+			rl::math::Vector3::UnitY()
+		) * rl::math::AngleAxis(
+			path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/rotation/x)").getValue<rl::math::Real>(0) * rl::math::constants::deg2rad,
+			rl::math::Vector3::UnitX()
+		).toRotationMatrix();
+		
+		world->translation().x() = path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/translation/x)").getValue<rl::math::Real>(0);
+		world->translation().y() = path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/translation/y)").getValue<rl::math::Real>(0);
+		world->translation().z() = path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/translation/z)").getValue<rl::math::Real>(0);
 	}
 	
 	if (rl::sg::DistanceScene* scene = dynamic_cast<rl::sg::DistanceScene*>(this->scene.get()))
@@ -967,60 +976,71 @@ MainWindow::load(const QString& filename)
 	this->scene2 = std::make_shared<rl::sg::so::Scene>();
 	
 	rl::xml::NodeSet viewerScene = path.eval("(/rl/plan|/rlplan)//viewer/model/scene").getValue<rl::xml::NodeSet>();
-	sceneFactory.load(viewerScene[0].getUri(viewerScene[0].getProperty("href")), this->scene2.get());
-	this->sceneModel2 = static_cast<rl::sg::so::Model*>(this->scene2->getModel(
-		path.eval("number((/rl/plan|/rlplan)//viewer/model/model)").getValue<std::size_t>()
-	));
+	std::string viewerSceneFilename = viewerScene[0].getLocalPath(viewerScene[0].getProperty("href"));
 	
-	if ("mdl" == path.eval("string((/rl/plan|/rlplan)//viewer/model/kinematics/@type)").getValue<std::string>())
+	if ("urdf" == viewerSceneFilename.substr(viewerSceneFilename.length() - 4, 4))
 	{
-		rl::xml::NodeSet mdl2 = path.eval("(/rl/plan|/rlplan)//viewer/model/kinematics").getValue<rl::xml::NodeSet>();
-		this->mdl2 = std::dynamic_pointer_cast<rl::mdl::Kinematic>(modelFactory.create(
-			mdl2[0].getUri(mdl2[0].getProperty("href"))
+		rl::sg::UrdfFactory sceneFactory;
+		sceneFactory.load(viewerSceneFilename, this->scene2.get());
+		this->sceneModel2 = static_cast<rl::sg::so::Model*>(this->scene2->getModel(
+			path.eval("number((/rl/plan|/rlplan)//viewer/model/model)").getValue<std::size_t>()
 		));
-		
-		if (path.eval("count((/rl/plan|/rlplan)//viewer/model/kinematics/world) > 0").getValue<bool>())
-		{
-			this->mdl2->world() = rl::math::AngleAxis(
-				path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/rotation/z)").getValue<rl::math::Real>(0) * rl::math::constants::deg2rad,
-				rl::math::Vector3::UnitZ()
-			) * rl::math::AngleAxis(
-				path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/rotation/y)").getValue<rl::math::Real>(0) * rl::math::constants::deg2rad,
-				rl::math::Vector3::UnitY()
-			) * rl::math::AngleAxis(
-				path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/rotation/x)").getValue<rl::math::Real>(0) * rl::math::constants::deg2rad,
-				rl::math::Vector3::UnitX()
-			);
-			
-			this->mdl2->world().translation().x() = path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/translation/x)").getValue<rl::math::Real>(0);
-			this->mdl2->world().translation().y() = path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/translation/y)").getValue<rl::math::Real>(0);
-			this->mdl2->world().translation().z() = path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/translation/z)").getValue<rl::math::Real>(0);
-		}
+	}
+	else
+	{
+		rl::sg::XmlFactory sceneFactory;
+		sceneFactory.load(viewerSceneFilename, this->scene2.get());
+		this->sceneModel2 = static_cast<rl::sg::so::Model*>(this->scene2->getModel(
+			path.eval("number((/rl/plan|/rlplan)//viewer/model/model)").getValue<std::size_t>()
+		));
+	}
+	
+	rl::xml::NodeSet viewerKinematics = path.eval("(/rl/plan|/rlplan)//viewer/model/kinematics").getValue<rl::xml::NodeSet>();
+	std::string viewerKinematicsFilename = viewerKinematics[0].getLocalPath(viewerKinematics[0].getProperty("href"));
+	
+	if ("urdf" == viewerKinematicsFilename.substr(viewerKinematicsFilename.length() - 4, 4))
+	{
+		rl::mdl::UrdfFactory modelFactory;
+		this->mdl2 = std::dynamic_pointer_cast<rl::mdl::Kinematic>(modelFactory.create(viewerKinematicsFilename));
+	}
+	else if ("mdl" == viewerKinematics[0].getProperty("type"))
+	{
+		rl::mdl::XmlFactory modelFactory;
+		this->mdl2 = std::dynamic_pointer_cast<rl::mdl::Kinematic>(modelFactory.create(viewerKinematicsFilename));
 	}
 	else
 	{
 		rl::xml::NodeSet kin2 = path.eval("(/rl/plan|/rlplan)//viewer/model/kinematics").getValue<rl::xml::NodeSet>();
-		this->kin2 = rl::kin::Kinematics::create(
-			kin2[0].getUri(kin2[0].getProperty("href"))
-		);
+		this->kin2 = rl::kin::Kinematics::create(viewerKinematicsFilename);
+	}
+	
+	if (path.eval("count((/rl/plan|/rlplan)//viewer/model/kinematics/world) > 0").getValue<bool>())
+	{
+		rl::math::Transform* world = nullptr;
 		
-		if (path.eval("count((/rl/plan|/rlplan)//viewer/model/kinematics/world) > 0").getValue<bool>())
+		if (nullptr != this->kin2.get())
 		{
-			this->kin2->world() = rl::math::AngleAxis(
-				path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/rotation/z)").getValue<rl::math::Real>(0) * rl::math::constants::deg2rad,
-				rl::math::Vector3::UnitZ()
-			) * rl::math::AngleAxis(
-				path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/rotation/y)").getValue<rl::math::Real>(0) * rl::math::constants::deg2rad,
-				rl::math::Vector3::UnitY()
-			) * rl::math::AngleAxis(
-				path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/rotation/x)").getValue<rl::math::Real>(0) * rl::math::constants::deg2rad,
-				rl::math::Vector3::UnitX()
-			);
-			
-			this->kin2->world().translation().x() = path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/translation/x)").getValue<rl::math::Real>(0);
-			this->kin2->world().translation().y() = path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/translation/y)").getValue<rl::math::Real>(0);
-			this->kin2->world().translation().z() = path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/translation/z)").getValue<rl::math::Real>(0);
+			world = &this->kin2->world();
 		}
+		else if (nullptr != this->mdl2.get())
+		{
+			world = &this->mdl2->world();
+		}
+		
+		world->linear() = rl::math::AngleAxis(
+			path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/rotation/z)").getValue<rl::math::Real>(0) * rl::math::constants::deg2rad,
+			rl::math::Vector3::UnitZ()
+		) * rl::math::AngleAxis(
+			path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/rotation/y)").getValue<rl::math::Real>(0) * rl::math::constants::deg2rad,
+			rl::math::Vector3::UnitY()
+		) * rl::math::AngleAxis(
+			path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/rotation/x)").getValue<rl::math::Real>(0) * rl::math::constants::deg2rad,
+			rl::math::Vector3::UnitX()
+		).toRotationMatrix();
+		
+		world->translation().x() = path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/translation/x)").getValue<rl::math::Real>(0);
+		world->translation().y() = path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/translation/y)").getValue<rl::math::Real>(0);
+		world->translation().z() = path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/translation/z)").getValue<rl::math::Real>(0);
 	}
 	
 	this->model2 = std::make_shared<rl::plan::Model>();
