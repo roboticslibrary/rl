@@ -102,7 +102,7 @@ namespace rl
 			inline Scalar squaredInteriorDistance(const ::Eigen::MatrixBase<Derived>& p) const
 			{
 				using ::std::pow;
-				return pow(this->squaredInteriorDistance(p), 2);
+				return pow(this->interiorDistance(p), 2);
 			}
 			
 		protected:
