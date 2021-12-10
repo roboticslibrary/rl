@@ -245,9 +245,9 @@ namespace rl
 					model->add(fixed, parent, frame.get());
 					model->add(p, frame.get(), child);
 					
-					p->max(0) = path.eval("number(limit/@upper)").getValue<::rl::math::Real>(::std::numeric_limits<::rl::math::Real>::max());
+					p->max(0) = path.eval("number(limit/@upper)").getValue<::rl::math::Real>(0);
 ::std::cout << "\tmax: " << p->max(0) << ::std::endl;
-					p->min(0) = path.eval("number(limit/@lower)").getValue<::rl::math::Real>(-::std::numeric_limits<::rl::math::Real>::max());
+					p->min(0) = path.eval("number(limit/@lower)").getValue<::rl::math::Real>(0);
 ::std::cout << "\tmin: " << p->min(0) << ::std::endl;
 					p->offset(0) = 0;
 					p->speed(0) = path.eval("number(limit/@velocity)").getValue<::rl::math::Real>(0);
@@ -290,8 +290,8 @@ namespace rl
 					}
 					else
 					{
-						r->max(0) = path.eval("number(limit/@upper)").getValue<::rl::math::Real>(::std::numeric_limits<::rl::math::Real>::max());
-						r->min(0) = path.eval("number(limit/@lower)").getValue<::rl::math::Real>(-::std::numeric_limits<::rl::math::Real>::max());
+						r->max(0) = path.eval("number(limit/@upper)").getValue<::rl::math::Real>(0);
+						r->min(0) = path.eval("number(limit/@lower)").getValue<::rl::math::Real>(0);
 						r->wraparound(0) = false;
 					}
 ::std::cout << "\tmax: " << r->max(0) * ::rl::math::constants::rad2deg << ::std::endl;
