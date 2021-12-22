@@ -208,7 +208,7 @@ namespace rl
 					return data;
 				}
 				
-				ConstTransformType transform() const
+				ConstTransformType& transform() const
 				{
 					return data;
 				}
