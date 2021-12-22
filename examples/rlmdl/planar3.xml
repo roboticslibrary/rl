@@ -2,7 +2,7 @@
 <rlmdl xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="rlmdl.xsd">
 	<model>
 		<manufacturer>Featherstone</manufacturer>
-		<name>planar2</name>
+		<name>planar3</name>
 		<world id="world">
 			<rotation>
 				<x>0</x>
@@ -44,6 +44,7 @@
 		<frame id="frame0"/>
 		<body id="link2">
 			<ignore idref="link1"/>
+			<ignore idref="link3"/>
 			<cm>
 				<x>0.5</x>
 				<y>0</y>
@@ -60,6 +61,24 @@
 			<m>1</m>
 		</body>
 		<frame id="frame1"/>
+		<body id="link3">
+			<ignore idref="link2"/>
+			<cm>
+				<x>0.5</x>
+				<y>0</y>
+				<z>0</z>
+			</cm>
+			<i>
+				<xx>0.01</xx>
+				<yy>0.083333333</yy>
+				<zz>0.083333333</zz>
+				<yz>0</yz>
+				<xz>0</xz>
+				<xy>0</xy>
+			</i>
+			<m>1</m>
+		</body>
+		<frame id="frame2"/>
 		<fixed id="fixed0">
 			<frame>
 				<a idref="world"/>
@@ -112,6 +131,30 @@
 			<frame>
 				<a idref="link2"/>
 				<b idref="frame1"/>
+			</frame>
+			<rotation>
+				<x>0</x>
+				<y>0</y>
+				<z>0</z>
+			</rotation>
+			<translation>
+				<x>1</x>
+				<y>0</y>
+				<z>0</z>
+			</translation>
+		</fixed>
+		<revolute id="joint2">
+			<frame>
+				<a idref="frame1"/>
+				<b idref="link3"/>
+			</frame>
+			<max>360</max>
+			<min>-360</min>
+		</revolute>
+		<fixed id="fixed3">
+			<frame>
+				<a idref="link3"/>
+				<b idref="frame2"/>
 			</frame>
 			<rotation>
 				<x>0</x>

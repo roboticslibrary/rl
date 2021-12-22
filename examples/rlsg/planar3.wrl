@@ -1,0 +1,131 @@
+#VRML V2.0 utf8
+Transform {
+	children [
+		DEF link0 Transform {
+			children [
+				Transform {
+					translation 0 0 -0.14
+					children [
+						Shape {
+							appearance Appearance {
+								material Material {
+									diffuseColor 0.7 0.1 0.1
+								}
+							}
+							geometry Box {
+								size 0.4 0.6 0.12
+							}
+						}
+					]
+				}
+			]
+		}
+		DEF link1 Transform {
+			children [
+				Transform {
+					translation 0.5 0 0
+					children [
+						Shape {
+							appearance Appearance {
+								material Material {
+									diffuseColor 0.8 0.45 0.1
+								}
+							}
+							geometry Box {
+								size 1 0.14 0.1
+							}
+						}
+					]
+				}
+				Transform {
+					rotation 1 0 0 1.570796
+					children [
+						Shape {
+							appearance Appearance {
+								material Material {
+									diffuseColor 0.8 0.45 0.1
+								}
+							}
+							geometry Cylinder {
+								radius 0.1
+								height 0.16
+							}
+						}
+					]
+				}
+			]
+		}
+		DEF link2 Transform {
+			translation 1 0 0
+			children [
+				Transform {
+					translation 0.5 0 0
+					children [
+						Shape {
+							appearance Appearance {
+								material Material {
+									diffuseColor 0.8 0.7 0.1
+								}
+							}
+							geometry Box {
+								size 1 0.14 0.1
+							}
+						}
+					]
+				}
+				Transform {
+					rotation 1 0 0 1.570796
+					children [
+						Shape {
+							appearance Appearance {
+								material Material {
+									diffuseColor 0.8 0.7 0.1
+								}
+							}
+							geometry Cylinder {
+								radius 0.1
+								height 0.16
+							}
+						}
+					]
+				}
+			]
+		}
+		DEF link3 Transform {
+			translation 2 0 0
+			children [
+				Transform {
+					translation 0.5 0 0
+					children [
+						Shape {
+							appearance Appearance {
+								material Material {
+									diffuseColor 0.5 0.7 0.2
+								}
+							}
+							geometry Box {
+								size 1 0.14 0.1
+							}
+						}
+					]
+				}
+				Transform {
+					rotation 1 0 0 1.570796
+					children [
+						Shape {
+							appearance Appearance {
+								material Material {
+									diffuseColor 0.5 0.7 0.2
+								}
+							}
+							geometry Cylinder {
+								radius 0.1
+								height 0.16
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

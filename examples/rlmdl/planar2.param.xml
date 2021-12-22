@@ -6,7 +6,7 @@
 			<model>
 				<manufacturer>Featherstone</manufacturer>
 				<name>planar2</name>
-				<world id="frame0">
+				<world id="world">
 					<rotation>
 						<x>0</x>
 						<y>0</y>
@@ -23,67 +23,74 @@
 						<z>9.80665</z>
 					</g>
 				</world>
+				<body id="link0">
+					<ignore/>
+				</body>
+				<body id="link1">
+					<ignore idref="link0"/>
+					<ignore idref="link2"/>
+					<cm>
+						<x><xsl:value-of select="0.5 * $length"/></x>
+						<y>0</y>
+						<z>0</z>
+					</cm>
+					<i>
+						<xx>0.01</xx>
+						<yy>0.083333333</yy>
+						<zz>0.083333333</zz>
+						<yz>0</yz>
+						<xz>0</xz>
+						<xy>0</xy>
+					</i>
+					<m>1</m>
+				</body>
+				<frame id="frame0"/>
+				<body id="link2">
+					<ignore idref="link1"/>
+					<cm>
+						<x><xsl:value-of select="0.5 * $length"/></x>
+						<y>0</y>
+						<z>0</z>
+					</cm>
+					<i>
+						<xx>0.01</xx>
+						<yy>0.083333333</yy>
+						<zz>0.083333333</zz>
+						<yz>0</yz>
+						<xz>0</xz>
+						<xy>0</xy>
+					</i>
+					<m>1</m>
+				</body>
 				<frame id="frame1"/>
-				<body id="frame2">
-					<cm>
-						<x><xsl:value-of select="0.5 * $length"/></x>
-						<y>0</y>
-						<z>0</z>
-					</cm>
-					<i>
-						<xx>0.01</xx>
-						<yy>0.083333333</yy>
-						<zz>0.083333333</zz>
-						<yz>0</yz>
-						<xz>0</xz>
-						<xy>0</xy>
-					</i>
-					<m>1</m>
-				</body>
-				<frame id="frame3"/>
-				<body id="frame4">
-					<cm>
-						<x><xsl:value-of select="0.5 * $length"/></x>
-						<y>0</y>
-						<z>0</z>
-					</cm>
-					<i>
-						<xx>0.01</xx>
-						<yy>0.083333333</yy>
-						<zz>0.083333333</zz>
-						<yz>0</yz>
-						<xz>0</xz>
-						<xy>0</xy>
-					</i>
-					<m>1</m>
-				</body>
-				<frame id="frame5"/>
-				<fixed id="link0">
+				<fixed id="fixed0">
 					<frame>
-						<a idref="frame0"/>
-						<b idref="frame1"/>
+						<a idref="world"/>
+						<b idref="link0"/>
 					</frame>
 					<rotation>
-						<x>-90</x>
+						<x>0</x>
 						<y>0</y>
 						<z>0</z>
 					</rotation>
 					<translation>
 						<x>0</x>
 						<y>0</y>
-						<z><xsl:value-of select="2 * $length"/></z>
+						<z>0</z>
 					</translation>
 				</fixed>
 				<revolute id="joint0">
 					<frame>
-						<a idref="frame1"/>
-						<b idref="frame2"/>
+						<a idref="link0"/>
+						<b idref="link1"/>
 					</frame>
+					<max>360</max>
+					<min>-360</min>
 				</revolute>
-				<fixed id="link1">
+				<fixed id="fixed1">
 					<frame>
-						<a idref="frame2"/>
-						<b idref="frame3"/>
+						<a idref="link1"/>
+						<b idref="frame0"/>
 					</frame>
 					<rotation>
 						<x>0</x>
@@ -98,14 +105,16 @@
 				</fixed>
 				<revolute id="joint1">
 					<frame>
-						<a idref="frame3"/>
-						<b idref="frame4"/>
+						<a idref="frame0"/>
+						<b idref="link2"/>
 					</frame>
+					<max>360</max>
+					<min>-360</min>
 				</revolute>
-				<fixed id="link2">
+				<fixed id="fixed2">
 					<frame>
-						<a idref="frame4"/>
-						<b idref="frame5"/>
+						<a idref="link2"/>
+						<b idref="frame1"/>
 					</frame>
 					<rotation>
 						<x>0</x>
