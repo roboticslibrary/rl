@@ -58,6 +58,12 @@ main(int argc, char** argv)
 			dynamic = std::dynamic_pointer_cast<rl::mdl::Dynamic>(factory.create(filename));
 		}
 		
+		if (argc < 2 + dynamic->getDofPosition() + dynamic->getDof() + dynamic->getDof())
+		{
+			std::cout << "Usage: rlDynamics2Demo MODELFILE Q1 ... Qn QD1 ... QDn QDD1 ... QDDn" << std::endl;
+			return EXIT_FAILURE;
+		}
+		
 		rl::math::Vector q(dynamic->getDofPosition());
 		rl::math::Vector qd(dynamic->getDof());
 		rl::math::Vector qdd(dynamic->getDof());
