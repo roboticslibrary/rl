@@ -214,6 +214,12 @@ namespace rl
 		}
 		
 		const ::rl::math::Vector&
+		Joint::getOffset() const
+		{
+			return this->offset;
+		}
+		
+		const ::rl::math::Vector&
 		Joint::getPosition() const
 		{
 			return this->q;
@@ -223,18 +229,6 @@ namespace rl
 		Joint::getPositionUnits() const
 		{
 			return this->qUnits;
-		}
-		
-		const ::rl::math::Vector&
-		Joint::getTorque() const
-		{
-			return this->tau;
-		}
-		
-		const ::Eigen::Matrix<::rl::math::Units, ::Eigen::Dynamic, 1>&
-		Joint::getTorqueUnits() const
-		{
-			return this->tauUnits;
 		}
 		
 		const ::rl::math::Vector&
@@ -250,6 +244,18 @@ namespace rl
 		}
 		
 		const ::rl::math::Vector&
+		Joint::getTorque() const
+		{
+			return this->tau;
+		}
+		
+		const ::Eigen::Matrix<::rl::math::Units, ::Eigen::Dynamic, 1>&
+		Joint::getTorqueUnits() const
+		{
+			return this->tauUnits;
+		}
+		
+		const ::rl::math::Vector&
 		Joint::getVelocity() const
 		{
 			return this->qd;
@@ -259,6 +265,12 @@ namespace rl
 		Joint::getVelocityUnits() const
 		{
 			return this->qdUnits;
+		}
+		
+		const ::Eigen::Matrix<bool, ::Eigen::Dynamic, 1>&
+		Joint::getWraparound() const
+		{
+			return this->wraparound;
 		}
 		
 		void
@@ -306,6 +318,30 @@ namespace rl
 		}
 		
 		void
+		Joint::setMaximum(const ::rl::math::ConstVectorRef& max)
+		{
+			this->max = max;
+		}
+		
+		void
+		Joint::setMinimum(const ::rl::math::ConstVectorRef& min)
+		{
+			this->min = min;
+		}
+		
+		void
+		Joint::setOffset(const ::rl::math::ConstVectorRef& offset)
+		{
+			this->offset = offset;
+		}
+		
+		void
+		Joint::setSpeed(const ::rl::math::ConstVectorRef& speed)
+		{
+			this->speed = speed;
+		}
+		
+		void
 		Joint::setTorque(const ::rl::math::ConstVectorRef& tau)
 		{
 			this->tau = tau;
@@ -318,6 +354,12 @@ namespace rl
 			
 			// S * qd
 			this->v = this->S * this->qd;
+		}
+		
+		void
+		Joint::setWraparound(const ::Eigen::Ref<const ::Eigen::Matrix<bool, ::Eigen::Dynamic, 1>>& wraparound)
+		{
+			this->wraparound = wraparound;
 		}
 		
 		void

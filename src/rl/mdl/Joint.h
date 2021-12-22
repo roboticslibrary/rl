@@ -75,21 +75,25 @@ namespace rl
 			
 			const ::rl::math::Vector& getMinimum() const;
 			
+			const ::rl::math::Vector& getOffset() const;
+			
 			const ::rl::math::Vector& getPosition() const;
 			
 			const ::Eigen::Matrix<::rl::math::Units, ::Eigen::Dynamic, 1>& getPositionUnits() const;
-			
-			const ::rl::math::Vector& getTorque() const;
-			
-			const ::Eigen::Matrix<::rl::math::Units, ::Eigen::Dynamic, 1>& getTorqueUnits() const;
 			
 			const ::rl::math::Vector& getSpeed() const;
 			
 			const ::Eigen::Matrix<::rl::math::Units, ::Eigen::Dynamic, 1>& getSpeedUnits() const;
 			
+			const ::rl::math::Vector& getTorque() const;
+			
+			const ::Eigen::Matrix<::rl::math::Units, ::Eigen::Dynamic, 1>& getTorqueUnits() const;
+			
 			const ::rl::math::Vector& getVelocity() const;
 			
 			const ::Eigen::Matrix<::rl::math::Units, ::Eigen::Dynamic, 1>& getVelocityUnits() const;
+			
+			const ::Eigen::Matrix<bool, ::Eigen::Dynamic, 1>& getWraparound() const;
 			
 			virtual void interpolate(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& q2, const ::rl::math::Real& alpha, ::rl::math::VectorRef q) const;
 			
@@ -101,11 +105,21 @@ namespace rl
 			
 			void setAcceleration(const ::rl::math::ConstVectorRef& qdd);
 			
+			void setMaximum(const ::rl::math::ConstVectorRef& max);
+			
+			void setMinimum(const ::rl::math::ConstVectorRef& min);
+			
+			void setOffset(const ::rl::math::ConstVectorRef& offset);
+			
 			virtual void setPosition(const ::rl::math::ConstVectorRef& q) = 0;
+			
+			void setSpeed(const ::rl::math::ConstVectorRef& speed);
 			
 			void setTorque(const ::rl::math::ConstVectorRef& tau);
 			
 			void setVelocity(const ::rl::math::ConstVectorRef& qd);
+			
+			void setWraparound(const ::Eigen::Ref<const ::Eigen::Matrix<bool, ::Eigen::Dynamic, 1>>& wraparound);
 			
 			virtual void step(const ::rl::math::ConstVectorRef& q1, const ::rl::math::ConstVectorRef& dq, ::rl::math::VectorRef q2) const;
 			

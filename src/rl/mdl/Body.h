@@ -54,11 +54,19 @@ namespace rl
 			
 			void forwardVelocity();
 			
+			bool getCollision() const;
+			
+			bool getCollision(Body* body) const;
+			
 			void inverseDynamics1();
 			
 			void inverseDynamics2();
 			
 			void setCenterOfMass(const ::rl::math::Real& x, const ::rl::math::Real& y, const ::rl::math::Real& z);
+			
+			void setCollision(const bool& collision);
+			
+			void setCollision(Body* body, const bool& collision);
 			
 			void setMass(const ::rl::math::Real& m);
 			

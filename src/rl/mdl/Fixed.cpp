@@ -38,5 +38,17 @@ namespace rl
 		Fixed::~Fixed()
 		{
 		}
+		
+		const ::rl::math::Transform&
+		Fixed::getTransform() const
+		{
+			return this->x.transform();
+		}
+		
+		void
+		Fixed::setTransform(const ::rl::math::Transform& t)
+		{
+			this->x = t;
+		}
 	}
 }

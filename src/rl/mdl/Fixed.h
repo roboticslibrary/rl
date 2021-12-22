@@ -40,6 +40,10 @@ namespace rl
 			
 			virtual ~Fixed();
 			
+			const ::rl::math::Transform& getTransform() const;
+			
+			void setTransform(const ::rl::math::Transform& t);
+			
 		protected:
 			
 		private:

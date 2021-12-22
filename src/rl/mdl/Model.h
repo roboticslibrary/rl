@@ -178,11 +178,17 @@ namespace rl
 			
 			void setManufacturer(const ::std::string& manufacturer);
 			
+			void setMaximum(const ::rl::math::Vector& max);
+			
+			void setMinimum(const ::rl::math::Vector& min);
+			
 			void setName(const ::std::string& name);
 			
 			void setOperationalVelocity(const ::std::size_t& i, const ::rl::math::MotionVector& v) const;
 			
 			void setPosition(const ::rl::math::Vector& q);
+			
+			void setSpeed(const ::rl::math::Vector& speed);
 			
 			void setTorque(const ::rl::math::Vector& tau);
 			

@@ -81,6 +81,18 @@ namespace rl
 		{
 		}
 		
+		bool
+		Body::getCollision() const
+		{
+			return this->collision;
+		}
+		
+		bool
+		Body::getCollision(Body* body) const
+		{
+			return this->selfcollision.count(body) == 0;
+		}
+		
 		void
 		Body::inverseDynamics1()
 		{
@@ -105,6 +117,30 @@ namespace rl
 			
 			// Ic - m * cx * cx
 			this->i.inertia() = this->ic - this->m * this->cm.cross33() * this->cm.cross33();
+		}
+		
+		void
+		Body::setCollision(const bool& collision)
+		{
+			this->collision = collision;
+		}
+		
+		void
+		Body::setCollision(Body* body, const bool& collision)
+		{
+			if (collision)
+			{
+				::std::unordered_set<Body*>::iterator found = ::std::find(this->selfcollision.begin(), this->selfcollision.end(), body);
+				
+				if (found != this->selfcollision.end())
+				{
+					this->selfcollision.erase(found);
+				}
+			}
+			else
+			{
+				this->selfcollision.insert(body);
+			}
 		}
 		
 		void
