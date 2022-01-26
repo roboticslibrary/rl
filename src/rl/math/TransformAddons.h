@@ -207,20 +207,25 @@ toDenavitHartenbergPaul(OtherScalar1& d, OtherScalar2& theta, OtherScalar3& a, O
 	assert(abs((*this)(2, 0)) <= ::std::numeric_limits<Scalar>::epsilon());
 	
 	d = (*this)(2, 3);
-	
 	theta = atan2((*this)(1, 0), (*this)(0, 0));
 	
-	if (abs((*this)(0, 0)) <= ::std::numeric_limits<Scalar>::epsilon())
+	Scalar tmp = (*this)(0, 0) + (*this)(1, 0);
+	
+	if (abs(tmp) > 0)
+	{
+		a = ((*this)(0, 3) + (*this)(1, 3)) / tmp;
+	}
+	else if (abs((*this)(1, 0)) > 0)
 	{
 		a = (*this)(1, 3) / (*this)(1, 0);
 	}
-	else if (abs((*this)(1, 0)) <= ::std::numeric_limits<Scalar>::epsilon())
+	else if (abs((*this)(0, 0)) > 0)
 	{
 		a = (*this)(0, 3) / (*this)(0, 0);
 	}
 	else
 	{
-		a = ((*this)(1, 3) / (*this)(1, 0) + (*this)(0, 3) / (*this)(0, 0)) * Scalar(0.5);
+		a = ::std::numeric_limits<Scalar>::quiet_NaN();
 	}
 	
 	alpha = atan2((*this)(2, 1), (*this)(2, 2));
