@@ -101,7 +101,7 @@ jobs:
           ninja-build
       - if: matrix.name == 'windows-latest-msvc'
         name: Enable Developer Command Prompt
-        uses: ilammy/msvc-dev-cmd@v1.5.0
+        uses: ilammy/msvc-dev-cmd@v1
       - if: matrix.name == 'windows-latest-msvc'
         name: Install dependencies for MSVC
         working-directory: ${{ runner.workspace }}
