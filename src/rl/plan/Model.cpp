@@ -459,6 +459,32 @@ namespace rl
 		}
 		
 		void
+		Model::setMaximum(const ::rl::math::Vector& max)
+		{
+			if (nullptr != this->kin)
+			{
+				this->kin->setMaximum(max);
+			}
+			else
+			{
+				this->mdl->setMaximum(max);
+			}
+		}
+		
+		void
+		Model::setMinimum(const ::rl::math::Vector& min)
+		{
+			if (nullptr != this->kin)
+			{
+				this->kin->setMinimum(min);
+			}
+			else
+			{
+				this->mdl->setMinimum(min);
+			}
+		}
+		
+		void
 		Model::setPosition(const ::rl::math::Vector& q)
 		{
 			if (nullptr != this->kin)

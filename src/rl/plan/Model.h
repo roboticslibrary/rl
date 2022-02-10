@@ -114,6 +114,10 @@ namespace rl
 			
 			virtual void setFrame(const ::std::size_t& i, const ::rl::math::Transform& frame);
 			
+			virtual void setMaximum(const ::rl::math::Vector& max);
+			
+			virtual void setMinimum(const ::rl::math::Vector& min);
+			
 			virtual void setPosition(const ::rl::math::Vector& q);
 			
 			virtual void step(const ::rl::math::Vector& q1, const ::rl::math::Vector& dq, ::rl::math::Vector& q2) const;
