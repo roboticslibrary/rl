@@ -305,6 +305,20 @@
 								</xs:sequence>
 							</xs:complexType>
 						</xs:element>
+						<xs:element name="max" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="q" type="qType" minOccurs="1" maxOccurs="unbounded" nillable="true"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="min" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="q" type="qType" minOccurs="1" maxOccurs="unbounded" nillable="true"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
 					</xs:sequence>
 					<xs:attribute name="href" type="xs:anyURI" use="required"/>
 					<xs:attribute name="type">

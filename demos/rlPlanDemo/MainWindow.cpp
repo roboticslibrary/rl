@@ -941,6 +941,86 @@ MainWindow::load(const QString& filename)
 		world->translation().z() = path.eval("number((/rl/plan|/rlplan)//model/kinematics/world/translation/z)").getValue<rl::math::Real>(0);
 	}
 	
+	if (path.eval("count((/rl/plan|/rlplan)//model/kinematics/max) > 0").getValue<bool>())
+	{
+		rl::xml::NodeSet max = path.eval("(/rl/plan|/rlplan)//model/kinematics/max/q").getValue<rl::xml::NodeSet>();
+		
+		rl::math::Vector maximum(max.size());
+		
+		if (nullptr != this->kin.get())
+		{
+			this->kin->getMaximum(maximum);
+		}
+		else if (nullptr != this->mdl.get())
+		{
+			maximum = this->mdl->getMaximum();
+		}
+		
+		for (int i = 0; i < max.size(); ++i)
+		{
+			std::string content = max[i].getContent();
+			
+			if (!content.empty())
+			{
+				maximum(i) = std::atof(content.c_str());
+				
+				if ("deg" == max[i].getProperty("unit"))
+				{
+					maximum(i) *= rl::math::constants::deg2rad;
+				}
+			}
+		}
+		
+		if (nullptr != this->kin.get())
+		{
+			this->kin->setMaximum(maximum);
+		}
+		else if (nullptr != this->mdl.get())
+		{
+			this->mdl->setMaximum(maximum);
+		}
+	}
+	
+	if (path.eval("count((/rl/plan|/rlplan)//model/kinematics/min) > 0").getValue<bool>())
+	{
+		rl::xml::NodeSet min = path.eval("(/rl/plan|/rlplan)//model/kinematics/min/q").getValue<rl::xml::NodeSet>();
+		
+		rl::math::Vector minimum(min.size());
+		
+		if (nullptr != this->kin.get())
+		{
+			this->kin->getMinimum(minimum);
+		}
+		else if (nullptr != this->mdl.get())
+		{
+			minimum = this->mdl->getMinimum();
+		}
+		
+		for (int i = 0; i < min.size(); ++i)
+		{
+			std::string content = min[i].getContent();
+			
+			if (!content.empty())
+			{
+				minimum(i) = std::atof(content.c_str());
+				
+				if ("deg" == min[i].getProperty("unit"))
+				{
+					minimum(i) *= rl::math::constants::deg2rad;
+				}
+			}
+		}
+		
+		if (nullptr != this->kin.get())
+		{
+			this->kin->setMinimum(minimum);
+		}
+		else if (nullptr != this->mdl.get())
+		{
+			this->mdl->setMinimum(minimum);
+		}
+	}
+	
 	if (rl::sg::DistanceScene* scene = dynamic_cast<rl::sg::DistanceScene*>(this->scene.get()))
 	{
 		this->model = std::make_shared<rl::plan::DistanceModel>();
@@ -1041,6 +1121,86 @@ MainWindow::load(const QString& filename)
 		world->translation().x() = path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/translation/x)").getValue<rl::math::Real>(0);
 		world->translation().y() = path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/translation/y)").getValue<rl::math::Real>(0);
 		world->translation().z() = path.eval("number((/rl/plan|/rlplan)//viewer/model/kinematics/world/translation/z)").getValue<rl::math::Real>(0);
+	}
+	
+	if (path.eval("count((/rl/plan|/rlplan)//viewer/model/kinematics/max) > 0").getValue<bool>())
+	{
+		rl::xml::NodeSet max = path.eval("(/rl/plan|/rlplan)//viewer/model/kinematics/max/q").getValue<rl::xml::NodeSet>();
+		
+		rl::math::Vector maximum(max.size());
+		
+		if (nullptr != this->kin2.get())
+		{
+			this->kin2->getMaximum(maximum);
+		}
+		else if (nullptr != this->mdl2.get())
+		{
+			maximum = this->mdl2->getMaximum();
+		}
+		
+		for (int i = 0; i < max.size(); ++i)
+		{
+			std::string content = max[i].getContent();
+			
+			if (!content.empty())
+			{
+				maximum(i) = std::atof(content.c_str());
+				
+				if ("deg" == max[i].getProperty("unit"))
+				{
+					maximum(i) *= rl::math::constants::deg2rad;
+				}
+			}
+		}
+		
+		if (nullptr != this->kin2.get())
+		{
+			this->kin2->setMaximum(maximum);
+		}
+		else if (nullptr != this->mdl2.get())
+		{
+			this->mdl2->setMaximum(maximum);
+		}
+	}
+	
+	if (path.eval("count((/rl/plan|/rlplan)//viewer/model/kinematics/min) > 0").getValue<bool>())
+	{
+		rl::xml::NodeSet min = path.eval("(/rl/plan|/rlplan)//viewer/model/kinematics/min/q").getValue<rl::xml::NodeSet>();
+		
+		rl::math::Vector minimum(min.size());
+		
+		if (nullptr != this->kin2.get())
+		{
+			this->kin2->getMinimum(minimum);
+		}
+		else if (nullptr != this->mdl2.get())
+		{
+			minimum = this->mdl2->getMinimum();
+		}
+		
+		for (int i = 0; i < min.size(); ++i)
+		{
+			std::string content = min[i].getContent();
+			
+			if (!content.empty())
+			{
+				minimum(i) = std::atof(content.c_str());
+				
+				if ("deg" == min[i].getProperty("unit"))
+				{
+					minimum(i) *= rl::math::constants::deg2rad;
+				}
+			}
+		}
+		
+		if (nullptr != this->kin2.get())
+		{
+			this->kin2->setMinimum(minimum);
+		}
+		else if (nullptr != this->mdl2.get())
+		{
+			this->mdl2->setMinimum(minimum);
+		}
 	}
 	
 	this->model2 = std::make_shared<rl::plan::Model>();
