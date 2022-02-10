@@ -124,6 +124,10 @@ namespace rl
 			
 			::rl::math::Vector generatePositionUniform(const ::rl::math::Vector& rand) const;
 			
+			::rl::math::Vector generatePositionUniform(const ::rl::math::Vector& min, const ::rl::math::Vector& max);
+			
+			::rl::math::Vector generatePositionUniform(const ::rl::math::Vector& rand, const ::rl::math::Vector& min, const ::rl::math::Vector& max) const;
+			
 			/**
 			 * Get number of links.
 			 */

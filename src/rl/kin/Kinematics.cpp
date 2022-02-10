@@ -496,6 +496,32 @@ namespace rl
 			return q;
 		}
 		
+		::rl::math::Vector
+		Kinematics::generatePositionUniform(const ::rl::math::Vector& min, const ::rl::math::Vector& max)
+		{
+			::rl::math::Vector rand(this->getDof());
+			
+			for (::std::size_t i = 0; i < this->getDof(); ++i)
+			{
+				rand(i) = this->rand();
+			}
+			
+			return this->generatePositionUniform(rand, min, max);
+		}
+		
+		::rl::math::Vector
+		Kinematics::generatePositionUniform(const ::rl::math::Vector& rand, const ::rl::math::Vector& min, const ::rl::math::Vector& max) const
+		{
+			::rl::math::Vector q(this->getDof());
+			
+			for (::std::size_t i = 0; i < this->getDof(); ++i)
+			{
+				q(i) = min(i) + rand(i) * (max(i) - min(i));
+			}
+			
+			return q;
+		}
+		
 		::std::size_t
 		Kinematics::getBodies() const
 		{
