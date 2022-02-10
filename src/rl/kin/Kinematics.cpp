@@ -891,6 +891,44 @@ namespace rl
 		}
 		
 		void
+		Kinematics::setMaximum(const ::std::size_t& i, const ::rl::math::Real& max)
+		{
+			assert(i < this->joints.size());
+			
+			this->joints[i]->max = max;
+		}
+		
+		void
+		Kinematics::setMaximum(const ::rl::math::Vector& max)
+		{
+			assert(max.size() == this->getDof());
+			
+			for (::std::size_t i = 0; i < this->joints.size(); ++i)
+			{
+				this->joints[i]->max = max(i);
+			}
+		}
+		
+		void
+		Kinematics::setMinimum(const ::std::size_t& i, const ::rl::math::Real& min)
+		{
+			assert(i < this->joints.size());
+			
+			this->joints[i]->min = min;
+		}
+		
+		void
+		Kinematics::setMinimum(const ::rl::math::Vector& min)
+		{
+			assert(min.size() == this->getDof());
+			
+			for (::std::size_t i = 0; i < this->joints.size(); ++i)
+			{
+				this->joints[i]->min = min(i);
+			}
+		}
+		
+		void
 		Kinematics::setPosition(const ::rl::math::Vector& q)
 		{
 			assert(q.size() == this->getDof());

@@ -272,6 +272,14 @@ namespace rl
 			 */
 			void setColliding(const ::std::size_t& i, const ::std::size_t& j, const bool& doCollide);
 			
+			void setMaximum(const ::std::size_t& i, const ::rl::math::Real& max);
+			
+			void setMaximum(const ::rl::math::Vector& max);
+			
+			void setMinimum(const ::std::size_t& i, const ::rl::math::Real& min);
+			
+			void setMinimum(const ::rl::math::Vector& min);
+			
 			/**
 			 * Update current joint position.
 			 *
