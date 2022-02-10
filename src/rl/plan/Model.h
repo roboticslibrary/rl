@@ -62,6 +62,8 @@ namespace rl
 			
 			virtual ::rl::math::Vector generatePositionUniform(const ::rl::math::Vector& rand) const;
 			
+			virtual ::rl::math::Vector generatePositionUniform(const ::rl::math::Vector& rand, const ::rl::math::Vector& min, const ::rl::math::Vector& max) const;
+			
 			virtual ::rl::sg::Body* getBody(const ::std::size_t& i) const;
 			
 			virtual ::std::size_t getBodies() const;

@@ -148,6 +148,19 @@ namespace rl
 			}
 		}
 		
+		::rl::math::Vector
+		Model::generatePositionUniform(const ::rl::math::Vector& rand, const ::rl::math::Vector& min, const ::rl::math::Vector& max) const
+		{
+			if (nullptr != this->kin)
+			{
+				return this->kin->generatePositionUniform(rand, min, max);
+			}
+			else
+			{
+				return this->mdl->generatePositionUniform(rand, min, max);
+			}
+		}
+		
 		::std::size_t
 		Model::getBodies() const
 		{
