@@ -14,31 +14,31 @@ jobs:
       fail-fast: false
       matrix:
         name:
-          - macos-latest
-          - ubuntu-latest-clang
-          - ubuntu-latest-gcc
-          - windows-latest-msvc
-          - windows-latest-msys2
+          - macos-11
+          - ubuntu-20.04-clang
+          - ubuntu-20.04-gcc
+          - windows-2019-msvc
+          - windows-2019-msys2
         include:
-          - name: macos-latest
+          - name: macos-11
             cmake_compiler_launcher: ccache
             cmake_prefix_path: /usr/local/opt/qt/lib/cmake
-            os: macos-latest
-          - name: ubuntu-latest-clang
+            os: macos-11
+          - name: ubuntu-20.04-clang
             cc: clang
             cmake_compiler_launcher: ccache
             cxx: clang++
-            os: ubuntu-latest
-          - name: ubuntu-latest-gcc
+            os: ubuntu-20.04
+          - name: ubuntu-20.04-gcc
             cc: gcc
             cmake_compiler_launcher: ccache
             cxx: g++
-            os: ubuntu-latest
-          - name: windows-latest-msvc
-            os: windows-latest
-          - name: windows-latest-msys2
+            os: ubuntu-20.04
+          - name: windows-2019-msvc
+            os: windows-2019
+          - name: windows-2019-msys2
             cmake_compiler_launcher: ccache
-            os: windows-latest
+            os: windows-2019
     env:
       CC: ${{ matrix.cc }}
       CCACHE_COMPRESS: true
@@ -50,15 +50,15 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - if: matrix.os == 'macos-latest'
+      - if: matrix.os == 'macos-11'
         name: Set up Tap
         run: brew tap roboticslibrary/rl
-      - if: matrix.os == 'ubuntu-latest'
+      - if: matrix.os == 'ubuntu-20.04'
         name: Set up PPA
         run: |
           sudo apt-get install -y software-properties-common
           sudo apt-add-repository -y -u ppa:roblib/ppa
-      - if: matrix.os == 'macos-latest'
+      - if: matrix.os == 'macos-11'
         name: Install dependencies for macOS
         run: >
           brew install
@@ -76,7 +76,7 @@ jobs:
           qt
           solid
           soqt
-      - if: matrix.os == 'ubuntu-latest'
+      - if: matrix.os == 'ubuntu-20.04'
         name: Install dependencies for Ubuntu
         run: >
           sudo apt-get install -y
@@ -99,17 +99,17 @@ jobs:
           libxml2-dev
           libxslt1-dev
           ninja-build
-      - if: matrix.name == 'windows-latest-msvc'
+      - if: matrix.name == 'windows-2019-msvc'
         name: Enable Developer Command Prompt
         uses: ilammy/msvc-dev-cmd@v1
-      - if: matrix.name == 'windows-latest-msvc'
+      - if: matrix.name == 'windows-2019-msvc'
         name: Install dependencies for MSVC
         working-directory: ${{ runner.workspace }}
         run: |
           curl -L https://github.com/roboticslibrary/rl-3rdparty/releases/download/latest/rl-3rdparty-msvc-14.2-x64.7z -o rl-3rdparty-msvc-14.2-x64.7z
           7z x rl-3rdparty-msvc-14.2-x64.7z -orl-3rdparty-install
           Write-Output "${{ runner.workspace }}\rl-3rdparty-install\bin" | Out-File -FilePath $Env:GITHUB_PATH -Encoding utf8 -Append
-      - if: matrix.name == 'windows-latest-msys2'
+      - if: matrix.name == 'windows-2019-msys2'
         name: Set up MSYS2
         uses: msys2/setup-msys2@v2
         with:
@@ -131,16 +131,16 @@ jobs:
             mingw-w64-x86_64-solid3
             mingw-w64-x86_64-soqt
           update: true
-      - if: matrix.name == 'windows-latest-msys2'
+      - if: matrix.name == 'windows-2019-msys2'
         name: Add MSYS2 to PATH
         run: |
           Write-Output (msys2 -c "cygpath -w /mingw64/bin") | Out-File -FilePath $Env:GITHUB_PATH -Encoding utf8 -Append
-      - if: matrix.os != 'windows-latest'
+      - if: matrix.os != 'windows-2019'
         name: Update environment variables
         run: |
           echo "CCACHE_BASEDIR=${{ runner.workspace }}" >> $GITHUB_ENV
           echo "CCACHE_DIR=${{ runner.workspace }}/.ccache" >> $GITHUB_ENV
-      - if: matrix.os == 'windows-latest'
+      - if: matrix.os == 'windows-2019'
         name: Update environment variables
         run: |
           Write-Output "CCACHE_BASEDIR=${{ runner.workspace }}" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
