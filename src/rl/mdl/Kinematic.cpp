@@ -26,7 +26,6 @@
 
 #include <algorithm>
 #include <stack>
-#include <boost/graph/graphviz.hpp>
 #include <rl/math/Quaternion.h>
 #include <rl/math/Rotation.h>
 #include <rl/math/Spatial.h>

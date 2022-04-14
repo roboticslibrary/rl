@@ -29,7 +29,6 @@
 
 #include <memory>
 #include <string>
-#include <boost/shared_array.hpp>
 #include <libxml/xpath.h>
 #include <libxml/xpathInternals.h>
 
