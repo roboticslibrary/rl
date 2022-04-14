@@ -27,8 +27,8 @@
 #ifndef RL_XML_ATTRIBUTE_H
 #define RL_XML_ATTRIBUTE_H
 
+#include <memory>
 #include <string>
-#include <boost/shared_array.hpp>
 #include <libxml/parser.h>
 
 #include "Namespace.h"
@@ -100,7 +100,7 @@ namespace rl
 			{
 				if (nullptr != this->attr->ns)
 				{
-					::boost::shared_array<::xmlChar> value(
+					::std::unique_ptr<::xmlChar, decltype(::xmlFree)> value(
 						::xmlGetNsProp(
 							this->attr->parent,
 							this->attr->name,
@@ -113,7 +113,7 @@ namespace rl
 				}
 				else
 				{
-					::boost::shared_array<::xmlChar> value(
+					::std::unique_ptr<::xmlChar, decltype(::xmlFree)> value(
 						::xmlGetProp(
 							this->attr->parent,
 							this->attr->name

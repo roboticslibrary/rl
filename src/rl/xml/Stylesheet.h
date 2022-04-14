@@ -31,7 +31,6 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include <boost/shared_array.hpp>
 #include <libxslt/transform.h>
 #include <libxslt/xsltInternals.h>
 
@@ -116,7 +115,7 @@ namespace rl
 				int size;
 				
 				::xmlDocDumpFormatMemory(this->stylesheet.get()->doc, &mem, &size, format ? 1 : 0);
-				::boost::shared_array<::xmlChar> memory(mem, ::xmlFree);
+				::std::unique_ptr<::xmlChar, decltype(::xmlFree)> memory(mem, ::xmlFree);
 				
 				return nullptr != memory.get() ? reinterpret_cast<const char*>(memory.get()) : ::std::string();
 			}
@@ -127,7 +126,7 @@ namespace rl
 				int size;
 				
 				::xmlDocDumpMemory(this->stylesheet.get()->doc, &mem, &size);
-				::boost::shared_array<::xmlChar> memory(mem, ::xmlFree);
+				::std::unique_ptr<::xmlChar, decltype(::xmlFree)> memory(mem, ::xmlFree);
 				
 				return nullptr != memory.get() ? reinterpret_cast<const char*>(memory.get()) : ::std::string();
 			}

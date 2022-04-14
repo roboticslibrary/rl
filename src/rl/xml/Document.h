@@ -29,7 +29,6 @@
 
 #include <memory>
 #include <string>
-#include <boost/shared_array.hpp>
 #include <libxml/parser.h>
 #include <libxml/xinclude.h>
 
@@ -71,7 +70,7 @@ namespace rl
 				int size;
 				
 				::xmlDocDumpFormatMemory(this->doc.get(), &mem, &size, format ? 1 : 0);
-				::boost::shared_array<::xmlChar> memory(mem, ::xmlFree);
+				::std::unique_ptr<::xmlChar, decltype(::xmlFree)> memory(mem, ::xmlFree);
 				
 				return nullptr != memory.get() ? reinterpret_cast<const char*>(memory.get()) : ::std::string();
 			}
@@ -82,7 +81,7 @@ namespace rl
 				int size;
 				
 				::xmlDocDumpMemory(this->doc.get(), &mem, &size);
-				::boost::shared_array<::xmlChar> memory(mem, ::xmlFree);
+				::std::unique_ptr<::xmlChar, decltype(::xmlFree)> memory(mem, ::xmlFree);
 				
 				return nullptr != memory.get() ? reinterpret_cast<const char*>(memory.get()) : ::std::string();
 			}
