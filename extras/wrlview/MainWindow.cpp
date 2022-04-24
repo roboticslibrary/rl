@@ -478,6 +478,12 @@ MainWindow::init()
 	
 	this->displayMenu->addSeparator();
 	
+	QAction* wireframeOverlayColorAction = new QAction("Wireframe Overlay Color...", this);
+	QObject::connect(wireframeOverlayColorAction, SIGNAL(triggered()), this, SLOT(selectWireframeOverlayColor()));
+	this->displayMenu->addAction(wireframeOverlayColorAction);
+	
+	this->displayMenu->addSeparator();
+	
 	QActionGroup* sizeActionGroup = new QActionGroup(this);
 	QObject::connect(sizeActionGroup, SIGNAL(triggered(QAction*)), this, SLOT(selectSize(QAction*)));
 	
@@ -1008,6 +1014,14 @@ MainWindow::selectView(QAction* action)
 	this->viewer->getCamera()->pointAt(SbVec3f(0, 0, 0), upvector);
 	this->viewer->getCamera()->scaleHeight(1);
 	this->viewer->viewAll();
+}
+
+void
+MainWindow::selectWireframeOverlayColor()
+{
+	const float* rgb = this->viewer->getWireframeOverlayColor().getValue();
+	QColor color = QColorDialog::getColor(QColor::fromRgbF(rgb[0], rgb[1], rgb[2]), this, "Select Color");
+	this->viewer->setWireframeOverlayColor(SbColor(color.redF(), color.greenF(), color.blueF()));
 }
 
 void

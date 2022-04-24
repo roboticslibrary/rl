@@ -164,6 +164,8 @@ private slots:
 	
 	void selectView(QAction* action);
 	
+	void selectWireframeOverlayColor();
+	
 	void toggleAxisCross();
 	
 	void toggleFullScreen();
