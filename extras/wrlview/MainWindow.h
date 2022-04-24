@@ -99,6 +99,8 @@ private:
 	
 	void load(const QString filename);
 	
+	void parseCommandLine();
+	
 	void saveImage(bool withAlpha);
 	
 	void saveImageOffscreen(bool withAlpha);

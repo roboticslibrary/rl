@@ -54,6 +54,10 @@
 #include <Inventor/nodes/SoScale.h>
 #include <Inventor/Qt/SoQt.h>
 
+#if QT_VERSION >= 0x050200
+#include <QCommandLineParser>
+#endif
+
 #if QT_VERSION >= 0x060000
 #include <QOpenGLWindow>
 #else
@@ -186,14 +190,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	this->setCentralWidget(this->widget);
 	this->setFocusProxy(this->viewer->getWidget());
 	
+	this->parseCommandLine();
+	
 	this->init();
-	
-	this->resize(800, 600);
-	
-	if (QCoreApplication::arguments().size() > 1)
-	{
-		this->filename = QCoreApplication::arguments()[1];
-	}
 	
 	if (!this->filename.isEmpty())
 	{
@@ -650,6 +649,107 @@ MainWindow::open()
 	}
 	
 	this->viewer->viewAll();
+}
+
+void
+MainWindow::parseCommandLine()
+{
+	QSize size(800, 600);
+	
+#if QT_VERSION >= 0x050200
+	QCommandLineOption backgroundOption(QStringList("background"), "Sets background color of 3D viewer.", "color");
+	QCommandLineOption heightOption(QStringList("height"), "Sets initial height of 3D viewer.", "height");
+	QCommandLineOption widthOption(QStringList("width"), "Sets initial width of 3D viewer.", "width");
+	
+	QCommandLineParser parser;
+	parser.addOption(backgroundOption);
+	parser.addOption(heightOption);
+	QCommandLineOption helpOption = parser.addHelpOption();
+	parser.addOption(widthOption);
+	parser.addPositionalArgument("filename", "", "[filename]");
+	
+	parser.process(QCoreApplication::arguments());
+	
+	if (parser.isSet(backgroundOption))
+	{
+		QString background = parser.value(backgroundOption);
+		
+		if (!QColor::isValidColor(background))
+		{
+			parser.showHelp();
+		}
+		
+		this->backgroundSwitch->whichChild = SO_SWITCH_NONE;
+		QColor color(background);
+		this->viewer->setBackgroundColor(SbColor(color.redF(), color.greenF(), color.blueF()));
+	}
+	
+	if (parser.isSet(heightOption))
+	{
+		bool ok;
+		size.setHeight(parser.value(heightOption).toInt(&ok));
+		
+		if (!ok)
+		{
+			parser.showHelp();
+		}
+	}
+	
+	if (parser.isSet(widthOption))
+	{
+		bool ok;
+		size.setWidth(parser.value(widthOption).toInt(&ok));
+		
+		if (!ok)
+		{
+			parser.showHelp();
+		}
+	}
+	
+	if (parser.positionalArguments().size() > 1)
+	{
+		parser.showHelp();
+	}
+	
+	if (!parser.positionalArguments().empty())
+	{
+		this->filename = parser.positionalArguments()[0];
+	}
+#else
+	QRegExp backgroundRegExp("--background=(\\S*)");
+	QRegExp helpRegExp("--help");
+	QRegExp heightRegExp("--height=(\\d*)");
+	QRegExp widthRegExp("--width=(\\d*)");
+	
+	for (int i = 1; i < QApplication::arguments().size(); ++i)
+	{
+		if (-1 != backgroundRegExp.indexIn(QApplication::arguments()[i]))
+		{
+			this->backgroundSwitch->whichChild = SO_SWITCH_NONE;
+			QColor color(backgroundRegExp.cap(1));
+			this->viewer->setBackgroundColor(SbColor(color.redF(), color.greenF(), color.blueF()));
+		}
+		else if (-1 != helpRegExp.indexIn(QApplication::arguments()[i]))
+		{
+			QMessageBox::information(this, "Usage", "wrlview [--background=<color>] [--height=<height>] [--help] [--width=<width>] [filename]");
+			exit(EXIT_SUCCESS);
+		}
+		else if (-1 != heightRegExp.indexIn(QApplication::arguments()[i]))
+		{
+			size.setHeight(heightRegExp.cap(1).toInt());
+		}
+		else if (-1 != widthRegExp.indexIn(QApplication::arguments()[i]))
+		{
+			size.setWidth(widthRegExp.cap(1).toInt());
+		}
+		else
+		{
+			this->filename = QApplication::arguments()[i];
+		}
+	}
+#endif
+	
+	this->widget->setSizeHint(size);
 }
 
 void
