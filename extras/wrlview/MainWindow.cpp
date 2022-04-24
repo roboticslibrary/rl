@@ -36,6 +36,7 @@
 #include <QDropEvent>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QInputDialog>
 #include <QMessageBox>
 #include <QMimeData>
 #include <QUrl>
@@ -80,6 +81,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	offscreenRenderer(nullptr),
 	origin1Switch(nullptr),
 	origin1000Switch(nullptr),
+	ppi(SoOffscreenRenderer::getScreenPixelsPerInch()),
 	root(nullptr),
 	scene(nullptr),
 	supportedFileEndings(),
@@ -484,6 +486,30 @@ MainWindow::init()
 	
 	this->displayMenu->addSeparator();
 	
+	QMenu* rendererMenu = this->displayMenu->addMenu("Renderer");
+	
+	QAction* selectRenderingPassesAction = new QAction("Rendering Passes...", this);
+	QObject::connect(selectRenderingPassesAction, SIGNAL(triggered()), this, SLOT(selectRenderingPasses()));
+	rendererMenu->addAction(selectRenderingPassesAction);
+	
+	QAction* selectRenderingSmoothingAction = new QAction("Smoothing", this);
+	selectRenderingSmoothingAction->setCheckable(true);
+	selectRenderingSmoothingAction->setChecked(this->viewer->getGLRenderAction()->isSmoothing());
+	QObject::connect(selectRenderingSmoothingAction, SIGNAL(triggered(bool)), this, SLOT(selectRenderingSmoothing(bool)));
+	rendererMenu->addAction(selectRenderingSmoothingAction);
+	
+	QMenu* offscreenRendererMenu = this->displayMenu->addMenu("Offscreen Renderer");
+	
+	QAction* selectOffscreenPixelsPerInchAction = new QAction("Pixels per Inch...", this);
+	QObject::connect(selectOffscreenPixelsPerInchAction, SIGNAL(triggered()), this, SLOT(selectOffscreenPixelsPerInch()));
+	offscreenRendererMenu->addAction(selectOffscreenPixelsPerInchAction);
+	
+	QAction* selectOffscreenPassesAction = new QAction("Rendering Passes...", this);
+	QObject::connect(selectOffscreenPassesAction, SIGNAL(triggered()), this, SLOT(selectOffscreenPasses()));
+	offscreenRendererMenu->addAction(selectOffscreenPassesAction);
+	
+	this->displayMenu->addSeparator();
+	
 	QActionGroup* sizeActionGroup = new QActionGroup(this);
 	QObject::connect(sizeActionGroup, SIGNAL(triggered(QAction*)), this, SLOT(selectSize(QAction*)));
 	
@@ -832,7 +858,7 @@ MainWindow::saveImageOffscreen(bool withAlpha)
 	QString filename = "wrlview-" + QDateTime::currentDateTime().toString("yyyyMMdd-HHmmsszzz") + ".png";
 	
 	SbViewportRegion viewportRegion(this->viewer->getViewportRegion());
-	viewportRegion.setPixelsPerInch(300);
+	viewportRegion.setPixelsPerInch(this->ppi);
 	viewportRegion.setWindowSize(
 		viewportRegion.getViewportSizePixels()[0] * viewportRegion.getPixelsPerInch() / SoOffscreenRenderer::getScreenPixelsPerInch(),
 		viewportRegion.getViewportSizePixels()[1] * viewportRegion.getPixelsPerInch() / SoOffscreenRenderer::getScreenPixelsPerInch()
@@ -841,7 +867,6 @@ MainWindow::saveImageOffscreen(bool withAlpha)
 	this->offscreenRenderer->setBackgroundColor(this->viewer->getBackgroundColor());
 	this->offscreenRenderer->setComponents(withAlpha ? SoOffscreenRenderer::RGB_TRANSPARENCY : SoOffscreenRenderer::RGB);
 	this->offscreenRenderer->setViewportRegion(viewportRegion);
-	this->offscreenRenderer->getGLRenderAction()->setNumPasses(8);
 	
 	if (!this->offscreenRenderer->render(this->viewer->getSceneManager()->getSceneGraph()))
 	{
@@ -1022,6 +1047,48 @@ MainWindow::selectWireframeOverlayColor()
 	const float* rgb = this->viewer->getWireframeOverlayColor().getValue();
 	QColor color = QColorDialog::getColor(QColor::fromRgbF(rgb[0], rgb[1], rgb[2]), this, "Select Color");
 	this->viewer->setWireframeOverlayColor(SbColor(color.redF(), color.greenF(), color.blueF()));
+}
+
+void
+MainWindow::selectOffscreenPasses()
+{
+	bool ok;
+	int num = QInputDialog::getInt(this, "Offscreen Renderer", "Rendering Passes", this->offscreenRenderer->getGLRenderAction()->getNumPasses(), 0, 256, 1, &ok, Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
+	
+	if (ok)
+	{
+		this->offscreenRenderer->getGLRenderAction()->setNumPasses(num);
+	}
+}
+
+void
+MainWindow::selectOffscreenPixelsPerInch()
+{
+	bool ok;
+	float ppi = QInputDialog::getInt(this, "Offscreen Renderer", "Pixels per Inch", this->ppi, 0, 600, 1, &ok, Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
+	
+	if (ok)
+	{
+		this->ppi = ppi;
+	}
+}
+
+void
+MainWindow::selectRenderingPasses()
+{
+	bool ok;
+	int num = QInputDialog::getInt(this, "Renderer", "Rendering Passes", this->viewer->getGLRenderAction()->getNumPasses(), 0, 256, 1, &ok, Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
+	
+	if (ok)
+	{
+		this->viewer->getGLRenderAction()->setNumPasses(num);
+	}
+}
+
+void
+MainWindow::selectRenderingSmoothing(bool checked)
+{
+	this->viewer->getGLRenderAction()->setSmoothing(checked);
 }
 
 void

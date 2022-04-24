@@ -125,6 +125,8 @@ private:
 	
 	SoSwitch* origin1000Switch;
 	
+	float ppi;
+	
 	SoSeparator* root;
 	
 	SoSeparator* scene;
@@ -165,6 +167,14 @@ private slots:
 	void selectView(QAction* action);
 	
 	void selectWireframeOverlayColor();
+	
+	void selectOffscreenPasses();
+	
+	void selectOffscreenPixelsPerInch();
+	
+	void selectRenderingPasses();
+	
+	void selectRenderingSmoothing(bool checked);
 	
 	void toggleAxisCross();
 	
