@@ -41,6 +41,7 @@
 #include <Inventor/VRMLnodes/SoVRMLInline.h>
 
 class SoGradientBackground;
+class Widget;
 
 class MainWindow : public QMainWindow
 {
@@ -132,7 +133,7 @@ private:
 	
 	QMenu* viewMenu;
 	
-	QWidget* widget;
+	Widget* widget;
 	
 private slots:
 	void open();

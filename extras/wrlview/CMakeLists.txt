@@ -39,6 +39,8 @@ if(Coin_FOUND AND OPENGL_FOUND AND QT_FOUND AND SoQt_FOUND)
 		MainWindow.h
 		SoGradientBackground.cpp
 		SoGradientBackground.h
+		Widget.cpp
+		Widget.h
 		wrlview.cpp
 		${CMAKE_CURRENT_BINARY_DIR}/wrlview.rc
 	)

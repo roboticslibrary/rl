@@ -62,6 +62,7 @@
 
 #include "MainWindow.h"
 #include "SoGradientBackground.h"
+#include "Widget.h"
 
 MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	QMainWindow(parent, f),
@@ -79,7 +80,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	scene(nullptr),
 	supportedFileEndings(),
 	viewer(nullptr),
-	widget(new QWidget(this))
+	widget(new Widget(this))
 {
 	SoQt::init(this);
 	SoDB::init();
@@ -852,10 +853,9 @@ MainWindow::selectOrigin(QAction* action)
 void
 MainWindow::selectSize(QAction* action)
 {
-	this->widget->setFixedSize(action->data().toSize());
-	this->setFixedSize(this->widget->sizeHint());
-	this->widget->setFixedSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
-	this->setFixedSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
+	this->widget->setSizeHint(action->data().toSize());
+	this->widget->updateGeometry();
+	this->resize(this->sizeHint());
 }
 
 void
