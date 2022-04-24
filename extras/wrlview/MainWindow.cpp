@@ -533,7 +533,7 @@ MainWindow::inlineFetchUrlCallback(const SbString& url, void* userData, SoVRMLIn
 	
 	QString string(node->url.getValues(0)->getString());
 	
-	if (string.startsWith("http://") || string.startsWith("ftp://"))
+	if (string.startsWith("http://") || string.startsWith("https://") || string.startsWith("ftp://"))
 	{
 		QNetworkReply* reply = mainWindow->manager->get(QNetworkRequest(QUrl(node->url.getValues(0)->getString())));
 		reply->setProperty("node", QVariant::fromValue(static_cast<void*>(node)));
