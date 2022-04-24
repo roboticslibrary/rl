@@ -60,6 +60,7 @@ private:
 	enum class Background
 	{
 		black,
+		custom,
 		gradient,
 		white
 	};

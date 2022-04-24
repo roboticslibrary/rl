@@ -27,6 +27,7 @@
 #include <QActionGroup>
 #include <QApplication>
 #include <QClipboard>
+#include <QColorDialog>
 #include <QCoreApplication>
 #include <QDateTime>
 #include <QDragEnterEvent>
@@ -446,9 +447,14 @@ MainWindow::init()
 	backgroundActionGroup->addAction(backgroundBlackAction);
 	this->displayMenu->addAction(backgroundBlackAction);
 	
+	QAction* backgroundCustomAction = new QAction("Custom Background...", this);
+	backgroundCustomAction->setCheckable(true);
+	backgroundCustomAction->setData(static_cast<int>(Background::custom));
+	backgroundActionGroup->addAction(backgroundCustomAction);
+	this->displayMenu->addAction(backgroundCustomAction);
+	
 	QAction* backgroundGradientAction = new QAction("Gradient Background", this);
 	backgroundGradientAction->setCheckable(true);
-	backgroundGradientAction->setChecked(true);
 	backgroundGradientAction->setData(static_cast<int>(Background::gradient));
 	backgroundActionGroup->addAction(backgroundGradientAction);
 	this->displayMenu->addAction(backgroundGradientAction);
@@ -458,6 +464,17 @@ MainWindow::init()
 	backgroundWhiteAction->setData(static_cast<int>(Background::white));
 	backgroundActionGroup->addAction(backgroundWhiteAction);
 	this->displayMenu->addAction(backgroundWhiteAction);
+	
+	const SbColor& color = this->viewer->getBackgroundColor();
+	
+	if (color[0] > 0 || color[1] > 0 || color[2] > 0)
+	{
+		backgroundCustomAction->setChecked(true);
+	}
+	else
+	{
+		backgroundGradientAction->setChecked(true);
+	}
 	
 	this->displayMenu->addSeparator();
 	
@@ -778,6 +795,14 @@ MainWindow::selectBackground(QAction* action)
 	case Background::black:
 		this->backgroundSwitch->whichChild = SO_SWITCH_NONE;
 		this->viewer->setBackgroundColor(SbColor(0, 0, 0));
+		break;
+	case Background::custom:
+		{
+			const float* rgb = this->viewer->getBackgroundColor().getValue();
+			QColor color = QColorDialog::getColor(QColor::fromRgbF(rgb[0], rgb[1], rgb[2]), this, "Select Color");
+			this->backgroundSwitch->whichChild = SO_SWITCH_NONE;
+			this->viewer->setBackgroundColor(SbColor(color.redF(), color.greenF(), color.blueF()));
+		}
 		break;
 	case Background::gradient:
 		this->backgroundSwitch->whichChild = SO_SWITCH_ALL;
