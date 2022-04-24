@@ -78,20 +78,6 @@ private:
 		o1000
 	};
 	
-	enum class Size
-	{
-		s640x480,
-		s800x600,
-		s1024x768,
-		s1024x1024,
-		s1280x720,
-		s1280x960,
-		s1200x1200,
-		s1600x1200,
-		s1920x1080,
-		s2400x2400
-	};
-	
 	enum class View
 	{
 		back,

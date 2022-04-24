@@ -479,58 +479,50 @@ MainWindow::init()
 	this->displayMenu->addSeparator();
 	
 	QActionGroup* sizeActionGroup = new QActionGroup(this);
-	sizeActionGroup->setExclusive(true);
 	QObject::connect(sizeActionGroup, SIGNAL(triggered(QAction*)), this, SLOT(selectSize(QAction*)));
 	
-	QAction* size640x480Action = new QAction("640x480", this);
-	size640x480Action->setData(static_cast<int>(Size::s640x480));
-	sizeActionGroup->addAction(size640x480Action);
-	this->displayMenu->addAction(size640x480Action);
+	QMenu* sizeMenu0 = this->displayMenu->addMenu("1:1");
+	QMenu* sizeMenu1 = this->displayMenu->addMenu("4:3");
+	QMenu* sizeMenu2 = this->displayMenu->addMenu("16:9");
+	QMenu* sizeMenu3 = this->displayMenu->addMenu("21:9");
 	
-	QAction* size800x600Action = new QAction("800x600", this);
-	size800x600Action->setData(static_cast<int>(Size::s800x600));
-	sizeActionGroup->addAction(size800x600Action);
-	this->displayMenu->addAction(size800x600Action);
+	QList<std::pair<QMenu*, QSize>> sizes;
+	sizes.push_back(std::make_pair(sizeMenu0, QSize(256, 256)));
+	sizes.push_back(std::make_pair(sizeMenu0, QSize(512, 512)));
+	sizes.push_back(std::make_pair(sizeMenu0, QSize(1024, 1024)));
+	sizes.push_back(std::make_pair(sizeMenu0, QSize(2048, 2048)));
+	sizes.push_back(std::make_pair(sizeMenu1, QSize(320, 240)));
+	sizes.push_back(std::make_pair(sizeMenu1, QSize(640, 480)));
+	sizes.push_back(std::make_pair(sizeMenu1, QSize(800, 600)));
+	sizes.push_back(std::make_pair(sizeMenu1, QSize(1024, 768)));
+	sizes.push_back(std::make_pair(sizeMenu1, QSize(1152, 864)));
+	sizes.push_back(std::make_pair(sizeMenu1, QSize(1280, 960)));
+	sizes.push_back(std::make_pair(sizeMenu1, QSize(1400, 1050)));
+	sizes.push_back(std::make_pair(sizeMenu1, QSize(1600, 1200)));
+	sizes.push_back(std::make_pair(sizeMenu1, QSize(2048, 1536)));
+	sizes.push_back(std::make_pair(sizeMenu2, QSize(426, 240)));
+	sizes.push_back(std::make_pair(sizeMenu2, QSize(640, 360)));
+	sizes.push_back(std::make_pair(sizeMenu2, QSize(854, 480)));
+	sizes.push_back(std::make_pair(sizeMenu2, QSize(960, 540)));
+	sizes.push_back(std::make_pair(sizeMenu2, QSize(1280, 720)));
+	sizes.push_back(std::make_pair(sizeMenu2, QSize(1366, 768)));
+	sizes.push_back(std::make_pair(sizeMenu2, QSize(1600, 900)));
+	sizes.push_back(std::make_pair(sizeMenu2, QSize(1920, 1080)));
+	sizes.push_back(std::make_pair(sizeMenu2, QSize(2560, 1440)));
+	sizes.push_back(std::make_pair(sizeMenu2, QSize(3200, 1800)));
+	sizes.push_back(std::make_pair(sizeMenu2, QSize(3840, 2160)));
+	sizes.push_back(std::make_pair(sizeMenu2, QSize(5120, 2880)));
+	sizes.push_back(std::make_pair(sizeMenu3, QSize(2560, 1080)));
+	sizes.push_back(std::make_pair(sizeMenu3, QSize(3440, 1440)));
+	sizes.push_back(std::make_pair(sizeMenu3, QSize(5120, 2160)));
 	
-	QAction* size1024x768Action = new QAction("1024x768", this);
-	size1024x768Action->setData(static_cast<int>(Size::s1024x768));
-	sizeActionGroup->addAction(size1024x768Action);
-	this->displayMenu->addAction(size1024x768Action);
-	
-	QAction* size1024x1024Action = new QAction("1024x1024", this);
-	size1024x1024Action->setData(static_cast<int>(Size::s1024x1024));
-	sizeActionGroup->addAction(size1024x1024Action);
-	this->displayMenu->addAction(size1024x1024Action);
-	
-	QAction* size1280x720Action = new QAction("1280x720", this);
-	size1280x720Action->setData(static_cast<int>(Size::s1280x720));
-	sizeActionGroup->addAction(size1280x720Action);
-	this->displayMenu->addAction(size1280x720Action);
-	
-	QAction* size1280x960Action = new QAction("1280x960", this);
-	size1280x960Action->setData(static_cast<int>(Size::s1280x960));
-	sizeActionGroup->addAction(size1280x960Action);
-	this->displayMenu->addAction(size1280x960Action);
-	
-	QAction* size1200x1200Action = new QAction("1200x1200", this);
-	size1200x1200Action->setData(static_cast<int>(Size::s1200x1200));
-	sizeActionGroup->addAction(size1200x1200Action);
-	this->displayMenu->addAction(size1200x1200Action);
-	
-	QAction* size1600x1200Action = new QAction("1600x1200", this);
-	size1600x1200Action->setData(static_cast<int>(Size::s1600x1200));
-	sizeActionGroup->addAction(size1600x1200Action);
-	this->displayMenu->addAction(size1600x1200Action);
-	
-	QAction* size1920x1080Action = new QAction("1920x1080", this);
-	size1920x1080Action->setData(static_cast<int>(Size::s1920x1080));
-	sizeActionGroup->addAction(size1920x1080Action);
-	this->displayMenu->addAction(size1920x1080Action);
-	
-	QAction* size2400x2400Action = new QAction("2400x2400", this);
-	size2400x2400Action->setData(static_cast<int>(Size::s2400x2400));
-	sizeActionGroup->addAction(size2400x2400Action);
-	this->displayMenu->addAction(size2400x2400Action);
+	for (int i = 0; i < sizes.size(); ++i)
+	{
+		QAction* sizeAction = new QAction(QString::number(sizes[i].second.width()) + "x" + QString::number(sizes[i].second.height()), this);
+		sizeAction->setData(sizes[i].second);
+		sizeActionGroup->addAction(sizeAction);
+		sizes[i].first->addAction(sizeAction);
+	}
 }
 
 void
@@ -860,43 +852,8 @@ MainWindow::selectOrigin(QAction* action)
 void
 MainWindow::selectSize(QAction* action)
 {
-	switch (static_cast<Size>(action->data().toInt()))
-	{
-	case Size::s640x480:
-		this->widget->setFixedSize(640, 480);
-		break;
-	case Size::s800x600:
-		this->widget->setFixedSize(800, 600);
-		break;
-	case Size::s1024x768:
-		this->widget->setFixedSize(1024, 768);
-		break;
-	case Size::s1024x1024:
-		this->widget->setFixedSize(1024, 1024);
-		break;
-	case Size::s1280x720:
-		this->widget->setFixedSize(1280, 720);
-		break;
-	case Size::s1280x960:
-		this->widget->setFixedSize(1280, 960);
-		break;
-	case Size::s1200x1200:
-		this->widget->setFixedSize(1200, 1200);
-		break;
-	case Size::s1600x1200:
-		this->widget->setFixedSize(1600, 1200);
-		break;
-	case Size::s1920x1080:
-		this->widget->setFixedSize(1920, 1080);
-		break;
-	case Size::s2400x2400:
-		this->widget->setFixedSize(2400, 2400);
-		break;
-	default:
-		break;
-	}
-	
-	this->setFixedSize(this->widget->sizeHint().width(), this->widget->sizeHint().height());
+	this->widget->setFixedSize(action->data().toSize());
+	this->setFixedSize(this->widget->sizeHint());
 	this->widget->setFixedSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
 	this->setFixedSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
 }
