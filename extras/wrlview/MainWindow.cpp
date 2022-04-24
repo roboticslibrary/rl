@@ -214,16 +214,23 @@ MainWindow::~MainWindow()
 void
 MainWindow::copyCameraValues()
 {
+	SbVec3f axis;
+	float angle;
+	this->viewer->getCamera()->orientation.getValue(axis, angle);
+	
 	QApplication::clipboard()->setText(
 		"position " +
 			QString::number(this->viewer->getCamera()->position.getValue()[0]) + " " +
 			QString::number(this->viewer->getCamera()->position.getValue()[1]) + " " +
 			QString::number(this->viewer->getCamera()->position.getValue()[2]) + "\n" +
 		"orientation " +
-			QString::number(this->viewer->getCamera()->orientation.getValue().getValue()[0]) + " " +
-			QString::number(this->viewer->getCamera()->orientation.getValue().getValue()[1]) + " " +
-			QString::number(this->viewer->getCamera()->orientation.getValue().getValue()[2]) + " " +
-			QString::number(this->viewer->getCamera()->orientation.getValue().getValue()[3]) + "\n" +
+			QString::number(axis[0]) + " " +
+			QString::number(axis[1]) + " " +
+			QString::number(axis[2]) + " " +
+			QString::number(angle) + "\n" +
+		"nearDistance " + QString::number(this->viewer->getCamera()->nearDistance.getValue()) + "\n" +
+		"farDistance " + QString::number(this->viewer->getCamera()->farDistance.getValue()) + "\n" +
+		"aspectRatio " + QString::number(this->viewer->getCamera()->aspectRatio.getValue()) + "\n" +
 		"focalDistance " + QString::number(this->viewer->getCamera()->focalDistance.getValue()) + "\n" +
 		(
 			SoPerspectiveCamera::getClassTypeId() == this->viewer->getCameraType() ?
