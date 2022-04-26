@@ -9,6 +9,7 @@ set(
 	Circular.h
 	CircularVector2.h
 	CircularVector3.h
+	CompositeFunction.h
 	Constants.h
 	Function.h
 	GnatNearestNeighbors.h

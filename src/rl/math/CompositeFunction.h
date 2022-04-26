@@ -24,67 +24,81 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef RL_MATH_NESTEDFUNCTION_H
-#define RL_MATH_NESTEDFUNCTION_H
+#ifndef RL_MATH_COMPOSITEFUNCTION_H
+#define RL_MATH_COMPOSITEFUNCTION_H
 
+#include <cmath>
 #include <stdexcept>
 
 #include "Function.h"
-
-#if defined(__GNUC__) || defined(__clang__)
-#define RL_MATH_DEPRECATED __attribute__ ((__deprecated__))
-#elif defined(_MSC_VER)
-#define RL_MATH_DEPRECATED __declspec(deprecated)
-#endif
 
 namespace rl
 {
 	namespace math
 	{
-		template<typename T2, typename T>
-		class RL_MATH_DEPRECATED NestedFunction : public Function<T>
+		/**
+		 * A composite function that takes two functions \f$f\f$ and \f$g\f$ and produces
+		 * a function \f$h = f \circ g\f$ such that \f$h(x) = f(g(x))\f$.
+		 */
+		template<typename T, typename T2>
+		class CompositeFunction : public Function<T>
 		{
 		public:
-			NestedFunction(const Function<T2>& inner, const Function<T>& outer) :
-				Function<T>(inner.lower(), inner.upper()),
-				inner(inner),
-				outer(outer)
+			CompositeFunction(const Function<T>& f, const Function<T2>& g) :
+				Function<T>(g.lower(), g.upper()),
+				f(f),
+				g(g)
 			{
 			}
 			
-			virtual ~NestedFunction()
+			virtual ~CompositeFunction()
 			{
 			}
 			
-			NestedFunction* clone() const
+			CompositeFunction* clone() const
 			{
-				return new NestedFunction(*this);
+				return new CompositeFunction(*this);
 			}
-
+			
 			T operator()(const Real& x, const ::std::size_t& derivative = 0) const
 			{
+				using ::std::pow;
+				
 				switch (derivative)
 				{
 				case 0:
-					return this->outer(this->inner(x));
+					return this->f(this->g(x));
 					break;
 				case 1:
-					return this->outer(this->inner(x), 1) * this->inner(x, 1);
+					return this->f(this->g(x), 1) * this->g(x, 1);
+					break;
+				case 2:
+					{
+						T2 g0 = this->g(x);
+						return pow(this->g(x, 1), 2) * this->f(g0, 2) + this->f(g0, 1) * this->g(x, 2);
+					}
+					break;
+				case 3:
+					{
+						T2 g0 = this->g(x);
+						T2 g1 = this->g(x, 1);
+						return 3 * g1 * this->f(g0, 2) * this->g(x, 2) + pow(g1, 3) * this->f(g0, 3) + this->f(g0, 1) * this->g(x, 3);
+					}
 					break;
 				default:
-					throw ::std::runtime_error("rl::math::NestedFunction: Derivatives > 1 not supported");
+					throw ::std::runtime_error("rl::math::CompositeFunction: Derivatives > 3 not supported");
 					break;
 				}
 			}
 			
 		protected:
-
-		private:
-			const Function<T2>& inner;
 			
-			const Function<T>& outer;
+		private:
+			const Function<T>& f;
+			
+			const Function<T2>& g;
 		};
 	}
 }
 
-#endif // RL_MATH_NESTEDFUNCTION_H
+#endif // RL_MATH_COMPOSITEFUNCTION_H
