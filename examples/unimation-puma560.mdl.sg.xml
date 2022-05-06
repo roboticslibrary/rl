@@ -4,6 +4,6 @@
 		<xi:include href="rlmdl/unimation-puma560.xml" xpointer="xpointer(/rlmdl/model)"/>
 	</mdl>
 	<sg>
-		<xi:include href="rlsg/unimation-puma560.xml" xpointer="xpointer(/rlsg/scene)"/>
+		<xi:include href="rlsg/unimation-puma560/unimation-puma560.xml" xpointer="xpointer(/rlsg/scene)"/>
 	</sg>
 </rl>
