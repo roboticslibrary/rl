@@ -845,7 +845,7 @@ MainWindow::saveImage(bool withAlpha)
 	{
 		format = "JPEG";
 	}
-
+	
 	if (!image.save(filename, format.toStdString().c_str()))
 	{
 		QMessageBox::critical(this, "Error", "Error writing " + filename + ".");

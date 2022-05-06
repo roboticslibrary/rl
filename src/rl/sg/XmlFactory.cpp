@@ -62,7 +62,7 @@ namespace rl
 		{
 			this->load(filename, scene, false, false);
 		}
-
+		
 		void
 		XmlFactory::load(const ::std::string& filename, Scene* scene, const bool& doBoundingBoxPoints, const bool& doPoints)
 		{

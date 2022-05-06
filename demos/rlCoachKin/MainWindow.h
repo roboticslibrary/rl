@@ -67,7 +67,7 @@ public:
 	
 public slots:
 	void saveImageWithAlpha();
-
+	
 	void saveImageWithoutAlpha();
 	
 	void saveScene();

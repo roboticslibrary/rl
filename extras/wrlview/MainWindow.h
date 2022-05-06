@@ -149,11 +149,11 @@ private slots:
 	void replyFinished(QNetworkReply* reply);
 	
 	void saveImageOffscreenWithAlpha();
-
+	
 	void saveImageOffscreenWithoutAlpha();
 	
 	void saveImageWithAlpha();
-
+	
 	void saveImageWithoutAlpha();
 	
 	void selectBackground(QAction* action);

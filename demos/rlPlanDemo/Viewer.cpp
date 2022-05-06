@@ -439,7 +439,7 @@ Viewer::Viewer(QWidget* parent, Qt::WindowFlags f) :
 	this->root->addChild(this->vertices);
 	
 	// work
-
+	
 	this->work->setName("work");
 	this->work->whichChoice = SO_SWITCH_NONE;
 	

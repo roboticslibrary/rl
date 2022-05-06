@@ -171,7 +171,7 @@ namespace rl
 				assert(derivative <= 2 && "Circular: higher derivatives not implemented");
 				
 				Real c = this->angle / this->x1;
-
+				
 				if (derivative == 0)
 				{
 					return this->center + ::std::cos(c * x) * this->axisX + ::std::sin(c * x) * this->axisY;

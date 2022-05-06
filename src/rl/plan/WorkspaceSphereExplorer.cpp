@@ -107,7 +107,7 @@ namespace rl
 			);
 			start.radiusSum = start.radius;
 			start.parent = nullptr;
-
+			
 			start.priority = (*this->goal - *start.center).norm() - start.radius;
 			
 			this->queue.insert(start);

@@ -111,7 +111,7 @@ main(int argc, char** argv)
 	
 	std::size_t dof = kinematics->getDof();
 	rl::math::Vector q(kinematics->getDof());
-
+	
 	for (std::size_t i = 0; i < kinematics->getDof(); ++i)
 	{
 		q(i) = boost::lexical_cast<rl::math::Real>(argv[i + 3]) * rl::math::constants::deg2rad;

@@ -113,7 +113,7 @@ namespace rl
 				}
 				
 				this->getBody()->add(this);
-
+				
 				this->setTransform(::rl::math::Transform::Identity());
 			}
 			

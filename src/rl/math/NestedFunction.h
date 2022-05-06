@@ -60,7 +60,7 @@ namespace rl
 			{
 				return new NestedFunction(*this);
 			}
-
+			
 			T operator()(const Real& x, const ::std::size_t& derivative = 0) const
 			{
 				switch (derivative)
@@ -78,7 +78,7 @@ namespace rl
 			}
 			
 		protected:
-
+			
 		private:
 			const Function<T2>& inner;
 			

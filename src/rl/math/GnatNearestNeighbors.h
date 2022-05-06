@@ -657,7 +657,7 @@ namespace rl
 				
 				node.data.clear();
 				node.data.shrink_to_fit();
-
+				
 #ifdef _OPENMP
 #pragma omp parallel for if (size > 2 * this->nodeDataMax)
 #if _OPENMP < 200805

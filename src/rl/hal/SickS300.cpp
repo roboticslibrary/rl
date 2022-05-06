@@ -379,7 +379,7 @@ namespace rl
 				throw DeviceException("Checksum error");
 			}
 for (::std::size_t i = 0; i < sumbytes; ++i) { ::std::cout << hex(buf[i]) << " "; } ::std::cout << ::std::endl;
-
+			
 			return sumbytes;
 		}
 		

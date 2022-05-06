@@ -113,7 +113,7 @@ private:
 	QGraphicsItemGroup* edges;
 	
 	QGraphicsItemGroup* path;
-
+	
 	QGraphicsRectItem* scene;
 	
 	ConfigurationSpaceThread* thread;

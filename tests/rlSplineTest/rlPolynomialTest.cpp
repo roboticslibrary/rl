@@ -119,7 +119,7 @@ main(int argc, char** argv)
 			return EXIT_FAILURE;
 		}
 	}
-
+	
 	std::cout << "rlPolynomialTest is ok." << std::endl;
 	return EXIT_SUCCESS;
 }

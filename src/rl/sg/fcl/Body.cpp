@@ -50,7 +50,7 @@ namespace rl
 				{
 					delete this->shapes[0];
 				}
-
+				
 				this->getModel()->remove(this);
 			}
 			
