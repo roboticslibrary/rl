@@ -241,6 +241,10 @@ namespace rl
 			
 			::std::vector<Body*> bodies;
 			
+			::std::size_t dof;
+			
+			::std::size_t dofPosition;
+			
 			::std::vector<Element*> elements;
 			
 			::std::vector<Frame*> frames;

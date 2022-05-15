@@ -36,6 +36,8 @@ namespace rl
 	{
 		Model::Model() :
 			bodies(),
+			dof(),
+			dofPosition(),
 			elements(),
 			frames(),
 			gammaPosition(),
@@ -244,27 +246,13 @@ namespace rl
 		::std::size_t
 		Model::getDof() const
 		{
-			::std::size_t dof = 0;
-			
-			for (::std::size_t i = 0; i < this->joints.size(); ++i)
-			{
-				dof += this->joints[i]->getDof();
-			}
-			
-			return dof;
+			return this->dof;
 		}
 		
 		::std::size_t
 		Model::getDofPosition() const
 		{
-			::std::size_t dof = 0;
-			
-			for (::std::size_t i = 0; i < this->joints.size(); ++i)
-			{
-				dof += this->joints[i]->getDofPosition();
-			}
-			
-			return dof;
+			return this->dofPosition;
 		}
 		
 		Frame*
@@ -740,6 +728,8 @@ namespace rl
 		Model::update()
 		{
 			this->bodies.clear();
+			this->dof = 0;
+			this->dofPosition = 0;
 			this->elements.clear();
 			this->joints.clear();
 			this->leaves.clear();
@@ -747,6 +737,18 @@ namespace rl
 			this->transforms.clear();
 			
 			this->update(this->root);
+			
+			for (::std::size_t i = 0; i < this->joints.size(); ++i)
+			{
+				this->dof += this->joints[i]->getDof();
+				this->dofPosition += this->joints[i]->getDofPosition();
+			}
+			
+			this->gammaPosition = ::rl::math::Matrix::Identity(this->getDofPosition(), this->getDofPosition());
+			this->gammaVelocity = ::rl::math::Matrix::Identity(this->getDof(), this->getDof());
+			this->home = ::rl::math::Vector::Zero(this->getDofPosition());
+			this->invGammaPosition = ::rl::math::Matrix::Identity(this->getDofPosition(), this->getDofPosition());
+			this->invGammaVelocity = ::rl::math::Matrix::Identity(this->getDof(), this->getDof());
 		}
 		
 		void
@@ -791,12 +793,6 @@ namespace rl
 					this->tools.push_back(*i.first);
 				}
 			}
-			
-			this->gammaPosition = ::rl::math::Matrix::Identity(this->getDofPosition(), this->getDofPosition());
-			this->gammaVelocity = ::rl::math::Matrix::Identity(this->getDof(), this->getDof());
-			this->home = ::rl::math::Vector::Zero(this->getDofPosition());
-			this->invGammaPosition = ::rl::math::Matrix::Identity(this->getDofPosition(), this->getDofPosition());
-			this->invGammaVelocity = ::rl::math::Matrix::Identity(this->getDof(), this->getDof());
 		}
 		
 		::rl::math::Transform&
