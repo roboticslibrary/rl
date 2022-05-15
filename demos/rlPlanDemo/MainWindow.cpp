@@ -2160,6 +2160,7 @@ MainWindow::parseCommandLine()
 	
 #if QT_VERSION >= 0x050200
 	QCommandLineOption backgroundOption(QStringList("background"), "Sets background color of 3D viewer.", "color");
+	QCommandLineOption benchmarkOption(QStringList("benchmark"), "Save benchmark statistics in file.", "filename");
 	QCommandLineOption disableViewerOption(QStringList("disable-viewer"), "Disables viewer during planning.");
 	QCommandLineOption disableWaitOption(QStringList("disable-wait"), "Disables wait before planning.");
 	QCommandLineOption enableQuitOption(QStringList("enable-quit"), "Exits after planning.");
@@ -2170,6 +2171,7 @@ MainWindow::parseCommandLine()
 	
 	QCommandLineParser parser;
 	parser.addOption(backgroundOption);
+	parser.addOption(benchmarkOption);
 	parser.addOption(disableViewerOption);
 	parser.addOption(disableWaitOption);
 	parser.addOption(enableQuitOption);
@@ -2192,6 +2194,11 @@ MainWindow::parseCommandLine()
 		}
 		
 		this->viewer->setBackgroundColor(QColor(background));
+	}
+	
+	if (parser.isSet(benchmarkOption))
+	{
+		this->thread->benchmark = parser.value(benchmarkOption).toStdString();
 	}
 	
 	if (parser.isSet(disableViewerOption))
@@ -2271,6 +2278,7 @@ MainWindow::parseCommandLine()
 	}
 #else
 	QRegExp backgroundRegExp("--background=(\\S*)");
+	QRegExp benchmarkRegExp("--benchmark=([\\s\\S]*)");
 	QRegExp engineRegExp("--engine=(" + engines.join("|") + ")");
 	QRegExp helpRegExp("--help");
 	QRegExp heightRegExp("--height=(\\d*)");
@@ -2286,13 +2294,17 @@ MainWindow::parseCommandLine()
 		{
 			this->viewer->setBackgroundColor(backgroundRegExp.cap(1));
 		}
+		else if (-1 != benchmarkRegExp.indexIn(QApplication::arguments()[i]))
+		{
+			this->thread->benchmark = benchmarkRegExp.cap(1).toStdString();
+		}
 		else if (-1 != engineRegExp.indexIn(QApplication::arguments()[i]))
 		{
 			this->engine = engineRegExp.cap(1);
 		}
 		else if (-1 != helpRegExp.indexIn(QApplication::arguments()[i]))
 		{
-			QMessageBox::information(this, "Usage", "rlPlanDemo [--background=<color>] [--disable-viewer] [--disable-wait] [--enable-quit] [--engine=<" + engines.join("|") + ">] [--height=<height>] [--help] [--seed=<seed>] [--width=<width>] [filename]");
+			QMessageBox::information(this, "Usage", "rlPlanDemo [--background=<color>] [--benchmark=<filename>] [--disable-viewer] [--disable-wait] [--enable-quit] [--engine=<" + engines.join("|") + ">] [--height=<height>] [--help] [--seed=<seed>] [--width=<width>] [filename]");
 			exit(EXIT_SUCCESS);
 		}
 		else if (-1 != heightRegExp.indexIn(QApplication::arguments()[i]))

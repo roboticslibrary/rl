@@ -83,6 +83,8 @@ public:
 	
 	bool animate;
 	
+	std::string benchmark;
+	
 	bool quit;
 	
 	bool swept;

@@ -44,6 +44,7 @@
 Thread::Thread(QObject* parent) :
 	QThread(parent),
 	animate(true),
+	benchmark(),
 	quit(false),
 	swept(false),
 	running(false)
@@ -202,136 +203,138 @@ Thread::run()
 	
 	emit statusChanged("Planner " + QString(solved ? "succeeded" : "failed") + " in " + QString::number(plannerDuration * 1000) + " ms.");
 	
-	std::fstream benchmark;
-	benchmark.open("benchmark.csv", std::ios::app | std::ios::in | std::ios::out);
-	int peek = benchmark.peek();
-	
-	if (std::ifstream::traits_type::eof() == peek)
-	{
-		benchmark.clear();
-		benchmark << "Date,Time,Solved,Engine,Planner,Robot,Nearest Neighbors,Vertices,Edges,Total CD,Free CD,Exploration Duration (s),Duration (s), Path Length" << std::endl;
-	}
-	else
-	{
-		benchmark.seekp(peek);
-	}
-	
-	benchmark << QDateTime::currentDateTime().toString("yyyy-MM-dd,HH:mm:ss.zzz").toStdString();
-	benchmark << ",";
-	benchmark << (solved ? "true" : "false");
-	benchmark << ",";
-	benchmark << MainWindow::instance()->engine.toUpper().toStdString();
-	benchmark << ",";
-	benchmark << MainWindow::instance()->planner->getName();
-	benchmark << ",";
-	benchmark << MainWindow::instance()->model->getManufacturer();
-	benchmark << (!MainWindow::instance()->model->getManufacturer().empty() && !MainWindow::instance()->model->getName().empty() ? " " : "");
-	benchmark << MainWindow::instance()->model->getName();
-	benchmark << ",";
-	
-	if (!MainWindow::instance()->nearestNeighbors.empty())
-	{
-		if (rl::plan::GnatNearestNeighbors* gnatNearestNeighbors = dynamic_cast<rl::plan::GnatNearestNeighbors*>(MainWindow::instance()->nearestNeighbors.front().get()))
-		{
-			benchmark << "GNAT";
-			
-			boost::optional<std::size_t> checks = gnatNearestNeighbors->getChecks();
-			
-			if (checks)
-			{
-				benchmark << " (" << checks.get() << " Checks)";
-			}
-		}
-		else if (rl::plan::KdtreeBoundingBoxNearestNeighbors* kdtreeBoundingBoxNearestNeighbors = dynamic_cast<rl::plan::KdtreeBoundingBoxNearestNeighbors*>(MainWindow::instance()->nearestNeighbors.front().get()))
-		{
-			benchmark << "k-d Tree Bounding Box";
-			
-			boost::optional<std::size_t> checks = kdtreeBoundingBoxNearestNeighbors->getChecks();
-			
-			if (checks)
-			{
-				benchmark << " (" << checks.get() << " Checks)";
-			}
-		}
-		else if (rl::plan::KdtreeNearestNeighbors* kdtreeNearestNeighbors = dynamic_cast<rl::plan::KdtreeNearestNeighbors*>(MainWindow::instance()->nearestNeighbors.front().get()))
-		{
-			benchmark << "k-d Tree";
-			
-			boost::optional<std::size_t> checks = kdtreeNearestNeighbors->getChecks();
-			
-			if (checks)
-			{
-				benchmark << " (" << checks.get() << " Checks)";
-			}
-		}
-		else if (rl::plan::LinearNearestNeighbors* linearNearestNeighbors = dynamic_cast<rl::plan::LinearNearestNeighbors*>(MainWindow::instance()->nearestNeighbors.front().get()))
-		{
-			benchmark << "Linear";
-		}
-	}
-	
-	benchmark << ",";
-	
-	if (rl::plan::Prm* prm = dynamic_cast<rl::plan::Prm*>(MainWindow::instance()->planner.get()))
-	{
-		benchmark << prm->getNumVertices();
-	}
-	else if (rl::plan::Rrt* rrt = dynamic_cast<rl::plan::Rrt*>(MainWindow::instance()->planner.get()))
-	{
-		benchmark << rrt->getNumVertices();
-	}
-	
-	benchmark << ",";
-	
-	if (rl::plan::Prm* prm = dynamic_cast<rl::plan::Prm*>(MainWindow::instance()->planner.get()))
-	{
-		benchmark << prm->getNumEdges();
-	}
-	else if (rl::plan::Rrt* rrt = dynamic_cast<rl::plan::Rrt*>(MainWindow::instance()->planner.get()))
-	{
-		benchmark << rrt->getNumEdges();
-	}
-	
-	benchmark << ",";
-	benchmark << MainWindow::instance()->model->getTotalQueries();
-	benchmark << ",";
-	benchmark << MainWindow::instance()->model->getFreeQueries();
-	benchmark << ",";
-	
-	if (rl::plan::Eet* eet = dynamic_cast<rl::plan::Eet*>(MainWindow::instance()->planner.get()))
-	{
-		benchmark << std::chrono::duration_cast<std::chrono::duration<double>>(eet->getExplorationDuration()).count();
-	}
-	else
-	{
-		benchmark << 0;
-	}
-	
-	benchmark << ",";
-	benchmark << plannerDuration;
-	
 	rl::plan::VectorList path;
 	
 	if (solved)
 	{
 		path = MainWindow::instance()->planner->getPath();
+	}
+	
+	if (!this->benchmark.empty())
+	{
+		std::fstream benchmark;
+		benchmark.open(this->benchmark, std::ios::app | std::ios::in | std::ios::out);
+		int peek = benchmark.peek();
 		
-		rl::plan::VectorList::iterator i = path.begin();
-		rl::plan::VectorList::iterator j = ++path.begin();
-		
-		rl::math::Real length = 0;
-		
-		for (; i != path.end() && j != path.end(); ++i, ++j)
+		if (std::ifstream::traits_type::eof() == peek)
 		{
-			length += MainWindow::instance()->model->distance(*i, *j);
+			benchmark.clear();
+			benchmark << "Date,Time,Solved,Engine,Planner,Robot,Nearest Neighbors,Vertices,Edges,Total CD,Free CD,Exploration Duration (s),Duration (s),Path Length" << std::endl;
+		}
+		else
+		{
+			benchmark.seekp(peek);
+		}
+		
+		benchmark << QDateTime::currentDateTime().toString("yyyy-MM-dd,HH:mm:ss.zzz").toStdString();
+		benchmark << ",";
+		benchmark << (solved ? "true" : "false");
+		benchmark << ",";
+		benchmark << MainWindow::instance()->engine.toUpper().toStdString();
+		benchmark << ",";
+		benchmark << MainWindow::instance()->planner->getName();
+		benchmark << ",";
+		benchmark << MainWindow::instance()->model->getManufacturer();
+		benchmark << (!MainWindow::instance()->model->getManufacturer().empty() && !MainWindow::instance()->model->getName().empty() ? " " : "");
+		benchmark << MainWindow::instance()->model->getName();
+		benchmark << ",";
+		
+		if (!MainWindow::instance()->nearestNeighbors.empty())
+		{
+			if (rl::plan::GnatNearestNeighbors* gnatNearestNeighbors = dynamic_cast<rl::plan::GnatNearestNeighbors*>(MainWindow::instance()->nearestNeighbors.front().get()))
+			{
+				benchmark << "GNAT";
+				boost::optional<std::size_t> checks = gnatNearestNeighbors->getChecks();
+				
+				if (checks)
+				{
+					benchmark << " (" << checks.get() << " Checks)";
+				}
+			}
+			else if (rl::plan::KdtreeBoundingBoxNearestNeighbors* kdtreeBoundingBoxNearestNeighbors = dynamic_cast<rl::plan::KdtreeBoundingBoxNearestNeighbors*>(MainWindow::instance()->nearestNeighbors.front().get()))
+			{
+				benchmark << "k-d Tree Bounding Box";
+				boost::optional<std::size_t> checks = kdtreeBoundingBoxNearestNeighbors->getChecks();
+				
+				if (checks)
+				{
+					benchmark << " (" << checks.get() << " Checks)";
+				}
+			}
+			else if (rl::plan::KdtreeNearestNeighbors* kdtreeNearestNeighbors = dynamic_cast<rl::plan::KdtreeNearestNeighbors*>(MainWindow::instance()->nearestNeighbors.front().get()))
+			{
+				benchmark << "k-d Tree";
+				boost::optional<std::size_t> checks = kdtreeNearestNeighbors->getChecks();
+				
+				if (checks)
+				{
+					benchmark << " (" << checks.get() << " Checks)";
+				}
+			}
+			else if (rl::plan::LinearNearestNeighbors* linearNearestNeighbors = dynamic_cast<rl::plan::LinearNearestNeighbors*>(MainWindow::instance()->nearestNeighbors.front().get()))
+			{
+				benchmark << "Linear";
+			}
 		}
 		
 		benchmark << ",";
-		benchmark << length;
+		
+		if (rl::plan::Prm* prm = dynamic_cast<rl::plan::Prm*>(MainWindow::instance()->planner.get()))
+		{
+			benchmark << prm->getNumVertices();
+		}
+		else if (rl::plan::Rrt* rrt = dynamic_cast<rl::plan::Rrt*>(MainWindow::instance()->planner.get()))
+		{
+			benchmark << rrt->getNumVertices();
+		}
+		
+		benchmark << ",";
+		
+		if (rl::plan::Prm* prm = dynamic_cast<rl::plan::Prm*>(MainWindow::instance()->planner.get()))
+		{
+			benchmark << prm->getNumEdges();
+		}
+		else if (rl::plan::Rrt* rrt = dynamic_cast<rl::plan::Rrt*>(MainWindow::instance()->planner.get()))
+		{
+			benchmark << rrt->getNumEdges();
+		}
+		
+		benchmark << ",";
+		benchmark << MainWindow::instance()->model->getTotalQueries();
+		benchmark << ",";
+		benchmark << MainWindow::instance()->model->getFreeQueries();
+		benchmark << ",";
+		
+		if (rl::plan::Eet* eet = dynamic_cast<rl::plan::Eet*>(MainWindow::instance()->planner.get()))
+		{
+			benchmark << std::chrono::duration_cast<std::chrono::duration<double>>(eet->getExplorationDuration()).count();
+		}
+		else
+		{
+			benchmark << 0;
+		}
+		
+		benchmark << ",";
+		benchmark << plannerDuration;
+		benchmark << ",";
+		
+		if (solved)
+		{
+			rl::math::Real length = 0;
+			rl::plan::VectorList::iterator i = path.begin();
+			rl::plan::VectorList::iterator j = ++path.begin();
+			
+			for (; i != path.end() && j != path.end(); ++i, ++j)
+			{
+				length += MainWindow::instance()->model->distance(*i, *j);
+			}
+			
+			benchmark << length;
+		}
+		
+		benchmark << std::endl;
+		benchmark.close();
 	}
-	
-	benchmark << std::endl;
-	benchmark.close();
 	
 	if (!this->running) return;
 	
