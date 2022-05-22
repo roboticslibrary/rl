@@ -92,6 +92,8 @@ public slots:
 	
 	void reset();
 	
+	void resetCollisions();
+	
 	void resetEdges();
 	
 	void resetLines();

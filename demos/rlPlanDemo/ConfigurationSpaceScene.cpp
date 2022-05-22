@@ -195,6 +195,7 @@ ConfigurationSpaceScene::eval()
 		return;
 	}
 	
+	this->resetCollisions();
 	this->thread->start();
 }
 
@@ -300,6 +301,17 @@ ConfigurationSpaceScene::reset()
 	this->resetEdges();
 	this->resetLines();
 	this->resetPath();
+}
+
+void
+ConfigurationSpaceScene::resetCollisions()
+{
+	if (nullptr == this->collisions)
+	{
+		return;
+	}
+	
+	qDeleteAll(this->collisions->childItems());
 }
 
 void
