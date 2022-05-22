@@ -56,6 +56,19 @@ ConfigurationSpaceScene::ConfigurationSpaceScene(QObject* parent) :
 	
 	this->thread->scene = this;
 	
+	this->scene = this->addRect(0, 0, 0, 0, QPen(Qt::NoPen), QBrush(Qt::white));
+	this->scene->setFlag(QGraphicsItem::ItemClipsChildrenToShape, true);
+	this->scene->setZValue(0);
+	
+	this->collisions = this->createItemGroup(QList<QGraphicsItem*>());
+	this->collisions->setZValue(1);
+	
+	this->edges = this->createItemGroup(QList<QGraphicsItem*>());
+	this->edges->setZValue(2);
+	
+	this->path = this->createItemGroup(QList<QGraphicsItem*>());
+	this->path->setZValue(3);
+	
 	QObject::connect(
 		this->thread,
 		SIGNAL(addCollision(const qreal&, const qreal&, const qreal&, const qreal&, const int&)),
@@ -89,11 +102,8 @@ ConfigurationSpaceScene::addCollision(const qreal& x, const qreal& y, const qrea
 void
 ConfigurationSpaceScene::clear()
 {
-	QGraphicsScene::clear();
-	this->collisions = nullptr;
-	this->edges = nullptr;
-	this->path = nullptr;
-	this->scene = nullptr;
+	this->reset();
+	this->resetCollisions();
 }
 
 void
@@ -229,28 +239,14 @@ ConfigurationSpaceScene::init()
 	this->steps[0] = static_cast<int>(std::ceil(this->range[0] / this->delta[0]));
 	this->steps[1] = static_cast<int>(std::ceil(this->range[1] / this->delta[1]));
 	
-	this->scene = this->addRect(
+	this->scene->setRect(
 		this->minimum[0],
 		-this->maximum[1],
 		this->range[0],
-		this->range[1],
-		QPen(Qt::NoPen),
-		QBrush(Qt::white)
+		this->range[1]
 	);
 	
-	this->scene->setFlag(QGraphicsItem::ItemClipsChildrenToShape, true);
-	this->scene->setZValue(0);
-	
 	this->setSceneRect(this->scene->boundingRect());
-	
-	this->collisions = this->createItemGroup(QList<QGraphicsItem*>());
-	this->collisions->setZValue(1);
-	
-	this->edges = this->createItemGroup(QList<QGraphicsItem*>());
-	this->edges->setZValue(2);
-	
-	this->path = this->createItemGroup(QList<QGraphicsItem*>());
-	this->path->setZValue(3);
 }
 
 void
@@ -306,22 +302,12 @@ ConfigurationSpaceScene::reset()
 void
 ConfigurationSpaceScene::resetCollisions()
 {
-	if (nullptr == this->collisions)
-	{
-		return;
-	}
-	
 	qDeleteAll(this->collisions->childItems());
 }
 
 void
 ConfigurationSpaceScene::resetEdges()
 {
-	if (nullptr == this->edges)
-	{
-		return;
-	}
-	
 	qDeleteAll(this->edges->childItems());
 }
 
@@ -333,11 +319,6 @@ ConfigurationSpaceScene::resetLines()
 void
 ConfigurationSpaceScene::resetPath()
 {
-	if (nullptr == this->path)
-	{
-		return;
-	}
-	
 	qDeleteAll(this->path->childItems());
 }
 
