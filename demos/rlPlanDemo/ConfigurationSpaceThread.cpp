@@ -27,16 +27,13 @@
 #include <QMutexLocker>
 #include <rl/plan/SimpleModel.h>
 
+#include "ConfigurationSpaceScene.h"
 #include "ConfigurationSpaceThread.h"
 #include "MainWindow.h"
 
 ConfigurationSpaceThread::ConfigurationSpaceThread(QObject* parent) :
 	QThread(parent),
-	axis0(0),
-	axis1(1),
-	delta0(1),
-	delta1(1),
-	model(nullptr),
+	scene(nullptr),
 	running(false)
 {
 }
@@ -48,41 +45,34 @@ ConfigurationSpaceThread::~ConfigurationSpaceThread()
 void
 ConfigurationSpaceThread::run()
 {
+	if (nullptr == this->scene)
+	{
+		return;
+	}
+	
 	QMutexLocker lock(&MainWindow::instance()->mutex);
 	
 	this->running = true;
 	
-	if (rl::plan::SimpleModel* model = dynamic_cast<rl::plan::SimpleModel*>(this->model))
+	if (rl::plan::SimpleModel* model = dynamic_cast<rl::plan::SimpleModel*>(this->scene->model))
 	{
-		rl::math::Vector maximum = model->getMaximum();
-		rl::math::Vector minimum = model->getMinimum();
-		
-		rl::math::Real range0 = std::abs(maximum(this->axis0) - minimum(this->axis0));
-		rl::math::Real range1 = std::abs(maximum(this->axis1) - minimum(this->axis1));
-		
-		rl::math::Real delta0 = range0 / std::ceil(range0 / this->delta0);
-		rl::math::Real delta1 = range1 / std::ceil(range1 / this->delta1);
-		
-		std::size_t steps0 = static_cast<std::size_t>(std::ceil(range0 / delta0));
-		std::size_t steps1 = static_cast<std::size_t>(std::ceil(range1 / delta1));
-		
 		rl::math::Vector q(*MainWindow::instance()->q);
 		
-		for (std::size_t i = 0; i < steps1 + 1 && this->running; ++i)
+		for (int i = 0; i < this->scene->steps[1] + 1 && this->running; ++i)
 		{
-			q(this->axis1) = maximum(this->axis1) - i * delta1;
+			q(this->scene->axis[1]) = this->scene->maximum[1] - i * this->scene->delta[1];
 			
-			for (std::size_t j = 0; j < steps0 + 1 && this->running; ++j)
+			for (int j = 0; j < this->scene->steps[0] + 1 && this->running; ++j)
 			{
-				q(this->axis0) = minimum(this->axis0) + j * delta0;
+				q(this->scene->axis[0]) = this->scene->minimum[0] + j * this->scene->delta[0];
 				
 				if (model->isColliding(q))
 				{
 					emit addCollision(
-						q(this->axis0),
-						q(this->axis1),
-						delta0,
-						delta1,
+						q(this->scene->axis[0]),
+						q(this->scene->axis[1]),
+						this->scene->delta[0],
+						this->scene->delta[1],
 						0
 					);
 				}

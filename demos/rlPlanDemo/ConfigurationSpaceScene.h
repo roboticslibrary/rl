@@ -43,15 +43,19 @@ public:
 	
 	virtual ~ConfigurationSpaceScene();
 	
-	std::size_t axis0;
+	std::array<std::size_t, 2> axis;
 	
-	std::size_t axis1;
+	std::array<rl::math::Real, 2> delta;
 	
-	rl::math::Real delta0;
+	std::array<rl::math::Real, 2> maximum;
 	
-	rl::math::Real delta1;
+	std::array<rl::math::Real, 2> minimum;
 	
 	rl::plan::Model* model;
+	
+	std::array<rl::math::Real, 2> range;
+	
+	std::array<int, 2> steps;
 	
 public slots:
 	void addCollision(const qreal& x, const qreal& y, const qreal& w, const qreal& h, const int& rgb);

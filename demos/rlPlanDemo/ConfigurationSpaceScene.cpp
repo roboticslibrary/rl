@@ -36,17 +36,26 @@
 
 ConfigurationSpaceScene::ConfigurationSpaceScene(QObject* parent) :
 	QGraphicsScene(parent),
-	axis0(0),
-	axis1(1),
-	delta0(1),
-	delta1(1),
+	axis(),
+	delta(),
+	maximum(),
+	minimum(),
 	model(nullptr),
+	range(),
+	steps(),
 	collisions(nullptr),
 	edges(nullptr),
 	path(nullptr),
 	scene(nullptr),
 	thread(new ConfigurationSpaceThread(this))
 {
+	this->axis[0] = 0;
+	this->axis[1] = 1;
+	this->delta[0] = 1;
+	this->delta[1] = 1;
+	
+	this->thread->scene = this;
+	
 	QObject::connect(
 		this->thread,
 		SIGNAL(addCollision(const qreal&, const qreal&, const qreal&, const qreal&, const int&)),
@@ -96,10 +105,10 @@ void
 ConfigurationSpaceScene::drawConfigurationEdge(const rl::math::Vector& u, const rl::math::Vector& v, const bool& free)
 {
 	QGraphicsLineItem* line = this->addLine(
-		u(this->axis0),
-		-u(this->axis1),
-		v(this->axis0),
-		-v(this->axis1),
+		u(this->axis[0]),
+		-u(this->axis[1]),
+		v(this->axis[0]),
+		-v(this->axis[1]),
 		free ? QPen(QBrush(QColor(0, 128, 0)), 0) : QPen(QBrush(QColor(128, 0, 0)), 0)
 	);
 	
@@ -122,10 +131,10 @@ ConfigurationSpaceScene::drawConfigurationPath(const rl::plan::VectorList& path)
 	for (; i != path.end() && j != path.end(); ++i, ++j)
 	{
 		QGraphicsLineItem* line = this->addLine(
-			(*i)(this->axis0),
-			-(*i)(this->axis1),
-			(*j)(this->axis0),
-			-(*j)(this->axis1),
+			(*i)(this->axis[0]),
+			-(*i)(this->axis[1]),
+			(*j)(this->axis[0]),
+			-(*j)(this->axis[1]),
 			QPen(QBrush(QColor(0, 255, 0)), 0)
 		);
 		
@@ -186,12 +195,6 @@ ConfigurationSpaceScene::eval()
 		return;
 	}
 	
-	this->thread->axis0 = this->axis0;
-	this->thread->axis1 = this->axis1;
-	this->thread->delta0 = this->delta0;
-	this->thread->delta1 = this->delta1;
-	this->thread->model = this->model;
-	
 	this->thread->start();
 }
 
@@ -213,11 +216,23 @@ ConfigurationSpaceScene::init()
 	rl::math::Vector maximum = this->model->getMaximum();
 	rl::math::Vector minimum = this->model->getMinimum();
 	
+	this->maximum[0] = maximum(this->axis[0]);
+	this->maximum[1] = maximum(this->axis[1]);
+	
+	this->minimum[0] = minimum(this->axis[0]);
+	this->minimum[1] = minimum(this->axis[1]);
+	
+	this->range[0] = std::abs(this->maximum[0] - this->minimum[0]);
+	this->range[1] = std::abs(this->maximum[1] - this->minimum[1]);
+	
+	this->steps[0] = static_cast<int>(std::ceil(this->range[0] / this->delta[0]));
+	this->steps[1] = static_cast<int>(std::ceil(this->range[1] / this->delta[1]));
+	
 	this->scene = this->addRect(
-		minimum(this->axis0),
-		-maximum(this->axis1),
-		std::abs(maximum(this->axis0) - minimum(this->axis0)),
-		std::abs(maximum(this->axis1) - minimum(this->axis1)),
+		this->minimum[0],
+		-this->maximum[1],
+		this->range[0],
+		this->range[1],
 		QPen(Qt::NoPen),
 		QBrush(Qt::white)
 	);
@@ -260,19 +275,16 @@ ConfigurationSpaceScene::mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent)
 	{
 		if (!MainWindow::instance()->thread->isRunning())
 		{
-			rl::math::Vector maximum = this->model->getMaximum();
-			rl::math::Vector minimum = this->model->getMinimum();
-			
-			if (mouseEvent->scenePos().x() > minimum(this->axis0) &&
-				mouseEvent->scenePos().x() < maximum(this->axis0))
+			if (mouseEvent->scenePos().x() > this->minimum[0] &&
+				mouseEvent->scenePos().x() < this->maximum[0])
 			{
-				(*MainWindow::instance()->q)(this->axis0) = mouseEvent->scenePos().x();
+				(*MainWindow::instance()->q)(this->axis[0]) = mouseEvent->scenePos().x();
 			}
 			
-			if (-mouseEvent->scenePos().y() > minimum(this->axis1) &&
-				-mouseEvent->scenePos().y() < maximum(this->axis1))
+			if (-mouseEvent->scenePos().y() > this->minimum[1] &&
+				-mouseEvent->scenePos().y() < this->maximum[1])
 			{
-				(*MainWindow::instance()->q)(this->axis1) = -mouseEvent->scenePos().y();
+				(*MainWindow::instance()->q)(this->axis[1]) = -mouseEvent->scenePos().y();
 			}
 			
 			MainWindow::instance()->configurationModel->invalidate();

@@ -28,7 +28,8 @@
 #define CONFIGURATIONSPACETHREAD_H
 
 #include <QThread>
-#include <rl/plan/Model.h>
+
+class ConfigurationSpaceScene;
 
 class ConfigurationSpaceThread : public QThread
 {
@@ -43,15 +44,7 @@ public:
 	
 	void stop();
 	
-	std::size_t axis0;
-	
-	std::size_t axis1;
-	
-	rl::math::Real delta0;
-	
-	rl::math::Real delta1;
-	
-	rl::plan::Model* model;
+	ConfigurationSpaceScene* scene;
 	
 protected:
 	

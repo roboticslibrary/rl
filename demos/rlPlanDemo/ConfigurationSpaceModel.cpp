@@ -71,16 +71,16 @@ ConfigurationSpaceModel::data(const QModelIndex& index, int role) const
 		switch (index.row())
 		{
 		case 0:
-			return static_cast<unsigned int>(this->configurationSpaceScene->axis0);
+			return static_cast<unsigned int>(this->configurationSpaceScene->axis[0]);
 			break;
 		case 1:
-			return static_cast<unsigned int>(this->configurationSpaceScene->axis1);
+			return static_cast<unsigned int>(this->configurationSpaceScene->axis[1]);
 			break;
 		case 2:
-			return this->configurationSpaceScene->delta0;
+			return this->configurationSpaceScene->delta[0];
 			break;
 		case 3:
-			return this->configurationSpaceScene->delta1;
+			return this->configurationSpaceScene->delta[1];
 			break;
 		default:
 			break;
@@ -160,11 +160,11 @@ ConfigurationSpaceModel::rowCount(const QModelIndex& parent) const
 		return 0;
 	}
 	
-	
 	if (nullptr == this->configurationSpaceScene->model)
 	{
 		return 0;
 	}
+	
 	return 4;
 }
 
@@ -193,7 +193,7 @@ ConfigurationSpaceModel::setData(const QModelIndex& index, const QVariant& value
 		case 0:
 			if (value.value<std::size_t>() < this->configurationSpaceScene->model->getDofPosition())
 			{
-				this->configurationSpaceScene->axis0 = value.value<std::size_t>();
+				this->configurationSpaceScene->axis[0] = value.value<std::size_t>();
 			}
 			else
 			{
@@ -203,7 +203,7 @@ ConfigurationSpaceModel::setData(const QModelIndex& index, const QVariant& value
 		case 1:
 			if (value.value<std::size_t>() < this->configurationSpaceScene->model->getDofPosition())
 			{
-				this->configurationSpaceScene->axis1 = value.value<std::size_t>();
+				this->configurationSpaceScene->axis[1] = value.value<std::size_t>();
 			}
 			else
 			{
@@ -213,7 +213,7 @@ ConfigurationSpaceModel::setData(const QModelIndex& index, const QVariant& value
 		case 2:
 			if (value.value<rl::math::Real>() > 0)
 			{
-				this->configurationSpaceScene->delta0 = value.value<rl::math::Real>();
+				this->configurationSpaceScene->delta[0] = value.value<rl::math::Real>();
 			}
 			else
 			{
@@ -223,7 +223,7 @@ ConfigurationSpaceModel::setData(const QModelIndex& index, const QVariant& value
 		case 3:
 			if (value.value<rl::math::Real>() > 0)
 			{
-				this->configurationSpaceScene->delta1 = value.value<rl::math::Real>();
+				this->configurationSpaceScene->delta[1] = value.value<rl::math::Real>();
 			}
 			else
 			{
