@@ -310,12 +310,7 @@ ConfigurationSpaceScene::resetEdges()
 		return;
 	}
 	
-	QList<QGraphicsItem*> items = this->edges->childItems();
-	
-	while (!items.isEmpty())
-	{
-		delete items.takeFirst();
-	}
+	qDeleteAll(this->edges->childItems());
 }
 
 void
@@ -331,12 +326,7 @@ ConfigurationSpaceScene::resetPath()
 		return;
 	}
 	
-	QList<QGraphicsItem*> items = this->path->childItems();
-	
-	while (!items.isEmpty())
-	{
-		delete items.takeFirst();
-	}
+	qDeleteAll(this->path->childItems());
 }
 
 void
