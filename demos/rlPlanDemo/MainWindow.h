@@ -253,15 +253,9 @@ private:
 	
 	QAction* toggleCameraAction;
 	
-	QAction* toggleConfigurationAction;
-	
 	QAction* toggleConfigurationEdgesAction;
 	
-	QAction* toggleConfigurationSpaceAction;
-	
 	QAction* toggleConfigurationSpaceActiveAction;
-	
-	QAction* toggleConfigurationSpaceSceneAction;
 	
 	QAction* toggleConfigurationVerticesAction;
 	
@@ -270,8 +264,6 @@ private:
 	QAction* togglePathEdgesAction;
 	
 	QAction* togglePathVerticesAction;
-	
-	QAction* togglePlannerAction;
 	
 	QAction* togglePointsAction;
 	

@@ -180,16 +180,12 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	startThreadAction(new QAction(this)),
 	toggleAnimationAction(new QAction(this)),
 	toggleCameraAction(new QAction(this)),
-	toggleConfigurationAction(new QAction(this)),
 	toggleConfigurationEdgesAction(new QAction(this)),
-	toggleConfigurationSpaceAction(new QAction(this)),
 	toggleConfigurationSpaceActiveAction(new QAction(this)),
-	toggleConfigurationSpaceSceneAction(new QAction(this)),
 	toggleConfigurationVerticesAction(new QAction(this)),
 	toggleLinesAction(new QAction(this)),
 	togglePathEdgesAction(new QAction(this)),
 	togglePathVerticesAction(new QAction(this)),
-	togglePlannerAction(new QAction(this)),
 	togglePointsAction(new QAction(this)),
 	toggleSpheresAction(new QAction(this)),
 	toggleSweptVolumeAction(new QAction(this)),
@@ -598,18 +594,9 @@ MainWindow::init()
 	
 	this->exitAction->setText("Exit");
 	QObject::connect(this->exitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
-	this->addAction(this->exitAction);
 	fileMenu->addAction(this->exitAction);
 	
 	QMenu* configurationMenu = this->menuBar()->addMenu("Configuration");
-	
-	this->toggleConfigurationAction->setText("Parameters");
-	this->toggleConfigurationAction->setShortcut(QKeySequence("F5"));
-	QObject::connect(this->toggleConfigurationAction, SIGNAL(triggered()), this, SLOT(toggleConfiguration()));
-	this->addAction(this->toggleConfigurationAction);
-	configurationMenu->addAction(this->toggleConfigurationAction);
-	
-	configurationMenu->addSeparator();
 	
 	this->getRandomConfigurationAction->setText("Random");
 	this->getRandomConfigurationAction->setShortcut(QKeySequence("F3"));
@@ -625,25 +612,10 @@ MainWindow::init()
 	
 	QMenu* configurationSpaceMenu = this->menuBar()->addMenu("Configuration Space");
 	
-	this->toggleConfigurationSpaceAction->setText("Parameters");
-	this->toggleConfigurationSpaceAction->setShortcut(QKeySequence("F6"));
-	QObject::connect(this->toggleConfigurationSpaceAction, SIGNAL(triggered()), this, SLOT(toggleConfigurationSpace()));
-	this->addAction(this->toggleConfigurationSpaceAction);
-	configurationSpaceMenu->addAction(this->toggleConfigurationSpaceAction);
-	
-	this->toggleConfigurationSpaceSceneAction->setText("Visualization");
-	this->toggleConfigurationSpaceSceneAction->setShortcut(QKeySequence("F10"));
-	QObject::connect(this->toggleConfigurationSpaceSceneAction, SIGNAL(triggered()), this, SLOT(toggleConfigurationSpaceScene()));
-	this->addAction(this->toggleConfigurationSpaceSceneAction);
-	configurationSpaceMenu->addAction(this->toggleConfigurationSpaceSceneAction);
-	
-	configurationSpaceMenu->addSeparator();
-	
 	this->toggleConfigurationSpaceActiveAction->setCheckable(true);
 	this->toggleConfigurationSpaceActiveAction->setChecked(false);
 	this->toggleConfigurationSpaceActiveAction->setText("Active");
 	QObject::connect(this->toggleConfigurationSpaceActiveAction, SIGNAL(toggled(bool)), this, SLOT(toggleConfigurationSpaceActive(bool)));
-	this->addAction(this->toggleConfigurationSpaceActiveAction);
 	configurationSpaceMenu->addAction(this->toggleConfigurationSpaceActiveAction);
 	
 	configurationSpaceMenu->addSeparator();
@@ -655,14 +627,6 @@ MainWindow::init()
 	configurationSpaceMenu->addAction(this->evalAction);
 	
 	QMenu* plannerMenu = this->menuBar()->addMenu("Planner");
-	
-	this->togglePlannerAction->setText("Parameters");
-	this->togglePlannerAction->setShortcut(QKeySequence("F7"));
-	QObject::connect(this->togglePlannerAction, SIGNAL(triggered()), this, SLOT(togglePlanner()));
-	this->addAction(this->togglePlannerAction);
-	plannerMenu->addAction(this->togglePlannerAction);
-	
-	plannerMenu->addSeparator();
 	
 	this->getStartConfigurationAction->setText("Get Start Configuration");
 	this->getStartConfigurationAction->setShortcut(QKeySequence("F1"));
@@ -710,7 +674,6 @@ MainWindow::init()
 	this->toggleViewActiveAction->setChecked(true);
 	this->toggleViewActiveAction->setText("Active");
 	QObject::connect(this->toggleViewActiveAction, SIGNAL(toggled(bool)), this, SLOT(toggleViewActive(bool)));
-	this->addAction(this->toggleViewActiveAction);
 	viewMenu->addAction(this->toggleViewActiveAction);
 	
 	viewMenu->addSeparator();
@@ -719,21 +682,18 @@ MainWindow::init()
 	this->togglePathEdgesAction->setChecked(true);
 	this->togglePathEdgesAction->setText("Path Edges");
 	QObject::connect(this->togglePathEdgesAction, SIGNAL(toggled(bool)), this->viewer, SLOT(togglePathEdges(bool)));
-	this->addAction(this->togglePathEdgesAction);
 	viewMenu->addAction(this->togglePathEdgesAction);
 	
 	this->togglePathVerticesAction->setCheckable(true);
 	this->togglePathVerticesAction->setChecked(false);
 	this->togglePathVerticesAction->setText("Path Vertices");
 	QObject::connect(this->togglePathVerticesAction, SIGNAL(toggled(bool)), this->viewer, SLOT(togglePathVertices(bool)));
-	this->addAction(this->togglePathVerticesAction);
 	viewMenu->addAction(this->togglePathVerticesAction);
 	
 	this->toggleAnimationAction->setCheckable(true);
 	this->toggleAnimationAction->setChecked(true);
 	this->toggleAnimationAction->setText("Animation");
 	QObject::connect(this->toggleAnimationAction, SIGNAL(toggled(bool)), this, SLOT(toggleAnimation(bool)));
-	this->addAction(this->toggleAnimationAction);
 	viewMenu->addAction(this->toggleAnimationAction);
 	
 	this->toggleSweptVolumeAction->setCheckable(true);
@@ -741,23 +701,22 @@ MainWindow::init()
 	this->toggleSweptVolumeAction->setText("Swept Volume");
 	QObject::connect(this->toggleSweptVolumeAction, SIGNAL(toggled(bool)), this, SLOT(toggleSweptVolume(bool)));
 	QObject::connect(this->toggleSweptVolumeAction, SIGNAL(toggled(bool)), this->viewer, SLOT(toggleSweptVolume(bool)));
-	this->addAction(this->toggleSweptVolumeAction);
 	viewMenu->addAction(this->toggleSweptVolumeAction);
 	
 	viewMenu->addSeparator();
 	
 	this->toggleConfigurationEdgesAction->setCheckable(true);
 	this->toggleConfigurationEdgesAction->setChecked(true);
+	this->toggleConfigurationEdgesAction->setMenuRole(QAction::NoRole);
 	this->toggleConfigurationEdgesAction->setText("Configuration Edges");
 	QObject::connect(this->toggleConfigurationEdgesAction, SIGNAL(toggled(bool)), this->viewer, SLOT(toggleConfigurationEdges(bool)));
-	this->addAction(this->toggleConfigurationEdgesAction);
 	viewMenu->addAction(this->toggleConfigurationEdgesAction);
 	
 	this->toggleConfigurationVerticesAction->setCheckable(true);
 	this->toggleConfigurationVerticesAction->setChecked(false);
+	this->toggleConfigurationVerticesAction->setMenuRole(QAction::NoRole);
 	this->toggleConfigurationVerticesAction->setText("Configuration Vertices");
 	QObject::connect(this->toggleConfigurationVerticesAction, SIGNAL(toggled(bool)), this->viewer, SLOT(toggleConfigurationVertices(bool)));
-	this->addAction(this->toggleConfigurationVerticesAction);
 	viewMenu->addAction(this->toggleConfigurationVerticesAction);
 	
 	viewMenu->addSeparator();
@@ -766,7 +725,6 @@ MainWindow::init()
 	this->toggleWorkFramesAction->setChecked(false);
 	this->toggleWorkFramesAction->setText("Work Frames");
 	QObject::connect(this->toggleWorkFramesAction, SIGNAL(toggled(bool)), this->viewer, SLOT(toggleWorkFrames(bool)));
-	this->addAction(this->toggleWorkFramesAction);
 	viewMenu->addAction(this->toggleWorkFramesAction);
 	
 	viewMenu->addSeparator();
@@ -775,21 +733,18 @@ MainWindow::init()
 	this->toggleLinesAction->setChecked(true);
 	this->toggleLinesAction->setText("Lines");
 	QObject::connect(this->toggleLinesAction, SIGNAL(toggled(bool)), this->viewer, SLOT(toggleLines(bool)));
-	this->addAction(this->toggleLinesAction);
 	viewMenu->addAction(this->toggleLinesAction);
 	
 	this->togglePointsAction->setCheckable(true);
 	this->togglePointsAction->setChecked(true);
 	this->togglePointsAction->setText("Points");
 	QObject::connect(this->togglePointsAction, SIGNAL(toggled(bool)), this->viewer, SLOT(togglePoints(bool)));
-	this->addAction(this->togglePointsAction);
 	viewMenu->addAction(this->togglePointsAction);
 	
 	this->toggleSpheresAction->setCheckable(true);
 	this->toggleSpheresAction->setChecked(true);
 	this->toggleSpheresAction->setText("Spheres");
 	QObject::connect(this->toggleSpheresAction, SIGNAL(toggled(bool)), this->viewer, SLOT(toggleSpheres(bool)));
-	this->addAction(this->toggleSpheresAction);
 	viewMenu->addAction(this->toggleSpheresAction);
 	
 	viewMenu->addSeparator();
