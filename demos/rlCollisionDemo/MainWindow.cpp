@@ -392,20 +392,44 @@ MainWindow::parseCommandLine()
 void
 MainWindow::test()
 {
+	this->distanceCoordinate->point.setNum(0);
+	this->distanceLineSet->coordIndex.setNum(0);
+	this->distanceCoordinate->point.setNum(0);
+	
+	this->depthCoordinate->point.setNum(0);
+	this->depthLineSet->coordIndex.setNum(0);
+	this->depthCoordinate->point.setNum(0);
+	
+	rl::sg::Body* body = this->collisionScene->getModel(this->model)->getBody(this->body);
+	
 	if (rl::sg::SimpleScene* simpleScene = dynamic_cast<rl::sg::SimpleScene*>(this->collisionScene.get()))
 	{
-		bool test = simpleScene->isColliding();
+		std::size_t collisions = 0;
 		
-		if (test)
+		for (rl::sg::Scene::Iterator i = this->collisionScene->begin(); i != this->collisionScene->end(); ++i)
 		{
-			this->simpleLabel->setText("Collision: true");
+			for (rl::sg::Model::Iterator j = (*i)->begin(); j != (*i)->end(); ++j)
+			{
+				if (body != *j)
+				{
+					if (simpleScene->areColliding(body, *j))
+					{
+						++collisions;
+					}
+				}
+			}
+		}
+		
+		this->simpleLabel->setText("Collisions: " + QString::number(collisions));
+		
+		if (collisions > 0)
+		{
 			this->viewer->setBackgroundColor(SbColor(0.5, 0, 0));
 			this->gradientBackground->color0.setValue(0.5f, 0.0f, 0.0f);
 			this->gradientBackground->color1.setValue(1.0f, 1.0f, 1.0f);
 		}
 		else
 		{
-			this->simpleLabel->setText("Collision: false");
 			this->viewer->setBackgroundColor(SbColor(0, 0, 0));
 			this->gradientBackground->color0.setValue(0.8f, 0.8f, 0.8f);
 			this->gradientBackground->color1.setValue(1.0f, 1.0f, 1.0f);
@@ -414,23 +438,33 @@ MainWindow::test()
 	
 	if (rl::sg::DistanceScene* distanceScene = dynamic_cast<rl::sg::DistanceScene*>(this->collisionScene.get()))
 	{
-		this->distanceCoordinate->point.setNum(0);
-		this->distanceLineSet->coordIndex.setNum(0);
-		this->distanceCoordinate->point.setNum(0);
+		rl::math::Vector3 point1 = rl::math::Vector3::Zero();
+		rl::math::Vector3 point2 = rl::math::Vector3::Zero();
+		rl::math::Real distance = std::numeric_limits<rl::math::Real>::max();
 		
-		rl::math::Vector3 point1;
-		rl::math::Vector3 point2;
-		
-		rl::math::Real distance = distanceScene->distance(
-			this->collisionScene->getModel(0)->getBody(0),
-			this->collisionScene->getModel(1)->getBody(0),
-			point1,
-			point2
-		);
+		for (rl::sg::Scene::Iterator i = this->collisionScene->begin(); i != this->collisionScene->end(); ++i)
+		{
+			for (rl::sg::Model::Iterator j = (*i)->begin(); j != (*i)->end(); ++j)
+			{
+				if (body != *j)
+				{
+					rl::math::Vector3 tmpPoint1;
+					rl::math::Vector3 tmpPoint2;
+					rl::math::Real tmpDistance = distanceScene->distance(body, *j, tmpPoint1, tmpPoint2);
+					
+					if (tmpDistance < distance)
+					{
+						distance = tmpDistance;
+						point1 = tmpPoint1;
+						point2 = tmpPoint2;
+					}
+				}
+			}
+		}
 		
 		this->distanceLabel->setText("Distance: " + QString::number(distance));
 		
-		if (distance > std::numeric_limits<rl::math::Real>::epsilon())
+		if (distance > 0 && distance < std::numeric_limits<rl::math::Real>::max())
 		{
 			this->distanceCoordinate->point.set1Value(
 				this->distanceCoordinate->point.getNum(),
@@ -462,23 +496,33 @@ MainWindow::test()
 	
 	if (rl::sg::DepthScene* depthScene = dynamic_cast<rl::sg::DepthScene*>(this->collisionScene.get()))
 	{
-		this->depthCoordinate->point.setNum(0);
-		this->depthLineSet->coordIndex.setNum(0);
-		this->depthCoordinate->point.setNum(0);
+		rl::math::Vector3 point1 = rl::math::Vector3::Zero();
+		rl::math::Vector3 point2 = rl::math::Vector3::Zero();
+		rl::math::Real depth = 0;
 		
-		rl::math::Vector3 point1;
-		rl::math::Vector3 point2;
-		
-		rl::math::Real depth = depthScene->depth(
-			this->collisionScene->getModel(0)->getBody(0),
-			this->collisionScene->getModel(1)->getBody(0),
-			point1,
-			point2
-		);
+		for (rl::sg::Scene::Iterator i = this->collisionScene->begin(); i != this->collisionScene->end(); ++i)
+		{
+			for (rl::sg::Model::Iterator j = (*i)->begin(); j != (*i)->end(); ++j)
+			{
+				if (body != *j)
+				{
+					rl::math::Vector3 tmpPoint1;
+					rl::math::Vector3 tmpPoint2;
+					rl::math::Real tmpDepth = depthScene->depth(body, *j, tmpPoint1, tmpPoint2);
+					
+					if (tmpDepth > depth)
+					{
+						depth = tmpDepth;
+						point1 = tmpPoint1;
+						point2 = tmpPoint2;
+					}
+				}
+			}
+		}
 		
 		this->depthLabel->setText("Depth: " + QString::number(depth));
 		
-		if (depth > std::numeric_limits<rl::math::Real>::epsilon())
+		if (depth > 0)
 		{
 			this->depthCoordinate->point.set1Value(
 				this->depthCoordinate->point.getNum(),
