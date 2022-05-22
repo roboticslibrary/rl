@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <QGraphicsRectItem>
 #include <QGraphicsSceneMouseEvent>
+#include <QPainter>
 
 #include "ConfigurationModel.h"
 #include "ConfigurationSpaceScene.h"
@@ -43,11 +43,12 @@ ConfigurationSpaceScene::ConfigurationSpaceScene(QObject* parent) :
 	model(nullptr),
 	range(),
 	steps(),
-	collisions(nullptr),
+	collisions(true),
 	configuration(nullptr),
+	data(),
 	edges(nullptr),
+	image(),
 	path(nullptr),
-	scene(nullptr),
 	thread(new ConfigurationSpaceThread(this))
 {
 	this->axis[0] = 0;
@@ -56,13 +57,6 @@ ConfigurationSpaceScene::ConfigurationSpaceScene(QObject* parent) :
 	this->delta[1] = 1;
 	
 	this->thread->scene = this;
-	
-	this->scene = this->addRect(0, 0, 0, 0, QPen(Qt::NoPen), QBrush(Qt::white));
-	this->scene->setFlag(QGraphicsItem::ItemClipsChildrenToShape, true);
-	this->scene->setZValue(0);
-	
-	this->collisions = this->createItemGroup(QList<QGraphicsItem*>());
-	this->collisions->setZValue(1);
 	
 	this->configuration = this->addEllipse(-3, -3, 6, 6, QPen(Qt::NoPen), QBrush((QColor(247, 127, 7))));
 	this->configuration->setFlag(QGraphicsItem::ItemIgnoresTransformations);
@@ -79,9 +73,9 @@ ConfigurationSpaceScene::ConfigurationSpaceScene(QObject* parent) :
 	
 	QObject::connect(
 		this->thread,
-		SIGNAL(addCollision(const qreal&, const qreal&, const qreal&, const qreal&, const int&)),
+		SIGNAL(addCollision(const int&, const int&, const unsigned char&)),
 		this,
-		SLOT(addCollision(const qreal&, const qreal&, const qreal&, const qreal&, const int&))
+		SLOT(addCollision(const int&, const int&, const unsigned char&))
 	);
 	
 	QObject::connect(this->thread, SIGNAL(finished()), this, SIGNAL(evalFinished()));
@@ -93,18 +87,16 @@ ConfigurationSpaceScene::~ConfigurationSpaceScene()
 }
 
 void
-ConfigurationSpaceScene::addCollision(const qreal& x, const qreal& y, const qreal& w, const qreal& h, const int& rgb)
+ConfigurationSpaceScene::addCollision(const int& x, const int& y, const unsigned char& rgb)
 {
-	QGraphicsRectItem* rect = this->addRect(
-		x - w * static_cast<qreal>(0.5),
-		-y - h * static_cast<qreal>(0.5),
-		w,
-		h,
-		QPen(Qt::NoPen),
-		QBrush(QColor(rgb, rgb, rgb))
+	this->data[y * this->steps[0] + x] = rgb;
+	this->invalidate(
+		this->minimum[0] + x * this->delta[0],
+		this->minimum[1] + y * this->delta[1],
+		this->delta[0],
+		this->delta[1],
+		QGraphicsScene::BackgroundLayer
 	);
-	
-	this->collisions->addToGroup(rect);
 }
 
 void
@@ -115,11 +107,29 @@ ConfigurationSpaceScene::clear()
 }
 
 void
+ConfigurationSpaceScene::drawBackground(QPainter* painter, const QRectF& rect)
+{
+	painter->fillRect(rect, this->palette().color(QPalette::Window));
+	
+	if (this->collisions)
+	{
+		QRectF target = rect.intersected(this->sceneRect());
+		QRectF source(
+			(target.x() - this->minimum[0]) / this->delta[0],
+			(target.y() - this->minimum[1]) / this->delta[1],
+			target.width() / this->delta[0],
+			target.height() / this->delta[1]
+		);
+		painter->drawImage(target, image, source, Qt::NoFormatConversion);
+	}
+}
+
+void
 ConfigurationSpaceScene::drawConfiguration(const rl::math::Vector& q)
 {
 	this->configuration->setPos(
 		q(this->axis[0]),
-		-q(this->axis[1])
+		q(this->axis[1])
 	);
 }
 
@@ -128,10 +138,10 @@ ConfigurationSpaceScene::drawConfigurationEdge(const rl::math::Vector& u, const 
 {
 	QGraphicsLineItem* line = this->addLine(
 		u(this->axis[0]),
-		-u(this->axis[1]),
+		u(this->axis[1]),
 		v(this->axis[0]),
-		-v(this->axis[1]),
-		free ? QPen(QBrush(QColor(0, 128, 0)), 0) : QPen(QBrush(QColor(128, 0, 0)), 0)
+		v(this->axis[1]),
+		QPen(QBrush(QColor(96, 96, 96)), 0)
 	);
 	
 	this->edges->addToGroup(line);
@@ -153,11 +163,11 @@ ConfigurationSpaceScene::drawConfigurationPath(const rl::plan::VectorList& path)
 	}
 	
 	QPainterPath painterPath;
-	painterPath.moveTo(path.front()(this->axis[0]), -path.front()(this->axis[1]));
+	painterPath.moveTo(path.front()(this->axis[0]), path.front()(this->axis[1]));
 	
 	for (rl::plan::VectorList::const_iterator i = ++path.begin(); i != path.end(); ++i)
 	{
-		painterPath.lineTo((*i)(this->axis[0]), -(*i)(this->axis[1]));
+		painterPath.lineTo((*i)(this->axis[0]), (*i)(this->axis[1]));
 	}
 	
 	this->path->setPath(painterPath);
@@ -252,17 +262,25 @@ ConfigurationSpaceScene::init()
 	
 	this->configuration->setPos(
 		(*MainWindow::instance()->q)(this->axis[0]),
-		-(*MainWindow::instance()->q)(this->axis[1])
+		(*MainWindow::instance()->q)(this->axis[1])
 	);
 	
-	this->scene->setRect(
-		this->minimum[0],
-		-this->maximum[1],
-		this->range[0],
-		this->range[1]
-	);
+	this->data.assign(this->steps[0] * this->steps[1], 128);
 	
-	this->setSceneRect(this->scene->boundingRect());
+#if QT_VERSION >= 0x050500
+	this->image = QImage(this->data.data(), this->steps[0], this->steps[1], this->steps[0], QImage::Format_Grayscale8);
+#else
+	this->image = QImage(this->data.data(), this->steps[0], this->steps[1], this->steps[0], QImage::Format_Indexed8);
+	QVector<QRgb> colors;
+	colors.reserve(256);
+	for (int i = 0; i < 256; ++i)
+	{
+		colors.push_back(qRgb(i, i, i));
+	}
+	this->image.setColorTable(colors);
+#endif
+	
+	this->setSceneRect(this->minimum[0], this->minimum[1], this->range[0], this->range[1]);
 }
 
 void
@@ -288,17 +306,11 @@ ConfigurationSpaceScene::mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent)
 	{
 		if (!MainWindow::instance()->thread->isRunning())
 		{
-			if (mouseEvent->scenePos().x() > this->minimum[0] &&
-				mouseEvent->scenePos().x() < this->maximum[0])
-			{
-				(*MainWindow::instance()->q)(this->axis[0]) = mouseEvent->scenePos().x();
-			}
+			qreal x = qBound(this->minimum[0], mouseEvent->scenePos().x(), this->maximum[0]);
+			qreal y = qBound(this->minimum[1], mouseEvent->scenePos().y(), this->maximum[1]);
 			
-			if (-mouseEvent->scenePos().y() > this->minimum[1] &&
-				-mouseEvent->scenePos().y() < this->maximum[1])
-			{
-				(*MainWindow::instance()->q)(this->axis[1]) = -mouseEvent->scenePos().y();
-			}
+			(*MainWindow::instance()->q)(this->axis[0]) = x;
+			(*MainWindow::instance()->q)(this->axis[1]) = y;
 			
 			MainWindow::instance()->configurationModel->invalidate();
 			this->drawConfiguration(*MainWindow::instance()->q);
@@ -319,7 +331,8 @@ ConfigurationSpaceScene::reset()
 void
 ConfigurationSpaceScene::resetCollisions()
 {
-	qDeleteAll(this->collisions->childItems());
+	std::fill(this->data.begin(), this->data.end(), 128);
+	this->invalidate(this->sceneRect(), QGraphicsScene::BackgroundLayer);
 }
 
 void
@@ -362,7 +375,8 @@ ConfigurationSpaceScene::showMessage(const std::string& message)
 void
 ConfigurationSpaceScene::toggleCollisions(const bool& doOn)
 {
-	this->collisions->setVisible(doOn);
+	this->collisions = doOn;
+	this->invalidate(this->sceneRect(), QGraphicsScene::BackgroundLayer);
 }
 
 void

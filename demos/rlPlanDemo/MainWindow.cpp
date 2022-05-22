@@ -227,7 +227,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	this->configurationSpaceView->setAlternatingRowColors(true);
 	this->configurationSpaceView->setModel(this->configurationSpaceModel);
 	
-	this->configurationSpaceSceneView->setBackgroundBrush(QBrush(QWidget::palette().color(QWidget::backgroundRole())));
+	this->configurationSpaceSceneView->scale(1, -1);
 	this->configurationSpaceSceneView->setScene(this->configurationSpaceScene);
 	
 #if QT_VERSION >= 0x050000

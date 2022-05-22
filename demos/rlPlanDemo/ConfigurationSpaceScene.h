@@ -27,6 +27,7 @@
 #ifndef CONFIGURATIONSPACESCENE_H
 #define CONFIGURATIONSPACESCENE_H
 
+#include <QGraphicsEllipseItem>
 #include <QGraphicsItemGroup>
 #include <QGraphicsPathItem>
 #include <QGraphicsScene>
@@ -59,7 +60,7 @@ public:
 	std::array<int, 2> steps;
 	
 public slots:
-	void addCollision(const qreal& x, const qreal& y, const qreal& w, const qreal& h, const int& rgb);
+	void addCollision(const int& x, const int& y, const unsigned char& rgb);
 	
 	void clear();
 	
@@ -118,20 +119,24 @@ public slots:
 	void togglePathEdges(const bool& doOn);
 	
 protected:
+	void drawBackground(QPainter* painter, const QRectF& rect);
+	
 	void mouseMoveEvent(QGraphicsSceneMouseEvent* mouseEvent);
 	
 	void mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent);
 	
 private:
-	QGraphicsItemGroup* collisions;
+	bool collisions;
 	
 	QGraphicsEllipseItem* configuration;
 	
+	std::vector<unsigned char> data;
+	
 	QGraphicsItemGroup* edges;
 	
-	QGraphicsPathItem* path;
+	QImage image;
 	
-	QGraphicsRectItem* scene;
+	QGraphicsPathItem* path;
 	
 	ConfigurationSpaceThread* thread;
 	

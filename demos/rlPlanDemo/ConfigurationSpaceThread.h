@@ -52,7 +52,7 @@ private:
 	bool running;
 	
 signals:
-	void addCollision(const qreal& x, const qreal& y, const qreal& w, const qreal& h, const int& rgb);
+	void addCollision(const int& x, const int& y, const unsigned char& rgb);
 };
 
 #endif // CONFIGURATIONSPACETHREAD_H

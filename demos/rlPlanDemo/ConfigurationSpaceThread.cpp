@@ -58,24 +58,15 @@ ConfigurationSpaceThread::run()
 	{
 		rl::math::Vector q(*MainWindow::instance()->q);
 		
-		for (int i = 0; i < this->scene->steps[1] + 1 && this->running; ++i)
+		for (int i = 0; i < this->scene->steps[0] && this->running; ++i)
 		{
-			q(this->scene->axis[1]) = this->scene->maximum[1] - i * this->scene->delta[1];
+			q(this->scene->axis[0]) = this->scene->minimum[0] + i * this->scene->delta[0];
 			
-			for (int j = 0; j < this->scene->steps[0] + 1 && this->running; ++j)
+			for (int j = 0; j < this->scene->steps[1] && this->running; ++j)
 			{
-				q(this->scene->axis[0]) = this->scene->minimum[0] + j * this->scene->delta[0];
-				
-				if (model->isColliding(q))
-				{
-					emit addCollision(
-						q(this->scene->axis[0]),
-						q(this->scene->axis[1]),
-						this->scene->delta[0],
-						this->scene->delta[1],
-						0
-					);
-				}
+				q(this->scene->axis[1]) = this->scene->minimum[1] + j * this->scene->delta[1];
+				unsigned char rgb = model->isColliding(q) ? 0 : 255;
+				emit addCollision(i, j, rgb);
 			}
 		}
 	}
@@ -92,7 +83,7 @@ ConfigurationSpaceThread::stop()
 		
 		while (!this->isFinished())
 		{
-			QThread::usleep(0);
+			QThread::yieldCurrentThread();
 		}
 	}
 }
