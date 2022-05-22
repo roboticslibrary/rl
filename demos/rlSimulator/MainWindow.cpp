@@ -439,9 +439,6 @@ MainWindow::instance()
 void
 MainWindow::init()
 {
-	this->positionDockWidget->toggleViewAction()->setShortcut(QKeySequence("F5"));
-	this->addAction(this->positionDockWidget->toggleViewAction());
-	
 	this->saveImageAction->setShortcut(QKeySequence("Return"));
 	QObject::connect(this->saveImageAction, SIGNAL(triggered()), this, SLOT(saveImage()));
 	this->addAction(this->saveImageAction);
