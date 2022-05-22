@@ -523,7 +523,7 @@ MainWindow::getGoalConfiguration()
 {
 	*this->q = *this->goal;
 	this->configurationModel->invalidate();
-	this->viewer->drawConfiguration(*this->q);
+	this->thread->drawConfiguration(*this->q);
 	this->statusBar()->showMessage("Showing goal configuration.", 1000);
 }
 
@@ -532,7 +532,7 @@ MainWindow::getRandomConfiguration()
 {
 	*this->q = this->sampler2->generate();
 	this->configurationModel->invalidate();
-	this->viewer->drawConfiguration(*this->q);
+	this->thread->drawConfiguration(*this->q);
 	this->statusBar()->showMessage("Showing random configuration.", 1000);
 }
 
@@ -541,7 +541,7 @@ MainWindow::getRandomFreeConfiguration()
 {
 	*this->q = this->sampler2->generateCollisionFree();
 	this->configurationModel->invalidate();
-	this->viewer->drawConfiguration(*this->q);
+	this->thread->drawConfiguration(*this->q);
 	this->statusBar()->showMessage("Showing random collision-free configuration.", 1000);
 }
 
@@ -550,7 +550,7 @@ MainWindow::getStartConfiguration()
 {
 	*this->q = *this->start;
 	this->configurationModel->invalidate();
-	this->viewer->drawConfiguration(*this->q);
+	this->thread->drawConfiguration(*this->q);
 	this->statusBar()->showMessage("Showing start configuration.", 1000);
 }
 
@@ -2075,7 +2075,7 @@ MainWindow::load(const QString& filename)
 		path.eval("number((/rl/plan|/rlplan)//viewer/camera/scale)").getValue<rl::math::Real>(1)
 	);
 	
-	this->viewer->drawConfiguration(*this->start);
+	this->thread->drawConfiguration(*this->start);
 	
 	this->configurationModel->invalidate();
 	this->configurationSpaceModel->invalidate();
@@ -2521,6 +2521,8 @@ MainWindow::toggleConfigurationSpaceActive(const bool& doOn)
 	{
 		this->disconnect(this->thread, this->configurationSpaceScene);
 	}
+	
+	this->configurationSpaceScene->toggleConfiguration(doOn);
 }
 
 void

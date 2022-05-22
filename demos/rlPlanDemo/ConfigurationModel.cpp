@@ -151,7 +151,7 @@ ConfigurationModel::setData(const QModelIndex& index, const QVariant& value, int
 			(*MainWindow::instance()->q)(index.row()) = value.value<rl::math::Real>();
 		}
 		
-		MainWindow::instance()->viewer->drawConfiguration(*MainWindow::instance()->q);
+		MainWindow::instance()->thread->drawConfiguration(*MainWindow::instance()->q);
 		
 		emit dataChanged(index, index);
 		

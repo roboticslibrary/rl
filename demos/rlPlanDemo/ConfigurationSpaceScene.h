@@ -111,6 +111,8 @@ public slots:
 	
 	void toggleCollisions(const bool& doOn);
 	
+	void toggleConfiguration(const bool& doOn);
+	
 	void toggleConfigurationEdges(const bool& doOn);
 	
 	void togglePathEdges(const bool& doOn);
@@ -122,6 +124,8 @@ protected:
 	
 private:
 	QGraphicsItemGroup* collisions;
+	
+	QGraphicsEllipseItem* configuration;
 	
 	QGraphicsItemGroup* edges;
 	

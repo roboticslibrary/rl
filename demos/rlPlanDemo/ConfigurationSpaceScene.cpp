@@ -44,6 +44,7 @@ ConfigurationSpaceScene::ConfigurationSpaceScene(QObject* parent) :
 	range(),
 	steps(),
 	collisions(nullptr),
+	configuration(nullptr),
 	edges(nullptr),
 	path(nullptr),
 	scene(nullptr),
@@ -62,6 +63,11 @@ ConfigurationSpaceScene::ConfigurationSpaceScene(QObject* parent) :
 	
 	this->collisions = this->createItemGroup(QList<QGraphicsItem*>());
 	this->collisions->setZValue(1);
+	
+	this->configuration = this->addEllipse(-3, -3, 6, 6, QPen(Qt::NoPen), QBrush((QColor(247, 127, 7))));
+	this->configuration->setFlag(QGraphicsItem::ItemIgnoresTransformations);
+	this->configuration->setVisible(false);
+	this->configuration->setZValue(4);
 	
 	this->edges = this->createItemGroup(QList<QGraphicsItem*>());
 	this->edges->setZValue(2);
@@ -111,6 +117,10 @@ ConfigurationSpaceScene::clear()
 void
 ConfigurationSpaceScene::drawConfiguration(const rl::math::Vector& q)
 {
+	this->configuration->setPos(
+		q(this->axis[0]),
+		-q(this->axis[1])
+	);
 }
 
 void
@@ -240,6 +250,11 @@ ConfigurationSpaceScene::init()
 	this->steps[0] = static_cast<int>(std::ceil(this->range[0] / this->delta[0]));
 	this->steps[1] = static_cast<int>(std::ceil(this->range[1] / this->delta[1]));
 	
+	this->configuration->setPos(
+		(*MainWindow::instance()->q)(this->axis[0]),
+		-(*MainWindow::instance()->q)(this->axis[1])
+	);
+	
 	this->scene->setRect(
 		this->minimum[0],
 		-this->maximum[1],
@@ -286,6 +301,7 @@ ConfigurationSpaceScene::mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent)
 			}
 			
 			MainWindow::instance()->configurationModel->invalidate();
+			this->drawConfiguration(*MainWindow::instance()->q);
 			MainWindow::instance()->viewer->drawConfiguration(*MainWindow::instance()->q);
 		}
 	}
@@ -347,6 +363,12 @@ void
 ConfigurationSpaceScene::toggleCollisions(const bool& doOn)
 {
 	this->collisions->setVisible(doOn);
+}
+
+void
+ConfigurationSpaceScene::toggleConfiguration(const bool& doOn)
+{
+	this->configuration->setVisible(doOn);
 }
 
 void
