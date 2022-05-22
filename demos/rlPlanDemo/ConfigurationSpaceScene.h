@@ -108,6 +108,12 @@ public slots:
 	
 	void showMessage(const std::string& message);
 	
+	void toggleCollisions(const bool& doOn);
+	
+	void toggleConfigurationEdges(const bool& doOn);
+	
+	void togglePathEdges(const bool& doOn);
+	
 protected:
 	void mouseMoveEvent(QGraphicsSceneMouseEvent* mouseEvent);
 	

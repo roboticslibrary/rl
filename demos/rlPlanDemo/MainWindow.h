@@ -257,6 +257,12 @@ private:
 	
 	QAction* toggleConfigurationSpaceActiveAction;
 	
+	QAction* toggleConfigurationSpaceCollisionsAction;
+	
+	QAction* toggleConfigurationSpaceEdgesAction;
+	
+	QAction* toggleConfigurationSpacePathEdgesAction;
+	
 	QAction* toggleConfigurationVerticesAction;
 	
 	QAction* toggleLinesAction;

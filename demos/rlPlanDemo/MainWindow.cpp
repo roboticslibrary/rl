@@ -182,6 +182,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	toggleCameraAction(new QAction(this)),
 	toggleConfigurationEdgesAction(new QAction(this)),
 	toggleConfigurationSpaceActiveAction(new QAction(this)),
+	toggleConfigurationSpaceCollisionsAction(new QAction(this)),
+	toggleConfigurationSpaceEdgesAction(new QAction(this)),
+	toggleConfigurationSpacePathEdgesAction(new QAction(this)),
 	toggleConfigurationVerticesAction(new QAction(this)),
 	toggleLinesAction(new QAction(this)),
 	togglePathEdgesAction(new QAction(this)),
@@ -617,6 +620,31 @@ MainWindow::init()
 	this->toggleConfigurationSpaceActiveAction->setText("Active");
 	QObject::connect(this->toggleConfigurationSpaceActiveAction, SIGNAL(toggled(bool)), this, SLOT(toggleConfigurationSpaceActive(bool)));
 	configurationSpaceMenu->addAction(this->toggleConfigurationSpaceActiveAction);
+	
+	configurationSpaceMenu->addSeparator();
+	
+	this->toggleConfigurationSpacePathEdgesAction->setCheckable(true);
+	this->toggleConfigurationSpacePathEdgesAction->setChecked(true);
+	this->toggleConfigurationSpacePathEdgesAction->setText("Path Edges");
+	QObject::connect(this->toggleConfigurationSpacePathEdgesAction, SIGNAL(toggled(bool)), this->configurationSpaceScene, SLOT(togglePathEdges(bool)));
+	configurationSpaceMenu->addAction(this->toggleConfigurationSpacePathEdgesAction);
+	
+	configurationSpaceMenu->addSeparator();
+	
+	this->toggleConfigurationSpaceEdgesAction->setCheckable(true);
+	this->toggleConfigurationSpaceEdgesAction->setChecked(true);
+	this->toggleConfigurationSpaceEdgesAction->setMenuRole(QAction::NoRole);
+	this->toggleConfigurationSpaceEdgesAction->setText("Configuration Edges");
+	QObject::connect(this->toggleConfigurationSpaceEdgesAction, SIGNAL(toggled(bool)), this->configurationSpaceScene, SLOT(toggleConfigurationEdges(bool)));
+	configurationSpaceMenu->addAction(this->toggleConfigurationSpaceEdgesAction);
+	
+	configurationSpaceMenu->addSeparator();
+	
+	this->toggleConfigurationSpaceCollisionsAction->setCheckable(true);
+	this->toggleConfigurationSpaceCollisionsAction->setChecked(true);
+	this->toggleConfigurationSpaceCollisionsAction->setText("Collisions");
+	QObject::connect(this->toggleConfigurationSpaceCollisionsAction, SIGNAL(toggled(bool)), this->configurationSpaceScene, SLOT(toggleCollisions(bool)));
+	configurationSpaceMenu->addAction(this->toggleConfigurationSpaceCollisionsAction);
 	
 	configurationSpaceMenu->addSeparator();
 	

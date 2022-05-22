@@ -341,3 +341,21 @@ void
 ConfigurationSpaceScene::showMessage(const std::string& message)
 {
 }
+
+void
+ConfigurationSpaceScene::toggleCollisions(const bool& doOn)
+{
+	this->collisions->setVisible(doOn);
+}
+
+void
+ConfigurationSpaceScene::toggleConfigurationEdges(const bool& doOn)
+{
+	this->edges->setVisible(doOn);
+}
+
+void
+ConfigurationSpaceScene::togglePathEdges(const bool& doOn)
+{
+	this->path->setVisible(doOn);
+}
