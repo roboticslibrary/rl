@@ -26,6 +26,7 @@ if(QT_FOUND AND SoQt_FOUND AND (RL_BUILD_SG_BULLET OR RL_BUILD_SG_FCL OR RL_BUIL
 		BodyModel.h
 		MainWindow.h
 		SoGradientBackground.h
+		SoMaterialHighlightRenderAction.h
 	)
 	
 	set(
@@ -35,6 +36,7 @@ if(QT_FOUND AND SoQt_FOUND AND (RL_BUILD_SG_BULLET OR RL_BUILD_SG_FCL OR RL_BUIL
 		MainWindow.cpp
 		rlCollisionDemo.cpp
 		SoGradientBackground.cpp
+		SoMaterialHighlightRenderAction.cpp
 	)
 	
 	add_executable(

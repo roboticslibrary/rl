@@ -31,11 +31,12 @@
 #include <QMessageBox>
 #include <QTableView>
 #include <QStatusBar>
+#include <Inventor/SoPickedPoint.h>
 #include <Inventor/nodes/SoDrawStyle.h>
 #include <Inventor/Qt/SoQt.h>
 #include <Inventor/VRMLnodes/SoVRMLAppearance.h>
 #include <Inventor/VRMLnodes/SoVRMLMaterial.h>
-#include <Inventor/VRMLnodes/SoVRMLShape.h>
+#include <Inventor/VRMLnodes/SoVRMLTransform.h>
 #include <rl/sg/Body.h>
 #include <rl/sg/DepthScene.h>
 #include <rl/sg/DistanceScene.h>
@@ -43,6 +44,8 @@
 #include <rl/sg/Shape.h>
 #include <rl/sg/SimpleScene.h>
 #include <rl/sg/XmlFactory.h>
+#include <rl/sg/so/Body.h>
+#include <rl/sg/so/Shape.h>
 
 #if QT_VERSION >= 0x050200
 #include <QCommandLineParser>
@@ -68,12 +71,13 @@
 #include "BodyModel.h"
 #include "MainWindow.h"
 #include "SoGradientBackground.h"
+#include "SoMaterialHighlightRenderAction.h"
 
 MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	QMainWindow(parent, f),
 	collisionScene(),
 	viewScene(),
-	body(0),
+	bodyModel(new BodyModel(this)),
 	depthCoordinate(nullptr),
 	depthLabel(new QLabel(this)),
 	depthLineSet(nullptr),
@@ -85,8 +89,12 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	engine(),
 	filename(),
 	gradientBackground(),
-	model(0),
+	highlightRenderAction(nullptr),
+	root(nullptr),
+	selected(nullptr),
+	selection(nullptr),
 	simpleLabel(new QLabel(this)),
+	view2collision(),
 	viewer(nullptr)
 {
 	MainWindow::singleton = this;
@@ -94,6 +102,10 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	SoQt::init(this);
 	SoDB::init();
 	SoGradientBackground::initClass();
+	SoMaterialHighlightRenderAction::initClass();
+	
+	this->root = new SoSeparator();
+	this->root->ref();
 	
 	this->parseCommandLine();
 	
@@ -145,11 +157,22 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	this->gradientBackground->ref();
 	this->gradientBackground->color0.setValue(0.8f, 0.8f, 0.8f);
 	this->gradientBackground->color1.setValue(1.0f, 1.0f, 1.0f);
-	this->viewScene->root->insertChild(this->gradientBackground, 0);
+	this->root->insertChild(this->gradientBackground, 0);
+	
+	this->selection = new SoSelection();
+	this->selection->addSelectionCallback(MainWindow::selectionCallback, this);
+	this->selection->addDeselectionCallback(MainWindow::deselectionCallback, this);
+	this->selection->setPickFilterCallback(MainWindow::pickFilterCallback, this);
+	this->selection->policy = SoSelection::SINGLE;
+	this->selection->addChild(this->viewScene->root);
+	this->root->addChild(this->selection);
+	
+	this->highlightRenderAction = new SoMaterialHighlightRenderAction();
 	
 	this->viewer = new SoQtExaminerViewer(this, nullptr, true, SoQtFullViewer::BUILD_POPUP);
 	this->viewer->setFeedbackVisibility(true);
-	this->viewer->setSceneGraph(this->viewScene->root);
+	this->viewer->setGLRenderAction(this->highlightRenderAction);
+	this->viewer->setSceneGraph(this->root);
 	this->viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_BLEND);
 	
 	this->setCentralWidget(this->viewer->getWidget());
@@ -161,15 +184,17 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	factory.load(this->filename.toStdString(), this->collisionScene.get());
 	factory.load(this->filename.toStdString(), this->viewScene.get());
 	
+	for (rl::sg::Scene::Iterator i = this->viewScene->begin(), j = this->collisionScene->begin(); i != this->viewScene->end(); ++i, ++j)
+	{
+		for (rl::sg::Model::Iterator k = (*i)->begin(), l = (*j)->begin(); k != (*i)->end(); ++k, ++l)
+		{
+			this->view2collision[*k] = *l;
+		}
+	}
+	
 	this->viewer->viewAll();
 	
 	BodyDelegate* bodyDelegate = new BodyDelegate(this);
-	
-	BodyModel* bodyModel = new BodyModel(this);
-	bodyModel->setBody(
-		this->viewScene->getModel(this->model)->getBody(this->body),
-		this->collisionScene->getModel(this->model)->getBody(this->body)
-	);
 	
 	QTableView* bodyView = new QTableView(this);
 #if QT_VERSION >= 0x050000
@@ -180,14 +205,14 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	bodyView->horizontalHeader()->hide();
 	bodyView->setAlternatingRowColors(true);
 	bodyView->setItemDelegate(bodyDelegate);
-	bodyView->setModel(bodyModel);
+	bodyView->setModel(this->bodyModel);
 	
 	QDockWidget* bodyDockWidget = new QDockWidget(this);
 	bodyDockWidget->resize(160, 240);
 	bodyDockWidget->setFeatures(QDockWidget::NoDockWidgetFeatures | QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
 	bodyDockWidget->setFloating(true);
 	bodyDockWidget->setWidget(bodyView);
-	bodyDockWidget->setWindowTitle("Model[" + QString::number(this->model) + "]->Body[" + QString::number(this->body) + "]");
+	bodyDockWidget->setWindowTitle("Body");
 	
 	SoDrawStyle* drawStyle = new SoDrawStyle();
 	drawStyle->lineWidth = 0.0f;
@@ -253,13 +278,34 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 		this->statusBar()->addWidget(this->depthLabel);
 	}
 	
+	if (this->viewScene->getNumModels() > 0)
+	{
+		rl::sg::Model* model = this->viewScene->getModel(0);
+		
+		if (model->getNumBodies() > 0)
+		{
+			rl::sg::Body* body = model->getBody(0);
+			this->selection->select(dynamic_cast<rl::sg::so::Body*>(body)->root);
+		}
+	}
+	
 	this->test();
 }
 
 MainWindow::~MainWindow()
 {
-	this->gradientBackground->unref();
+	this->root->unref();
 	MainWindow::singleton = nullptr;
+}
+
+void
+MainWindow::deselectionCallback(void* data, SoPath* path)
+{
+	MainWindow* mainWindow = static_cast<MainWindow*>(data);
+	mainWindow->bodyModel->setBody(nullptr, nullptr);
+	mainWindow->selected = nullptr;
+	mainWindow->selection->touch();
+	mainWindow->test();
 }
 
 MainWindow*
@@ -300,29 +346,14 @@ MainWindow::parseCommandLine()
 	engines.sort();
 	
 #if QT_VERSION >= 0x050200
-	QCommandLineOption bodyOption(QStringList("body"), "Sets active body.", "body");
 	QCommandLineOption engineOption(QStringList("engine"), "Sets collision engine.", engines.join("|"));
-	QCommandLineOption modelOption(QStringList("model"), "Sets model of active body.", "model");
 	
 	QCommandLineParser parser;
-	parser.addOption(bodyOption);
 	parser.addOption(engineOption);
 	const QCommandLineOption helpOption = parser.addHelpOption();
-	parser.addOption(modelOption);
 	parser.addPositionalArgument("filename", "", "[filename]");
 	
 	parser.process(QCoreApplication::arguments());
-	
-	if (parser.isSet(bodyOption))
-	{
-		bool ok;
-		this->body = parser.value(bodyOption).toUInt(&ok);
-		
-		if (!ok)
-		{
-			parser.showHelp();
-		}
-	}
 	
 	if (parser.isSet(engineOption))
 	{
@@ -336,17 +367,6 @@ MainWindow::parseCommandLine()
 		this->engine = engine;
 	}
 	
-	if (parser.isSet(modelOption))
-	{
-		bool ok;
-		this->model = parser.value(modelOption).toUInt(&ok);
-		
-		if (!ok)
-		{
-			parser.showHelp();
-		}
-	}
-	
 	if (parser.positionalArguments().size() > 1)
 	{
 		parser.showHelp();
@@ -357,29 +377,19 @@ MainWindow::parseCommandLine()
 		this->filename = parser.positionalArguments()[0];
 	}
 #else
-	QRegExp bodyRegExp("--body=(\\d*)");
 	QRegExp engineRegExp("--engine=(" + engines.join("|") + ")");
 	QRegExp helpRegExp("--help");
-	QRegExp modelRegExp("--model=(\\d*)");
 	
 	for (int i = 1; i < QApplication::arguments().size(); ++i)
 	{
-		if (-1 != bodyRegExp.indexIn(QApplication::arguments()[i]))
-		{
-			this->body = bodyRegExp.cap(1).toUInt();
-		}
-		else if (-1 != engineRegExp.indexIn(QApplication::arguments()[i]))
+		if (-1 != engineRegExp.indexIn(QApplication::arguments()[i]))
 		{
 			this->engine = engineRegExp.cap(1);
 		}
 		else if (-1 != helpRegExp.indexIn(QApplication::arguments()[i]))
 		{
-			QMessageBox::information(this, "Usage", "rlCollisionDemo [--body=<body>] [--engine=<" + engines.join("|") + ">] [--help] [--model=<model>] [filename]");
+			QMessageBox::information(this, "Usage", "rlCollisionDemo [--engine=<" + engines.join("|") + ">] [--help] [filename]");
 			exit(0);
-		}
-		else if (-1 != modelRegExp.indexIn(QApplication::arguments()[i]))
-		{
-			this->model = modelRegExp.cap(1).toUInt();
 		}
 		else
 		{
@@ -387,6 +397,38 @@ MainWindow::parseCommandLine()
 		}
 	}
 #endif
+}
+
+SoPath*
+MainWindow::pickFilterCallback(void* data, const SoPickedPoint* pick)
+{
+	SoFullPath* path = static_cast<SoFullPath*>(pick->getPath());
+	path->pop();
+	path->pop();
+	path->pop();
+	return path;
+}
+
+void
+MainWindow::selectionCallback(void* data, SoPath* path)
+{
+	MainWindow* mainWindow = static_cast<MainWindow*>(data);
+	
+	if (path->getTail()->isOfType(SoVRMLTransform::getClassTypeId()))
+	{
+		SoVRMLTransform* vrmlTransform = static_cast<SoVRMLTransform*>(path->getTail());
+		
+		if (nullptr != vrmlTransform->getUserData())
+		{
+			rl::sg::so::Body* view = static_cast<rl::sg::so::Body*>(vrmlTransform->getUserData());
+			rl::sg::Body* collision = dynamic_cast<rl::sg::Body*>(mainWindow->view2collision[view]);
+			mainWindow->bodyModel->setBody(collision, view);
+			mainWindow->selected = view;
+		}
+	}
+	
+	mainWindow->selection->touch();
+	mainWindow->test();
 }
 
 void
@@ -400,7 +442,17 @@ MainWindow::test()
 	this->depthLineSet->coordIndex.setNum(0);
 	this->depthCoordinate->point.setNum(0);
 	
-	rl::sg::Body* body = this->collisionScene->getModel(this->model)->getBody(this->body);
+	rl::sg::Base* collision = this->view2collision[this->selected];
+	
+	if (nullptr == this->selected || nullptr == collision)
+	{
+		this->simpleLabel->hide();
+		this->distanceLabel->hide();
+		this->depthLabel->hide();
+		return;
+	}
+	
+	rl::sg::Body* body = dynamic_cast<rl::sg::Body*>(collision);
 	
 	if (rl::sg::SimpleScene* simpleScene = dynamic_cast<rl::sg::SimpleScene*>(this->collisionScene.get()))
 	{
@@ -420,19 +472,20 @@ MainWindow::test()
 			}
 		}
 		
+		this->simpleLabel->show();
 		this->simpleLabel->setText("Collisions: " + QString::number(collisions));
 		
 		if (collisions > 0)
 		{
-			this->viewer->setBackgroundColor(SbColor(0.5, 0, 0));
-			this->gradientBackground->color0.setValue(0.5f, 0.0f, 0.0f);
-			this->gradientBackground->color1.setValue(1.0f, 1.0f, 1.0f);
+			this->highlightRenderAction->setDiffuseColor(SbColor(0.8f, 0.0f, 0.0f));
+			this->highlightRenderAction->setEmissiveColor(SbColor(0.25f, 0.0f, 0.0f));
+			this->highlightRenderAction->setSpecularColor(SbColor(1.0f, 0.0f, 0.0f));
 		}
 		else
 		{
-			this->viewer->setBackgroundColor(SbColor(0, 0, 0));
-			this->gradientBackground->color0.setValue(0.8f, 0.8f, 0.8f);
-			this->gradientBackground->color1.setValue(1.0f, 1.0f, 1.0f);
+			this->highlightRenderAction->setDiffuseColor(SbColor(0.8f, 0.8f, 0.8f));
+			this->highlightRenderAction->setEmissiveColor(SbColor(0.0f, 0.0f, 0.25f));
+			this->highlightRenderAction->setSpecularColor(SbColor(0.0f, 0.0f, 1.0f));
 		}
 	}
 	
@@ -462,6 +515,7 @@ MainWindow::test()
 			}
 		}
 		
+		this->distanceLabel->show();
 		this->distanceLabel->setText("Distance: " + QString::number(distance));
 		
 		if (distance > 0 && distance < std::numeric_limits<rl::math::Real>::max())
@@ -520,6 +574,7 @@ MainWindow::test()
 			}
 		}
 		
+		this->depthLabel->show();
 		this->depthLabel->setText("Depth: " + QString::number(depth));
 		
 		if (depth > 0)

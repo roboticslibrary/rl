@@ -31,15 +31,19 @@
 #include <QMainWindow>
 #include <QLabel>
 #include <string>
+#include <unordered_map>
+#include <Inventor/nodes/SoSelection.h>
+#include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #include <Inventor/VRMLnodes/SoVRMLCoordinate.h>
 #include <Inventor/VRMLnodes/SoVRMLIndexedLineSet.h>
 #include <Inventor/VRMLnodes/SoVRMLPointSet.h>
-#include <Inventor/VRMLnodes/SoVRMLTransform.h>
 #include <rl/sg/Scene.h>
 #include <rl/sg/so/Scene.h>
 
+class BodyModel;
 class SoGradientBackground;
+class SoMaterialHighlightRenderAction;
 
 class MainWindow : public QMainWindow
 {
@@ -58,9 +62,15 @@ protected:
 	MainWindow(QWidget* parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
 	
 private:
+	static void deselectionCallback(void* data, SoPath* path);
+	
 	void parseCommandLine();
 	
-	std::size_t body;
+	static SoPath* pickFilterCallback(void* data, const SoPickedPoint* pick);
+	
+	static void selectionCallback(void* data, SoPath* path);
+	
+	BodyModel* bodyModel;
 	
 	SoVRMLCoordinate* depthCoordinate;
 	
@@ -84,11 +94,19 @@ private:
 	
 	SoGradientBackground* gradientBackground;
 	
-	std::size_t model;
+	SoMaterialHighlightRenderAction* highlightRenderAction;
+	
+	SoSeparator* root;
+	
+	rl::sg::Base* selected;
+	
+	SoSelection* selection;
 	
 	QLabel* simpleLabel;
 	
 	static MainWindow* singleton;
+	
+	std::unordered_map<rl::sg::Base*, rl::sg::Base*> view2collision;
 	
 	SoQtExaminerViewer* viewer;
 };
