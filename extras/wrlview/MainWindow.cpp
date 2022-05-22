@@ -119,8 +119,17 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	this->viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_BLEND);
 	
 	this->gradientBackground = new SoGradientBackground();
-	this->gradientBackground->color0.setValue(0.8f, 0.8f, 0.8f);
-	this->gradientBackground->color1.setValue(1.0f, 1.0f, 1.0f);
+	
+	if (this->palette().color(QPalette::Window).lightness() < 128)
+	{
+		this->gradientBackground->color0.setValue(0.0f, 0.0f, 0.0f);
+		this->gradientBackground->color1.setValue(0.2f, 0.2f, 0.2f);
+	}
+	else
+	{
+		this->gradientBackground->color0.setValue(0.8f, 0.8f, 0.8f);
+		this->gradientBackground->color1.setValue(1.0f, 1.0f, 1.0f);
+	}
 	
 	this->backgroundSwitch = new SoSwitch();
 	this->backgroundSwitch->whichChild = SO_SWITCH_ALL;
@@ -212,6 +221,26 @@ MainWindow::~MainWindow()
 	{
 		delete this->offscreenRenderer;
 	}
+}
+
+void
+MainWindow::changeEvent(QEvent* event)
+{
+	if (QEvent::PaletteChange == event->type())
+	{
+		if (this->palette().color(QPalette::Window).lightness() < 128)
+		{
+			this->gradientBackground->color0.setValue(0.0f, 0.0f, 0.0f);
+			this->gradientBackground->color1.setValue(0.2f, 0.2f, 0.2f);
+		}
+		else
+		{
+			this->gradientBackground->color0.setValue(0.8f, 0.8f, 0.8f);
+			this->gradientBackground->color1.setValue(1.0f, 1.0f, 1.0f);
+		}
+	}
+	
+	QMainWindow::changeEvent(event);
 }
 
 void

@@ -53,6 +53,8 @@ public:
 	virtual ~MainWindow();
 	
 protected:
+	void changeEvent(QEvent* event);
+	
 	void dragEnterEvent(QDragEnterEvent* event);
 	
 	void dropEvent(QDropEvent* event);

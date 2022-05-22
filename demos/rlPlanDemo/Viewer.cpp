@@ -25,6 +25,7 @@
 //
 
 #include <QDateTime>
+#include <QEvent>
 #include <QMessageBox>
 #include <QStatusBar>
 #include <Inventor/actions/SoWriteAction.h>
@@ -151,12 +152,20 @@ Viewer::Viewer(QWidget* parent, Qt::WindowFlags f) :
 	
 	// background
 	
+	if (this->palette().color(QPalette::Window).lightness() < 128)
+	{
+		this->backgroundGradientBackground->color0.setValue(0.0f, 0.0f, 0.0f);
+		this->backgroundGradientBackground->color1.setValue(0.2f, 0.2f, 0.2f);
+	}
+	else
+	{
+		this->backgroundGradientBackground->color0.setValue(0.8f, 0.8f, 0.8f);
+		this->backgroundGradientBackground->color1.setValue(1.0f, 1.0f, 1.0f);
+	}
+	
 	this->background->setName("background");
 	this->background->whichChoice = SO_SWITCH_ALL;
-	
-	this->backgroundGradientBackground->color0.setValue(0.8f, 0.8f, 0.8f);
-	this->backgroundGradientBackground->color1.setValue(1.0f, 1.0f, 1.0f);
-	this->background->addChild(backgroundGradientBackground);
+	this->background->addChild(this->backgroundGradientBackground);
 	
 	this->root->addChild(this->background);
 	
@@ -472,6 +481,26 @@ Viewer::~Viewer()
 {
 	this->spheresAppearance->unref();
 	this->root->unref();
+}
+
+void
+Viewer::changeEvent(QEvent* event)
+{
+	if (QEvent::PaletteChange == event->type())
+	{
+		if (this->palette().color(QPalette::Window).lightness() < 128)
+		{
+			this->backgroundGradientBackground->color0.setValue(0.0f, 0.0f, 0.0f);
+			this->backgroundGradientBackground->color1.setValue(0.2f, 0.2f, 0.2f);
+		}
+		else
+		{
+			this->backgroundGradientBackground->color0.setValue(0.8f, 0.8f, 0.8f);
+			this->backgroundGradientBackground->color1.setValue(1.0f, 1.0f, 1.0f);
+		}
+	}
+	
+	QWidget::changeEvent(event);
 }
 
 void

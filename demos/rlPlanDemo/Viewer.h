@@ -133,6 +133,7 @@ public slots:
 	void toggleWorkFrames(const bool& doOn);
 	
 protected:
+	void changeEvent(QEvent* event);
 	
 private:
 	SoVRMLSwitch* background;

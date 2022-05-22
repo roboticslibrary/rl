@@ -1,4 +1,4 @@
-project(wrlview VERSION 0.2.0)
+project(wrlview VERSION 0.2.1)
 
 if(NOT PROJECT_VERSION_TWEAK)
 	set(PROJECT_VERSION_TWEAK 0)

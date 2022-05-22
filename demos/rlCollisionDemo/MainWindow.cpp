@@ -155,8 +155,18 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	
 	this->gradientBackground = new SoGradientBackground();
 	this->gradientBackground->ref();
-	this->gradientBackground->color0.setValue(0.8f, 0.8f, 0.8f);
-	this->gradientBackground->color1.setValue(1.0f, 1.0f, 1.0f);
+	
+	if (this->palette().color(QPalette::Window).lightness() < 128)
+	{
+		this->gradientBackground->color0.setValue(0.0f, 0.0f, 0.0f);
+		this->gradientBackground->color1.setValue(0.2f, 0.2f, 0.2f);
+	}
+	else
+	{
+		this->gradientBackground->color0.setValue(0.8f, 0.8f, 0.8f);
+		this->gradientBackground->color1.setValue(1.0f, 1.0f, 1.0f);
+	}
+	
 	this->root->insertChild(this->gradientBackground, 0);
 	
 	this->selection = new SoSelection();
@@ -296,6 +306,26 @@ MainWindow::~MainWindow()
 {
 	this->root->unref();
 	MainWindow::singleton = nullptr;
+}
+
+void
+MainWindow::changeEvent(QEvent* event)
+{
+	if (QEvent::PaletteChange == event->type())
+	{
+		if (this->palette().color(QPalette::Window).lightness() < 128)
+		{
+			this->gradientBackground->color0.setValue(0.0f, 0.0f, 0.0f);
+			this->gradientBackground->color1.setValue(0.2f, 0.2f, 0.2f);
+		}
+		else
+		{
+			this->gradientBackground->color0.setValue(0.8f, 0.8f, 0.8f);
+			this->gradientBackground->color1.setValue(1.0f, 1.0f, 1.0f);
+		}
+	}
+	
+	QMainWindow::changeEvent(event);
 }
 
 void

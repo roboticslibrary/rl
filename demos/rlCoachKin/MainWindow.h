@@ -75,6 +75,8 @@ public slots:
 protected:
 	MainWindow(QWidget* parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
 	
+	void changeEvent(QEvent* event);
+	
 private:
 	void init();
 	

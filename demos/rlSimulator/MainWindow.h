@@ -103,6 +103,8 @@ public slots:
 protected:
 	MainWindow(QWidget* parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
 	
+	void changeEvent(QEvent* event);
+	
 	void timerEvent(QTimerEvent *event);
 	
 private:

@@ -61,6 +61,8 @@ public:
 protected:
 	MainWindow(QWidget* parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
 	
+	void changeEvent(QEvent* event);
+	
 private:
 	static void deselectionCallback(void* data, SoPath* path);
 	
