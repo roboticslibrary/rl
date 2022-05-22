@@ -28,6 +28,7 @@
 #define CONFIGURATIONSPACESCENE_H
 
 #include <QGraphicsItemGroup>
+#include <QGraphicsPathItem>
 #include <QGraphicsScene>
 #include <rl/plan/Model.h>
 #include <rl/plan/Viewer.h>
@@ -124,7 +125,7 @@ private:
 	
 	QGraphicsItemGroup* edges;
 	
-	QGraphicsItemGroup* path;
+	QGraphicsPathItem* path;
 	
 	QGraphicsRectItem* scene;
 	

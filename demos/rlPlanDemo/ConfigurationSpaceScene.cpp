@@ -66,7 +66,9 @@ ConfigurationSpaceScene::ConfigurationSpaceScene(QObject* parent) :
 	this->edges = this->createItemGroup(QList<QGraphicsItem*>());
 	this->edges->setZValue(2);
 	
-	this->path = this->createItemGroup(QList<QGraphicsItem*>());
+	QPen pathPen(QColor(55, 176, 55), 2);
+	pathPen.setCosmetic(true);
+	this->path = this->addPath(QPainterPath(), pathPen);
 	this->path->setZValue(3);
 	
 	QObject::connect(
@@ -135,21 +137,20 @@ ConfigurationSpaceScene::drawConfigurationPath(const rl::plan::VectorList& path)
 {
 	this->resetPath();
 	
-	rl::plan::VectorList::const_iterator i = path.begin();
-	rl::plan::VectorList::const_iterator j = ++path.begin();
-	
-	for (; i != path.end() && j != path.end(); ++i, ++j)
+	if (path.empty())
 	{
-		QGraphicsLineItem* line = this->addLine(
-			(*i)(this->axis[0]),
-			-(*i)(this->axis[1]),
-			(*j)(this->axis[0]),
-			-(*j)(this->axis[1]),
-			QPen(QBrush(QColor(0, 255, 0)), 0)
-		);
-		
-		this->path->addToGroup(line);
+		return;
 	}
+	
+	QPainterPath painterPath;
+	painterPath.moveTo(path.front()(this->axis[0]), -path.front()(this->axis[1]));
+	
+	for (rl::plan::VectorList::const_iterator i = ++path.begin(); i != path.end(); ++i)
+	{
+		painterPath.lineTo((*i)(this->axis[0]), -(*i)(this->axis[1]));
+	}
+	
+	this->path->setPath(painterPath);
 }
 
 void
@@ -319,7 +320,7 @@ ConfigurationSpaceScene::resetLines()
 void
 ConfigurationSpaceScene::resetPath()
 {
-	qDeleteAll(this->path->childItems());
+	this->path->setPath(QPainterPath());
 }
 
 void
