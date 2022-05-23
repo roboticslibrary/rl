@@ -275,17 +275,17 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	
 	if (dynamic_cast<rl::sg::SimpleScene*>(this->collisionScene.get()))
 	{
-		this->statusBar()->addWidget(this->simpleLabel);
+		this->statusBar()->addPermanentWidget(this->simpleLabel);
 	}
 	
 	if (dynamic_cast<rl::sg::DistanceScene*>(this->collisionScene.get()))
 	{
-		this->statusBar()->addWidget(this->distanceLabel);
+		this->statusBar()->addPermanentWidget(this->distanceLabel);
 	}
 	
 	if (dynamic_cast<rl::sg::DepthScene*>(this->collisionScene.get()))
 	{
-		this->statusBar()->addWidget(this->depthLabel);
+		this->statusBar()->addPermanentWidget(this->depthLabel);
 	}
 	
 	if (this->viewScene->getNumModels() > 0)
