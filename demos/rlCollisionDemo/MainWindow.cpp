@@ -218,11 +218,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	bodyView->setModel(this->bodyModel);
 	
 	QDockWidget* bodyDockWidget = new QDockWidget(this);
-	bodyDockWidget->resize(160, 240);
-	bodyDockWidget->setFeatures(QDockWidget::NoDockWidgetFeatures | QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
-	bodyDockWidget->setFloating(true);
 	bodyDockWidget->setWidget(bodyView);
 	bodyDockWidget->setWindowTitle("Body");
+	this->addDockWidget(Qt::LeftDockWidgetArea, bodyDockWidget);
 	
 	SoDrawStyle* drawStyle = new SoDrawStyle();
 	drawStyle->lineWidth = 0.0f;
