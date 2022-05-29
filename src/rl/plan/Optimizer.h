@@ -60,6 +60,8 @@ namespace rl
 			
 			void setViewer(Viewer* viewer);
 			
+			bool subdivide(VectorList& path, const ::rl::math::Real& length = 0);
+			
 			SimpleModel* model;
 			
 			Verifier* verifier;

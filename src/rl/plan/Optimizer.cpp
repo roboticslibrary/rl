@@ -25,6 +25,8 @@
 //
 
 #include "Optimizer.h"
+#include "SimpleModel.h"
+#include "Viewer.h"
 
 namespace rl
 {
@@ -75,6 +77,31 @@ namespace rl
 		Optimizer::setViewer(Viewer* viewer)
 		{
 			this->viewer = viewer;
+		}
+		
+		bool
+		Optimizer::subdivide(VectorList& path, const ::rl::math::Real& length)
+		{
+			bool changed = false;
+			::rl::math::Vector inter(this->getModel()->getDofPosition());
+			
+			for (VectorList::iterator i = path.begin(), j = ::std::next(i); i != path.end() && j != path.end(); ++i, ++j)
+			{
+				if (0 == length || this->getModel()->distance(*i, *j) > length)
+				{
+					this->getModel()->interpolate(*i, *j, static_cast<::rl::math::Real>(0.5), inter);
+					i = path.insert(j, inter);
+					
+					if (nullptr != this->getViewer())
+					{
+						this->getViewer()->drawConfigurationPath(path);
+					}
+					
+					changed = true;
+				}
+			}
+			
+			return changed;
 		}
 	}
 }

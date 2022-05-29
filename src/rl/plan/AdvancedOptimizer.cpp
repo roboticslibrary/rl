@@ -97,20 +97,9 @@ namespace rl
 					}
 				}
 				
-				for (VectorList::iterator i = path.begin(), j = ::std::next(i); i != path.end() && j != path.end(); ++i, ++j)
+				if (this->subdivide(path, this->length))
 				{
-					if (this->getModel()->distance(*i, *j) > length)
-					{
-						this->getModel()->interpolate(*i, *j, static_cast<::rl::math::Real>(0.5), inter);
-						i = path.insert(j, inter);
-						
-						if (nullptr != this->getViewer())
-						{
-							this->getViewer()->drawConfigurationPath(path);
-						}
-						
-						changed = true;
-					}
+					changed = true;
 				}
 			}
 		}
