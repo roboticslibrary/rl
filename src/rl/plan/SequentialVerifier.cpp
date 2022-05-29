@@ -46,7 +46,7 @@ namespace rl
 			assert(u.size() == this->getModel()->getDofPosition());
 			assert(v.size() == this->getModel()->getDofPosition());
 			
-			::std::size_t steps = this->getSteps(d);;
+			::std::size_t steps = this->getSteps(d);
 			
 			::rl::math::Vector inter(u.size());
 			
