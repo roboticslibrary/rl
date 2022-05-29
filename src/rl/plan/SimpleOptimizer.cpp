@@ -51,11 +51,7 @@ namespace rl
 			{
 				changed = false;
 				
-				VectorList::iterator i = path.begin();
-				VectorList::iterator j = ++path.begin();
-				VectorList::iterator k = ++++path.begin();
-				
-				while (i != path.end() && j != path.end() && k != path.end())
+				for (VectorList::iterator i = path.begin(), j = ::std::next(i), k = ::std::next(j); i != path.end() && j != path.end() && k != path.end(); ++i, ++j, ++k)
 				{
 					::rl::math::Real ik = this->getModel()->distance(*i, *k);
 					
@@ -72,12 +68,6 @@ namespace rl
 						}
 						
 						changed = true;
-					}
-					else
-					{
-						++i;
-						++j;
-						++k;
 					}
 				}
 			}

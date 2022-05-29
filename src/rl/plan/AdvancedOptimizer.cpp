@@ -60,11 +60,6 @@ namespace rl
 		AdvancedOptimizer::process(VectorList& path)
 		{
 			bool changed = true;
-			
-			VectorList::iterator i;
-			VectorList::iterator j;
-			VectorList::iterator k;
-			
 			::rl::math::Vector inter(this->getModel()->getDofPosition());
 			
 			while (changed && path.size() > 2)
@@ -73,11 +68,7 @@ namespace rl
 				{
 					changed = false;
 					
-					i = path.begin();
-					j = ++path.begin();
-					k = ++++path.begin();
-					
-					while (i != path.end() && j != path.end() && k != path.end())
+					for (VectorList::iterator i = path.begin(), j = ::std::next(i), k = ::std::next(j); i != path.end() && j != path.end() && k != path.end(); ++i, ++j, ++k)
 					{
 						::rl::math::Real ik = this->getModel()->distance(*i, *k);
 						
@@ -85,11 +76,7 @@ namespace rl
 						{
 							::rl::math::Real ij = this->getModel()->distance(*i, *j);
 							::rl::math::Real jk = this->getModel()->distance(*j, *k);
-							
-							::rl::math::Real alpha = ij / (ij + jk);
-							
-							this->getModel()->interpolate(*i, *k, alpha, inter);
-							
+							this->getModel()->interpolate(*i, *k, ij / (ij + jk), inter);
 							::rl::math::Real ratio = this->getModel()->distance(*j, inter) / ik;
 							
 							if (ratio > this->ratio)
@@ -106,32 +93,16 @@ namespace rl
 								
 								changed = true;
 							}
-							else
-							{
-								++i;
-								++j;
-								++k;
-							}
-						}
-						else
-						{
-							++i;
-							++j;
-							++k;
 						}
 					}
 				}
 				
-				i = path.begin();
-				j = ++path.begin();
-				
-				while (i != path.end() && j != path.end())
+				for (VectorList::iterator i = path.begin(), j = ::std::next(i); i != path.end() && j != path.end(); ++i, ++j)
 				{
-					if (this->getModel()->distance(*i, *j) > this->length)
+					if (this->getModel()->distance(*i, *j) > length)
 					{
 						this->getModel()->interpolate(*i, *j, static_cast<::rl::math::Real>(0.5), inter);
-						
-						j = path.insert(j, inter);
+						i = path.insert(j, inter);
 						
 						if (nullptr != this->getViewer())
 						{
@@ -139,11 +110,6 @@ namespace rl
 						}
 						
 						changed = true;
-					}
-					else
-					{
-						++i;
-						++j;
 					}
 				}
 			}
