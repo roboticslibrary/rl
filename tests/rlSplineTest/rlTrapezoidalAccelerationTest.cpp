@@ -49,7 +49,7 @@ main(int argc, char** argv)
 			int steps = 2000;
 			for (std::size_t i = 0; i < steps; ++i)
 			{
-				rl::math::Real t = f.duration() * i / static_cast< rl::math::Real >(steps - 1);
+				rl::math::Real t = f.duration() * i / static_cast<rl::math::Real>(steps - 1);
 				stream << t << "\t" << f(t)(0) << "\t" << f(t, 1)(0) << "\t" << f(t, 2)(0) << "\t" << f(t, 3)(0) << std::endl;
 			}
 #endif

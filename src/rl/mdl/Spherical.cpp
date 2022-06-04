@@ -79,7 +79,7 @@ namespace rl
 		void
 		Spherical::generatePositionGaussian(const ::rl::math::ConstVectorRef& rand, const ::rl::math::ConstVectorRef& mean, const ::rl::math::ConstVectorRef& sigma, ::rl::math::VectorRef q) const
 		{
-			q = ::rl::math::Quaternion::Random(rand, ::Eigen::Map< const ::rl::math::Quaternion>(mean.data()), sigma).coeffs();
+			q = ::rl::math::Quaternion::Random(rand, ::Eigen::Map<const ::rl::math::Quaternion>(mean.data()), sigma).coeffs();
 		}
 		
 		void

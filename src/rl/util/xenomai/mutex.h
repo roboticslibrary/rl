@@ -148,7 +148,7 @@ namespace rl
 				typedef chrono::system_clock clock_t;
 				
 				template<typename Rep, typename Period>
-				bool M_try_lock_for(const ::std::chrono::duration< Rep, Period>& rtime)
+				bool M_try_lock_for(const ::std::chrono::duration<Rep, Period>& rtime)
 				{
 					clock_t::duration rt = ::std::chrono::duration_cast<clock_t::duration>(rtime);
 					
