@@ -44,6 +44,8 @@ namespace rl
 		class Function
 		{
 		public:
+			typedef T value_type;
+			
 			Function(const Real& x0 = 0, const Real& x1 = 1) :
 				x0(x0),
 				x1(x1)
