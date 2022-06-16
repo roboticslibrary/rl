@@ -77,6 +77,81 @@ namespace rl
 			{
 			}
 			
+			template<typename U = T>
+			static Polynomial CubicAtRest(
+				const typename ::std::enable_if<::std::is_floating_point<U>::value, U>::type& y0,
+				const typename ::std::enable_if<::std::is_floating_point<U>::value, U>::type& y1,
+				const typename ::std::enable_if<::std::is_floating_point<U>::value, U>::type& ydmax,
+				const typename ::std::enable_if<::std::is_floating_point<U>::value, U>::type& yddmax,
+				const typename ::std::enable_if<::std::is_floating_point<U>::value, U>::type& ydddmax
+			)
+			{
+				using ::std::abs;
+				using ::std::cbrt;
+				using ::std::max;
+				using ::std::pow;
+				using ::std::sqrt;
+				
+				T dy = y0 - y1;
+				
+				T x1v = 3 * abs(dy) / (2 * abs(ydmax));
+				T x1a = sqrt(6 * abs(yddmax) * abs(dy)) / abs(yddmax);
+				T x1j = cbrt(12 * abs(dy) * pow(ydddmax, 2)) / abs(ydddmax);
+				T x1 = max({x1v, x1a, x1j});
+				
+				Polynomial f(3);
+				
+				f.c[0] = y0;
+				f.c[1] = 0;
+				f.c[2] = -3 * dy / pow(x1, 2);
+				f.c[3] = 2 * dy / pow(x1, 3);
+				f.x1 = x1;
+				
+				return f;
+			}
+			
+			template<typename U = T>
+			static Polynomial CubicAtRest(
+				const typename ::std::enable_if<::std::is_class<U>::value, U>::type& y0,
+				const typename ::std::enable_if<::std::is_class<U>::value, U>::type& y1,
+				const typename ::std::enable_if<::std::is_class<U>::value, U>::type& ydmax,
+				const typename ::std::enable_if<::std::is_class<U>::value, U>::type& yddmax,
+				const typename ::std::enable_if<::std::is_class<U>::value, U>::type& ydddmax
+			)
+			{
+				using ::std::abs;
+				using ::std::cbrt;
+				using ::std::max;
+				using ::std::pow;
+				using ::std::sqrt;
+				
+				T dy = y0 - y1;
+				
+				::std::size_t dim = TypeTraits<T>::size(y0);
+				
+				T x1(dim);
+				
+				for (::std::size_t i = 0; i < dim; ++i)
+				{
+					auto x1v = 3 * abs(dy[i]) / (2 * abs(ydmax[i]));
+					auto x1a = sqrt(6 * abs(yddmax[i]) * abs(dy[i])) / abs(yddmax[i]);
+					auto x1j = cbrt(12 * abs(dy[i]) * pow(ydddmax[i], 2)) / abs(ydddmax[i]);
+					x1[i] = max({x1v, x1a, x1j});
+				}
+				
+				Real x1max = TypeTraits<T>::max_element(x1);
+				
+				Polynomial f(3);
+				
+				f.c[0] = y0;
+				f.c[1] = TypeTraits<T>::Zero(dim);
+				f.c[2] = -3 * dy / pow(x1max, 2);
+				f.c[3] = 2 * dy / pow(x1max, 3);
+				f.x1 = x1max;
+				
+				return f;
+			}
+			
 			static Polynomial CubicFirst(const T& y0, const T& y1, const T& yd0, const T& yd1, const Real& x1 = 1)
 			{
 				Polynomial f(3);
@@ -140,6 +215,85 @@ namespace rl
 				return f;
 			}
 			
+			template<typename U = T>
+			static Polynomial QuinticAtRest(
+				const typename ::std::enable_if<::std::is_floating_point<U>::value, U>::type& y0,
+				const typename ::std::enable_if<::std::is_floating_point<U>::value, U>::type& y1,
+				const typename ::std::enable_if<::std::is_floating_point<U>::value, U>::type& ydmax,
+				const typename ::std::enable_if<::std::is_floating_point<U>::value, U>::type& yddmax,
+				const typename ::std::enable_if<::std::is_floating_point<U>::value, U>::type& ydddmax
+			)
+			{
+				using ::std::abs;
+				using ::std::cbrt;
+				using ::std::max;
+				using ::std::pow;
+				using ::std::sqrt;
+				
+				T dy = y0 - y1;
+				
+				T x1v = 15 * abs(dy) / (8 * abs(ydmax));
+				T x1a = sqrt(30 * abs(yddmax) * sqrt(3) * abs(dy)) / (3 * abs(yddmax));
+				T x1j = cbrt(60 * abs(dy) * pow(ydddmax, 2)) / abs(ydddmax);
+				T x1 = max({x1v, x1a, x1j});
+				
+				Polynomial f(5);
+				
+				f.c[0] = y0;
+				f.c[1] = 0;
+				f.c[2] = 0;
+				f.c[3] = -10 * dy / pow(x1, 3);
+				f.c[4] = 15 * dy / pow(x1, 4);
+				f.c[5] = -6 * dy / pow(x1, 5);
+				f.x1 = x1;
+				
+				return f;
+			}
+			
+			template<typename U = T>
+			static Polynomial QuinticAtRest(
+				const typename ::std::enable_if<::std::is_class<U>::value, U>::type& y0,
+				const typename ::std::enable_if<::std::is_class<U>::value, U>::type& y1,
+				const typename ::std::enable_if<::std::is_class<U>::value, U>::type& ydmax,
+				const typename ::std::enable_if<::std::is_class<U>::value, U>::type& yddmax,
+				const typename ::std::enable_if<::std::is_class<U>::value, U>::type& ydddmax
+			)
+			{
+				using ::std::abs;
+				using ::std::cbrt;
+				using ::std::max;
+				using ::std::pow;
+				using ::std::sqrt;
+				
+				T dy = y0 - y1;
+				
+				::std::size_t dim = TypeTraits<T>::size(y0);
+				
+				T x1(dim);
+				
+				for (::std::size_t i = 0; i < dim; ++i)
+				{
+					auto x1v = 15 * abs(dy[i]) / (8 * abs(ydmax[i]));
+					auto x1a = sqrt(30 * abs(yddmax[i]) * sqrt(3) * abs(dy[i])) / (3 * abs(yddmax[i]));
+					auto x1j = cbrt(60 * abs(dy[i]) * pow(ydddmax[i], 2)) / abs(ydddmax[i]);
+					x1[i] = max({x1v, x1a, x1j});
+				}
+				
+				Real x1max = TypeTraits<T>::max_element(x1);
+				
+				Polynomial f(5);
+				
+				f.c[0] = y0;
+				f.c[1] = TypeTraits<T>::Zero(dim);
+				f.c[2] = TypeTraits<T>::Zero(dim);
+				f.c[3] = -10 * dy / pow(x1max, 3);
+				f.c[4] = 15 * dy / pow(x1max, 4);
+				f.c[5] = -6 * dy / pow(x1max, 5);
+				f.x1 = x1max;
+				
+				return f;
+			}
+			
 			static Polynomial QuinticFirstSecond(const T& y0, const T& y1, const T& yd0, const T& yd1, const T& ydd0, const T& ydd1, const Real& x1 = 1)
 			{
 				Polynomial f(5);
@@ -151,6 +305,89 @@ namespace rl
 				f.c[4] = (16 * x1 * yd0 - 2 * ::std::pow(x1, 2) * ydd1 + 30 * y0 + 14 * x1 * yd1 - 30 * y1 + 3 * ::std::pow(x1, 2) * ydd0) / (2 * ::std::pow(x1, 4));
 				f.c[5] = -(12 * y0 + 6 * x1 * yd0 + 6 * x1 * yd1 - 12 * y1 + ::std::pow(x1, 2) * ydd0 - ::std::pow(x1, 2) * ydd1) / (2 * ::std::pow(x1, 5));
 				f.x1 = x1;
+				
+				return f;
+			}
+			
+			template<typename U = T>
+			static Polynomial SepticAtRest(
+				const typename ::std::enable_if<::std::is_floating_point<U>::value, U>::type& y0,
+				const typename ::std::enable_if<::std::is_floating_point<U>::value, U>::type& y1,
+				const typename ::std::enable_if<::std::is_floating_point<U>::value, U>::type& ydmax,
+				const typename ::std::enable_if<::std::is_floating_point<U>::value, U>::type& yddmax,
+				const typename ::std::enable_if<::std::is_floating_point<U>::value, U>::type& ydddmax
+			)
+			{
+				using ::std::abs;
+				using ::std::cbrt;
+				using ::std::max;
+				using ::std::pow;
+				using ::std::sqrt;
+				
+				T dy = y0 - y1;
+				
+				T x1v = 35 * abs(dy) / (16 * abs(ydmax));
+				T x1a = (2 * sqrt(21 * abs(yddmax) * sqrt(5) * abs(dy))) / (5 * abs(yddmax));
+				T x1j = cbrt((420 * abs(dy)) * pow(ydddmax, 2)) / (2 * abs(ydddmax));
+				T x1 = max({x1v, x1a, x1j});
+				
+				Polynomial f(7);
+				
+				f.c[0] = y0;
+				f.c[1] = 0;
+				f.c[2] = 0;
+				f.c[3] = 0;
+				f.c[4] = -35 * dy / pow(x1, 4);
+				f.c[5] = 84 * dy / pow(x1, 5);
+				f.c[6] = -70 * dy / pow(x1, 6);
+				f.c[7] = 20 * dy / pow(x1, 7);
+				f.x1 = x1;
+				
+				return f;
+			}
+			
+			template<typename U = T>
+			static Polynomial SepticAtRest(
+				const typename ::std::enable_if<::std::is_class<U>::value, U>::type& y0,
+				const typename ::std::enable_if<::std::is_class<U>::value, U>::type& y1,
+				const typename ::std::enable_if<::std::is_class<U>::value, U>::type& ydmax,
+				const typename ::std::enable_if<::std::is_class<U>::value, U>::type& yddmax,
+				const typename ::std::enable_if<::std::is_class<U>::value, U>::type& ydddmax
+			)
+			{
+				using ::std::abs;
+				using ::std::cbrt;
+				using ::std::max;
+				using ::std::pow;
+				using ::std::sqrt;
+				
+				T dy = y0 - y1;
+				
+				::std::size_t dim = TypeTraits<T>::size(y0);
+				
+				T x1(dim);
+				
+				for (::std::size_t i = 0; i < dim; ++i)
+				{
+					auto x1v = 35 * abs(dy[i]) / (16 * abs(ydmax[i]));
+					auto x1a = (2 * sqrt(21 * abs(yddmax[i]) * sqrt(5) * abs(dy[i]))) / (5 * abs(yddmax[i]));
+					auto x1j = cbrt((420 * abs(dy[i])) * pow(ydddmax[i], 2)) / (2 * abs(ydddmax[i]));
+					x1[i] = max({x1v, x1a, x1j});
+				}
+				
+				Real x1max = TypeTraits<T>::max_element(x1);
+				
+				Polynomial f(7);
+				
+				f.c[0] = y0;
+				f.c[1] = TypeTraits<T>::Zero(dim);
+				f.c[2] = TypeTraits<T>::Zero(dim);
+				f.c[3] = TypeTraits<T>::Zero(dim);
+				f.c[4] = -35 * dy / pow(x1max, 4);
+				f.c[5] = 84 * dy / pow(x1max, 5);
+				f.c[6] = -70 * dy / pow(x1max, 6);
+				f.c[7] = 20 * dy / pow(x1max, 7);
+				f.x1 = x1max;
 				
 				return f;
 			}

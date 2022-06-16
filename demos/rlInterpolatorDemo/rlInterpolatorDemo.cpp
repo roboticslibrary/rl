@@ -238,6 +238,63 @@ main(int argc, char** argv)
 	}
 	
 	{
+		rl::math::Polynomial<rl::math::Vector> f0 = rl::math::Polynomial<rl::math::Vector>::CubicAtRest(
+			rl::math::Vector::Constant(1, 0),
+			rl::math::Vector::Constant(1, 1),
+			rl::math::Vector::Constant(1, 1),
+			rl::math::Vector::Constant(1, 2),
+			rl::math::Vector::Constant(1, 4)
+		);
+		eval(f0);
+		rl::math::Polynomial<rl::math::ArrayX> f1 = rl::math::Polynomial<rl::math::ArrayX>::CubicAtRest(
+			rl::math::ArrayX::Constant(1, 0),
+			rl::math::ArrayX::Constant(1, 1),
+			rl::math::ArrayX::Constant(1, 1),
+			rl::math::ArrayX::Constant(1, 2),
+			rl::math::ArrayX::Constant(1, 4)
+		);
+		eval(f1);
+	}
+	
+	{
+		rl::math::Polynomial<rl::math::Vector> f0 = rl::math::Polynomial<rl::math::Vector>::QuinticAtRest(
+			rl::math::Vector::Constant(1, 0),
+			rl::math::Vector::Constant(1, 1),
+			rl::math::Vector::Constant(1, 1),
+			rl::math::Vector::Constant(1, 2),
+			rl::math::Vector::Constant(1, 4)
+		);
+		eval(f0);
+		rl::math::Polynomial<rl::math::ArrayX> f1 = rl::math::Polynomial<rl::math::ArrayX>::QuinticAtRest(
+			rl::math::ArrayX::Constant(1, 0),
+			rl::math::ArrayX::Constant(1, 1),
+			rl::math::ArrayX::Constant(1, 1),
+			rl::math::ArrayX::Constant(1, 2),
+			rl::math::ArrayX::Constant(1, 4)
+		);
+		eval(f1);
+	}
+	
+	{
+		rl::math::Polynomial<rl::math::Vector> f0 = rl::math::Polynomial<rl::math::Vector>::SepticAtRest(
+			rl::math::Vector::Constant(1, 0),
+			rl::math::Vector::Constant(1, 1),
+			rl::math::Vector::Constant(1, 1),
+			rl::math::Vector::Constant(1, 2),
+			rl::math::Vector::Constant(1, 4)
+		);
+		eval(f0);
+		rl::math::Polynomial<rl::math::ArrayX> f1 = rl::math::Polynomial<rl::math::ArrayX>::SepticAtRest(
+			rl::math::ArrayX::Constant(1, 0),
+			rl::math::ArrayX::Constant(1, 1),
+			rl::math::ArrayX::Constant(1, 1),
+			rl::math::ArrayX::Constant(1, 2),
+			rl::math::ArrayX::Constant(1, 4)
+		);
+		eval(f1);
+	}
+	
+	{
 		rl::math::Spline<rl::math::Vector> f0 = rl::math::Spline<rl::math::Vector>::QuarticLinearQuarticAtRest(
 			rl::math::Vector::Constant(1, 0),
 			rl::math::Vector::Constant(1, 1),

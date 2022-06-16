@@ -1,6 +1,7 @@
 set(
 	TESTS
 	rlCompositeFunctionTest
+	rlPolynomialAtRestTest
 	rlPolynomialExtremaTest
 	rlPolynomialTest
 	rlQuarticLinearQuarticTest
