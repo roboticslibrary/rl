@@ -32,14 +32,17 @@
 #include <rl/hal/UniversalRobotsRtde.h>
 #include <rl/math/Constants.h>
 #include <rl/math/Polynomial.h>
+#include <rl/math/Spline.h>
 
 #define COACH
 //#define GNUPLOT
 //#define MITSUBISHI
 //#define UNIVERSAL_ROBOTS_RTDE
 
-#define CUBIC
+//#define CUBIC
 //#define QUINTIC
+//#define SEPTIC
+#define TRAPEZOIDAL
 
 int
 main(int argc, char** argv)
@@ -61,6 +64,10 @@ main(int argc, char** argv)
 		
 		rl::math::Real updateRate = std::chrono::duration_cast<std::chrono::duration<rl::math::Real>>(controller.getUpdateRate()).count();
 		
+		rl::math::Vector vmax = rl::math::Vector::Constant(controller.getDof(), 5 * rl::math::constants::deg2rad);
+		rl::math::Vector amax = rl::math::Vector::Constant(controller.getDof(), 15 * rl::math::constants::deg2rad);
+		rl::math::Vector jmax = rl::math::Vector::Constant(controller.getDof(), 45 * rl::math::constants::deg2rad);
+		
 		controller.open();
 		controller.start();
 		
@@ -69,32 +76,30 @@ main(int argc, char** argv)
 		rl::math::Vector q0 = controller.getJointPosition();
 		rl::math::Vector q1 = q0 + rl::math::Vector::Constant(controller.getDof(), 5 * rl::math::constants::deg2rad);
 		
-		rl::math::Real te = updateRate * 300.0f;
-		
 		rl::math::Vector q(controller.getDof());
 		
 #ifdef CUBIC
-		rl::math::Polynomial<rl::math::Vector> interpolator = rl::math::Polynomial<rl::math::Vector>::CubicFirst(
-			q0,
-			q1,
-			rl::math::Vector::Zero(controller.getDof()),
-			rl::math::Vector::Zero(controller.getDof()),
-			te
-		);
+		rl::math::Polynomial<rl::math::Vector> interpolator = rl::math::Polynomial<rl::math::Vector>::CubicAtRest(
 #endif // CUBIC
 #ifdef QUINTIC
-		rl::math::Polynomial<rl::math::Vector> interpolator = rl::math::Polynomial<rl::math::Vector>::QuinticFirstSecond(
+		rl::math::Polynomial<rl::math::Vector> interpolator = rl::math::Polynomial<rl::math::Vector>::QuinticAtRest(
+#endif // QUINTIC
+#ifdef SEPTIC
+		rl::math::Polynomial<rl::math::Vector> interpolator = rl::math::Polynomial<rl::math::Vector>::SepticAtRest(
+#endif // SEPTIC
+#ifdef TRAPEZOIDAL
+		rl::math::Spline<rl::math::Vector> interpolator = rl::math::Spline<rl::math::Vector>::TrapezoidalAccelerationAtRest(
+#endif // TRAPEZOIDAL
 			q0,
 			q1,
-			rl::math::Vector::Zero(controller.getDof()),
-			rl::math::Vector::Zero(controller.getDof()),
-			rl::math::Vector::Zero(controller.getDof()),
-			rl::math::Vector::Zero(controller.getDof()),
-			te
+			vmax,
+			amax,
+			jmax
 		);
-#endif // QUINTIC
 		
-		for (std::size_t i = 0; i <= std::ceil(te / updateRate); ++i)
+		std::size_t steps = static_cast<std::size_t>(std::ceil(interpolator.duration() / updateRate)) + 1;
+		
+		for (std::size_t i = 0; i < steps; ++i)
 		{
 			q = interpolator(i * updateRate);
 			controller.setJointPosition(q);
@@ -102,27 +107,27 @@ main(int argc, char** argv)
 		}
 		
 #ifdef CUBIC
-		interpolator = rl::math::Polynomial<rl::math::Vector>::CubicFirst(
-			q1,
-			q0,
-			rl::math::Vector::Zero(controller.getDof()),
-			rl::math::Vector::Zero(controller.getDof()),
-			te
-		);
+		interpolator = rl::math::Polynomial<rl::math::Vector>::CubicAtRest(
 #endif // CUBIC
 #ifdef QUINTIC
-		interpolator = rl::math::Polynomial<rl::math::Vector>::QuinticFirstSecond(
+		interpolator = rl::math::Polynomial<rl::math::Vector>::QuinticAtRest(
+#endif // QUINTIC
+#ifdef SEPTIC
+		interpolator = rl::math::Polynomial<rl::math::Vector>::SepticAtRest(
+#endif // SEPTIC
+#ifdef TRAPEZOIDAL
+		interpolator = rl::math::Spline<rl::math::Vector>::TrapezoidalAccelerationAtRest(
+#endif // TRAPEZOIDAL
 			q1,
 			q0,
-			rl::math::Vector::Zero(controller.getDof()),
-			rl::math::Vector::Zero(controller.getDof()),
-			rl::math::Vector::Zero(controller.getDof()),
-			rl::math::Vector::Zero(controller.getDof()),
-			te
+			vmax,
+			amax,
+			jmax
 		);
-#endif // QUINTIC
 		
-		for (std::size_t i = 0; i <= std::ceil(te / updateRate); ++i)
+		steps = static_cast<std::size_t>(std::ceil(interpolator.duration() / updateRate)) + 1;
+		
+		for (std::size_t i = 0; i < steps; ++i)
 		{
 			q = interpolator(i * updateRate);
 			controller.setJointPosition(q);
