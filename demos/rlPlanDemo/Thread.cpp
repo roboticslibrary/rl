@@ -360,15 +360,15 @@ Thread::run()
 				QThread::usleep(static_cast<std::size_t>(2.0 * 1000.0 * 1000.0));
 			}
 			
-			emit statusChanged("Planner " + QString(solved ? "succeeded" : "failed") + " in " + QString::number(plannerDuration) + " ms. Optimizing...");
+			emit statusChanged("Planner " + QString(solved ? "succeeded" : "failed") + " in " + QString::number(plannerDuration * 1000) + " ms. Optimizing...");
 			
 			start = std::chrono::steady_clock::now();
 			MainWindow::instance()->optimizer->process(path);
 			stop = std::chrono::steady_clock::now();
 			
-			double optimizerDuration = std::chrono::duration_cast<std::chrono::duration<double>>(stop - start).count() * 1000;
+			double optimizerDuration = std::chrono::duration_cast<std::chrono::duration<double>>(stop - start).count();
 			
-			emit statusChanged("Planner " + QString(solved ? "succeeded" : "failed") + " in " + QString::number(plannerDuration) + " ms. Optimizer finished in " + QString::number(optimizerDuration) + " ms.");
+			emit statusChanged("Planner " + QString(solved ? "succeeded" : "failed") + " in " + QString::number(plannerDuration * 1000) + " ms. Optimizer finished in " + QString::number(optimizerDuration * 1000) + " ms.");
 			
 			if (nullptr != MainWindow::instance()->planner->getViewer())
 			{
