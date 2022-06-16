@@ -137,7 +137,7 @@ namespace rl
 				return 0;
 			}
 			
-			static T abs(const float& t)
+			static T abs(const T& t)
 			{
 				return ::std::abs(t);
 			}
@@ -184,7 +184,7 @@ namespace rl
 				return 0;
 			}
 			
-			static T abs(const float& t)
+			static T abs(const T& t)
 			{
 				return ::std::abs(t);
 			}
