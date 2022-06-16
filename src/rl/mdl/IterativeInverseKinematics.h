@@ -48,11 +48,15 @@ namespace rl
 			
 			const ::std::size_t& getIterations() const;
 			
+			const ::std::size_t& getRandomRestarts() const;
+			
 			void setDuration(const ::std::chrono::nanoseconds& duration);
 			
 			virtual void setEpsilon(const ::rl::math::Real& epsilon);
 			
 			void setIterations(const ::std::size_t& iterations);
+			
+			void setRandomRestarts(const ::std::size_t& restarts);
 			
 		protected:
 			
@@ -62,6 +66,8 @@ namespace rl
 			::rl::math::Real epsilon;
 			
 			::std::size_t iterations;
+			
+			::std::size_t restarts;
 		};
 	}
 }

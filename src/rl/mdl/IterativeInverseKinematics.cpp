@@ -34,7 +34,8 @@ namespace rl
 			InverseKinematics(kinematic),
 			duration(::std::chrono::milliseconds(1000)),
 			epsilon(static_cast<::rl::math::Real>(1.0e-6)),
-			iterations(10000)
+			iterations(10000),
+			restarts(::std::numeric_limits<::std::size_t>::max())
 		{
 		}
 		
@@ -60,6 +61,12 @@ namespace rl
 			return this->iterations;
 		}
 		
+		const ::std::size_t&
+		IterativeInverseKinematics::getRandomRestarts() const
+		{
+			return this->restarts;
+		}
+		
 		void
 		IterativeInverseKinematics::setDuration(const ::std::chrono::nanoseconds& duration)
 		{
@@ -76,6 +83,12 @@ namespace rl
 		IterativeInverseKinematics::setIterations(const ::std::size_t& iterations)
 		{
 			this->iterations = iterations;
+		}
+		
+		void
+		IterativeInverseKinematics::setRandomRestarts(const ::std::size_t& restarts)
+		{
+			this->restarts = restarts;
 		}
 	}
 }

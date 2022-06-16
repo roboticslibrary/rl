@@ -83,6 +83,7 @@ namespace rl
 		{
 			::std::chrono::steady_clock::time_point start = ::std::chrono::steady_clock::now();
 			double remaining = ::std::chrono::duration<double>(this->getDuration()).count();
+			::std::size_t attempt = 0;
 			::std::size_t iteration = 0;
 			
 			::rl::math::Vector q = this->kinematic->getPosition();
@@ -94,6 +95,17 @@ namespace rl
 			
 			do
 			{
+				if (attempt > 0)
+				{
+					for (::std::size_t i = 0; i < this->kinematic->getDof(); ++i)
+					{
+						rand(i) = this->randDistribution(this->randEngine);
+					}
+					
+					q = this->kinematic->generatePositionUniform(rand);
+					this->kinematic->setPosition(q);
+				}
+				
 				do
 				{
 					this->kinematic->forwardPosition();
@@ -157,18 +169,8 @@ namespace rl
 					}
 				}
 				while (remaining > 0 && iteration < this->getIterations());
-				
-				for (::std::size_t i = 0; i < this->kinematic->getDof(); ++i)
-				{
-					rand(i) = this->randDistribution(this->randEngine);
-				}
-				
-				q = this->kinematic->generatePositionUniform(rand);
-				this->kinematic->setPosition(q);
-				
-				remaining = ::std::chrono::duration<double>(this->getDuration() - (::std::chrono::steady_clock::now() - start)).count();
 			}
-			while (remaining > 0 && iteration < this->getIterations());
+			while (attempt++ < this->getRandomRestarts() && remaining > 0 && iteration < this->getIterations());
 			
 			return false;
 		}
