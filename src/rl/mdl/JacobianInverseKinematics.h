@@ -67,11 +67,15 @@ namespace rl
 			
 			const Method& getMethod() const;
 			
+			const ::std::size_t& getSteps() const;
+			
 			void seed(const ::std::mt19937::result_type& value);
 			
 			void setDelta(const ::rl::math::Real& delta);
 			
 			void setMethod(const Method& method);
+			
+			void setSteps(const ::std::size_t& steps);
 			
 			bool solve();
 			
@@ -85,6 +89,8 @@ namespace rl
 			::std::uniform_real_distribution<::rl::math::Real> randDistribution;
 			
 			::std::mt19937 randEngine;
+			
+			::std::size_t steps;
 		};
 	}
 }

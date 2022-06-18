@@ -40,7 +40,8 @@ namespace rl
 			delta(::std::numeric_limits<::rl::math::Real>::infinity()),
 			method(Method::svd),
 			randDistribution(0, 1),
-			randEngine(::std::random_device()())
+			randEngine(::std::random_device()()),
+			steps(100)
 		{
 		}
 		
@@ -60,6 +61,12 @@ namespace rl
 			return this->method;
 		}
 		
+		const ::std::size_t&
+		JacobianInverseKinematics::getSteps() const
+		{
+			return this->steps;
+		}
+		
 		void
 		JacobianInverseKinematics::seed(const ::std::mt19937::result_type& value)
 		{
@@ -76,6 +83,12 @@ namespace rl
 		JacobianInverseKinematics::setMethod(const Method& method)
 		{
 			this->method = method;
+		}
+		
+		void
+		JacobianInverseKinematics::setSteps(const ::std::size_t& steps)
+		{
+			this->steps = steps;
 		}
 		
 		bool
@@ -106,15 +119,15 @@ namespace rl
 					this->kinematic->setPosition(q);
 				}
 				
-				do
+				for (::std::size_t i = 0; i < this->steps && remaining > 0 && iteration < this->getIterations(); ++i, ++iteration)
 				{
 					this->kinematic->forwardPosition();
 					dx.setZero();
 					
-					for (::std::size_t i = 0; i < this->goals.size(); ++i)
+					for (::std::size_t j = 0; j < this->goals.size(); ++j)
 					{
-						::rl::math::VectorBlock dxi = dx.segment(6 * this->goals[i].second, 6);
-						dxi = this->kinematic->getOperationalPosition(this->goals[i].second).toDelta(this->goals[i].first);
+						::rl::math::VectorBlock dxi = dx.segment(6 * this->goals[j].second, 6);
+						dxi = this->kinematic->getOperationalPosition(this->goals[j].second).toDelta(this->goals[j].first);
 					}
 					
 					if (dx.squaredNorm() < ::std::pow(this->getEpsilon(), 2))
@@ -162,13 +175,7 @@ namespace rl
 					this->kinematic->setPosition(q);
 					
 					remaining = ::std::chrono::duration<double>(this->getDuration() - (::std::chrono::steady_clock::now() - start)).count();
-					
-					if (0 == ++iteration % 100)
-					{
-						break;
-					}
 				}
-				while (remaining > 0 && iteration < this->getIterations());
 			}
 			while (attempt++ < this->getRandomRestarts() && remaining > 0 && iteration < this->getIterations());
 			
