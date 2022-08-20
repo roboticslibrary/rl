@@ -53,14 +53,16 @@ namespace rl
 			{
 				if (nullptr != this->object)
 				{
-					if (::XPATH_LOCATIONSET == this->object->type && nullptr != this->object->user)
-					{
-						::xmlXPtrFreeLocationSet(static_cast<::xmlLocationSetPtr>(this->object->user));
-					}
-					else if (::XPATH_STRING == this->object->type && nullptr != this->object->stringval)
+					if (::XPATH_STRING == this->object->type && nullptr != this->object->stringval)
 					{
 						::xmlFree(this->object->stringval);
 					}
+#if LIBXML_VERSION < 21000 || defined(LIBXML_XPTR_LOCS_ENABLED)
+					else if (::XPATH_LOCATIONSET == this->object->type && nullptr != this->object->user)
+					{
+						::xmlXPtrFreeLocationSet(static_cast<::xmlLocationSetPtr>(this->object->user));
+					}
+#endif
 				}
 			}
 			
@@ -104,9 +106,11 @@ namespace rl
 				case ::XPATH_STRING:
 					return typeid(this->object->stringval);
 					break;
+#if LIBXML_VERSION < 21000 || defined(LIBXML_XPTR_LOCS_ENABLED)
 				case ::XPATH_POINT:
 				case ::XPATH_RANGE:
 				case ::XPATH_LOCATIONSET:
+#endif
 				case ::XPATH_USERS:
 				case ::XPATH_XSLT_TREE:
 				default:
