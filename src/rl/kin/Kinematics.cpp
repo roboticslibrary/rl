@@ -732,12 +732,13 @@ namespace rl
 		}
 		
 		bool
-		Kinematics::inversePosition(const ::rl::math::Transform& x, ::rl::math::Vector& q, const ::std::size_t& leaf, const ::rl::math::Real& delta, const ::rl::math::Real& epsilon, const ::std::size_t& iterations, const ::std::chrono::nanoseconds& duration)
+		Kinematics::inversePosition(const ::rl::math::Transform& x, ::rl::math::Vector& q, const ::std::size_t& leaf, const ::rl::math::Real& delta, const ::rl::math::Real& epsilon, const ::std::size_t& iterations, const ::std::chrono::nanoseconds& duration, const ::std::size_t& steps, const ::std::size_t& restarts)
 		{
 			assert(q.size() == this->getDof());
 			
 			::std::chrono::steady_clock::time_point start = ::std::chrono::steady_clock::now();
 			double remaining = ::std::chrono::duration<double>(duration).count();
+			::std::size_t attempt = 0;
 			::std::size_t iteration = 0;
 			
 			this->getPosition(q);
@@ -747,7 +748,13 @@ namespace rl
 			
 			do
 			{
-				do
+				if (attempt > 0)
+				{
+					q = this->generatePositionUniform();
+					this->setPosition(q);
+				}
+				
+				for (::std::size_t i = 0; i < steps && remaining > 0 && iteration < iterations; ++i, ++iteration)
 				{
 					this->updateFrames();
 					dx.setZero();
@@ -781,20 +788,11 @@ namespace rl
 					this->setPosition(q);
 					
 					remaining = ::std::chrono::duration<double>(duration - (::std::chrono::steady_clock::now() - start)).count();
-					
-					if (0 == ++iteration % 100)
-					{
-						break;
-					}
 				}
-				while (remaining > 0 && iteration < iterations);
-				
-				q = this->generatePositionUniform();
-				this->setPosition(q);
 				
 				remaining = ::std::chrono::duration<double>(duration - (::std::chrono::steady_clock::now() - start)).count();
 			}
-			while (remaining > 0 && iteration < iterations);
+			while (attempt++ < restarts && remaining > 0 && iteration < iterations);
 			
 			return false;
 		}
