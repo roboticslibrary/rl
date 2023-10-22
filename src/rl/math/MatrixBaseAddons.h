@@ -222,7 +222,6 @@ static SphericalFromCartesian(const MatrixBase<OtherDerived>& cartesian)
  *
  * http://mathworld.wolfram.com/SphericalCoordinates.html
  */
-template<typename OtherDerived>
 Matrix<Scalar, 3, 1>
 static SphericalFromCartesian(const Scalar& x, const Scalar& y, const Scalar& z)
 {
