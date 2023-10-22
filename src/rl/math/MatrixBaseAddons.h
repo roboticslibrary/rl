@@ -238,8 +238,8 @@ static SphericalFromCartesian(const Scalar& x, const Scalar& y, const Scalar& z)
 	
 	return Matrix<Scalar, 3, 1>(
 		sqrt(x_2 + y_2 + z_2),
-		atan2(sqrt(x_2 + y_2), z),
-		atan2(y, x)
+		atan2(y, x),
+		atan2(sqrt(x_2 + y_2), z)
 	);
 }
 
