@@ -1,5 +1,6 @@
 if(RL_BUILD_MATH)
 	add_subdirectory(rlCircularTest)
+	add_subdirectory(rlCoordinatesTest)
 	add_subdirectory(rlMathDeltaTest)
 	add_subdirectory(rlNearestNeighborsTest)
 	add_subdirectory(rlSpatialTest)
