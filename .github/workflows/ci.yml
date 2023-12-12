@@ -149,23 +149,23 @@ jobs:
       - name: Configure CMake
         run: >
           cmake
-          -G"Ninja Multi-Config"
+          -GNinja
           -S"${{ github.workspace }}"
-          -B"${{ runner.workspace }}/rl-build"
+          -B"${{ github.workspace }}/build"
       - name: Build Debug
-        working-directory: ${{ runner.workspace }}/rl-build
+        working-directory: ${{ github.workspace }}/build
         run: cmake --build . --config Debug
       - name: Build Release
-        working-directory: ${{ runner.workspace }}/rl-build
+        working-directory: ${{ github.workspace }}/build
         run: cmake --build . --config Release
       - name: Test
-        working-directory: ${{ runner.workspace }}/rl-build
+        working-directory: ${{ github.workspace }}/build
         run: ctest --output-on-failure
       - name: Create archive
-        working-directory: ${{ runner.workspace }}/rl-build
+        working-directory: ${{ github.workspace }}/build
         run: cpack -G 7Z
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.name }}
-          path: ${{ runner.workspace }}/rl-build/rl-*.7z
+          path: ${{ github.workspace }}/build/rl-*.7z
