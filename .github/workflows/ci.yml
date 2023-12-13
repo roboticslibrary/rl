@@ -8,31 +8,10 @@ jobs:
       fail-fast: false
       matrix:
         name:
-#          - macos-11
-#          - ubuntu-20.04-clang
-#          - ubuntu-20.04-gcc
           - windows-2019-msvc
-#          - windows-2019-msys2
         include:
-#          - name: macos-11
-#            cmake_compiler_launcher: ccache
-#            cmake_prefix_path: /usr/local/opt/qt/lib/cmake
-#            os: macos-11
-#          - name: ubuntu-20.04-clang
-#            cc: clang
-#            cmake_compiler_launcher: ccache
-#            cxx: clang++
-#            os: ubuntu-20.04
-#          - name: ubuntu-20.04-gcc
-#            cc: gcc
-#            cmake_compiler_launcher: ccache
-#            cxx: g++
-#            os: ubuntu-20.04
           - name: windows-2019-msvc
             os: windows-2019
-#          - name: windows-2019-msys2
-#            cmake_compiler_launcher: ccache
-#            os: windows-2019
     env:
       CC: ${{ matrix.cc }}
       CCACHE_COMPRESS: true
@@ -151,21 +130,21 @@ jobs:
           cmake
           -G"Ninja Multi-Config"
           -S"${{ github.workspace }}"
-          -B"${{ github.workspace }}/build"
+          -B"${{ runner.workspace }}/rl-build"
       - name: Build Debug
-        working-directory: ${{ github.workspace }}/build
+        working-directory: ${{ runner.workspace }}/rl-build
         run: cmake --build . --config Debug
       - name: Build Release
-        working-directory: ${{ github.workspace }}/build
+        working-directory: ${{ runner.workspace }}/rl-build
         run: cmake --build . --config Release
       - name: Test
-        working-directory: ${{ github.workspace }}/build
+        working-directory: ${{ runner.workspace }}/rl-build
         run: ctest --output-on-failure
       - name: Create archive
-        working-directory: ${{ github.workspace }}/build
+        working-directory: ${{ runner.workspace }}/rl-build
         run: cpack -G 7Z
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.name }}
-          path: ${{ github.workspace }}/build/rl-*.7z
+          path: ${{ runner.workspace }}/rl-build/rl-*.7z
