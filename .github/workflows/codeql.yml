@@ -8,13 +8,14 @@ on:
       - master
   schedule:
     - cron: '30 14 * * 2'
+  workflow_dispatch:
 jobs:
   analyze:
     name: Analyze
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up PPA
         run: |
           sudo apt-get install -y software-properties-common
@@ -27,7 +28,7 @@ jobs:
           libboost-dev
           libbullet-dev
           libcomedi-dev
-          libdc1394-22-dev
+          libdc1394-dev
           libeigen3-dev
           libfcl-dev
           libnlopt-dev
