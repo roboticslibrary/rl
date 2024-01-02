@@ -6,60 +6,27 @@ on:
   pull_request:
     branches:
       - master
+  workflow_dispatch:
 jobs:
-  build:
+  build-macos:
     name: Build
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        name:
-          - macos-11
-          - ubuntu-20.04-clang
-          - ubuntu-20.04-gcc
-          - windows-2019-msvc
-          - windows-2019-msys2
-        include:
-          - name: macos-11
-            cmake_compiler_launcher: ccache
-            cmake_prefix_path: /usr/local/opt/qt/lib/cmake
-            os: macos-11
-          - name: ubuntu-20.04-clang
-            cc: clang
-            cmake_compiler_launcher: ccache
-            cxx: clang++
-            os: ubuntu-20.04
-          - name: ubuntu-20.04-gcc
-            cc: gcc
-            cmake_compiler_launcher: ccache
-            cxx: g++
-            os: ubuntu-20.04
-          - name: windows-2019-msvc
-            os: windows-2019
-          - name: windows-2019-msys2
-            cmake_compiler_launcher: ccache
-            os: windows-2019
+        os:
+          - macos-12
     env:
-      CC: ${{ matrix.cc }}
       CCACHE_COMPRESS: true
       CCACHE_MAXSIZE: 500M
-      CMAKE_C_COMPILER_LAUNCHER: ${{ matrix.cmake_compiler_launcher }}
-      CMAKE_CXX_COMPILER_LAUNCHER: ${{ matrix.cmake_compiler_launcher }}
-      CMAKE_PREFIX_PATH: ${{ matrix.cmake_prefix_path }}
-      CXX: ${{ matrix.cxx }}
+      CMAKE_C_COMPILER_LAUNCHER: ccache
+      CMAKE_CXX_COMPILER_LAUNCHER: ccache
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
-      - if: matrix.os == 'macos-11'
-        name: Set up Tap
+        uses: actions/checkout@v4
+      - name: Set up Tap
         run: brew tap roboticslibrary/rl
-      - if: matrix.os == 'ubuntu-20.04'
-        name: Set up PPA
-        run: |
-          sudo apt-get install -y software-properties-common
-          sudo apt-add-repository -y -u ppa:roblib/ppa
-      - if: matrix.os == 'macos-11'
-        name: Install dependencies for macOS
+      - name: Install dependencies
         run: >
           brew install
           boost
@@ -73,11 +40,174 @@ jobs:
           nlopt
           ode
           pqp
-          qt
           solid
           soqt
-      - if: matrix.os == 'ubuntu-20.04'
-        name: Install dependencies for Ubuntu
+      - name: Update environment variables
+        run: |
+          echo "CCACHE_BASEDIR=${{ runner.workspace }}" >> $GITHUB_ENV
+          echo "CCACHE_DIR=${{ runner.workspace }}/.ccache" >> $GITHUB_ENV
+      - name: Cache compiler
+        uses: actions/cache@v3
+        with:
+          path: ${{ runner.workspace }}/.ccache
+          key: ${{ matrix.os }}-ccache-${{ github.sha }}
+          restore-keys: ${{ matrix.os }}-ccache-
+      - name: Configure CMake
+        run: cmake -GNinja -DCMAKE_BUILD_TYPE=Release -S"${{ github.workspace }}" -B"${{ runner.workspace }}/rl-build"
+      - name: Build
+        working-directory: ${{ runner.workspace }}/rl-build
+        run: cmake --build .
+      - name: Test
+        working-directory: ${{ runner.workspace }}/rl-build
+        run: ctest --output-on-failure
+      - name: Create archive
+        working-directory: ${{ runner.workspace }}/rl-build
+        run: cpack -G TXZ
+      - name: Upload archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.os }}
+          path: ${{ runner.workspace }}/rl-build/rl-*.tar.xz
+  build-msvc:
+    name: Build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - windows-2019
+          - windows-2022
+        qt:
+          - qt5
+          - qt6
+        include:
+          - os: windows-2019
+            toolchain: 14.2
+          - os: windows-2022
+            toolchain: 14.3
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Enable Developer Command Prompt
+        uses: ilammy/msvc-dev-cmd@v1
+      - name: Install dependencies
+        working-directory: ${{ runner.workspace }}
+        run: |
+          curl -L https://github.com/roboticslibrary/rl-3rdparty/releases/download/latest/rl-3rdparty-msvc-${{ matrix.toolchain }}-x64-${{ matrix.qt }}.7z -o rl-3rdparty.7z
+          7z x rl-3rdparty.7z -orl-3rdparty-install
+          Write-Output "${{ runner.workspace }}\rl-3rdparty-install\bin" | Out-File -FilePath $Env:GITHUB_PATH -Encoding utf8 -Append
+      - name: Configure CMake
+        run: cmake -GNinja -DCMAKE_BUILD_TYPE=Release -S"${{ github.workspace }}" -B"${{ runner.workspace }}/rl-build"
+      - name: Build
+        working-directory: ${{ runner.workspace }}/rl-build
+        run: cmake --build .
+      - name: Test
+        working-directory: ${{ runner.workspace }}/rl-build
+        run: ctest --output-on-failure
+      - name: Create archive
+        working-directory: ${{ runner.workspace }}/rl-build
+        run: cpack -G 7Z
+      - name: Upload archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.os }}-msvc-${{ matrix.toolchain }}-${{ matrix.qt }}
+          path: ${{ runner.workspace }}/rl-build/rl-*.7z
+  build-msys2:
+    name: Build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - windows-2022
+        sys:
+          - ucrt64
+    env:
+      CCACHE_COMPRESS: true
+      CCACHE_MAXSIZE: 500M
+      CMAKE_C_COMPILER_LAUNCHER: ccache
+      CMAKE_CXX_COMPILER_LAUNCHER: ccache
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: ${{matrix.sys}}
+          pacboy: >-
+            boost:p
+            bullet:p
+            ccache:p
+            cmake:p
+            coin:p
+            eigen3:p
+            libxml2:p
+            libxslt:p
+            ninja:p
+            nlopt:p
+            ode:p
+            pqp:p
+            solid3:p
+            soqt:p
+            toolchain:p
+          update: true
+      - name: Update environment variables
+        run: |
+          echo "CCACHE_BASEDIR=${{ runner.workspace }}" >> $GITHUB_ENV
+          echo "CCACHE_DIR=${{ runner.workspace }}/.ccache" >> $GITHUB_ENV
+      - name: Cache compiler
+        uses: actions/cache@v3
+        with:
+          path: ${{ runner.workspace }}/.ccache
+          key: ${{ matrix.os }}-msys2-${{ matrix.sys }}-ccache-${{ github.sha }}
+          restore-keys: ${{ matrix.os }}-msys2-${{ matrix.sys }}-ccache-
+      - name: Configure CMake
+        run: cmake -GNinja -DCMAKE_BUILD_TYPE=Release -S"${{ github.workspace }}" -B"${{ runner.workspace }}/rl-build"
+      - name: Build
+        working-directory: ${{ runner.workspace }}/rl-build
+        run: cmake --build .
+      - name: Test
+        working-directory: ${{ runner.workspace }}/rl-build
+        run: ctest --output-on-failure
+      - name: Create archive
+        working-directory: ${{ runner.workspace }}/rl-build
+        run: cpack -G TXZ
+      - name: Upload archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.os }}-msys2-${{ matrix.sys }}
+          path: ${{ runner.workspace }}/rl-build/rl-*.tar.xz
+  build-ubuntu:
+    name: Build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-22.04
+        compiler:
+          - cc: clang
+            cxx: clang++
+          - cc: gcc
+            cxx: g++
+    env:
+      CC: ${{ matrix.compiler.cc }}
+      CCACHE_COMPRESS: true
+      CCACHE_MAXSIZE: 500M
+      CMAKE_C_COMPILER_LAUNCHER: ccache
+      CMAKE_CXX_COMPILER_LAUNCHER: ccache
+      CXX: ${{ matrix.compiler.cxx }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up PPA
+        run: |
+          sudo apt-get install -y software-properties-common
+          sudo apt-add-repository -y -u ppa:roblib/ppa
+      - name: Install dependencies
         run: >
           sudo apt-get install -y
           build-essential
@@ -87,7 +217,7 @@ jobs:
           libboost-dev
           libbullet-dev
           libcomedi-dev
-          libdc1394-22-dev
+          libdc1394-dev
           libeigen3-dev
           libfcl-dev
           libnlopt-dev
@@ -99,66 +229,18 @@ jobs:
           libxml2-dev
           libxslt1-dev
           ninja-build
-      - if: matrix.name == 'windows-2019-msvc'
-        name: Enable Developer Command Prompt
-        uses: ilammy/msvc-dev-cmd@v1
-      - if: matrix.name == 'windows-2019-msvc'
-        name: Install dependencies for MSVC
-        working-directory: ${{ runner.workspace }}
-        run: |
-          curl -L https://github.com/roboticslibrary/rl-3rdparty/releases/download/latest/rl-3rdparty-msvc-14.2-x64.7z -o rl-3rdparty-msvc-14.2-x64.7z
-          7z x rl-3rdparty-msvc-14.2-x64.7z -orl-3rdparty-install
-          Write-Output "${{ runner.workspace }}\rl-3rdparty-install\bin" | Out-File -FilePath $Env:GITHUB_PATH -Encoding utf8 -Append
-      - if: matrix.name == 'windows-2019-msys2'
-        name: Set up MSYS2
-        uses: msys2/setup-msys2@v2
-        with:
-          install: >-
-            mingw-w64-x86_64-boost
-            mingw-w64-x86_64-bullet
-            mingw-w64-x86_64-ccache
-            mingw-w64-x86_64-cmake
-            mingw-w64-x86_64-coin
-            mingw-w64-x86_64-eigen3
-            mingw-w64-x86_64-gcc
-            mingw-w64-x86_64-libxml2
-            mingw-w64-x86_64-libxslt
-            mingw-w64-x86_64-ninja
-            mingw-w64-x86_64-nlopt
-            mingw-w64-x86_64-ode
-            mingw-w64-x86_64-pqp
-            mingw-w64-x86_64-qt5
-            mingw-w64-x86_64-solid3
-            mingw-w64-x86_64-soqt
-          update: true
-      - if: matrix.name == 'windows-2019-msys2'
-        name: Add MSYS2 to PATH
-        run: |
-          Write-Output (msys2 -c "cygpath -w /mingw64/bin") | Out-File -FilePath $Env:GITHUB_PATH -Encoding utf8 -Append
-      - if: matrix.os != 'windows-2019'
-        name: Update environment variables
+      - name: Update environment variables
         run: |
           echo "CCACHE_BASEDIR=${{ runner.workspace }}" >> $GITHUB_ENV
           echo "CCACHE_DIR=${{ runner.workspace }}/.ccache" >> $GITHUB_ENV
-      - if: matrix.os == 'windows-2019'
-        name: Update environment variables
-        run: |
-          Write-Output "CCACHE_BASEDIR=${{ runner.workspace }}" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
-          Write-Output "CCACHE_DIR=${{ runner.workspace }}\.ccache" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
-      - if: matrix.cmake_compiler_launcher != ''
-        name: Cache compiler
+      - name: Cache compiler
         uses: actions/cache@v3
         with:
           path: ${{ runner.workspace }}/.ccache
-          key: ${{ matrix.name }}-ccache-${{ github.sha }}
-          restore-keys: ${{ matrix.name }}-ccache-
+          key: ${{ matrix.os }}-${{ matrix.compiler.cc }}-ccache-${{ github.sha }}
+          restore-keys: ${{ matrix.os }}-${{ matrix.compiler.cc }}-ccache-
       - name: Configure CMake
-        run: >
-          cmake
-          -GNinja
-          -DCMAKE_BUILD_TYPE=Release
-          -S"${{ github.workspace }}"
-          -B"${{ runner.workspace }}/rl-build"
+        run: cmake -GNinja -DCMAKE_BUILD_TYPE=Release -S"${{ github.workspace }}" -B"${{ runner.workspace }}/rl-build"
       - name: Build
         working-directory: ${{ runner.workspace }}/rl-build
         run: cmake --build .
@@ -167,9 +249,9 @@ jobs:
         run: ctest --output-on-failure
       - name: Create archive
         working-directory: ${{ runner.workspace }}/rl-build
-        run: cpack -G 7Z
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        run: cpack -G TXZ
+      - name: Upload archive
+        uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.name }}
-          path: ${{ runner.workspace }}/rl-build/rl-*.7z
+          name: ${{ matrix.os }}-${{ matrix.compiler.cc }}
+          path: ${{ runner.workspace }}/rl-build/rl-*.tar.xz
