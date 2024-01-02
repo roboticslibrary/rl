@@ -26,6 +26,7 @@
 
 #include <cstring>
 #include <iostream>
+#include <iterator>
 #include <stdexcept>
 #include <vector>
 #include <boost/lexical_cast.hpp>

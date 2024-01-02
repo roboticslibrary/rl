@@ -25,6 +25,7 @@
 //
 
 #include <iostream>
+#include <iterator>
 #include <stdexcept>
 #include <boost/lexical_cast.hpp>
 #include <rl/hal/Socket.h>
