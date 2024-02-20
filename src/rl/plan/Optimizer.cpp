@@ -84,11 +84,8 @@ namespace rl
 		{
 			bool changed = false;
 			::rl::math::Vector inter(this->getModel()->getDofPosition());
-			
-			VectorList::iterator i = path.begin();
-			VectorList::iterator j = ++path.begin();
 				
-			while (i != path.end() && j != path.end())
+			for (VectorList::iterator i = path.begin(), j = ::std::next(i); i != path.end() && j != path.end();)
 			{
 				if (length > 0 && this->getModel()->distance(*i, *j) > length)
 				{
