@@ -85,12 +85,12 @@ namespace rl
 			bool changed = false;
 			::rl::math::Vector inter(this->getModel()->getDofPosition());
 			
-			for (VectorList::iterator i = path.begin(), j = ::std::next(i); i != path.end() && j != path.end(); ++i, ++j)
+			for (VectorList::iterator i = path.begin(), j = ::std::next(i); i != path.end() && j != path.end();)
 			{
-				if (0 == length || this->getModel()->distance(*i, *j) > length)
+				if (length > 0 && this->getModel()->distance(*i, *j) > length)
 				{
 					this->getModel()->interpolate(*i, *j, static_cast<::rl::math::Real>(0.5), inter);
-					i = path.insert(j, inter);
+					j = path.insert(j, inter);
 					
 					if (nullptr != this->getViewer())
 					{
@@ -98,6 +98,11 @@ namespace rl
 					}
 					
 					changed = true;
+				}
+				else
+				{
+					++i;
+					++j;
 				}
 			}
 			

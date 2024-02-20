@@ -68,7 +68,7 @@ namespace rl
 				{
 					changed = false;
 					
-					for (VectorList::iterator i = path.begin(), j = ::std::next(i), k = ::std::next(j); i != path.end() && j != path.end() && k != path.end(); ++i, ++j, ++k)
+					for (VectorList::iterator i = path.begin(), j = ::std::next(i), k = ::std::next(j); i != path.end() && j != path.end() && k != path.end();)
 					{
 						::rl::math::Real ik = this->getModel()->distance(*i, *k);
 						
@@ -76,7 +76,8 @@ namespace rl
 						{
 							::rl::math::Real ij = this->getModel()->distance(*i, *j);
 							::rl::math::Real jk = this->getModel()->distance(*j, *k);
-							this->getModel()->interpolate(*i, *k, ij / (ij + jk), inter);
+							::rl::math::Real alpha = ij / (ij + jk);
+							this->getModel()->interpolate(*i, *k, alpha, inter);
 							::rl::math::Real ratio = this->getModel()->distance(*j, inter) / ik;
 							
 							if (ratio > this->ratio)
@@ -93,6 +94,18 @@ namespace rl
 								
 								changed = true;
 							}
+							else
+							{
+								++i;
+								++j;
+								++k;
+							}
+						}
+						else
+						{
+							++i;
+							++j;
+							++k;
 						}
 					}
 				}
