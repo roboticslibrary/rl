@@ -61,7 +61,7 @@ namespace rl
 		{
 			bool changed = true;
 			::rl::math::Vector inter(this->getModel()->getDofPosition());
-						
+			
 			while (changed && path.size() > 2)
 			{
 				while (changed && path.size() > 2)
@@ -76,11 +76,8 @@ namespace rl
 						{
 							::rl::math::Real ij = this->getModel()->distance(*i, *j);
 							::rl::math::Real jk = this->getModel()->distance(*j, *k);
-							
 							::rl::math::Real alpha = ij / (ij + jk);
-							
 							this->getModel()->interpolate(*i, *k, alpha, inter);
-							
 							::rl::math::Real ratio = this->getModel()->distance(*j, inter) / ik;
 							
 							if (ratio > this->ratio)
