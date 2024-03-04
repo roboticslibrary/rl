@@ -24,69 +24,29 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef RL_KIN_JOINT_H
-#define RL_KIN_JOINT_H
+#ifndef RL_KIN_FACTORY_H
+#define RL_KIN_FACTORY_H
 
-#include <unordered_set>
-#include <boost/graph/adjacency_list.hpp>
-#include <rl/math/Units.h>
-
-#include "Transform.h"
+#include <memory>
+#include <string>
+#include <rl/kin/export.h>
 
 namespace rl
 {
 	namespace kin
 	{
-		class RL_KIN_EXPORT Joint : public Transform
+		class Kinematics;
+		
+		class RL_KIN_EXPORT Factory
 		{
 		public:
-			typedef ::boost::adjacency_list<
-				::boost::listS,
-				::boost::listS,
-				::boost::bidirectionalS,
-				::boost::listS
-			> Tree;
+			Factory();
 			
-			typedef Tree::vertex_descriptor Vertex;
+			virtual ~Factory();
 			
-			Joint();
-			
-			virtual ~Joint();
-			
-			::rl::math::Real getPosition() const;
-			
-			virtual ::rl::math::Units getPositionUnit() const = 0;
-			
-			virtual ::rl::math::Units getSpeedUnit() const = 0;
-			
-			virtual void jacobian(const ::rl::math::Transform& tcp, ::rl::math::MatrixBlock& j) = 0;
-			
-			virtual void normalize(::rl::math::Real& q);
-			
-			virtual void setPosition(const ::rl::math::Real& q);
-			
-			::rl::math::Real a;
-			
-			::rl::math::Real alpha;
-			
-			::rl::math::Real d;
-			
-			::std::unordered_set<Vertex> leaves;
-			
-			::rl::math::Real max;
-			
-			::rl::math::Real min;
-			
-			::rl::math::Real offset;
-			
-			::rl::math::Real speed;
-			
-			::rl::math::Real theta;
-			
-			bool wraparound;
+			virtual ::std::shared_ptr<Kinematics> create(const ::std::string& filename) = 0;
 			
 		protected:
-			::rl::math::Real q;
 			
 		private:
 			
@@ -94,4 +54,4 @@ namespace rl
 	}
 }
 
-#endif // RL_KIN_JOINT_H
+#endif // RL_KIN_FACTORY_H

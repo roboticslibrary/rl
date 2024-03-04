@@ -60,6 +60,10 @@ namespace rl
 			
 			virtual ~Kinematics();
 			
+			void add(const ::std::shared_ptr<Frame>& frame);
+			
+			void add(const ::std::shared_ptr<Transform>& transform, const Frame* a, const Frame* b);
+			
 			/**
 			 * See if specified bodies should be tested for collisions with each other.
 			 */
@@ -72,7 +76,7 @@ namespace rl
 			 */
 			virtual void clamp(::rl::math::Vector& q) const;
 			
-			static ::std::shared_ptr<Kinematics> create(const ::std::string& filename);
+			RL_KIN_DEPRECATED static ::std::shared_ptr<Kinematics> create(const ::std::string& filename);
 			
 			/**
 			 * Calculate distance measure between specified configuration.
@@ -262,6 +266,10 @@ namespace rl
 			
 			void normalize(::rl::math::Vector& q) const;
 			
+			void remove(Frame* frame);
+			
+			void remove(Transform* transform);
+			
 			void seed(const ::std::mt19937::result_type& value);
 			
 			/**
@@ -274,6 +282,8 @@ namespace rl
 			 */
 			void setColliding(const ::std::size_t& i, const ::std::size_t& j, const bool& doCollide);
 			
+			void setManufacturer(const ::std::string& manufacturer);
+			
 			void setMaximum(const ::std::size_t& i, const ::rl::math::Real& max);
 			
 			void setMaximum(const ::rl::math::Vector& max);
@@ -281,6 +291,8 @@ namespace rl
 			void setMinimum(const ::std::size_t& i, const ::rl::math::Real& min);
 			
 			void setMinimum(const ::rl::math::Vector& min);
+			
+			void setName(const ::std::string& name);
 			
 			/**
 			 * Update current joint position.
@@ -300,6 +312,8 @@ namespace rl
 			virtual ::rl::math::Real transformedDistance(const ::rl::math::Vector& q1, const ::rl::math::Vector& q2) const;
 			
 			virtual ::rl::math::Real transformedDistance(const ::rl::math::Real& q1, const ::rl::math::Real& q2, const ::std::size_t& i) const;
+			
+			virtual void update();
 			
 			/**
 			 * Update frames.
@@ -338,13 +352,13 @@ namespace rl
 			
 		protected:
 			typedef ::boost::adjacency_list<
-				::boost::vecS,
-				::boost::vecS,
+				::boost::listS,
+				::boost::listS,
 				::boost::bidirectionalS,
 				::std::shared_ptr<Frame>,
 				::std::shared_ptr<Transform>,
 				::boost::no_property,
-				::boost::vecS
+				::boost::listS
 			> Tree;
 			
 			typedef ::boost::graph_traits<Tree>::edge_descriptor Edge;
@@ -366,8 +380,6 @@ namespace rl
 			typedef ::boost::graph_traits<Tree>::vertex_iterator VertexIterator;
 			
 			typedef ::std::pair<VertexIterator, VertexIterator> VertexIteratorPair;
-			
-			virtual void update();
 			
 			void update(Vertex& u);
 			

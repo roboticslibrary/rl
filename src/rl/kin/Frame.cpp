@@ -32,12 +32,25 @@ namespace rl
 	{
 		Frame::Frame() :
 			Element(),
-			frame(::rl::math::Transform::Identity())
+			frame(::rl::math::Transform::Identity()),
+			descriptor()
 		{
 		}
 		
 		Frame::~Frame()
 		{
+		}
+		
+		const Frame::Vertex&
+		Frame::getVertexDescriptor() const
+		{
+			return this->descriptor;
+		}
+		
+		void
+		Frame::setVertexDescriptor(const Vertex& descriptor)
+		{
+			this->descriptor = descriptor;
 		}
 	}
 }

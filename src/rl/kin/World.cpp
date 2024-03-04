@@ -24,74 +24,19 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef RL_KIN_JOINT_H
-#define RL_KIN_JOINT_H
-
-#include <unordered_set>
-#include <boost/graph/adjacency_list.hpp>
-#include <rl/math/Units.h>
-
-#include "Transform.h"
+#include "World.h"
 
 namespace rl
 {
 	namespace kin
 	{
-		class RL_KIN_EXPORT Joint : public Transform
+		World::World() :
+			Frame()
 		{
-		public:
-			typedef ::boost::adjacency_list<
-				::boost::listS,
-				::boost::listS,
-				::boost::bidirectionalS,
-				::boost::listS
-			> Tree;
-			
-			typedef Tree::vertex_descriptor Vertex;
-			
-			Joint();
-			
-			virtual ~Joint();
-			
-			::rl::math::Real getPosition() const;
-			
-			virtual ::rl::math::Units getPositionUnit() const = 0;
-			
-			virtual ::rl::math::Units getSpeedUnit() const = 0;
-			
-			virtual void jacobian(const ::rl::math::Transform& tcp, ::rl::math::MatrixBlock& j) = 0;
-			
-			virtual void normalize(::rl::math::Real& q);
-			
-			virtual void setPosition(const ::rl::math::Real& q);
-			
-			::rl::math::Real a;
-			
-			::rl::math::Real alpha;
-			
-			::rl::math::Real d;
-			
-			::std::unordered_set<Vertex> leaves;
-			
-			::rl::math::Real max;
-			
-			::rl::math::Real min;
-			
-			::rl::math::Real offset;
-			
-			::rl::math::Real speed;
-			
-			::rl::math::Real theta;
-			
-			bool wraparound;
-			
-		protected:
-			::rl::math::Real q;
-			
-		private:
-			
-		};
+		}
+		
+		World::~World()
+		{
+		}
 	}
 }
-
-#endif // RL_KIN_JOINT_H

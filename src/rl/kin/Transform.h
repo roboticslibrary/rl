@@ -27,6 +27,7 @@
 #ifndef RL_KIN_TRANSFORM_H
 #define RL_KIN_TRANSFORM_H
 
+#include <boost/graph/adjacency_list.hpp>
 #include <rl/math/Transform.h>
 
 #include "Element.h"
@@ -42,9 +43,22 @@ namespace rl
 		public:
 			EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 			
+			typedef ::boost::adjacency_list<
+				::boost::listS,
+				::boost::listS,
+				::boost::bidirectionalS,
+				::boost::listS
+			> Tree;
+			
+			typedef Tree::edge_descriptor Edge;
+			
 			Transform();
 			
 			virtual ~Transform();
+			
+			const Edge& getEdgeDescriptor() const;
+			
+			void setEdgeDescriptor(const Edge& descriptor);
 			
 			virtual void updateFrames();
 			
@@ -57,7 +71,7 @@ namespace rl
 		protected:
 			
 		private:
-			
+			Edge descriptor;
 		};
 	}
 }

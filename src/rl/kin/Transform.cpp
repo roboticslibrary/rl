@@ -35,12 +35,25 @@ namespace rl
 			Element(),
 			in(nullptr),
 			out(nullptr),
-			transform(::rl::math::Transform::Identity())
+			transform(::rl::math::Transform::Identity()),
+			descriptor()
 		{
 		}
 		
 		Transform::~Transform()
 		{
+		}
+		
+		const Transform::Edge&
+		Transform::getEdgeDescriptor() const
+		{
+			return this->descriptor;
+		}
+		
+		void
+		Transform::setEdgeDescriptor(const Edge& descriptor)
+		{
+			this->descriptor = descriptor;
 		}
 		
 		void

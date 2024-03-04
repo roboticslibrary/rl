@@ -34,6 +34,7 @@
 #include <boost/lexical_cast.hpp>
 #include <rl/kin/Kinematics.h>
 #include <rl/kin/Puma.h>
+#include <rl/kin/XmlFactory.h>
 #include <rl/math/Constants.h>
 #include <rl/math/Rotation.h>
 
@@ -48,7 +49,8 @@ main(int argc, char** argv)
 	
 	try
 	{
-		std::shared_ptr<rl::kin::Kinematics> kinematics(rl::kin::Kinematics::create(argv[1]));
+		rl::kin::XmlFactory factory;
+		std::shared_ptr<rl::kin::Kinematics> kinematics(factory.create(argv[1]));
 		
 		if (rl::kin::Puma* puma = dynamic_cast<rl::kin::Puma*>(kinematics.get()))
 		{

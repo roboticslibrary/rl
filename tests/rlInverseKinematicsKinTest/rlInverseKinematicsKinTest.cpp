@@ -29,6 +29,7 @@
 #include <stdexcept>
 #include <rl/kin/Kinematics.h>
 #include <rl/kin/Puma.h>
+#include <rl/kin/XmlFactory.h>
 
 int
 main(int argc, char** argv)
@@ -43,7 +44,8 @@ main(int argc, char** argv)
 	{
 		std::string filename = argv[1];
 		
-		std::shared_ptr<rl::kin::Kinematics> kinematics(rl::kin::Kinematics::create(filename));
+		rl::kin::XmlFactory factory;
+		std::shared_ptr<rl::kin::Kinematics> kinematics(factory.create(filename));
 		kinematics->seed(0);
 		
 		for (std::size_t n = 0; n < 100; ++n)

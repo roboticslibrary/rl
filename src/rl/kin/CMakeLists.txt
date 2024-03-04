@@ -4,6 +4,7 @@ set(
 	HDRS
 	Element.h
 	Exception.h
+	Factory.h
 	Frame.h
 	Joint.h
 	Kinematics.h
@@ -13,12 +14,15 @@ set(
 	Revolute.h
 	Rhino.h
 	Transform.h
+	World.h
+	XmlFactory.h
 )
 
 set(
 	SRCS
 	Element.cpp
 	Exception.cpp
+	Factory.cpp
 	Frame.cpp
 	Joint.cpp
 	Kinematics.cpp
@@ -28,6 +32,8 @@ set(
 	Revolute.cpp
 	Rhino.cpp
 	Transform.cpp
+	World.cpp
+	XmlFactory.cpp
 )
 
 add_library(

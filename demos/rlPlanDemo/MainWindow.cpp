@@ -42,6 +42,7 @@
 #include <Inventor/nodes/SoOrthographicCamera.h>
 #include <Inventor/nodes/SoPerspectiveCamera.h>
 #include <Inventor/Qt/SoQt.h>
+#include <rl/kin/XmlFactory.h>
 #include <rl/math/Constants.h>
 #include <rl/math/Rotation.h>
 #include <rl/mdl/UrdfFactory.h>
@@ -892,7 +893,8 @@ MainWindow::load(const QString& filename)
 	}
 	else
 	{
-		this->kin = rl::kin::Kinematics::create(modelKinematicsFilename);
+		rl::kin::XmlFactory modelFactory;
+		this->kin = modelFactory.create(modelKinematicsFilename);
 	}
 	
 	if (path.eval("count((/rl/plan|/rlplan)//model/kinematics/world) > 0").getValue<bool>())
@@ -1073,8 +1075,8 @@ MainWindow::load(const QString& filename)
 	}
 	else
 	{
-		rl::xml::NodeSet kin2 = path.eval("(/rl/plan|/rlplan)//viewer/model/kinematics").getValue<rl::xml::NodeSet>();
-		this->kin2 = rl::kin::Kinematics::create(viewerKinematicsFilename);
+		rl::kin::XmlFactory modelFactory;
+		this->kin2 = modelFactory.create(viewerKinematicsFilename);
 	}
 	
 	if (path.eval("count((/rl/plan|/rlplan)//viewer/model/kinematics/world) > 0").getValue<bool>())

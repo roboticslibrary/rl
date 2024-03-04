@@ -27,6 +27,7 @@
 #ifndef RL_KIN_FRAME_H
 #define RL_KIN_FRAME_H
 
+#include <boost/graph/adjacency_list.hpp>
 #include <rl/math/Transform.h>
 
 #include "Element.h"
@@ -40,16 +41,29 @@ namespace rl
 		public:
 			EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 			
+			typedef ::boost::adjacency_list<
+				::boost::listS,
+				::boost::listS,
+				::boost::bidirectionalS,
+				::boost::listS
+			> Tree;
+			
+			typedef Tree::vertex_descriptor Vertex;
+			
 			Frame();
 			
 			virtual ~Frame();
+			
+			const Vertex& getVertexDescriptor() const;
+			
+			void setVertexDescriptor(const Vertex& descriptor);
 			
 			::rl::math::Transform frame;
 			
 		protected:
 			
 		private:
-			
+			Vertex descriptor;
 		};
 	}
 }

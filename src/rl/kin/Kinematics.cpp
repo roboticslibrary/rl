@@ -25,28 +25,15 @@
 //
 
 #include <algorithm>
-#include <rl/math/Constants.h>
-#include <rl/math/Rotation.h>
 #include <rl/std/algorithm.h>
-#include <rl/xml/Attribute.h>
-#include <rl/xml/Document.h>
-#include <rl/xml/DomParser.h>
-#include <rl/xml/Node.h>
-#include <rl/xml/Object.h>
-#include <rl/xml/Path.h>
-#include <rl/xml/Stylesheet.h>
 
-#include "Element.h"
 #include "Exception.h"
 #include "Frame.h"
 #include "Kinematics.h"
-#include "Link.h"
 #include "Joint.h"
-#include "Prismatic.h"
-#include "Puma.h"
-#include "Revolute.h"
-#include "Rhino.h"
-#include "Transform.h"
+#include "Link.h"
+#include "World.h"
+#include "XmlFactory.h"
 
 namespace rl
 {
@@ -73,6 +60,27 @@ namespace rl
 		
 		Kinematics::~Kinematics()
 		{
+		}
+		
+		void
+		Kinematics::add(const ::std::shared_ptr<Frame>& frame)
+		{
+			Vertex vertex = ::boost::add_vertex(this->tree);
+			frame->setVertexDescriptor(vertex);
+			this->tree[vertex] = frame;
+			
+			if (::std::dynamic_pointer_cast<World>(frame))
+			{
+				this->root = vertex;
+			}
+		}
+		
+		void
+		Kinematics::add(const ::std::shared_ptr<Transform>& transform, const Frame* a, const Frame* b)
+		{
+			Edge edge = ::boost::add_edge(a->getVertexDescriptor(), b->getVertexDescriptor(), this->tree).first;
+			transform->setEdgeDescriptor(edge);
+			this->tree[edge] = transform;
 		}
 		
 		bool
@@ -120,296 +128,8 @@ namespace rl
 		::std::shared_ptr<Kinematics>
 		Kinematics::create(const ::std::string& filename)
 		{
-			::std::shared_ptr<Kinematics> kinematics;
-			
-			::rl::xml::DomParser parser;
-			
-			::rl::xml::Document document = parser.readFile(filename, "", XML_PARSE_NOENT | XML_PARSE_XINCLUDE);
-			document.substitute(XML_PARSE_NOENT | XML_PARSE_XINCLUDE);
-			
-			if ("stylesheet" == document.getRootElement().getName() || "transform" == document.getRootElement().getName())
-			{
-				if ("1.0" == document.getRootElement().getProperty("version"))
-				{
-					if (document.getRootElement().hasNamespace() && "http://www.w3.org/1999/XSL/Transform" == document.getRootElement().getNamespace().getHref())
-					{
-						::rl::xml::Stylesheet stylesheet(document);
-						document = stylesheet.apply();
-					}
-				}
-			}
-			
-			::rl::xml::Path path(document);
-			
-			::rl::xml::NodeSet instances = path.eval("(/rl/kin|/rlkin)/kinematics|(/rl/kin|/rlkin)/puma|(/rl/kin|/rlkin)/rhino").getValue<::rl::xml::NodeSet>();
-			
-			if (instances.empty())
-			{
-				throw Exception("rl::kin::Kinematics::create() - No models found in file " + filename);
-			}
-			
-			for (int i = 0; i < ::std::min(1, instances.size()); ++i)
-			{
-				::rl::xml::Path path(document, instances[i]);
-				
-				if ("puma" == instances[i].getName())
-				{
-					kinematics = ::std::make_shared<Puma>();
-				}
-				else if ("rhino" == instances[i].getName())
-				{
-					kinematics = ::std::make_shared<Rhino>();
-				}
-				else if ("kinematics" == instances[i].getName())
-				{
-					kinematics = ::std::make_shared<Kinematics>();
-				}
-				else
-				{
-					continue;
-				}
-				
-				// manufacturer
-				
-				kinematics->manufacturer = path.eval("string(manufacturer)").getValue<::std::string>();
-				
-				// name
-				
-				kinematics->name = path.eval("string(name)").getValue<::std::string>();
-				
-				// frames
-				
-				::rl::xml::NodeSet frames = path.eval("frame|link|world").getValue<::rl::xml::NodeSet>();
-				
-				::std::map<::std::string, Vertex> id2vertex;
-				
-				for (int j = 0; j < frames.size(); ++j)
-				{
-					::rl::xml::Path path(document, frames[j]);
-					
-					Vertex v = ::boost::add_vertex(kinematics->tree);
-					
-					if ("frame" == frames[j].getName())
-					{
-						::std::shared_ptr<Frame> f = ::std::make_shared<Frame>();
-						
-						f->name = path.eval("string(@id)").getValue<::std::string>();
-						
-						f->frame.setIdentity();
-						
-						f->frame = ::rl::math::AngleAxis(
-							path.eval("number(rotation/z)").getValue<::rl::math::Real>(0) * ::rl::math::constants::deg2rad,
-							::rl::math::Vector3::UnitZ()
-						) * ::rl::math::AngleAxis(
-							path.eval("number(rotation/y)").getValue<::rl::math::Real>(0) * ::rl::math::constants::deg2rad,
-							::rl::math::Vector3::UnitY()
-						) * ::rl::math::AngleAxis(
-							path.eval("number(rotation/x)").getValue<::rl::math::Real>(0) * ::rl::math::constants::deg2rad,
-							::rl::math::Vector3::UnitX()
-						);
-						
-						f->frame.translation().x() = path.eval("number(translation/x)").getValue<::rl::math::Real>(0);
-						f->frame.translation().y() = path.eval("number(translation/y)").getValue<::rl::math::Real>(0);
-						f->frame.translation().z() = path.eval("number(translation/z)").getValue<::rl::math::Real>(0);
-						
-						kinematics->tree[v] = f;
-					}
-					else if ("link" == frames[j].getName())
-					{
-						::std::shared_ptr<Link> l = ::std::make_shared<Link>();
-						
-						l->name = path.eval("string(@id)").getValue<::std::string>();
-						
-						kinematics->tree[v] = l;
-					}
-					else if ("world" == frames[j].getName())
-					{
-						::std::shared_ptr<Frame> f = ::std::make_shared<Frame>();
-						
-						f->name = path.eval("string(@id)").getValue<::std::string>();
-						
-						f->frame.setIdentity();
-						
-						f->frame = ::rl::math::AngleAxis(
-							path.eval("number(rotation/z)").getValue<::rl::math::Real>(0) * ::rl::math::constants::deg2rad,
-							::rl::math::Vector3::UnitZ()
-						) * ::rl::math::AngleAxis(
-							path.eval("number(rotation/y)").getValue<::rl::math::Real>(0) * ::rl::math::constants::deg2rad,
-							::rl::math::Vector3::UnitY()
-						) * ::rl::math::AngleAxis(
-							path.eval("number(rotation/x)").getValue<::rl::math::Real>(0) * ::rl::math::constants::deg2rad,
-							::rl::math::Vector3::UnitX()
-						);
-						
-						f->frame.translation().x() = path.eval("number(translation/x)").getValue<::rl::math::Real>(0);
-						f->frame.translation().y() = path.eval("number(translation/y)").getValue<::rl::math::Real>(0);
-						f->frame.translation().z() = path.eval("number(translation/z)").getValue<::rl::math::Real>(0);
-						
-						kinematics->root = v;
-						
-						kinematics->tree[v] = f;
-					}
-					
-					::std::string id = path.eval("string(@id)").getValue<::std::string>();
-					
-					if (id2vertex.find(id) != id2vertex.end())
-					{
-						throw Exception("Frame with ID " + id + " not unique in file " + filename);
-					}
-					
-					id2vertex[id] = v;
-				}
-				
-				for (int j = 0; j < frames.size(); ++j)
-				{
-					::rl::xml::Path path(document, frames[j]);
-					
-					if ("link" == frames[j].getName())
-					{
-						::std::string v1Id = path.eval("string(@id)").getValue<::std::string>();
-						
-						if (id2vertex.find(v1Id) == id2vertex.end())
-						{
-							throw Exception("Link with ID " + v1Id + " not found in file " + filename);
-						}
-						
-						Vertex v1 = id2vertex[v1Id];
-						Link* l1 = dynamic_cast<Link*>(kinematics->tree[v1].get());
-						
-						::rl::xml::NodeSet ignores = path.eval("ignore").getValue<::rl::xml::NodeSet>();
-						
-						for (int k = 0; k < ignores.size(); ++k)
-						{
-							if (!ignores[k].getProperty("idref").empty())
-							{
-								::std::string v2IdRef = ignores[k].getProperty("idref");
-								
-								if (id2vertex.find(v2IdRef) == id2vertex.end())
-								{
-									throw Exception("Link with IDREF " + v2IdRef + " in Link with ID " + v1Id + " not found in file " + filename);
-								}
-								
-								Vertex v2 = id2vertex[v2IdRef];
-								Link* l2 = dynamic_cast<Link*>(kinematics->tree[v2].get());
-								
-								l1->selfcollision.insert(l2);
-								l2->selfcollision.insert(l1);
-							}
-							else
-							{
-								l1->collision = false;
-							}
-						}
-					}
-				}
-				
-				// transforms
-				
-				::rl::xml::NodeSet transforms = path.eval("prismatic|revolute|transform").getValue<::rl::xml::NodeSet>();
-				
-				for (int j = 0; j < transforms.size(); ++j)
-				{
-					::rl::xml::Path path(document, transforms[j]);
-					
-					::std::string name = path.eval("string(@id)").getValue<::std::string>();
-					
-					::std::string aIdRef = path.eval("string(frame/a/@idref)").getValue<::std::string>();
-					
-					if (id2vertex.find(aIdRef) == id2vertex.end())
-					{
-						throw Exception("Frame A with IDREF " + aIdRef + " in Transform with ID " + name + " not found in file " + filename);
-					}
-					
-					Vertex a = id2vertex[aIdRef];
-					
-					::std::string bIdRef = path.eval("string(frame/b/@idref)").getValue<::std::string>();
-					
-					if (id2vertex.find(bIdRef) == id2vertex.end())
-					{
-						throw Exception("Frame B with IDREF " + bIdRef + " in Transform with ID " + name + " not found in file " + filename);
-					}
-					
-					Vertex b = id2vertex[bIdRef];
-					
-					Edge e = ::boost::add_edge(a, b, kinematics->tree).first;
-					
-					if ("prismatic" == transforms[j].getName())
-					{
-						::std::shared_ptr<Prismatic> p = ::std::make_shared<Prismatic>();
-						
-						p->name = name;
-						
-						p->a = path.eval("number(dh/a)").getValue<::rl::math::Real>(0);
-						p->alpha = path.eval("number(dh/alpha)").getValue<::rl::math::Real>(0);
-						p->d = path.eval("number(dh/d)").getValue<::rl::math::Real>(0);
-						p->max = path.eval("number(max)").getValue<::rl::math::Real>(::std::numeric_limits<::rl::math::Real>::max());
-						p->min = path.eval("number(min)").getValue<::rl::math::Real>(-::std::numeric_limits<::rl::math::Real>::max());
-						p->offset = path.eval("number(offset)").getValue<::rl::math::Real>(0);
-						p->speed = path.eval("number(speed)").getValue<::rl::math::Real>(0);
-						p->theta = path.eval("number(dh/theta)").getValue<::rl::math::Real>(0);
-						p->wraparound = path.eval("count(wraparound) > 0").getValue<bool>();
-						
-						p->alpha *= ::rl::math::constants::deg2rad;
-						p->theta *= ::rl::math::constants::deg2rad;
-						
-						kinematics->tree[e] = p;
-					}
-					else if ("revolute" == transforms[j].getName())
-					{
-						::std::shared_ptr<Revolute> r = ::std::make_shared<Revolute>();
-						
-						r->name = name;
-						
-						r->a = path.eval("number(dh/a)").getValue<::rl::math::Real>(0);
-						r->alpha = path.eval("number(dh/alpha)").getValue<::rl::math::Real>(0);
-						r->d = path.eval("number(dh/d)").getValue<::rl::math::Real>(0);
-						r->max = path.eval("number(max)").getValue<::rl::math::Real>(::std::numeric_limits<::rl::math::Real>::max());
-						r->min = path.eval("number(min)").getValue<::rl::math::Real>(-::std::numeric_limits<::rl::math::Real>::max());
-						r->offset = path.eval("number(offset)").getValue<::rl::math::Real>(0);
-						r->speed = path.eval("number(speed)").getValue<::rl::math::Real>(0);
-						r->theta = path.eval("number(dh/theta)").getValue<::rl::math::Real>(0);
-						r->wraparound = path.eval("count(wraparound) > 0").getValue<bool>();
-						
-						r->alpha *= ::rl::math::constants::deg2rad;
-						r->max *= ::rl::math::constants::deg2rad;
-						r->min *= ::rl::math::constants::deg2rad;
-						r->offset *= ::rl::math::constants::deg2rad;
-						r->speed *= ::rl::math::constants::deg2rad;
-						r->theta *= ::rl::math::constants::deg2rad;
-						
-						kinematics->tree[e] = r;
-					}
-					else if ("transform" == transforms[j].getName())
-					{
-						::std::shared_ptr<Transform> t = ::std::make_shared<Transform>();
-						
-						t->name = name;
-						
-						t->transform.setIdentity();
-						
-						t->transform = ::rl::math::AngleAxis(
-							path.eval("number(rotation/z)").getValue<::rl::math::Real>(0) * ::rl::math::constants::deg2rad,
-							::rl::math::Vector3::UnitZ()
-						) * ::rl::math::AngleAxis(
-							path.eval("number(rotation/y)").getValue<::rl::math::Real>(0) * ::rl::math::constants::deg2rad,
-							::rl::math::Vector3::UnitY()
-						) * ::rl::math::AngleAxis(
-							path.eval("number(rotation/x)").getValue<::rl::math::Real>(0) * ::rl::math::constants::deg2rad,
-							::rl::math::Vector3::UnitX()
-						);
-						
-						t->transform.translation().x() = path.eval("number(translation/x)").getValue<::rl::math::Real>(0);
-						t->transform.translation().y() = path.eval("number(translation/y)").getValue<::rl::math::Real>(0);
-						t->transform.translation().z() = path.eval("number(translation/z)").getValue<::rl::math::Real>(0);
-						
-						kinematics->tree[e] = t;
-					}
-				}
-			}
-			
-			kinematics->update();
-			
-			return kinematics;
+			XmlFactory factory;
+			return factory.create(filename);
 		}
 		
 		::rl::math::Real
@@ -857,6 +577,25 @@ namespace rl
 		}
 		
 		void
+		Kinematics::remove(Frame* frame)
+		{
+			::boost::clear_vertex(frame->getVertexDescriptor(), this->tree);
+			
+			if (dynamic_cast<World*>(frame))
+			{
+				this->root = 0;
+			}
+			
+			::boost::remove_vertex(frame->getVertexDescriptor(), this->tree);
+		}
+		
+		void
+		Kinematics::remove(Transform* transform)
+		{
+			::boost::remove_edge(transform->getEdgeDescriptor(), this->tree);
+		}
+		
+		void
 		Kinematics::seed(const ::std::mt19937::result_type& value)
 		{
 			this->randEngine.seed(value);
@@ -886,6 +625,12 @@ namespace rl
 				this->links[i]->selfcollision.insert(this->links[j]);
 				this->links[j]->selfcollision.insert(this->links[i]);
 			}
+		}
+		
+		void
+		Kinematics::setManufacturer(const ::std::string& manufacturer)
+		{
+			this->manufacturer = manufacturer;
 		}
 		
 		void
@@ -924,6 +669,12 @@ namespace rl
 			{
 				this->joints[i]->min = min(i);
 			}
+		}
+		
+		void
+		Kinematics::setName(const ::std::string& name)
+		{
+			this->name = name;
 		}
 		
 		void

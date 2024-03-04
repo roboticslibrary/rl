@@ -29,6 +29,7 @@
 #include <QHeaderView>
 #include <Inventor/actions/SoWriteAction.h>
 #include <Inventor/Qt/SoQt.h>
+#include <rl/kin/XmlFactory.h>
 #include <rl/sg/XmlFactory.h>
 
 #if QT_VERSION >= 0x060000
@@ -84,11 +85,12 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f) :
 	this->scene = std::make_shared<rl::sg::so::Scene>();
 	rl::sg::XmlFactory geometryFactory;
 	geometryFactory.load(QApplication::arguments()[1].toStdString(), this->scene.get());
+	rl::kin::XmlFactory kinematicFactory;
 	
 	for (int i = 2; i < QApplication::arguments().size(); ++i)
 	{
 		this->geometryModels.push_back(this->scene->getModel(i - 2));
-		this->kinematicModels.push_back(rl::kin::Kinematics::create(QApplication::arguments()[i].toStdString()));
+		this->kinematicModels.push_back(kinematicFactory.create(QApplication::arguments()[i].toStdString()));
 	}
 	
 	for (std::size_t i = 0; i < this->kinematicModels.size(); ++i)

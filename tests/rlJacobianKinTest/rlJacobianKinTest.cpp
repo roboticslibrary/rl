@@ -29,6 +29,7 @@
 #include <memory>
 #include <stdexcept>
 #include <rl/kin/Kinematics.h>
+#include <rl/kin/XmlFactory.h>
 #include <rl/math/Constants.h>
 #include <rl/math/Transform.h>
 
@@ -41,7 +42,9 @@ main(int argc, char** argv)
 		return EXIT_FAILURE;
 	}
 	
-	std::shared_ptr<rl::kin::Kinematics> kinematics(rl::kin::Kinematics::create(argv[1]));
+	rl::kin::XmlFactory factory;
+	std::shared_ptr<rl::kin::Kinematics> kinematics(factory.create(argv[1]));
+	
 	std::size_t dof = kinematics->getDof();
 	std::srand(0); // get reproducible results
 	
