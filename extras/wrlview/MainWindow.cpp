@@ -654,9 +654,10 @@ MainWindow::load(const QString filename)
 	if (nullptr != this->scene)
 	{
 		this->root->removeChild(this->scene);
-		this->filename.clear();
-		this->setWindowTitle("wrlview");
 	}
+	
+	this->filename = absoluteFilename;
+	this->setWindowTitle("wrlview");
 	
 #if defined(HAVE_SOSTLFILEKIT_H) && defined(HAVE_SOSTLFILEKIT_CONVERT)
 	if (absoluteFilename.endsWith(".stl", Qt::CaseInsensitive))
@@ -695,7 +696,6 @@ MainWindow::load(const QString filename)
 	}
 	
 	this->root->addChild(this->scene);
-	this->filename = absoluteFilename;
 	this->setWindowTitle(absoluteFilename + " - wrlview");
 }
 
