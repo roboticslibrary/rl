@@ -1,8 +1,9 @@
 [Desktop Entry]
 Categories=Science;Robotics;
-Comment=Rotation conversion demo
+Comment=Rotation conversion demo for axis-angle, rotation matrix, quaternion, and Euler angle representations
 Exec=rlRotationConverterDemo
 Icon=robotics-library
-Name=Robotics Library (rlRotationConverterDemo)
+Keywords=Angle;Axis;Euler;Library;Matrix;Quaternion;Robot;Robotics;Rotation;
+Name=rlRotationConverterDemo
 Type=Application
 X-Unity-IconBackgroundColor=#ffffff

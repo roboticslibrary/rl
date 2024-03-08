@@ -1,8 +1,9 @@
 [Desktop Entry]
 Categories=Science;Robotics;
 Comment=Simulation demo with Unimation Puma 560
-Exec=sh -c "rlSimulator $(dirname %k)/../rl-@VERSION@/examples/rlsg/unimation-puma560_boxes.xml $(dirname %k)/../rl-@VERSION@/examples/rlmdl/unimation-puma560.xml"
+Exec=sh -c "rlSimulator $(dirname %k)/../rl-@PROJECT_VERSION@/examples/rlsg/unimation-puma560_boxes.xml $(dirname %k)/../rl-@PROJECT_VERSION@/examples/rlmdl/unimation-puma560.xml"
 Icon=robotics-library
-Name=Robotics Library (rlSimulator)
+Keywords=Dynamics;Kinematics;Library;Puma;Robot;Robotics;Simulation;Simulator;
+Name=rlSimulator
 Type=Application
 X-Unity-IconBackgroundColor=#ffffff
