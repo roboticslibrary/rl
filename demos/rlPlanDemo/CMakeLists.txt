@@ -68,7 +68,7 @@ if(QT_FOUND AND SoQt_FOUND AND (RL_BUILD_SG_BULLET OR RL_BUILD_SG_FCL OR RL_BUIL
 		Boost::headers
 		SoQt::SoQt
 	)
-		
+	
 	if(TARGET OpenGL::GL)
 		target_link_libraries(rlPlanDemo OpenGL::GL)
 	else()
