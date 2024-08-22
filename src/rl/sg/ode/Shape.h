@@ -55,6 +55,8 @@ namespace rl
 				void setTransform(const ::rl::math::Transform& transform);
 				
 				::dGeomID geom;
+
+				::dTriMeshDataID data;
 				
 			protected:
 				
