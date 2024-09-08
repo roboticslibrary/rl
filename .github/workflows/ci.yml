@@ -47,7 +47,7 @@ jobs:
           echo "CCACHE_BASEDIR=${{ runner.workspace }}" >> $GITHUB_ENV
           echo "CCACHE_DIR=${{ runner.workspace }}/.ccache" >> $GITHUB_ENV
       - name: Cache compiler
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ runner.workspace }}/.ccache
           key: ${{ matrix.os }}-ccache-${{ github.sha }}
@@ -159,7 +159,7 @@ jobs:
           echo "CCACHE_BASEDIR=${{ runner.workspace }}" >> $GITHUB_ENV
           echo "CCACHE_DIR=${{ runner.workspace }}/.ccache" >> $GITHUB_ENV
       - name: Cache compiler
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ runner.workspace }}/.ccache
           key: ${{ matrix.os }}-msys2-${{ matrix.sys }}-ccache-${{ github.sha }}
@@ -234,7 +234,7 @@ jobs:
           echo "CCACHE_BASEDIR=${{ runner.workspace }}" >> $GITHUB_ENV
           echo "CCACHE_DIR=${{ runner.workspace }}/.ccache" >> $GITHUB_ENV
       - name: Cache compiler
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ runner.workspace }}/.ccache
           key: ${{ matrix.os }}-${{ matrix.compiler.cc }}-ccache-${{ github.sha }}
