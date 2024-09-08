@@ -84,7 +84,12 @@ jobs:
           - os: windows-2019
             toolchain: 14.2
           - os: windows-2022
-            toolchain: 14.3
+            toolchain: 14.4
+    env:
+      CCACHE_COMPRESS: true
+      CCACHE_MAXSIZE: 500M
+      CMAKE_C_COMPILER_LAUNCHER: ccache
+      CMAKE_CXX_COMPILER_LAUNCHER: ccache
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -95,7 +100,24 @@ jobs:
         run: |
           curl -L https://github.com/roboticslibrary/rl-3rdparty/releases/download/latest/rl-3rdparty-msvc-${{ matrix.toolchain }}-x64-${{ matrix.qt }}.7z -o rl-3rdparty.7z
           7z x rl-3rdparty.7z -orl-3rdparty-install
+          Write-Output "CMAKE_PREFIX_PATH=${{ runner.workspace }}\rl-3rdparty-install" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
           Write-Output "${{ runner.workspace }}\rl-3rdparty-install\bin" | Out-File -FilePath $Env:GITHUB_PATH -Encoding utf8 -Append
+      - name: Install ccache
+        working-directory: ${{ runner.workspace }}
+        run: |
+          curl -L https://github.com/ccache/ccache/releases/download/v4.10.2/ccache-4.10.2-windows-x86_64.zip -o ccache-4.10.2-windows-x86_64.zip
+          7z x ccache-4.10.2-windows-x86_64.zip
+          Write-Output "${{ runner.workspace }}\ccache-4.10.2-windows-x86_64" | Out-File -FilePath $Env:GITHUB_PATH -Encoding utf8 -Append
+      - name: Update environment variables
+        run: |
+          Write-Output "CCACHE_BASEDIR=${{ runner.workspace }}" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+          Write-Output "CCACHE_DIR=${{ runner.workspace }}\.ccache" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+      - name: Cache compiler
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.workspace }}/.ccache
+          key: ${{ matrix.os }}-msvc-${{ matrix.toolchain }}-${{ matrix.qt }}-ccache-${{ github.sha }}
+          restore-keys: ${{ matrix.os }}-msvc-${{ matrix.toolchain }}-${{ matrix.qt }}-ccache-
       - name: Configure CMake
         run: cmake -GNinja -DCMAKE_BUILD_TYPE=Release -S"${{ github.workspace }}" -B"${{ runner.workspace }}/rl-build"
       - name: Build
