@@ -51,7 +51,8 @@ namespace rl
 				baseTransform(::rl::math::Transform::Identity()),
 				indices(),
 				transform(::rl::math::Transform::Identity()),
-				vertices()
+				vertices(),
+				data(nullptr)
 			{
 				::SoVRMLGeometry* geometry = static_cast<::SoVRMLGeometry*>(shape->geometry.getValue());
 				
