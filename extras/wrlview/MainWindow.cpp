@@ -735,7 +735,11 @@ MainWindow::parseCommandLine()
 	{
 		QString background = parser.value(backgroundOption);
 		
+#if QT_VERSION >= 0x060400
+		if (!QColor::isValidColorName(background))
+#else
 		if (!QColor::isValidColor(background))
+#endif
 		{
 			parser.showHelp();
 		}
