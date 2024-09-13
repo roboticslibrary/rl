@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - macos-12
+          - macos-14
     env:
       CCACHE_COMPRESS: true
       CCACHE_MAXSIZE: 500M
@@ -24,8 +24,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Set up Tap
+      - name: Set up tap
         run: brew tap roboticslibrary/rl
+      - name: Update index
+        run: brew update
       - name: Install dependencies
         run: >
           brew install
@@ -33,7 +35,7 @@ jobs:
           bullet
           ccache
           cmake
-          coin
+          coin3d
           eigen
           fcl
           ninja
@@ -41,7 +43,6 @@ jobs:
           ode
           pqp
           solid
-          soqt
       - name: Update environment variables
         run: |
           echo "CCACHE_BASEDIR=${{ runner.workspace }}" >> $GITHUB_ENV
@@ -82,9 +83,9 @@ jobs:
           - qt6
         include:
           - os: windows-2019
-            toolchain: 14.2
+            toolset: 14.2
           - os: windows-2022
-            toolchain: 14.4
+            toolset: 14.4
     env:
       CCACHE_COMPRESS: true
       CCACHE_MAXSIZE: 500M
@@ -98,7 +99,7 @@ jobs:
       - name: Install dependencies
         working-directory: ${{ runner.workspace }}
         run: |
-          curl -L https://github.com/roboticslibrary/rl-3rdparty/releases/download/latest/rl-3rdparty-msvc-${{ matrix.toolchain }}-x64-${{ matrix.qt }}.7z -o rl-3rdparty.7z
+          curl -L https://github.com/roboticslibrary/rl-3rdparty/releases/download/latest/rl-3rdparty-msvc-${{ matrix.toolset }}-x64-${{ matrix.qt }}.7z -o rl-3rdparty.7z
           7z x rl-3rdparty.7z -orl-3rdparty-install
           Write-Output "CMAKE_PREFIX_PATH=${{ runner.workspace }}\rl-3rdparty-install" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
           Write-Output "${{ runner.workspace }}\rl-3rdparty-install\bin" | Out-File -FilePath $Env:GITHUB_PATH -Encoding utf8 -Append
@@ -116,8 +117,8 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ runner.workspace }}/.ccache
-          key: ${{ matrix.os }}-msvc-${{ matrix.toolchain }}-${{ matrix.qt }}-ccache-${{ github.sha }}
-          restore-keys: ${{ matrix.os }}-msvc-${{ matrix.toolchain }}-${{ matrix.qt }}-ccache-
+          key: ${{ matrix.os }}-msvc-${{ matrix.toolset }}-${{ matrix.qt }}-ccache-${{ github.sha }}
+          restore-keys: ${{ matrix.os }}-msvc-${{ matrix.toolset }}-${{ matrix.qt }}-ccache-
       - name: Configure CMake
         run: cmake -GNinja -DCMAKE_BUILD_TYPE=Release -S"${{ github.workspace }}" -B"${{ runner.workspace }}/rl-build"
       - name: Build
@@ -132,7 +133,7 @@ jobs:
       - name: Upload archive
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.os }}-msvc-${{ matrix.toolchain }}-${{ matrix.qt }}
+          name: ${{ matrix.os }}-msvc-${{ matrix.toolset }}-${{ matrix.qt }}
           path: ${{ runner.workspace }}/rl-build/rl-*.7z
   build-msys2:
     name: Build
@@ -229,6 +230,8 @@ jobs:
         run: |
           sudo apt-get install -y software-properties-common
           sudo apt-add-repository -y -u ppa:roblib/ppa
+      - name: Update index
+        run: sudo apt-get update
       - name: Install dependencies
         run: >
           sudo apt-get install -y
