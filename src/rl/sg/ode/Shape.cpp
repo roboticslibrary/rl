@@ -49,10 +49,10 @@ namespace rl
 				::rl::sg::Shape(body),
 				geom(nullptr),
 				baseTransform(::rl::math::Transform::Identity()),
+				data(nullptr),
 				indices(),
 				transform(::rl::math::Transform::Identity()),
-				vertices(),
-				data(nullptr)
+				vertices()
 			{
 				::SoVRMLGeometry* geometry = static_cast<::SoVRMLGeometry*>(shape->geometry.getValue());
 				
