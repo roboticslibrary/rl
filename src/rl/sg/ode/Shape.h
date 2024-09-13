@@ -63,6 +63,8 @@ namespace rl
 				
 				::rl::math::Transform baseTransform;
 				
+				::dTriMeshDataID data;
+				
 				::std::vector<::dTriIndex> indices;
 				
 				::rl::math::Transform transform;

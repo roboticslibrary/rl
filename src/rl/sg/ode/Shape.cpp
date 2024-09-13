@@ -49,6 +49,7 @@ namespace rl
 				::rl::sg::Shape(body),
 				geom(nullptr),
 				baseTransform(::rl::math::Transform::Identity()),
+				data(nullptr),
 				indices(),
 				transform(::rl::math::Transform::Identity()),
 				vertices()
@@ -92,9 +93,9 @@ namespace rl
 					callbackAction.addTriangleCallback(geometry->getTypeId(), Shape::triangleCallback, this);
 					callbackAction.apply(geometry);
 					
-					::dTriMeshDataID data = ::dGeomTriMeshDataCreate();
+					this->data = ::dGeomTriMeshDataCreate();
 					::dGeomTriMeshDataBuildSimple(data, &this->vertices[0], this->vertices.size() / 4, &this->indices[0], this->indices.size());
-					this->geom = ::dCreateTriMesh(static_cast<Body*>(this->getBody())->space, data, nullptr, nullptr, nullptr);
+					this->geom = ::dCreateTriMesh(static_cast<Body*>(this->getBody())->space, this->data, nullptr, nullptr, nullptr);
 				}
 				else if (geometry->isOfType(::SoVRMLSphere::getClassTypeId()))
 				{
@@ -121,6 +122,7 @@ namespace rl
 			{
 				this->getBody()->remove(this);
 				::dGeomDestroy(this->geom);
+				::dGeomTriMeshDataDestroy(this->data);
 			}
 			
 			::rl::math::Transform
