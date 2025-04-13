@@ -1,12 +1,4 @@
-cmake_minimum_required(VERSION 3.1)
-
-if(POLICY CMP0072)
-	cmake_policy(SET CMP0072 NEW)
-endif()
-
-if(POLICY CMP0075)
-	cmake_policy(SET CMP0075 NEW)
-endif()
+cmake_minimum_required(VERSION 3.1...3.31 FATAL_ERROR)
 
 project(rl VERSION 0.7.0)
 
