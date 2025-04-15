@@ -265,7 +265,7 @@ ConfigurationSpaceScene::init()
 		(*MainWindow::instance()->q)(this->axis[1])
 	);
 	
-	this->data.assign(this->steps[0] * this->steps[1], 128);
+	this->data.assign(static_cast<std::size_t>(this->steps[0]) * this->steps[1], 128);
 	
 #if QT_VERSION >= 0x050500
 	this->image = QImage(this->data.data(), this->steps[0], this->steps[1], this->steps[0], QImage::Format_Grayscale8);
