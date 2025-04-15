@@ -106,9 +106,9 @@ jobs:
       - name: Install ccache
         working-directory: ${{ runner.workspace }}
         run: |
-          curl -L https://github.com/ccache/ccache/releases/download/v4.10.2/ccache-4.10.2-windows-x86_64.zip -o ccache-4.10.2-windows-x86_64.zip
-          7z x ccache-4.10.2-windows-x86_64.zip
-          Write-Output "${{ runner.workspace }}\ccache-4.10.2-windows-x86_64" | Out-File -FilePath $Env:GITHUB_PATH -Encoding utf8 -Append
+          curl -L https://github.com/ccache/ccache/releases/download/v4.11.2/ccache-4.11.2-windows-x86_64.zip -o ccache-4.11.2-windows-x86_64.zip
+          7z x ccache-4.11.2-windows-x86_64.zip
+          Write-Output "${{ runner.workspace }}\ccache-4.11.2-windows-x86_64" | Out-File -FilePath $Env:GITHUB_PATH -Encoding utf8 -Append
       - name: Update environment variables
         run: |
           Write-Output "CCACHE_BASEDIR=${{ runner.workspace }}" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
@@ -210,7 +210,7 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-22.04
+          - ubuntu-24.04
         compiler:
           - cc: clang
             cxx: clang++
