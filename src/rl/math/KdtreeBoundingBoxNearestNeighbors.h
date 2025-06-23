@@ -251,12 +251,12 @@ namespace rl
 			void swap(KdtreeBoundingBoxNearestNeighbors& other)
 			{
 				using ::std::swap;
-				swap(this->mean, other.mean);
+				swap(this->boundingBox, other.boundingBox);
 				swap(this->metric, other.metric);
-				swap(this->samples, other.samples);
+				swap(this->checks, other.checks);
 				swap(this->root, other.root);
 				swap(this->values, other.values);
-				swap(this->var, other.var);
+				swap(this->nodeDataMax, other.nodeDataMax);
 			}
 			
 			friend void swap(KdtreeBoundingBoxNearestNeighbors& lhs, KdtreeBoundingBoxNearestNeighbors& rhs)
