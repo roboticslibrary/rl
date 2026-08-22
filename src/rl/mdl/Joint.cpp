@@ -24,6 +24,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include <cmath>
 #include <rl/std/algorithm.h>
 
 #include "Frame.h"
@@ -67,19 +68,31 @@ namespace rl
 		{
 			for (::std::ptrdiff_t i = 0; i < q.size(); ++i)
 			{
-				if (this->wraparound(i))
+				::rl::math::Real range = this->wraparound(i)
+					? ::std::abs(this->max(i) - this->min(i))
+					: ::rl::math::Real(0);
+				
+				// Wrapping by repeated subtraction has no termination guarantee. Once |q| is
+				// large enough that q - range == q in double precision the value stops moving,
+				// and the loop spins forever on finite, well formed input; a range of zero does
+				// the same immediately. An iterative solver can hand this a diverged iterate,
+				// and this sits below that solver's iteration and duration checks, so nothing
+				// above can bound it - the thread simply never comes back.
+				//
+				// fmod does the same normalisation in one step for any magnitude. Anything it
+				// cannot express - a non-finite q, or a degenerate range - falls through to a
+				// plain clamp: infinities land on the limit, and a NaN stays a NaN so the
+				// caller can still see something went wrong.
+				if (this->wraparound(i) && range > 0 && ::std::isfinite(q(i)))
 				{
-					::rl::math::Real range = ::std::abs(this->max(i) - this->min(i));
-					
-					while (q(i) > this->max(i))
+					::rl::math::Real wrapped = ::std::fmod(q(i) - this->min(i), range);
+				
+					if (wrapped < 0)
 					{
-						q(i) -= range;
+						wrapped += range;
 					}
-					
-					while (q(i) < this->min(i))
-					{
-						q(i) += range;
-					}
+				
+					q(i) = this->min(i) + wrapped;
 				}
 				else
 				{
